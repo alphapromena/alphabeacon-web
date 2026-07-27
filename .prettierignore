@@ -1,0 +1,10 @@
+dist/
+coverage/
+node_modules/
+pnpm-lock.yaml
+cdk.out/
+test-results/
+playwright-report/
+public/
+src/components/ui/
+skills/

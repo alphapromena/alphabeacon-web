@@ -1,0 +1,21 @@
+import type { Dataset, DatasetId } from '@/data/types'
+import { buildActiveDataset } from './active'
+import { buildFreshDataset } from './fresh'
+
+/**
+ * The dataset registry — the only way a screen reaches a different world.
+ * Each entry is a factory so every switch starts from a pristine copy.
+ * Later phases add: past-due, needs-reauth, low-credits, heavy.
+ */
+export const DATASETS: { id: DatasetId; build: () => Dataset }[] = [
+  { id: 'active', build: buildActiveDataset },
+  { id: 'fresh', build: buildFreshDataset },
+]
+
+export const DEFAULT_DATASET_ID: DatasetId = 'active'
+
+export function buildDataset(id: DatasetId): Dataset {
+  const entry = DATASETS.find((d) => d.id === id)
+  if (!entry) throw new Error(`Unknown dataset: ${id}`)
+  return entry.build()
+}

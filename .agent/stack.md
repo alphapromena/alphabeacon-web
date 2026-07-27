@@ -4,10 +4,10 @@
 
 ## Runtime & languages
 
-| Tool | Version | Pinned by |
-|------|---------|-----------|
-| Node | 22.x | `.nvmrc` + `engines` |
-| TypeScript | 5.x strict | `tsconfig.json` |
+| Tool       | Version                                                   | Pinned by            |
+| ---------- | --------------------------------------------------------- | -------------------- |
+| Node       | 22.x in CI (`.nvmrc`); `engines` allows ≥22 for local dev | `.nvmrc` + `engines` |
+| TypeScript | 5.x strict                                                | `tsconfig.json`      |
 
 ## Package manager
 
@@ -16,47 +16,47 @@ dependencies are public — no private registry, no token.
 
 ## Key dependencies (and why)
 
-| Package | Role | Why this one (see decisions.md) |
-|---------|------|---------------------------------|
-| `react` 19 + `vite` | SPA + build | one framework; marketing routes pre-rendered at build |
-| `tailwindcss` v4 | styling | CSS-variable theming maps design.md tokens |
-| shadcn/ui (CLI-managed) + `lucide-react` | component system + icons | the shadcn **skill** gives the agent correct APIs; base library **radix** |
-| `react-router` | routing + guards | SPA route table in `src/routes.tsx` |
-| `react-hook-form` + `@hookform/resolvers` | forms | pairs with shadcn `Field`/`FieldGroup`; zod schemas from `src/data/types.ts` |
-| `zod` | form schemas + entity types | declared locally; nothing is parsed from a wire |
-| `sonner` | toasts | shadcn's toast host |
-| `vitest` + `@playwright/test` + `@axe-core/playwright` | unit/component/e2e + a11y | fixture-driven state specs; goldens |
-| Lighthouse CI | perf/a11y budgets | W7 gate |
-| `aws-cdk-lib` | `infra/` deploy (S3 + CloudFront + ACM) | uniform with the other repos |
+| Package                                                | Role                                    | Why this one (see decisions.md)                                              |
+| ------------------------------------------------------ | --------------------------------------- | ---------------------------------------------------------------------------- |
+| `react` 19 + `vite`                                    | SPA + build                             | one framework; marketing routes pre-rendered at build                        |
+| `tailwindcss` v4                                       | styling                                 | CSS-variable theming maps design.md tokens                                   |
+| shadcn/ui (CLI-managed) + `lucide-react`               | component system + icons                | the shadcn **skill** gives the agent correct APIs; base library **radix**    |
+| `react-router`                                         | routing + guards                        | SPA route table in `src/routes.tsx`                                          |
+| `react-hook-form` + `@hookform/resolvers`              | forms                                   | pairs with shadcn `Field`/`FieldGroup`; zod schemas from `src/data/types.ts` |
+| `zod`                                                  | form schemas + entity types             | declared locally; nothing is parsed from a wire                              |
+| `sonner`                                               | toasts                                  | shadcn's toast host                                                          |
+| `vitest` + `@playwright/test` + `@axe-core/playwright` | unit/component/e2e + a11y               | fixture-driven state specs; goldens                                          |
+| Lighthouse CI                                          | perf/a11y budgets                       | W7 gate                                                                      |
+| `aws-cdk-lib`                                          | `infra/` deploy (S3 + CloudFront + ACM) | uniform with the other repos                                                 |
 
 ## Commands (copy-paste ready)
 
-| Action | Command |
-|--------|---------|
-| install | `pnpm install` |
-| run dev | `pnpm dev` |
+| Action                                     | Command                                                                                       |
+| ------------------------------------------ | --------------------------------------------------------------------------------------------- |
+| install                                    | `pnpm install`                                                                                |
+| run dev                                    | `pnpm dev`                                                                                    |
 | shadcn — add / search / docs / diff / info | `pnpm dlx shadcn@latest add <c>` · `… search <q>` · `… docs <c>` · `… diff` · `… info --json` |
-| install the AI skill (once, committed) | `pnpm dlx skills add shadcn/ui` |
-| test — all / single | `pnpm test` / `pnpm test <path>` |
-| e2e — state specs / goldens / axe | `pnpm e2e` / `pnpm e2e --grep @golden` / `pnpm e2e --grep @axe` |
-| lint / format / typecheck | `pnpm lint` / `pnpm format` / `pnpm typecheck` |
-| static guard (also in CI) | `pnpm guard:static` |
-| lighthouse budgets | `pnpm lh` |
-| build | `pnpm build` |
-| deploy | `pnpm deploy --stage dev|staging|prod` |
-| phase verify | `pnpm verify:w<NN>` |
+| install the AI skill (once, committed)     | `pnpm dlx skills add shadcn/ui`                                                               |
+| test — all / single                        | `pnpm test` / `pnpm test <path>`                                                              |
+| e2e — state specs / goldens / axe          | `pnpm e2e` / `pnpm e2e --grep @golden` / `pnpm e2e --grep @axe`                               |
+| lint / format / typecheck                  | `pnpm lint` / `pnpm format` / `pnpm typecheck`                                                |
+| static guard (also in CI)                  | `pnpm guard:static`                                                                           |
+| lighthouse budgets                         | `pnpm lh`                                                                                     |
+| build                                      | `pnpm build`                                                                                  |
+| deploy                                     | `pnpm run deploy --stage <dev\|staging\|prod>` (plain `pnpm deploy` is shadowed by a pnpm built-in) |
+| phase verify                               | `pnpm verify:w<NN>`                                                                           |
 
 Agents: after any code change run **lint → typecheck → test** before "done";
 before closing a phase run its `verify:wNN` and paste the output in the PR.
 
 ## Environments / flavors
 
-| Flavor | Purpose | How to select |
-|--------|---------|---------------|
-| local | all development | `pnpm dev` |
-| dev | deployed preview | `pnpm deploy --stage dev` |
+| Flavor  | Purpose                    | How to select                 |
+| ------- | -------------------------- | ----------------------------- |
+| local   | all development            | `pnpm dev`                    |
+| dev     | deployed preview           | `pnpm deploy --stage dev`     |
 | staging | gates + Lighthouse budgets | `pnpm deploy --stage staging` |
-| prod | live static site | gate approval |
+| prod    | live static site           | gate approval                 |
 
 ## Environment variables
 

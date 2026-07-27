@@ -5,18 +5,18 @@
 
 ## Naming
 
-| Thing | Convention | Example |
-|-------|------------|---------|
-| files | kebab-case | `today-queue.tsx`, `use-approve.ts` |
-| components | PascalCase | `ClaimChip`, `AppShell` |
-| hooks | `use…` camelCase | `useComposeStream` |
-| types / contracts | PascalCase | `DraftStatus` |
-| constants | SCREAMING_SNAKE | `MAX_POSTS_PER_DAY` |
-| CSS variables | shadcn set, kebab | `--primary`, `--radius` |
-| feature folders | area name | `features/studio/` |
-| branches | `w/NN-slug` · `fix/<slug>` | `w/03-today` |
-| commits | Conventional Commits | `feat(today): approval-gated media entry` |
-| test tags | `@golden` · `@axe` | on Playwright specs |
+| Thing             | Convention                 | Example                                   |
+| ----------------- | -------------------------- | ----------------------------------------- |
+| files             | kebab-case                 | `today-queue.tsx`, `use-approve.ts`       |
+| components        | PascalCase                 | `ClaimChip`, `AppShell`                   |
+| hooks             | `use…` camelCase           | `useComposeStream`                        |
+| types / contracts | PascalCase                 | `DraftStatus`                             |
+| constants         | SCREAMING_SNAKE            | `MAX_POSTS_PER_DAY`                       |
+| CSS variables     | shadcn set, kebab          | `--primary`, `--radius`                   |
+| feature folders   | area name                  | `features/studio/`                        |
+| branches          | `w/NN-slug` · `fix/<slug>` | `w/03-today`                              |
+| commits           | Conventional Commits       | `feat(today): approval-gated media entry` |
+| test tags         | `@golden` · `@axe`         | on Playwright specs                       |
 
 ## Formatting & lint
 

@@ -6,15 +6,15 @@ scripts — the rules below ARE the workflow.
 
 ## Structure
 
-| File                     | What it holds                                      |
-|--------------------------|----------------------------------------------------|
-| `web-plan.md`            | The build order: phases W0–W7, each with Verify    |
-| `.agent/context.md`      | What this frontend is, personas, screen glossary   |
-| `.agent/stack.md`        | Versions, packages, and the commands to run        |
-| `.agent/architecture.md` | App shape, data flow, mode isolation, routing      |
-| `.agent/conventions.md`  | shadcn rules, design law, testing, do/don't        |
-| `.agent/decisions.md`    | Why things are the way they are (decision log)     |
-| `.agent/sessions.md`     | Log of what happened each session (progress)       |
+| File                     | What it holds                                    |
+| ------------------------ | ------------------------------------------------ |
+| `web-plan.md`            | The build order: phases W0–W7, each with Verify  |
+| `.agent/context.md`      | What this frontend is, personas, screen glossary |
+| `.agent/stack.md`        | Versions, packages, and the commands to run      |
+| `.agent/architecture.md` | App shape, data flow, mode isolation, routing    |
+| `.agent/conventions.md`  | shadcn rules, design law, testing, do/don't      |
+| `.agent/decisions.md`    | Why things are the way they are (decision log)   |
+| `.agent/sessions.md`     | Log of what happened each session (progress)     |
 
 `screens4.md` is screen truth and `design.md` is the visual system — both live
 in the product docs; never contradict them silently.
