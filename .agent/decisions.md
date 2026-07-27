@@ -166,6 +166,51 @@ add a new entry that says it supersedes the old one.
 - Instead of: pinning the older v2/v3 CLI to match the plan's folder wording —
   fighting the toolchain for a cosmetic path difference.
 
+### 2026-07-27 — Signature motion opts in through one `data-ab-motion` attribute
+
+- Why: "reduced motion removes signature animation" is a promise that has to
+  survive every future component, not just today's two. Both animations declare
+  themselves with `data-ab-motion`, and one rule in `globals.css` kills the whole
+  attribute under `prefers-reduced-motion` — so the e2e sweep can assert over
+  _every_ animated element rather than one known dot, and new motion cannot skip
+  the guarantee by forgetting a media query. `use-count-up` enforces the same law
+  in JS, where CSS cannot reach: under reduced motion it returns the target on
+  the first render rather than animating faster.
+- Instead of: per-component `motion-safe:` variants — correct wherever someone
+  remembers them, invisible when they forget, and untestable in aggregate.
+
+### 2026-07-27 — Status tokens darkened to clear AA on their own tints
+
+- Why: the status-badge pattern renders `text-X` on `bg-X/10`, which is a much
+  stricter contrast case than a solid fill, and axe measured real failures at the
+  shadcn/provisional defaults: `--muted-foreground` 4.38:1, `--success` 4.47:1,
+  `--destructive` 3.98:1 (AA needs 4.5:1). All three were darkened in
+  `tokens.css`. Darkening also improves the solid-fill case (white text on
+  `bg-destructive`), so one token still serves both roles.
+- Instead of: adding separate `--on-tint` foreground tokens (doubles the palette
+  for a problem darkening solves), or scoping contrast exceptions per component
+  (the failure would return the next time someone used the token).
+
+### 2026-07-27 — Testing Library cleanup is registered explicitly
+
+- Why: vitest runs without `globals`, so `@testing-library/react` cannot find a
+  global `afterEach` at import time and never registers auto-cleanup. Renders
+  then accumulate across tests in a file and role queries start matching
+  elements left over from earlier cases — which is exactly how it first
+  surfaced. `src/test/setup.ts` now calls `afterEach(cleanup)` for every suite.
+- Instead of: enabling `globals: true` — it would fix cleanup by making
+  `describe`/`it`/`expect` ambient, and explicit imports are worth keeping.
+
+### 2026-07-27 — `no-unused-vars` ignores rest siblings
+
+- Why: `const { invalid, ...field } = props` is how a wrapper deliberately keeps
+  an internal flag off the DOM, and the form layer needs it in every field
+  component. Flagging that as dead code pushes authors toward `_`-prefix noise or
+  spreading unknown attributes onto real elements. `_`-prefixed names remain the
+  explicit escape hatch for genuinely unused bindings.
+- Instead of: renaming to `_invalid` at each site — same result, more noise, and
+  it reads as "unused" when the omission is the entire point.
+
 ### 2026-07-23 — Strict CSP on the static origin
 
 - Why: still worth having on a site with no credentials — it is close to free on

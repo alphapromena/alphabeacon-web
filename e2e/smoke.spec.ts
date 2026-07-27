@@ -75,16 +75,9 @@ test('state switcher forces loading and error presentations', async ({ page }) =
   await expect(page.getByText(STAT_LABELS[0])).toHaveCount(0)
 })
 
-test('reduced motion removes the beacon pulse', { tag: '@reduced-motion' }, async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: 'reduce' })
-  await page.goto('/')
-  await expectDashboardStats(page)
-
-  const railDot = page.getByLabel(/drafts awaiting review/i)
-  await expect(railDot).toBeVisible()
-  const animationName = await railDot.evaluate((el) => getComputedStyle(el).animationName)
-  expect(animationName).toBe('none')
-})
+// The reduced-motion assertion lives in design-layer.spec.ts now: it sweeps
+// every [data-ab-motion] element on the kitchen sink instead of one dot found
+// by aria-label, so a new animation cannot escape it.
 
 test('dashboard and dev pages scan clean', { tag: '@axe' }, async ({ page }) => {
   await page.goto('/')

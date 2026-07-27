@@ -37,6 +37,8 @@ export type DataAction =
   | { type: 'dev/force'; mode: DevForce }
   | { type: 'draft/transition'; draftId: string; to: DraftStatus }
   | { type: 'notifications/markAllRead' }
+  | { type: 'session/signOut' }
+  | { type: 'session/signIn' }
 
 export function dataReducer(state: DataState, action: DataAction): DataState {
   switch (action.type) {
@@ -64,6 +66,19 @@ export function dataReducer(state: DataState, action: DataAction): DataState {
           ...state.world,
           notifications: state.world.notifications.map((n) => ({ ...n, read: true })),
         },
+      }
+    // The session is local and fake, but signing out must really sign out:
+    // the route guards read this flag, so the shell's Sign out exercises the
+    // same redirect a real one would.
+    case 'session/signOut':
+      return {
+        ...state,
+        world: { ...state.world, session: { ...state.world.session, signedIn: false } },
+      }
+    case 'session/signIn':
+      return {
+        ...state,
+        world: { ...state.world, session: { ...state.world.session, signedIn: true } },
       }
   }
 }

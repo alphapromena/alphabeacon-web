@@ -21,12 +21,21 @@
   --secondary: oklch(0.968 0.004 260);
   --secondary-foreground: oklch(0.205 0.01 260);
   --muted: oklch(0.968 0.004 260);
-  --muted-foreground: oklch(0.552 0.01 260);
+  /* Darkened from 0.552: secondary text must clear AA (4.5:1) against the
+     MUTED surface, not just the background — axe caught 4.38:1. */
+  --muted-foreground: oklch(0.46 0.012 260);
   --accent: oklch(0.955 0.01 258);
   --accent-foreground: oklch(0.205 0.01 260);
-  --destructive: oklch(0.577 0.245 27.325);
-  --warning: oklch(0.55 0.13 70);
+  /* These three are read BOTH as solid fills (with white text) and as small
+     text on their own 10% tint — the status-badge pattern. The tint case is
+     the strict one, so each is darkened until `text-X on bg-X/10` clears AA;
+     axe measured 3.98 and 4.47 at the shadcn defaults. Darkening only helps
+     the solid-fill case, so one token can serve both. */
+  --destructive: oklch(0.505 0.21 27.325);
+  --warning: oklch(0.52 0.13 70);
   --warning-foreground: oklch(0.985 0.005 70);
+  --success: oklch(0.485 0.125 155);
+  --success-foreground: oklch(0.985 0.005 155);
   --border: oklch(0.922 0.004 260);
   --input: oklch(0.922 0.004 260);
   --ring: oklch(0.62 0.15 258);
@@ -67,6 +76,8 @@
   --destructive: oklch(0.704 0.191 22.216);
   --warning: oklch(0.8 0.14 80);
   --warning-foreground: oklch(0.24 0.06 70);
+  --success: oklch(0.75 0.14 155);
+  --success-foreground: oklch(0.22 0.06 155);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.68 0.15 258);

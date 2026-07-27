@@ -21,7 +21,8 @@
     "guard:static": "tsx scripts/guard-static.ts",
     "lh": "tsx scripts/lighthouse.ts",
     "deploy": "tsx scripts/deploy.ts",
-    "verify:w00": "tsx scripts/verify-w00.ts"
+    "verify:w00": "tsx scripts/verify-w00.ts",
+    "verify:w01": "tsx scripts/verify-w01.ts"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

@@ -31,20 +31,20 @@ dependencies are public — no private registry, no token.
 
 ## Commands (copy-paste ready)
 
-| Action                                     | Command                                                                                       |
-| ------------------------------------------ | --------------------------------------------------------------------------------------------- |
-| install                                    | `pnpm install`                                                                                |
-| run dev                                    | `pnpm dev`                                                                                    |
-| shadcn — add / search / docs / diff / info | `pnpm dlx shadcn@latest add <c>` · `… search <q>` · `… docs <c>` · `… diff` · `… info --json` |
-| install the AI skill (once, committed)     | `pnpm dlx skills add shadcn/ui`                                                               |
-| test — all / single                        | `pnpm test` / `pnpm test <path>`                                                              |
-| e2e — state specs / goldens / axe          | `pnpm e2e` / `pnpm e2e --grep @golden` / `pnpm e2e --grep @axe`                               |
-| lint / format / typecheck                  | `pnpm lint` / `pnpm format` / `pnpm typecheck`                                                |
-| static guard (also in CI)                  | `pnpm guard:static`                                                                           |
-| lighthouse budgets                         | `pnpm lh`                                                                                     |
-| build                                      | `pnpm build`                                                                                  |
+| Action                                     | Command                                                                                             |
+| ------------------------------------------ | --------------------------------------------------------------------------------------------------- |
+| install                                    | `pnpm install`                                                                                      |
+| run dev                                    | `pnpm dev`                                                                                          |
+| shadcn — add / search / docs / diff / info | `pnpm dlx shadcn@latest add <c>` · `… search <q>` · `… docs <c>` · `… diff` · `… info --json`       |
+| install the AI skill (once, committed)     | `pnpm dlx skills add shadcn/ui`                                                                     |
+| test — all / single                        | `pnpm test` / `pnpm test <path>`                                                                    |
+| e2e — state specs / goldens / axe          | `pnpm e2e` / `pnpm e2e --grep @golden` / `pnpm e2e --grep @axe`                                     |
+| lint / format / typecheck                  | `pnpm lint` / `pnpm format` / `pnpm typecheck`                                                      |
+| static guard (also in CI)                  | `pnpm guard:static`                                                                                 |
+| lighthouse budgets                         | `pnpm lh`                                                                                           |
+| build                                      | `pnpm build`                                                                                        |
 | deploy                                     | `pnpm run deploy --stage <dev\|staging\|prod>` (plain `pnpm deploy` is shadowed by a pnpm built-in) |
-| phase verify                               | `pnpm verify:w<NN>`                                                                           |
+| phase verify                               | `pnpm verify:w<NN>`                                                                                 |
 
 Agents: after any code change run **lint → typecheck → test** before "done";
 before closing a phase run its `verify:wNN` and paste the output in the PR.

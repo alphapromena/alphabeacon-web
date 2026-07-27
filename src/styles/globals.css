@@ -39,6 +39,8 @@
   --color-destructive: var(--destructive);
   --color-warning: var(--warning);
   --color-warning-foreground: var(--warning-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
   --color-muted-foreground: var(--muted-foreground);
@@ -72,5 +74,54 @@
   }
   html {
     @apply font-sans;
+  }
+}
+
+/**
+ * Signature motion (design law, screens4.md §0.2). Exactly two animations
+ * exist in this product and both are opt-in via `data-ab-motion`:
+ *   beacon-pulse — the live-status ring, only while something needs attention
+ *   signal-sweep — a gradient line sweeping a card's top edge while generating
+ * Under prefers-reduced-motion both are REMOVED, not slowed: the elements
+ * stop animating and stop rendering. Playwright asserts every [data-ab-motion]
+ * element computes animation-name: none under reduced motion — so this rule
+ * is the single place that guarantee lives.
+ */
+@keyframes ab-beacon-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  70% {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+
+@keyframes ab-signal-sweep {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+[data-ab-motion='beacon-pulse'] {
+  animation: ab-beacon-pulse 2.2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+[data-ab-motion='signal-sweep'] {
+  animation: ab-signal-sweep 1.6s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-ab-motion] {
+    animation: none !important;
+    display: none !important;
   }
 }

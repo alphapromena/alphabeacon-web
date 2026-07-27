@@ -133,6 +133,20 @@ export default tseslint.config(
   {
     files: ['**/*.{ts,tsx}'],
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
+    rules: {
+      // Omitting a prop via rest destructuring (`const { invalid, ...rest }`)
+      // is deliberate, not dead code — it is how a wrapper keeps an internal
+      // flag off the DOM. `_`-prefixed names stay the explicit escape hatch.
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          ignoreRestSiblings: true,
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
+        },
+      ],
+    },
   },
   // App code runs in the browser and gets the React rules
   {
