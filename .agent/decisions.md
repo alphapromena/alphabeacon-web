@@ -124,7 +124,50 @@ add a new entry that says it supersedes the old one.
   provider-hook discipline (never import `data/entities/*` from `features/`) is
   the one rule that keeps the eventual swap cheap.
 
-### 2026-07-27 — Provisional OKLCH palette pending design.md
+### 2026-07-28 — The real brand palette, split by role to hold AA
+
+- Why: the Alpha MENA Branding Kit landed, so `design.md` now exists and the
+  palette is the brand's own. One constraint shaped the mapping: the signature
+  pink `#FF1E57` measures **3.77:1** as small text on white and **3.24:1** on
+  its own 10% tint — both below AA's 4.5:1. Rather than dilute the brand or ship
+  inaccessible text, the palette splits by role: `--brand` (#FF1E57) keeps the
+  logo, gradient, glow and display type; `--primary` (#B1204A, the kit's own
+  deep rose darkened 0.017) takes every interactive text, link, ring and fill.
+  Both are brand colors; only their jobs differ. `design.md` Part 1.4 lists
+  every value that is not a kit color exactly, and why.
+- Instead of: (a) using `#FF1E57` for `--primary` and shipping 3.2:1 text —
+  fails our own design law and axe; (b) lightening the surfaces to rescue the
+  pink — off-brand and still short; (c) dropping the pink to a decorative
+  afterthought — it is the brand's signature.
+- **Supersedes**: _Provisional OKLCH palette pending design.md_.
+
+### 2026-07-28 — Barlow replaces Space Grotesk + Geist Sans; Geist Mono stays
+
+- Why: the kit names **Barlow** as the brand typeface (and sets the logo in
+  Barlow caps), so display and UI both move to it. Geist Mono is kept for
+  figures because the kit defines no monospace and tabular numerals are a
+  functional need — columns must align and digits must not jitter while counting
+  up. Recorded as the one deliberate departure from a kit-only stack.
+- Instead of: keeping Space Grotesk/Geist — visibly off-brand next to the logo;
+  or forcing Barlow onto figures — proportional digits break every number column.
+- Note: `screens4.md` §0.2's font row was updated in the same change; it is a
+  cheat-sheet that mirrors `design.md`, which is the source for the visual system.
+
+### 2026-07-28 — The palette is guarded by a test, not by review
+
+- Why: three AA failures reached `main` during W1 and were only caught because
+  axe happened to render the offending pair. `src/styles/tokens.test.ts` now
+  parses `tokens.css`, resolves OKLCH the way a browser does (including sRGB
+  gamut clamping and gamma-space alpha compositing), and asserts every pair the
+  product renders — text on each surface, the `bg-X/10 text-X` status pattern
+  over three surfaces, the heavier `/20` dark destructive tint, focus rings,
+  form-control boundaries at 3:1, and chart series. It also asserts the
+  brand/primary split itself, so nobody can "simplify" `--primary` back to the
+  inaccessible pink.
+- Instead of: relying on axe alone — it only sees pairs a screen happens to put
+  on screen, so an unrendered state can ship broken and surface much later.
+
+### 2026-07-27 — Provisional OKLCH palette pending design.md (superseded 2026-07-28)
 
 - Why: `design.md` (the visual system of record) is not in this workspace;
   screens4.md §0.2 supplies fonts/type/spacing/radius/motion but no color

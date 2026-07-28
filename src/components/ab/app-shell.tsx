@@ -133,7 +133,8 @@ function AppSidebar() {
             aria-hidden
             className="size-6 shrink-0 rounded-md bg-[image:var(--signal-gradient)]"
           />
-          <span className="truncate font-display text-base font-semibold tracking-tight group-data-[collapsible=icon]:hidden">
+          {/* The kit sets the wordmark in Barlow, all caps (design.md Part 3). */}
+          <span className="truncate font-display text-sm font-semibold tracking-[0.14em] uppercase group-data-[collapsible=icon]:hidden">
             AlphaBeacon
           </span>
         </div>

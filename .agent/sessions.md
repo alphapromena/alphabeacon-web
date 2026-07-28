@@ -118,3 +118,32 @@ changes code or makes a decision (see rule 6 in `CLAUDE.md`).
   count-up test deterministic (was racing jsdom's rAF clock at 2.8s of a 3s
   timeout) by driving the frames directly.
 - Next: W2 — marketing + auth + onboarding (M1, A1–A5, N3).
+
+### 2026-07-28 09:00 — Real brand palette + Barlow from the Alpha MENA kit; design.md written
+
+- Did: read `Alpha MENA Branding Kit.pdf` (palette, Barlow, logo rules) and
+  replaced the provisional system with the real brand. Wrote `design.md` as the
+  visual system of record. Rebuilt `tokens.css` in OKLCH from the kit, switched
+  the type stack to Barlow (Geist Mono kept for figures), rebranded the logo
+  mark and favicon, and set the wordmark in Barlow caps per the kit's logo rule.
+  Added `src/styles/tokens.test.ts`: it parses the real CSS, resolves OKLCH the
+  way a browser does (sRGB gamut clamping, gamma-space alpha compositing) and
+  asserts 49 contrast pairs, so the palette is guarded by a test rather than by
+  review.
+- Phase: W1 (brand pass; W2 not started, awaiting the visual review)
+- Files: `design.md` (new), `src/styles/{tokens.css,globals.css,tokens.test.ts}`,
+  `src/components/ab/app-shell.tsx`, `src/features/marketing/marketing-home.tsx`,
+  `public/favicon.svg`, `e2e/smoke.spec.ts`, `scripts/verify-w01.ts`,
+  `screens4.md` (font row), `package.json`
+- Decisions: see decisions.md — real brand palette split by role; Barlow replaces
+  Space Grotesk + Geist Sans; the palette is guarded by a test (all 2026-07-28)
+- Verify: verify:w01 green on every automated step (lint, typecheck, 115 unit
+  tests incl. 49 contrast assertions, guard-static, build, raw-color canary,
+  8 e2e incl. axe in light + dark). Manual item open: the human visual pass.
+- Notes: the kit's signature pink #FF1E57 fails AA as small text (3.77:1 on
+  white, 3.24:1 on its own 10% tint), so the brand is split by role rather than
+  diluted — `--brand` keeps the logo/gradient/glow/display type, `--primary`
+  (#B1204A, the kit's deep rose darkened 0.017) takes all interactive text.
+  Six tokens needed adjustment for AA; `design.md` Part 1.4 lists each with its
+  reason. GitHub/domain/cert deliberately deferred at the user's request.
+- Next: user's visual pass on /dev/kitchen-sink in both themes, then W2.

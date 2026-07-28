@@ -15,8 +15,9 @@ export function MarketingHome() {
   return (
     <div className="min-h-svh bg-background text-foreground">
       <header className="mx-auto flex max-w-5xl items-center justify-between px-6 py-5">
-        <span className="flex items-center gap-2 font-display text-lg font-semibold tracking-tight">
-          <span aria-hidden className="size-2.5 rounded-full bg-primary" />
+        {/* Wordmark per the kit: Barlow, all caps, tracked (design.md Part 3). */}
+        <span className="flex items-center gap-2 font-display text-base font-semibold tracking-[0.14em] uppercase">
+          <span aria-hidden className="size-6 rounded-md bg-[image:var(--signal-gradient)]" />
           AlphaBeacon
         </span>
         <nav aria-label="Marketing" className="flex items-center gap-3">

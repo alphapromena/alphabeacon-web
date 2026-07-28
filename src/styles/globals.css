@@ -7,18 +7,25 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
-@import '@fontsource-variable/geist';
+/* Barlow is the brand typeface (branding kit, "FONTS"); it ships as static
+   weights rather than a variable file, so only the four the UI uses are
+   imported. Geist Mono stays for figures — the kit defines no monospace, and
+   tabular numerals are a functional requirement, not a brand choice. */
+@import '@fontsource/barlow/400.css';
+@import '@fontsource/barlow/500.css';
+@import '@fontsource/barlow/600.css';
+@import '@fontsource/barlow/700.css';
 @import '@fontsource-variable/geist-mono';
-@import '@fontsource-variable/space-grotesk';
 @import './tokens.css';
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  /* Fonts (design law): Space Grotesk display · Geist UI · Geist Mono numbers */
-  --font-sans: 'Geist Variable', ui-sans-serif, system-ui, sans-serif;
+  /* Fonts (design.md Part 2): Barlow for everything the brand speaks in,
+     Geist Mono for every figure that matters. */
+  --font-sans: 'Barlow', ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'Geist Mono Variable', ui-monospace, 'Cascadia Code', monospace;
-  --font-display: 'Space Grotesk Variable', 'Geist Variable', sans-serif;
+  --font-display: 'Barlow', ui-sans-serif, system-ui, sans-serif;
   --font-heading: var(--font-display);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
