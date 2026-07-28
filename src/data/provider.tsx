@@ -20,8 +20,20 @@ import {
   type ReactNode,
 } from 'react'
 import { buildDataset, DATASETS, DEFAULT_DATASET_ID } from '@/data/datasets'
-import type { Dataset, DatasetId } from '@/data/types'
+import type {
+  CalendarSource,
+  Dataset,
+  DatasetId,
+  Org,
+  Platform,
+  Schedule,
+  Tone,
+} from '@/data/types'
+import { MAX_SIGN_IN_ATTEMPTS, SIGN_IN_LOCKOUT_MS } from '@/data/types'
 import { canTransition, type DraftStatus } from '@/lib/draft-status'
+
+/** A5 runs five steps; N3 resumes at whichever one is unfinished. */
+export type OnboardingStep = Org['onboarding']['resumeStep']
 
 /** /dev/states override: force the loading or error presentation anywhere. */
 export type DevForce = 'none' | 'loading' | 'error'
@@ -39,6 +51,23 @@ export type DataAction =
   | { type: 'notifications/markAllRead' }
   | { type: 'session/signOut' }
   | { type: 'session/signIn' }
+  // --- auth (A1–A4) ---------------------------------------------------------
+  | { type: 'auth/signUp'; name: string; email: string; orgName: string }
+  | { type: 'auth/verifyEmail' }
+  | { type: 'auth/signInSucceeded' }
+  | { type: 'auth/signInFailed' }
+  | { type: 'auth/clearLockout' }
+  // --- onboarding (A5) ------------------------------------------------------
+  | { type: 'onboarding/goToStep'; step: OnboardingStep }
+  | { type: 'onboarding/saveBrand'; offer: string; differentiators: string[]; name: string }
+  | { type: 'onboarding/complete' }
+  | { type: 'schedule/update'; patch: Partial<Schedule> }
+  | { type: 'schedule/start' }
+  | { type: 'tones/create'; tone: Tone }
+  | { type: 'connections/connect'; platform: Platform }
+  | { type: 'connections/disconnect'; platform: Platform }
+  | { type: 'eventSources/add'; source: CalendarSource }
+  | { type: 'eventSources/remove'; sourceId: string }
 
 export function dataReducer(state: DataState, action: DataAction): DataState {
   switch (action.type) {
@@ -79,6 +108,172 @@ export function dataReducer(state: DataState, action: DataAction): DataState {
       return {
         ...state,
         world: { ...state.world, session: { ...state.world.session, signedIn: true } },
+      }
+
+    /**
+     * Signup creates the account AND the organization in one step (A1), then
+     * parks on A3 until the email is verified — signed in, but not yet through
+     * the door, which is what makes the verify gate real rather than cosmetic.
+     */
+    case 'auth/signUp': {
+      const userId = state.world.session.userId
+      const users = state.world.users.map((u) =>
+        u.id === userId ? { ...u, name: action.name, email: action.email } : u,
+      )
+      return {
+        ...state,
+        world: {
+          ...state.world,
+          users,
+          org: { ...state.world.org, name: action.orgName },
+          session: {
+            ...state.world.session,
+            signedIn: true,
+            pendingEmail: action.email,
+            emailVerified: false,
+          },
+        },
+      }
+    }
+    case 'auth/verifyEmail':
+      return {
+        ...state,
+        world: {
+          ...state.world,
+          session: { ...state.world.session, emailVerified: true, pendingEmail: undefined },
+        },
+      }
+    case 'auth/signInSucceeded':
+      return {
+        ...state,
+        world: {
+          ...state.world,
+          session: {
+            ...state.world.session,
+            signedIn: true,
+            emailVerified: true,
+            failedSignIns: 0,
+            lockedUntil: undefined,
+          },
+        },
+      }
+    case 'auth/signInFailed': {
+      const failedSignIns = state.world.session.failedSignIns + 1
+      // The lockout is a real gate, not a scolding message: past the limit the
+      // form itself is disabled until the countdown clears.
+      const lockedUntil =
+        failedSignIns >= MAX_SIGN_IN_ATTEMPTS ? Date.now() + SIGN_IN_LOCKOUT_MS : undefined
+      return {
+        ...state,
+        world: { ...state.world, session: { ...state.world.session, failedSignIns, lockedUntil } },
+      }
+    }
+    case 'auth/clearLockout':
+      return {
+        ...state,
+        world: {
+          ...state.world,
+          session: { ...state.world.session, failedSignIns: 0, lockedUntil: undefined },
+        },
+      }
+
+    case 'onboarding/goToStep':
+      return {
+        ...state,
+        world: {
+          ...state.world,
+          org: { ...state.world.org, onboarding: { completed: false, resumeStep: action.step } },
+        },
+      }
+    case 'onboarding/saveBrand':
+      return {
+        ...state,
+        world: {
+          ...state.world,
+          org: {
+            ...state.world.org,
+            name: action.name,
+            offer: action.offer,
+            differentiators: action.differentiators,
+          },
+        },
+      }
+    case 'onboarding/complete':
+      return {
+        ...state,
+        world: {
+          ...state.world,
+          org: { ...state.world.org, onboarding: { completed: true, resumeStep: 5 } },
+        },
+      }
+
+    case 'schedule/update':
+      return {
+        ...state,
+        world: { ...state.world, schedule: { ...state.world.schedule, ...action.patch } },
+      }
+    /** "Start pipeline" activates scheduling for the org — not a soft save. */
+    case 'schedule/start':
+      return {
+        ...state,
+        world: { ...state.world, schedule: { ...state.world.schedule, started: true } },
+      }
+
+    case 'tones/create':
+      return { ...state, world: { ...state.world, tones: [...state.world.tones, action.tone] } }
+
+    case 'connections/connect':
+      return {
+        ...state,
+        world: {
+          ...state.world,
+          connections: state.world.connections.map((c) =>
+            c.platform === action.platform
+              ? {
+                  ...c,
+                  status: 'active',
+                  accountName: state.world.org.name,
+                  handle: state.world.org.name.toLowerCase().replace(/\s+/g, ''),
+                  connectedSince: new Date().toISOString().slice(0, 10),
+                  permissions: { analytics: true, posting: true },
+                }
+              : c,
+          ),
+        },
+      }
+    case 'connections/disconnect':
+      return {
+        ...state,
+        world: {
+          ...state.world,
+          connections: state.world.connections.map((c) =>
+            c.platform === action.platform
+              ? {
+                  ...c,
+                  status: 'not_connected',
+                  accountName: undefined,
+                  handle: undefined,
+                  connectedSince: undefined,
+                  permissions: { analytics: false, posting: false },
+                  scopes: [],
+                }
+              : c,
+          ),
+        },
+      }
+
+    case 'eventSources/add':
+      return {
+        ...state,
+        world: { ...state.world, eventSources: [...state.world.eventSources, action.source] },
+      }
+    case 'eventSources/remove':
+      return {
+        ...state,
+        world: {
+          ...state.world,
+          eventSources: state.world.eventSources.filter((s) => s.id !== action.sourceId),
+        },
       }
   }
 }
@@ -141,6 +336,10 @@ export function useSession() {
   const { world } = useData().state
   const user = world.users.find((u) => u.id === world.session.userId)
   return { ...world.session, user }
+}
+
+export function useUsers() {
+  return useData().state.world.users
 }
 
 export function useDrafts() {

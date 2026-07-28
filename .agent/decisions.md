@@ -153,6 +153,27 @@ add a new entry that says it supersedes the old one.
 - Note: `screens4.md` §0.2's font row was updated in the same change; it is a
   cheat-sheet that mirrors `design.md`, which is the source for the visual system.
 
+### 2026-07-28 — No Arabic UI, and the two costs that decision does and does not defer
+
+- Why: `context.md` puts UI localization out of scope and `architecture.md`
+  records an English UI, so Barlow's lack of Arabic coverage costs nothing for
+  chrome. Two futures were separated rather than lumped together:
+  **(a) Arabic content** — generated post copy in an Alpha MENA product is
+  plausible (the demo tenant already runs on `Asia/Amman` with a Jordan holiday
+  feed). It is data through `DataProvider`, not localization: it needs an
+  Arabic-capable fallback appended to `--font-sans` plus `dir="auto"` on the
+  elements that render user/AI text. Cheap, local, and reversible — deferred
+  until an Arabic record actually exists, because adding a face for content that
+  does not exist is speculative weight.
+  **(b) Arabic chrome** — mirroring the app is the expensive one: `dir="rtl"`,
+  logical properties instead of left/right everywhere, mirrored icons and
+  motion, and a paired Arabic face for the type scale. It is NOT started, and
+  the trigger to revisit is a decision to localize the UI, not the appearance of
+  Arabic content.
+- Instead of: adding an Arabic webfont and RTL plumbing now — pays a real cost
+  today for a requirement the product does not have; or saying nothing and
+  letting Arabic content silently fall back to a system font later.
+
 ### 2026-07-28 — The palette is guarded by a test, not by review
 
 - Why: three AA failures reached `main` during W1 and were only caught because

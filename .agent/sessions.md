@@ -147,3 +147,38 @@ changes code or makes a decision (see rule 6 in `CLAUDE.md`).
   Six tokens needed adjustment for AA; `design.md` Part 1.4 lists each with its
   reason. GitHub/domain/cert deliberately deferred at the user's request.
 - Next: user's visual pass on /dev/kitchen-sink in both themes, then W2.
+
+### 2026-07-28 12:45 — W2 shipped: marketing, auth, onboarding; verify:w02 green
+
+- Did: built M1, A1–A5 and N3 on branch `w/02-marketing-auth-onboarding`.
+  M1 is the full landing page (hero with a rendered product frame, social proof,
+  four features, how-it-works, pricing, FAQ, CTA, footer) pricing from the same
+  `usePlans()` Billing reads. Auth: a shared `AuthLayout`, a password meter with
+  a live checklist, signup with the duplicate-email state, sign-in with a real
+  lockout countdown, verify-email with a resend cooldown and expired-link
+  recovery, and reset with non-enumerating copy plus the invalid-token path.
+  A5 is the five-step wizard ending in "Start pipeline", which activates
+  scheduling rather than soft-saving; the custom-tone sheet (I4's component,
+  first of its three entry points) returns with the tone selected and the step
+  intact. N3 resumes at the step actually reached. Added the `visitor` dataset —
+  the only signed-out world — and wired the Authed / SignedOutOnly guards.
+- Phase: W2
+- Files: `src/features/{marketing,auth,onboarding,settings,system}/*`,
+  `src/data/{provider.tsx,types.ts,datasets/visitor.ts}`, `src/lib/messages.ts`,
+  `src/routes.tsx`, `e2e/onboarding.spec.ts`, `scripts/verify-w02.ts`,
+  `package.json`
+- Decisions: see decisions.md — no Arabic UI, and the two costs it does and
+  does not defer (2026-07-28)
+- Verify: verify:w02 green on every automated step (lint, typecheck, 134 unit
+  tests, guard-static, build, the cap-declared-once check, deliverables, and 16
+  e2e including the @golden signup → verify → onboard → dashboard walk and axe
+  over marketing + both auth screens).
+- Notes: two real bugs found by the specs. (1) axe caught the social-proof strip
+  dimmed with `opacity-60`, which drops real text below AA — replaced with the
+  muted token. (2) `page.goto` reloads the SPA and therefore rebuilds the default
+  dataset, so any e2e that deep-links after switching worlds silently tests the
+  wrong tenant; the spec now navigates only through in-app links and documents
+  why. Also removed the W1-era skipped "marketing pages scan clean" placeholder,
+  now that real marketing axe coverage exists.
+- Next: W3 — Dashboard, Today queue, draft detail, media panel, schedule dialog
+  (D1–D5).

@@ -22,7 +22,7 @@ export function buildActiveDataset(): Dataset {
       'Atlas Roasters — Pro plan, pipeline running, drafts in every status, LinkedIn needs re-auth.',
     org: structuredClone(ATLAS_ORG),
     users: structuredClone(ATLAS_USERS),
-    session: { signedIn: true, userId: 'user_maya' },
+    session: { signedIn: true, userId: 'user_maya', emailVerified: true, failedSignIns: 0 },
     connections: atlasConnections(),
     eventSources: atlasEventSources(),
     events: atlasEvents(),

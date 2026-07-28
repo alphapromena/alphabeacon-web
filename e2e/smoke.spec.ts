@@ -92,6 +92,3 @@ test('dashboard and dev pages scan clean', { tag: '@axe' }, async ({ page }) => 
   const devScan = await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze()
   expect(devScan.violations).toEqual([])
 })
-
-// Marketing routes are not built yet — unskip and scan them when they land.
-test.skip('marketing pages scan clean', { tag: '@axe' }, async () => {})

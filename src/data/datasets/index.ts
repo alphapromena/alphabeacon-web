@@ -1,6 +1,7 @@
 import type { Dataset, DatasetId } from '@/data/types'
 import { buildActiveDataset } from './active'
 import { buildFreshDataset } from './fresh'
+import { buildVisitorDataset } from './visitor'
 
 /**
  * The dataset registry — the only way a screen reaches a different world.
@@ -10,6 +11,7 @@ import { buildFreshDataset } from './fresh'
 export const DATASETS: { id: DatasetId; build: () => Dataset }[] = [
   { id: 'active', build: buildActiveDataset },
   { id: 'fresh', build: buildFreshDataset },
+  { id: 'visitor', build: buildVisitorDataset },
 ]
 
 export const DEFAULT_DATASET_ID: DatasetId = 'active'

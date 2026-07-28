@@ -33,10 +33,20 @@ export interface User {
   role: 'admin' | 'member'
 }
 
-/** A fake local session — drives guards and plan gating. No token exists. */
+/**
+ * A fake local session — drives guards, the signed-out redirect, the
+ * locked-out countdown and plan gating. No token exists and nothing persists.
+ */
 export interface Session {
   signedIn: boolean
   userId: string
+  /** Set by signup; A3 verifies it before onboarding starts. */
+  pendingEmail?: string
+  emailVerified: boolean
+  /** Consecutive failed sign-ins — A2 locks out after MAX_SIGN_IN_ATTEMPTS. */
+  failedSignIns: number
+  /** Epoch ms the lockout ends; A2 renders a mono countdown until then. */
+  lockedUntil?: number
 }
 
 // ---------------------------------------------------------------------------
@@ -309,7 +319,8 @@ export interface ActivityItem {
 // Dataset — a whole-tenant world (src/data/datasets/*)
 // ---------------------------------------------------------------------------
 
-export type DatasetId = 'fresh' | 'active' | 'past-due' | 'needs-reauth' | 'low-credits' | 'heavy'
+export type DatasetId =
+  'visitor' | 'fresh' | 'active' | 'past-due' | 'needs-reauth' | 'low-credits' | 'heavy'
 
 export interface Dataset {
   id: DatasetId
@@ -342,6 +353,12 @@ export interface Dataset {
 // ---------------------------------------------------------------------------
 
 export const MAX_POSTS_PER_DAY = 3
+
+/** A2 locks out after this many consecutive failures (screens4.md A2). */
+export const MAX_SIGN_IN_ATTEMPTS = 3
+export const SIGN_IN_LOCKOUT_MS = 30_000
+/** A3's resend cooldown, shown as a mono countdown. */
+export const VERIFY_RESEND_COOLDOWN_MS = 30_000
 
 export const scheduleConfigSchema = z.object({
   activeDays: z
