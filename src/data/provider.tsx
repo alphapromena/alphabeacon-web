@@ -21,12 +21,15 @@ import {
 } from 'react'
 import { buildDataset, DATASETS, DEFAULT_DATASET_ID } from '@/data/datasets'
 import type {
+  Asset,
   CalendarSource,
   Dataset,
   DatasetId,
+  Draft,
   Org,
   Platform,
   Schedule,
+  StudioJob,
   Tone,
 } from '@/data/types'
 import { MAX_SIGN_IN_ATTEMPTS, SIGN_IN_LOCKOUT_MS } from '@/data/types'
@@ -68,6 +71,16 @@ export type DataAction =
   | { type: 'connections/disconnect'; platform: Platform }
   | { type: 'eventSources/add'; source: CalendarSource }
   | { type: 'eventSources/remove'; sourceId: string }
+  // --- review queue (D2–D5) -------------------------------------------------
+  | { type: 'draft/approve'; draftId: string }
+  | { type: 'draft/reject'; draftId: string; reason: string }
+  | { type: 'draft/edit'; draftId: string; copy: string }
+  /** Reserves credits and puts the draft in media_pending until the job lands. */
+  | { type: 'media/start'; draftId: string; jobId: string; modelId: string; prompt: string }
+  | { type: 'media/succeed'; jobId: string; assetId: string }
+  | { type: 'media/fail'; jobId: string; reason: string }
+  | { type: 'draft/schedule'; draftId: string; scheduledFor: string; platforms: Platform[] }
+  | { type: 'draft/publish'; draftId: string }
 
 export function dataReducer(state: DataState, action: DataAction): DataState {
   switch (action.type) {
@@ -275,7 +288,191 @@ export function dataReducer(state: DataState, action: DataAction): DataState {
           eventSources: state.world.eventSources.filter((s) => s.id !== action.sourceId),
         },
       }
+
+    // -----------------------------------------------------------------------
+    // The review queue. Every status change routes through `transitionDraft`,
+    // so the state machine is enforced once rather than per action.
+    // -----------------------------------------------------------------------
+    case 'draft/approve':
+      return transitionDraft(state, action.draftId, 'approved')
+    case 'draft/reject':
+      return transitionDraft(state, action.draftId, 'rejected', (draft) => ({
+        ...draft,
+        failureReason: action.reason,
+      }))
+    case 'draft/edit':
+      return {
+        ...state,
+        world: {
+          ...state.world,
+          drafts: state.world.drafts.map((d) =>
+            d.id === action.draftId ? { ...d, copy: action.copy } : d,
+          ),
+        },
+      }
+
+    case 'media/start': {
+      const model = state.world.studioModels.find((m) => m.id === action.modelId)
+      if (!model) return state
+      const next = transitionDraft(state, action.draftId, 'media_pending')
+      if (next === state) return state
+      const job: StudioJob = {
+        id: action.jobId,
+        modelId: model.id,
+        kind: model.kind,
+        prompt: action.prompt,
+        credits: model.credits,
+        status: 'running',
+        origin: { type: 'draft', draftId: action.draftId },
+        createdAt: new Date().toISOString(),
+      }
+      return {
+        ...next,
+        world: {
+          ...next.world,
+          jobs: [job, ...next.world.jobs],
+          // Held, not spent: a hold that never commits is released in full.
+          ledger: [
+            ...next.world.ledger,
+            {
+              id: `led_${action.jobId}_reserve`,
+              at: job.createdAt,
+              type: 'reserved',
+              amount: -model.credits,
+              ref: { kind: 'job', id: job.id },
+            },
+          ],
+        },
+      }
+    }
+
+    case 'media/succeed': {
+      const job = state.world.jobs.find((j) => j.id === action.jobId)
+      if (!job || job.origin.type !== 'draft') return state
+      const at = new Date().toISOString()
+      const asset: Asset = {
+        id: action.assetId,
+        jobId: job.id,
+        kind: job.kind,
+        label: job.prompt.slice(0, 60),
+        createdAt: at,
+      }
+      const withMedia = transitionDraft(state, job.origin.draftId, 'media_ready', (draft) => ({
+        ...draft,
+        assetId: asset.id,
+      }))
+      return {
+        ...withMedia,
+        world: {
+          ...withMedia.world,
+          jobs: withMedia.world.jobs.map((j) =>
+            j.id === job.id ? { ...j, status: 'succeeded', assetId: asset.id } : j,
+          ),
+          assets: [asset, ...withMedia.world.assets],
+          ledger: [
+            ...withMedia.world.ledger,
+            {
+              id: `led_${job.id}_release`,
+              at,
+              type: 'released',
+              amount: job.credits,
+              ref: { kind: 'job', id: job.id },
+            },
+            {
+              id: `led_${job.id}_commit`,
+              at,
+              type: 'committed',
+              amount: -job.credits,
+              ref: { kind: 'job', id: job.id },
+            },
+          ],
+        },
+      }
+    }
+
+    case 'media/fail': {
+      const job = state.world.jobs.find((j) => j.id === action.jobId)
+      if (!job || job.origin.type !== 'draft') return state
+      const at = new Date().toISOString()
+      // A failed generation costs nothing: the hold is released and the draft
+      // goes back to `approved`, where the media entry point still exists.
+      const reverted = transitionDraft(state, job.origin.draftId, 'approved')
+      return {
+        ...reverted,
+        world: {
+          ...reverted.world,
+          jobs: reverted.world.jobs.map((j) =>
+            j.id === job.id ? { ...j, status: 'failed', failureReason: action.reason } : j,
+          ),
+          ledger: [
+            ...reverted.world.ledger,
+            {
+              id: `led_${job.id}_release`,
+              at,
+              type: 'released',
+              amount: job.credits,
+              ref: { kind: 'job', id: job.id },
+            },
+          ],
+        },
+      }
+    }
+
+    case 'draft/schedule':
+      return transitionDraft(state, action.draftId, 'scheduled', (draft) => ({
+        ...draft,
+        scheduledFor: action.scheduledFor,
+        publishResults: action.platforms.map((platform) => ({ platform, ok: true })),
+      }))
+
+    case 'draft/publish': {
+      const draft = state.world.drafts.find((d) => d.id === action.draftId)
+      if (!draft) return state
+      // A channel that needs re-auth fails on its own; the others still go out,
+      // which is why D5 reports per-channel results rather than one verdict.
+      const results = (draft.publishResults ?? []).map((result) => {
+        const connection = state.world.connections.find((c) => c.platform === result.platform)
+        return connection?.status === 'active'
+          ? { ...result, ok: true }
+          : { ...result, ok: false, reason: 'Connection needs re-auth' }
+      })
+      const anyFailed = results.some((r) => !r.ok)
+      return transitionDraft(
+        state,
+        action.draftId,
+        anyFailed ? 'publish_failed' : 'published',
+        (d) => ({
+          ...d,
+          publishResults: results,
+          failureReason: anyFailed
+            ? 'Some channels could not publish. Reconnect them and retry.'
+            : undefined,
+        }),
+      )
+    }
   }
+}
+
+/**
+ * The one place a draft's status changes. Illegal transitions are a no-op:
+ * buttons render from `canTransition`, so reaching one means programmer error,
+ * not user error — and silently refusing beats corrupting the queue.
+ */
+function transitionDraft(
+  state: DataState,
+  draftId: string,
+  to: DraftStatus,
+  patch?: (draft: Draft) => Draft,
+): DataState {
+  const draft = state.world.drafts.find((d) => d.id === draftId)
+  if (!draft || !canTransition(draft.status, to)) return state
+  const at = new Date().toISOString()
+  const drafts = state.world.drafts.map((d) => {
+    if (d.id !== draftId) return d
+    const moved: Draft = { ...d, status: to, timeline: [...d.timeline, { status: to, at }] }
+    return patch ? patch(moved) : moved
+  })
+  return { ...state, world: { ...state.world, drafts } }
 }
 
 interface DataContextValue {

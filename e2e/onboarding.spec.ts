@@ -9,20 +9,10 @@
  */
 import AxeBuilder from '@axe-core/playwright'
 import type { Page } from '@playwright/test'
+import { activateDataset } from './datasets'
 import { expect, test } from './fixtures'
 
 const WCAG_TAGS = ['wcag2a', 'wcag2aa']
-
-async function activateDataset(page: Page, label: string) {
-  await page.goto('/dev/datasets')
-  const card = page
-    .locator('*')
-    .filter({ hasText: label })
-    .filter({ has: page.getByRole('button', { name: 'Activate' }) })
-    .last()
-  await card.getByRole('button', { name: 'Activate' }).click()
-  await page.getByRole('link', { name: '← App' }).click()
-}
 
 /** A signed-out prospect: '/' is the marketing site. */
 const asVisitor = (page: Page) => activateDataset(page, 'Visitor (signed out)')

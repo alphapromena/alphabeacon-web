@@ -182,3 +182,38 @@ changes code or makes a decision (see rule 6 in `CLAUDE.md`).
   now that real marketing axe coverage exists.
 - Next: W3 — Dashboard, Today queue, draft detail, media panel, schedule dialog
   (D1–D5).
+
+### 2026-07-28 15:50 — W3 shipped: the review queue (D1–D5); verify:w03 green
+
+- Did: built the queue on branch `w/03-today-queue`. Reducer first: draft
+  approve/reject/edit, the media job lifecycle with real credit holds, and
+  per-channel publish results — all status changes routed through one
+  `transitionDraft` helper so the state machine is enforced once. D2 groups
+  drafts by slot and computes every action from `canTransition`; D3 adds the
+  timestamped timeline and judge score; D4 is Studio's composer draft-scoped,
+  with the credit arithmetic on screen and an insufficient-credits refusal that
+  preserves the prompt; D5 publishes per channel, showing a needs-reauth channel
+  disabled with the fix inline while the others still go out. D1 gained the
+  quick-links grid (mirroring the rail) and feed filters. Added the
+  `low-credits` dataset, derived from `active` so only the money differs.
+- Phase: W3
+- Files: `src/features/today/*` (7 files), `src/features/dashboard/dashboard-screen.tsx`,
+  `src/data/{provider.tsx,datasets/low-credits.ts,review-queue.test.ts}`,
+  `src/routes.tsx`, `e2e/{today-queue.spec.ts,datasets.ts}`,
+  `scripts/verify-w03.ts`, `package.json`, `.agent/open-items.md`, `CLAUDE.md`
+- Decisions: none new
+- Verify: verify:w03 green on every automated step (lint, typecheck, 145 unit
+  tests, guard-static, build, the structural approval-gate check, the e2e
+  navigation-rule check, deliverables, and 24 e2e including the @golden approve
+  walk and axe over the queue and draft detail).
+- Notes: the approval gate now has a STRUCTURAL check, not just a behavioural
+  one — `verify-w03` reads `draft-card.tsx` and fails if the media control is
+  rendered from a hand-rolled status comparison or carries `disabled`, because a
+  test cannot tell "absent by the machine" from "absent by coincidence". The W2
+  navigation rule is likewise enforced by the verifier now, and the dataset
+  switcher moved into a shared `e2e/datasets.ts` (the old copy broke when asked
+  to activate the dataset that was already active). Also removed a duplicate
+  `h1` on D2 — the shell's top bar already titles the screen.
+- Open items: `.agent/open-items.md` now carries the W1 screen-reader walk plus
+  the three W2 manual checks, all still unsigned; W3 adds two more.
+- Next: W4 — Calendar, schedule config, event sources, connections (C1–C4, B1–B3).

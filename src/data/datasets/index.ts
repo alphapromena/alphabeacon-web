@@ -1,17 +1,19 @@
 import type { Dataset, DatasetId } from '@/data/types'
 import { buildActiveDataset } from './active'
 import { buildFreshDataset } from './fresh'
+import { buildLowCreditsDataset } from './low-credits'
 import { buildVisitorDataset } from './visitor'
 
 /**
  * The dataset registry — the only way a screen reaches a different world.
  * Each entry is a factory so every switch starts from a pristine copy.
- * Later phases add: past-due, needs-reauth, low-credits, heavy.
+ * Later phases add: past-due, needs-reauth, heavy.
  */
 export const DATASETS: { id: DatasetId; build: () => Dataset }[] = [
   { id: 'active', build: buildActiveDataset },
   { id: 'fresh', build: buildFreshDataset },
   { id: 'visitor', build: buildVisitorDataset },
+  { id: 'low-credits', build: buildLowCreditsDataset },
 ]
 
 export const DEFAULT_DATASET_ID: DatasetId = 'active'

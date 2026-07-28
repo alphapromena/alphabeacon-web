@@ -16,6 +16,8 @@ import { SignInScreen } from '@/features/auth/signin-screen'
 import { SignUpScreen } from '@/features/auth/signup-screen'
 import { VerifyEmailScreen } from '@/features/auth/verify-email-screen'
 import { DashboardScreen } from '@/features/dashboard/dashboard-screen'
+import { DraftDetailScreen } from '@/features/today/draft-detail-screen'
+import { TodayScreen } from '@/features/today/today-screen'
 import { DevDatasetsScreen } from '@/features/dev/dev-datasets'
 import { DevKitchenSinkScreen } from '@/features/dev/dev-kitchen-sink'
 import { DevStatesScreen } from '@/features/dev/dev-states'
@@ -50,7 +52,6 @@ function SignedOutOnly({ children }: { children: ReactNode }) {
 }
 
 const STUB_ROUTES = [
-  { path: '/today', title: 'Today', phase: 'W3' },
   { path: '/calendar', title: 'Calendar', phase: 'W4' },
   { path: '/studio', title: 'Studio', phase: 'W5' },
   { path: '/analytics', title: 'Analytics', phase: 'W6' },
@@ -90,6 +91,24 @@ export const router = createBrowserRouter([
   { path: '/verify-email', element: <VerifyEmailScreen /> },
   { path: '/reset-password', element: <ResetPasswordScreen /> },
   { path: '/onboarding', element: <OnboardingScreen /> },
+
+  // Area D — the review queue
+  {
+    path: '/today',
+    element: (
+      <Authed>
+        <TodayScreen />
+      </Authed>
+    ),
+  },
+  {
+    path: '/today/:id',
+    element: (
+      <Authed>
+        <DraftDetailScreen />
+      </Authed>
+    ),
+  },
 
   ...STUB_ROUTES.map(({ path, title, phase }) => ({
     path,

@@ -1,0 +1,205 @@
+/**
+ * D2 — Today · `/today`. The screen the product is judged on.
+ *
+ * Drafts are grouped by the slot they belong to, because that is the unit
+ * people actually think in ("the 9am post"), and because a slot that failed to
+ * generate must not take its siblings down with it — each group renders its own
+ * error and the rest of the queue keeps working.
+ */
+import { Inbox, Plus } from 'lucide-react'
+import { useState } from 'react'
+import { Link } from 'react-router'
+import { EmptyState } from '@/components/ab/empty-state'
+import { ErrorState } from '@/components/ab/error-state'
+import { MonoNumber } from '@/components/ab/mono-number'
+import { BeaconDot } from '@/components/ab/motion'
+import { SkeletonList } from '@/components/ab/skeletons'
+import { toastSuccess } from '@/components/ab/toast'
+import { AppShell } from '@/components/ab/app-shell'
+import { Button } from '@/components/ui/button'
+import {
+  useAssets,
+  useBilling,
+  useCalendarEvents,
+  useDataDispatch,
+  useDrafts,
+  useSchedule,
+  useScreenPhase,
+  useSlots,
+  useTones,
+} from '@/data/provider'
+import type { Draft } from '@/data/types'
+import { MESSAGES } from '@/lib/messages'
+import { DraftCard } from './draft-card'
+import { MediaPanel } from './media-panel'
+import { RejectDialog } from './reject-dialog'
+import { ScheduleDialog } from './schedule-dialog'
+import { EditDraftDialog } from './edit-draft-dialog'
+
+export function TodayScreen() {
+  const drafts = useDrafts()
+  const slots = useSlots()
+  const tones = useTones()
+  const events = useCalendarEvents()
+  const assets = useAssets()
+  const schedule = useSchedule()
+  const billing = useBilling()
+  const dispatch = useDataDispatch()
+  const phase = useScreenPhase()
+
+  const [mediaFor, setMediaFor] = useState<Draft | null>(null)
+  const [scheduleFor, setScheduleFor] = useState<Draft | null>(null)
+  const [rejectFor, setRejectFor] = useState<Draft | null>(null)
+  const [editFor, setEditFor] = useState<Draft | null>(null)
+
+  const today = new Date().toISOString().slice(0, 10)
+  const todaySlots = slots.filter((slot) => slot.date === today)
+  const awaiting = drafts.filter((d) => d.status === 'pending_review').length
+
+  const context =
+    awaiting > 0
+      ? `${awaiting} drafts ready across ${todaySlots.length} slots`
+      : 'Nothing waiting on you right now'
+
+  return (
+    <AppShell title="Today" context={context}>
+      {phase === 'loading' ? (
+        <SkeletonList rows={4} label="Loading today's queue" />
+      ) : phase === 'error' ? (
+        <ErrorState
+          message={MESSAGES.errors.screenLoadFailed}
+          onRetry={() => dispatch({ type: 'dev/force', mode: 'none' })}
+        />
+      ) : (
+        <div className="flex flex-col gap-8">
+          {/* The shell's top bar already carries this screen's h1, so the
+              in-page header is an h2 — one h1 per page, and the queue summary
+              reads as a section of it rather than a second title. */}
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div className="flex flex-col gap-1">
+              <p className="text-xs tracking-wider text-muted-foreground uppercase">Today</p>
+              <h2 className="font-display text-2xl font-semibold tracking-tight">
+                {awaiting > 0 ? `${awaiting} drafts ready for review` : 'Your queue is clear'}
+              </h2>
+              {todaySlots.length > 0 && (
+                <p className="text-sm text-muted-foreground">
+                  Across {todaySlots.length} slots. Approve what fits, then create the art.
+                </p>
+              )}
+            </div>
+            <div className="flex items-center gap-3">
+              <BeaconDot
+                live={awaiting > 0}
+                label={awaiting > 0 ? 'Drafts need review' : undefined}
+              />
+              <Button asChild variant="outline" size="sm">
+                <Link to="/generate">
+                  <Plus aria-hidden />
+                  Generate one now
+                </Link>
+              </Button>
+            </div>
+          </div>
+
+          {todaySlots.length > 0 && (
+            <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
+              {todaySlots.map((slot) => (
+                <span key={slot.id} className="rounded-full border border-border px-2 py-0.5">
+                  <MonoNumber value={slot.time} />
+                </span>
+              ))}
+            </div>
+          )}
+
+          {todaySlots.length === 0 ? (
+            <EmptyState
+              icon={Inbox}
+              title="No drafts yet"
+              description={
+                schedule.started
+                  ? `Your next slot generates at ${schedule.generateAt}.`
+                  : MESSAGES.empty.dashboardFresh
+              }
+              action={
+                <Button asChild>
+                  <Link to={schedule.started ? '/generate' : '/onboarding'}>
+                    {schedule.started ? 'Generate one now' : 'Finish setup'}
+                  </Link>
+                </Button>
+              }
+            />
+          ) : (
+            todaySlots.map((slot) => {
+              const slotDrafts = slot.draftIds
+                .map((id) => drafts.find((d) => d.id === id))
+                .filter((d): d is Draft => Boolean(d))
+              const event = events.find((e) => e.id === slot.eventId)
+
+              return (
+                <section key={slot.id} className="flex flex-col gap-3">
+                  <h2 className="flex items-center gap-2 font-display text-sm font-semibold">
+                    <MonoNumber value={slot.time} />
+                    {event && <span className="text-muted-foreground">· {event.name}</span>}
+                  </h2>
+
+                  {/* One slot's failure is its own — the others still render. */}
+                  {slotDrafts.length === 0 ? (
+                    <ErrorState
+                      title="This slot did not generate"
+                      message="Nothing was drafted for this time. The other slots are unaffected — try generating one by hand."
+                    />
+                  ) : (
+                    <div className="flex flex-col gap-3">
+                      {slotDrafts.map((draft) => (
+                        <DraftCard
+                          key={draft.id}
+                          draft={draft}
+                          tone={tones.find((t) => t.id === draft.toneId)}
+                          event={events.find((e) => e.id === draft.eventId)}
+                          assetLabel={assets.find((a) => a.id === draft.assetId)?.label}
+                          onApprove={() => {
+                            dispatch({ type: 'draft/approve', draftId: draft.id })
+                            toastSuccess('Approved', {
+                              description: 'Create the art, or schedule it as it is.',
+                            })
+                          }}
+                          onReject={() => setRejectFor(draft)}
+                          onEdit={() => setEditFor(draft)}
+                          onCreateMedia={() => setMediaFor(draft)}
+                          onSchedule={() => setScheduleFor(draft)}
+                          onRetry={() => dispatch({ type: 'draft/publish', draftId: draft.id })}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </section>
+              )
+            })
+          )}
+        </div>
+      )}
+
+      <MediaPanel
+        draft={mediaFor}
+        planTier={billing.planId}
+        open={mediaFor !== null}
+        onOpenChange={(next) => !next && setMediaFor(null)}
+      />
+      <ScheduleDialog
+        draft={scheduleFor}
+        open={scheduleFor !== null}
+        onOpenChange={(next) => !next && setScheduleFor(null)}
+      />
+      <RejectDialog
+        draft={rejectFor}
+        open={rejectFor !== null}
+        onOpenChange={(next) => !next && setRejectFor(null)}
+      />
+      <EditDraftDialog
+        draft={editFor}
+        open={editFor !== null}
+        onOpenChange={(next) => !next && setEditFor(null)}
+      />
+    </AppShell>
+  )
+}

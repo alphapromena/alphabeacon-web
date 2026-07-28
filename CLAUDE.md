@@ -15,6 +15,7 @@ scripts — the rules below ARE the workflow.
 | `.agent/conventions.md`  | shadcn rules, design law, testing, do/don't      |
 | `.agent/decisions.md`    | Why things are the way they are (decision log)   |
 | `.agent/sessions.md`     | Log of what happened each session (progress)     |
+| `.agent/open-items.md`   | Manual gates awaiting a human sign-off           |
 
 `screens4.md` is screen truth and `design.md` is the visual system — both live
 in the product docs; never contradict them silently.
@@ -51,7 +52,9 @@ in the product docs; never contradict them silently.
 
 6. **Log every turn.** After EVERY reply where you change code or make a
    decision, append one entry to the bottom of `.agent/sessions.md` using the
-   format at the top of that file — last step of your reply, unprompted.
+   format at the top of that file — last step of your reply, unprompted. If a
+   phase closes with a MANUAL check unperformed, add it to
+   `.agent/open-items.md`; only a human moves an item to "Signed off".
 
 7. **Obey the conventions.** `conventions.md` beats your habits. Smallest change
    that does the job — no drive-by refactors or reformatting.
