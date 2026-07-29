@@ -82,6 +82,21 @@
   html {
     @apply font-sans;
   }
+
+  /*
+   * WCAG 2.2 §2.4.11 Focus Not Obscured.
+   *
+   * The sticky save bar is fixed to the bottom of the viewport, and when the
+   * browser scrolls a newly focused control into view it aligns it flush with
+   * that same edge — so the last field in a form lands underneath the bar.
+   * Padding on the column cannot fix this: the browser scrolls to the element,
+   * not to the end of the page. Reserving the bar's height as scroll margin on
+   * every focusable element does, and costs nothing on screens with no bar.
+   */
+  :where(a[href], button, input, select, textarea, summary, [tabindex]):focus-visible {
+    scroll-margin-bottom: 6rem;
+    scroll-margin-top: 5rem; /* the sticky top bar obscures the same way */
+  }
 }
 
 /**

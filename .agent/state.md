@@ -5,7 +5,7 @@ without reconstructing it from the session log. **Update this file at the end
 of any turn that finishes a phase or changes the plan.** `sessions.md` is the
 chronological record; this is the current picture.
 
-_Last updated: 2026-07-29, after W6._
+_Last updated: 2026-07-29, after W6 and the manual-pass remediation._
 
 ---
 
@@ -58,7 +58,7 @@ aspirational, not a rule this repo follows.
 | W6 Compose/analytics/settings/system | F1, G1–G2, I1–I7, N1, N2, N4 | Done · `verify:w06` green                                    |
 | **W7 Hardening + ship**              | —                            | **Next**                                                     |
 
-Current totals: **264 unit tests** (24 files), **59 e2e**, all green.
+Current totals: **296 unit tests** (25 files), **66 e2e**, all green.
 **No route is a stub any more** — `PlaceholderScreen` is deleted, and
 `verify:w06` fails if it comes back.
 
@@ -75,9 +75,9 @@ Current totals: **264 unit tests** (24 files), **59 e2e**, all green.
   yet, by design.
 - **Lighthouse CI** (marketing ≥ 95 perf / 100 a11y; app ≥ 85 / 100), which
   needs the staging deploy, which needs the domain + certificate (still parked).
-- **Dead-dataset and unused-record pruning.** Two known items: `DatasetId` still
-  admits `'heavy'`, a world that was never built, and `src/data/datasets/index.ts`
-  still says "Later phases add: heavy".
+- **Dead-dataset and unused-record pruning.** The `heavy` id is gone; the seven
+  worlds now are visitor, fresh, active, low-credits, needs-reauth, past-due and
+  quiet-week.
 
 ## Rules that have bitten, and will again
 
@@ -102,17 +102,26 @@ These are learned the hard way; each cost a debugging cycle.
 6. **Scripts under `scripts/` must not import app source.** `tsconfig.node.json`
    has no `@/` alias, and dragging `src/` into it breaks typecheck repo-wide.
    Assertions about data belong in the unit suite.
-7. **Playwright's `getByText('…')` is case-insensitive substring matching**, and
+7. **`sr-only` hides an element but keeps it focusable.** A visually hidden
+   control still takes a tab stop and renders no focus indicator, so focus
+   appears to vanish. Pair it with `tabIndex={-1}` whenever a visible control is
+   the real affordance.
+8. **A route whose sections each render the layout will destroy focus.** React
+   swaps one component for another, the shared nav unmounts, and the focused
+   element goes with it. Shared chrome belongs in a route layout above an
+   `Outlet`.
+9. **Playwright's `getByText('…')` is case-insensitive substring matching**, and
    the rail's Today link carries its unread count in its accessible name
    (`"Today 5 drafts need review"`), so `{ exact: true }` finds nothing. Scope
    rail clicks to `[data-sidebar="sidebar"]` and match by prefix.
-8. **An open Radix menu is modal**: everything behind it is `aria-hidden`, so a
-   role query for the trigger returns nothing while its menu is open. Press
-   Escape before asserting on what the trigger now says.
-9. **A structural check must not match prose.** A `verify` regex against a
-   sentence in JSX breaks the first time Prettier wraps the line, and the fix
-   people reach for is deleting the check. Match structure — a call, a guard, a
-   catalogue key — not copy.
+10. **An open Radix menu is modal**: everything behind it is `aria-hidden`, so a
+    role query for the trigger returns nothing while its menu is open. Press
+    Escape before asserting on what the trigger now says.
+11. **A structural check must not match prose.** A `verify` regex against a
+    sentence in JSX breaks the first time Prettier wraps the line, and the fix
+    people reach for is deleting the check. Match structure — a call, a guard, a
+    catalogue key — not copy. The same trap bit twice more on 2026-07-29: a
+    length-capped regex broke when a comment lengthened the tag it matched.
 
 ## Design laws with automated enforcement
 
@@ -137,20 +146,23 @@ read source, because these failure modes pass behavioural tests:
 - Every dirty-state screen commits through the shared `SaveBar`; a local
   `useBlocker` fails the phase (W6).
 - No route resolves to a placeholder (W6).
+- Settings is a route layout with a real tablist, the leave-guard restores
+  focus, no `sr-only` file input holds a tab stop, and adding a rule focuses it
+  (post-W6 remediation).
 - The palette is guarded by `src/styles/tokens.test.ts` — 49 contrast
   assertions, including the `bg-X/10 text-X` badge pattern.
 
 ## Open manual gates
 
-**13 checks remain unsigned** — see `.agent/open-items.md`, now grouped into
-**three sittings** (viewport → screen reader → read-as-a-stranger) rather than
-by phase, because a phase is how an item was created and a sitting is how it
-gets cleared. None block a phase; all block launch.
+**None.** All 13 were walked on 2026-07-29 and signed off — the debt is at
+zero, which is how W7 was meant to start. What they found became work, not
+backlog: six focus fixes, two data-honesty fixes, and one decision-gated
+proposal (timezones) that has not been built.
 
-The reviewer's intent as of 2026-07-29: **clear all 13 before W7 starts**, so
-the phase begins with the debt at zero. The oldest and largest is the
-screen-reader walk, which now covers the shell plus six W3–W6 surfaces that
-carry their own semantics.
+**The lesson worth carrying:** axe was green on every screen the six focus bugs
+lived on, and always had been. It reads markup; it does not tab through
+anything. Treat `@axe` as a floor, never as the accessibility safety net —
+`e2e/settings-a11y.spec.ts` is the pattern for what actually catches these.
 
 ## Still parked (needs a human)
 

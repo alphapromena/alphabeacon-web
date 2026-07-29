@@ -19,7 +19,6 @@ import { Card, CardContent } from '@/components/ui/card'
 import { useDataDispatch, useTones } from '@/data/provider'
 import type { Tone } from '@/data/types'
 import { MESSAGES } from '@/lib/messages'
-import { SettingsLayout } from './settings-layout'
 import { ToneEditorForm } from './tone-editor'
 
 export function TonesScreen() {
@@ -30,7 +29,7 @@ export function TonesScreen() {
   const custom = tones.filter((tone) => tone.kind === 'custom')
 
   return (
-    <SettingsLayout title="Tones" context="The voices drafts can be written in" wide>
+    <>
       <section className="flex flex-col gap-3">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="font-display text-lg font-semibold">Your tones</h2>
@@ -82,7 +81,7 @@ export function TonesScreen() {
           ))}
         </div>
       </section>
-    </SettingsLayout>
+    </>
   )
 }
 
@@ -155,7 +154,7 @@ export function ToneEditorScreen() {
 
   if (editing && !existing) {
     return (
-      <SettingsLayout title="Tone">
+      <>
         <EmptyState
           icon={Palette}
           title="That tone no longer exists"
@@ -166,15 +165,12 @@ export function ToneEditorScreen() {
             </Button>
           }
         />
-      </SettingsLayout>
+      </>
     )
   }
 
   return (
-    <SettingsLayout
-      title={existing ? `Edit ${existing.name}` : 'New custom tone'}
-      context="Brand voice always applies underneath — a tone shapes the style on top of it"
-    >
+    <>
       <ToneEditorForm
         initial={existing}
         submitLabel={existing ? 'Save changes' : 'Create tone'}
@@ -187,6 +183,6 @@ export function ToneEditorScreen() {
           navigate('/settings/tones')
         }}
       />
-    </SettingsLayout>
+    </>
   )
 }

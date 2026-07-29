@@ -4,12 +4,12 @@ import { buildFreshDataset } from './fresh'
 import { buildLowCreditsDataset } from './low-credits'
 import { buildNeedsReauthDataset } from './needs-reauth'
 import { buildPastDueDataset } from './past-due'
+import { buildQuietWeekDataset } from './quiet-week'
 import { buildVisitorDataset } from './visitor'
 
 /**
  * The dataset registry — the only way a screen reaches a different world.
  * Each entry is a factory so every switch starts from a pristine copy.
- * Later phases add: heavy.
  */
 export const DATASETS: { id: DatasetId; build: () => Dataset }[] = [
   { id: 'active', build: buildActiveDataset },
@@ -18,6 +18,7 @@ export const DATASETS: { id: DatasetId; build: () => Dataset }[] = [
   { id: 'low-credits', build: buildLowCreditsDataset },
   { id: 'needs-reauth', build: buildNeedsReauthDataset },
   { id: 'past-due', build: buildPastDueDataset },
+  { id: 'quiet-week', build: buildQuietWeekDataset },
 ]
 
 export const DEFAULT_DATASET_ID: DatasetId = 'active'

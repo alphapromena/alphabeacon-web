@@ -383,7 +383,7 @@ export interface ActivityItem {
 // ---------------------------------------------------------------------------
 
 export type DatasetId =
-  'visitor' | 'fresh' | 'active' | 'past-due' | 'needs-reauth' | 'low-credits' | 'heavy'
+  'visitor' | 'fresh' | 'active' | 'past-due' | 'needs-reauth' | 'low-credits' | 'quiet-week'
 
 export interface Dataset {
   id: DatasetId

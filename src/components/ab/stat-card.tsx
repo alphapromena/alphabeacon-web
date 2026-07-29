@@ -24,6 +24,7 @@ export function StatCard({
   tone = 'default',
   hint,
   delta,
+  deltaNote,
   to,
   className,
 }: {
@@ -41,6 +42,11 @@ export function StatCard({
    * silence.
    */
   delta?: { percent: number; period: string }
+  /**
+   * Why there is no delta. Shown only when `delta` is absent — a card that
+   * simply drops its comparison reads as broken rather than as honest.
+   */
+  deltaNote?: string
   /** In-app route; makes the whole card the link. */
   to?: string
   className?: string
@@ -75,7 +81,11 @@ export function StatCard({
           className={cn('text-3xl leading-none font-semibold', warn && 'text-warning')}
         />
         {warn && <span className="sr-only">Needs attention</span>}
-        {delta && <Delta {...delta} />}
+        {delta ? (
+          <Delta {...delta} />
+        ) : (
+          deltaNote && <p className="text-xs text-muted-foreground">{deltaNote}</p>
+        )}
         {hint && <p className="text-xs text-muted-foreground">{hint}</p>}
       </CardContent>
     </Card>

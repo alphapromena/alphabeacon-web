@@ -21,7 +21,6 @@ import { useDataDispatch, useKnowledgeDocs } from '@/data/provider'
 import type { KnowledgeDoc } from '@/data/types'
 import { MESSAGES } from '@/lib/messages'
 import { cn } from '@/lib/utils'
-import { SettingsLayout } from './settings-layout'
 import { useKnowledgeUpload } from './use-knowledge-upload'
 
 /** "2.3 MB" — sizes read mono, like every other figure. */
@@ -46,11 +45,7 @@ export function KnowledgeScreen() {
   const [dragging, setDragging] = useState(false)
 
   return (
-    <SettingsLayout
-      title="Knowledge"
-      context="Documents drafts can quote — price lists, FAQs, product notes"
-      wide
-    >
+    <>
       <div
         // A dropzone is a target, not a control: the button inside it is the
         // keyboard path, so the div itself stays out of the tab order.
@@ -89,6 +84,9 @@ export function KnowledgeScreen() {
           type="file"
           multiple
           className="sr-only"
+          // "Browse files" is the affordance; this must not hold a tab stop of
+          // its own that renders no focus indicator.
+          tabIndex={-1}
           aria-label="Choose documents to upload"
           onChange={(event) => {
             accept(Array.from(event.target.files ?? []))
@@ -155,7 +153,7 @@ export function KnowledgeScreen() {
           ))}
         </ul>
       )}
-    </SettingsLayout>
+    </>
   )
 }
 

@@ -33,6 +33,7 @@ import { GenerateScreen } from '@/features/generate/generate-screen'
 import { BrandVoiceScreen } from '@/features/settings/brand-voice-screen'
 import { KnowledgeScreen } from '@/features/settings/knowledge-screen'
 import { OrganizationScreen } from '@/features/settings/organization-screen'
+import { SettingsLayout } from '@/features/settings/settings-layout'
 import { SourcesScreen } from '@/features/settings/sources-screen'
 import { TeamScreen } from '@/features/settings/team-screen'
 import { ToneEditorScreen, TonesScreen } from '@/features/settings/tones-screen'
@@ -153,19 +154,85 @@ export const router = createBrowserRouter([
     // Area G — analytics
     { path: '/analytics', element: <AnalyticsOverviewScreen /> },
     { path: '/analytics/:connectionId', element: <ChannelDetailScreen /> },
-
-    // Area I — settings. `/settings` is the section index, not a screen of its
-    // own: every entry point into Settings lands on the org profile (I1).
-    { path: '/settings', element: <Navigate to="/settings/organization" replace /> },
-    { path: '/settings/organization', element: <OrganizationScreen /> },
-    { path: '/settings/brand-voice', element: <BrandVoiceScreen /> },
-    { path: '/settings/tones', element: <TonesScreen /> },
-    { path: '/settings/tones/new', element: <ToneEditorScreen /> },
-    { path: '/settings/tones/:toneId', element: <ToneEditorScreen /> },
-    { path: '/settings/sources', element: <SourcesScreen /> },
-    { path: '/settings/knowledge', element: <KnowledgeScreen /> },
-    { path: '/settings/team', element: <TeamScreen /> },
   ].map(({ path, element }) => ({ path, element: <Authed>{element}</Authed> })),
+
+  /**
+   * Area I — settings. A NESTED layout, deliberately: the sections share one
+   * tablist, and mounting it once above the `Outlet` is what stops the focused
+   * tab being destroyed on every section change. Each child carries its own
+   * heading in `handle` (typed as `SettingsHandle`), because the layout owns
+   * the `h1` and there is exactly one per page.
+   */
+  {
+    path: '/settings',
+    element: (
+      <Authed>
+        <SettingsLayout />
+      </Authed>
+    ),
+    children: [
+      // Every entry point into Settings lands on the org profile (I1).
+      { index: true, element: <Navigate to="/settings/organization" replace /> },
+      {
+        path: 'organization',
+        element: <OrganizationScreen />,
+        handle: { title: 'Organization', context: 'Who you are, and how drafts should sign off' },
+      },
+      {
+        path: 'brand-voice',
+        element: <BrandVoiceScreen />,
+        handle: { title: 'Brand voice', context: 'What every draft must and must not do' },
+      },
+      {
+        path: 'tones',
+        element: <TonesScreen />,
+        handle: { title: 'Tones', context: 'The voices drafts can be written in', wide: true },
+      },
+      {
+        path: 'tones/new',
+        element: <ToneEditorScreen />,
+        handle: {
+          title: 'New custom tone',
+          context: 'Brand voice always applies underneath — a tone shapes the style on top of it',
+        },
+      },
+      {
+        // The layout renames this one after the tone being edited.
+        path: 'tones/:toneId',
+        element: <ToneEditorScreen />,
+        handle: {
+          title: 'Edit tone',
+          context: 'Brand voice always applies underneath — a tone shapes the style on top of it',
+        },
+      },
+      {
+        path: 'sources',
+        element: <SourcesScreen />,
+        handle: {
+          title: 'Sources & topics',
+          context: 'What drafts read, and what they talk about',
+        },
+      },
+      {
+        path: 'knowledge',
+        element: <KnowledgeScreen />,
+        handle: {
+          title: 'Knowledge',
+          context: 'Documents drafts can quote — price lists, FAQs, product notes',
+          wide: true,
+        },
+      },
+      {
+        path: 'team',
+        element: <TeamScreen />,
+        handle: {
+          title: 'Team',
+          context: 'Who can see and approve what this workspace publishes',
+          wide: true,
+        },
+      },
+    ],
+  },
 
   ...devRoutes,
   { path: '*', element: <NotFoundScreen /> },

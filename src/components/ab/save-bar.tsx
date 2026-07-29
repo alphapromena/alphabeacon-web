@@ -10,6 +10,7 @@
  * It is sticky and it appears ONLY when there is something to save — a bar that
  * is always there stops meaning anything.
  */
+import { useEffect, useRef } from 'react'
 import { useBlocker } from 'react-router'
 import { Button } from '@/components/ui/button'
 import {
@@ -42,10 +43,43 @@ export function SaveBar({
       dirty && currentLocation.pathname !== nextLocation.pathname,
   )
 
+  /**
+   * Where focus goes when the refusal is dismissed.
+   *
+   * This dialog has no trigger element — the blocker opens it, not a button —
+   * so Radix has nothing to restore focus to and drops it on `document.body`.
+   *
+   * Reading `document.activeElement` at the moment of blocking is not enough
+   * either: by then focus is on whatever the user clicked to leave, usually a
+   * nav tab. Choosing "Keep editing" should put you back in the form you are
+   * keeping, so this tracks the last control focused INSIDE the editing region
+   * and ignores anything in a tablist or in the dialog itself.
+   */
+  const blocked = blocker.state === 'blocked'
+  const returnFocusTo = useRef<HTMLElement | null>(null)
+  useEffect(() => {
+    if (!dirty) return
+    const remember = (event: FocusEvent) => {
+      const target = event.target as HTMLElement | null
+      if (!target || target === document.body) return
+      if (target.closest('[role="tablist"], [role="dialog"], [role="alertdialog"]')) return
+      returnFocusTo.current = target
+    }
+    // Seed from whatever is focused right now: editing a field is what made the
+    // form dirty, so the listener would otherwise miss the very control the
+    // user is standing in and only start tracking from their next move.
+    remember({ target: document.activeElement } as unknown as FocusEvent)
+    document.addEventListener('focusin', remember)
+    return () => document.removeEventListener('focusin', remember)
+  }, [dirty])
+
   return (
     <>
       {dirty && (
-        <div className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-background/95 backdrop-blur">
+        <div
+          data-slot="save-bar"
+          className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-background/95 backdrop-blur"
+        >
           <div className="mx-auto flex max-w-[1200px] items-center justify-between gap-4 px-4 py-3 md:px-6">
             <p className="text-sm text-muted-foreground">You have unsaved changes.</p>
             <div className="flex items-center gap-2">
@@ -58,11 +92,20 @@ export function SaveBar({
         </div>
       )}
 
-      <Dialog
-        open={blocker.state === 'blocked'}
-        onOpenChange={(open) => !open && blocker.reset?.()}
-      >
-        <DialogContent className="sm:max-w-[420px]">
+      <Dialog open={blocked} onOpenChange={(open) => !open && blocker.reset?.()}>
+        <DialogContent
+          className="sm:max-w-[420px]"
+          onCloseAutoFocus={(event) => {
+            // Only meaningful when we stay on the page; if the user discarded,
+            // the route is already changing and the new screen owns focus.
+            // If the remembered control has left the DOM, let the browser do
+            // whatever it would have done — there is nothing better to offer.
+            const target = returnFocusTo.current
+            if (!target?.isConnected) return
+            event.preventDefault()
+            target.focus()
+          }}
+        >
           <DialogHeader>
             <DialogTitle>Leave without saving?</DialogTitle>
             <DialogDescription>{consequence}</DialogDescription>

@@ -8,7 +8,7 @@
  * four different keyboard behaviours if each screen writes its own.
  */
 import { Plus, X } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -107,6 +107,27 @@ export function RuleList({
   const set = (index: number, value: string) =>
     onChange(values.map((entry, i) => (i === index ? value : entry)))
 
+  /**
+   * Adding a row moves focus into it.
+   *
+   * Without this, "Add do" appends an empty field and leaves you standing on
+   * the button — so the keyboard path is press, tab, type, and the row you
+   * just asked for is somewhere behind you. The index is parked in state
+   * because the input does not exist until React has rendered it.
+   */
+  const inputs = useRef<(HTMLInputElement | null)[]>([])
+  const [focusRow, setFocusRow] = useState<number | null>(null)
+  useEffect(() => {
+    if (focusRow === null) return
+    inputs.current[focusRow]?.focus()
+    setFocusRow(null)
+  }, [focusRow])
+
+  const addRow = () => {
+    onChange([...values, ''])
+    setFocusRow(values.length)
+  }
+
   return (
     <fieldset className="flex flex-col gap-2">
       <legend className="text-sm font-medium">{label}</legend>
@@ -117,6 +138,9 @@ export function RuleList({
           <li key={index} className="flex gap-2">
             <Input
               id={`${idPrefix}-${index}`}
+              ref={(node) => {
+                inputs.current[index] = node
+              }}
               aria-label={`${label} rule ${index + 1}`}
               value={value}
               placeholder={placeholder}
@@ -135,13 +159,7 @@ export function RuleList({
         ))}
       </ul>
 
-      <Button
-        type="button"
-        variant="outline"
-        size="sm"
-        className="w-fit"
-        onClick={() => onChange([...values, ''])}
-      >
+      <Button type="button" variant="outline" size="sm" className="w-fit" onClick={addRow}>
         <Plus aria-hidden />
         Add {label.toLowerCase()}
       </Button>

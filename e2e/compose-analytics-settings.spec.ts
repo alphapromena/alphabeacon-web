@@ -8,31 +8,10 @@
  */
 import AxeBuilder from '@axe-core/playwright'
 import type { Page } from '@playwright/test'
-import { activateDataset } from './datasets'
+import { openFromRail as open, rail } from './datasets'
 import { expect, test } from './fixtures'
 
 const WCAG_TAGS = ['wcag2a', 'wcag2aa']
-
-/**
- * A rail link, scoped to the rail. Today's link carries its unread count in its
- * accessible name ("Today 5 drafts need review"), so an exact match finds
- * nothing — and an unscoped prefix match would also catch the dashboard's
- * "Today's queue" tile.
- */
-function rail(page: Page, label: string) {
-  return page
-    .locator('[data-sidebar="sidebar"]')
-    .getByRole('link', { name: new RegExp(`^${label}`) })
-    .first()
-}
-
-async function open(page: Page, label: string, dataset = 'Active org') {
-  await activateDataset(page, dataset)
-  await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible()
-  await rail(page, label).click()
-  // The shell's h1 renders during the skeleton, so wait for content.
-  await expect(page.locator('[aria-busy="true"]')).toHaveCount(0)
-}
 
 /** F1 is reached the way a user reaches it: from the queue. */
 async function openGenerate(page: Page, dataset = 'Active org') {
@@ -214,7 +193,7 @@ test('settings opens on the org profile and guards unsaved edits', async ({ page
   await expect(page.getByText('You have unsaved changes.')).toBeVisible()
 
   // Leaving with unsaved work is refused out loud.
-  await page.getByRole('link', { name: 'Team' }).click()
+  await page.getByRole('tab', { name: 'Team' }).click()
   await expect(page.getByRole('heading', { name: 'Leave without saving?' })).toBeVisible()
   await page.getByRole('button', { name: 'Keep editing' }).click()
 
@@ -224,7 +203,7 @@ test('settings opens on the org profile and guards unsaved edits', async ({ page
 
 test('@golden a custom tone written once shows up wherever tones are picked', async ({ page }) => {
   await open(page, 'Settings')
-  await page.getByRole('link', { name: 'Tones' }).click()
+  await page.getByRole('tab', { name: 'Tones' }).click()
   await expect(page.getByRole('heading', { name: 'Tones', level: 1 })).toBeVisible()
 
   await page.getByRole('link', { name: 'Create custom tone' }).first().click()
@@ -257,7 +236,7 @@ test('@golden a custom tone written once shows up wherever tones are picked', as
 
 test('deleting a custom tone names what it costs before it happens', async ({ page }) => {
   await open(page, 'Settings')
-  await page.getByRole('link', { name: 'Tones' }).click()
+  await page.getByRole('tab', { name: 'Tones' }).click()
 
   await page.getByRole('button', { name: 'Delete' }).first().click()
   const confirm = page.getByRole('alertdialog')
@@ -269,7 +248,7 @@ test('deleting a custom tone names what it costs before it happens', async ({ pa
 
 test('a source is named from its address, and prose is refused', async ({ page }) => {
   await open(page, 'Settings')
-  await page.getByRole('link', { name: 'Sources & topics' }).click()
+  await page.getByRole('tab', { name: 'Sources & topics' }).click()
 
   await page.getByLabel('Add a source').fill('coffee news please')
   await page.getByRole('button', { name: 'Add source' }).click()
@@ -283,7 +262,7 @@ test('a source is named from its address, and prose is refused', async ({ page }
 
 test('knowledge plays the whole ingestion lifecycle, per file', async ({ page }) => {
   await open(page, 'Settings')
-  await page.getByRole('link', { name: 'Knowledge' }).click()
+  await page.getByRole('tab', { name: 'Knowledge' }).click()
 
   // The seeded batch shows the mixed states the design is actually about.
   await expect(page.getByText('Ready').first()).toBeVisible()
@@ -315,7 +294,7 @@ test('the team screen invites, refuses a duplicate, and never offers to remove y
   page,
 }) => {
   await open(page, 'Settings')
-  await page.getByRole('link', { name: 'Team' }).click()
+  await page.getByRole('tab', { name: 'Team' }).click()
 
   const me = page.getByRole('row').filter({ hasText: 'Maya Haddad' })
   await expect(me.getByRole('button', { name: 'Remove' })).toHaveCount(0)
@@ -379,7 +358,7 @@ test('@axe generate, analytics and settings scan clean', async ({ page }) => {
   await expect(page.locator('[aria-busy="true"]')).toHaveCount(0)
   expect((await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze()).violations).toEqual([])
 
-  await page.getByRole('link', { name: 'Knowledge' }).click()
+  await page.getByRole('tab', { name: 'Knowledge' }).click()
   await expect(page.locator('[aria-busy="true"]')).toHaveCount(0)
   expect((await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze()).violations).toEqual([])
 })

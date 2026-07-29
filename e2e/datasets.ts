@@ -25,3 +25,27 @@ export async function activateDataset(page: Page, label: string): Promise<void> 
 
   await page.getByRole('link', { name: '← App' }).click()
 }
+
+/**
+ * A rail link, scoped to the rail.
+ *
+ * Two traps it exists to avoid: Today's link carries its unread count in its
+ * accessible name ("Today 5 drafts need review"), so `{ exact: true }` finds
+ * nothing; and an unscoped prefix match also catches the dashboard's "Today's
+ * queue" tile.
+ */
+export function rail(page: Page, label: string) {
+  return page
+    .locator('[data-sidebar="sidebar"]')
+    .getByRole('link', { name: new RegExp(`^${label}`) })
+    .first()
+}
+
+/** Dashboard → a rail destination, waiting for the screen to actually settle. */
+export async function openFromRail(page: Page, label: string, dataset = 'Active org') {
+  await activateDataset(page, dataset)
+  await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible()
+  await rail(page, label).click()
+  // The shell's h1 renders during the skeleton, so wait for content.
+  await expect(page.locator('[aria-busy="true"]')).toHaveCount(0)
+}

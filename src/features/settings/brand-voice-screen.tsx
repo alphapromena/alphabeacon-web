@@ -14,7 +14,6 @@ import { Button } from '@/components/ui/button'
 import { useDataDispatch, useOrg } from '@/data/provider'
 import { MESSAGES } from '@/lib/messages'
 import { RuleList } from './field-editors'
-import { SettingsLayout } from './settings-layout'
 
 /** Blank rows are how a list editor works, not something to save. */
 const clean = (values: string[]) => values.map((value) => value.trim()).filter(Boolean)
@@ -30,7 +29,7 @@ export function BrandVoiceScreen() {
   const empty = saved.do.length === 0 && saved.dont.length === 0
 
   return (
-    <SettingsLayout title="Brand voice" context="What every draft must and must not do">
+    <>
       <p className="rounded-lg border border-border bg-muted px-3 py-2 text-sm text-muted-foreground">
         {MESSAGES.notices.brandVoiceUnderTones}{' '}
         <Link className="underline underline-offset-4" to="/settings/tones">
@@ -96,6 +95,6 @@ export function BrandVoiceScreen() {
         }}
         consequence="Your rule changes will be lost, and drafts keep following the brand voice you had before."
       />
-    </SettingsLayout>
+    </>
   )
 }

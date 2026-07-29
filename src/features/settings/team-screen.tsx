@@ -31,7 +31,6 @@ import { useDataDispatch, useInvites, useSession, useUsers } from '@/data/provid
 import type { User } from '@/data/types'
 import { relativeTime, shortDate } from '@/lib/format'
 import { MESSAGES } from '@/lib/messages'
-import { SettingsLayout } from './settings-layout'
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
@@ -76,11 +75,7 @@ export function TeamScreen() {
   }
 
   return (
-    <SettingsLayout
-      title="Team"
-      context="Who can see and approve what this workspace publishes"
-      wide
-    >
+    <>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="font-display text-lg font-semibold">
           <MonoNumber value={users.length} /> members
@@ -273,6 +268,6 @@ export function TeamScreen() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </SettingsLayout>
+    </>
   )
 }

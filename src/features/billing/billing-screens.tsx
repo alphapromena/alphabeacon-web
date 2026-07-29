@@ -26,6 +26,7 @@ import { toastSuccess } from '@/components/ab/toast'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
+import { outstandingHolds, reconcileLedger } from './ledger'
 import {
   useBilling,
   useCreditBalance,
@@ -306,12 +307,8 @@ export function CreditsScreen() {
   const phase = useScreenPhase()
 
   const rows = [...ledger].sort((a, b) => b.at.localeCompare(a.at))
-  const outstanding = ledger
-    .filter((entry) => entry.type === 'reserved')
-    .filter(
-      (entry) =>
-        !ledger.some((other) => other.type === 'released' && other.ref?.id === entry.ref?.id),
-    )
+  const outstanding = outstandingHolds(ledger)
+  const sums = reconcileLedger(ledger)
 
   return (
     <AppShell title="Credits" context="Every grant, hold and spend">
@@ -334,10 +331,37 @@ export function CreditsScreen() {
             </div>
             {outstanding.length > 0 && (
               <p className="max-w-xs text-sm text-muted-foreground">
-                <MonoNumber value={outstanding.reduce((sum, e) => sum + Math.abs(e.amount), 0)} />{' '}
-                credits are held by runs still in flight. They return if a run fails.
+                <MonoNumber value={sums.held} /> credits are held by runs still in flight. They
+                return if a run fails.
               </p>
             )}
+          </section>
+
+          {/* The balance said as the sum it is. Every figure below is computed
+              from the same rows, so "where did the rest go" is answered on the
+              screen instead of by adding up the table yourself. */}
+          <section
+            aria-label="How the balance is made up"
+            className="grid grid-cols-2 gap-3 sm:grid-cols-4"
+          >
+            {[
+              { label: 'Granted', value: sums.granted, hint: 'Plan grants and refunds' },
+              { label: 'Spent', value: -sums.spent, hint: 'Runs that finished' },
+              { label: 'Held', value: -sums.held, hint: 'Runs still in flight' },
+              { label: 'Balance', value: sums.balance, hint: 'What you can spend now' },
+            ].map((cell) => (
+              <div
+                key={cell.label}
+                className="flex flex-col gap-0.5 rounded-lg border border-border p-3"
+              >
+                <span className="text-xs text-muted-foreground">{cell.label}</span>
+                <MonoNumber
+                  value={cell.value > 0 && cell.label !== 'Balance' ? `+${cell.value}` : cell.value}
+                  className="text-lg font-semibold"
+                />
+                <span className="text-xs text-muted-foreground">{cell.hint}</span>
+              </div>
+            ))}
           </section>
 
           <section className="flex flex-col gap-3">

@@ -377,3 +377,105 @@ add a new entry that says it supersedes the old one.
 - Instead of: clearing them per phase as each shipped (the intent all along,
   and it did not survive contact with six phases), or dropping the ones that
   felt covered by axe — axe cannot hear what is announced, which is the point.
+
+### 2026-07-29 — Settings is a route layout, and its sections are a real tablist
+
+- Why: each section rendered its own copy of the layout, so changing section
+  swapped one component for another, React unmounted the whole navigation, and
+  the focused tab went with it — focus fell to `document.body` and a keyboard
+  user tabbed back in from the top of the page every time. Mounting the layout
+  once above an `Outlet` fixes the cause rather than the symptom, and is also
+  what a tablist needs. Activation is manual (arrows move, Enter follows)
+  because these tabs change the URL; automatic activation would fire six
+  navigations on the way past.
+- Instead of: restoring focus programmatically after each navigation (treats
+  the symptom, and leaves the nav being destroyed and rebuilt for no reason), or
+  leaving six plain tab stops (works, but the reviewer asked for the tablist and
+  it is the standard pattern for sectioned settings).
+
+### 2026-07-29 — The save bar's guard remembers the field, not the click
+
+- Why: the leave-without-saving dialog has no trigger element — the router's
+  blocker opens it — so Radix has nothing to restore focus to and drops it on
+  the body. Reading `document.activeElement` when the block fires is not enough
+  either: by then focus is on the nav tab the user clicked to leave. Choosing
+  "Keep editing" should return you to the form you are keeping, so the bar
+  tracks the last control focused inside the editing region and ignores the
+  tablist and the dialog.
+- Instead of: focusing the first field (loses your place in a long form), or
+  accepting the tab (you chose not to go there).
+
+### 2026-07-29 — Focus-not-obscured is held once, in the base layer
+
+- Why: WCAG 2.2 §2.4.11. The save bar is fixed to the bottom of the viewport and
+  the browser scrolls a newly focused control flush to that same edge, so the
+  last field lands underneath it. Padding on the column cannot fix this — the
+  browser scrolls to the element, not to the end of the page. A single
+  `scroll-margin-bottom` on every focusable element in `globals.css` does, costs
+  nothing where there is no bar, and cannot be forgotten by the next screen that
+  grows one.
+- Instead of: per-screen padding (already present, and demonstrably not enough),
+  or making the bar non-fixed (loses the always-reachable commit).
+
+### 2026-07-29 — A hidden file input never holds a tab stop
+
+- Why: both upload controls paired a visible button with an `sr-only` file
+  input. `sr-only` hides an element visually but keeps it focusable, so tabbing
+  landed on something that rendered nothing and focus appeared to vanish. The
+  button is the affordance; the input is plumbing and takes `tabIndex={-1}`.
+- Instead of: `aria-hidden` on the input as well — it would drop the control out
+  of the accessibility tree entirely, and a screen-reader user browsing by form
+  control would lose a working way to open the picker.
+
+### 2026-07-29 — The credits ledger states its arithmetic
+
+- Why: the rows always summed to the balance correctly, but a reader seeing
+  "granted 500" and "balance 458" had to add up a table to find the missing 42.
+  H3 now prints granted / spent / held / balance, all computed from the same
+  rows by `reconcileLedger`, with the identity asserted against every dataset.
+  Writing that test immediately found a real bug: the low-credits world charged
+  452 credits to `job_backfill`, a job that did not exist, so the single largest
+  line on the screen rendered with a blank description.
+- Instead of: a stored summary (the balance is never stored — that law is what
+  keeps the number honest), or explaining it in prose (prose does not fail a
+  test when the data stops adding up).
+
+### 2026-07-29 — An absent delta says why it is absent
+
+- Why: "no comparable prior period → show nothing" is right, but silent absence
+  reads as breakage: the trend badges appeared on the 7-day range and vanished
+  on 30-day with no explanation. The card now distinguishes the two real
+  reasons — there is no earlier window yet, or there is one and it was empty.
+- Instead of: showing "0%" or "—" (the invented comparison this rule exists to
+  prevent), or extending the series to 60 days so 30-day always has a prior
+  window (hides the question instead of answering it, and the same gap returns
+  at the next range).
+
+### 2026-07-29 — A "quiet week" world, so a zero can be looked at
+
+- Why: every seeded world has a busy last seven days, so G1's headline stat
+  cards — posts published, and every delta beside them — could not be checked in
+  their most important state. `quiet-week` publishes nothing in seven days, with
+  reach tapering to a floor rather than to zero (older posts keep working) and
+  followers flat. Datasets are already "the only way a screen reaches a
+  different world", so this is the existing mechanism rather than a new one.
+- Instead of: a dev toggle that zeroes analytics (a second mechanism for what
+  datasets already do), or editing the seed to be quiet by default (loses the
+  busy world the rest of the product is demonstrated from).
+
+### 2026-07-29 — OPEN QUESTION: should the shared pipeline between D3 and Studio be visible?
+
+- The question, narrowly: draft detail (D3) and Creative Studio (E1–E4) read as
+  two different products, and **that is correct** — they are two jobs, and that
+  is settled. What is not settled is whether the pipeline they share — the same
+  credits, the same reserve → release → commit, the same job list — should be
+  surfaced in the UI, or should stay an implementation detail the user never
+  needs to hold.
+- Arguments for surfacing: a user who spends credits in D4 and then sees a
+  balance move in Billing currently has to infer the connection; E3's job list
+  already mixes both origins ("Standalone" / "For draft") and is the one place
+  the shared pipeline is visible, but nothing points at it from D3.
+- Arguments against: the whole point of D4 is "Studio, in context" — someone
+  approving a draft should not have to learn what a job is.
+- Not building anything. Logged so the question survives; it needs a product
+  decision, not an implementation.

@@ -44,6 +44,7 @@ import { shortDate } from '@/lib/format'
 import { MESSAGES } from '@/lib/messages'
 import { PLATFORMS } from '@/features/connections/platforms'
 import {
+  comparisonNote,
   deltaPercent,
   growth,
   inRange,
@@ -158,6 +159,10 @@ export function AnalyticsOverviewScreen() {
   }, [reporting, days])
 
   const period = `previous ${days} days`
+  // Why a comparison is missing, so an absent delta reads as honest rather
+  // than as a card that failed to render.
+  const priorWindow = reporting[0] ? priorSlice(reporting[0].labels, days).length : 0
+  const note = comparisonNote(priorWindow, days)
 
   return (
     <AppShell title="Analytics" context="Reach, engagement, and what it came from">
@@ -199,6 +204,7 @@ export function AnalyticsOverviewScreen() {
               delta={
                 totals.reachDelta === undefined ? undefined : { percent: totals.reachDelta, period }
               }
+              deltaNote={totals.reachDelta === undefined ? note : undefined}
             />
             <StatCard
               label="Total engagement"
@@ -208,6 +214,7 @@ export function AnalyticsOverviewScreen() {
                   ? undefined
                   : { percent: totals.engagementDelta, period }
               }
+              deltaNote={totals.engagementDelta === undefined ? note : undefined}
             />
             <StatCard
               label="Posts published"
@@ -217,6 +224,7 @@ export function AnalyticsOverviewScreen() {
                   ? undefined
                   : { percent: totals.publishedDelta, period }
               }
+              deltaNote={totals.publishedDelta === undefined ? note : undefined}
             />
             <StatCard
               label="Follower growth"
@@ -226,6 +234,7 @@ export function AnalyticsOverviewScreen() {
                   ? undefined
                   : { percent: totals.followersDelta, period }
               }
+              deltaNote={totals.followersDelta === undefined ? note : undefined}
             />
           </section>
 

@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest'
+import { buildDataset } from '@/data/datasets'
 import {
+  comparisonNote,
   deltaPercent,
   growth,
   inRange,
@@ -68,5 +70,40 @@ describe('inRange', () => {
   it('excludes the future and refuses nonsense', () => {
     expect(inRange(new Date(now + DAY).toISOString(), 7, now)).toBe(false)
     expect(inRange('not a date', 7, now)).toBe(false)
+  })
+})
+
+describe('comparisonNote', () => {
+  it('distinguishes "no history yet" from "history, but nothing in it"', () => {
+    // The 30-day range on a 30-day series: there is no earlier window at all.
+    expect(comparisonNote(0, 30)).toMatch(/No earlier 30 days/)
+    // The window exists and was empty — a different fact, and a different fix.
+    expect(comparisonNote(7, 7)).toMatch(/Nothing in the previous 7 days/)
+  })
+})
+
+describe('the quiet-week world exists so a zero can be looked at', () => {
+  it('publishes nothing in the last seven days, and still reports reach', () => {
+    const quiet = buildDataset('quiet-week')
+    const synced = quiet.analytics.filter((series) => series.synced)
+    expect(synced.length).toBeGreaterThan(0)
+
+    for (const series of synced) {
+      const recent = series.posts.filter((post) => inRange(post.publishedAt, 7))
+      expect(recent, 'a quiet week publishes nothing').toHaveLength(0)
+      // Reach tapers rather than vanishing: older posts keep working, so a
+      // floor of zero would be its own lie.
+      expect(sum(periodSlice(series.reach, 7))).toBeGreaterThan(0)
+      // And it really is quieter than the week before, so the delta is negative.
+      expect(sum(periodSlice(series.reach, 7))).toBeLessThan(sum(priorSlice(series.reach, 7)))
+    }
+  })
+
+  it('leaves the busy world alone, so the comparison is real', () => {
+    const active = buildDataset('active')
+    const recent = active.analytics
+      .filter((series) => series.synced)
+      .flatMap((series) => series.posts.filter((post) => inRange(post.publishedAt, 7)))
+    expect(recent.length).toBeGreaterThan(0)
   })
 })

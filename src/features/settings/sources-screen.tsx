@@ -22,7 +22,6 @@ import { useDataDispatch, useFollowedSources, useTopics } from '@/data/provider'
 import { shortDate } from '@/lib/format'
 import { MESSAGES } from '@/lib/messages'
 import { TagInput } from './field-editors'
-import { SettingsLayout } from './settings-layout'
 import { deriveSourceName, isSourceUrlValid, normalizeSourceUrl } from './source-url'
 
 export function SourcesScreen() {
@@ -60,7 +59,7 @@ export function SourcesScreen() {
   }
 
   return (
-    <SettingsLayout title="Sources & topics" context="What drafts read, and what they talk about">
+    <>
       <section className="flex flex-col gap-4">
         <div className="flex flex-col gap-1">
           <h2 className="font-display text-lg font-semibold">Sources</h2>
@@ -162,6 +161,6 @@ export function SourcesScreen() {
           <p className="text-sm text-muted-foreground">{MESSAGES.empty.noTopics}</p>
         )}
       </section>
-    </SettingsLayout>
+    </>
   )
 }

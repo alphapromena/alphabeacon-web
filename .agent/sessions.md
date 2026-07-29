@@ -408,3 +408,50 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   message-catalogue completeness test, route-level code-splitting (one ~1.2 MB
   chunk today), the full-app `@golden` walks, and CI on the new remote — which
   has never run a workflow.
+
+### 2026-07-29 12:30 — Manual-pass triage: six focus fixes, two honesty fixes, one proposal
+
+- Did: fixed the six keyboard-focus defects the manual pass found, in the order
+  given. (1) Settings became a nested ROUTE layout — each section used to render
+  its own copy, so changing section unmounted the whole nav and focus fell to
+  `document.body`; mounted once above an `Outlet`, the focused tab survives.
+  The leave-guard dialog now remembers the last field focused inside the editing
+  region and returns focus there. (2) `scroll-margin-bottom` in the base layer
+  keeps the fixed save bar off the focused control (WCAG 2.2 §2.4.11). (3) Both
+  hidden file inputs take `tabIndex={-1}`. (4) The six sections are a real
+  tablist — roving tabindex, arrows, Home/End, manual activation. (5) The nav
+  scroller gained the vertical room its focus ring was being clipped by, and
+  adding a brand-voice rule now puts the cursor in the new row.
+- Also (separate track): H3 states its arithmetic — granted / spent / held /
+  balance, all computed by `reconcileLedger`. Writing the test found a real bug:
+  the low-credits world charged 452 credits to a job that did not exist, so the
+  biggest line on the screen rendered blank; it now names the run that spent it.
+  G1's absent deltas now say WHY they are absent, distinguishing "no earlier
+  window yet" from "the window was empty". Added a `quiet-week` dataset so a
+  genuinely zero-post week can be looked at, and removed the `heavy` dataset id
+  that was never built.
+- Coverage added, because axe was green through all six focus bugs:
+  `e2e/settings-a11y.spec.ts` (7 tests, one per defect, asserting real focus and
+  real geometry), a `keyboard-focus rules hold` structural check in
+  `verify:w06`, `src/features/billing/ledger.test.ts` (the reconciliation
+  identity across every dataset), and quiet-week/comparison-note cases in
+  `range.test.ts`.
+- Two of my own checks were wrong on the first pass and are worth remembering: a
+  length-capped regex in the verify script broke when a comment made the tag
+  longer, and a `str.replace` matched inside a function call as well as the list
+  it was meant to edit. Both are the same lesson already in `state.md` — match
+  structure, not text.
+- Phase: post-W6 remediation (W7 NOT started, at the reviewer's instruction)
+- Files: `src/features/settings/*`, `src/routes.tsx`,
+  `src/components/ab/{save-bar,stat-card}.tsx`, `src/styles/globals.css`,
+  `src/features/billing/{ledger.ts,ledger.test.ts,billing-screens.tsx}`,
+  `src/features/analytics/{range.ts,range.test.ts,analytics-screens.tsx}`,
+  `src/data/datasets/{quiet-week.ts,low-credits.ts,index.ts}`, `src/data/types.ts`,
+  `e2e/{settings-a11y.spec.ts,datasets.ts,compose-analytics-settings.spec.ts}`,
+  `scripts/verify-w06.ts`
+- Decisions: see decisions.md — seven entries dated 2026-07-29, plus the logged
+  open question about whether D3 and Studio should show their shared pipeline
+- Verify: `verify:w06` green — 296 unit tests, 66 e2e, all structural checks
+- Open: the timezone/date proposal is written and awaiting a decision. Nothing
+  in the product has been changed for it.
+- Next: the reviewer decides on timezones; then W7.

@@ -45,6 +45,19 @@ export function deltaPercent(current: number, previous: number): number | undefi
   return Math.round(((current - previous) / previous) * 100)
 }
 
+/**
+ * Why a delta is missing.
+ *
+ * Absent beats a fake 0% — but silent absence reads as breakage, so a card with
+ * no comparison has to say which of the two reasons applies: we do not have the
+ * earlier window yet, or we have it and there was nothing in it.
+ */
+export function comparisonNote(priorWindowLength: number, days: RangeDays): string {
+  return priorWindowLength === 0
+    ? `No earlier ${days} days to compare with yet`
+    : `Nothing in the previous ${days} days to compare with`
+}
+
 /** Whether an ISO timestamp falls inside the last `days` days. */
 export function inRange(iso: string, days: number, now: number = Date.now()): boolean {
   const at = new Date(iso).getTime()

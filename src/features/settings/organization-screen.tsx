@@ -23,7 +23,6 @@ import { useDataDispatch, useOrg, useSchedule } from '@/data/provider'
 import { MESSAGES } from '@/lib/messages'
 import { TIMEZONES, zoneAbbreviation } from '@/lib/timezone'
 import { TagInput } from './field-editors'
-import { SettingsLayout } from './settings-layout'
 
 export function OrganizationScreen() {
   const org = useOrg()
@@ -55,7 +54,7 @@ export function OrganizationScreen() {
   }
 
   return (
-    <SettingsLayout title="Organization" context="Who you are, and how drafts should sign off">
+    <>
       <section className="flex flex-col gap-5">
         <div className="flex flex-wrap items-center gap-4">
           <Avatar className="size-16 rounded-xl">
@@ -97,6 +96,10 @@ export function OrganizationScreen() {
             type="file"
             accept="image/*"
             className="sr-only"
+            // The visible button is the affordance. Left tabbable, this steals a
+            // tab stop that shows nothing — focus appears to vanish. It keeps
+            // its name, so it is still reachable and operable by control name.
+            tabIndex={-1}
             aria-label="Choose a logo image"
             onChange={(event) => {
               const file = event.target.files?.[0]
@@ -197,6 +200,6 @@ export function OrganizationScreen() {
         }}
         consequence="Your profile changes will be lost, and drafts keep using the details you had before."
       />
-    </SettingsLayout>
+    </>
   )
 }

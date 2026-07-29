@@ -210,18 +210,88 @@ function settingsShareOneSaveBar(): boolean {
   )
 }
 
+/**
+ * The focus rules the manual keyboard pass had to find by hand.
+ *
+ * axe is green on all of these screens and always was — it inspects markup, it
+ * does not tab through anything. These checks encode the shape of each fix so
+ * the next person cannot undo one without the phase failing.
+ */
+function focusRulesHold(): boolean {
+  console.log('\n=== the keyboard-focus rules from the W6 manual pass ===')
+  const layout = read('src', 'features', 'settings', 'settings-layout.tsx')
+  const routes = read('src', 'routes.tsx')
+  const saveBar = read('src', 'components', 'ab', 'save-bar.tsx')
+  const globals = read('src', 'styles', 'globals.css')
+  const editors = read('src', 'features', 'settings', 'field-editors.tsx')
+
+  // Settings must stay a ROUTE layout. The moment a screen wraps itself in the
+  // layout again, the nav unmounts per section and focus goes to the body.
+  const layoutIsRouted =
+    /<Outlet\s*\/>/.test(layout) && /element: \(\s*<Authed>\s*<SettingsLayout/.test(routes)
+  const screensDoNotWrap = [
+    'organization-screen',
+    'brand-voice-screen',
+    'tones-screen',
+    'sources-screen',
+    'knowledge-screen',
+    'team-screen',
+  ].every((name) => !/<SettingsLayout/.test(read('src', 'features', 'settings', `${name}.tsx`)))
+
+  // A real tablist: roving tabindex plus arrow keys.
+  const isTablist =
+    /role="tablist"/.test(layout) && /role="tab"/.test(layout) && /ArrowRight/.test(layout)
+  const rovingTabindex = /tabIndex=\{index === focusIndex \? 0 : -1\}/.test(layout)
+
+  // The trigger-less guard dialog has to hand focus back itself.
+  const guardRestoresFocus = /onCloseAutoFocus/.test(saveBar) && /returnFocusTo/.test(saveBar)
+
+  // WCAG 2.2 focus-not-obscured, held centrally rather than per screen.
+  const scrollMargin = /scroll-margin-bottom/.test(globals)
+
+  // A visually hidden file input may never hold a tab stop. Sliced rather than
+  // regexed: a length-capped pattern breaks the moment someone adds a comment
+  // inside the tag, and a check that fails for formatting reasons gets deleted.
+  const uploads = ['organization-screen', 'knowledge-screen'].every((name) => {
+    const source = read('src', 'features', 'settings', `${name}.tsx`)
+    const tags = source
+      .split('<input')
+      .slice(1)
+      .map((chunk) => chunk.slice(0, chunk.indexOf('/>')))
+      .filter((tag) => tag.includes('type="file"'))
+    return tags.length > 0 && tags.every((tag) => tag.includes('tabIndex={-1}'))
+  })
+
+  // Adding a row moves the cursor into it.
+  const addFocusesRow =
+    /setFocusRow/.test(editors) && /inputs\.current\[focusRow\]\?\.focus\(\)/.test(editors)
+
+  const ok =
+    layoutIsRouted &&
+    screensDoNotWrap &&
+    isTablist &&
+    rovingTabindex &&
+    guardRestoresFocus &&
+    scrollMargin &&
+    uploads &&
+    addFocusesRow
+  return record(
+    'keyboard-focus rules hold',
+    ok,
+    'focus: settings is a route layout with a real tablist, the guard restores focus, no hidden tab stops',
+    `focus check failed -- routed:${layoutIsRouted} noWrap:${screensDoNotWrap} tablist:${isTablist} roving:${rovingTabindex} guard:${guardRestoresFocus} scrollMargin:${scrollMargin} uploads:${uploads} addRow:${addFocusesRow}`,
+  )
+}
+
 /** No screen may still be a stub once its phase has shipped. */
 function noStubsRemain(): boolean {
   console.log('\n=== every W6 route is a real screen ===')
   const routes = read('src', 'routes.tsx')
   const noPlaceholder = !/PlaceholderScreen/.test(routes)
   const gone = !existsSync(join(root, 'src/features/system/placeholder-screen.tsx'))
-  const wired = [
-    '/generate',
-    '/analytics/:connectionId',
-    '/settings/tones/:toneId',
-    '/settings/team',
-  ]
+  // Settings paths are relative: they hang off the nested `/settings` layout
+  // rather than each being declared absolute.
+  const wired = ['/generate', '/analytics/:connectionId', 'tones/:toneId', 'team']
   const allWired = wired.every((path) => routes.includes(`'${path}'`))
 
   return record(
@@ -243,6 +313,7 @@ function e2eNavigationRuleHolds(): boolean {
     'calendar-connections.spec.ts',
     'studio-billing.spec.ts',
     'compose-analytics-settings.spec.ts',
+    'settings-a11y.spec.ts',
   ]
   let ok = true
   for (const name of specs) {
@@ -286,6 +357,7 @@ function deliverablesExist(): boolean {
     'src/components/ab/save-bar.tsx',
     'src/data/settings-system.test.ts',
     'e2e/compose-analytics-settings.spec.ts',
+    'e2e/settings-a11y.spec.ts',
   ]
   const missing = required.filter((path) => !existsSync(join(root, path)))
   if (missing.length) {
@@ -306,6 +378,7 @@ const STRUCTURAL = [
   'F1 reuses the queue card and actions',
   'compose is script-driven',
   'settings share one save bar',
+  'keyboard-focus rules hold',
   'no stub routes remain',
   'e2e navigation rule holds',
   'W6 deliverables exist',
@@ -335,6 +408,7 @@ function main(): void {
     if (!generateReusesTheQueuesCard()) failed = true
     if (!composeIsScriptDriven()) failed = true
     if (!settingsShareOneSaveBar()) failed = true
+    if (!focusRulesHold()) failed = true
     if (!noStubsRemain()) failed = true
     if (!e2eNavigationRuleHolds()) failed = true
     if (!deliverablesExist()) failed = true
