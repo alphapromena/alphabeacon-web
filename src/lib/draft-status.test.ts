@@ -10,6 +10,14 @@ describe('draft state machine', () => {
     expect(canTransition('scheduled', 'published')).toBe(true)
   })
 
+  it('allows attaching an existing asset without a pending generation', () => {
+    // E4's attach picker: the asset already exists and was already paid for,
+    // so there is nothing to wait for between approved and media_ready.
+    expect(canTransition('approved', 'media_ready')).toBe(true)
+    // But it is still gated on approval, like every other route to media.
+    expect(canTransition('pending_review', 'media_ready')).toBe(false)
+  })
+
   it('allows scheduling without media, rejection, expiry, and the publish-retry loop', () => {
     expect(canTransition('approved', 'scheduled')).toBe(true)
     expect(canTransition('pending_review', 'rejected')).toBe(true)

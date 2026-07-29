@@ -237,7 +237,7 @@ changes code or makes a decision (see rule 6 in `CLAUDE.md`).
 - Phase: W4
 - Files: `src/features/calendar/*` (5), `src/features/connections/*` (3),
   `src/lib/timezone.ts` + test, `src/data/{provider.tsx,types.ts,
-  datasets/needs-reauth.ts,entities/drafts.ts,calendar-connections.test.ts}`,
+datasets/needs-reauth.ts,entities/drafts.ts,calendar-connections.test.ts}`,
   `src/routes.tsx`, `e2e/calendar-connections.spec.ts`, `scripts/verify-w04.ts`,
   `package.json`, `.agent/open-items.md`
 - Decisions: none new
@@ -260,3 +260,46 @@ changes code or makes a decision (see rule 6 in `CLAUDE.md`).
   calendar — reachable only from the empty state, i.e. not reachable by anyone
   who already had a schedule. Added a toolbar link.
 - Next: W5 — Studio + billing (E1–E4, H1–H4).
+
+### 2026-07-29 08:10 — W5 shipped: Studio + billing (E1–E4, H1–H4); verify:w05 green
+
+- Did: built Creative Studio and Billing on branch `w/05-studio-billing`.
+  Started with `lib/params-schema.ts`, which turns a model's capability JSON
+  Schema into form fields, and diversified the catalog so the four models
+  publish genuinely different shapes (two enums; bounded int + float; a NUMERIC
+  enum plus a boolean; free text plus a titled field). `params-form.tsx` renders
+  from that and names no model or parameter anywhere. Extracted the composer
+  into `use-composer.ts` + `composer.tsx` and rewrote D4 to render the SAME
+  body inside its dialog — media-panel.tsx is now ~70 lines because the tool is
+  shared. E1 gallery (kind + plan filters, gated models shown not hidden), E3
+  jobs (beacon dot while running, origin tags), E4 asset detail (attach picker
+  filtered to approved-or-later, generate-similar, delete confirm). H1–H4 with
+  the ledger showing held rows distinctly, and the `past_due` banner in the
+  shell gating generation and publishing product-wide. Added the `past-due`
+  dataset.
+- Phase: W5
+- Files: `src/features/studio/*` (4), `src/features/billing/billing-screens.tsx`,
+  `src/features/today/media-panel.tsx` (rewritten onto the shared composer),
+  `src/lib/params-schema.ts` + test, `src/lib/draft-status.ts`,
+  `src/data/{provider.tsx,types.ts,datasets/past-due.ts,studio-billing.test.ts,
+  entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
+  `src/routes.tsx`, `e2e/studio-billing.spec.ts`, `scripts/verify-w05.ts`
+- Decisions: none new (the state-machine edge below is recorded in
+  `draft-status.ts` itself, next to the transition table it changes)
+- Verify: verify:w05 green on every automated step (lint, typecheck, 212 unit
+  tests, guard-static, build, four structural checks, and 42 e2e).
+- Notes: two real findings.
+  (1) A MODELING GAP the attach picker exposed: `approved → media_ready` was
+  not a legal transition, so attaching an existing asset was impossible. There
+  are genuinely two routes to media — generate one (via `media_pending`) or
+  attach one that already exists and was already paid for — and the machine
+  only had the first. Edge added, with the reasoning beside the table.
+  (2) A REGRESSION my own refactor caused, caught by a W3 test: with no model
+  pre-selected, the composer started with empty params, so a required field was
+  unset and Generate sat disabled for a reason nobody could see. Params are now
+  seeded for whichever model is effectively selected, including the implicit
+  first one.
+  `verify-w05` adds four structural checks, the sharpest being that D4 and E2
+  must both render the shared `ComposerBody` and neither may grow its own params
+  form — the day someone copies the body to tweak it, the phase fails.
+- Next: W6 — compose, analytics, settings, system (F1, G1–G2, I1–I7, N1, N2, N4).

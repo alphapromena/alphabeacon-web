@@ -28,6 +28,7 @@ import type {
   Draft,
   Org,
   Platform,
+  PlanTier,
   Schedule,
   StudioJob,
   Tone,
@@ -76,7 +77,15 @@ export type DataAction =
   | { type: 'draft/reject'; draftId: string; reason: string }
   | { type: 'draft/edit'; draftId: string; copy: string }
   /** Reserves credits and puts the draft in media_pending until the job lands. */
-  | { type: 'media/start'; draftId: string; jobId: string; modelId: string; prompt: string }
+  /** `draftId` empty means a standalone Studio run with nothing to attach to. */
+  | {
+      type: 'media/start'
+      draftId: string
+      jobId: string
+      modelId: string
+      prompt: string
+      params?: Record<string, string | number | boolean>
+    }
   | { type: 'media/succeed'; jobId: string; assetId: string }
   | { type: 'media/fail'; jobId: string; reason: string }
   | { type: 'draft/schedule'; draftId: string; scheduledFor: string; platforms: Platform[] }
@@ -94,6 +103,11 @@ export type DataAction =
   | { type: 'connection/setPages'; platform: Platform; pageIds: string[] }
   | { type: 'eventSources/toggleCalendar'; sourceId: string; calendarId: string; enabled: boolean }
   | { type: 'eventSources/retry'; sourceId: string }
+  // --- studio + billing (E1-E4, H1-H4) --------------------------------------
+  | { type: 'asset/delete'; assetId: string }
+  | { type: 'asset/attach'; assetId: string; draftId: string }
+  | { type: 'billing/changePlan'; planId: PlanTier }
+  | { type: 'billing/resolvePastDue' }
 
 export function dataReducer(state: DataState, action: DataAction): DataState {
   switch (action.type) {
@@ -327,16 +341,21 @@ export function dataReducer(state: DataState, action: DataAction): DataState {
     case 'media/start': {
       const model = state.world.studioModels.find((m) => m.id === action.modelId)
       if (!model) return state
-      const next = transitionDraft(state, action.draftId, 'media_pending')
-      if (next === state) return state
+      // Draft-scoped runs move the draft; standalone runs have nothing to move,
+      // and must not be refused just because there is no draft.
+      const next = action.draftId ? transitionDraft(state, action.draftId, 'media_pending') : state
+      if (action.draftId && next === state) return state
       const job: StudioJob = {
         id: action.jobId,
         modelId: model.id,
         kind: model.kind,
         prompt: action.prompt,
+        params: action.params,
         credits: model.credits,
         status: 'running',
-        origin: { type: 'draft', draftId: action.draftId },
+        origin: action.draftId
+          ? { type: 'draft', draftId: action.draftId }
+          : { type: 'standalone' },
         createdAt: new Date().toISOString(),
       }
       return {
@@ -361,7 +380,7 @@ export function dataReducer(state: DataState, action: DataAction): DataState {
 
     case 'media/succeed': {
       const job = state.world.jobs.find((j) => j.id === action.jobId)
-      if (!job || job.origin.type !== 'draft') return state
+      if (!job) return state
       const at = new Date().toISOString()
       const asset: Asset = {
         id: action.assetId,
@@ -370,10 +389,13 @@ export function dataReducer(state: DataState, action: DataAction): DataState {
         label: job.prompt.slice(0, 60),
         createdAt: at,
       }
-      const withMedia = transitionDraft(state, job.origin.draftId, 'media_ready', (draft) => ({
-        ...draft,
-        assetId: asset.id,
-      }))
+      const withMedia =
+        job.origin.type === 'draft'
+          ? transitionDraft(state, job.origin.draftId, 'media_ready', (draft) => ({
+              ...draft,
+              assetId: asset.id,
+            }))
+          : state
       return {
         ...withMedia,
         world: {
@@ -405,11 +427,12 @@ export function dataReducer(state: DataState, action: DataAction): DataState {
 
     case 'media/fail': {
       const job = state.world.jobs.find((j) => j.id === action.jobId)
-      if (!job || job.origin.type !== 'draft') return state
+      if (!job) return state
       const at = new Date().toISOString()
       // A failed generation costs nothing: the hold is released and the draft
       // goes back to `approved`, where the media entry point still exists.
-      const reverted = transitionDraft(state, job.origin.draftId, 'approved')
+      const reverted =
+        job.origin.type === 'draft' ? transitionDraft(state, job.origin.draftId, 'approved') : state
       return {
         ...reverted,
         world: {
@@ -532,6 +555,75 @@ export function dataReducer(state: DataState, action: DataAction): DataState {
             source.id === action.sourceId ? { ...source, status: 'active' } : source,
           ),
         },
+      }
+
+    case 'asset/delete':
+      return {
+        ...state,
+        world: {
+          ...state.world,
+          assets: state.world.assets.filter((asset) => asset.id !== action.assetId),
+          // A draft pointing at a deleted asset would render a ghost.
+          drafts: state.world.drafts.map((draft) =>
+            draft.assetId === action.assetId ? { ...draft, assetId: undefined } : draft,
+          ),
+        },
+      }
+
+    /** E4: attaching a standalone asset to a draft that has earned media. */
+    case 'asset/attach': {
+      const draft = state.world.drafts.find((d) => d.id === action.draftId)
+      if (!draft) return state
+      const attached = {
+        ...state,
+        world: {
+          ...state.world,
+          drafts: state.world.drafts.map((d) =>
+            d.id === action.draftId ? { ...d, assetId: action.assetId } : d,
+          ),
+          jobs: state.world.jobs.map((job) =>
+            job.assetId === action.assetId
+              ? { ...job, origin: { type: 'draft' as const, draftId: action.draftId } }
+              : job,
+          ),
+        },
+      }
+      // An approved draft becomes media_ready; one already further along keeps
+      // its status, because attaching art does not un-schedule a post.
+      return canTransition(draft.status, 'media_ready')
+        ? transitionDraft(attached, action.draftId, 'media_ready')
+        : attached
+    }
+
+    case 'billing/changePlan': {
+      const plan = state.world.plans.find((p) => p.id === action.planId)
+      if (!plan) return state
+      const at = new Date().toISOString()
+      return {
+        ...state,
+        world: {
+          ...state.world,
+          billing: { ...state.world.billing, planId: plan.id, status: 'active' },
+          // A plan change grants its credits, and the grant is a ledger row
+          // like any other — the balance is never written directly.
+          ledger: [
+            ...state.world.ledger,
+            {
+              id: `led_plan_${plan.id}_${at}`,
+              at,
+              type: 'grant',
+              amount: plan.credits,
+              ref: { kind: 'subscription', id: plan.id },
+            },
+          ],
+        },
+      }
+    }
+
+    case 'billing/resolvePastDue':
+      return {
+        ...state,
+        world: { ...state.world, billing: { ...state.world.billing, status: 'active' } },
       }
 
     case 'draft/publish': {

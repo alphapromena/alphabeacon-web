@@ -18,7 +18,19 @@ import { VerifyEmailScreen } from '@/features/auth/verify-email-screen'
 import { CalendarScreen } from '@/features/calendar/calendar-screen'
 import { EventSourcesScreen } from '@/features/calendar/event-sources-screen'
 import { ScheduleConfigScreen } from '@/features/calendar/schedule-config-screen'
+import {
+  CheckoutReturnScreen,
+  CreditsScreen,
+  PlansScreen,
+  SubscriptionScreen,
+} from '@/features/billing/billing-screens'
 import { ConnectionsScreen } from '@/features/connections/connections-screen'
+import {
+  StudioAssetScreen,
+  StudioComposerScreen,
+  StudioGalleryScreen,
+  StudioJobsScreen,
+} from '@/features/studio/studio-screens'
 import { DashboardScreen } from '@/features/dashboard/dashboard-screen'
 import { DraftDetailScreen } from '@/features/today/draft-detail-screen'
 import { TodayScreen } from '@/features/today/today-screen'
@@ -56,9 +68,7 @@ function SignedOutOnly({ children }: { children: ReactNode }) {
 }
 
 const STUB_ROUTES = [
-  { path: '/studio', title: 'Studio', phase: 'W5' },
   { path: '/analytics', title: 'Analytics', phase: 'W6' },
-  { path: '/billing', title: 'Billing', phase: 'W5' },
   { path: '/settings', title: 'Settings', phase: 'W6' },
   { path: '/settings/tones', title: 'Tones', phase: 'W6' },
   { path: '/generate', title: 'Generate', phase: 'W6' },
@@ -120,6 +130,19 @@ export const router = createBrowserRouter([
     { path: '/calendar/settings', element: <ScheduleConfigScreen /> },
     { path: '/calendar/sources', element: <EventSourcesScreen /> },
     { path: '/connections', element: <ConnectionsScreen /> },
+
+    // Area E — Creative Studio
+    { path: '/studio', element: <StudioGalleryScreen /> },
+    { path: '/studio/new', element: <StudioComposerScreen /> },
+    { path: '/studio/jobs', element: <StudioJobsScreen /> },
+    { path: '/studio/assets/:id', element: <StudioAssetScreen /> },
+
+    // Area H — Billing
+    { path: '/billing', element: <SubscriptionScreen /> },
+    { path: '/billing/plans', element: <PlansScreen /> },
+    { path: '/billing/subscription', element: <SubscriptionScreen /> },
+    { path: '/billing/credits', element: <CreditsScreen /> },
+    { path: '/billing/return', element: <CheckoutReturnScreen /> },
   ].map(({ path, element }) => ({ path, element: <Authed>{element}</Authed> })),
 
   ...STUB_ROUTES.map(({ path, title, phase }) => ({

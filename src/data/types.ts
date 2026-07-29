@@ -209,6 +209,8 @@ export interface StudioJob {
   modelId: string
   kind: 'image' | 'video'
   prompt: string
+  /** The values the schema-driven params form produced for this run. */
+  params?: Record<string, string | number | boolean>
   credits: number
   status: JobStatus
   origin: { type: 'standalone' } | { type: 'draft'; draftId: string }

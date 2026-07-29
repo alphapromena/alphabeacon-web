@@ -20,12 +20,18 @@ export const DRAFT_STATUSES = [
 export type DraftStatus = (typeof DRAFT_STATUSES)[number]
 
 /**
- * Every legal edge. `media_pending → approved` is the failure path: a failed
- * generation releases its credits and returns the draft to `approved`.
+ * Every legal edge.
+ *
+ * `media_pending → approved` is the failure path: a failed generation releases
+ * its credits and returns the draft to `approved`.
+ *
+ * `approved → media_ready` is the SECOND way a draft gets media — attaching an
+ * asset that already exists (E4's attach picker). It skips `media_pending`
+ * because nothing is pending: the work was done, and paid for, earlier.
  */
 const TRANSITIONS: Record<DraftStatus, readonly DraftStatus[]> = {
   pending_review: ['approved', 'rejected', 'expired'],
-  approved: ['media_pending', 'scheduled', 'expired'],
+  approved: ['media_pending', 'media_ready', 'scheduled', 'expired'],
   media_pending: ['media_ready', 'approved'],
   media_ready: ['scheduled', 'expired'],
   scheduled: ['published', 'publish_failed'],

@@ -59,6 +59,17 @@ what an audience in that zone would actually see. The arithmetic is tested
 (`src/lib/timezone.test.ts`, including both 2026 DST boundaries); what a machine
 cannot judge is whether the screen makes the zone obvious enough to trust.
 
+### W5 — D4 and E2 as one tool
+
+Open the media panel from a draft, then the composer from the gallery, back to
+back. `verify:w05` proves they share the component; what it cannot judge is
+whether they *feel* like one tool, which is what the checklist actually asks.
+
+### W5 — the ledger as someone querying a charge
+
+Read `/billing/credits` as a customer asking why their balance is lower than
+their spend. Do the held rows explain it without needing the concept explained?
+
 ---
 
 ## Signed off

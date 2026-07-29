@@ -25,7 +25,8 @@
     "verify:w01": "tsx scripts/verify-w01.ts",
     "verify:w02": "tsx scripts/verify-w02.ts",
     "verify:w03": "tsx scripts/verify-w03.ts",
-    "verify:w04": "tsx scripts/verify-w04.ts"
+    "verify:w04": "tsx scripts/verify-w04.ts",
+    "verify:w05": "tsx scripts/verify-w05.ts"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

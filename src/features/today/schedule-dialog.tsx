@@ -22,7 +22,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
-import { useConnections, useDataDispatch } from '@/data/provider'
+import { useBilling, useConnections, useDataDispatch } from '@/data/provider'
 import type { Draft, Platform } from '@/data/types'
 import { cn } from '@/lib/utils'
 
@@ -50,7 +50,9 @@ export function ScheduleDialog({
   onOpenChange: (open: boolean) => void
 }) {
   const connections = useConnections()
+  const billing = useBilling()
   const dispatch = useDataDispatch()
+  const pastDue = billing.status === 'past_due'
 
   const publishable = connections.filter((c) => c.permissions.posting)
   const [selected, setSelected] = useState<Platform[]>([])
@@ -64,7 +66,7 @@ export function ScheduleDialog({
     )
 
   const submit = (publishNow: boolean) => {
-    if (selected.length === 0) return
+    if (selected.length === 0 || pastDue) return
     const scheduledFor = publishNow
       ? new Date().toISOString()
       : when
@@ -84,6 +86,15 @@ export function ScheduleDialog({
         </DialogHeader>
 
         <div className="flex flex-col gap-4">
+          {pastDue && (
+            <p
+              role="alert"
+              className="rounded-lg border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive"
+            >
+              Publishing is paused while your payment is unresolved. Your schedule and drafts are
+              untouched — update your payment method and this post can go out.
+            </p>
+          )}
           <div className="flex flex-col gap-2">
             <label htmlFor="schedule-when" className="text-sm font-medium">
               When
@@ -177,11 +188,15 @@ export function ScheduleDialog({
           <Button variant="ghost" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
-          <Button variant="outline" disabled={selected.length === 0} onClick={() => submit(true)}>
+          <Button
+            variant="outline"
+            disabled={selected.length === 0 || pastDue}
+            onClick={() => submit(true)}
+          >
             <Send aria-hidden />
             Publish now
           </Button>
-          <Button disabled={selected.length === 0} onClick={() => submit(false)}>
+          <Button disabled={selected.length === 0 || pastDue} onClick={() => submit(false)}>
             <CalendarClock aria-hidden />
             Schedule
           </Button>
