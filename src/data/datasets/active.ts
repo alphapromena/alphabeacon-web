@@ -7,6 +7,12 @@ import { GENERATION_MODELS } from '@/data/entities/generation-models'
 import { atlasActivity, atlasNotifications } from '@/data/entities/notifications'
 import { ATLAS_ORG, ATLAS_USERS } from '@/data/entities/orgs'
 import { PLANS } from '@/data/entities/plans'
+import {
+  ATLAS_TOPICS,
+  atlasFollowedSources,
+  atlasInvites,
+  atlasKnowledgeDocs,
+} from '@/data/entities/settings'
 import { atlasAssets, atlasJobs } from '@/data/entities/studio'
 import { STUDIO_MODELS } from '@/data/entities/studio-models'
 import { ATLAS_CUSTOM_TONES, PRESET_TONES } from '@/data/entities/tones'
@@ -22,8 +28,12 @@ export function buildActiveDataset(): Dataset {
       'Atlas Roasters — Pro plan, pipeline running, drafts in every status, LinkedIn needs re-auth.',
     org: structuredClone(ATLAS_ORG),
     users: structuredClone(ATLAS_USERS),
+    invites: atlasInvites(),
     session: { signedIn: true, userId: 'user_maya', emailVerified: true, failedSignIns: 0 },
     connections: atlasConnections(),
+    followedSources: atlasFollowedSources(),
+    topics: [...ATLAS_TOPICS],
+    knowledgeDocs: atlasKnowledgeDocs(),
     eventSources: atlasEventSources(),
     events: atlasEvents(),
     schedule: {

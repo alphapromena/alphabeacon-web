@@ -70,6 +70,25 @@ whether they _feel_ like one tool, which is what the checklist actually asks.
 Read `/billing/credits` as a customer asking why their balance is lower than
 their spend. Do the held rows explain it without needing the concept explained?
 
+### W6 — the compose run at full length
+
+Watch a generate run from the first word to the last. Does the token pace read
+as writing, or as a progress bar wearing words? The rate is one constant
+(`COMPOSE_TOKEN_MS`); nothing but a human can say whether it is the right one.
+
+### W6 — analytics as someone who had a quiet week
+
+Read G1 with the 30-day range on. Do the deltas, the "not reported" line and the
+per-channel cards tell one consistent story, or do they invite the reader to
+average three different ones?
+
+### W6 — Settings by keyboard alone
+
+Tab through all six Settings sections: the tag inputs, the rule lists, the
+dropzone, the invite dialog, and the sticky save bar. The bar overlays the
+bottom of the column — confirm the last field is still reachable and visible
+when it is showing.
+
 ---
 
 ## Signed off

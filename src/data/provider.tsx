@@ -26,11 +26,15 @@ import type {
   Dataset,
   DatasetId,
   Draft,
+  FollowedSource,
+  KnowledgeDoc,
+  KnowledgeStatus,
   Org,
   Platform,
   PlanTier,
   Schedule,
   StudioJob,
+  TeamInvite,
   Tone,
 } from '@/data/types'
 import { MAX_SIGN_IN_ATTEMPTS, SIGN_IN_LOCKOUT_MS } from '@/data/types'
@@ -42,15 +46,26 @@ export type OnboardingStep = Org['onboarding']['resumeStep']
 /** /dev/states override: force the loading or error presentation anywhere. */
 export type DevForce = 'none' | 'loading' | 'error'
 
+/**
+ * N4's condition. `auto` means "believe the browser" — the offline banner then
+ * follows the real `navigator.onLine`. The other two exist because a static app
+ * has no request that can fail, so degraded service has no honest signal to
+ * read; forcing it from `/dev/states` is how that designed state stays
+ * reachable without inventing a fake one in the product.
+ */
+export type Connectivity = 'auto' | 'offline' | 'degraded'
+
 export interface DataState {
   datasetId: DatasetId
   world: Dataset
   devForce: DevForce
+  connectivity: Connectivity
 }
 
 export type DataAction =
   | { type: 'dataset/switch'; id: DatasetId }
   | { type: 'dev/force'; mode: DevForce }
+  | { type: 'dev/connectivity'; mode: Connectivity }
   | { type: 'draft/transition'; draftId: string; to: DraftStatus }
   | { type: 'notifications/markAllRead' }
   | { type: 'session/signOut' }
@@ -108,6 +123,23 @@ export type DataAction =
   | { type: 'asset/attach'; assetId: string; draftId: string }
   | { type: 'billing/changePlan'; planId: PlanTier }
   | { type: 'billing/resolvePastDue' }
+  // --- on-demand generate (F1) ----------------------------------------------
+  /** A finished run becomes an ordinary draft, in the ordinary queue. */
+  | { type: 'draft/create'; draft: Draft }
+  // --- settings (I1-I7) -----------------------------------------------------
+  | { type: 'org/update'; patch: Partial<Org> }
+  | { type: 'tones/update'; tone: Tone }
+  | { type: 'tones/delete'; toneId: string }
+  | { type: 'sources/add'; source: FollowedSource }
+  | { type: 'sources/remove'; sourceId: string }
+  | { type: 'topics/set'; topics: string[] }
+  | { type: 'knowledge/add'; doc: KnowledgeDoc }
+  | { type: 'knowledge/status'; docId: string; status: KnowledgeStatus; failureReason?: string }
+  | { type: 'knowledge/progress'; docId: string; progress: number }
+  | { type: 'knowledge/remove'; docId: string }
+  | { type: 'team/invite'; invite: TeamInvite }
+  | { type: 'team/revokeInvite'; inviteId: string }
+  | { type: 'team/removeMember'; userId: string }
 
 export function dataReducer(state: DataState, action: DataAction): DataState {
   switch (action.type) {
@@ -115,6 +147,8 @@ export function dataReducer(state: DataState, action: DataAction): DataState {
       return { ...state, datasetId: action.id, world: buildDataset(action.id) }
     case 'dev/force':
       return { ...state, devForce: action.mode }
+    case 'dev/connectivity':
+      return { ...state, connectivity: action.mode }
     case 'draft/transition': {
       const draft = state.world.drafts.find((d) => d.id === action.draftId)
       // Illegal transitions are a no-op by design: buttons render from
@@ -626,6 +660,133 @@ export function dataReducer(state: DataState, action: DataAction): DataState {
         world: { ...state.world, billing: { ...state.world.billing, status: 'active' } },
       }
 
+    /**
+     * F1's finished run. It enters at `pending_review` like anything the
+     * pipeline produced, which is the point: an on-demand post is reviewed,
+     * approved and scheduled through exactly the same machine.
+     */
+    case 'draft/create':
+      return { ...state, world: { ...state.world, drafts: [action.draft, ...state.world.drafts] } }
+
+    case 'org/update':
+      return { ...state, world: { ...state.world, org: { ...state.world.org, ...action.patch } } }
+
+    case 'tones/update':
+      return {
+        ...state,
+        world: {
+          ...state.world,
+          tones: state.world.tones.map((tone) => (tone.id === action.tone.id ? action.tone : tone)),
+        },
+      }
+    /**
+     * Deleting a tone takes it out of the library and out of the schedule, so
+     * nothing new can be drafted in it. Drafts that already used it keep their
+     * copy — that text was written, and unwriting it would be a lie about what
+     * was published. Presets are never deletable, so a schedule can never be
+     * left with nothing to speak in.
+     */
+    case 'tones/delete':
+      return {
+        ...state,
+        world: {
+          ...state.world,
+          tones: state.world.tones.filter(
+            (tone) => tone.id !== action.toneId || tone.kind === 'preset',
+          ),
+          schedule: {
+            ...state.world.schedule,
+            toneIds: state.world.schedule.toneIds.filter((id) => id !== action.toneId),
+          },
+        },
+      }
+
+    case 'sources/add':
+      return {
+        ...state,
+        world: { ...state.world, followedSources: [...state.world.followedSources, action.source] },
+      }
+    case 'sources/remove':
+      return {
+        ...state,
+        world: {
+          ...state.world,
+          followedSources: state.world.followedSources.filter((s) => s.id !== action.sourceId),
+        },
+      }
+    case 'topics/set':
+      return { ...state, world: { ...state.world, topics: action.topics } }
+
+    case 'knowledge/add':
+      return {
+        ...state,
+        world: { ...state.world, knowledgeDocs: [action.doc, ...state.world.knowledgeDocs] },
+      }
+    /** The ingestion lifecycle: Uploading → Processing → Ready | Failed. */
+    case 'knowledge/status':
+      return {
+        ...state,
+        world: {
+          ...state.world,
+          knowledgeDocs: state.world.knowledgeDocs.map((doc) =>
+            doc.id === action.docId
+              ? {
+                  ...doc,
+                  status: action.status,
+                  // Progress belongs to the upload; past it, it would be a lie.
+                  progress: action.status === 'uploading' ? doc.progress : undefined,
+                  failureReason: action.status === 'failed' ? action.failureReason : undefined,
+                }
+              : doc,
+          ),
+        },
+      }
+    case 'knowledge/progress':
+      return {
+        ...state,
+        world: {
+          ...state.world,
+          knowledgeDocs: state.world.knowledgeDocs.map((doc) =>
+            doc.id === action.docId ? { ...doc, progress: action.progress } : doc,
+          ),
+        },
+      }
+    case 'knowledge/remove':
+      return {
+        ...state,
+        world: {
+          ...state.world,
+          knowledgeDocs: state.world.knowledgeDocs.filter((doc) => doc.id !== action.docId),
+        },
+      }
+
+    case 'team/invite':
+      return {
+        ...state,
+        world: { ...state.world, invites: [...state.world.invites, action.invite] },
+      }
+    case 'team/revokeInvite':
+      return {
+        ...state,
+        world: {
+          ...state.world,
+          invites: state.world.invites.filter((invite) => invite.id !== action.inviteId),
+        },
+      }
+    case 'team/removeMember':
+      return {
+        ...state,
+        world: {
+          ...state.world,
+          // Never the signed-in user: I7 does not render the control for
+          // yourself, and the reducer refuses it too rather than trusting that.
+          users:
+            action.userId === state.world.session.userId
+              ? state.world.users
+              : state.world.users.filter((user) => user.id !== action.userId),
+        },
+      }
+
     case 'draft/publish': {
       const draft = state.world.drafts.find((d) => d.id === action.draftId)
       if (!draft) return state
@@ -694,6 +855,7 @@ export function DataProvider({
     datasetId: id,
     world: buildDataset(id),
     devForce: 'none' as DevForce,
+    connectivity: 'auto' as Connectivity,
   }))
   const value = useMemo(() => ({ state, dispatch }), [state])
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>
@@ -738,6 +900,22 @@ export function useSession() {
 
 export function useUsers() {
   return useData().state.world.users
+}
+
+export function useInvites() {
+  return useData().state.world.invites
+}
+
+export function useFollowedSources() {
+  return useData().state.world.followedSources
+}
+
+export function useTopics() {
+  return useData().state.world.topics
+}
+
+export function useKnowledgeDocs() {
+  return useData().state.world.knowledgeDocs
 }
 
 export function useDrafts() {
@@ -816,6 +994,10 @@ export function useActivity() {
 
 export function useDevForce() {
   return useData().state.devForce
+}
+
+export function useConnectivity() {
+  return useData().state.connectivity
 }
 
 // ---------------------------------------------------------------------------

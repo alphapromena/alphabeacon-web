@@ -12,7 +12,7 @@ import { dataReducer, type DataState } from '@/data/provider'
 import type { DatasetId } from '@/data/types'
 
 function world(id: DatasetId): DataState {
-  return { datasetId: id, world: buildDataset(id), devForce: 'none' }
+  return { datasetId: id, world: buildDataset(id), devForce: 'none', connectivity: 'auto' }
 }
 
 const balanceOf = (state: DataState) =>

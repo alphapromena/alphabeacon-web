@@ -38,6 +38,18 @@ export const MESSAGES = {
     modelRequired: 'Pick which model drafts your copy.',
     toneNameRequired: 'Name this tone so you can pick it later.',
     toneRuleRequired: 'Add at least one do or one dont so the tone means something.',
+
+    // On-demand generate (F1)
+    promptRequired: 'Tell us what to write about.',
+    generateRateLimited:
+      "You've hit the generation limit for now. Your scheduled slots keep running — on-demand runs open up again tomorrow.",
+    generatePaused: 'Generation is paused while your payment is unresolved.',
+
+    // Settings (I1–I7)
+    sourceUrlRequired: 'Paste the address of a feed, blog, or news page.',
+    sourceUrlInvalid: 'That does not look like a web address.',
+    inviteEmailTaken: 'Someone with that email is already on the team or invited.',
+    knowledgeUnreadable: 'We could not read that file. Try a text-based PDF, DOCX, TXT, or CSV.',
   },
   empty: {
     dashboardFresh: 'Your pipeline has not started yet — finish setup to see drafts here.',
@@ -46,6 +58,14 @@ export const MESSAGES = {
     noConnections: 'Nothing connected yet — connect your first account to start posting.',
     noEventSources: "No event sources yet — add your country's holidays or connect a calendar.",
     noCustomTones: 'No custom tones yet — create one to match a campaign or product line.',
+    noAnalytics:
+      'No analytics yet — connect a channel and turn its analytics permission on to see reach here.',
+    noPublishedPosts: 'No published posts yet in this range.',
+    noBrandVoice: 'No rules yet — add one so every draft knows what you would never say.',
+    noFollowedSources: 'No sources yet — add a feed so drafts have something current to work from.',
+    noTopics: 'No topics yet — add a few so drafts stay on subjects you care about.',
+    noKnowledge: 'No documents yet — upload your price list, FAQs, or product notes.',
+    noInvites: 'Invite your team to collaborate.',
   },
   /** Non-error copy that must stay identical wherever it appears. */
   notices: {
@@ -53,6 +73,16 @@ export const MESSAGES = {
       'If that email has an account, a reset link is on its way. Check your inbox — and your spam folder.',
     setupIncomplete: "Let's finish setting up your workspace — your pipeline hasn't started yet.",
     xComingSoon: 'X support is coming soon. Everything else is ready to connect now.',
+    /** G1/G2 — an absent number is never drawn as a zero. */
+    syncPending: 'Sync pending — this channel has not reported numbers for this range yet.',
+    limitedAnalytics:
+      'This platform only reports follower counts for accounts like yours, so reach and engagement are not available here. That is a limit of the platform, not a gap in your posting.',
+    /** I2 — the cross-note tones and brand voice both carry. */
+    brandVoiceUnderTones:
+      'Brand voice always applies underneath whatever tone is selected — tones vary the style, these rules never bend.',
+    // N4. Both are non-blocking and clear themselves.
+    offline: "You're offline — changes will sync when you reconnect.",
+    degraded: "We're having trouble reaching AlphaBeacon — retrying…",
   },
 } as const
 

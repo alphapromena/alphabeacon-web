@@ -159,6 +159,12 @@ count-up in `useCountUp` enforces the same rule in JavaScript, where CSS cannot
 reach: under reduced motion the final figure renders immediately rather than
 animating faster. No other animation may be added without extending this part.
 
+F1's token-by-token stream is **not** a third animation: it is content arriving,
+the same way a list grows when data lands. The only motion on that screen is the
+signal sweep on the card's top edge while the run is in flight. The caret beside
+the text is a static glyph — it does not blink, because a blinking cursor would
+be exactly the decorative animation this part exists to refuse.
+
 ---
 
 ## Part 6 — The rules that outrank taste
@@ -172,3 +178,8 @@ animating faster. No other animation may be added without extending this part.
 6. Custom tones render identically to preset tones, everywhere.
 7. Reduced motion removes signature animation entirely.
 8. The app is light + dark; marketing is light-only.
+9. A figure nobody reported is absent, never zero — "Syncing…" on a post, no
+   delta at all where there is no comparable prior period.
+10. A metric moving the wrong way is `warning`, not `destructive`. Reach falling
+    is news; it is not an error, and colouring it like one cries wolf on the
+    screen where a real failure has to stand out.

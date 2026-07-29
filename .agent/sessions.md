@@ -324,3 +324,54 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   because there is no remote yet, so anyone cloning and checking out `main`
   finds no product code. Needs either a fast-forward or the GitHub repo.
 - Next: W6 — compose, analytics, settings, system (F1, G1–G2, I1–I7, N1, N2, N4).
+
+### 2026-07-29 09:55 — W6: compose, analytics, settings, system (F1, G1–G2, I1–I7, N1, N2, N4)
+
+- Did: built the last of `screens4.md`. **F1** streams a run word by word from
+  `lib/compose-player.ts` replaying `data/compose-scripts.ts` — five outcomes,
+  chosen by a word in the prompt so each designed state is reachable by typing
+  rather than by a demo control in the product; a finished run becomes an
+  ordinary `DraftCard` wired to D2's own actions, which meant extracting
+  `use-draft-actions.ts` + `draft-dialogs.tsx` so the queue and compose share one
+  action row instead of two. **G1/G2** carry the "Syncing…" rule into analytics:
+  unsynced channels are excluded from the totals and the totals say so, a delta
+  with no comparable prior period is absent rather than 0%, and LinkedIn's
+  follower-only reporting gets the written explanation instead of an empty chart.
+  **I1–I7** share one frame, one save bar and one dirty guard (extracted to
+  `ab/save-bar.tsx`, C1 moved onto it); the tone editor became `ToneEditorForm`
+  behind both the sheet and a routed page, and grew a Preview that shows brand
+  voice and tone rules in force together. **N1** moved out of the shell with
+  per-type icons and a real unread count; **N2** got the signal gradient and a
+  secondary link that goes somewhere; **N4** reads the browser's real offline
+  events, with degraded service forced from `/dev/states`.
+- Also: deleted `Org.timezone` (nothing read it; `Schedule.timezone` is the
+  single source screens4.md I1 asks for), gave LinkedIn a read scope that
+  explains its `limited` series, extended the analytics series to 30 days so
+  ranges have something to compare against, added `toneId` to published posts
+  for G2's best-tone chip, and removed `PlaceholderScreen` — no route is a stub
+  any more.
+- Three things bit, and are now in `state.md`: Playwright's `getByText` is
+  case-insensitive substring matching (a tone named "Roastery floor" matched a
+  brand-voice rule about the roastery floor); an open Radix menu is modal, so the
+  bell is `aria-hidden` while its own menu is open; and a structural check
+  written against a sentence in JSX failed the moment Prettier wrapped the line —
+  the check now matches structure, not prose.
+- Phase: W6
+- Files: `src/features/generate/*`, `src/features/analytics/*`,
+  `src/features/settings/*`, `src/lib/compose-player.ts`,
+  `src/data/compose-scripts.ts`, `src/data/entities/settings.ts`,
+  `src/components/ab/{save-bar,notification-bell,offline-banner,stat-card}.tsx`,
+  `src/features/today/{use-draft-actions.ts,draft-dialogs.tsx,today-screen.tsx}`,
+  `src/data/{types.ts,provider.tsx}`, `src/routes.tsx`,
+  `scripts/verify-w06.ts`, `e2e/compose-analytics-settings.spec.ts`, docs
+- Decisions: see decisions.md — script catalogue chosen by the prompt · one
+  timezone on the schedule · Preview composes and says so · offline real,
+  degraded forced · Retry only where a retry could win · 404 points at your
+  admins · the save bar and its guard are one component
+- Verify: `verify:w06` green — lint, typecheck, 264 unit tests, guard-static,
+  build, seven structural checks, 59 e2e including axe on generate, analytics,
+  settings and knowledge
+- Next: W7 — hardening and ship. First real work: the message-catalogue
+  completeness test (MESSAGES grew a lot here), route-level code-splitting (the
+  bundle is one ~1.2 MB chunk and vite already warns), and the full-app `@golden`
+  walks. Lighthouse still needs the parked domain + certificate.

@@ -7,19 +7,16 @@
  * error and the rest of the queue keeps working.
  */
 import { Inbox, Plus } from 'lucide-react'
-import { useState } from 'react'
 import { Link } from 'react-router'
 import { EmptyState } from '@/components/ab/empty-state'
 import { ErrorState } from '@/components/ab/error-state'
 import { MonoNumber } from '@/components/ab/mono-number'
 import { BeaconDot } from '@/components/ab/motion'
 import { SkeletonList } from '@/components/ab/skeletons'
-import { toastSuccess } from '@/components/ab/toast'
 import { AppShell } from '@/components/ab/app-shell'
 import { Button } from '@/components/ui/button'
 import {
   useAssets,
-  useBilling,
   useCalendarEvents,
   useDataDispatch,
   useDrafts,
@@ -31,10 +28,8 @@ import {
 import type { Draft } from '@/data/types'
 import { MESSAGES } from '@/lib/messages'
 import { DraftCard } from './draft-card'
-import { MediaPanel } from './media-panel'
-import { RejectDialog } from './reject-dialog'
-import { ScheduleDialog } from './schedule-dialog'
-import { EditDraftDialog } from './edit-draft-dialog'
+import { DraftDialogs } from './draft-dialogs'
+import { useDraftActions } from './use-draft-actions'
 
 export function TodayScreen() {
   const drafts = useDrafts()
@@ -43,14 +38,9 @@ export function TodayScreen() {
   const events = useCalendarEvents()
   const assets = useAssets()
   const schedule = useSchedule()
-  const billing = useBilling()
   const dispatch = useDataDispatch()
   const phase = useScreenPhase()
-
-  const [mediaFor, setMediaFor] = useState<Draft | null>(null)
-  const [scheduleFor, setScheduleFor] = useState<Draft | null>(null)
-  const [rejectFor, setRejectFor] = useState<Draft | null>(null)
-  const [editFor, setEditFor] = useState<Draft | null>(null)
+  const actions = useDraftActions()
 
   const today = new Date().toISOString().slice(0, 10)
   const todaySlots = slots.filter((slot) => slot.date === today)
@@ -157,17 +147,7 @@ export function TodayScreen() {
                           tone={tones.find((t) => t.id === draft.toneId)}
                           event={events.find((e) => e.id === draft.eventId)}
                           assetLabel={assets.find((a) => a.id === draft.assetId)?.label}
-                          onApprove={() => {
-                            dispatch({ type: 'draft/approve', draftId: draft.id })
-                            toastSuccess('Approved', {
-                              description: 'Create the art, or schedule it as it is.',
-                            })
-                          }}
-                          onReject={() => setRejectFor(draft)}
-                          onEdit={() => setEditFor(draft)}
-                          onCreateMedia={() => setMediaFor(draft)}
-                          onSchedule={() => setScheduleFor(draft)}
-                          onRetry={() => dispatch({ type: 'draft/publish', draftId: draft.id })}
+                          {...actions.handlersFor(draft)}
                         />
                       ))}
                     </div>
@@ -179,27 +159,7 @@ export function TodayScreen() {
         </div>
       )}
 
-      <MediaPanel
-        draft={mediaFor}
-        planTier={billing.planId}
-        open={mediaFor !== null}
-        onOpenChange={(next) => !next && setMediaFor(null)}
-      />
-      <ScheduleDialog
-        draft={scheduleFor}
-        open={scheduleFor !== null}
-        onOpenChange={(next) => !next && setScheduleFor(null)}
-      />
-      <RejectDialog
-        draft={rejectFor}
-        open={rejectFor !== null}
-        onOpenChange={(next) => !next && setRejectFor(null)}
-      />
-      <EditDraftDialog
-        draft={editFor}
-        open={editFor !== null}
-        onOpenChange={(next) => !next && setEditFor(null)}
-      />
+      <DraftDialogs actions={actions} />
     </AppShell>
   )
 }

@@ -284,3 +284,73 @@ add a new entry that says it supersedes the old one.
   CloudFront response-headers policy, asserted in e2e.
 - Instead of: deferring headers until there is something to protect — by then the
   inline-style and third-party-script habits are already in the codebase.
+
+### 2026-07-29 — F1's stream is a script catalogue, chosen by the prompt
+
+- Why: the app is static, so the "model" is a timer replaying canned copy — but
+  every state F1 must render is a state a real stream produces. Five scripts in
+  `src/data/compose-scripts.ts` cover the five outcomes (complete, complete with
+  a mid-stream guardrail flag, dropped, long-enough-to-stop, refused), and
+  `pickScript` selects one by a word in the prompt so each is reachable by
+  typing. The allowance check runs first, so no prompt can type past a refusal.
+- Instead of: a dev-only "which script?" control in the product (demo furniture
+  a user would find), or random selection (untestable, and a designed state you
+  cannot reach on purpose is a designed state nobody reviews).
+
+### 2026-07-29 — The org's timezone lives on the schedule, and only there
+
+- Why: screens4.md I1 asks for "timezone (mirrors C1, single source)". `Org` and
+  `Schedule` both carried one; nothing read the org's copy, and the first thing
+  that did would have made two screens disagree about when a post goes out.
+  `Org.timezone` is deleted, and I1's control dispatches `schedule/update`.
+- Instead of: keeping both and syncing them on save — the sync is the bug.
+
+### 2026-07-29 — I4's Preview composes, and says so
+
+- Why: the screen promises "one sample line combining the org's brand voice with
+  this tone's rules", and there is no model to ask. What can be shown honestly is
+  the thing the action exists for: which brand-voice rules and which tone rules
+  are in force at the same time, beside a sample line (the tone's own example
+  when it has one). `composePreview` is pure, so the composition is testable.
+- Instead of: a fake spinner and a canned sentence dressed as a generation —
+  the one place in this product where pretending would actually mislead.
+
+### 2026-07-29 — N4's offline state is real; degraded service is forced
+
+- Why: `navigator.onLine` plus the `online`/`offline` events is genuine signal
+  and costs nothing, so the offline banner is real. "We're having trouble
+  reaching AlphaBeacon" has no honest source in an app that never makes a
+  request, so it is reachable only through `/dev/states`, alongside loading and
+  error. Both messages live in the catalogue and both render.
+- Instead of: inventing a failure on a timer so the second banner "works" — a
+  product whose first lie is an outage it made up.
+
+### 2026-07-29 — Retry only appears where a retry could win
+
+- Why: I6 has two kinds of failure. A file we cannot read at all (wrong type)
+  will fail identically forever, so it offers the reason and Remove; a failure
+  that might clear offers Retry. This is the same law as the media entry points
+  in D2 — a control you can see but never use is a tease.
+- Instead of: one Retry on every failure (teaches people the button is a lie), or
+  a `retryable` flag on the record (a field to describe what the reason already
+  says).
+
+### 2026-07-29 — N2's secondary link goes to your admins, not to "support"
+
+- Why: screens4.md N2 asks for a secondary support link. There is no support
+  inbox, and a link that goes nowhere is worse than none — so 404 points at the
+  people who can actually act, the admins in this workspace (I7).
+- Instead of: a fabricated `support@` address, which would look real enough to
+  be tried.
+
+### 2026-07-29 — The save bar and its dirty guard are one component
+
+- Why: C1 had a sticky save bar and a leave-without-saving dialog written inline,
+  and W6 added three more screens that need both. They are one promise — nothing
+  changes until you save, and leaving with unsaved work is refused out loud — so
+  a screen that took the bar without the guard would keep half of it.
+  `components/ab/save-bar.tsx` owns both; `verify:w06` fails any settings screen
+  that grows its own `useBlocker`.
+- Instead of: copying the pattern per screen (four wordings of the same refusal),
+  or a hook that returns state a screen still has to render (the half nobody
+  copies is the dialog).

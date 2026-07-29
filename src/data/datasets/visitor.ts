@@ -1,3 +1,4 @@
+import { dayFromNow } from '@/data/dates'
 import { GENERATION_MODELS } from '@/data/entities/generation-models'
 import { PLANS } from '@/data/entities/plans'
 import { STUDIO_MODELS } from '@/data/entities/studio-models'
@@ -23,11 +24,16 @@ export function buildVisitorDataset(): Dataset {
       name: '',
       offer: '',
       differentiators: [],
-      timezone: 'Asia/Amman',
+      ctaText: '',
+      brandVoice: { do: [], dont: [], examples: [] },
       onboarding: { completed: false, resumeStep: 1 },
     },
-    users: [{ id: 'user_new', name: '', email: '', role: 'admin' }],
+    users: [{ id: 'user_new', name: '', email: '', role: 'admin', joinedAt: dayFromNow(0) }],
+    invites: [],
     session: { signedIn: false, userId: 'user_new', emailVerified: false, failedSignIns: 0 },
+    followedSources: [],
+    topics: [],
+    knowledgeDocs: [],
     // Every platform shows as connectable — onboarding step 2 is the first
     // place this world has anything to say.
     connections: (['facebook', 'instagram', 'linkedin', 'x'] as const).map((platform) => ({

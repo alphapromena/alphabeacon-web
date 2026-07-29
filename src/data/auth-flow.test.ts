@@ -9,7 +9,12 @@ import { dataReducer, type DataState } from '@/data/provider'
 import { MAX_SIGN_IN_ATTEMPTS } from '@/data/types'
 
 function visitor(): DataState {
-  return { datasetId: 'visitor', world: buildDataset('visitor'), devForce: 'none' }
+  return {
+    datasetId: 'visitor',
+    world: buildDataset('visitor'),
+    devForce: 'none',
+    connectivity: 'auto',
+  }
 }
 
 describe('signup (A1)', () => {

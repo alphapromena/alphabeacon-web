@@ -11,7 +11,7 @@
  * When `to` is set the whole tile is the link (a card-sized target beats a
  * "view more" afterthought) and keeps a visible focus ring.
  */
-import { TriangleAlert, type LucideIcon } from 'lucide-react'
+import { ArrowDownRight, ArrowUpRight, TriangleAlert, type LucideIcon } from 'lucide-react'
 import { Link } from 'react-router'
 import { MonoNumber } from '@/components/ab/mono-number'
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -23,6 +23,7 @@ export function StatCard({
   icon: Icon,
   tone = 'default',
   hint,
+  delta,
   to,
   className,
 }: {
@@ -33,6 +34,13 @@ export function StatCard({
   tone?: 'default' | 'warning'
   /** Short, concrete context under the number. Not a place for hype. */
   hint?: string
+  /**
+   * Period-over-period movement (G1). Arrow + signed percent + a spoken
+   * direction, so it survives greyscale and a screen reader. Pass nothing when
+   * there is no comparable prior period — an invented "0%" is worse than
+   * silence.
+   */
+  delta?: { percent: number; period: string }
   /** In-app route; makes the whole card the link. */
   to?: string
   className?: string
@@ -67,6 +75,7 @@ export function StatCard({
           className={cn('text-3xl leading-none font-semibold', warn && 'text-warning')}
         />
         {warn && <span className="sr-only">Needs attention</span>}
+        {delta && <Delta {...delta} />}
         {hint && <p className="text-xs text-muted-foreground">{hint}</p>}
       </CardContent>
     </Card>
@@ -84,5 +93,28 @@ export function StatCard({
     >
       {card}
     </Link>
+  )
+}
+
+/** Movement, said three ways at once: shape, sign, and a word. */
+function Delta({ percent, period }: { percent: number; period: string }) {
+  const up = percent >= 0
+  const Arrow = up ? ArrowUpRight : ArrowDownRight
+  return (
+    <p className="flex flex-wrap items-center gap-1 text-xs">
+      <Arrow
+        aria-hidden
+        className={cn('size-3.5 shrink-0', up ? 'text-success' : 'text-warning')}
+      />
+      <MonoNumber
+        value={`${up ? '+' : ''}${percent}%`}
+        className={cn('font-medium', up ? 'text-success' : 'text-warning')}
+      />
+      <span className="sr-only">{up ? 'up on' : 'down on'}</span>
+      <span aria-hidden className="text-muted-foreground">
+        vs
+      </span>
+      <span className="text-muted-foreground">{period}</span>
+    </p>
   )
 }

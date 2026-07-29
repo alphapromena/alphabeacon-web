@@ -17,8 +17,12 @@ export function buildFreshDataset(): Dataset {
       'Nova Skincare — just signed up, onboarding not started, no connections, no drafts.',
     org: structuredClone(NOVA_ORG),
     users: structuredClone(NOVA_USERS),
+    invites: [],
     session: { signedIn: true, userId: 'user_lena', emailVerified: true, failedSignIns: 0 },
     connections: novaConnections(),
+    followedSources: [],
+    topics: [],
+    knowledgeDocs: [],
     eventSources: [],
     events: [],
     schedule: {

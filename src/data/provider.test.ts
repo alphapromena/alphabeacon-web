@@ -3,7 +3,12 @@ import { buildDataset } from '@/data/datasets'
 import { dataReducer, type DataState } from '@/data/provider'
 
 function initialState(): DataState {
-  return { datasetId: 'active', world: buildDataset('active'), devForce: 'none' }
+  return {
+    datasetId: 'active',
+    world: buildDataset('active'),
+    devForce: 'none',
+    connectivity: 'auto',
+  }
 }
 
 describe('dataReducer', () => {

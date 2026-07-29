@@ -11,7 +11,6 @@
  * different grants: plenty of teams want the numbers without handing over the
  * ability to post.
  */
-import { AtSign, Briefcase, Camera, Users, type LucideIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useSearchParams } from 'react-router'
 import { AppShell } from '@/components/ab/app-shell'
@@ -39,18 +38,7 @@ import { relativeTime, shortDate } from '@/lib/format'
 import { MESSAGES } from '@/lib/messages'
 import { ConnectionSheet } from './connection-sheet'
 import { ConnectReturn } from './connect-return'
-
-/**
- * Neutral glyphs, not brand marks: lucide dropped its brand icons in v1, and
- * shipping someone else's logo has licensing weight a placeholder should not
- * carry. The platform NAME is what identifies the card.
- */
-const PLATFORMS: Record<Platform, { label: string; icon: LucideIcon }> = {
-  facebook: { label: 'Facebook Page', icon: Users },
-  instagram: { label: 'Instagram', icon: Camera },
-  linkedin: { label: 'LinkedIn', icon: Briefcase },
-  x: { label: 'X', icon: AtSign },
-}
+import { PLATFORMS } from './platforms'
 
 export function ConnectionsScreen() {
   const connections = useConnections()

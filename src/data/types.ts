@@ -15,22 +15,50 @@ import { MESSAGES } from '@/lib/messages'
 // Org, users, session
 // ---------------------------------------------------------------------------
 
+/**
+ * The org-wide do/don't rules that shape every draft (I2). Brand voice always
+ * applies underneath whatever tone is selected — the two are layered, not
+ * alternatives, which is why they are separate records.
+ */
+export interface BrandVoice {
+  do: string[]
+  dont: string[]
+  /** Illustrative snippets, not rules — shown as examples in I2. */
+  examples: string[]
+}
+
 export interface Org {
   id: string
   name: string
   /** One-line offer shown across onboarding and settings. */
   offer: string
   differentiators: string[]
-  timezone: string
+  /** The standard closing ask drafts fall back to (I1). */
+  ctaText: string
+  /** A locally-read data URL from I1's picker; no asset is ever fetched. */
+  logo?: string
+  brandVoice: BrandVoice
   /** Onboarding progress; N3 resumes at `resumeStep` when incomplete. */
   onboarding: { completed: boolean; resumeStep: 1 | 2 | 3 | 4 | 5 }
 }
+// NOTE: the org's timezone lives on `Schedule`, not here. screens4.md I1 asks
+// for "timezone (mirrors C1, single source)" — two fields would be two sources.
 
 export interface User {
   id: string
   name: string
   email: string
   role: 'admin' | 'member'
+  /** ISO date, shown mono in I7. */
+  joinedAt: string
+}
+
+/** A sent-but-unaccepted invitation (I7's "Invited" rows). */
+export interface TeamInvite {
+  id: string
+  email: string
+  role: User['role']
+  invitedAt: string
 }
 
 /**
@@ -86,6 +114,34 @@ export interface Tone {
   rules: { do: string[]; dont: string[] }
   /** Optional sample sentence used to steer generation. */
   example?: string
+}
+
+// ---------------------------------------------------------------------------
+// Followed sources, topics, knowledge (I5, I6)
+// ---------------------------------------------------------------------------
+
+/** An RSS/news/blog feed the pipeline reads for material. */
+export interface FollowedSource {
+  id: string
+  /** Scheme-less by design — the static law bans http(s):// literals in src/. */
+  url: string
+  name: string
+  addedAt: string
+}
+
+/** Uploading → Processing → Ready | Failed. Per file, mixed within one batch. */
+export type KnowledgeStatus = 'uploading' | 'processing' | 'ready' | 'failed'
+
+export interface KnowledgeDoc {
+  id: string
+  filename: string
+  sizeBytes: number
+  status: KnowledgeStatus
+  /** 0–100 while uploading; absent once the upload finishes. */
+  progress?: number
+  /** failed only: what went wrong, shown next to Retry. */
+  failureReason?: string
+  addedAt: string
 }
 
 export type PlanTier = 'free' | 'pro' | 'studio'
@@ -290,6 +346,8 @@ export interface AnalyticsSeries {
   posts: {
     draftId?: string
     title: string
+    /** Which tone wrote it — G2's "best-performing tone" reads this. */
+    toneId?: string
     publishedAt: string
     /** Absent until the platform reports — never render 0 in its place. */
     metrics?: { reach: number; engagement: number; likes: number }
@@ -333,8 +391,12 @@ export interface Dataset {
   description: string
   org: Org
   users: User[]
+  invites: TeamInvite[]
   session: Session
   connections: Connection[]
+  followedSources: FollowedSource[]
+  topics: string[]
+  knowledgeDocs: KnowledgeDoc[]
   eventSources: CalendarSource[]
   events: CalendarEvent[]
   schedule: Schedule

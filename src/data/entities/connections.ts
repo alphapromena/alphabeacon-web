@@ -37,8 +37,10 @@ export function atlasConnections(): Connection[] {
       accountName: 'Atlas Roasters',
       handle: 'atlas-roasters',
       connectedSince: dayFromNow(-60),
-      permissions: { analytics: false, posting: true },
-      scopes: ['w_member_social'],
+      // The read scope only ever yields follower counts, which is exactly why
+      // this channel's series carries `limited` (G2's honesty note).
+      permissions: { analytics: true, posting: true },
+      scopes: ['w_member_social', 'r_member_profile'],
       lastSyncAt: timestampAt(-3, '06:10'),
     },
     {

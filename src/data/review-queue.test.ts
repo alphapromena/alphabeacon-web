@@ -12,7 +12,12 @@ import type { Draft } from '@/data/types'
 import { DRAFT_STATUSES, canTransition, type DraftStatus } from '@/lib/draft-status'
 
 function active(): DataState {
-  return { datasetId: 'active', world: buildDataset('active'), devForce: 'none' }
+  return {
+    datasetId: 'active',
+    world: buildDataset('active'),
+    devForce: 'none',
+    connectivity: 'auto',
+  }
 }
 
 const find = (state: DataState, id: string) => state.world.drafts.find((d) => d.id === id) as Draft

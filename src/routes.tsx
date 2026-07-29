@@ -24,7 +24,18 @@ import {
   PlansScreen,
   SubscriptionScreen,
 } from '@/features/billing/billing-screens'
+import {
+  AnalyticsOverviewScreen,
+  ChannelDetailScreen,
+} from '@/features/analytics/analytics-screens'
 import { ConnectionsScreen } from '@/features/connections/connections-screen'
+import { GenerateScreen } from '@/features/generate/generate-screen'
+import { BrandVoiceScreen } from '@/features/settings/brand-voice-screen'
+import { KnowledgeScreen } from '@/features/settings/knowledge-screen'
+import { OrganizationScreen } from '@/features/settings/organization-screen'
+import { SourcesScreen } from '@/features/settings/sources-screen'
+import { TeamScreen } from '@/features/settings/team-screen'
+import { ToneEditorScreen, TonesScreen } from '@/features/settings/tones-screen'
 import {
   StudioAssetScreen,
   StudioComposerScreen,
@@ -41,7 +52,6 @@ import { MarketingHome } from '@/features/marketing/marketing-home'
 import { OnboardingScreen } from '@/features/onboarding/onboarding-screen'
 import { EmptyOrgScreen } from '@/features/system/empty-org-screen'
 import { NotFoundScreen } from '@/features/system/not-found'
-import { PlaceholderScreen } from '@/features/system/placeholder-screen'
 
 function RootGate() {
   const session = useSession()
@@ -66,13 +76,6 @@ function SignedOutOnly({ children }: { children: ReactNode }) {
   if (session.signedIn && org.onboarding.completed) return <Navigate to="/" replace />
   return children
 }
-
-const STUB_ROUTES = [
-  { path: '/analytics', title: 'Analytics', phase: 'W6' },
-  { path: '/settings', title: 'Settings', phase: 'W6' },
-  { path: '/settings/tones', title: 'Tones', phase: 'W6' },
-  { path: '/generate', title: 'Generate', phase: 'W6' },
-]
 
 const devRoutes = import.meta.env.PROD
   ? []
@@ -143,16 +146,27 @@ export const router = createBrowserRouter([
     { path: '/billing/subscription', element: <SubscriptionScreen /> },
     { path: '/billing/credits', element: <CreditsScreen /> },
     { path: '/billing/return', element: <CheckoutReturnScreen /> },
+
+    // Area F — on-demand generate
+    { path: '/generate', element: <GenerateScreen /> },
+
+    // Area G — analytics
+    { path: '/analytics', element: <AnalyticsOverviewScreen /> },
+    { path: '/analytics/:connectionId', element: <ChannelDetailScreen /> },
+
+    // Area I — settings. `/settings` is the section index, not a screen of its
+    // own: every entry point into Settings lands on the org profile (I1).
+    { path: '/settings', element: <Navigate to="/settings/organization" replace /> },
+    { path: '/settings/organization', element: <OrganizationScreen /> },
+    { path: '/settings/brand-voice', element: <BrandVoiceScreen /> },
+    { path: '/settings/tones', element: <TonesScreen /> },
+    { path: '/settings/tones/new', element: <ToneEditorScreen /> },
+    { path: '/settings/tones/:toneId', element: <ToneEditorScreen /> },
+    { path: '/settings/sources', element: <SourcesScreen /> },
+    { path: '/settings/knowledge', element: <KnowledgeScreen /> },
+    { path: '/settings/team', element: <TeamScreen /> },
   ].map(({ path, element }) => ({ path, element: <Authed>{element}</Authed> })),
 
-  ...STUB_ROUTES.map(({ path, title, phase }) => ({
-    path,
-    element: (
-      <Authed>
-        <PlaceholderScreen title={title} phase={phase} />
-      </Authed>
-    ),
-  })),
   ...devRoutes,
   { path: '*', element: <NotFoundScreen /> },
 ])

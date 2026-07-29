@@ -11,20 +11,13 @@
  * still deciding, and leaving with unsaved work has to be refused out loud.
  */
 import { useState } from 'react'
-import { Link, useBlocker } from 'react-router'
+import { Link } from 'react-router'
 import { AppShell } from '@/components/ab/app-shell'
 import { ErrorState } from '@/components/ab/error-state'
+import { SaveBar } from '@/components/ab/save-bar'
 import { SkeletonForm } from '@/components/ab/skeletons'
 import { toastSuccess } from '@/components/ab/toast'
 import { Button } from '@/components/ui/button'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
@@ -64,13 +57,6 @@ export function ScheduleConfigScreen() {
 
   const dirty = JSON.stringify(draft) !== JSON.stringify(saved)
   const invalid = draft.activeDays.length === 0 || draft.toneIds.length === 0 || !draft.modelId
-
-  // The guard is the router's, not a window.confirm: leaving is a navigation,
-  // so the refusal belongs where navigation happens.
-  const blocker = useBlocker(
-    ({ currentLocation, nextLocation }) =>
-      dirty && currentLocation.pathname !== nextLocation.pathname,
-  )
 
   const patch = (next: Partial<Schedule>) => setDraft((current) => ({ ...current, ...next }))
   const modelName = models.find((m) => m.id === draft.modelId)?.name ?? ''
@@ -210,32 +196,19 @@ export function ScheduleConfigScreen() {
         </div>
       )}
 
-      {/* Sticky, and only when there is something to save — a save bar that is
-          always there stops meaning anything. */}
-      {dirty && phase === 'ready' && (
-        <div className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-background/95 backdrop-blur">
-          <div className="mx-auto flex max-w-[1200px] items-center justify-between gap-4 px-4 py-3 md:px-6">
-            <p className="text-sm text-muted-foreground">You have unsaved changes.</p>
-            <div className="flex items-center gap-2">
-              <Button variant="ghost" onClick={() => setDraft(saved)}>
-                Cancel
-              </Button>
-              <Button
-                onClick={() => {
-                  setTouched(true)
-                  if (invalid) return
-                  dispatch({ type: 'schedule/update', patch: draft })
-                  toastSuccess('Schedule saved', {
-                    description: 'New slots follow it from the next run.',
-                  })
-                }}
-              >
-                Save changes
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+      <SaveBar
+        dirty={dirty && phase === 'ready'}
+        onCancel={() => setDraft(saved)}
+        onSave={() => {
+          setTouched(true)
+          if (invalid) return
+          dispatch({ type: 'schedule/update', patch: draft })
+          toastSuccess('Schedule saved', {
+            description: 'New slots follow it from the next run.',
+          })
+        }}
+        consequence="Your schedule changes will be lost, and generation keeps following the settings you had before."
+      />
 
       <ToneEditorSheet
         open={toneEditorOpen}
@@ -247,29 +220,6 @@ export function ScheduleConfigScreen() {
           toastSuccess('Tone saved', { description: `${tone.name} is selected for this schedule.` })
         }}
       />
-
-      <Dialog
-        open={blocker.state === 'blocked'}
-        onOpenChange={(open) => !open && blocker.reset?.()}
-      >
-        <DialogContent className="sm:max-w-[420px]">
-          <DialogHeader>
-            <DialogTitle>Leave without saving?</DialogTitle>
-            <DialogDescription>
-              Your schedule changes will be lost, and generation keeps following the settings you
-              had before.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="ghost" onClick={() => blocker.reset?.()}>
-              Keep editing
-            </Button>
-            <Button variant="destructive" onClick={() => blocker.proceed?.()}>
-              Discard changes
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </AppShell>
   )
 }

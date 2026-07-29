@@ -171,8 +171,16 @@ export function SlotSheet({
                   </dl>
                 )}
 
+                {/* Per screens4.md G2, a post's link lands on the CHANNEL that
+                    reported it, not on the org-wide overview. With no reporting
+                    channel there is nothing specific to open, so it falls back
+                    to the overview rather than to a guess. */}
                 <Button asChild variant="ghost" size="sm" className="w-fit">
-                  <Link to="/analytics">View full analytics →</Link>
+                  <Link
+                    to={performance[0] ? `/analytics/${performance[0].connectionId}` : '/analytics'}
+                  >
+                    View full analytics →
+                  </Link>
                 </Button>
               </section>
             </>

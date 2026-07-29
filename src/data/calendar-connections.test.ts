@@ -12,7 +12,7 @@ import { canUndoSkip } from '@/features/calendar/skip-window'
 import type { Dataset, DatasetId, Slot } from '@/data/types'
 
 function world(id: DatasetId): DataState {
-  return { datasetId: id, world: buildDataset(id), devForce: 'none' }
+  return { datasetId: id, world: buildDataset(id), devForce: 'none', connectivity: 'auto' }
 }
 
 describe('every connection status is reachable from the datasets', () => {

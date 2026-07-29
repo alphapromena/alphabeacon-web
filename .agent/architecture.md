@@ -37,7 +37,7 @@
 | `src/data/datasets/`        | whole-tenant states                                                          | the only way a screen reaches a different world                     |
 | `src/data/provider.tsx`     | `DataProvider` — active dataset, session, in-memory reducer, hooks           | the single seam a future API would resolve behind                   |
 | `src/lib/draft-status.ts`   | `DraftStatus` + `canTransition`                                              | buttons render from it                                              |
-| `src/lib/compose-player.ts` | timer-driven token player for F1                                             | replaces a stream; no transport                                     |
+| `src/lib/compose-player.ts` | timer-driven token player for F1                                             | replays `data/compose-scripts.ts`; no transport                     |
 | `src/lib/messages.ts`       | every designed error/empty string                                            | features never inline error copy                                    |
 | `src/styles/`               | `tokens.css` (design.md → shadcn CSS vars, OKLCH, light+dark)                | never hardcode values in features                                   |
 | `e2e/`                      | Playwright: per-screen state specs, `@golden`, `@axe`                        | dataset/state driven; asserts zero network                          |
@@ -84,8 +84,12 @@ screen means adding data, never a call.
   (`/calendar?slot=`), draft (`/today/:id`), checkout returns
   (`/billing/return?state=`), connect returns (`/connections?connect=`) — all
   reachable as in-app routed steps.
+- `/settings` is a redirect, not a screen: every entry point into Settings lands
+  on the org profile (`/settings/organization`), and the six sections share one
+  frame (`features/settings/settings-layout.tsx`).
 - Dev routes (`/dev/datasets`, `/dev/states`, `/dev/kitchen-sink`) are excluded
-  from production builds.
+  from production builds. `/dev/states` forces loading and error **and** N4's
+  connectivity banner, which has no honest signal in a static app.
 
 ## Error handling & logging
 

@@ -12,7 +12,6 @@
  * it *is* the <main>, which would nest the banner inside it.
  */
 import {
-  Bell,
   Calendar,
   ChartLine,
   CreditCard,
@@ -28,6 +27,8 @@ import type { CSSProperties, ReactNode } from 'react'
 import { Link, useLocation } from 'react-router'
 import { MonoNumber } from '@/components/ab/mono-number'
 import { BeaconDot } from '@/components/ab/motion'
+import { NotificationBell } from '@/components/ab/notification-bell'
+import { OfflineBanner } from '@/components/ab/offline-banner'
 import { ThemeToggle } from '@/components/ab/theme-toggle'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
@@ -60,11 +61,9 @@ import {
   useCreditBalance,
   useDataDispatch,
   useDrafts,
-  useNotifications,
   useOrg,
   useSession,
 } from '@/data/provider'
-import { relativeTime } from '@/lib/format'
 import { cn } from '@/lib/utils'
 
 /** Rail order is fixed by screens4.md §0.4 — do not reorder casually. */
@@ -113,6 +112,7 @@ export function AppShell({
             <AccountMenu />
           </div>
         </header>
+        <OfflineBanner />
         <PastDueBanner />
         <main className="mx-auto w-full max-w-[1200px] flex-1 px-4 py-6 md:px-6">{children}</main>
       </div>
@@ -233,77 +233,6 @@ function PlanCreditChip() {
       <MonoNumber value={credits} />
       <span>credits</span>
     </Link>
-  )
-}
-
-/**
- * N1's quick glance. The full, persistent list lives on the Dashboard (D1) —
- * this dropdown deliberately shows only the most recent few and links there.
- */
-function NotificationBell() {
-  const notifications = useNotifications()
-  const dispatch = useDataDispatch()
-  const unread = notifications.filter((n) => !n.read).length
-  const recent = notifications.slice(0, 5)
-
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="relative"
-          aria-label={unread > 0 ? `Notifications, ${unread} unread` : 'Notifications'}
-        >
-          <Bell aria-hidden />
-          {unread > 0 && (
-            <span
-              aria-hidden
-              className="absolute right-1.5 top-1.5 size-2 rounded-full bg-primary ring-2 ring-background"
-            />
-          )}
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-80">
-        <DropdownMenuLabel className="flex items-center justify-between gap-2">
-          <span>Notifications</span>
-          {unread > 0 && (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-auto px-1.5 py-0.5 text-xs font-normal"
-              onClick={() => dispatch({ type: 'notifications/markAllRead' })}
-            >
-              Mark all as read
-            </Button>
-          )}
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        {recent.length === 0 ? (
-          <p className="px-2 py-6 text-center text-sm text-muted-foreground">
-            You&apos;re all caught up.
-          </p>
-        ) : (
-          recent.map((notification) => (
-            <DropdownMenuItem key={notification.id} asChild>
-              <Link to={notification.href} className="flex flex-col items-start gap-0.5">
-                <span className={cn('text-sm', !notification.read && 'font-medium')}>
-                  {notification.message}
-                </span>
-                <MonoNumber
-                  value={relativeTime(notification.at)}
-                  className="text-xs text-muted-foreground"
-                />
-              </Link>
-            </DropdownMenuItem>
-          ))
-        )}
-        <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-          <Link to="/">View everything on the Dashboard</Link>
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
   )
 }
 
