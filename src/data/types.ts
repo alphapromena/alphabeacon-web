@@ -140,13 +140,15 @@ export type SlotStatus = 'pending' | 'generating' | 'review' | 'done' | 'skipped
 
 export interface Slot {
   id: string
-  /** ISO date (day precision). */
+  /** ISO date (day precision), local to the schedule's timezone. */
   date: string
-  /** 24h "HH:mm". */
+  /** 24h "HH:mm", wall-clock in the schedule's timezone. */
   time: string
   status: SlotStatus
   eventId?: string
   draftIds: string[]
+  /** Set when skipped; C4 offers undo only while it is still the same day. */
+  skippedAt?: string
 }
 
 // ---------------------------------------------------------------------------
@@ -287,7 +289,8 @@ export interface AnalyticsSeries {
     draftId?: string
     title: string
     publishedAt: string
-    metrics: { reach: number; engagement: number; likes: number }
+    /** Absent until the platform reports — never render 0 in its place. */
+    metrics?: { reach: number; engagement: number; likes: number }
   }[]
 }
 

@@ -81,6 +81,19 @@ export type DataAction =
   | { type: 'media/fail'; jobId: string; reason: string }
   | { type: 'draft/schedule'; draftId: string; scheduledFor: string; platforms: Platform[] }
   | { type: 'draft/publish'; draftId: string }
+  // --- calendar + connections (C1-C4, B1-B3) --------------------------------
+  | { type: 'slot/skip'; slotId: string }
+  | { type: 'slot/unskip'; slotId: string }
+  | {
+      type: 'connection/setPermission'
+      platform: Platform
+      key: 'analytics' | 'posting'
+      value: boolean
+    }
+  | { type: 'connection/reconnect'; platform: Platform }
+  | { type: 'connection/setPages'; platform: Platform; pageIds: string[] }
+  | { type: 'eventSources/toggleCalendar'; sourceId: string; calendarId: string; enabled: boolean }
+  | { type: 'eventSources/retry'; sourceId: string }
 
 export function dataReducer(state: DataState, action: DataAction): DataState {
   switch (action.type) {
@@ -424,6 +437,102 @@ export function dataReducer(state: DataState, action: DataAction): DataState {
         scheduledFor: action.scheduledFor,
         publishResults: action.platforms.map((platform) => ({ platform, ok: true })),
       }))
+
+    case 'slot/skip':
+      return {
+        ...state,
+        world: {
+          ...state.world,
+          slots: state.world.slots.map((slot) =>
+            slot.id === action.slotId
+              ? { ...slot, status: 'skipped', skippedAt: new Date().toISOString() }
+              : slot,
+          ),
+        },
+      }
+    case 'slot/unskip':
+      return {
+        ...state,
+        world: {
+          ...state.world,
+          slots: state.world.slots.map((slot) =>
+            slot.id === action.slotId ? { ...slot, status: 'pending', skippedAt: undefined } : slot,
+          ),
+        },
+      }
+
+    case 'connection/setPermission':
+      return {
+        ...state,
+        world: {
+          ...state.world,
+          connections: state.world.connections.map((c) =>
+            c.platform === action.platform
+              ? { ...c, permissions: { ...c.permissions, [action.key]: action.value } }
+              : c,
+          ),
+        },
+      }
+    case 'connection/reconnect':
+      return {
+        ...state,
+        world: {
+          ...state.world,
+          connections: state.world.connections.map((c) =>
+            c.platform === action.platform
+              ? { ...c, status: 'active', lastSyncAt: new Date().toISOString() }
+              : c,
+          ),
+        },
+      }
+    case 'connection/setPages':
+      return {
+        ...state,
+        world: {
+          ...state.world,
+          connections: state.world.connections.map((c) =>
+            c.platform === action.platform && c.pages
+              ? {
+                  ...c,
+                  pages: c.pages.map((page) => ({
+                    ...page,
+                    selected: action.pageIds.includes(page.id),
+                  })),
+                }
+              : c,
+          ),
+        },
+      }
+
+    case 'eventSources/toggleCalendar':
+      return {
+        ...state,
+        world: {
+          ...state.world,
+          eventSources: state.world.eventSources.map((source) =>
+            source.id === action.sourceId && source.calendars
+              ? {
+                  ...source,
+                  calendars: source.calendars.map((calendar) =>
+                    calendar.id === action.calendarId
+                      ? { ...calendar, enabled: action.enabled }
+                      : calendar,
+                  ),
+                }
+              : source,
+          ),
+        },
+      }
+    case 'eventSources/retry':
+      return {
+        ...state,
+        world: {
+          ...state.world,
+          eventSources: state.world.eventSources.map((source) =>
+            source.id === action.sourceId ? { ...source, status: 'active' } : source,
+          ),
+        },
+      }
 
     case 'draft/publish': {
       const draft = state.world.drafts.find((d) => d.id === action.draftId)

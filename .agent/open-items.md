@@ -47,6 +47,18 @@ not a second product bolted onto the queue.
 Read Today at 360px, three slot groups deep. Is it still obvious which draft
 belongs to which time?
 
+### W4 — the month grid at phone width
+
+Read the calendar at 360px. Three slot chips in one day cell is the density
+this design is betting on — does it hold, or does a busy week become unreadable?
+
+### W4 — timezone as the audience sees it
+
+Switch the timezone in Schedule settings and confirm the slot times shown match
+what an audience in that zone would actually see. The arithmetic is tested
+(`src/lib/timezone.test.ts`, including both 2026 DST boundaries); what a machine
+cannot judge is whether the screen makes the zone obvious enough to trust.
+
 ---
 
 ## Signed off

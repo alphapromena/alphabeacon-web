@@ -217,3 +217,46 @@ changes code or makes a decision (see rule 6 in `CLAUDE.md`).
 - Open items: `.agent/open-items.md` now carries the W1 screen-reader walk plus
   the three W2 manual checks, all still unsigned; W3 adds two more.
 - Next: W4 — Calendar, schedule config, event sources, connections (C1–C4, B1–B3).
+
+### 2026-07-29 07:50 — W4 shipped: calendar, scheduling, sources, connections; verify:w04 green
+
+- Did: built C1–C4 and B1–B3 on branch `w/04-calendar-connections`. Started with
+  `lib/timezone.ts`, which measures a zone's offset through `Intl` rather than
+  tabulating rules, so a wall-clock slot resolves to the right instant on both
+  sides of a DST change; Amman (fixed UTC+3 since 2022) and New York are tested
+  together precisely because one moves and one does not. C1 reuses the W2
+  pipeline fields rather than copying them, and holds edits locally so the
+  sticky save bar and the router-level dirty guard are honest. C2 keeps a
+  Google source's calendar choices when its token dies. C3 renders month and
+  week, tints event days, and shows post-publish reach. C4 adds the event card,
+  the same-day skip undo, and the performance section. B1 shows all four
+  connection statuses with per-permission switches and the Facebook Page picker;
+  B2 lists scopes and names what disconnecting costs; B3 handles success,
+  denied, failed and already-connected as routed steps. Added the
+  `needs-reauth` dataset.
+- Phase: W4
+- Files: `src/features/calendar/*` (5), `src/features/connections/*` (3),
+  `src/lib/timezone.ts` + test, `src/data/{provider.tsx,types.ts,
+  datasets/needs-reauth.ts,entities/drafts.ts,calendar-connections.test.ts}`,
+  `src/routes.tsx`, `e2e/calendar-connections.spec.ts`, `scripts/verify-w04.ts`,
+  `package.json`, `.agent/open-items.md`
+- Decisions: none new
+- Verify: verify:w04 green on every automated step (lint, typecheck, 195 unit
+  tests, guard-static, build, the structural Syncing check, the e2e navigation
+  rule, deliverables, and 34 e2e).
+- Notes: four real bugs, all found by tests rather than by reading.
+  (1) The slot sheet held a SNAPSHOT of the slot, so skipping left it rendering
+  its pre-skip self — it now derives from live provider state by id.
+  (2) No slot in any world was skippable, because every slot already had
+  drafts; the active dataset now carries upcoming empty slots, which is what a
+  running pipeline actually looks like. A reachability sweep in the unit suite
+  now fails if any W4 state becomes unreachable.
+  (3) axe caught `opacity-50` on out-of-month day cells dropping date numerals
+  to 2.37:1 — the third time dimming real text has broken AA in this codebase,
+  so out-of-month days now recede via the surface instead.
+  (4) `needs-reauth` only cleared metrics on one channel, so the aggregate still
+  had a number and the "Syncing…" state was unreachable.
+  Also: the schedule settings screen had no in-app route from a populated
+  calendar — reachable only from the empty state, i.e. not reachable by anyone
+  who already had a schedule. Added a toolbar link.
+- Next: W5 — Studio + billing (E1–E4, H1–H4).

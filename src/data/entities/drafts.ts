@@ -210,5 +210,18 @@ export function atlasSlots(): Slot[] {
       eventId: 'ev_tasting',
       draftIds: ['draft_005'],
     },
+    // Upcoming, nothing drafted yet. A running pipeline always has these ahead
+    // of it, and they are the only slots that can honestly be skipped — so
+    // without them C3 looks like a calendar that stops at tomorrow, and C4's
+    // skip has nothing to act on.
+    ...[2, 3, 4, 6, 7].flatMap((offset) =>
+      ['09:00', '13:00'].map((time) => ({
+        id: `slot_ahead_${offset}_${time.replace(':', '')}`,
+        date: dayFromNow(offset),
+        time,
+        status: 'pending' as const,
+        draftIds: [],
+      })),
+    ),
   ]
 }

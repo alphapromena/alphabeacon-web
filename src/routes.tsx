@@ -15,6 +15,10 @@ import { ResetPasswordScreen } from '@/features/auth/reset-password-screen'
 import { SignInScreen } from '@/features/auth/signin-screen'
 import { SignUpScreen } from '@/features/auth/signup-screen'
 import { VerifyEmailScreen } from '@/features/auth/verify-email-screen'
+import { CalendarScreen } from '@/features/calendar/calendar-screen'
+import { EventSourcesScreen } from '@/features/calendar/event-sources-screen'
+import { ScheduleConfigScreen } from '@/features/calendar/schedule-config-screen'
+import { ConnectionsScreen } from '@/features/connections/connections-screen'
 import { DashboardScreen } from '@/features/dashboard/dashboard-screen'
 import { DraftDetailScreen } from '@/features/today/draft-detail-screen'
 import { TodayScreen } from '@/features/today/today-screen'
@@ -52,12 +56,12 @@ function SignedOutOnly({ children }: { children: ReactNode }) {
 }
 
 const STUB_ROUTES = [
-  { path: '/calendar', title: 'Calendar', phase: 'W4' },
   { path: '/studio', title: 'Studio', phase: 'W5' },
   { path: '/analytics', title: 'Analytics', phase: 'W6' },
-  { path: '/connections', title: 'Connections', phase: 'W4' },
   { path: '/billing', title: 'Billing', phase: 'W5' },
   { path: '/settings', title: 'Settings', phase: 'W6' },
+  { path: '/settings/tones', title: 'Tones', phase: 'W6' },
+  { path: '/generate', title: 'Generate', phase: 'W6' },
 ]
 
 const devRoutes = import.meta.env.PROD
@@ -109,6 +113,14 @@ export const router = createBrowserRouter([
       </Authed>
     ),
   },
+
+  // Areas C and B — calendar, scheduling, connections
+  ...[
+    { path: '/calendar', element: <CalendarScreen /> },
+    { path: '/calendar/settings', element: <ScheduleConfigScreen /> },
+    { path: '/calendar/sources', element: <EventSourcesScreen /> },
+    { path: '/connections', element: <ConnectionsScreen /> },
+  ].map(({ path, element }) => ({ path, element: <Authed>{element}</Authed> })),
 
   ...STUB_ROUTES.map(({ path, title, phase }) => ({
     path,
