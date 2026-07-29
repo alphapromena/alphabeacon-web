@@ -78,11 +78,11 @@ React 19 + Vite + strict TS. **Tailwind v4** with CSS-variable theming. **shadcn
 
 ## 7. Manual steps — the complete list
 
-| #   | Step                                                                             | When    |
-| --- | -------------------------------------------------------------------------------- | ------- |
-| 1   | GitHub repo                                                                      | day 1   |
-| 2   | Web domain + ACM cert (e.g. `alphabeacon.com` / `www`) per the agent's checklist | day 1   |
-| 3   | One-word gate approvals + PR reviews                                             | ongoing |
+| #   | Step                                                                             | When                                                          |
+| --- | -------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| 1   | GitHub repo                                                                      | **done 2026-07-29** — `alphapromena/alphabeacon-web`, private |
+| 2   | Web domain + ACM cert (e.g. `alphabeacon.com` / `www`) per the agent's checklist | still open                                                    |
+| 3   | One-word gate approvals + manual sign-offs (`.agent/open-items.md`)              | ongoing                                                       |
 
 Everything else — shadcn init, skill install, tokens, data, deploys, verifies — is agent + CI. No package-registry token, no CORS ask, no backend coordination of any kind.
 
@@ -100,7 +100,14 @@ Every data-backed screen ships loading / empty / error / populated, keyboard nav
 
 ## 9. Phases — build in this order
 
-Branch `w/NN-slug` → PR with `pnpm verify:wNN` output pasted → merge on green.
+Branch `w/NN-slug` → `pnpm verify:wNN` green → fast-forward `main`.
+
+> Amended 2026-07-29: this originally said "→ PR with the verify output pasted →
+> merge on green". W0–W6 were built before the remote existed and were
+> fast-forwarded onto `main` in order once it did; the retroactive PRs were
+> skipped deliberately (solo developer, no reviewer). Open a PR from W7 onward
+> only where one is useful. The verify gate itself is unchanged and still
+> mandatory.
 
 ### W0 — Foundation + shadcn + the skill + the data layer
 

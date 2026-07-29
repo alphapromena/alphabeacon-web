@@ -22,26 +22,27 @@ it will cost).
 
 ## Where the code is
 
-|                  |                                                             |
-| ---------------- | ----------------------------------------------------------- |
-| Working branch   | `w/06-compose-analytics-settings` — **contains everything** |
-| `main`           | still at the docs commit, **7 commits behind**              |
-| Uncommitted work | none                                                        |
+|            |                                                        |
+| ---------- | ------------------------------------------------------ |
+| Remote     | `github.com/alphapromena/alphabeacon-web` (private)    |
+| `main`     | `cfe6607` — **holds everything through W6**, pushed    |
+| Phase tips | `w/00`…`w/06` all pushed, kept as the per-phase record |
+| Tags       | none                                                   |
 
-Every phase branch was cut from the previous one, so they stack linearly:
+Every phase branch was cut from the previous one, so they stack linearly and
+`main` was fast-forwarded straight through them — no merge commits, one history:
 
 ```
-main  ──  w/00-foundation ── w/01-design-layer ── w/02-marketing-auth-onboarding
-      ──  w/03-today-queue ── w/04-calendar-connections ── w/05-studio-billing
-      ──  w/06-compose-analytics-settings ← HEAD
+main = w/06-compose-analytics-settings ← cfe6607
+  └─ w/00-foundation ─ w/01-design-layer ─ w/02-marketing-auth-onboarding
+     ─ w/03-today-queue ─ w/04-calendar-connections ─ w/05-studio-billing
+     ─ w/06-compose-analytics-settings
 ```
 
-**Decide before continuing:** `web-plan.md` §9 says each phase merges via PR on
-green, but there is no GitHub remote yet (manual step 1, still parked), so
-nothing has merged. Either fast-forward `main` to
-`w/06-compose-analytics-settings`, or create the remote and open PRs
-retroactively. Until then, **`main` is empty of product code** — anyone checking
-it out will think nothing was built.
+**Workflow from here (decided 2026-07-29):** the retroactive PRs for W0–W6 were
+skipped deliberately — solo developer, no reviewer, no value. From W7 onward,
+open a PR only if it is useful. `web-plan.md` §9's "PR per phase" is therefore
+aspirational, not a rule this repo follows.
 
 ## Phase status
 
@@ -141,15 +142,22 @@ read source, because these failure modes pass behavioural tests:
 
 ## Open manual gates
 
-**Fourteen checks across W1–W6 remain unsigned** — see `.agent/open-items.md`.
-None block the next phase; all block launch. The oldest and most important is
-the **W1 screen-reader walk of the app shell**, explicitly flagged by the
-reviewer as "not to be discovered at launch."
+**13 checks remain unsigned** — see `.agent/open-items.md`, now grouped into
+**three sittings** (viewport → screen reader → read-as-a-stranger) rather than
+by phase, because a phase is how an item was created and a sitting is how it
+gets cleared. None block a phase; all block launch.
+
+The reviewer's intent as of 2026-07-29: **clear all 13 before W7 starts**, so
+the phase begins with the debt at zero. The oldest and largest is the
+screen-reader walk, which now covers the shell plus six W3–W6 surfaces that
+carry their own semantics.
 
 ## Still parked (needs a human)
 
-1. **GitHub repo** — blocks the W0 verify item "a canary PR is blocked by every
-   check", and blocks the PR-per-phase workflow the plan describes.
+1. **CI on the new remote** — the repo exists and everything is pushed, but no
+   workflow has ever run there. The W0 verify item "a canary PR is blocked by
+   every check" is still unproven: the checks all pass locally and have never
+   been enforced by GitHub.
 2. **Domain + ACM certificate** — blocks "staging URL serves the shell". The
    CDK stack (`infra/`, `ABW-<stage>-Web`) synthesises but has never deployed.
    This now also blocks a W7 verify item: Lighthouse budgets are measured on the

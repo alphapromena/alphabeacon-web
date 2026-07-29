@@ -375,3 +375,36 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   completeness test (MESSAGES grew a lot here), route-level code-splitting (the
   bundle is one ~1.2 MB chunk and vite already warns), and the full-app `@golden`
   walks. Lighthouse still needs the parked domain + certificate.
+
+### 2026-07-29 10:40 — Repo pushed to GitHub; main fast-forwarded; open items regrouped
+
+- Did: scanned the full history for secrets first (every blob on every branch —
+  filenames, high-confidence key patterns, assigned secret literals, AWS ARNs;
+  the only filename hits were `tokens.css`/`tokens.test.ts`, which are design
+  tokens). Clean. Added `origin`
+  (`github.com/alphapromena/alphabeacon-web`, private and empty — nothing to
+  force-push over) and pushed all 8 branches; there are no tags. Fast-forwarded
+  `main` through `w/00`→`w/06` with `--ff-only` one branch at a time, so a
+  diverged branch would have stopped the run rather than merged silently, and
+  pushed it. `main` is now `cfe6607`, verified from the server.
+- Then: regrouped `.agent/open-items.md` by **sitting** instead of by phase —
+  three sittings (viewport and environment · keyboard and screen reader · read
+  it as a stranger), ordered so layout findings land before the semantics pass
+  that they would otherwise invalidate. Widened the W1 screen-reader item to its
+  real current scope: the shell, plus the six W3–W6 surfaces that carry their
+  own semantics (F1's polite status line and its guardrail flag, G2's sortable
+  table, I6's dropzone, I7's dialogs, the save bar's leave-guard).
+- Correction: the outstanding count is **13**, not the fourteen I reported last
+  turn. The pre-existing "eleven across W1–W5" was itself one over — the real
+  figure was ten.
+- Phase: between W6 and W7 (no product code changed)
+- Files: `.agent/open-items.md` (rewritten), `.agent/state.md`,
+  `.agent/decisions.md`, `web-plan.md`
+- Decisions: see decisions.md — no retroactive PRs, `main` fast-forwards ·
+  manual gates grouped by sitting
+- Verify: not re-run (no source changed); `verify:w06` was green at `cfe6607`
+- Next: **W7 does not start yet.** The reviewer is clearing all 13 manual gates
+  first, so W7 begins with the debt at zero. When it does start: the
+  message-catalogue completeness test, route-level code-splitting (one ~1.2 MB
+  chunk today), the full-app `@golden` walks, and CI on the new remote — which
+  has never run a workflow.

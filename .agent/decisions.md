@@ -354,3 +354,26 @@ add a new entry that says it supersedes the old one.
 - Instead of: copying the pattern per screen (four wordings of the same refusal),
   or a hook that returns state a screen still has to render (the half nobody
   copies is the dialog).
+
+### 2026-07-29 — No retroactive PRs; `main` fast-forwards
+
+- Why: W0–W6 were built before the GitHub remote existed. Once it did, `main`
+  was fast-forwarded through each phase branch in order (`--ff-only`, so a
+  diverged branch would have failed loudly rather than merged quietly) and the
+  phase tips were kept as the per-phase record. Opening seven PRs after the fact,
+  on a solo project with no second reviewer, is ceremony that buys nothing — the
+  `verify:wNN` gate is what actually protects the branch, and it is unchanged.
+- Instead of: reconstructing the PR history for the audit trail — `sessions.md`,
+  the phase branches and the verify output already are the audit trail.
+
+### 2026-07-29 — Manual gates are grouped by sitting, not by phase
+
+- Why: thirteen items had accumulated across six phases, and grouped by phase
+  they were unclearable — each sitting would have meant setting up a screen
+  reader, resizing to 360px and re-reading copy, three times over. Grouped by
+  apparatus (viewport → screen reader → read-as-a-stranger) the same thirteen
+  close in three sittings. The order matters: layout findings move focus order,
+  so the viewport pass runs before the screen-reader pass, and judgment last.
+- Instead of: clearing them per phase as each shipped (the intent all along,
+  and it did not survive contact with six phases), or dropping the ones that
+  felt covered by axe — axe cannot hear what is announced, which is the point.
