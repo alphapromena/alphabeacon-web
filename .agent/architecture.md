@@ -19,8 +19,8 @@
                     │        │  active dataset + in-memory reducer│
                     │        ▼                                   │
                     │  data/datasets/  ◀─ data/entities/         │
-                    │  fresh · active · past-due · needs-reauth  │
-                    │  · low-credits · heavy                     │
+                    │  visitor · fresh · active · low-credits   │
+                    │  · needs-reauth · past-due                 │
                     └────────────────────────────────────────────┘
                        no network boundary exists — nothing leaves
 ```

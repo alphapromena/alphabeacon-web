@@ -6,25 +6,28 @@ scripts — the rules below ARE the workflow.
 
 ## Structure
 
-| File                     | What it holds                                    |
-| ------------------------ | ------------------------------------------------ |
-| `web-plan.md`            | The build order: phases W0–W7, each with Verify  |
-| `.agent/context.md`      | What this frontend is, personas, screen glossary |
-| `.agent/stack.md`        | Versions, packages, and the commands to run      |
-| `.agent/architecture.md` | App shape, data flow, mode isolation, routing    |
-| `.agent/conventions.md`  | shadcn rules, design law, testing, do/don't      |
-| `.agent/decisions.md`    | Why things are the way they are (decision log)   |
-| `.agent/sessions.md`     | Log of what happened each session (progress)     |
-| `.agent/open-items.md`   | Manual gates awaiting a human sign-off           |
+| File                     | What it holds                                     |
+| ------------------------ | ------------------------------------------------- |
+| `.agent/state.md`        | **Where the build stands right now — read first** |
+| `web-plan.md`            | The build order: phases W0–W7, each with Verify   |
+| `.agent/context.md`      | What this frontend is, personas, screen glossary  |
+| `.agent/stack.md`        | Versions, packages, and the commands to run       |
+| `.agent/architecture.md` | App shape, data flow, mode isolation, routing     |
+| `.agent/conventions.md`  | shadcn rules, design law, testing, do/don't       |
+| `.agent/decisions.md`    | Why things are the way they are (decision log)    |
+| `.agent/sessions.md`     | Log of what happened each session (progress)      |
+| `.agent/open-items.md`   | Manual gates awaiting a human sign-off            |
 
 `screens4.md` is screen truth and `design.md` is the visual system — both live
 in the product docs; never contradict them silently.
 
 ## Hard rules — follow every time, no exceptions
 
-1. **Read first.** Before changing anything, read `context.md`, `stack.md`,
-   `architecture.md`, and `conventions.md`. Check `decisions.md` before touching
-   architecture. Skim the last entry in `sessions.md` to see where things stand.
+1. **Read first.** Start with `.agent/state.md` — it says which phase is done,
+   which branch holds the code, and the traps that have already cost time. Then
+   `context.md`, `stack.md`, `architecture.md`, and `conventions.md`. Check
+   `decisions.md` before touching architecture, and skim the last entry in
+   `sessions.md` for the most recent turn.
 
 2. **Follow the plan.** Work phases W0–W7 in order from `web-plan.md`. A phase
    is done ONLY when its **Verify** passes (`pnpm verify:wNN`); paste the output
@@ -68,7 +71,8 @@ in the product docs; never contradict them silently.
 
 10. **Keep the docs true.** If your change makes anything in `.agent/*.md` or
     `web-plan.md` wrong, fix that file in the same change. Never guess silently —
-    if docs and code disagree, flag it and ask.
+    if docs and code disagree, flag it and ask. Finishing a phase (or changing
+    the plan) means updating `.agent/state.md` in the same turn.
 
 11. **Never store secrets** in `.agent/`, the plan, or code. There are no
     runtime credentials in this app by design — if a task seems to need one,

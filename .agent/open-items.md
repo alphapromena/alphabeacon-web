@@ -63,7 +63,7 @@ cannot judge is whether the screen makes the zone obvious enough to trust.
 
 Open the media panel from a draft, then the composer from the gallery, back to
 back. `verify:w05` proves they share the component; what it cannot judge is
-whether they *feel* like one tool, which is what the checklist actually asks.
+whether they _feel_ like one tool, which is what the checklist actually asks.
 
 ### W5 — the ledger as someone querying a charge
 

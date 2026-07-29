@@ -41,9 +41,7 @@ export function useComposer({
   const [kind, setKind] = useState<'image' | 'video'>(initial?.kind ?? 'image')
   const [modelId, setModelId] = useState(initialModelId ?? '')
   const [prompt, setPrompt] = useState('')
-  const [params, setParams] = useState<ParamValues>(() =>
-    defaultsFromSchema(initial?.paramsSchema),
-  )
+  const [params, setParams] = useState<ParamValues>(() => defaultsFromSchema(initial?.paramsSchema))
   const [phase, setPhase] = useState<ComposerPhase>('compose')
   const [failure, setFailure] = useState('')
   const timer = useRef<number | undefined>(undefined)

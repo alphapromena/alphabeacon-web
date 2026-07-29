@@ -282,7 +282,7 @@ datasets/needs-reauth.ts,entities/drafts.ts,calendar-connections.test.ts}`,
   `src/features/today/media-panel.tsx` (rewritten onto the shared composer),
   `src/lib/params-schema.ts` + test, `src/lib/draft-status.ts`,
   `src/data/{provider.tsx,types.ts,datasets/past-due.ts,studio-billing.test.ts,
-  entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
+entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   `src/routes.tsx`, `e2e/studio-billing.spec.ts`, `scripts/verify-w05.ts`
 - Decisions: none new (the state-machine edge below is recorded in
   `draft-status.ts` itself, next to the transition table it changes)
@@ -302,4 +302,25 @@ datasets/needs-reauth.ts,entities/drafts.ts,calendar-connections.test.ts}`,
   `verify-w05` adds four structural checks, the sharpest being that D4 and E2
   must both render the shared `ComposerBody` and neither may grow its own params
   form — the day someone copies the body to tweak it, the phase fails.
+- Next: W6 — compose, analytics, settings, system (F1, G1–G2, I1–I7, N1, N2, N4).
+
+### 2026-07-29 08:25 — Handoff pass: state.md written, stale docs corrected
+
+- Did: added `.agent/state.md` — a single current-state snapshot (phase status,
+  which branch holds the code, what W6 needs, the traps that have already cost
+  debugging cycles, the structural checks each verify runs, open manual gates,
+  and what is still parked). Registered it in `CLAUDE.md`'s structure table and
+  in rule 1 as the first thing to read, and extended rule 10 so finishing a
+  phase means updating it. Corrected the dataset list in `architecture.md`,
+  `context.md` and `web-plan.md`: all three still named a `heavy` world that was
+  never built and omitted `visitor`, which W2 added as the only signed-out one.
+- Phase: between W5 and W6 (documentation only, no product code)
+- Files: `.agent/state.md` (new), `CLAUDE.md`, `.agent/architecture.md`,
+  `.agent/context.md`, `web-plan.md`
+- Decisions: none
+- Verify: lint + typecheck + guard-static green; 213 unit tests, 42 e2e
+- Flagged for the reviewer: `main` is still at the docs commit and six commits
+  behind `w/05-studio-billing`. The plan's PR-per-phase merge never happened
+  because there is no remote yet, so anyone cloning and checking out `main`
+  finds no product code. Needs either a fast-forward or the GitHub repo.
 - Next: W6 — compose, analytics, settings, system (F1, G1–G2, I1–I7, N1, N2, N4).

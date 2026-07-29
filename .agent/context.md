@@ -24,17 +24,17 @@ no network calls at all. Backend integration is a separate, later plan.
 
 ## Core domain concepts (glossary)
 
-| Term             | Meaning in THIS repo                                                                     | Invariants / notes                                                 |
-| ---------------- | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| Screen ID        | M1, A1–A5, B1–B3, C1–C4, D1–D5, E1–E4, F1, G1–G2, H1–H4, I1–I7, N1–N4                    | `screens4.md` is truth for layout, copy, and states                |
-| Four data states | loading / empty / error / populated                                                      | every server-backed screen ships all four                          |
-| Draft status     | the state machine in `src/lib/draft-status.ts`                                           | buttons render from `canTransition` — illegal actions cannot exist |
-| Dataset          | a whole-tenant static state (fresh, active, past_due, needs re-auth, low credits, heavy) | switchable at `/dev/datasets`                                      |
-| State switcher   | forces loading / error presentation on any screen                                        | `/dev/states`; the dataset supplies empty + populated              |
-| Data layer       | `src/data/` — types, entity modules, datasets, `DataProvider`                            | features read via provider hooks only                              |
-| Tone             | preset or custom writing style                                                           | custom renders identically to presets everywhere                   |
-| ClaimChip        | a source attribution chip (verified / flagged)                                           | grounding is shown, never hidden                                   |
-| Message          | a named error/empty string in `src/lib/messages.ts`                                      | one catalogue; no screen invents its own error copy                |
+| Term             | Meaning in THIS repo                                                                      | Invariants / notes                                                 |
+| ---------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| Screen ID        | M1, A1–A5, B1–B3, C1–C4, D1–D5, E1–E4, F1, G1–G2, H1–H4, I1–I7, N1–N4                     | `screens4.md` is truth for layout, copy, and states                |
+| Four data states | loading / empty / error / populated                                                       | every server-backed screen ships all four                          |
+| Draft status     | the state machine in `src/lib/draft-status.ts`                                            | buttons render from `canTransition` — illegal actions cannot exist |
+| Dataset          | a whole-tenant static state (visitor, fresh, active, low-credits, needs-reauth, past-due) | switchable at `/dev/datasets`                                      |
+| State switcher   | forces loading / error presentation on any screen                                         | `/dev/states`; the dataset supplies empty + populated              |
+| Data layer       | `src/data/` — types, entity modules, datasets, `DataProvider`                             | features read via provider hooks only                              |
+| Tone             | preset or custom writing style                                                            | custom renders identically to presets everywhere                   |
+| ClaimChip        | a source attribution chip (verified / flagged)                                            | grounding is shown, never hidden                                   |
+| Message          | a named error/empty string in `src/lib/messages.ts`                                       | one catalogue; no screen invents its own error copy                |
 
 Agents: use these exact terms in code, commits, and UI copy — never synonyms.
 
