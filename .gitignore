@@ -9,3 +9,12 @@ cdk.out/
 *.local
 .DS_Store
 *.tsbuildinfo
+.vite/
+
+# No runtime credentials exist in this app by design (CLAUDE.md rule 11).
+# These are here so an accidental one can never be committed.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
