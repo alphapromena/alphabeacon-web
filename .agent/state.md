@@ -58,7 +58,7 @@ aspirational, not a rule this repo follows.
 | W6 Compose/analytics/settings/system | F1, G1–G2, I1–I7, N1, N2, N4 | Done · `verify:w06` green                                    |
 | **W7 Hardening + ship**              | —                            | **Next**                                                     |
 
-Current totals: **296 unit tests** (25 files), **66 e2e**, all green.
+Current totals: **306 unit tests** (26 files), **68 e2e**, all green.
 **No route is a stub any more** — `PlaceholderScreen` is deleted, and
 `verify:w06` fails if it comes back.
 
@@ -149,13 +149,18 @@ read source, because these failure modes pass behavioural tests:
 - Settings is a route layout with a real tablist, the leave-guard restores
   focus, no `sr-only` file input holds a tab stop, and adding a rule focuses it
   (post-W6 remediation).
+- Every posting time renders through `PostingTime`, labelled by GMT offset, and
+  no screen claims to know the audience's local time (post-W6 remediation).
 - The palette is guarded by `src/styles/tokens.test.ts` — 49 contrast
   assertions, including the `bg-X/10 text-X` badge pattern.
 
 ## Open manual gates
 
-**None.** All 13 were walked on 2026-07-29 and signed off — the debt is at
-zero, which is how W7 was meant to start. What they found became work, not
+**Two are REOPENED.** All 13 were walked on 2026-07-29 and signed off, but the
+focus, tablist and posting-time work that came out of them moved the semantics
+two of the sittings exist to check — so the 360px pass and the screen-reader
+walk must run again against the FIXED build, not the one they were signed off
+against. See `.agent/open-items.md`. What they found became work, not
 backlog: six focus fixes, two data-honesty fixes, and one decision-gated
 proposal (timezones) that has not been built.
 

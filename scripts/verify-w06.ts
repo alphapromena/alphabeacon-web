@@ -16,7 +16,7 @@
 //   "axe" -> the Playwright @axe specs
 
 import { spawnSync } from 'node:child_process'
-import { existsSync, readFileSync } from 'node:fs'
+import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -283,6 +283,69 @@ function focusRulesHold(): boolean {
   )
 }
 
+/**
+ * Times say which zone they are in, and never claim to be the audience's.
+ *
+ * The manual pass found C4 telling the user a slot time was "the time your
+ * audience sees". That is not imprecise, it is false: a connected page has
+ * followers in every zone and this product holds no data about where they are.
+ * The claim is easy to reintroduce with one well-meaning line of copy, so it is
+ * guarded here rather than left to review.
+ */
+function timesAreHonestAboutZones(): boolean {
+  console.log('\n=== posting times name their zone, and claim nothing more ===')
+  const featureFiles = walkFeatures()
+
+  // Nothing anywhere may promise an audience-local time. Comments are stripped
+  // first: the guard is on what the user READS, and the code that removed the
+  // claim is allowed to quote it in explaining why. (Safe to strip `//` here —
+  // the static law already bans `://` anywhere under src/.)
+  const withoutComments = (source: string) =>
+    source.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '')
+  const claimants = featureFiles.filter((path) =>
+    /audience sees|audience'?s time/i.test(withoutComments(readFileSync(path, 'utf8'))),
+  )
+  const noAudienceClaim = claimants.length === 0
+  if (!noAudienceClaim) for (const path of claimants) console.log(`  claims audience time: ${path}`)
+
+  // Every screen that renders a slot or scheduled time goes through the one
+  // component that knows the rules.
+  const usesPostingTime = [
+    'src/features/today/today-screen.tsx',
+    'src/features/today/draft-card.tsx',
+    'src/features/today/draft-detail-screen.tsx',
+    'src/features/calendar/slot-sheet.tsx',
+  ].every((path) => /<PostingTime/.test(read(path)))
+
+  const component = read('src', 'components', 'ab', 'posting-time.tsx')
+  // GMT offset, not an ambiguous abbreviation, and the local time only on a
+  // real mismatch.
+  const offsetLabel = /zoneAbbreviation\(zone, instant\)/.test(component)
+  const localOnlyWhenDifferent = /const differs =/.test(component) && /\{differs &&/.test(component)
+
+  // Dates outside the current year keep the year.
+  const dated =
+    /sameYear \? \{\} : \{ year: 'numeric' \}/.test(read('src', 'lib', 'format.ts')) &&
+    /sameYear \? \{\} : \{ year: 'numeric' \}/.test(read('src', 'lib', 'timezone.ts'))
+
+  return record(
+    'times are honest about zones',
+    noAudienceClaim && usesPostingTime && offsetLabel && localOnlyWhenDifferent && dated,
+    'time: posting times carry a GMT offset, local time shows only on a mismatch, no audience claim',
+    `time check failed -- noAudienceClaim:${noAudienceClaim} usesPostingTime:${usesPostingTime} offset:${offsetLabel} localOnMismatch:${localOnlyWhenDifferent} year:${dated}`,
+  )
+}
+
+/** Every `.ts`/`.tsx` under src/features, for repo-wide copy checks. */
+function walkFeatures(dir = join(root, 'src', 'features'), found: string[] = []): string[] {
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const full = join(dir, entry.name)
+    if (entry.isDirectory()) walkFeatures(full, found)
+    else if (/\.tsx?$/.test(entry.name)) found.push(full)
+  }
+  return found
+}
+
 /** No screen may still be a stub once its phase has shipped. */
 function noStubsRemain(): boolean {
   console.log('\n=== every W6 route is a real screen ===')
@@ -378,6 +441,7 @@ const STRUCTURAL = [
   'F1 reuses the queue card and actions',
   'compose is script-driven',
   'settings share one save bar',
+  'times are honest about zones',
   'keyboard-focus rules hold',
   'no stub routes remain',
   'e2e navigation rule holds',
@@ -408,6 +472,7 @@ function main(): void {
     if (!generateReusesTheQueuesCard()) failed = true
     if (!composeIsScriptDriven()) failed = true
     if (!settingsShareOneSaveBar()) failed = true
+    if (!timesAreHonestAboutZones()) failed = true
     if (!focusRulesHold()) failed = true
     if (!noStubsRemain()) failed = true
     if (!e2eNavigationRuleHolds()) failed = true

@@ -455,3 +455,47 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
 - Open: the timezone/date proposal is written and awaiting a decision. Nothing
   in the product has been changed for it.
 - Next: the reviewer decides on timezones; then W7.
+
+### 2026-07-29 14:10 — Timezones and dates made honest; team roles closed a spec gap
+
+- Did: all four approved timezone decisions. `components/ab/posting-time.tsx` is
+  now the one place a posting time renders — the schedule's zone is the fact,
+  the viewer's local time appears only when it genuinely differs (with its date
+  when the day differs too), and the zone is labelled by OFFSET (`GMT+3`) rather
+  than by abbreviation, because "AST" means both Arabia and Atlantic Standard
+  Time and this product's operators publish to clients in either. The offset is
+  what fits the tightest slot (a queue heading, a calendar cell), so it is used
+  everywhere; the IANA name appears where there is room. Applied at the queue,
+  draft detail, the timeline, the draft card and the slot sheet.
+- Deleted the false claim: C4 said a slot time was "the time your audience
+  sees". A connected page has followers in every zone and this product holds no
+  data about where they are. Everything now says **posting time**.
+- Dates outside the current year carry the year, in both `shortDate` and
+  `formatDateInZone` — and the year is decided in the DISPLAY zone, which the
+  test pins with a New Year's Eve case.
+- Team roles: added the admin-only role select the spec never had. Promotion is
+  immediate; demotion is confirmed; demoting the LAST admin is impossible — the
+  option is absent, the reducer refuses it, and the row says to promote someone
+  else first. Recorded as a spec gap found rather than a feature invented.
+- Coverage: a `times are honest about zones` structural check (greps the feature
+  tree for the audience claim with comments stripped, so the code that removed
+  it may still quote it); e2e for the zone label and the deleted claim; e2e for
+  the role change including the last-admin case; unit tests for the offset
+  label across DST, the display-zone year rule, and the three role rules.
+- Also recorded the lesson from the previous turn: `ledger.test.ts` was written
+  for one identity and found an unrelated 452-credit charge pointing at a job
+  that did not exist. The rule taken from it is in decisions.md — assert the
+  surrounding invariants, not just the property in question.
+- Phase: post-W6 remediation (W7 still NOT started)
+- Files: `src/components/ab/posting-time.tsx` (new), `src/lib/{timezone,format}.ts`
+  - tests, `src/features/today/{today-screen,draft-card,draft-detail-screen}.tsx`,
+    `src/features/calendar/{slot-sheet,calendar-screen}.tsx`,
+    `src/features/settings/team-screen.tsx`, `src/data/provider.tsx`,
+    `scripts/verify-w06.ts`, `e2e/{calendar-connections,compose-analytics-settings}.spec.ts`
+- Decisions: see decisions.md — four entries dated 2026-07-29 (the test lesson,
+  posting times, the deleted audience claim, the I7 spec gap)
+- Verify: `verify:w06` green — 306 unit tests, 68 e2e, all structural checks
+- Next: **two manual gates are REOPENED** and must run against this build, not
+  the old one — the 360px pass and the screen-reader walk, since the focus,
+  tablist and posting-time work moved the semantics the walk exists to check.
+  W7 waits for those.

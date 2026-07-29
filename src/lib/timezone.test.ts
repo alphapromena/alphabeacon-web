@@ -7,7 +7,14 @@
  * machine's own offset, or applies one offset year-round, cannot pass both.
  */
 import { describe, expect, it } from 'vitest'
-import { formatTimeInZone, offsetMinutesAt, zoneAbbreviation, zonedTimeToInstant } from './timezone'
+import {
+  formatDateInZone,
+  formatTimeInZone,
+  offsetMinutesAt,
+  slotInstant,
+  zoneAbbreviation,
+  zonedTimeToInstant,
+} from './timezone'
 
 describe('offsets are measured, not assumed', () => {
   it('tracks New York across a daylight-saving change', () => {
@@ -81,5 +88,51 @@ describe('zones are labelled legibly', () => {
     expect(zoneAbbreviation('Asia/Amman', new Date('2026-07-15T12:00:00Z'))).toBe('GMT+3')
     expect(zoneAbbreviation('America/New_York', new Date('2026-07-15T12:00:00Z'))).toBe('GMT-4')
     expect(zoneAbbreviation('America/New_York', new Date('2026-01-15T12:00:00Z'))).toBe('GMT-5')
+  })
+})
+
+describe('a posting time is said unambiguously', () => {
+  it('labels the zone by offset, never by an ambiguous abbreviation', () => {
+    // "AST" means both Arabia and Atlantic Standard Time. This product's
+    // operators publish to clients in either, so the offset is the only
+    // honest short form.
+    const summer = new Date('2026-07-15T09:00:00.000Z')
+    expect(zoneAbbreviation('Asia/Amman', summer)).toBe('GMT+3')
+    expect(zoneAbbreviation('Asia/Amman', summer)).not.toMatch(/AST/)
+    expect(zoneAbbreviation('UTC', summer)).toMatch(/UTC|GMT/)
+  })
+
+  it('follows daylight saving instead of freezing one season', () => {
+    const july = new Date('2026-07-15T12:00:00.000Z')
+    const january = new Date('2026-01-15T12:00:00.000Z')
+    expect(zoneAbbreviation('America/New_York', july)).toBe('GMT-4')
+    expect(zoneAbbreviation('America/New_York', january)).toBe('GMT-5')
+    // Jordan abolished DST in 2022, so it must NOT move.
+    expect(zoneAbbreviation('Asia/Amman', july)).toBe(zoneAbbreviation('Asia/Amman', january))
+  })
+})
+
+describe('dates outside the current year carry it', () => {
+  const now = new Date('2026-07-29T12:00:00.000Z')
+
+  it('omits the year within the current year, and shows it outside', () => {
+    expect(formatDateInZone('2026-03-04T09:00:00.000Z', 'UTC', now)).toBe('Mar 4')
+    expect(formatDateInZone('2025-11-04T09:00:00.000Z', 'UTC', now)).toBe('Nov 4, 2025')
+  })
+
+  it("decides the year in the DISPLAY zone, not in the viewer's", () => {
+    // 31 Dec 22:00 UTC is already 1 Jan in Amman: the year shown has to be the
+    // year of the zone the time is being read in.
+    const newYearEve = '2025-12-31T22:00:00.000Z'
+    expect(formatDateInZone(newYearEve, 'Asia/Amman', now)).toBe('Jan 1')
+    expect(formatDateInZone(newYearEve, 'UTC', now)).toBe('Dec 31, 2025')
+  })
+})
+
+describe('slotInstant', () => {
+  it('is the same conversion the schedule already trusted', () => {
+    expect(slotInstant('2026-07-14', '09:00', 'Asia/Amman').toISOString()).toBe(
+      zonedTimeToInstant('2026-07-14', '09:00', 'Asia/Amman').toISOString(),
+    )
   })
 })

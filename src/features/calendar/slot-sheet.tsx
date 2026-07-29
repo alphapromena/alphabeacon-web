@@ -13,6 +13,7 @@ import { CalendarDays, ExternalLink, Undo2 } from 'lucide-react'
 import { Link } from 'react-router'
 import { ConfirmDialog } from '@/components/ab/confirm-dialog'
 import { MonoNumber } from '@/components/ab/mono-number'
+import { PostingTime } from '@/components/ab/posting-time'
 import { DraftStatusBadge } from '@/components/ab/status-badge'
 import { toastSuccess } from '@/components/ab/toast'
 import { Button } from '@/components/ui/button'
@@ -32,7 +33,7 @@ import {
   useSchedule,
 } from '@/data/provider'
 import type { Slot } from '@/data/types'
-import { shortDate } from '@/lib/format'
+import { slotInstant } from '@/lib/timezone'
 import { canUndoSkip } from './skip-window'
 
 export function SlotSheet({
@@ -70,10 +71,17 @@ export function SlotSheet({
       <SheetContent className="w-full overflow-y-auto sm:max-w-[440px]">
         <SheetHeader>
           <SheetTitle>
-            <MonoNumber value={`${shortDate(slot.date)} · ${slot.time}`} />
+            <PostingTime
+              at={slotInstant(slot.date, slot.time, schedule.timezone)}
+              zone={schedule.timezone}
+              showDate
+            />
           </SheetTitle>
+          {/* NOT "the time your audience sees" — that was false. A connected
+              page has followers in every zone and this product holds no data
+              about where they are. What it knows is where it posts FROM. */}
           <SheetDescription>
-            {schedule.timezone.replace('_', ' ')} — the time your audience sees.
+            Posting time, in {schedule.timezone.replace('_', ' ')}.
           </SheetDescription>
         </SheetHeader>
 

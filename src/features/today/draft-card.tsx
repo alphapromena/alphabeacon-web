@@ -17,6 +17,7 @@ import { useState } from 'react'
 import { Link } from 'react-router'
 import { ClaimChip } from '@/components/ab/claim-chip'
 import { MonoNumber } from '@/components/ab/mono-number'
+import { PostingTime } from '@/components/ab/posting-time'
 import { SignalSweep } from '@/components/ab/motion'
 import { DraftStatusBadge } from '@/components/ab/status-badge'
 import { ToneBadge } from '@/components/ab/tone-badge'
@@ -24,11 +25,11 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import type { CalendarEvent, Draft, Tone } from '@/data/types'
 import { canTransition } from '@/lib/draft-status'
-import { clockTime } from '@/lib/format'
 import { cn } from '@/lib/utils'
 
 export function DraftCard({
   draft,
+  zone,
   tone,
   event,
   assetLabel,
@@ -40,6 +41,8 @@ export function DraftCard({
   onRetry,
 }: {
   draft: Draft
+  /** The schedule's posting zone — every time on this card is read in it. */
+  zone: string
   tone?: Tone
   event?: CalendarEvent
   /** Present once media exists — the card shows it rather than describing it. */
@@ -125,7 +128,7 @@ export function DraftCard({
 
         {draft.scheduledFor && (
           <p className="text-sm text-muted-foreground">
-            Scheduled for <MonoNumber value={clockTime(draft.scheduledFor)} />
+            Scheduled for <PostingTime at={draft.scheduledFor} zone={zone} showDate />
           </p>
         )}
 

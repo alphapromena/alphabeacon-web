@@ -33,6 +33,7 @@ import {
   useScreenPhase,
   useSlots,
 } from '@/data/provider'
+import { zoneAbbreviation } from '@/lib/timezone'
 import { cn } from '@/lib/utils'
 import { SlotSheet } from './slot-sheet'
 
@@ -111,7 +112,10 @@ export function CalendarScreen() {
   const title = new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' }).format(anchor)
 
   return (
-    <AppShell title="Calendar" context={`${title} · ${schedule.timezone.replace('_', ' ')}`}>
+    <AppShell
+      title="Calendar"
+      context={`${title} · posting times in ${schedule.timezone.replace('_', ' ')} (${zoneAbbreviation(schedule.timezone)})`}
+    >
       {phase === 'loading' ? (
         <div className="grid grid-cols-7 gap-2" aria-busy="true" aria-label="Loading calendar">
           {Array.from({ length: 21 }, (_, index) => (

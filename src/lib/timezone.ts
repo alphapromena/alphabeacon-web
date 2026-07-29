@@ -70,21 +70,42 @@ export function formatTimeInZone(instant: Date | string, timeZone: string): stri
   }).format(new Date(instant))
 }
 
-/** "Jul 14" as read in the given zone. */
-export function formatDateInZone(instant: Date | string, timeZone: string): string {
+/** "Jul 14" as read in the given zone — with the year when it is not this one. */
+export function formatDateInZone(
+  instant: Date | string,
+  timeZone: string,
+  now: Date = new Date(),
+): string {
+  const at = new Date(instant)
+  const yearIn = (date: Date) =>
+    new Intl.DateTimeFormat('en-US', { timeZone, year: 'numeric' }).format(date)
+  const sameYear = yearIn(at) === yearIn(now)
   return new Intl.DateTimeFormat('en-US', {
     timeZone,
     month: 'short',
     day: 'numeric',
-  }).format(new Date(instant))
+    ...(sameYear ? {} : { year: 'numeric' }),
+  }).format(at)
 }
 
-/** "GMT+3" — shown beside a timezone so the choice is legible, not just named. */
+/**
+ * "GMT+3" — the zone said unambiguously.
+ *
+ * Deliberately the offset and not the abbreviation: "AST" means both Arabia and
+ * Atlantic Standard Time, and this product's operators publish to clients in
+ * either. `shortOffset` is measured at the instant given, so it follows DST
+ * instead of freezing one season's answer.
+ */
 export function zoneAbbreviation(timeZone: string, at: Date = new Date()): string {
   const parts = new Intl.DateTimeFormat('en-US', { timeZone, timeZoneName: 'shortOffset' })
     .formatToParts(at)
     .find((part) => part.type === 'timeZoneName')
   return parts?.value ?? timeZone
+}
+
+/** The instant a slot's wall-clock date + time names, in the schedule's zone. */
+export function slotInstant(date: string, time: string, timeZone: string): Date {
+  return zonedTimeToInstant(date, time, timeZone)
 }
 
 /**

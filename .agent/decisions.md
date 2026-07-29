@@ -479,3 +479,65 @@ add a new entry that says it supersedes the old one.
   approving a draft should not have to learn what a job is.
 - Not building anything. Logged so the question survives; it needs a product
   decision, not an implementation.
+
+### 2026-07-29 — A test is worth more than the assertion it was written for
+
+- Why: `ledger.test.ts` was written to prove one identity — granted − spent −
+  held equals the balance. What it actually found was unrelated and worse: the
+  low-credits world charged 452 credits to `job_backfill`, a job that did not
+  exist, so the single largest line on the credits screen rendered with a blank
+  description. Nobody was looking for that, and no screenshot would have shown
+  it. The rule this repo takes from it: **when you write a test for one
+  property, assert the surrounding invariants too** — every reference resolves,
+  every total is non-negative, every row names something real. The cheap extra
+  assertions are where the unknown bugs live, and they cost a line each.
+- Instead of: testing exactly the one property in question, which would have
+  passed and left the 452-credit ghost in place.
+
+### 2026-07-29 — Posting times: the schedule's zone, labelled by offset
+
+- Why: four decisions taken together, all approved. (1) A slot is a wall-clock
+  time in the org's posting zone, so that zone is the fact and everything else
+  renders it. (2) The viewer's local time appears ONLY when it differs — an
+  always-on second zone trains people to read neither — and brings its date with
+  it when the day differs too. (3) The label is `GMT+3`, never `AST`: that
+  abbreviation means both Arabia and Atlantic Standard Time, and this product's
+  operators publish to clients in either. In the tightest slot — a calendar day
+  cell, a queue slot heading — the offset is what fits, so the offset is used
+  everywhere and the IANA name appears where there is room (calendar header,
+  slot sheet, schedule config). (4) Dates outside the current year carry it.
+- All of it lives in `components/ab/posting-time.tsx` so no screen can hold a
+  different opinion, and `verify:w06` fails if a screen stops using it.
+- Instead of: per-screen formatting (six opinions), or the abbreviation (shorter,
+  ambiguous, and ambiguity in a publishing time is a missed post).
+
+### 2026-07-29 — The product no longer claims to know the audience's time
+
+- Why: C4 read "the time your audience sees". That is not imprecise, it is
+  false, and it was user-facing: a connected page has followers in every zone
+  and this product holds no data about where they are. Renamed to **posting
+  time** everywhere, and the claim deleted. If a platform ever reports a real
+  audience zone it arrives as its own sourced fact, not as a relabelling of the
+  operator's zone. `verify:w06` greps the feature tree for the claim so it
+  cannot come back in a well-meaning line of copy — comments are stripped first,
+  so the code that removed it may still quote it in explaining why.
+- Instead of: softening it ("roughly the time your audience sees"), which keeps
+  a claim the data cannot support.
+
+### 2026-07-29 — SPEC GAP FOUND: no way to change a member's role
+
+- Why: screens4.md I7 specifies a role BADGE on member rows and a role select
+  only in the invite dialog. Read strictly that is what was built, and the badge
+  correctly stays a non-focusable label. But it leaves an admin no way to
+  promote or demote anyone — the only path from member to admin was remove and
+  re-invite, which destroys that person's history and their joined date. That is
+  a data-loss route wearing the costume of a missing feature, so the gap is in
+  the spec rather than in the implementation.
+- What was added: an admin-only `<select>` beside the badge. Promotion is
+  immediate (it grants access and is reversible); demotion is confirmed (it
+  takes access away). Demoting the LAST admin is impossible rather than
+  discouraged — the option is absent, the reducer refuses it, and the row says
+  to promote someone else first, because a workspace with no admin can never
+  change its own billing, team or connections again.
+- Noted as a spec gap, not a feature invented: `screens4.md` I7 should gain the
+  role control when it is next revised.

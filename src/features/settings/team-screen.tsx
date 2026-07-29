@@ -12,6 +12,16 @@
 import { MailPlus, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { ConfirmDialog } from '@/components/ab/confirm-dialog'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import { MonoNumber } from '@/components/ab/mono-number'
 import { toastSuccess } from '@/components/ab/toast'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
@@ -53,6 +63,7 @@ export function TeamScreen() {
   const [error, setError] = useState<string | null>(null)
 
   const admin = session.user?.role === 'admin'
+  const admins = users.filter((user) => user.role === 'admin')
 
   const invite = () => {
     const value = email.trim().toLowerCase()
@@ -127,9 +138,24 @@ export function TeamScreen() {
                   </div>
                 </td>
                 <td className="px-4 py-3">
-                  <Badge variant="outline" className="font-normal capitalize">
-                    {user.role}
-                  </Badge>
+                  {/* The badge stays a label — screens4.md I7 specifies a role
+                      badge, and a focusable pill would promise an interaction
+                      it does not have. The control that CHANGES a role is a
+                      separate, admin-only select beside it. */}
+                  {admin ? (
+                    <RoleSelect
+                      user={user}
+                      lastAdmin={admins.length <= 1 && user.role === 'admin'}
+                      onChange={(role) => {
+                        dispatch({ type: 'team/setRole', userId: user.id, role })
+                        toastSuccess(`${user.name} is now ${role === 'admin' ? 'an' : 'a'} ${role}`)
+                      }}
+                    />
+                  ) : (
+                    <Badge variant="outline" className="font-normal capitalize">
+                      {user.role}
+                    </Badge>
+                  )}
                 </td>
                 <td className="px-4 py-3">
                   <MonoNumber value={shortDate(user.joinedAt)} />
@@ -268,6 +294,82 @@ export function TeamScreen() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+    </>
+  )
+}
+
+/**
+ * Changing someone's role, with the one irreversible case made impossible.
+ *
+ * Demoting the LAST admin leaves a workspace nobody can administer — no billing
+ * change, no re-auth, and no way to promote anyone back. So for that person the
+ * "Member" option is absent rather than disabled, the same law the queue's
+ * media buttons follow, and the row says why.
+ *
+ * Promotion is immediate: it grants access, is reversible, and nothing is lost.
+ * Demotion is confirmed, because it takes access away from someone who has it.
+ */
+function RoleSelect({
+  user,
+  lastAdmin,
+  onChange,
+}: {
+  user: User
+  /** True when this member is the only admin left. */
+  lastAdmin: boolean
+  onChange: (role: User['role']) => void
+}) {
+  const [pending, setPending] = useState<User['role'] | null>(null)
+
+  return (
+    <>
+      <label className="sr-only" htmlFor={`role-${user.id}`}>
+        Role for {user.name}
+      </label>
+      <select
+        id={`role-${user.id}`}
+        value={user.role}
+        onChange={(event) => {
+          const next = event.target.value as User['role']
+          if (next === user.role) return
+          if (next === 'admin') onChange(next)
+          else setPending(next)
+        }}
+        className="h-8 rounded-lg border border-input bg-background px-2 text-sm"
+      >
+        <option value="admin">Admin</option>
+        {/* Absent, not disabled: there is no legal demotion of the last admin. */}
+        {!lastAdmin && <option value="member">Member</option>}
+      </select>
+      {lastAdmin && (
+        <p className="mt-1 max-w-40 text-xs text-muted-foreground">
+          The only admin. Promote someone else before changing this.
+        </p>
+      )}
+
+      <AlertDialog open={pending !== null} onOpenChange={(open) => !open && setPending(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Make {user.name} a member?</AlertDialogTitle>
+            <AlertDialogDescription>
+              They keep their account and everything they have already approved, but they lose
+              billing, the team list, and the ability to connect or reconnect a channel.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Keep as admin</AlertDialogCancel>
+            <AlertDialogAction
+              variant="destructive"
+              onClick={() => {
+                if (pending) onChange(pending)
+                setPending(null)
+              }}
+            >
+              Change to member
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   )
 }

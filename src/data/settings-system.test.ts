@@ -243,3 +243,50 @@ describe('N4 connectivity', () => {
     )
   })
 })
+
+describe('roles can be changed without destroying a member', () => {
+  it('promotes and demotes in place, keeping the account', () => {
+    const start = world()
+    const member = start.world.users.find((u) => u.role === 'member')
+    if (!member) throw new Error('the active world should have a member')
+
+    const promoted = dataReducer(start, {
+      type: 'team/setRole',
+      userId: member.id,
+      role: 'admin',
+    })
+    expect(promoted.world.users.find((u) => u.id === member.id)?.role).toBe('admin')
+    // The whole point: nothing else about them changed.
+    expect(promoted.world.users).toHaveLength(start.world.users.length)
+    expect(promoted.world.users.find((u) => u.id === member.id)?.joinedAt).toBe(member.joinedAt)
+  })
+
+  it('refuses to demote the last admin, because there is no way back', () => {
+    const start = world()
+    const admins = start.world.users.filter((u) => u.role === 'admin')
+    expect(admins).toHaveLength(1)
+
+    const attempted = dataReducer(start, {
+      type: 'team/setRole',
+      userId: admins[0].id,
+      role: 'member',
+    })
+    expect(attempted.world.users.find((u) => u.id === admins[0].id)?.role).toBe('admin')
+  })
+
+  it('allows the demotion once someone else can administer', () => {
+    const start = world()
+    const member = start.world.users.find((u) => u.role === 'member')
+    const admin = start.world.users.find((u) => u.role === 'admin')
+    if (!member || !admin) throw new Error('the active world should have both')
+
+    const promoted = dataReducer(start, { type: 'team/setRole', userId: member.id, role: 'admin' })
+    const demoted = dataReducer(promoted, {
+      type: 'team/setRole',
+      userId: admin.id,
+      role: 'member',
+    })
+    expect(demoted.world.users.find((u) => u.id === admin.id)?.role).toBe('member')
+    expect(demoted.world.users.filter((u) => u.role === 'admin')).toHaveLength(1)
+  })
+})

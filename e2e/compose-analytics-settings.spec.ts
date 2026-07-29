@@ -311,6 +311,35 @@ test('the team screen invites, refuses a duplicate, and never offers to remove y
   await expect(page.getByRole('row').filter({ hasText: 'sam@atlasroasters.example' })).toBeVisible()
 })
 
+test('a role can be changed in place, and the last admin cannot be demoted', async ({ page }) => {
+  await open(page, 'Settings')
+  await page.getByRole('tab', { name: 'Team' }).click()
+  await expect(page.getByRole('heading', { name: 'Team', level: 1 })).toBeVisible()
+
+  // The only admin: demotion is ABSENT, not disabled, and the row says why.
+  const mine = page.getByLabel('Role for Maya Haddad')
+  await expect(mine.getByRole('option')).toHaveCount(1)
+  await expect(page.getByText('The only admin. Promote someone else before changing this.')).toBeVisible()
+
+  // Promotion is immediate — it grants access and is reversible.
+  await page.getByLabel('Role for Omar Nasser').selectOption('admin')
+  await expect(page.getByLabel('Role for Omar Nasser')).toHaveValue('admin')
+
+  // With a second admin, demotion becomes possible, and is confirmed because
+  // it takes access away from someone who has it.
+  await expect(mine.getByRole('option')).toHaveCount(2)
+  await mine.selectOption('member')
+  const confirm = page.getByRole('alertdialog')
+  await expect(confirm).toContainText('they lose billing, the team list')
+  await confirm.getByRole('button', { name: 'Change to member' }).click()
+
+  // Demoting YOURSELF is allowed — a departing admin handing over — and it
+  // takes your own admin controls with it, which is the honest consequence.
+  await expect(page.getByLabel('Role for Maya Haddad')).toHaveCount(0)
+  await expect(page.getByRole('row').filter({ hasText: 'Maya Haddad' })).toContainText('member')
+  await expect(page.getByRole('button', { name: 'Invite member' })).toHaveCount(0)
+})
+
 // ---------------------------------------------------------------------------
 // N1, N4 — system surfaces
 // ---------------------------------------------------------------------------

@@ -187,3 +187,19 @@ test('@axe calendar, connections and sources scan clean', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Connections', level: 1 })).toBeVisible()
   expect((await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze()).violations).toEqual([])
 })
+
+test('a slot time names its zone, and never claims to be the audience', async ({ page }) => {
+  await open(page, 'Calendar')
+
+  // The zone is stated once for the grid, as an offset rather than "AST",
+  // which means both Arabia and Atlantic Standard Time.
+  await expect(page.getByText(/posting times in Asia\/Amman \(GMT\+3\)/)).toBeVisible()
+
+  await page.getByRole('button', { name: /:00/ }).first().click()
+  const sheet = page.getByRole('dialog')
+  await expect(sheet).toBeVisible()
+
+  // The sheet says posting time, and the false claim is gone for good.
+  await expect(sheet.getByText(/Posting time, in Asia\/Amman/)).toBeVisible()
+  await expect(sheet.getByText(/audience sees/i)).toHaveCount(0)
+})

@@ -14,6 +14,7 @@ import { AppShell } from '@/components/ab/app-shell'
 import { ClaimChip } from '@/components/ab/claim-chip'
 import { ErrorState } from '@/components/ab/error-state'
 import { MonoNumber } from '@/components/ab/mono-number'
+import { PostingTime } from '@/components/ab/posting-time'
 import { DraftStatusBadge } from '@/components/ab/status-badge'
 import { ToneBadge } from '@/components/ab/tone-badge'
 import { toastSuccess } from '@/components/ab/toast'
@@ -28,10 +29,12 @@ import {
   useScreenPhase,
   useSlots,
   useTones,
+  useSchedule,
 } from '@/data/provider'
 import { canTransition } from '@/lib/draft-status'
-import { clockTime, relativeTime, shortDate } from '@/lib/format'
+import { relativeTime } from '@/lib/format'
 import { MESSAGES } from '@/lib/messages'
+import { slotInstant } from '@/lib/timezone'
 import { EditDraftDialog } from './edit-draft-dialog'
 import { MediaPanel } from './media-panel'
 import { RejectDialog } from './reject-dialog'
@@ -42,6 +45,7 @@ export function DraftDetailScreen() {
   const drafts = useDrafts()
   const tones = useTones()
   const slots = useSlots()
+  const schedule = useSchedule()
   const assets = useAssets()
   const billing = useBilling()
   const dispatch = useDataDispatch()
@@ -167,7 +171,11 @@ export function DraftDetailScreen() {
                   <div className="flex items-center justify-between gap-2">
                     <dt className="text-muted-foreground">Slot</dt>
                     <dd>
-                      <MonoNumber value={`${shortDate(slot.date)} ${slot.time}`} />
+                      <PostingTime
+                        at={slotInstant(slot.date, slot.time, schedule.timezone)}
+                        zone={schedule.timezone}
+                        showDate
+                      />
                     </dd>
                   </div>
                 )}
@@ -214,7 +222,13 @@ export function DraftDetailScreen() {
             </div>
 
             <section className="flex flex-col gap-3">
-              <h2 className="font-display text-sm font-semibold">Timeline</h2>
+              <h2 className="flex flex-wrap items-baseline gap-x-2 font-display text-sm font-semibold">
+                Timeline
+                {/* Named once here so the rows below can stay bare. */}
+                <span className="text-xs font-normal text-muted-foreground">
+                  times in {schedule.timezone.replace('_', ' ')}
+                </span>
+              </h2>
               <ol className="flex flex-col gap-3">
                 {draft.timeline.map((entry, index) => (
                   <li key={`${entry.status}-${entry.at}`} className="flex gap-3">
@@ -227,7 +241,7 @@ export function DraftDetailScreen() {
                     <span className="flex flex-col gap-0.5 pb-2">
                       <DraftStatusBadge status={entry.status} className="self-start" />
                       <span className="text-xs text-muted-foreground">
-                        <MonoNumber value={clockTime(entry.at)} /> ·{' '}
+                        <PostingTime at={entry.at} zone={schedule.timezone} showZone={false} /> ·{' '}
                         <MonoNumber value={relativeTime(entry.at)} />
                       </span>
                     </span>

@@ -36,6 +36,7 @@ import type {
   StudioJob,
   TeamInvite,
   Tone,
+  User,
 } from '@/data/types'
 import { MAX_SIGN_IN_ATTEMPTS, SIGN_IN_LOCKOUT_MS } from '@/data/types'
 import { canTransition, type DraftStatus } from '@/lib/draft-status'
@@ -140,6 +141,7 @@ export type DataAction =
   | { type: 'team/invite'; invite: TeamInvite }
   | { type: 'team/revokeInvite'; inviteId: string }
   | { type: 'team/removeMember'; userId: string }
+  | { type: 'team/setRole'; userId: string; role: User['role'] }
 
 export function dataReducer(state: DataState, action: DataAction): DataState {
   switch (action.type) {
@@ -773,6 +775,30 @@ export function dataReducer(state: DataState, action: DataAction): DataState {
           invites: state.world.invites.filter((invite) => invite.id !== action.inviteId),
         },
       }
+    /**
+     * Promote or demote in place.
+     *
+     * The last admin cannot be demoted: a workspace with no admin can never
+     * change its own billing, team or connections again, and nothing in a
+     * static app — or a real one — offers a way back from that. The UI confirms
+     * the demotion; this refuses the unrecoverable one outright.
+     */
+    case 'team/setRole': {
+      const admins = state.world.users.filter((user) => user.role === 'admin')
+      const target = state.world.users.find((user) => user.id === action.userId)
+      if (!target) return state
+      if (action.role !== 'admin' && target.role === 'admin' && admins.length <= 1) return state
+      return {
+        ...state,
+        world: {
+          ...state.world,
+          users: state.world.users.map((user) =>
+            user.id === action.userId ? { ...user, role: action.role } : user,
+          ),
+        },
+      }
+    }
+
     case 'team/removeMember':
       return {
         ...state,

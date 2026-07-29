@@ -10,7 +10,7 @@ import { Inbox, Plus } from 'lucide-react'
 import { Link } from 'react-router'
 import { EmptyState } from '@/components/ab/empty-state'
 import { ErrorState } from '@/components/ab/error-state'
-import { MonoNumber } from '@/components/ab/mono-number'
+import { PostingTime } from '@/components/ab/posting-time'
 import { BeaconDot } from '@/components/ab/motion'
 import { SkeletonList } from '@/components/ab/skeletons'
 import { AppShell } from '@/components/ab/app-shell'
@@ -27,6 +27,7 @@ import {
 } from '@/data/provider'
 import type { Draft } from '@/data/types'
 import { MESSAGES } from '@/lib/messages'
+import { slotInstant } from '@/lib/timezone'
 import { DraftCard } from './draft-card'
 import { DraftDialogs } from './draft-dialogs'
 import { useDraftActions } from './use-draft-actions'
@@ -95,7 +96,11 @@ export function TodayScreen() {
             <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
               {todaySlots.map((slot) => (
                 <span key={slot.id} className="rounded-full border border-border px-2 py-0.5">
-                  <MonoNumber value={slot.time} />
+                  <PostingTime
+                    at={slotInstant(slot.date, slot.time, schedule.timezone)}
+                    zone={schedule.timezone}
+                    showZone={false}
+                  />
                 </span>
               ))}
             </div>
@@ -127,8 +132,11 @@ export function TodayScreen() {
 
               return (
                 <section key={slot.id} className="flex flex-col gap-3">
-                  <h2 className="flex items-center gap-2 font-display text-sm font-semibold">
-                    <MonoNumber value={slot.time} />
+                  <h2 className="flex flex-wrap items-center gap-2 font-display text-sm font-semibold">
+                    <PostingTime
+                      at={slotInstant(slot.date, slot.time, schedule.timezone)}
+                      zone={schedule.timezone}
+                    />
                     {event && <span className="text-muted-foreground">· {event.name}</span>}
                   </h2>
 
@@ -144,6 +152,7 @@ export function TodayScreen() {
                         <DraftCard
                           key={draft.id}
                           draft={draft}
+                          zone={schedule.timezone}
                           tone={tones.find((t) => t.id === draft.toneId)}
                           event={events.find((e) => e.id === draft.eventId)}
                           assetLabel={assets.find((a) => a.id === draft.assetId)?.label}

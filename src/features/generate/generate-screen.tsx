@@ -249,6 +249,7 @@ export function GenerateScreen() {
                 {created ? (
                   <DraftCard
                     draft={created}
+                    zone={schedule.timezone}
                     tone={tones.find((t) => t.id === created.toneId)}
                     {...actions.handlersFor(created)}
                   />

@@ -32,7 +32,20 @@ export function clockTime(iso: string): string {
   return new Date(iso).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
 }
 
-/** "Jul 27" — compact calendar and chart labels. */
-export function shortDate(iso: string): string {
-  return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+/**
+ * "Jul 27" this year, "Jul 27, 2025" outside it.
+ *
+ * Dropping the year unconditionally is only safe while every date is recent,
+ * and this product shows joined dates, invoice history and published posts that
+ * are not. A bare "Jul 27" on a row from last year reads as this year — the one
+ * misreading a date format must never allow.
+ */
+export function shortDate(iso: string, now: Date = new Date()): string {
+  const at = new Date(iso)
+  const sameYear = at.getFullYear() === now.getFullYear()
+  return at.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    ...(sameYear ? {} : { year: 'numeric' }),
+  })
 }

@@ -15,13 +15,30 @@ item to "Signed off" (with the date) only when a human has actually done it.
 off below. What they found is tracked as work, not as debt — see the session
 entry for that date and the `2026-07-29` block in `decisions.md`.
 
-One product question is open and **decision-gated, not buildable yet**:
+### Two gates REOPENED — they must run against the fixed build
 
-### Timezones and dates on slot times _(from the W4/W6 sittings)_
+The focus, tablist and posting-time changes of 2026-07-29 moved the very
+semantics two of the sittings exist to check, so their earlier sign-off no
+longer covers what is on screen now.
 
-Times carry no zone anywhere except the calendar header, and list dates drop the
-year. A proposal is written and waiting on a decision — see the session entry
-for 2026-07-29. Nothing has been changed in the product yet.
+**Sitting 1 — viewport and environment (~35 min).** Unchanged in scope, but the
+settings tablist, the role select and the longer posting-time strings are all
+new since it ran, and all three are width-sensitive. Re-walk 360px.
+
+**Sitting 2 — keyboard and screen reader (~50 min).** This one changed the most.
+Settings is now a `tablist`/`tab`/`tabpanel` with roving tabindex and manual
+activation, the leave-guard hands focus back explicitly, two hidden file inputs
+left the tab order, and the team rows gained a role `<select>` whose most
+important behaviour is an ABSENT option. None of that existed when the walk was
+done. Listen specifically for:
+
+- the tablist announcing position ("tab 3 of 6") and selection state;
+- the leave-guard's return: after "Keep editing", is focus announced back in the
+  field, or silently moved?
+- the role select on the last admin — the missing option is the design, so does
+  the row's explanation get announced with it?
+- posting times: `9:00 AM GMT+3 · 10:00 AM your time` reads as one string;
+  confirm it is not heard as two unrelated numbers.
 
 ---
 
