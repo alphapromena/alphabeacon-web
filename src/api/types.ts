@@ -171,6 +171,27 @@ export interface ApiCountry {
   name: string
 }
 
+// --- Notifications (INT-5) ---------------------------------------------------
+
+/** Raised server-side by the producing feature; never written from here. */
+export interface ApiNotification {
+  id: string
+  orgId: string
+  userId: string
+  /** Free-form event type owned by the producer — treat unknown as generic. */
+  kind: string
+  title: string
+  message: string
+  /** A frontend route or a label; null when there is nothing to click. */
+  action: string | null
+  relatedType: string | null
+  relatedId: string | null
+  /** null = unread. */
+  seenAt: string | null
+  createdAt: string
+  updatedAt: string
+}
+
 /** Event ingestion writes these; `{skip}` is the entire mutation surface. */
 export interface ApiSlot {
   id: string

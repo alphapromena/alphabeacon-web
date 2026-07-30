@@ -748,3 +748,33 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   org+schedule+source together; C1 PATCH surviving reload; countries picker +
   409 + add/remove) + the slot test honestly skipping until ingestion runs
 - Next: INT-5 — notifications (`int/05`)
+
+### 2026-07-30 16:45 — INT-5: the notification inbox live; the integration's first pass is COMPLETE
+
+- Did: the inbox joined the sync (`fetchInbox`: the list + the unread-count
+  endpoint together; the count is the badge's truth — the list is one page,
+  the count is the whole inbox). The adapter treats `kind` as free-form per
+  the contract: five known kinds keep their icons, anything else renders as
+  the new `generic` type (types.ts gained it — the icon lookup also gained a
+  fallback, closing the crash the INT-0 mapper flagged). `action` resolves
+  defensively: only a rooted path becomes a link; a label or null goes home;
+  a deleted subject's dead route lands on the designed 404 (N2's job).
+  `read-all` is the one mutation (idempotent), through a seam that dims
+  optimistically — including the endpoint-backed badge — then reconciles.
+- The combined all-file live matrix trips the API's documented rate limits by
+  design (five signups + wizards in a minute); the suites run per-spec, as
+  each phase was verified. Noted in state.md.
+- Phase: INT-5 (branch `int/05`)
+- Files: `src/data/notifications.ts` +
+  `src/data/adapters/notification-adapter.ts` (new), `src/data/live-sync.ts`,
+  `src/data/provider.tsx`, `src/data/types.ts` (NotificationType + generic —
+  deliberate), `src/api/types.ts`, `src/components/ab/notification-bell.tsx`,
+  `e2e/live-notifications.spec.ts` (new)
+- Decisions: covered by the contract's own rules (unknown kinds generic,
+  defensive actions) — no new entries
+- Verify: lint + typecheck + 340 unit + guard-static (222 files) green;
+  static e2e 74 passed / 22 live skipped; live e2e 1/1 (list + unread-count +
+  idempotent read-all against the deployed API, and the bell agreeing)
+- Next: nothing in INT scope. The integration's six phases are done; the
+  backend questions live in open-items 1–10, and W7 still waits on the two
+  reopened manual gates.

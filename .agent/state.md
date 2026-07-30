@@ -66,6 +66,12 @@ committed). Static mode remains the default and the e2e test bed. Hybrid per
 entity: covered entities go live; drafts/Today, connections, Studio, billing,
 analytics, compose and knowledge stay static, awaiting backend phase 2.
 
+**Running the live suites:** one spec at a time (`$env:VITE_API_BASE_URL=…;
+pnpm e2e --grep live-<phase>`), the way each phase was verified — the API's
+documented rate limits (60 s between code sends, 5/hour per email+purpose)
+make a single-shot all-file matrix trip 429s by design. Fresh
+`qa+<timestamp>` addresses every run; every dev code is 000000.
+
 | Phase | Scope                                                    | State       |
 | ----- | -------------------------------------------------------- | ----------- |
 | INT-0 | API client, env switch, guard amendments, docs           | Done (`int/00`, pushed) |
@@ -73,7 +79,7 @@ analytics, compose and knowledge stay static, awaiting backend phase 2.
 | INT-2 | Me + orgs + members + invites                            | Done (`int/02`) · live e2e 12/12 |
 | INT-3 | Brand (voices, tones + adapter, sources, topics)         | Done (`int/03`) · live e2e 5/5 |
 | INT-4 | Schedules + event sources (+countries) + slots           | Done (`int/04`) · live e2e 3/3 (+1 gated on ingestion) |
-| INT-5 | Notifications (list, unread-count, read-all)             | Queued      |
+| INT-5 | Notifications (list, unread-count, read-all)             | Done (`int/05`) · live e2e 1/1 |
 
 Current totals: **340 unit tests** (31 files), **74 static e2e + 7 live e2e**, all green.
 **No route is a stub any more** — `PlaceholderScreen` is deleted, and

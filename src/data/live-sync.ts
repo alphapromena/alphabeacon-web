@@ -16,6 +16,7 @@ import { updateStoredSession } from '@/api/session'
 import type {
   ApiCountry,
   ApiEventSource,
+  ApiNotification,
   ApiInvite,
   ApiMember,
   ApiSchedule,
@@ -31,6 +32,7 @@ import type {
 } from '@/api/types'
 import { adaptBrand, type BrandGraft } from '@/data/adapters/brand-adapter'
 import { adaptTeam, type TeamGraft } from '@/data/adapters/org-adapter'
+import { adaptNotifications } from '@/data/adapters/notification-adapter'
 import { adaptScheduling, type SchedulingGraft } from '@/data/adapters/scheduling-adapter'
 
 /** Fresh user + orgs; the stored record is rewritten in the same storage. */
@@ -93,6 +95,15 @@ export async function fetchScheduling(orgId: string): Promise<SchedulingGraft> {
     slots.items,
     Object.fromEntries(countries.map((country) => [country.code, country.name])),
   )
+}
+
+/** The signed-in user's inbox for this org + the true unread count. */
+export async function fetchInbox(orgId: string) {
+  const [list, count] = await Promise.all([
+    api<Paginated<ApiNotification>>('GET', `/orgs/${orgId}/notifications`),
+    api<{ unread: number }>('GET', `/orgs/${orgId}/notifications/unread-count`),
+  ])
+  return { notifications: adaptNotifications(list.items), unread: count.unread }
 }
 
 /** The brand kit: tones, voices, sources, topics — any member may read all. */

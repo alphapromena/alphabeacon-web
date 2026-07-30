@@ -29,9 +29,10 @@ import { clearAuthSession, graftAuthSession } from '@/data/adapters/auth-adapter
 import type { BrandGraft } from '@/data/adapters/brand-adapter'
 import type { TeamGraft } from '@/data/adapters/org-adapter'
 import type { SchedulingGraft } from '@/data/adapters/scheduling-adapter'
-import { fetchBrand, fetchScheduling, fetchTeam, refreshAuthSnapshot } from '@/data/live-sync'
+import { fetchBrand, fetchInbox, fetchScheduling, fetchTeam, refreshAuthSnapshot } from '@/data/live-sync'
 import { buildDataset, DATASETS, DEFAULT_DATASET_ID } from '@/data/datasets'
 import type {
+  AppNotification,
   Asset,
   CalendarSource,
   Dataset,
@@ -92,6 +93,8 @@ export interface DataState {
   }
   /** The working schedule's API id (INT-4); null until one is created. */
   liveScheduleId?: string | null
+  /** The unread-count ENDPOINT's number (INT-5) — the badge's truth. */
+  liveUnreadCount?: number
 }
 
 export type DataAction =
@@ -115,6 +118,7 @@ export type DataAction =
       team: TeamGraft
       brand: BrandGraft | null
       scheduling: SchedulingGraft | null
+      inbox: { notifications: AppNotification[]; unread: number } | null
     }
   // --- auth (A1–A4) ---------------------------------------------------------
   | { type: 'auth/signUp'; name: string; email: string; orgName: string }
@@ -233,6 +237,7 @@ export function dataReducer(state: DataState, action: DataAction): DataState {
             }
           : undefined,
         liveScheduleId: action.scheduling ? action.scheduling.scheduleId : undefined,
+        liveUnreadCount: action.inbox?.unread,
         world: {
           ...state.world,
           users: action.team.users,
@@ -264,6 +269,7 @@ export function dataReducer(state: DataState, action: DataAction): DataState {
                   : {}),
               }
             : {}),
+          ...(action.inbox ? { notifications: action.inbox.notifications } : {}),
         },
       }
     case 'live/pendingVerification':
@@ -309,6 +315,8 @@ export function dataReducer(state: DataState, action: DataAction): DataState {
     case 'notifications/markAllRead':
       return {
         ...state,
+        // The endpoint-backed badge follows the optimistic dim (INT-5).
+        liveUnreadCount: state.liveUnreadCount !== undefined ? 0 : undefined,
         world: {
           ...state.world,
           notifications: state.world.notifications.map((n) => ({ ...n, read: true })),
@@ -1089,19 +1097,21 @@ export function DataProvider({
         }
         const orgId = refreshed.orgs[0]?.id
         if (orgId) {
-          const [team, brand, scheduling] = await Promise.all([
+          const [team, brand, scheduling, inbox] = await Promise.all([
             fetchTeam(orgId),
             fetchBrand(orgId),
             fetchScheduling(orgId),
+            fetchInbox(orgId),
           ])
           if (cancelled) return
-          dispatch({ type: 'live/orgSynced', team, brand, scheduling })
+          dispatch({ type: 'live/orgSynced', team, brand, scheduling, inbox })
         } else {
           dispatch({
             type: 'live/orgSynced',
             team: { users: [], invites: [], memberIdByUserId: {} },
             brand: null,
             scheduling: null,
+            inbox: null,
           })
         }
         completed = true
@@ -1164,6 +1174,17 @@ export function useLiveBrandIds(): DataState['liveBrandIds'] {
 
 export function useLiveScheduleId(): string | null {
   return useData().state.liveScheduleId ?? null
+}
+
+/** The bell's badge: the unread-count endpoint's number in live mode (the
+ *  list is one page; the count is the whole inbox), derived locally in the
+ *  static demo. */
+export function useUnreadNotificationCount(): number {
+  const { state } = useData()
+  return (
+    state.liveUnreadCount ??
+    state.world.notifications.filter((notification) => !notification.read).length
+  )
 }
 
 export function useDatasetInfo() {

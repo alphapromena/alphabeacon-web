@@ -365,7 +365,14 @@ export interface AnalyticsSeries {
 // ---------------------------------------------------------------------------
 
 export type NotificationType =
-  'reauth_needed' | 'low_credits' | 'generation_failed' | 'payment_failed' | 'drafts_ready'
+  | 'reauth_needed'
+  | 'low_credits'
+  | 'generation_failed'
+  | 'payment_failed'
+  | 'drafts_ready'
+  /** INT-5: the API's `kind` is free-form and owned by the producing
+   *  feature; anything unrecognised renders generically, never crashes. */
+  | 'generic'
 
 export interface AppNotification {
   id: string

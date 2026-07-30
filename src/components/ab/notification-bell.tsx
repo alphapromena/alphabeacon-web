@@ -23,7 +23,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { useDataDispatch, useNotifications } from '@/data/provider'
+import { useNotifications, useUnreadNotificationCount } from '@/data/provider'
+import { useNotificationActions } from '@/data/notifications'
 import type { NotificationType } from '@/data/types'
 import { relativeTime } from '@/lib/format'
 import { MESSAGES } from '@/lib/messages'
@@ -35,12 +36,15 @@ const TYPE_ICON: Record<NotificationType, LucideIcon> = {
   generation_failed: TriangleAlert,
   payment_failed: CreditCard,
   drafts_ready: Inbox,
+  generic: Bell,
 }
 
 export function NotificationBell() {
   const notifications = useNotifications()
-  const dispatch = useDataDispatch()
-  const unread = notifications.filter((n) => !n.read).length
+  const actions = useNotificationActions()
+  // The badge is the unread-count ENDPOINT's number in live mode (the list
+  // holds a page; the count is the whole inbox), derived locally otherwise.
+  const unread = useUnreadNotificationCount()
   const recent = notifications.slice(0, 5)
 
   return (
@@ -71,7 +75,7 @@ export function NotificationBell() {
               variant="ghost"
               size="sm"
               className="h-auto px-1.5 py-0.5 text-xs font-normal"
-              onClick={() => dispatch({ type: 'notifications/markAllRead' })}
+              onClick={() => void actions.markAllRead()}
             >
               Mark all as read
             </Button>
@@ -84,7 +88,8 @@ export function NotificationBell() {
           </p>
         ) : (
           recent.map((notification) => {
-            const Icon = TYPE_ICON[notification.type]
+            // A kind minted after this build still renders — generically.
+            const Icon = TYPE_ICON[notification.type] ?? Bell
             return (
               <DropdownMenuItem key={notification.id} asChild>
                 <Link to={notification.href} className="flex items-start gap-2">
