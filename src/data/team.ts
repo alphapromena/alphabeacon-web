@@ -20,9 +20,55 @@ import type { AuthActionResult } from '@/data/auth'
 import {
   useDataDispatch,
   useLiveMemberIds,
+  useLiveViewerRole,
   useLiveWorkingOrgId,
+  useSession,
 } from '@/data/provider'
 import type { TeamInvite, User } from '@/data/types'
+
+/** Org-role precedence — the one rank table (owner arrived with INT-2). */
+export const ROLE_RANK: Record<User['role'], number> = { owner: 3, admin: 2, member: 1 }
+
+export interface TeamPermissions {
+  /** The viewer's OWN role: the workspace root's membership.role in live
+   *  mode, the session user's role in the static demo. Never inferred from
+   *  the members list (review item, 2026-07-30). */
+  viewerRole: User['role']
+  /** Invite, resend/cancel invites, remove lower tiers. */
+  canManageMembers: boolean
+  /** Role changes: OWNER-only on the wire; the static demo's admins keep
+   *  their demo power. A rule constant per mode — not an inference. */
+  canSetRoles: boolean
+  /** Whether the owner tier is grantable (live only — the demo has none). */
+  canGrantOwner: boolean
+  /** The tier that must never empty: owner live, admin in the demo. */
+  protectedTier: User['role']
+  /** The API's removal precedence: owners remove anyone; others only lower. */
+  canRemove(target: User): boolean
+}
+
+export function useTeamPermissions(): TeamPermissions {
+  const live = isLiveMode()
+  const liveRole = useLiveViewerRole()
+  const session = useSession()
+  const viewerRole: User['role'] = live
+    ? (liveRole ?? 'member')
+    : (session.user?.role ?? 'member')
+
+  const canSetRoles = live
+    ? viewerRole === 'owner'
+    : ROLE_RANK[viewerRole] >= ROLE_RANK.admin
+
+  return {
+    viewerRole,
+    canManageMembers: ROLE_RANK[viewerRole] >= ROLE_RANK.admin,
+    canSetRoles,
+    canGrantOwner: live && canSetRoles,
+    protectedTier: live ? 'owner' : 'admin',
+    canRemove: (target) =>
+      viewerRole === 'owner' || ROLE_RANK[viewerRole] > ROLE_RANK[target.role],
+  }
+}
 
 export type TeamActionResult =
   | (AuthActionResult & { ok: false })

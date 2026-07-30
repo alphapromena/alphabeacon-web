@@ -28,6 +28,8 @@ import type {
   ApiVoice,
   ApiOrgSummary,
   AuthSession,
+  OrgRole,
+  OrgRoot,
   Paginated,
 } from '@/api/types'
 import { adaptBrand, type BrandGraft } from '@/data/adapters/brand-adapter'
@@ -49,6 +51,17 @@ export async function refreshAuthSnapshot(current: AuthSession): Promise<AuthSes
   }
   updateStoredSession(refreshed)
   return refreshed
+}
+
+/**
+ * The VIEWER's own role in this org, from the workspace root — the
+ * authoritative "who am I here" (`GET /orgs/:orgId` resolves the caller's
+ * membership; platform admins arrive as a synthetic owner). Permissions
+ * derive from THIS, never from scanning the members list.
+ */
+export async function fetchViewerRole(orgId: string): Promise<OrgRole> {
+  const root = await api<OrgRoot>('GET', `/orgs/${orgId}`)
+  return root.membership.role
 }
 
 /** Members + pending invites for the working org, adapted for the world. */

@@ -23,13 +23,13 @@ import {
 import { configureApi } from '@/api/client'
 import { isLiveMode } from '@/api/config'
 import { loadSession, purgeSession } from '@/api/session'
-import type { AuthSession } from '@/api/types'
+import type { AuthSession, OrgRole } from '@/api/types'
 import { toastError } from '@/components/ab/toast'
 import { clearAuthSession, graftAuthSession } from '@/data/adapters/auth-adapter'
 import type { BrandGraft } from '@/data/adapters/brand-adapter'
 import type { TeamGraft } from '@/data/adapters/org-adapter'
 import type { SchedulingGraft } from '@/data/adapters/scheduling-adapter'
-import { fetchBrand, fetchInbox, fetchScheduling, fetchTeam, refreshAuthSnapshot } from '@/data/live-sync'
+import { fetchBrand, fetchInbox, fetchScheduling, fetchTeam, fetchViewerRole, refreshAuthSnapshot } from '@/data/live-sync'
 import { buildDataset, DATASETS, DEFAULT_DATASET_ID } from '@/data/datasets'
 import type {
   AppNotification,
@@ -95,6 +95,12 @@ export interface DataState {
   liveScheduleId?: string | null
   /** The unread-count ENDPOINT's number (INT-5) — the badge's truth. */
   liveUnreadCount?: number
+  /**
+   * The viewer's OWN role in the working org, from the workspace root
+   * (`GET /orgs/:orgId` → membership.role). Review item: permissions derive
+   * from this, never inferred from the members list.
+   */
+  liveViewerRole?: OrgRole | null
 }
 
 export type DataAction =
@@ -119,6 +125,7 @@ export type DataAction =
       brand: BrandGraft | null
       scheduling: SchedulingGraft | null
       inbox: { notifications: AppNotification[]; unread: number } | null
+      viewerRole: OrgRole | null
     }
   // --- auth (A1–A4) ---------------------------------------------------------
   | { type: 'auth/signUp'; name: string; email: string; orgName: string }
@@ -238,6 +245,7 @@ export function dataReducer(state: DataState, action: DataAction): DataState {
           : undefined,
         liveScheduleId: action.scheduling ? action.scheduling.scheduleId : undefined,
         liveUnreadCount: action.inbox?.unread,
+        liveViewerRole: action.viewerRole,
         world: {
           ...state.world,
           users: action.team.users,
@@ -1097,14 +1105,15 @@ export function DataProvider({
         }
         const orgId = refreshed.orgs[0]?.id
         if (orgId) {
-          const [team, brand, scheduling, inbox] = await Promise.all([
+          const [team, brand, scheduling, inbox, viewerRole] = await Promise.all([
             fetchTeam(orgId),
             fetchBrand(orgId),
             fetchScheduling(orgId),
             fetchInbox(orgId),
+            fetchViewerRole(orgId),
           ])
           if (cancelled) return
-          dispatch({ type: 'live/orgSynced', team, brand, scheduling, inbox })
+          dispatch({ type: 'live/orgSynced', team, brand, scheduling, inbox, viewerRole })
         } else {
           dispatch({
             type: 'live/orgSynced',
@@ -1112,6 +1121,7 @@ export function DataProvider({
             brand: null,
             scheduling: null,
             inbox: null,
+            viewerRole: null,
           })
         }
         completed = true
@@ -1174,6 +1184,11 @@ export function useLiveBrandIds(): DataState['liveBrandIds'] {
 
 export function useLiveScheduleId(): string | null {
   return useData().state.liveScheduleId ?? null
+}
+
+/** The viewer's own org role from the workspace root (live mode only). */
+export function useLiveViewerRole(): OrgRole | null {
+  return useData().state.liveViewerRole ?? null
 }
 
 /** The bell's badge: the unread-count endpoint's number in live mode (the

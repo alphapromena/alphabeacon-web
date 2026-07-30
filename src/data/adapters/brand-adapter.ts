@@ -10,6 +10,9 @@
  * - **Voices**: one description per row. The app's do/don't/examples split has
  *   no wire home, so live mode carries ONE flat rule list (each row = one
  *   rule); the don't/example editors are disabled with the same note.
+ *   `description` is one plain human-readable sentence in BOTH directions —
+ *   read verbatim, written verbatim. No delimiter, prefix, or encoding is
+ *   ever parsed out of it: the same no-smuggling law as tones.
  * - **Sources**: `{url, title}` ↔ `FollowedSource` — the app stores addresses
  *   scheme-less by law; the adapter strips on read and the seam restores a
  *   secure scheme on write.

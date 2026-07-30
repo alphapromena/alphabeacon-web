@@ -49,9 +49,14 @@ export interface User {
   name: string
   email: string
   /**
-   * Org role. `owner` arrived with the AlphaStudio integration (INT-2): the
-   * API's model is three-tier, and ownership transfer + the last-owner rules
-   * only make sense with it. Static datasets remain two-tier — an owner never
+   * ORG MEMBERSHIP role — per-org, from that org's membership records. The
+   * same person can be owner in one org and member in another; this field is
+   * always the role in the WORKING org's world. It is never the platform
+   * role (`ApiUser.role`, e.g. 'user'|'admin' from GET /me), which stays a
+   * wire-only field on `src/api/types.ts` and has no home in the app model.
+   * `owner` arrived with the AlphaStudio integration (INT-2): the API's
+   * model is three-tier, and ownership transfer + the last-owner rules only
+   * make sense with it. Static datasets remain two-tier — an owner never
    * appears in a demo world — so every static behaviour is unchanged.
    */
   role: 'owner' | 'admin' | 'member'

@@ -38,14 +38,11 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useInvites, useSession, useUsers } from '@/data/provider'
-import { useTeamActions, type TeamActionResult } from '@/data/team'
+import { ROLE_RANK, useTeamActions, useTeamPermissions, type TeamActionResult } from '@/data/team'
 import type { User } from '@/data/types'
 import { relativeTime, shortDate } from '@/lib/format'
 import { MESSAGES } from '@/lib/messages'
 import { toastError } from '@/components/ab/toast'
-
-/** Org-role precedence: the API's model (owner arrived with INT-2). */
-const ROLE_RANK: Record<User['role'], number> = { owner: 3, admin: 2, member: 1 }
 
 /** One place team failures become copy — switched on code, never message. */
 function reportFailure(result: TeamActionResult) {
@@ -75,18 +72,16 @@ export function TeamScreen() {
   const [role, setRole] = useState<User['role']>('member')
   const [error, setError] = useState<string | null>(null)
 
-  const me = session.user
   /**
-   * The tier that manages roles is the HIGHEST present in the world: owner in
-   * a live workspace, admin in the static demo (owners never appear there).
-   * Pure data — no screen ever asks which mode it is in.
+   * Review item (2026-07-30): every viewer-side gate derives from the
+   * viewer's OWN membership role — the workspace root's answer in live mode,
+   * the session user's in the demo — via useTeamPermissions. The members
+   * list only ever describes TARGETS (whose row is the protected tier's
+   * last), never the viewer's power.
    */
-  const highestRole: User['role'] = users.some((user) => user.role === 'owner')
-    ? 'owner'
-    : 'admin'
-  const admin = !!me && ROLE_RANK[me.role] >= ROLE_RANK.admin
-  const canSetRoles = me?.role === highestRole
-  const holdersOfHighest = users.filter((user) => user.role === highestRole)
+  const perms = useTeamPermissions()
+  const admin = perms.canManageMembers
+  const holdersOfProtected = users.filter((user) => user.role === perms.protectedTier)
 
   const invite = async () => {
     const value = email.trim().toLowerCase()
@@ -184,12 +179,13 @@ export function TeamScreen() {
                       it does not have. The control that CHANGES a role belongs
                       to the HIGHEST tier present (the API makes role changes
                       owner-only where owners exist). */}
-                  {canSetRoles ? (
+                  {perms.canSetRoles ? (
                     <RoleSelect
                       user={user}
-                      highestRole={highestRole}
-                      lastOfHighest={
-                        holdersOfHighest.length <= 1 && user.role === highestRole
+                      canGrantOwner={perms.canGrantOwner}
+                      protectedTier={perms.protectedTier}
+                      lastOfProtected={
+                        holdersOfProtected.length <= 1 && user.role === perms.protectedTier
                       }
                       onChange={async (role) => {
                         const result = await team.setRole(user.id, role)
@@ -215,10 +211,7 @@ export function TeamScreen() {
                   {/* Removal follows the API's precedence: owners remove
                       anyone, admins remove members only — an equal or higher
                       role gets no button rather than a 403. */}
-                  {admin &&
-                    user.id !== session.userId &&
-                    (me?.role === 'owner' ||
-                      ROLE_RANK[me?.role ?? 'member'] > ROLE_RANK[user.role]) && (
+                  {admin && user.id !== session.userId && perms.canRemove(user) && (
                       <ConfirmDialog
                         trigger={
                           <Button variant="ghost" size="sm">
@@ -245,8 +238,8 @@ export function TeamScreen() {
                       says the same). The last owner has no legal leave — the
                       affordance is absent, and the row says why. */}
                   {user.id === session.userId &&
-                    (holdersOfHighest.length <= 1 && user.role === highestRole ? (
-                      highestRole === 'owner' && (
+                    (holdersOfProtected.length <= 1 && user.role === perms.protectedTier ? (
+                      perms.protectedTier === 'owner' && (
                         <p className="text-xs text-muted-foreground">
                           {MESSAGES.errors.lastOwner}
                         </p>
@@ -409,22 +402,25 @@ export function TeamScreen() {
  */
 function RoleSelect({
   user,
-  highestRole,
-  lastOfHighest,
+  canGrantOwner,
+  protectedTier,
+  lastOfProtected,
   onChange,
 }: {
   user: User
-  /** The managing tier: 'owner' where owners exist, 'admin' in the demo. */
-  highestRole: User['role']
-  /** True when this member is the only holder of the highest tier. */
-  lastOfHighest: boolean
+  /** Whether the owner tier is grantable (live workspaces only). */
+  canGrantOwner: boolean
+  /** The tier that must never empty: owner live, admin in the demo. */
+  protectedTier: User['role']
+  /** True when this member is the only holder of the protected tier. */
+  lastOfProtected: boolean
   onChange: (role: User['role']) => void | Promise<void>
 }) {
   const [pending, setPending] = useState<User['role'] | null>(null)
 
-  const options: User['role'][] = lastOfHighest
-    ? [highestRole]
-    : highestRole === 'owner'
+  const options: User['role'][] = lastOfProtected
+    ? [protectedTier]
+    : canGrantOwner
       ? ['owner', 'admin', 'member']
       : ['admin', 'member']
 
@@ -454,9 +450,9 @@ function RoleSelect({
           </option>
         ))}
       </select>
-      {lastOfHighest && (
+      {lastOfProtected && (
         <p className="mt-1 max-w-40 text-xs text-muted-foreground">
-          The only {highestRole}. Promote someone else before changing this.
+          The only {protectedTier}. Promote someone else before changing this.
         </p>
       )}
 

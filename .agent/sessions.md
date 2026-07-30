@@ -778,3 +778,30 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
 - Next: nothing in INT scope. The integration's six phases are done; the
   backend questions live in open-items 1–10, and W7 still waits on the two
   reopened manual gates.
+
+### 2026-07-30 17:20 — Review fixes: viewer permissions from the workspace root
+
+- Did (review item 1): the viewer's power no longer touches the members list.
+  The sync fetches `GET /orgs/:orgId` and keeps the caller's OWN
+  `membership.role` (`liveViewerRole`); `useTeamPermissions()` (team.ts) is
+  the one place gates come from — canManageMembers, canSetRoles (owner-only
+  on the wire; the demo's admins keep their demo power as a mode rule, not
+  an inference), canGrantOwner, protectedTier, canRemove(target). The team
+  screen consumes it; the members list now only ever describes TARGETS
+  (which row is the protected tier's last). New live e2e: an ADMIN viewing a
+  team with an owner gets no Remove on the owner's row and no role selects
+  at all, keeps Invite member, and can Leave — 6/6 live-team green.
+- (Review item 2): confirmed separate — `ApiUser.role` (platform, wire-only)
+  never enters the app model; app `User.role` is the org membership role,
+  per-org; doc comment on the type now says so explicitly.
+- (Review item 3): confirmed no parsing — each voices row's `description` is
+  one plain sentence read and written verbatim; the no-smuggling law is now
+  stated in brand-adapter's doc comment.
+- Model pairing: creative↔fast marked UNCONFIRMED in THE table's comment,
+  pending open-items 9; balanced↔balanced and precise↔quality stand.
+- Files: `src/data/{live-sync,provider,team}.ts/tsx`,
+  `src/features/settings/team-screen.tsx`, `src/data/types.ts` (comment),
+  `src/data/adapters/{brand,scheduling}-adapter.ts` (comments),
+  `e2e/live-team.spec.ts` (+1 test), wizard-finish timeouts in all live specs
+- Verify: lint + typecheck + 340 unit green; static e2e 74 passed; live-team
+  6/6 against the deployed API

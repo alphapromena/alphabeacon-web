@@ -19,10 +19,15 @@
 import type { ApiEventSource, ApiSchedule, ApiSlot } from '@/api/types'
 import type { CalendarEvent, CalendarSource, Schedule, Slot } from '@/data/types'
 
-/** App model id ↔ API modelAlias — THE table; nothing else may map these. */
+/**
+ * App model id ↔ API modelAlias — THE table; nothing else may map these.
+ * balanced↔balanced and precise↔quality are confirmed pairings;
+ * creative↔fast is UNCONFIRMED — it takes the remaining alias by elimination,
+ * pending the backend's answer (open-items 9). Change it HERE only.
+ */
 export const MODEL_ALIAS_BY_ID: Record<string, ApiSchedule['modelAlias']> = {
   gm_balanced: 'balanced',
-  gm_creative: 'fast',
+  gm_creative: 'fast', // unconfirmed — see doc comment
   gm_precise: 'quality',
 }
 

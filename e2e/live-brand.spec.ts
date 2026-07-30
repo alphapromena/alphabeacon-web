@@ -67,7 +67,11 @@ test('a fresh owner + org, made through the product', async ({ page }) => {
   await page.getByRole('button', { name: 'Skip for now' }).click()
   await page.getByRole('button', { name: 'Start pipeline' }).click()
   await page.getByRole('button', { name: 'Go to your dashboard' }).click()
-  await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible()
+  // Finish is org + preset tones + schedule + sources + the resync — a real
+  // burst of wire calls; give it headroom.
+  await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible({
+    timeout: 25_000,
+  })
 })
 
 test('a custom tone: created under the adapter, edited, and it survives a reload', async ({

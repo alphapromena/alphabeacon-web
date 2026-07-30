@@ -70,7 +70,11 @@ test('the wizard finish creates org + schedule + holiday source together', async
   await page.getByRole('button', { name: 'Continue' }).click()
   await page.getByRole('button', { name: 'Start pipeline' }).click()
   await page.getByRole('button', { name: 'Go to your dashboard' }).click()
-  await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible()
+  // Finish is org + preset tones + schedule + sources + the resync — a real
+  // burst of wire calls; give it headroom.
+  await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible({
+    timeout: 25_000,
+  })
 
   // The wire agrees: one schedule, one holidays source for JO.
   const token = await sessionToken(page)

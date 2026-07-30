@@ -82,7 +82,10 @@ test('the onboarding wizard creates the org LIVE; the dashboard follows', async 
   await page.getByRole('button', { name: 'Go to your dashboard' }).click()
 
   // The org now EXISTS server-side; the resync flipped the world onto it.
-  await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible()
+  // Finish is org + preset tones + schedule + sources — give the burst room.
+  await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible({
+    timeout: 25_000,
+  })
 })
 
 test('I1 renames the org through PATCH, and the name survives a reload', async ({ page }) => {
@@ -186,4 +189,39 @@ test('inviting an EXISTING user adds them immediately, and the role ladder holds
   await page.getByRole('button', { name: 'Remove member' }).click()
   await expect(page.getByText('Member removed')).toBeVisible()
   await expect(page.locator('tr').filter({ hasText: invitee })).toHaveCount(0)
+})
+
+test('an ADMIN viewing a team with an owner: no remove on the owner, no role selects at all', async ({
+  page,
+}) => {
+  // The owner re-adds the (existing) invitee and makes them an admin.
+  await login(page, owner, NEW_PASSWORD)
+  await openTeam(page)
+  await page.getByRole('button', { name: 'Invite member' }).click()
+  await page.getByLabel('Work email').fill(invitee)
+  await page.getByRole('button', { name: 'Send invite' }).click()
+  await expect(page.getByText('Added to the workspace')).toBeVisible()
+  const memberRow = page.locator('tr').filter({ hasText: invitee })
+  await memberRow.getByLabel(/Role for/).selectOption('admin')
+  await expect(page.getByText(/is now an admin/)).toBeVisible()
+  await signOut(page)
+
+  // The ADMIN's view. Their power comes from their OWN membership role (the
+  // workspace root), so the owner's presence in the list grants them nothing:
+  await login(page, invitee, PASSWORD)
+  await openTeam(page)
+
+  // …they can manage members (invite is offered),
+  await expect(page.getByRole('button', { name: 'Invite member' })).toBeVisible()
+  // …they cannot change ANY role (owner-only on the wire) — badges, no selects,
+  await expect(page.getByLabel(/Role for/)).toHaveCount(0)
+  // …and the owner's row offers no Remove (equal-or-higher is a 403 the UI
+  // never renders a path to).
+  const ownerRow = page.locator('tr').filter({ hasText: owner })
+  await expect(ownerRow.getByText('owner', { exact: true })).toBeVisible()
+  await expect(ownerRow.getByRole('button', { name: 'Remove' })).toHaveCount(0)
+  // Their own row can Leave (they are not the protected tier).
+  await expect(
+    page.locator('tr').filter({ hasText: invitee }).getByRole('button', { name: 'Leave' }),
+  ).toBeVisible()
 })
