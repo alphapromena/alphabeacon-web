@@ -60,3 +60,49 @@ export interface SignupReceipt {
   email: string
   codeExpiresAt: string
 }
+
+// --- Orgs / members / invites (INT-2) ---------------------------------------
+
+export interface ApiOrg {
+  id: string
+  name: string
+  slug: string
+  status: string
+  createdAt?: string
+  updatedAt?: string
+}
+
+/** `GET /orgs/:id` → the workspace root. */
+export interface OrgRoot {
+  org: ApiOrg
+  membership: { id: string; role: OrgRole }
+}
+
+/** One row of `GET /orgs/:id/members` — `id` is the MEMBERSHIP id. */
+export interface ApiMember {
+  id: string
+  userId: string
+  name: string
+  email: string
+  role: OrgRole
+  isActive: boolean
+  joinedAt: string
+}
+
+/** One row of `GET /orgs/:id/invites` — pending, unaccepted. */
+export interface ApiInvite {
+  id: string
+  userId: string
+  email: string
+  name: string
+  role: OrgRole
+  invitedAt: string
+}
+
+/** `POST /orgs/:id/members/invite` → 201. */
+export interface InviteReceipt {
+  userId: string
+  email: string
+  role: OrgRole
+  invitedNewUser: boolean
+}

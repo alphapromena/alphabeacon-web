@@ -5,27 +5,27 @@ without reconstructing it from the session log. **Update this file at the end
 of any turn that finishes a phase or changes the plan.** `sessions.md` is the
 chronological record; this is the current picture.
 
-_Last updated: 2026-07-30, after the M1 cinematic rebuild._
+_Last updated: 2026-07-30, after INT-1 (live auth)._
 
 ---
 
 ## In one paragraph
 
-`alphabeacon-web` is a **fully static** React SPA — every screen in
-`screens4.md`, rendered from typed data committed under `src/data/`, with **no
-network calls of any kind** (enforced twice: `guard-static` fails the build, and
-every Playwright run asserts zero requests). Phases **W0–W6 are built and
-verified** — every screen in `screens4.md` now exists — and **W7 (hardening +
-ship) is next**. There is no backend and no integration work in this repo by
-design — that is a separate plan, written later (`web-plan.md` §13 records what
-it will cost).
+`alphabeacon-web` is a static-first React SPA — every screen in
+`screens4.md`, rendered from typed data committed under `src/data/` — now
+integrating with the **live AlphaStudio API** (contract: `docs/api/api.md`).
+Network code is legal only in `src/api/`, only when `VITE_API_BASE_URL` is set;
+without it the app is byte-for-byte the static build and the e2e suite asserts
+zero requests. Phases **W0–W6 are built and verified**; **W7 is parked behind
+the two manual gates**; the INT phases are wiring covered entities live (table
+below).
 
 ## Where the code is
 
 |            |                                                        |
 | ---------- | ------------------------------------------------------ |
 | Remote     | `github.com/alphapromena/alphabeacon-web` (private)    |
-| `main`     | `cfe6607` — **holds everything through W6**, pushed    |
+| `main`     | `1717492` — everything through W6 + the cinematic M1   |
 | Phase tips | `w/00`…`w/06` all pushed, kept as the per-phase record |
 | Tags       | none                                                   |
 
@@ -70,12 +70,12 @@ analytics, compose and knowledge stay static, awaiting backend phase 2.
 | ----- | -------------------------------------------------------- | ----------- |
 | INT-0 | API client, env switch, guard amendments, docs           | Done (`int/00`, pushed) |
 | INT-1 | Auth end to end against the live API                     | Done (`int/01`) · live e2e 7/7 |
-| INT-2 | Me + orgs + members + invites                            | Queued      |
+| INT-2 | Me + orgs + members + invites                            | Done (`int/02`) · live e2e 12/12 |
 | INT-3 | Brand (voices, tones + adapter, sources, topics)         | Queued      |
 | INT-4 | Schedules + event sources (+countries) + slots           | Queued      |
 | INT-5 | Notifications (list, unread-count, read-all)             | Queued      |
 
-Current totals: **316 unit tests** (28 files), **74 e2e**, all green.
+Current totals: **340 unit tests** (31 files), **74 static e2e + 7 live e2e**, all green.
 **No route is a stub any more** — `PlaceholderScreen` is deleted, and
 `verify:w06` fails if it comes back.
 

@@ -56,3 +56,17 @@ export function loadSession(): AuthSession | null {
 export function purgeSession(): void {
   for (const storage of storages()) storage.removeItem(KEY)
 }
+
+/**
+ * Refresh the stored record in place — same storage, same rememberMe choice.
+ * Used by the boot sync: `/me` + `/me/orgs` are the truth, the stored
+ * snapshot is just a warm start (open-items 6). No-op when signed out.
+ */
+export function updateStoredSession(session: AuthSession): void {
+  for (const storage of storages()) {
+    if (storage.getItem(KEY)) {
+      storage.setItem(KEY, JSON.stringify(session))
+      return
+    }
+  }
+}

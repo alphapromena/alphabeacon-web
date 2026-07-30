@@ -16,7 +16,7 @@ import { useNavigate } from 'react-router'
 import { Link } from 'react-router'
 import { BeaconDot } from '@/components/ab/motion'
 import { ConnectionStatusBadge } from '@/components/ab/status-badge'
-import { toastSuccess } from '@/components/ab/toast'
+import { toastError, toastSuccess } from '@/components/ab/toast'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -33,6 +33,7 @@ import {
   useTones,
   type OnboardingStep,
 } from '@/data/provider'
+import { useAccountActions } from '@/data/account'
 import type { CalendarSource, Platform, Tone, Weekday } from '@/data/types'
 import { MESSAGES } from '@/lib/messages'
 import { ToneEditorSheet } from '@/features/settings/tone-editor'
@@ -57,6 +58,7 @@ const HOLIDAY_FEEDS = ['Jordan', 'United Arab Emirates', 'Saudi Arabia', 'Egypt'
 export function OnboardingScreen() {
   const org = useOrg()
   const dispatch = useDataDispatch()
+  const account = useAccountActions()
   const navigate = useNavigate()
   const step = org.onboarding.resumeStep
 
@@ -78,7 +80,18 @@ export function OnboardingScreen() {
       )}
       {step === 5 && (
         <StepReady
-          onFinish={() => {
+          onFinish={async () => {
+            // Finishing the wizard is where the workspace becomes real: in
+            // live mode this creates the org (the creator becomes its first
+            // owner) under the name step 1 collected; the resync that follows
+            // flips the world onto it. Static completes exactly as before.
+            const result = await account.createOrg(org.name)
+            if (!result.ok) {
+              toastError(MESSAGES.errors.generic, {
+                retry: { label: 'Try again', onClick: () => {} },
+              })
+              return
+            }
             dispatch({ type: 'onboarding/complete' })
             navigate('/')
           }}

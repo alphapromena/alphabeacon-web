@@ -1,0 +1,189 @@
+/**
+ * INT-2's verify: me + orgs + members + invites against the DEPLOYED API,
+ * driven through the real UI — the wizard creates the org, I1 renames it,
+ * the account section changes the password, and the team screen exercises
+ * invite (new AND existing user), resend's rate limit, cancel, the
+ * three-tier role ladder, the last-owner laws, leave, and remove.
+ *
+ * Live-mode runs only; fresh qa+<timestamp> addresses; each purpose sends at
+ * most one code per address (the one deliberate immediate resend exists to
+ * prove the 429 toast).
+ */
+import type { Page } from '@playwright/test'
+import { expect, test } from './fixtures'
+
+const API_BASE = process.env.VITE_API_BASE_URL
+const RUN = Date.now()
+const PASSWORD = 'Roasted2Order!'
+const NEW_PASSWORD = 'FreshlyGround3!'
+const CODE = '000000'
+
+const owner = `qa+${RUN}o@alphapromena.com`
+const invitee = `qa+${RUN}m@alphapromena.com`
+const ORG_NAME = `QA Live Org ${RUN}`
+const ORG_RENAMED = `QA Live Org ${RUN} v2`
+
+test.skip(!API_BASE, 'live-mode run only (export VITE_API_BASE_URL)')
+test.describe.configure({ mode: 'serial' })
+
+async function signUpAndVerify(page: Page, name: string, email: string) {
+  await page.goto('/signup')
+  await page.getByLabel('Full name').fill(name)
+  await page.getByLabel('Work email').fill(email)
+  await page.getByLabel('Password', { exact: true }).fill(PASSWORD)
+  await page.getByLabel('Organization name').fill(ORG_NAME)
+  await page.getByRole('checkbox', { name: /terms of service/ }).click()
+  await page.getByRole('button', { name: 'Create account' }).click()
+  // The run's first POST can hit a cold Lambda; give first contact headroom.
+  await expect(page.getByRole('heading', { name: 'Check your inbox' })).toBeVisible({
+    timeout: 20_000,
+  })
+  await page.locator('[data-input-otp]').click()
+  await page.keyboard.type(CODE)
+  await expect(page.getByText('finish setting up your workspace')).toBeVisible({
+    timeout: 20_000,
+  })
+}
+
+async function login(page: Page, email: string, password: string) {
+  await page.goto('/login')
+  await page.getByLabel('Work email').fill(email)
+  await page.getByLabel('Password', { exact: true }).fill(password)
+  await page.getByRole('button', { name: 'Sign in' }).click()
+}
+
+async function signOut(page: Page) {
+  await page.getByRole('button', { name: 'Account menu' }).click()
+  await page.getByRole('menuitem', { name: 'Sign out', exact: true }).click()
+  await expect(page.getByRole('heading', { level: 1, name: 'AlphaBeacon' })).toBeVisible()
+}
+
+async function openTeam(page: Page) {
+  await page.getByRole('link', { name: 'Settings' }).first().click()
+  await page.getByRole('tab', { name: 'Team' }).click()
+  await expect(page.getByText(/members/)).toBeVisible()
+}
+
+test('the onboarding wizard creates the org LIVE; the dashboard follows', async ({ page }) => {
+  await signUpAndVerify(page, 'QA Owner', owner)
+
+  await page.getByRole('link', { name: /Resume setup/ }).click()
+  await expect(page.getByRole('heading', { name: 'Tell us about your brand' })).toBeVisible()
+  await page.getByLabel('Company name').fill(ORG_NAME)
+  await page.getByLabel('What you offer, in one line').fill('Coffee, roasted to order.')
+  await page.getByLabel('What sets you apart').fill('Small batch')
+  await page.getByRole('button', { name: 'Add' }).click()
+  await page.getByRole('button', { name: 'Continue' }).click()
+  await page.getByRole('button', { name: 'Skip for now' }).click()
+  await page.getByRole('button', { name: 'Skip for now' }).click()
+  await expect(page.getByRole('heading', { name: 'Start your pipeline' })).toBeVisible()
+  await page.getByRole('button', { name: 'Start pipeline' }).click()
+  await expect(page.getByRole('heading', { name: 'Your pipeline is running' })).toBeVisible()
+  await page.getByRole('button', { name: 'Go to your dashboard' }).click()
+
+  // The org now EXISTS server-side; the resync flipped the world onto it.
+  await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible()
+})
+
+test('I1 renames the org through PATCH, and the name survives a reload', async ({ page }) => {
+  await login(page, owner, PASSWORD)
+  await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible()
+
+  await page.getByRole('link', { name: 'Settings' }).first().click()
+  await expect(page.getByLabel('Organization name')).toHaveValue(ORG_NAME)
+  await page.getByLabel('Organization name').fill(ORG_RENAMED)
+  await page.getByRole('button', { name: 'Save changes' }).click()
+  await expect(page.getByText('Organization saved')).toBeVisible()
+
+  // A reload re-syncs from the server — the rename was real, not local.
+  await page.goto('/settings/organization')
+  await expect(page.getByLabel('Organization name')).toHaveValue(ORG_RENAMED)
+})
+
+test('change-password keeps this session and only the new password works after', async ({
+  page,
+}) => {
+  await login(page, owner, PASSWORD)
+  await page.getByRole('link', { name: 'Settings' }).first().click()
+
+  await page.getByRole('button', { name: 'Change password' }).click()
+  await page.getByLabel('Current password').fill(PASSWORD)
+  await page.getByLabel('New password').fill(NEW_PASSWORD)
+  await page.getByRole('button', { name: 'Change password' }).last().click()
+  await expect(page.getByText('Password changed')).toBeVisible()
+
+  await signOut(page)
+  await login(page, owner, PASSWORD)
+  await expect(page.getByRole('alert')).toContainText('Incorrect email or password')
+  await login(page, owner, NEW_PASSWORD)
+  await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible()
+})
+
+test('inviting a NEW user: coded email, resend rate-limits honestly, cancel removes', async ({
+  page,
+}) => {
+  await login(page, owner, NEW_PASSWORD)
+  await openTeam(page)
+
+  await page.getByRole('button', { name: 'Invite member' }).click()
+  await page.getByLabel('Work email').fill(invitee)
+  await page.getByRole('button', { name: 'Send invite' }).click()
+  await expect(page.getByText('Invite sent')).toBeVisible()
+  await expect(page.getByText(invitee)).toBeVisible()
+
+  // A second send inside 60 s is the documented rate limit — the toast says
+  // the wait, never a silent refusal.
+  await page.getByRole('button', { name: 'Resend' }).click()
+  await expect(page.getByText(/Too many requests/)).toBeVisible()
+
+  await page.getByRole('button', { name: 'Revoke' }).click()
+  await expect(page.getByText(invitee)).toHaveCount(0)
+})
+
+test('inviting an EXISTING user adds them immediately, and the role ladder holds', async ({
+  page,
+}) => {
+  // The invitee gets a real account first (no org).
+  await signUpAndVerify(page, 'QA Member', invitee)
+  await page.goto('/login')
+
+  await login(page, owner, NEW_PASSWORD)
+  await openTeam(page)
+
+  // Existing user → membership added on the spot; no pending invite.
+  await page.getByRole('button', { name: 'Invite member' }).click()
+  await page.getByLabel('Work email').fill(invitee)
+  await page.getByRole('button', { name: 'Send invite' }).click()
+  await expect(page.getByText('Added to the workspace')).toBeVisible()
+
+  const memberRow = page.locator('tr').filter({ hasText: invitee })
+  await expect(memberRow).toHaveCount(1)
+
+  // Sole owner: own row explains why leaving is impossible, offers no Leave.
+  const ownerRow = page.locator('tr').filter({ hasText: owner })
+  await expect(ownerRow.getByText(/You are the only owner/)).toBeVisible()
+  await expect(ownerRow.getByRole('button', { name: 'Leave' })).toHaveCount(0)
+
+  // Up the ladder: member → admin (immediate) → owner (ownership transfer).
+  await memberRow.getByLabel(/Role for/).selectOption('admin')
+  await expect(page.getByText(/is now an admin/)).toBeVisible()
+  await memberRow.getByLabel(/Role for/).selectOption('owner')
+  await expect(page.getByText(/is now an owner/)).toBeVisible()
+
+  // Two owners: Leave now exists for the signed-in owner.
+  await expect(ownerRow.getByRole('button', { name: 'Leave' })).toBeVisible()
+
+  // Down the ladder is confirmed, because it takes access away.
+  await memberRow.getByLabel(/Role for/).selectOption('admin')
+  await page.getByRole('button', { name: 'Change to admin' }).click()
+  await expect(page.getByText(/is now an admin/)).toBeVisible()
+  await expect(ownerRow.getByText(/You are the only owner/)).toBeVisible()
+
+  // And to member, then out entirely.
+  await memberRow.getByLabel(/Role for/).selectOption('member')
+  await page.getByRole('button', { name: 'Change to member' }).click()
+  await memberRow.getByRole('button', { name: 'Remove' }).click()
+  await page.getByRole('button', { name: 'Remove member' }).click()
+  await expect(page.getByText('Member removed')).toBeVisible()
+  await expect(page.locator('tr').filter({ hasText: invitee })).toHaveCount(0)
+})

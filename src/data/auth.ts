@@ -16,7 +16,7 @@
  * calls the API best-effort — a dead token must still sign out locally.
  */
 import { useCallback } from 'react'
-import { api, resetUnauthorizedGuard } from '@/api/client'
+import { api, resetUnauthorizedGuard, withDeliberateLogout } from '@/api/client'
 import { isLiveMode } from '@/api/config'
 import { isApiError, type ApiErrorCode, type ApiFieldDetail } from '@/api/errors'
 import { purgeSession, saveSession } from '@/api/session'
@@ -190,7 +190,8 @@ export function useAuthActions(): AuthActions {
         return
       }
       try {
-        await api<void>('POST', '/auth/logout')
+        // Scoped so an in-flight sync's 401 reads as the echo it is.
+        await withDeliberateLogout(() => api<void>('POST', '/auth/logout'))
       } catch {
         // Best-effort: a dead or unreachable session must still sign out here.
       }
@@ -204,12 +205,22 @@ export function useAuthActions(): AuthActions {
         return ok(1)
       }
       try {
-        const { revoked } = await api<{ revoked: number }>('POST', '/auth/logout-all')
+        const { revoked } = await withDeliberateLogout(() =>
+          api<{ revoked: number }>('POST', '/auth/logout-all'),
+        )
         purgeSession()
         dispatch({ type: 'live/sessionCleared' })
         return ok(revoked)
       } catch (error) {
-        return failure(error)
+        const result = failure(error)
+        // A dead token cannot revoke anything server-side, but the user asked
+        // to be signed out — locally, they are.
+        if (!result.ok && result.code === 'unauthorized') {
+          purgeSession()
+          dispatch({ type: 'live/sessionCleared' })
+          return ok(0)
+        }
+        return result
       }
     },
 

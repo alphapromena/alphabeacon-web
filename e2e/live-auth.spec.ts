@@ -49,7 +49,10 @@ async function signUpViaUi(page: Page, name: string, email: string) {
   await page.getByLabel('Organization name').fill('QA Roasters')
   await page.getByRole('checkbox', { name: /terms of service/ }).click()
   await page.getByRole('button', { name: 'Create account' }).click()
-  await expect(page.getByRole('heading', { name: 'Check your inbox' })).toBeVisible()
+  // The run's first POST can hit a cold Lambda; give first contact headroom.
+  await expect(page.getByRole('heading', { name: 'Check your inbox' })).toBeVisible({
+    timeout: 20_000,
+  })
 }
 
 async function enterCode(page: Page, code: string) {
@@ -227,12 +230,10 @@ test('a token-carrying 401 purges the session and lands on login with the toast'
       JSON.stringify(record),
     )
   })
+  // The reload boots from the corrupted record and the sync's GET /me comes
+  // back 401 — an ordinary authed read finding a dead session. The ceremony:
+  // purge, toast, land on login.
   await page.goto('/')
-  // Trigger an authed call through the seam: signing out everywhere uses the
-  // (now dead) token and must come back 401.
-  await page.getByRole('button', { name: 'Account menu' }).click()
-  await page.getByRole('menuitem', { name: 'Sign out everywhere' }).click()
-
   await expect(page.getByRole('heading', { name: 'Welcome back' })).toBeVisible()
   await expect(page.getByText('Your session ended. Sign in again to continue.')).toBeVisible()
 })

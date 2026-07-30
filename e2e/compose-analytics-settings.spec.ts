@@ -330,7 +330,7 @@ test('a role can be changed in place, and the last admin cannot be demoted', asy
   await expect(mine.getByRole('option')).toHaveCount(2)
   await mine.selectOption('member')
   const confirm = page.getByRole('alertdialog')
-  await expect(confirm).toContainText('they lose billing, the team list')
+  await expect(confirm).toContainText('they lose what the higher role could reach')
   await confirm.getByRole('button', { name: 'Change to member' }).click()
 
   // Demoting YOURSELF is allowed — a departing admin handing over — and it

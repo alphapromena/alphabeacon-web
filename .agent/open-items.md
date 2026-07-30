@@ -42,10 +42,13 @@ item to "Signed off" (with the date) only when a human has actually done it.
    complete" (auth-adapter). Fine for INT-1; if the product wants the full
    five-step wizard resumable server-side, that needs backend state.
 6. **The stored session's `user`/`orgs` are a login-time snapshot (found
-   INT-1).** Creating an org (or being invited, renamed, role-changed) after
-   login is invisible to a reload until the next sign-in. INT-2 must refresh
-   `GET /me` + `GET /me/orgs` on live boot instead of trusting the stored
-   record, keeping the token as the only trusted persisted fact.
+   INT-1).** RESOLVED in INT-2: the provider's live sync refreshes `GET /me`
+   + `GET /me/orgs` on every session establishment and rewrites the stored
+   record in place; the token is the only trusted persisted fact.
+7. **screens4.md has no account/security screen (INT-2).** Profile name and
+   change-password needed a home; they live in an "Your account" section at
+   the bottom of I1, live mode only (the static demo has no account to edit).
+   screens4.md should gain a proper home for it when next revised.
 
 ### M1 cinematic — two items gated on the human (2026-07-30)
 

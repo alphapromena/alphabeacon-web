@@ -11,23 +11,26 @@
  * replace and the remove are all real, which is the part the design is about.
  */
 import { Trash2, Upload } from 'lucide-react'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { SaveBar } from '@/components/ab/save-bar'
-import { toastSuccess } from '@/components/ab/toast'
+import { toastError, toastSuccess } from '@/components/ab/toast'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { useDataDispatch, useOrg, useSchedule } from '@/data/provider'
+import { useAccountActions } from '@/data/account'
 import { MESSAGES } from '@/lib/messages'
 import { TIMEZONES, zoneAbbreviation } from '@/lib/timezone'
+import { AccountSection } from './account-section'
 import { TagInput } from './field-editors'
 
 export function OrganizationScreen() {
   const org = useOrg()
   const schedule = useSchedule()
   const dispatch = useDataDispatch()
+  const account = useAccountActions()
   const fileInput = useRef<HTMLInputElement>(null)
 
   const saved = {
@@ -40,6 +43,20 @@ export function OrganizationScreen() {
   }
   const [draft, setDraft] = useState(saved)
   const [touched, setTouched] = useState(false)
+
+  // The world can change under a mounted form (the live sync lands after
+  // mount; another reducer writes the org). A PRISTINE draft adopts the new
+  // truth; an edited one is the user's and is never clobbered — the async
+  // sibling of state.md rule 4.
+  const savedKey = JSON.stringify(saved)
+  const previousSavedKey = useRef(savedKey)
+  useEffect(() => {
+    setDraft((current) =>
+      JSON.stringify(current) === previousSavedKey.current ? saved : current,
+    )
+    previousSavedKey.current = savedKey
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- savedKey is the change signal
+  }, [savedKey])
 
   const dirty = JSON.stringify(draft) !== JSON.stringify(saved)
   const nameMissing = draft.name.trim().length === 0
@@ -183,13 +200,26 @@ export function OrganizationScreen() {
         </div>
       </section>
 
+      <AccountSection />
+
       <SaveBar
         dirty={dirty}
         onCancel={() => setDraft(saved)}
-        onSave={() => {
+        onSave={async () => {
           setTouched(true)
           if (nameMissing || offerMissing) return
           const { timezone, ...orgPatch } = draft
+          // The NAME is the one org field the API stores; it goes to the
+          // server first so a failure keeps the bar dirty and honest. The
+          // rest (offer, differentiators, CTA, logo) stay in the world —
+          // their API home arrives with the brand phase.
+          if (orgPatch.name !== org.name) {
+            const result = await account.updateOrgName(orgPatch.name)
+            if (!result.ok) {
+              toastError(MESSAGES.errors.generic)
+              return
+            }
+          }
           dispatch({ type: 'org/update', patch: orgPatch })
           if (timezone !== schedule.timezone) {
             dispatch({ type: 'schedule/update', patch: { timezone } })

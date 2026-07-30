@@ -37,10 +37,23 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { useDataDispatch, useInvites, useSession, useUsers } from '@/data/provider'
+import { useInvites, useSession, useUsers } from '@/data/provider'
+import { useTeamActions, type TeamActionResult } from '@/data/team'
 import type { User } from '@/data/types'
 import { relativeTime, shortDate } from '@/lib/format'
 import { MESSAGES } from '@/lib/messages'
+import { toastError } from '@/components/ab/toast'
+
+/** Org-role precedence: the API's model (owner arrived with INT-2). */
+const ROLE_RANK: Record<User['role'], number> = { owner: 3, admin: 2, member: 1 }
+
+/** One place team failures become copy — switched on code, never message. */
+function reportFailure(result: TeamActionResult) {
+  if (result.ok) return
+  if (result.code === 'conflict') toastError(MESSAGES.errors.lastOwner)
+  else if (result.code === 'rate_limited') toastError(MESSAGES.errors.rateLimited + ' a moment.')
+  else toastError(MESSAGES.errors.teamActionFailed)
+}
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
@@ -55,17 +68,27 @@ export function TeamScreen() {
   const users = useUsers()
   const invites = useInvites()
   const session = useSession()
-  const dispatch = useDataDispatch()
+  const team = useTeamActions()
 
   const [open, setOpen] = useState(false)
   const [email, setEmail] = useState('')
   const [role, setRole] = useState<User['role']>('member')
   const [error, setError] = useState<string | null>(null)
 
-  const admin = session.user?.role === 'admin'
-  const admins = users.filter((user) => user.role === 'admin')
+  const me = session.user
+  /**
+   * The tier that manages roles is the HIGHEST present in the world: owner in
+   * a live workspace, admin in the static demo (owners never appear there).
+   * Pure data — no screen ever asks which mode it is in.
+   */
+  const highestRole: User['role'] = users.some((user) => user.role === 'owner')
+    ? 'owner'
+    : 'admin'
+  const admin = !!me && ROLE_RANK[me.role] >= ROLE_RANK.admin
+  const canSetRoles = me?.role === highestRole
+  const holdersOfHighest = users.filter((user) => user.role === highestRole)
 
-  const invite = () => {
+  const invite = async () => {
     const value = email.trim().toLowerCase()
     if (!value) return setError(MESSAGES.errors.emailRequired)
     if (!EMAIL.test(value)) return setError(MESSAGES.errors.emailInvalid)
@@ -74,11 +97,29 @@ export function TeamScreen() {
       invites.some((entry) => entry.email.toLowerCase() === value)
     if (taken) return setError(MESSAGES.errors.inviteEmailTaken)
 
-    dispatch({
-      type: 'team/invite',
-      invite: { id: `inv_${value}`, email: value, role, invitedAt: new Date().toISOString() },
+    const result = await team.invite({
+      id: `inv_${value}`,
+      email: value,
+      role,
+      invitedAt: new Date().toISOString(),
     })
-    toastSuccess('Invite sent', { description: `${value} can join as a ${role}.` })
+    if (!result.ok) {
+      // The server sees invites this client cannot (another admin's), so its
+      // 409 is the same designed state as the local check above.
+      setError(
+        result.code === 'conflict' ? MESSAGES.errors.inviteEmailTaken : result.message,
+      )
+      return
+    }
+    // Two truths, two toasts: an existing user is IN already; a new user got
+    // a coded email and appears under Invited until they redeem it.
+    if (result.invitedNewUser === false) {
+      toastSuccess('Added to the workspace', {
+        description: `${value} was already registered, so they're in — no invite to accept.`,
+      })
+    } else {
+      toastSuccess('Invite sent', { description: `${value} can join as a ${role}.` })
+    }
     setEmail('')
     setRole('member')
     setError(null)
@@ -140,15 +181,25 @@ export function TeamScreen() {
                 <td className="px-4 py-3">
                   {/* The badge stays a label — screens4.md I7 specifies a role
                       badge, and a focusable pill would promise an interaction
-                      it does not have. The control that CHANGES a role is a
-                      separate, admin-only select beside it. */}
-                  {admin ? (
+                      it does not have. The control that CHANGES a role belongs
+                      to the HIGHEST tier present (the API makes role changes
+                      owner-only where owners exist). */}
+                  {canSetRoles ? (
                     <RoleSelect
                       user={user}
-                      lastAdmin={admins.length <= 1 && user.role === 'admin'}
-                      onChange={(role) => {
-                        dispatch({ type: 'team/setRole', userId: user.id, role })
-                        toastSuccess(`${user.name} is now ${role === 'admin' ? 'an' : 'a'} ${role}`)
+                      highestRole={highestRole}
+                      lastOfHighest={
+                        holdersOfHighest.length <= 1 && user.role === highestRole
+                      }
+                      onChange={async (role) => {
+                        const result = await team.setRole(user.id, role)
+                        if (!result.ok) {
+                          reportFailure(result)
+                          return
+                        }
+                        toastSuccess(
+                          `${user.name} is now ${role === 'admin' || role === 'owner' ? 'an' : 'a'} ${role}`,
+                        )
                       }}
                     />
                   ) : (
@@ -161,25 +212,62 @@ export function TeamScreen() {
                   <MonoNumber value={shortDate(user.joinedAt)} />
                 </td>
                 <td className="px-4 py-3 text-right">
-                  {admin && user.id !== session.userId && (
-                    <ConfirmDialog
-                      trigger={
-                        <Button variant="ghost" size="sm">
-                          <Trash2 aria-hidden />
-                          Remove
-                        </Button>
-                      }
-                      title={`Remove ${user.name}?`}
-                      consequence="They lose access immediately. Drafts they approved stay approved, and anything scheduled still goes out."
-                      confirmLabel="Remove member"
-                      onConfirm={() => {
-                        dispatch({ type: 'team/removeMember', userId: user.id })
-                        toastSuccess('Member removed', {
-                          description: `${user.name} no longer has access.`,
-                        })
-                      }}
-                    />
-                  )}
+                  {/* Removal follows the API's precedence: owners remove
+                      anyone, admins remove members only — an equal or higher
+                      role gets no button rather than a 403. */}
+                  {admin &&
+                    user.id !== session.userId &&
+                    (me?.role === 'owner' ||
+                      ROLE_RANK[me?.role ?? 'member'] > ROLE_RANK[user.role]) && (
+                      <ConfirmDialog
+                        trigger={
+                          <Button variant="ghost" size="sm">
+                            <Trash2 aria-hidden />
+                            Remove
+                          </Button>
+                        }
+                        title={`Remove ${user.name}?`}
+                        consequence="They lose access immediately. Drafts they approved stay approved, and anything scheduled still goes out."
+                        confirmLabel="Remove member"
+                        onConfirm={async () => {
+                          const result = await team.removeMember(user.id)
+                          if (!result.ok) {
+                            reportFailure(result)
+                            return
+                          }
+                          toastSuccess('Member removed', {
+                            description: `${user.name} no longer has access.`,
+                          })
+                        }}
+                      />
+                    )}
+                  {/* Your own row offers Leave, never Remove (the API's 400
+                      says the same). The last owner has no legal leave — the
+                      affordance is absent, and the row says why. */}
+                  {user.id === session.userId &&
+                    (holdersOfHighest.length <= 1 && user.role === highestRole ? (
+                      highestRole === 'owner' && (
+                        <p className="text-xs text-muted-foreground">
+                          {MESSAGES.errors.lastOwner}
+                        </p>
+                      )
+                    ) : (
+                      <ConfirmDialog
+                        trigger={
+                          <Button variant="ghost" size="sm">
+                            <Trash2 aria-hidden />
+                            Leave
+                          </Button>
+                        }
+                        title="Leave this workspace?"
+                        consequence="You lose access immediately. Your approvals and history stay; someone else has to invite you back."
+                        confirmLabel="Leave workspace"
+                        onConfirm={async () => {
+                          const result = await team.leaveOrg()
+                          if (!result.ok) reportFailure(result)
+                        }}
+                      />
+                    ))}
                 </td>
               </tr>
             ))}
@@ -215,18 +303,26 @@ export function TeamScreen() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() =>
+                        onClick={async () => {
+                          const result = await team.resendInvite(entry.id)
+                          if (!result.ok) {
+                            reportFailure(result)
+                            return
+                          }
                           toastSuccess('Invite resent', {
                             description: `A fresh link is on its way to ${entry.email}.`,
                           })
-                        }
+                        }}
                       >
                         Resend
                       </Button>
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => dispatch({ type: 'team/revokeInvite', inviteId: entry.id })}
+                        onClick={async () => {
+                          const result = await team.cancelInvite(entry.id)
+                          if (!result.ok) reportFailure(result)
+                        }}
                       >
                         Revoke
                       </Button>
@@ -301,25 +397,36 @@ export function TeamScreen() {
 /**
  * Changing someone's role, with the one irreversible case made impossible.
  *
- * Demoting the LAST admin leaves a workspace nobody can administer — no billing
- * change, no re-auth, and no way to promote anyone back. So for that person the
- * "Member" option is absent rather than disabled, the same law the queue's
- * media buttons follow, and the row says why.
+ * Demoting the LAST holder of the highest tier leaves a workspace nobody can
+ * administer — no billing change, no re-auth, and no way to promote anyone
+ * back (the API's last-owner 409 says the same). So for that person every
+ * lower option is absent rather than disabled, the same law the queue's media
+ * buttons follow, and the row says why.
  *
- * Promotion is immediate: it grants access, is reversible, and nothing is lost.
+ * Promotion is immediate: it grants access, is reversible, and nothing is
+ * lost — granting `owner` is how co-owners and ownership transfer work.
  * Demotion is confirmed, because it takes access away from someone who has it.
  */
 function RoleSelect({
   user,
-  lastAdmin,
+  highestRole,
+  lastOfHighest,
   onChange,
 }: {
   user: User
-  /** True when this member is the only admin left. */
-  lastAdmin: boolean
-  onChange: (role: User['role']) => void
+  /** The managing tier: 'owner' where owners exist, 'admin' in the demo. */
+  highestRole: User['role']
+  /** True when this member is the only holder of the highest tier. */
+  lastOfHighest: boolean
+  onChange: (role: User['role']) => void | Promise<void>
 }) {
   const [pending, setPending] = useState<User['role'] | null>(null)
+
+  const options: User['role'][] = lastOfHighest
+    ? [highestRole]
+    : highestRole === 'owner'
+      ? ['owner', 'admin', 'member']
+      : ['admin', 'member']
 
   return (
     <>
@@ -332,40 +439,49 @@ function RoleSelect({
         onChange={(event) => {
           const next = event.target.value as User['role']
           if (next === user.role) return
-          if (next === 'admin') onChange(next)
+          // A rank increase grants access (reversible, immediate); a decrease
+          // takes it away and is confirmed first.
+          if (ROLE_RANK[next] > ROLE_RANK[user.role]) void onChange(next)
           else setPending(next)
         }}
         className="h-8 rounded-lg border border-input bg-background px-2 text-sm"
       >
-        <option value="admin">Admin</option>
-        {/* Absent, not disabled: there is no legal demotion of the last admin. */}
-        {!lastAdmin && <option value="member">Member</option>}
+        {/* Absent, not disabled: there is no legal demotion of the last
+            holder of the highest tier. */}
+        {options.map((option) => (
+          <option key={option} value={option}>
+            {option.charAt(0).toUpperCase() + option.slice(1)}
+          </option>
+        ))}
       </select>
-      {lastAdmin && (
+      {lastOfHighest && (
         <p className="mt-1 max-w-40 text-xs text-muted-foreground">
-          The only admin. Promote someone else before changing this.
+          The only {highestRole}. Promote someone else before changing this.
         </p>
       )}
 
       <AlertDialog open={pending !== null} onOpenChange={(open) => !open && setPending(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Make {user.name} a member?</AlertDialogTitle>
+            <AlertDialogTitle>
+              Make {user.name} {pending === 'admin' ? 'an admin' : `a ${pending ?? 'member'}`}?
+            </AlertDialogTitle>
             <AlertDialogDescription>
               They keep their account and everything they have already approved, but they lose
-              billing, the team list, and the ability to connect or reconnect a channel.
+              what the higher role could reach — billing, the team list, or the ability to
+              connect and reconnect channels.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Keep as admin</AlertDialogCancel>
+            <AlertDialogCancel>Keep as {user.role}</AlertDialogCancel>
             <AlertDialogAction
               variant="destructive"
               onClick={() => {
-                if (pending) onChange(pending)
+                if (pending) void onChange(pending)
                 setPending(null)
               }}
             >
-              Change to member
+              Change to {pending ?? 'member'}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

@@ -53,6 +53,21 @@ export function resetUnauthorizedGuard(): void {
   unauthorizedNotified = false
 }
 
+/**
+ * A deliberate logout revokes the token server-side while other authed
+ * requests may be in flight; their 401s are echoes of the logout, not a
+ * breach. Wrapping the logout call scopes that knowledge to the client.
+ */
+let deliberateLogout = false
+export async function withDeliberateLogout<T>(work: () => Promise<T>): Promise<T> {
+  deliberateLogout = true
+  try {
+    return await work()
+  } finally {
+    deliberateLogout = false
+  }
+}
+
 function buildQuery(query: Query | undefined): string {
   if (!query) return ''
   const params = new URLSearchParams()
@@ -119,7 +134,16 @@ export async function api<T>(
 
   const error = await toApiError(response, serverId)
 
-  if (error.status === 401 && token && !unauthorizedNotified) {
+  // Fire the dead-session hook only when this 401 is truly a breach: a token
+  // was attached, it is STILL the current token (not a stale echo), and no
+  // deliberate logout is in progress.
+  if (
+    error.status === 401 &&
+    token &&
+    !deliberateLogout &&
+    hooks.getToken() === token &&
+    !unauthorizedNotified
+  ) {
     unauthorizedNotified = true
     hooks.onUnauthorized()
   }

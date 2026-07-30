@@ -48,7 +48,13 @@ export interface User {
   id: string
   name: string
   email: string
-  role: 'admin' | 'member'
+  /**
+   * Org role. `owner` arrived with the AlphaStudio integration (INT-2): the
+   * API's model is three-tier, and ownership transfer + the last-owner rules
+   * only make sense with it. Static datasets remain two-tier — an owner never
+   * appears in a demo world — so every static behaviour is unchanged.
+   */
+  role: 'owner' | 'admin' | 'member'
   /** ISO date, shown mono in I7. */
   joinedAt: string
 }

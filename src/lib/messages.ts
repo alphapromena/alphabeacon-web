@@ -56,6 +56,8 @@ export const MESSAGES = {
     sourceUrlRequired: 'Paste the address of a feed, blog, or news page.',
     sourceUrlInvalid: 'That does not look like a web address.',
     inviteEmailTaken: 'Someone with that email is already on the team or invited.',
+    lastOwner: 'You are the only owner. Make someone else an owner first.',
+    teamActionFailed: 'That team change did not go through. Try again in a moment.',
     knowledgeUnreadable: 'We could not read that file. Try a text-based PDF, DOCX, TXT, or CSV.',
   },
   empty: {

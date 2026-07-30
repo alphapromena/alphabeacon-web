@@ -26,6 +26,8 @@ import { loadSession, purgeSession } from '@/api/session'
 import type { AuthSession } from '@/api/types'
 import { toastError } from '@/components/ab/toast'
 import { clearAuthSession, graftAuthSession } from '@/data/adapters/auth-adapter'
+import type { TeamGraft } from '@/data/adapters/org-adapter'
+import { fetchTeam, refreshAuthSnapshot } from '@/data/live-sync'
 import { buildDataset, DATASETS, DEFAULT_DATASET_ID } from '@/data/datasets'
 import type {
   Asset,
@@ -75,6 +77,12 @@ export interface DataState {
    * dataset switch can re-graft it onto the fresh world.
    */
   liveSession?: AuthSession | null
+  /** The live sync's real phase — what useScreenPhase reports in live mode. */
+  liveSyncPhase?: 'idle' | 'syncing' | 'error' | 'ready'
+  /** Bumped to re-run the sync (the error state's Try again path). */
+  liveResyncNonce?: number
+  /** userId → membership id, for the member/invite management endpoints. */
+  liveMemberIds?: Record<string, string>
 }
 
 export type DataAction =
@@ -89,6 +97,11 @@ export type DataAction =
   | { type: 'live/sessionEstablished'; session: AuthSession }
   | { type: 'live/sessionCleared' }
   | { type: 'live/pendingVerification'; email: string }
+  // --- live mode (INT-2): the sync grafting covered entities onto the world -
+  | { type: 'live/syncStarted' }
+  | { type: 'live/syncFailed' }
+  | { type: 'live/resync' }
+  | { type: 'live/teamSynced'; team: TeamGraft }
   // --- auth (A1–A4) ---------------------------------------------------------
   | { type: 'auth/signUp'; name: string; email: string; orgName: string }
   | { type: 'auth/verifyEmail' }
@@ -181,7 +194,30 @@ export function dataReducer(state: DataState, action: DataAction): DataState {
         world: graftAuthSession(state.world, action.session),
       }
     case 'live/sessionCleared':
-      return { ...state, liveSession: null, world: clearAuthSession(state.world) }
+      return {
+        ...state,
+        liveSession: null,
+        liveSyncPhase: 'idle',
+        liveMemberIds: undefined,
+        world: clearAuthSession(state.world),
+      }
+    case 'live/syncStarted':
+      return { ...state, liveSyncPhase: 'syncing' }
+    case 'live/syncFailed':
+      return { ...state, liveSyncPhase: 'error' }
+    case 'live/resync':
+      return { ...state, liveResyncNonce: (state.liveResyncNonce ?? 0) + 1 }
+    case 'live/teamSynced':
+      return {
+        ...state,
+        liveSyncPhase: 'ready',
+        liveMemberIds: action.team.memberIdByUserId,
+        world: {
+          ...state.world,
+          users: action.team.users,
+          invites: action.team.invites,
+        },
+      }
     case 'live/pendingVerification':
       // Signed up, not yet verified: the verify screen needs the address, and
       // nothing may pretend to be signed in yet.
@@ -198,7 +234,15 @@ export function dataReducer(state: DataState, action: DataAction): DataState {
         },
       }
     case 'dev/force':
-      return { ...state, devForce: action.mode }
+      // Every error screen's Try again dispatches this with 'none'; in live
+      // mode the honest retry is a resync, so the same press re-runs it.
+      return {
+        ...state,
+        devForce: action.mode,
+        ...(action.mode === 'none' && state.liveSyncPhase === 'error'
+          ? { liveResyncNonce: (state.liveResyncNonce ?? 0) + 1 }
+          : {}),
+      }
     case 'dev/connectivity':
       return { ...state, connectivity: action.mode }
     case 'draft/transition': {
@@ -955,6 +999,9 @@ export function DataProvider({
     configureApi({
       getToken: () => liveSessionRef.current?.token ?? null,
       onUnauthorized: () => {
+        // A deliberate sign-out revokes the token while a sync may still be
+        // in flight; its 401 is an echo, not a breach — nobody to evict.
+        if (!liveSessionRef.current) return
         purgeSession()
         dispatch({ type: 'live/sessionCleared' })
         toastError(MESSAGES.errors.sessionExpired)
@@ -963,6 +1010,58 @@ export function DataProvider({
       },
     })
   }, [])
+
+  // The live sync (INT-2): when a session stands, refresh /me + /me/orgs
+  // (the stored record is a warm start, not the truth — open-items 6), then
+  // pull the working org's covered entities. Re-runs on a fresh token, a new
+  // working org, or an explicit live/resync (the error state's Try again).
+  const syncedForRef = useRef<string | null>(null)
+  const sessionToken = state.liveSession?.token ?? null
+  const workingOrgId = state.liveSession?.orgs[0]?.id ?? null
+  const resyncNonce = state.liveResyncNonce ?? 0
+  useEffect(() => {
+    if (!isLiveMode() || !sessionToken) return
+    const syncKey = `${sessionToken}:${workingOrgId}:${resyncNonce}`
+    if (syncedForRef.current === syncKey) return
+    syncedForRef.current = syncKey
+
+    let cancelled = false
+    let completed = false
+    const run = async () => {
+      dispatch({ type: 'live/syncStarted' })
+      try {
+        const current = liveSessionRef.current
+        if (!current) return
+        const refreshed = await refreshAuthSnapshot(current)
+        if (cancelled) return
+        // Re-establish only when the snapshot moved — the syncKey guard keeps
+        // the same-token re-dispatch from looping.
+        if (JSON.stringify(refreshed) !== JSON.stringify(current)) {
+          dispatch({ type: 'live/sessionEstablished', session: refreshed })
+        }
+        const orgId = refreshed.orgs[0]?.id
+        if (orgId) {
+          const team = await fetchTeam(orgId)
+          if (cancelled) return
+          dispatch({ type: 'live/teamSynced', team })
+        } else {
+          dispatch({ type: 'live/teamSynced', team: { users: [], invites: [], memberIdByUserId: {} } })
+        }
+        completed = true
+      } catch {
+        completed = true
+        if (!cancelled) dispatch({ type: 'live/syncFailed' })
+      }
+    }
+    void run()
+    return () => {
+      cancelled = true
+      // A cancelled, unfinished run releases its claim — otherwise
+      // StrictMode's mount-cleanup-mount would cancel the first run and the
+      // second would find the key taken: a sync that never completes.
+      if (!completed && syncedForRef.current === syncKey) syncedForRef.current = null
+    }
+  }, [sessionToken, workingOrgId, resyncNonce])
 
   const value = useMemo(() => ({ state, dispatch }), [state])
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>
@@ -990,6 +1089,16 @@ export function useDataDispatch() {
  */
 export function useLiveMode(): boolean {
   return isLiveMode()
+}
+
+/** Data-layer plumbing for the mutation seams (team.ts, account.ts) — the
+ * working org and the userId → membership-id map. Not for features. */
+export function useLiveWorkingOrgId(): string | null {
+  return useData().state.liveSession?.orgs[0]?.id ?? null
+}
+
+export function useLiveMemberIds(): Record<string, string> | undefined {
+  return useData().state.liveMemberIds
 }
 
 export function useDatasetInfo() {
@@ -1130,12 +1239,22 @@ export type ScreenPhase = 'loading' | 'error' | 'ready'
  */
 export function useScreenPhase(delayMs = 400): ScreenPhase {
   const devForce = useDevForce()
+  const { state } = useData()
   const [settled, setSettled] = useState(false)
   useEffect(() => {
     const t = window.setTimeout(() => setSettled(true), delayMs)
     return () => window.clearTimeout(t)
   }, [delayMs])
+
+  const syncPhase = state.liveSyncPhase
   if (devForce === 'loading') return 'loading'
   if (devForce === 'error') return 'error'
+  // Live mode: the four states are REAL network states. Loading while the
+  // sync runs, error when it failed, populated/empty from the synced world.
+  if (state.liveSession) {
+    if (syncPhase === 'syncing' || syncPhase === 'idle') return 'loading'
+    if (syncPhase === 'error') return 'error'
+    return 'ready'
+  }
   return settled ? 'ready' : 'loading'
 }

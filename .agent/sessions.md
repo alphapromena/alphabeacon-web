@@ -623,3 +623,54 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   logout + logout-all, accept-invite deep link, dead-token 401→toast→login
 - Next: INT-2 — me + orgs + members + invites (branch `int/02`); its first
   job is the boot refresh of /me + /me/orgs (open-items 6)
+
+### 2026-07-30 15:00 — INT-2: me + orgs + members + invites, live — the sync pattern lands
+
+- Did: built the live-sync pattern the remaining phases ride on. On session
+  establishment the provider refreshes `/me` + `/me/orgs` (the stored record
+  is a warm start, rewritten in place — resolves open-items 6), then pulls the
+  working org's members + invites and grafts them (`live-sync.ts`,
+  `org-adapter.ts`); `useScreenPhase` maps to the REAL sync phase in live
+  mode, and every error screen's Try again re-runs the sync (wired in the
+  reducer, deterministically). Mutations go through two new data-layer seams —
+  `team.ts` (invite/resend/cancel/setRole/remove/leave) and `account.ts`
+  (profile name, change-password, createOrg, updateOrgName) — and resync on
+  success rather than trusting optimistic patches.
+- The deliberate reconciliation: `User.role` gained `owner` (types.ts is the
+  named reconciliation point; the API's model is three-tier). The team screen
+  now derives its powers from DATA: the tier that manages roles is the highest
+  present in the world — owner live, admin in the static demo — so static
+  behaviour is unchanged without a single mode check. Ownership transfer,
+  the last-owner absent-option law, Leave on your own row (absent for the
+  last owner, with the row saying why), and remove-precedence (owners remove
+  anyone, admins remove members) all render from `ROLE_RANK`.
+- Wizard completion now CREATES the org live (the resync flips the world onto
+  it); I1's save PATCHes the org name (other org fields await the brand
+  phase); I1 gained the live-only "Your account" section (name + change
+  password) — logged as a spec gap, open-items 7.
+- Three real defects found by the live run and fixed:
+  1. StrictMode's mount-cleanup-mount deadlocked the boot sync (the cancelled
+     first run held the once-per-key claim); the cleanup now releases it.
+  2. I1 seeded its draft at mount, so a sync landing later never reached a
+     pristine form — the async sibling of state.md rule 4; pristine drafts now
+     adopt fresh truth, edited ones are never clobbered.
+  3. Sign-out raced the in-flight sync: the revoked token's 401 echo fired the
+     dead-session ceremony. The client now scopes deliberate logouts, ignores
+     stale-token 401s, and logout-all with a dead token still signs out
+     locally.
+- Phase: INT-2 (branch `int/02`)
+- Files: `src/data/{live-sync,team,account}.ts` (new),
+  `src/data/adapters/org-adapter.ts` (new), `src/data/provider.tsx`,
+  `src/data/types.ts` (role union — deliberate), `src/api/{types,session,client}.ts`,
+  `src/features/settings/{team-screen,organization-screen,account-section}.tsx`,
+  `src/features/onboarding/onboarding-screen.tsx`, `src/lib/messages.ts`,
+  `e2e/live-team.spec.ts` (new), `e2e/{live-auth,compose-analytics-settings}.spec.ts`
+- Decisions: the sync pattern is covered by the INT-0 entries' architecture;
+  gaps and resolutions tracked in open-items 6–7
+- Verify: lint + typecheck + 340 unit + guard-static (216 files) green; static
+  e2e 74 passed / 12 live skipped; **live e2e 12/12 against the deployed API**
+  (both journeys interleaved) — wizard-created org, PATCH rename surviving
+  reload, change-password revoking others, new-user invite + 429 resend +
+  cancel, existing-user immediate add, the full role ladder incl. ownership
+  transfer and the last-owner laws, remove, and the dead-token ceremony
+- Next: INT-3 — brand resources with the tone adapter (branch `int/03`)
