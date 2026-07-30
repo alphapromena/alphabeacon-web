@@ -68,8 +68,8 @@ analytics, compose and knowledge stay static, awaiting backend phase 2.
 
 | Phase | Scope                                                    | State       |
 | ----- | -------------------------------------------------------- | ----------- |
-| INT-0 | API client, env switch, guard amendments, docs           | In progress (`int/00`) |
-| INT-1 | Auth end to end against the live API                     | Next        |
+| INT-0 | API client, env switch, guard amendments, docs           | Done (`int/00`, pushed) |
+| INT-1 | Auth end to end against the live API                     | Done (`int/01`) · live e2e 7/7 |
 | INT-2 | Me + orgs + members + invites                            | Queued      |
 | INT-3 | Brand (voices, tones + adapter, sources, topics)         | Queued      |
 | INT-4 | Schedules + event sources (+countries) + slots           | Queued      |

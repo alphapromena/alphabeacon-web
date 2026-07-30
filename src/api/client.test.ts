@@ -72,7 +72,9 @@ describe('api()', () => {
       string
     >
     expect(authedHeaders.authorization).toBe('Bearer tok-1')
-    expect(authedHeaders['x-request-id']).toBeTruthy()
+    // No x-request-id header: the deployed CORS policy does not allow it from
+    // browsers (see client.ts + open-items); the server's own id is logged.
+    expect(authedHeaders['x-request-id']).toBeUndefined()
 
     fetchMock.mockResolvedValue(jsonResponse(200, {}))
     await api('POST', '/auth/login', { body: { email: 'a@b.c' }, anonymous: true })

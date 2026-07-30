@@ -15,34 +15,38 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router'
 import { z } from 'zod'
-import { Form, FormActions, TextField } from '@/components/ab/form'
+import { Form, FormActions, FormField, TextField } from '@/components/ab/form'
 import { MonoNumber } from '@/components/ab/mono-number'
 import { Button } from '@/components/ui/button'
-import { useDataDispatch, useSession, useUsers } from '@/data/provider'
+import { Checkbox } from '@/components/ui/checkbox'
+import { useAuthActions } from '@/data/auth'
+import { useSession } from '@/data/provider'
 import { MESSAGES } from '@/lib/messages'
+import { AuthErrorAlert, type AuthFailure } from './auth-error'
 import { AuthLayout } from './auth-layout'
 import { formatCountdown, useCountdown } from './use-countdown'
 
 const signInSchema = z.object({
   email: z.string().min(1, MESSAGES.errors.emailRequired),
   password: z.string().min(1, MESSAGES.errors.passwordTooShort),
+  rememberMe: z.boolean(),
 })
 
 type SignInValues = z.infer<typeof signInSchema>
 
 export function SignInScreen() {
-  const dispatch = useDataDispatch()
+  const auth = useAuthActions()
   const session = useSession()
-  const users = useUsers()
   const navigate = useNavigate()
   const [failed, setFailed] = useState(false)
+  const [failure, setFailure] = useState<AuthFailure | null>(null)
 
   const secondsLeft = useCountdown(session.lockedUntil)
   const lockedOut = secondsLeft > 0
 
   const form = useForm<SignInValues>({
     resolver: zodResolver(signInSchema),
-    defaultValues: { email: '', password: '' },
+    defaultValues: { email: '', password: '', rememberMe: false },
   })
 
   return (
@@ -67,18 +71,29 @@ export function SignInScreen() {
     >
       <Form
         form={form}
-        onSubmit={(values) => {
+        onSubmit={async (values) => {
           if (lockedOut) return
-          const known = users.some(
-            (user) => user.email.toLowerCase() === values.email.trim().toLowerCase(),
-          )
-          if (!known) {
-            setFailed(true)
-            dispatch({ type: 'auth/signInFailed' })
+          setFailed(false)
+          setFailure(null)
+          const result = await auth.signIn({
+            email: values.email,
+            password: values.password,
+            rememberMe: values.rememberMe,
+          })
+          if (!result.ok) {
+            // Correct password, unverified address: A3 owns the rest — the
+            // seam has already remembered which email is pending.
+            if (result.reason === 'email_not_verified') {
+              navigate(`/verify-email?email=${encodeURIComponent(values.email)}`)
+              return
+            }
+            if (result.code === 'unauthorized') {
+              setFailed(true)
+              return
+            }
+            setFailure(result)
             return
           }
-          setFailed(false)
-          dispatch({ type: 'auth/signInSucceeded' })
           navigate('/')
         }}
       >
@@ -104,9 +119,18 @@ export function SignInScreen() {
             </div>
           )
         )}
+        <AuthErrorAlert failure={failure} />
 
         <TextField name="email" label="Work email" type="email" placeholder="you@company.com" />
         <TextField name="password" label="Password" type="password" />
+
+        {/* Mirrors the API's own rememberMe: 30-day sliding session instead
+            of 12-hour, localStorage instead of tab-scoped. */}
+        <FormField name="rememberMe" label="Keep me signed in on this device" orientation="horizontal">
+          {({ invalid: _invalid, value, onChange, ...field }) => (
+            <Checkbox {...field} checked={Boolean(value)} onCheckedChange={onChange} />
+          )}
+        </FormField>
 
         <div className="-mt-2 text-right text-sm">
           <Link

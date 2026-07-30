@@ -15,15 +15,13 @@ import { Form, FormActions, FormField, TextField } from '@/components/ab/form'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
-import { useDataDispatch, useSession } from '@/data/provider'
+import { useAuthActions } from '@/data/auth'
+import { useSession } from '@/data/provider'
 import { MESSAGES } from '@/lib/messages'
+import { AuthErrorAlert, type AuthFailure } from './auth-error'
 import { AuthLayout } from './auth-layout'
 import { passwordScore } from './password-rules'
 import { PasswordStrength } from './password-strength'
-
-/** The one address this static world already "knows", so A1's duplicate-email
- *  state is reachable without a server. */
-const TAKEN_EMAIL = 'maya@atlasroasters.example'
 
 const signUpSchema = z.object({
   name: z.string().min(1, MESSAGES.errors.nameRequired),
@@ -42,10 +40,11 @@ const signUpSchema = z.object({
 type SignUpValues = z.infer<typeof signUpSchema>
 
 export function SignUpScreen() {
-  const dispatch = useDataDispatch()
+  const auth = useAuthActions()
   const session = useSession()
   const navigate = useNavigate()
   const [duplicateEmail, setDuplicateEmail] = useState<string | null>(null)
+  const [failure, setFailure] = useState<AuthFailure | null>(null)
 
   const form = useForm<SignUpValues>({
     resolver: zodResolver(signUpSchema),
@@ -78,19 +77,31 @@ export function SignUpScreen() {
     >
       <Form
         form={form}
-        onSubmit={(values) => {
-          if (values.email.toLowerCase() === TAKEN_EMAIL) {
-            setDuplicateEmail(values.email)
-            return
-          }
+        onSubmit={async (values) => {
           setDuplicateEmail(null)
-          dispatch({
-            type: 'auth/signUp',
+          setFailure(null)
+          const result = await auth.signUp({
             name: values.name,
             email: values.email,
+            password: values.password,
             orgName: values.orgName,
           })
-          navigate('/verify-email')
+          if (!result.ok) {
+            // A registered email is a designed state, not a generic failure;
+            // per-field validation lands under its field; the rest render as
+            // the shared alert switched on code.
+            if (result.code === 'conflict') {
+              setDuplicateEmail(values.email)
+              return
+            }
+            for (const detail of result.fieldErrors) {
+              form.setError(detail.field as keyof SignUpValues, { message: detail.message })
+            }
+            if (result.fieldErrors.length === 0) setFailure(result)
+            return
+          }
+          // The address rides the URL so a refresh on A3 keeps its subject.
+          navigate(`/verify-email?email=${encodeURIComponent(values.email)}`)
         }}
       >
         {duplicateEmail && (
@@ -104,6 +115,7 @@ export function SignUpScreen() {
             </Link>
           </div>
         )}
+        <AuthErrorAlert failure={failure} />
 
         <TextField name="name" label="Full name" placeholder="Maya Haddad" />
         <TextField name="email" label="Work email" type="email" placeholder="you@company.com" />

@@ -211,7 +211,9 @@ export default tseslint.config(
       'ab/no-raw-color': 'error',
     },
   },
-  // Features read through DataProvider hooks, never entities directly
+  // Features read through DataProvider hooks — never entities directly, and
+  // never the API client: "no screen knows which side its data came from" is
+  // a structural rule, not a convention (decisions.md 2026-07-30).
   {
     files: ['src/features/**/*.{ts,tsx}'],
     rules: {
@@ -222,6 +224,11 @@ export default tseslint.config(
             {
               group: ['@/data/entities/*', '**/data/entities/*'],
               message: 'Read through DataProvider hooks (src/data/provider.tsx) instead.',
+            },
+            {
+              group: ['@/api', '@/api/*', '**/src/api/*'],
+              message:
+                'Features never touch the network layer — go through the data-layer seams (src/data/auth.ts, provider hooks).',
             },
           ],
         },

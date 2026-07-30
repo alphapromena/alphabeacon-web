@@ -11,6 +11,7 @@
 import type { ReactNode } from 'react'
 import { createBrowserRouter, Navigate } from 'react-router'
 import { useOrg, useSession } from '@/data/provider'
+import { AcceptInviteScreen } from '@/features/auth/accept-invite-screen'
 import { ResetPasswordScreen } from '@/features/auth/reset-password-screen'
 import { SignInScreen } from '@/features/auth/signin-screen'
 import { SignUpScreen } from '@/features/auth/signup-screen'
@@ -108,6 +109,8 @@ export const router = createBrowserRouter([
   },
   { path: '/verify-email', element: <VerifyEmailScreen /> },
   { path: '/reset-password', element: <ResetPasswordScreen /> },
+  // The invite deep link (docs/api/api.md): /accept-invite?email=…&code=…
+  { path: '/accept-invite', element: <AcceptInviteScreen /> },
   { path: '/onboarding', element: <OnboardingScreen /> },
 
   // Area D — the review queue

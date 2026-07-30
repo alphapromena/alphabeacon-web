@@ -15,10 +15,17 @@ import {
   useEffect,
   useMemo,
   useReducer,
+  useRef,
   useState,
   type Dispatch,
   type ReactNode,
 } from 'react'
+import { configureApi } from '@/api/client'
+import { isLiveMode } from '@/api/config'
+import { loadSession, purgeSession } from '@/api/session'
+import type { AuthSession } from '@/api/types'
+import { toastError } from '@/components/ab/toast'
+import { clearAuthSession, graftAuthSession } from '@/data/adapters/auth-adapter'
 import { buildDataset, DATASETS, DEFAULT_DATASET_ID } from '@/data/datasets'
 import type {
   Asset,
@@ -40,6 +47,7 @@ import type {
 } from '@/data/types'
 import { MAX_SIGN_IN_ATTEMPTS, SIGN_IN_LOCKOUT_MS } from '@/data/types'
 import { canTransition, type DraftStatus } from '@/lib/draft-status'
+import { MESSAGES } from '@/lib/messages'
 
 /** A5 runs five steps; N3 resumes at whichever one is unfinished. */
 export type OnboardingStep = Org['onboarding']['resumeStep']
@@ -61,6 +69,12 @@ export interface DataState {
   world: Dataset
   devForce: DevForce
   connectivity: Connectivity
+  /**
+   * The live AlphaStudio session, when one exists (live mode only; absent ≡
+   * null in static mode and in older test fixtures). Kept in state so a
+   * dataset switch can re-graft it onto the fresh world.
+   */
+  liveSession?: AuthSession | null
 }
 
 export type DataAction =
@@ -71,6 +85,10 @@ export type DataAction =
   | { type: 'notifications/markAllRead' }
   | { type: 'session/signOut' }
   | { type: 'session/signIn' }
+  // --- live mode (INT-1): the AlphaStudio session entering/leaving the world -
+  | { type: 'live/sessionEstablished'; session: AuthSession }
+  | { type: 'live/sessionCleared' }
+  | { type: 'live/pendingVerification'; email: string }
   // --- auth (A1–A4) ---------------------------------------------------------
   | { type: 'auth/signUp'; name: string; email: string; orgName: string }
   | { type: 'auth/verifyEmail' }
@@ -145,8 +163,40 @@ export type DataAction =
 
 export function dataReducer(state: DataState, action: DataAction): DataState {
   switch (action.type) {
-    case 'dataset/switch':
-      return { ...state, datasetId: action.id, world: buildDataset(action.id) }
+    case 'dataset/switch': {
+      // A fresh world, but the LIVE session survives the switch: covered
+      // entities stay real while the dataset supplies everything else.
+      const world = buildDataset(action.id)
+      const withSession = state.liveSession
+        ? graftAuthSession(world, state.liveSession)
+        : isLiveMode()
+          ? clearAuthSession(world)
+          : world
+      return { ...state, datasetId: action.id, world: withSession }
+    }
+    case 'live/sessionEstablished':
+      return {
+        ...state,
+        liveSession: action.session,
+        world: graftAuthSession(state.world, action.session),
+      }
+    case 'live/sessionCleared':
+      return { ...state, liveSession: null, world: clearAuthSession(state.world) }
+    case 'live/pendingVerification':
+      // Signed up, not yet verified: the verify screen needs the address, and
+      // nothing may pretend to be signed in yet.
+      return {
+        ...state,
+        world: {
+          ...state.world,
+          session: {
+            ...state.world.session,
+            signedIn: false,
+            emailVerified: false,
+            pendingEmail: action.email,
+          },
+        },
+      }
     case 'dev/force':
       return { ...state, devForce: action.mode }
     case 'dev/connectivity':
@@ -877,12 +927,43 @@ export function DataProvider({
   children: ReactNode
   initialDatasetId?: DatasetId
 }) {
-  const [state, dispatch] = useReducer(dataReducer, initialDatasetId, (id: DatasetId) => ({
-    datasetId: id,
-    world: buildDataset(id),
-    devForce: 'none' as DevForce,
-    connectivity: 'auto' as Connectivity,
-  }))
+  const [state, dispatch] = useReducer(dataReducer, initialDatasetId, (id: DatasetId): DataState => {
+    const base: DataState = {
+      datasetId: id,
+      world: buildDataset(id),
+      devForce: 'none' as DevForce,
+      connectivity: 'auto' as Connectivity,
+    }
+    if (!isLiveMode()) return base
+    // Live boot: a persisted session signs the world in as the real user; no
+    // session means genuinely signed out — never the dataset's fake sign-in.
+    const saved = loadSession()
+    return saved
+      ? { ...base, liveSession: saved, world: graftAuthSession(base.world, saved) }
+      : { ...base, liveSession: null, world: clearAuthSession(base.world) }
+  })
+
+  // The client's hooks read through refs so configureApi runs once: the token
+  // always reflects current state, and a dead session (any Bearer-carrying
+  // 401) purges, clears, explains, and lands on the login screen. Navigation
+  // uses history + popstate so react-router follows without a reload — the
+  // same pattern the OAuth-return deep links use.
+  const liveSessionRef = useRef<AuthSession | null>(state.liveSession ?? null)
+  liveSessionRef.current = state.liveSession ?? null
+  useEffect(() => {
+    if (!isLiveMode()) return
+    configureApi({
+      getToken: () => liveSessionRef.current?.token ?? null,
+      onUnauthorized: () => {
+        purgeSession()
+        dispatch({ type: 'live/sessionCleared' })
+        toastError(MESSAGES.errors.sessionExpired)
+        window.history.pushState({}, '', '/login')
+        window.dispatchEvent(new PopStateEvent('popstate'))
+      },
+    })
+  }, [])
+
   const value = useMemo(() => ({ state, dispatch }), [state])
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>
 }
@@ -899,6 +980,16 @@ function useData(): DataContextValue {
 
 export function useDataDispatch() {
   return useData().dispatch
+}
+
+/**
+ * Whether covered entities resolve against the live API. Screens may ask this
+ * to choose an AFFORDANCE (a real code entry vs the demo's stand-in button) —
+ * never to special-case where data came from; reads stay identical in both
+ * modes. Exposed as a hook so features keep importing only the provider.
+ */
+export function useLiveMode(): boolean {
+  return isLiveMode()
 }
 
 export function useDatasetInfo() {

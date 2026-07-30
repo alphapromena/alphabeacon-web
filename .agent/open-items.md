@@ -24,6 +24,28 @@ item to "Signed off" (with the date) only when a human has actually done it.
    item). Conservative reading taken: the UI keeps its cap of 3 — the API
    accepting more does not oblige the product to offer more. Backend dev:
    confirm the product cap is intentional product law, or align the API.
+3. **CORS blocks the documented `x-request-id` request header (found INT-1,
+   2026-07-30).** The contract says a client may send its own id, but the
+   Function URL's CORS policy allows only `content-type, authorization`
+   request headers — a browser preflight naming `x-request-id` receives no
+   CORS grant and every call is blocked. The client now sends no id and logs
+   the server's (from the envelope's `requestId`; the response header is
+   likely unexposed too). Backend dev: add `x-request-id` to
+   `Access-Control-Allow-Headers` and `Access-Control-Expose-Headers`.
+4. **Org roles are three-tier (`owner|admin|member`); the app's model is
+   two-tier.** INT-1's session adapter collapses `owner → admin` for display
+   (an owner can do everything the admin UI offers). INT-2 must teach the
+   team screen the real model — "last OWNER cannot leave/demote" (409), not
+   last admin — and `screens4.md` I7 should gain the owner tier when revised.
+5. **Onboarding state is client-inferred in live mode.** The API has no
+   onboarding concept, so "has at least one org" stands in for "onboarding
+   complete" (auth-adapter). Fine for INT-1; if the product wants the full
+   five-step wizard resumable server-side, that needs backend state.
+6. **The stored session's `user`/`orgs` are a login-time snapshot (found
+   INT-1).** Creating an org (or being invited, renamed, role-changed) after
+   login is invisible to a reload until the next sign-in. INT-2 must refresh
+   `GET /me` + `GET /me/orgs` on live boot instead of trusting the stored
+   record, keeping the token as the only trusted persisted fact.
 
 ### M1 cinematic — two items gated on the human (2026-07-30)
 

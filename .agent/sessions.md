@@ -581,3 +581,45 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   green; full static e2e 74/74 green WITH `.env.local` present (the pin works);
   health curl 200
 - Next: INT-1 — auth end to end against the live API (branch `int/01`)
+
+### 2026-07-30 14:10 — INT-1: auth end to end against the live API, every path green
+
+- Did: wired the whole auth surface to AlphaStudio through one seam,
+  `src/data/auth.ts` (`useAuthActions`) — screens call it, never `src/api/`
+  (now ESLint-enforced: `@/api/*` is unimportable from features). Static mode
+  reproduces the demo byte-for-byte through the same signatures.
+- Provider: three live actions (`live/sessionEstablished` grafts the auth
+  session onto the world via `src/data/adapters/auth-adapter.ts`;
+  `live/sessionCleared`; `live/pendingVerification`), live boot from the
+  persisted record (no session = genuinely signed out, never the demo's fake
+  sign-in), dataset switches re-graft the live session, and `configureApi` is
+  wired once: a token-carrying 401 purges, clears, toasts
+  `errors.sessionExpired`, and lands on /login via history+popstate.
+- Screens: signup posts for real (409 → the designed duplicate state;
+  validation details land under their fields); the verify screen gained a
+  REAL 6-digit code entry (input-otp) in live mode — verifying logs in — with
+  the demo's stand-in button intact statically; sign-in gained rememberMe and
+  the 403 email_not_verified routing; reset moved to the documented
+  `?email&code` deep link (legacy `?token` kept for static walks); NEW
+  `/accept-invite` screen per the contract; the account menu signs out
+  through the seam and gained "Sign out everywhere" (logout-all).
+- Found against the deployed API and logged in open-items: CORS blocks the
+  documented client `x-request-id` header (client adapted: sends none, logs
+  the server's); the stored session's `orgs` is a login-time snapshot (INT-2
+  must boot-refresh /me + /me/orgs); org roles are three-tier vs our two
+  (owner→admin collapse in the adapter, INT-2 to fix properly).
+- Phase: INT-1 (branch `int/01`)
+- Files: `src/data/auth.ts` + `src/data/adapters/auth-adapter.{ts,test.ts}`
+  (new), `src/data/provider.tsx`, `src/features/auth/*` (5 screens + shared
+  `auth-error.tsx`, `accept-invite-screen.tsx` new), `src/routes.tsx`,
+  `src/components/ab/app-shell.tsx`, `src/lib/messages.ts` (+4 keys),
+  `src/api/client.ts` (CORS adaptation), `eslint.config.js`,
+  `e2e/live-auth.spec.ts` (new, @live-gated)
+- Decisions: covered by the two INT-0 entries; gaps in open-items 3–6
+- Verify: lint + typecheck + 340 unit green; static e2e 74 passed / 7 live
+  skipped (the demo is intact, golden walk included); **live e2e 7/7 green
+  against the deployed API** — signup→000000→auto-login, 429 countdown,
+  vague 401, unverified-403 routing, deep-link reset revoking every session,
+  logout + logout-all, accept-invite deep link, dead-token 401→toast→login
+- Next: INT-2 — me + orgs + members + invites (branch `int/02`); its first
+  job is the boot refresh of /me + /me/orgs (open-items 6)

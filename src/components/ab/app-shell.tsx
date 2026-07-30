@@ -30,6 +30,7 @@ import { BeaconDot } from '@/components/ab/motion'
 import { NotificationBell } from '@/components/ab/notification-bell'
 import { OfflineBanner } from '@/components/ab/offline-banner'
 import { ThemeToggle } from '@/components/ab/theme-toggle'
+import { toastSuccess } from '@/components/ab/toast'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
@@ -56,10 +57,10 @@ import {
   SidebarRail,
   SidebarTrigger,
 } from '@/components/ui/sidebar'
+import { useAuthActions } from '@/data/auth'
 import {
   useBilling,
   useCreditBalance,
-  useDataDispatch,
   useDrafts,
   useOrg,
   useSession,
@@ -238,7 +239,7 @@ function PlanCreditChip() {
 
 function AccountMenu() {
   const session = useSession()
-  const dispatch = useDataDispatch()
+  const auth = useAuthActions()
   const initials =
     session.user?.name
       .split(' ')
@@ -274,9 +275,27 @@ function AccountMenu() {
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onSelect={() => dispatch({ type: 'session/signOut' })}>
+        <DropdownMenuItem onSelect={() => void auth.signOut()}>
           <LogOut aria-hidden />
           Sign out
+        </DropdownMenuItem>
+        {/* logout-all (docs/api/api.md): revokes every session, this one
+            included. In static mode it simply signs out. */}
+        <DropdownMenuItem
+          onSelect={async () => {
+            const result = await auth.signOutEverywhere()
+            if (result.ok) {
+              toastSuccess('Signed out everywhere', {
+                description:
+                  result.revoked !== undefined
+                    ? `${result.revoked} session${result.revoked === 1 ? '' : 's'} ended.`
+                    : undefined,
+              })
+            }
+          }}
+        >
+          <LogOut aria-hidden />
+          Sign out everywhere
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

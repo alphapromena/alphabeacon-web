@@ -31,6 +31,13 @@ export const MESSAGES = {
     signInLockedOut: 'Too many attempts. Try again in',
     verifyLinkExpired: 'That link has expired. Send yourself a fresh one.',
     resetLinkExpired: 'That reset link has expired or has already been used.',
+    // Live-mode auth (INT-1). The session message is the 401 toast; the code
+    // message covers verify/reset/invite codes alike (10-minute expiry,
+    // 5 attempts); rate limiting always names the wait beside it in mono.
+    sessionExpired: 'Your session ended. Sign in again to continue.',
+    accountDisabled: 'This account is disabled. Contact your administrator.',
+    codeInvalid: 'That code is not right or has expired. Request a fresh one.',
+    rateLimited: 'Too many requests. You can try again in',
 
     // Onboarding (A5)
     offerRequired: 'Describe what you offer in one line — drafts start from this.',

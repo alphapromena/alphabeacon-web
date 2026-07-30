@@ -53,11 +53,6 @@ export function resetUnauthorizedGuard(): void {
   unauthorizedNotified = false
 }
 
-const requestId = () =>
-  typeof crypto !== 'undefined' && 'randomUUID' in crypto
-    ? crypto.randomUUID()
-    : `req-${Date.now()}-${Math.floor(Math.random() * 1e9)}`
-
 function buildQuery(query: Query | undefined): string {
   if (!query) return ''
   const params = new URLSearchParams()
@@ -89,10 +84,13 @@ export async function api<T>(
   }
 
   const token = options.anonymous ? null : hooks.getToken()
-  const outboundId = requestId()
+  // The contract lets a client send its own x-request-id, but the deployed
+  // CORS policy only allows content-type + authorization request headers, so
+  // a browser cannot (open-items: backend asked to allow + expose it). The
+  // SERVER'S id is still captured — from the response header where exposed,
+  // and always from the error envelope's requestId.
   const headers: Record<string, string> = {
     accept: 'application/json',
-    'x-request-id': outboundId,
   }
   if (token) headers.authorization = `Bearer ${token}`
   if (options.body !== undefined) headers['content-type'] = 'application/json'
@@ -111,7 +109,7 @@ export async function api<T>(
   }
 
   const serverId = response.headers.get('x-request-id') ?? undefined
-  console.debug(`[api] ${method} ${path} → ${response.status} (req ${outboundId}, srv ${serverId})`)
+  console.debug(`[api] ${method} ${path} → ${response.status} (request-id ${serverId ?? 'unexposed'})`)
 
   if (response.ok) {
     if (token) unauthorizedNotified = false
