@@ -52,7 +52,23 @@ item to "Signed off" (with the date) only when a human has actually done it.
    as ONE flat list — nothing is smuggled into descriptions. Backend dev:
    tones want `rules {do, dont}` + `example`; voices want a kind (do/don't)
    and an examples home.
-8. **screens4.md has no account/security screen (INT-2).** Profile name and
+8. **A fresh live org has no preset tones and no slot ingestion yet
+   (INT-4).** The five preset tones are product law ("always present"), so
+   `finishOnboarding` seeds them via the API's own `preset` flag — backend
+   asked to seed server-side instead so a non-wizard org path gets them too.
+   Slot ingestion: creating a `holidays` source produced no slots during the
+   run; the skip/un-skip UI is wired and the live test degrades to a skip
+   until ingestion runs — backend dev: when does ingestion fire?
+9. **Model alias pairing (INT-4).** THE mapping table pairs Balanced↔balanced
+   and Precise↔quality confidently; Creative took the remaining `fast`.
+   Backend dev: confirm which product model each alias should mean.
+10. **Google Calendar sources have no API home (INT-4).** Live mode offers
+   country holidays only (the option is absent, not disabled); the static
+   demo keeps the Google stub. Also: the wizard's schedule POST sends
+   `toneIds: []` because tones cannot exist before the org does — tones are
+   picked in C1 after; if the backend ever seeds presets, the wizard can
+   send real ids.
+11. **screens4.md has no account/security screen (INT-2).** Profile name and
    change-password needed a home; they live in an "Your account" section at
    the bottom of I1, live mode only (the static demo has no account to edit).
    screens4.md should gain a proper home for it when next revised.

@@ -72,7 +72,7 @@ analytics, compose and knowledge stay static, awaiting backend phase 2.
 | INT-1 | Auth end to end against the live API                     | Done (`int/01`) · live e2e 7/7 |
 | INT-2 | Me + orgs + members + invites                            | Done (`int/02`) · live e2e 12/12 |
 | INT-3 | Brand (voices, tones + adapter, sources, topics)         | Done (`int/03`) · live e2e 5/5 |
-| INT-4 | Schedules + event sources (+countries) + slots           | Queued      |
+| INT-4 | Schedules + event sources (+countries) + slots           | Done (`int/04`) · live e2e 3/3 (+1 gated on ingestion) |
 | INT-5 | Notifications (list, unread-count, read-all)             | Queued      |
 
 Current totals: **340 unit tests** (31 files), **74 static e2e + 7 live e2e**, all green.

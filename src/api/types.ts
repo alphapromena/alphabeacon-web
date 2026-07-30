@@ -134,3 +134,51 @@ export interface ApiSource extends BrandRow {
 export interface ApiTopic extends BrandRow {
   description: string
 }
+
+// --- Scheduling (INT-4) ------------------------------------------------------
+
+export type ApiWeekday = 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat'
+
+export interface ApiSchedule {
+  id: string
+  orgId: string
+  timezone: string
+  days: ApiWeekday[]
+  /** `HH:MM`, wall-clock in `timezone`. */
+  generateAt: string
+  postsPerDay: number
+  modelAlias: 'fast' | 'balanced' | 'quality'
+  /** Comes back sorted ascending; PATCH replaces the whole selection. */
+  toneIds: string[]
+  eventAware: boolean
+  active: boolean
+  createdAt: string
+  updatedAt: string
+}
+
+export interface ApiEventSource {
+  id: string
+  orgId: string
+  kind: 'holidays'
+  /** ISO 3166-1 alpha-2, stored uppercase. */
+  country: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface ApiCountry {
+  code: string
+  name: string
+}
+
+/** Event ingestion writes these; `{skip}` is the entire mutation surface. */
+export interface ApiSlot {
+  id: string
+  orgId: string
+  eventSourceId: string
+  /** Plain calendar date, no time, no zone. */
+  date: string
+  status: 'review' | 'skipped' | 'approved'
+  title: string
+  kind: string
+}

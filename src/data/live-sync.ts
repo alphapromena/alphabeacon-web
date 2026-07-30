@@ -14,8 +14,12 @@ import { api } from '@/api/client'
 import { isApiError } from '@/api/errors'
 import { updateStoredSession } from '@/api/session'
 import type {
+  ApiCountry,
+  ApiEventSource,
   ApiInvite,
   ApiMember,
+  ApiSchedule,
+  ApiSlot,
   ApiSource,
   ApiTone,
   ApiTopic,
@@ -27,6 +31,7 @@ import type {
 } from '@/api/types'
 import { adaptBrand, type BrandGraft } from '@/data/adapters/brand-adapter'
 import { adaptTeam, type TeamGraft } from '@/data/adapters/org-adapter'
+import { adaptScheduling, type SchedulingGraft } from '@/data/adapters/scheduling-adapter'
 
 /** Fresh user + orgs; the stored record is rewritten in the same storage. */
 export async function refreshAuthSnapshot(current: AuthSession): Promise<AuthSession> {
@@ -58,6 +63,36 @@ export async function fetchTeam(orgId: string): Promise<TeamGraft> {
     ),
   ])
   return adaptTeam(members.items, invites.items)
+}
+
+/** Global reference data — one list for every org, cached for the session. */
+let countriesCache: ApiCountry[] | null = null
+export async function fetchCountries(orgId: string): Promise<ApiCountry[]> {
+  if (countriesCache) return countriesCache
+  const list = await api<Paginated<ApiCountry>>(
+    'GET',
+    `/orgs/${orgId}/event-sources/countries`,
+  )
+  countriesCache = list.items
+  return list.items
+}
+
+/** Schedules, event sources and their slots — the when of the pipeline. */
+export async function fetchScheduling(orgId: string): Promise<SchedulingGraft> {
+  const [schedules, sources, slots, countries] = await Promise.all([
+    api<Paginated<ApiSchedule>>('GET', `/orgs/${orgId}/schedules`, { query: { limit: 20 } }),
+    api<Paginated<ApiEventSource>>('GET', `/orgs/${orgId}/event-sources`, {
+      query: { limit: 100 },
+    }),
+    api<Paginated<ApiSlot>>('GET', `/orgs/${orgId}/slots`, { query: { limit: 100 } }),
+    fetchCountries(orgId),
+  ])
+  return adaptScheduling(
+    schedules.items,
+    sources.items,
+    slots.items,
+    Object.fromEntries(countries.map((country) => [country.code, country.name])),
+  )
 }
 
 /** The brand kit: tones, voices, sources, topics — any member may read all. */

@@ -28,7 +28,8 @@ import { toastError } from '@/components/ab/toast'
 import { clearAuthSession, graftAuthSession } from '@/data/adapters/auth-adapter'
 import type { BrandGraft } from '@/data/adapters/brand-adapter'
 import type { TeamGraft } from '@/data/adapters/org-adapter'
-import { fetchBrand, fetchTeam, refreshAuthSnapshot } from '@/data/live-sync'
+import type { SchedulingGraft } from '@/data/adapters/scheduling-adapter'
+import { fetchBrand, fetchScheduling, fetchTeam, refreshAuthSnapshot } from '@/data/live-sync'
 import { buildDataset, DATASETS, DEFAULT_DATASET_ID } from '@/data/datasets'
 import type {
   Asset,
@@ -89,6 +90,8 @@ export interface DataState {
     voiceIdByRule: Record<string, string>
     topicIdByText: Record<string, string>
   }
+  /** The working schedule's API id (INT-4); null until one is created. */
+  liveScheduleId?: string | null
 }
 
 export type DataAction =
@@ -107,7 +110,12 @@ export type DataAction =
   | { type: 'live/syncStarted' }
   | { type: 'live/syncFailed' }
   | { type: 'live/resync' }
-  | { type: 'live/orgSynced'; team: TeamGraft; brand: BrandGraft | null }
+  | {
+      type: 'live/orgSynced'
+      team: TeamGraft
+      brand: BrandGraft | null
+      scheduling: SchedulingGraft | null
+    }
   // --- auth (A1–A4) ---------------------------------------------------------
   | { type: 'auth/signUp'; name: string; email: string; orgName: string }
   | { type: 'auth/verifyEmail' }
@@ -224,6 +232,7 @@ export function dataReducer(state: DataState, action: DataAction): DataState {
               topicIdByText: action.brand.topicIdByText,
             }
           : undefined,
+        liveScheduleId: action.scheduling ? action.scheduling.scheduleId : undefined,
         world: {
           ...state.world,
           users: action.team.users,
@@ -243,6 +252,16 @@ export function dataReducer(state: DataState, action: DataAction): DataState {
                     examples: [],
                   },
                 },
+              }
+            : {}),
+          ...(action.scheduling
+            ? {
+                eventSources: action.scheduling.eventSources,
+                events: action.scheduling.events,
+                slots: action.scheduling.slots,
+                ...(action.scheduling.schedule
+                  ? { schedule: action.scheduling.schedule }
+                  : {}),
               }
             : {}),
         },
@@ -1070,14 +1089,19 @@ export function DataProvider({
         }
         const orgId = refreshed.orgs[0]?.id
         if (orgId) {
-          const [team, brand] = await Promise.all([fetchTeam(orgId), fetchBrand(orgId)])
+          const [team, brand, scheduling] = await Promise.all([
+            fetchTeam(orgId),
+            fetchBrand(orgId),
+            fetchScheduling(orgId),
+          ])
           if (cancelled) return
-          dispatch({ type: 'live/orgSynced', team, brand })
+          dispatch({ type: 'live/orgSynced', team, brand, scheduling })
         } else {
           dispatch({
             type: 'live/orgSynced',
             team: { users: [], invites: [], memberIdByUserId: {} },
             brand: null,
+            scheduling: null,
           })
         }
         completed = true
@@ -1136,6 +1160,10 @@ export function useLiveMemberIds(): Record<string, string> | undefined {
 
 export function useLiveBrandIds(): DataState['liveBrandIds'] {
   return useData().state.liveBrandIds
+}
+
+export function useLiveScheduleId(): string | null {
+  return useData().state.liveScheduleId ?? null
 }
 
 export function useDatasetInfo() {

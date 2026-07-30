@@ -55,9 +55,19 @@ const PLATFORM_LABELS: Record<Platform, string> = {
 }
 
 const HOLIDAY_FEEDS = ['Jordan', 'United Arab Emirates', 'Saudi Arabia', 'Egypt', 'Lebanon']
+/** The wizard's quick-start list, by ISO code for the live API (INT-4). */
+const HOLIDAY_CODES: Record<string, string> = {
+  Jordan: 'JO',
+  'United Arab Emirates': 'AE',
+  'Saudi Arabia': 'SA',
+  Egypt: 'EG',
+  Lebanon: 'LB',
+}
 
 export function OnboardingScreen() {
   const org = useOrg()
+  const schedule = useSchedule()
+  const eventSources = useEventSources()
   const dispatch = useDataDispatch()
   const account = useAccountActions()
   const navigate = useNavigate()
@@ -83,10 +93,18 @@ export function OnboardingScreen() {
         <StepReady
           onFinish={async () => {
             // Finishing the wizard is where the workspace becomes real: in
-            // live mode this creates the org (the creator becomes its first
-            // owner) under the name step 1 collected; the resync that follows
-            // flips the world onto it. Static completes exactly as before.
-            const result = await account.createOrg(org.name)
+            // live mode this creates the org AND pushes the schedule and
+            // holiday sources the steps collected, because none of them could
+            // exist server-side before the org did. Static completes as
+            // before.
+            const result = await account.finishOnboarding({
+              orgName: org.name,
+              schedule,
+              holidayCountryCodes: eventSources
+                .filter((source) => source.kind === 'holiday')
+                .map((source) => HOLIDAY_CODES[source.label.replace(' public holidays', '')])
+                .filter(Boolean),
+            })
             if (!result.ok) {
               toastError(MESSAGES.errors.generic, {
                 retry: { label: 'Try again', onClick: () => {} },

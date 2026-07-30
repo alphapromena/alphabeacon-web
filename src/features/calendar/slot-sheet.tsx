@@ -28,10 +28,10 @@ import {
 import {
   useAnalytics,
   useCalendarEvents,
-  useDataDispatch,
   useDrafts,
   useSchedule,
 } from '@/data/provider'
+import { useSchedulingActions } from '@/data/scheduling'
 import type { Slot } from '@/data/types'
 import { slotInstant } from '@/lib/timezone'
 import { canUndoSkip } from './skip-window'
@@ -49,7 +49,7 @@ export function SlotSheet({
   const events = useCalendarEvents()
   const analytics = useAnalytics()
   const schedule = useSchedule()
-  const dispatch = useDataDispatch()
+  const scheduling = useSchedulingActions()
 
   if (!slot) return null
 
@@ -109,7 +109,7 @@ export function SlotSheet({
                   variant="outline"
                   className="w-fit"
                   onClick={() => {
-                    dispatch({ type: 'slot/unskip', slotId: slot.id })
+                    void scheduling.unskipSlot(slot.id)
                     toastSuccess('Slot restored', { description: 'It will generate as usual.' })
                   }}
                 >
@@ -205,7 +205,7 @@ export function SlotSheet({
               consequence="Nothing will be drafted or published at this time. You can undo it for the rest of today; after that, changing the schedule is how you bring the time back."
               confirmLabel="Skip slot"
               onConfirm={() => {
-                dispatch({ type: 'slot/skip', slotId: slot.id })
+                void scheduling.skipSlot(slot.id)
                 toastSuccess('Slot skipped', { description: 'You can undo this today.' })
               }}
             />

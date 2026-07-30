@@ -7,14 +7,14 @@
  * keeping — losing a token should not lose a configuration.
  */
 import { CalendarDays, Flag, Plus, RefreshCw } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { AppShell } from '@/components/ab/app-shell'
 import { ConfirmDialog } from '@/components/ab/confirm-dialog'
 import { EmptyState } from '@/components/ab/empty-state'
 import { ErrorState } from '@/components/ab/error-state'
 import { SkeletonList } from '@/components/ab/skeletons'
 import { StatusBadge } from '@/components/ab/status-badge'
-import { toastSuccess } from '@/components/ab/toast'
+import { toastError, toastSuccess } from '@/components/ab/toast'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
@@ -26,6 +26,8 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { useDataDispatch, useEventSources, useScreenPhase } from '@/data/provider'
+import { useLiveMode } from '@/data/provider'
+import { useSchedulingActions, type Country } from '@/data/scheduling'
 import type { CalendarSource } from '@/data/types'
 import { MESSAGES } from '@/lib/messages'
 
@@ -43,6 +45,7 @@ const COUNTRIES = [
 export function EventSourcesScreen() {
   const sources = useEventSources()
   const dispatch = useDataDispatch()
+  const scheduling = useSchedulingActions()
   const phase = useScreenPhase()
   const [addOpen, setAddOpen] = useState(false)
 
@@ -138,7 +141,7 @@ export function EventSourcesScreen() {
                           consequence="Future slots stop being planned around these events. Posts already scheduled against one keep their date and their event name."
                           confirmLabel="Remove source"
                           onConfirm={() =>
-                            dispatch({ type: 'eventSources/remove', sourceId: source.id })
+                            void scheduling.removeEventSource(source.id)
                           }
                         />
                       </div>
@@ -189,8 +192,17 @@ export function EventSourcesScreen() {
       <AddSourceDialog
         open={addOpen}
         onOpenChange={setAddOpen}
-        onAdd={(source) => {
-          dispatch({ type: 'eventSources/add', source })
+        onAdd={async (source, countryCode) => {
+          const result = await scheduling.addHolidaySource(countryCode ?? '', source)
+          if (!result.ok) {
+            // One source per country (409) — the server's line, honestly told.
+            toastError(
+              result.code === 'conflict'
+                ? 'That country already feeds your calendar.'
+                : (result.fieldErrors[0]?.message ?? MESSAGES.errors.generic),
+            )
+            return
+          }
           toastSuccess('Source added', { description: `${source.label} now feeds your calendar.` })
           setAddOpen(false)
         }}
@@ -206,10 +218,25 @@ function AddSourceDialog({
 }: {
   open: boolean
   onOpenChange: (open: boolean) => void
-  onAdd: (source: CalendarSource) => void
+  onAdd: (source: CalendarSource, countryCode?: string) => void | Promise<void>
 }) {
+  const live = useLiveMode()
+  const scheduling = useSchedulingActions()
   const [kind, setKind] = useState<'holiday' | 'google'>('holiday')
   const [country, setCountry] = useState(COUNTRIES[0])
+  // Live mode: the countries endpoint is the ONLY source of valid values.
+  const [liveCountries, setLiveCountries] = useState<Country[] | null>(null)
+  const [liveCode, setLiveCode] = useState<string>('')
+  useEffect(() => {
+    if (!open || !live || liveCountries) return
+    void scheduling.listCountries().then((countries) => {
+      if (countries) {
+        setLiveCountries(countries)
+        setLiveCode((current) => current || (countries[0]?.code ?? ''))
+      }
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- fetch once per open
+  }, [open, live])
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -228,8 +255,12 @@ function AddSourceDialog({
             {(
               [
                 ['holiday', 'Country holidays', 'Public holidays for a country you sell in.'],
-                ['google', 'Google Calendar', 'Your own launches and events.'],
-              ] as const
+                // Google Calendar has no API home yet; live mode offers only
+                // what can actually persist (open-items).
+                ...(live
+                  ? []
+                  : ([['google', 'Google Calendar', 'Your own launches and events.']] as const)),
+              ] as readonly (readonly [string, string, string])[]
             ).map(([value, label, description]) => (
               <label
                 key={value}
@@ -240,7 +271,7 @@ function AddSourceDialog({
                   name="source-kind"
                   className="mt-1 accent-primary"
                   checked={kind === value}
-                  onChange={() => setKind(value)}
+                  onChange={() => setKind(value as 'holiday' | 'google')}
                 />
                 <span className="flex flex-col gap-0.5">
                   <span className="text-sm font-medium">{label}</span>
@@ -257,15 +288,23 @@ function AddSourceDialog({
               </label>
               <select
                 id="add-country"
-                value={country}
-                onChange={(event) => setCountry(event.target.value)}
+                value={live ? liveCode : country}
+                onChange={(event) =>
+                  live ? setLiveCode(event.target.value) : setCountry(event.target.value)
+                }
                 className="h-9 rounded-lg border border-input bg-background px-3 text-sm"
               >
-                {COUNTRIES.map((name) => (
-                  <option key={name} value={name}>
-                    {name}
-                  </option>
-                ))}
+                {live
+                  ? (liveCountries ?? []).map((entry) => (
+                      <option key={entry.code} value={entry.code}>
+                        {entry.name}
+                      </option>
+                    ))
+                  : COUNTRIES.map((name) => (
+                      <option key={name} value={name}>
+                        {name}
+                      </option>
+                    ))}
               </select>
             </div>
           )}
@@ -276,13 +315,15 @@ function AddSourceDialog({
             Cancel
           </Button>
           <Button
-            onClick={() =>
-              onAdd(
+            onClick={() => {
+              const liveName =
+                liveCountries?.find((entry) => entry.code === liveCode)?.name ?? liveCode
+              void onAdd(
                 kind === 'holiday'
                   ? {
-                      id: `src_${country.toLowerCase().replace(/\s+/g, '_')}`,
+                      id: `src_${(live ? liveCode : country).toLowerCase().replace(/\s+/g, '_')}`,
                       kind: 'holiday',
-                      label: `${country} public holidays`,
+                      label: `${live ? liveName : country} public holidays`,
                       status: 'active',
                     }
                   : {
@@ -295,8 +336,9 @@ function AddSourceDialog({
                         { id: 'cal_launches', name: 'Product launches', enabled: true },
                       ],
                     },
+                kind === 'holiday' ? (live ? liveCode : undefined) : undefined,
               )
-            }
+            }}
           >
             Add source
           </Button>

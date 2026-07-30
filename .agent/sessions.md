@@ -712,3 +712,39 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   on screen and valid on the wire, topics diff-synced, and the
   tone-deletion → schedule cascade
 - Next: INT-4 — schedules + event sources (+countries) + slots (`int/04`)
+
+### 2026-07-30 16:10 — INT-4: schedules, event sources and slots live
+
+- Did: the scheduling seam (`src/data/scheduling.ts`) + adapter with THE model
+  table (`MODEL_ALIAS_BY_ID`: gm_balanced↔balanced, gm_creative↔fast,
+  gm_precise↔quality — one table, used everywhere, pairing logged for the
+  backend). The sync now grafts schedules/event-sources/slots alongside team
+  and brand; C1 saves through POST/PATCH with toneIds replace semantics and
+  per-field refusals surfaced; the countries endpoint feeds the add-source
+  picker in live mode (Google absent — no API home); one-source-per-country
+  409 told honestly; slot skip/un-skip PATCHes `{skip}` — the entire wire
+  surface, so `approved` stays unreachable by construction.
+- The wizard's Finish became `finishOnboarding`: org + the five preset tones
+  (seeded with the wire's own `preset` flag — product law says presets are
+  always present, and a fresh live org had none) + the collected schedule +
+  holiday sources, in one action, because none of them could exist before
+  the org did.
+- The API's slots are event keep-or-skip records (date + title, no time);
+  the adapter renders each as an event + decision-slot pair (review→pending,
+  skipped→skipped, approved→done), time from the schedule's generateAt —
+  presentation, not a wire fact.
+- C1 gained the pristine-adopt effect (the server re-sorts toneIds, so the
+  post-save resync used to re-dirty the form — the third screen fixed by
+  that pattern).
+- Phase: INT-4 (branch `int/04`)
+- Files: `src/data/scheduling.ts` + `src/data/adapters/scheduling-adapter.ts`
+  (new), `src/data/{live-sync,account,provider}.ts/tsx`, `src/api/types.ts`,
+  `src/features/calendar/{schedule-config-screen,event-sources-screen,
+  slot-sheet}.tsx`, `src/features/onboarding/onboarding-screen.tsx`,
+  `e2e/live-scheduling.spec.ts` (new)
+- Decisions: the model table + preset seeding recorded in open-items 8–10
+- Verify: lint + typecheck + 340 unit + guard-static (220 files) green;
+  static e2e 74 passed / 21 live skipped; **live e2e 3/3** (wizard creating
+  org+schedule+source together; C1 PATCH surviving reload; countries picker +
+  409 + add/remove) + the slot test honestly skipping until ingestion runs
+- Next: INT-5 — notifications (`int/05`)

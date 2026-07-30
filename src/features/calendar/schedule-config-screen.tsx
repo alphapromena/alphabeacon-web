@@ -10,13 +10,13 @@
  * and the dirty guard honest: nothing changes under the user while they are
  * still deciding, and leaving with unsaved work has to be refused out loud.
  */
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router'
 import { AppShell } from '@/components/ab/app-shell'
 import { ErrorState } from '@/components/ab/error-state'
 import { SaveBar } from '@/components/ab/save-bar'
 import { SkeletonForm } from '@/components/ab/skeletons'
-import { toastSuccess } from '@/components/ab/toast'
+import { toastError, toastSuccess } from '@/components/ab/toast'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -31,6 +31,7 @@ import {
   useTones,
 } from '@/data/provider'
 import { useBrandActions } from '@/data/brand'
+import { useSchedulingActions } from '@/data/scheduling'
 import type { Schedule, Tone, Weekday } from '@/data/types'
 import { MESSAGES } from '@/lib/messages'
 import { TIMEZONES, zoneAbbreviation } from '@/lib/timezone'
@@ -51,11 +52,26 @@ export function ScheduleConfigScreen() {
   const sources = useEventSources()
   const dispatch = useDataDispatch()
   const brand = useBrandActions()
+  const scheduling = useSchedulingActions()
   const phase = useScreenPhase()
 
   const [draft, setDraft] = useState<Schedule>(saved)
   const [toneEditorOpen, setToneEditorOpen] = useState(false)
   const [touched, setTouched] = useState(false)
+
+  // The world can change under the mounted form (the live sync lands after
+  // mount; the server returns toneIds re-sorted). A PRISTINE draft adopts the
+  // new truth; an edited one is never clobbered (state.md rule 4's async
+  // sibling).
+  const savedKey = JSON.stringify(saved)
+  const previousSavedKey = useRef(savedKey)
+  useEffect(() => {
+    setDraft((current) =>
+      JSON.stringify(current) === previousSavedKey.current ? saved : current,
+    )
+    previousSavedKey.current = savedKey
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- savedKey is the change signal
+  }, [savedKey])
 
   const dirty = JSON.stringify(draft) !== JSON.stringify(saved)
   const invalid = draft.activeDays.length === 0 || draft.toneIds.length === 0 || !draft.modelId
@@ -201,10 +217,18 @@ export function ScheduleConfigScreen() {
       <SaveBar
         dirty={dirty && phase === 'ready'}
         onCancel={() => setDraft(saved)}
-        onSave={() => {
+        onSave={async () => {
           setTouched(true)
           if (invalid) return
-          dispatch({ type: 'schedule/update', patch: draft })
+          {
+            const result = await scheduling.saveSchedule(draft)
+            if (!result.ok) {
+              // The server's per-field refusals (a foreign tone id, a bad
+              // zone) surface as the error toast with its own words.
+              toastError(result.fieldErrors[0]?.message ?? MESSAGES.errors.generic)
+              return
+            }
+          }
           toastSuccess('Schedule saved', {
             description: 'New slots follow it from the next run.',
           })
