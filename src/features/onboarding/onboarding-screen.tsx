@@ -34,6 +34,7 @@ import {
   type OnboardingStep,
 } from '@/data/provider'
 import { useAccountActions } from '@/data/account'
+import { useBrandActions } from '@/data/brand'
 import type { CalendarSource, Platform, Tone, Weekday } from '@/data/types'
 import { MESSAGES } from '@/lib/messages'
 import { ToneEditorSheet } from '@/features/settings/tone-editor'
@@ -412,6 +413,7 @@ function StepPipeline({ onBack, onStarted }: { onBack: () => void; onStarted: ()
   const models = useGenerationModels()
   const billing = useBilling()
   const dispatch = useDataDispatch()
+  const brand = useBrandActions()
   const [toneEditorOpen, setToneEditorOpen] = useState(false)
   const [touched, setTouched] = useState(false)
 
@@ -507,7 +509,7 @@ function StepPipeline({ onBack, onStarted }: { onBack: () => void; onStarted: ()
         onSave={(tone: Tone) => {
           // Saving returns here with the new tone already selected and the
           // wizard's progress untouched (screens4.md A5 step 4).
-          dispatch({ type: 'tones/create', tone })
+          void brand.createTone(tone)
           dispatch({ type: 'schedule/update', patch: { toneIds: [...schedule.toneIds, tone.id] } })
           setToneEditorOpen(false)
           toastSuccess('Tone saved', { description: `${tone.name} is selected for this pipeline.` })

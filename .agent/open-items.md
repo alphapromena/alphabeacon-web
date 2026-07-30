@@ -45,7 +45,14 @@ item to "Signed off" (with the date) only when a human has actually done it.
    INT-1).** RESOLVED in INT-2: the provider's live sync refreshes `GET /me`
    + `GET /me/orgs` on every session establishment and rewrites the stored
    record in place; the token is the only trusted persisted fact.
-7. **screens4.md has no account/security screen (INT-2).** Profile name and
+7. **Tone rules/examples and voice do/don't/examples have no wire home
+   (INT-3).** The API stores tones as `{name, description, preset}` and
+   voices as one `description` per row. Live mode disables the rule/example
+   editors with a note (`notices.brandFieldsPending`) and carries voice rules
+   as ONE flat list — nothing is smuggled into descriptions. Backend dev:
+   tones want `rules {do, dont}` + `example`; voices want a kind (do/don't)
+   and an examples home.
+8. **screens4.md has no account/security screen (INT-2).** Profile name and
    change-password needed a home; they live in an "Your account" section at
    the bottom of I1, live mode only (the static demo has no account to edit).
    screens4.md should gain a proper home for it when next revised.

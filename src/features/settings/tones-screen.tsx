@@ -12,18 +12,19 @@ import { Palette, Pencil, Plus, Trash2 } from 'lucide-react'
 import { Link, useNavigate, useParams } from 'react-router'
 import { ConfirmDialog } from '@/components/ab/confirm-dialog'
 import { EmptyState } from '@/components/ab/empty-state'
-import { toastSuccess } from '@/components/ab/toast'
+import { toastError, toastSuccess } from '@/components/ab/toast'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { useDataDispatch, useTones } from '@/data/provider'
+import { useTones } from '@/data/provider'
+import { useBrandActions } from '@/data/brand'
 import type { Tone } from '@/data/types'
 import { MESSAGES } from '@/lib/messages'
 import { ToneEditorForm } from './tone-editor'
 
 export function TonesScreen() {
   const tones = useTones()
-  const dispatch = useDataDispatch()
+  const brand = useBrandActions()
 
   const presets = tones.filter((tone) => tone.kind === 'preset')
   const custom = tones.filter((tone) => tone.kind === 'custom')
@@ -58,8 +59,12 @@ export function TonesScreen() {
               <ToneCard
                 key={tone.id}
                 tone={tone}
-                onDelete={() => {
-                  dispatch({ type: 'tones/delete', toneId: tone.id })
+                onDelete={async () => {
+                  const result = await brand.deleteTone(tone.id)
+                  if (!result.ok) {
+                    toastError(MESSAGES.errors.generic)
+                    return
+                  }
                   toastSuccess('Tone deleted', {
                     description: `${tone.name} is no longer available for new drafts.`,
                   })
@@ -146,7 +151,7 @@ function ToneCard({ tone, onDelete }: { tone: Tone; onDelete?: () => void }) {
 export function ToneEditorScreen() {
   const { toneId } = useParams()
   const tones = useTones()
-  const dispatch = useDataDispatch()
+  const brand = useBrandActions()
   const navigate = useNavigate()
 
   const existing = toneId ? tones.find((tone) => tone.id === toneId) : undefined
@@ -175,8 +180,12 @@ export function ToneEditorScreen() {
         initial={existing}
         submitLabel={existing ? 'Save changes' : 'Create tone'}
         onCancel={() => navigate('/settings/tones')}
-        onSave={(tone) => {
-          dispatch(existing ? { type: 'tones/update', tone } : { type: 'tones/create', tone })
+        onSave={async (tone) => {
+          const result = existing ? await brand.updateTone(tone) : await brand.createTone(tone)
+          if (!result.ok) {
+            toastError(MESSAGES.errors.generic)
+            return
+          }
           toastSuccess(existing ? 'Tone saved' : 'Tone created', {
             description: `${tone.name} is available wherever tones are picked.`,
           })

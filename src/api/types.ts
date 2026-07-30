@@ -106,3 +106,31 @@ export interface InviteReceipt {
   role: OrgRole
   invitedNewUser: boolean
 }
+
+// --- Brand (INT-3): four org-scoped resources, one CRUD surface -------------
+
+interface BrandRow {
+  id: string
+  orgId: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface ApiTone extends BrandRow {
+  name: string
+  description: string
+  preset: boolean
+}
+
+export interface ApiVoice extends BrandRow {
+  description: string
+}
+
+export interface ApiSource extends BrandRow {
+  url: string
+  title: string
+}
+
+export interface ApiTopic extends BrandRow {
+  description: string
+}

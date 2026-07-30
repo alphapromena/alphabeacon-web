@@ -26,8 +26,9 @@ import { loadSession, purgeSession } from '@/api/session'
 import type { AuthSession } from '@/api/types'
 import { toastError } from '@/components/ab/toast'
 import { clearAuthSession, graftAuthSession } from '@/data/adapters/auth-adapter'
+import type { BrandGraft } from '@/data/adapters/brand-adapter'
 import type { TeamGraft } from '@/data/adapters/org-adapter'
-import { fetchTeam, refreshAuthSnapshot } from '@/data/live-sync'
+import { fetchBrand, fetchTeam, refreshAuthSnapshot } from '@/data/live-sync'
 import { buildDataset, DATASETS, DEFAULT_DATASET_ID } from '@/data/datasets'
 import type {
   Asset,
@@ -83,6 +84,11 @@ export interface DataState {
   liveResyncNonce?: number
   /** userId → membership id, for the member/invite management endpoints. */
   liveMemberIds?: Record<string, string>
+  /** Brand mutation plumbing: rule/topic text → row id (INT-3). */
+  liveBrandIds?: {
+    voiceIdByRule: Record<string, string>
+    topicIdByText: Record<string, string>
+  }
 }
 
 export type DataAction =
@@ -97,11 +103,11 @@ export type DataAction =
   | { type: 'live/sessionEstablished'; session: AuthSession }
   | { type: 'live/sessionCleared' }
   | { type: 'live/pendingVerification'; email: string }
-  // --- live mode (INT-2): the sync grafting covered entities onto the world -
+  // --- live mode (INT-2/3): the sync grafting covered entities onto the world
   | { type: 'live/syncStarted' }
   | { type: 'live/syncFailed' }
   | { type: 'live/resync' }
-  | { type: 'live/teamSynced'; team: TeamGraft }
+  | { type: 'live/orgSynced'; team: TeamGraft; brand: BrandGraft | null }
   // --- auth (A1–A4) ---------------------------------------------------------
   | { type: 'auth/signUp'; name: string; email: string; orgName: string }
   | { type: 'auth/verifyEmail' }
@@ -207,15 +213,38 @@ export function dataReducer(state: DataState, action: DataAction): DataState {
       return { ...state, liveSyncPhase: 'error' }
     case 'live/resync':
       return { ...state, liveResyncNonce: (state.liveResyncNonce ?? 0) + 1 }
-    case 'live/teamSynced':
+    case 'live/orgSynced':
       return {
         ...state,
         liveSyncPhase: 'ready',
         liveMemberIds: action.team.memberIdByUserId,
+        liveBrandIds: action.brand
+          ? {
+              voiceIdByRule: action.brand.voiceIdByRule,
+              topicIdByText: action.brand.topicIdByText,
+            }
+          : undefined,
         world: {
           ...state.world,
           users: action.team.users,
           invites: action.team.invites,
+          ...(action.brand
+            ? {
+                tones: action.brand.tones,
+                followedSources: action.brand.sources,
+                topics: action.brand.topics,
+                org: {
+                  ...state.world.org,
+                  brandVoice: {
+                    // The wire stores ONE flat rule list; don'ts and examples
+                    // have no home yet (open-items) and render disabled.
+                    do: action.brand.voiceRules,
+                    dont: [],
+                    examples: [],
+                  },
+                },
+              }
+            : {}),
         },
       }
     case 'live/pendingVerification':
@@ -1041,11 +1070,15 @@ export function DataProvider({
         }
         const orgId = refreshed.orgs[0]?.id
         if (orgId) {
-          const team = await fetchTeam(orgId)
+          const [team, brand] = await Promise.all([fetchTeam(orgId), fetchBrand(orgId)])
           if (cancelled) return
-          dispatch({ type: 'live/teamSynced', team })
+          dispatch({ type: 'live/orgSynced', team, brand })
         } else {
-          dispatch({ type: 'live/teamSynced', team: { users: [], invites: [], memberIdByUserId: {} } })
+          dispatch({
+            type: 'live/orgSynced',
+            team: { users: [], invites: [], memberIdByUserId: {} },
+            brand: null,
+          })
         }
         completed = true
       } catch {
@@ -1099,6 +1132,10 @@ export function useLiveWorkingOrgId(): string | null {
 
 export function useLiveMemberIds(): Record<string, string> | undefined {
   return useData().state.liveMemberIds
+}
+
+export function useLiveBrandIds(): DataState['liveBrandIds'] {
+  return useData().state.liveBrandIds
 }
 
 export function useDatasetInfo() {

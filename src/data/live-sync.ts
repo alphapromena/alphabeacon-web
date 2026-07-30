@@ -16,11 +16,16 @@ import { updateStoredSession } from '@/api/session'
 import type {
   ApiInvite,
   ApiMember,
+  ApiSource,
+  ApiTone,
+  ApiTopic,
   ApiUser,
+  ApiVoice,
   ApiOrgSummary,
   AuthSession,
   Paginated,
 } from '@/api/types'
+import { adaptBrand, type BrandGraft } from '@/data/adapters/brand-adapter'
 import { adaptTeam, type TeamGraft } from '@/data/adapters/org-adapter'
 
 /** Fresh user + orgs; the stored record is rewritten in the same storage. */
@@ -53,4 +58,16 @@ export async function fetchTeam(orgId: string): Promise<TeamGraft> {
     ),
   ])
   return adaptTeam(members.items, invites.items)
+}
+
+/** The brand kit: tones, voices, sources, topics — any member may read all. */
+export async function fetchBrand(orgId: string): Promise<BrandGraft> {
+  const list = { query: { limit: 100 } }
+  const [tones, voices, sources, topics] = await Promise.all([
+    api<Paginated<ApiTone>>('GET', `/orgs/${orgId}/brand/tones`, list),
+    api<Paginated<ApiVoice>>('GET', `/orgs/${orgId}/brand/voices`, list),
+    api<Paginated<ApiSource>>('GET', `/orgs/${orgId}/brand/sources`, list),
+    api<Paginated<ApiTopic>>('GET', `/orgs/${orgId}/brand/topics`, list),
+  ])
+  return adaptBrand(tones.items, voices.items, sources.items, topics.items)
 }

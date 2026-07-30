@@ -25,7 +25,7 @@ import {
 } from '@/components/ui/sheet'
 import type { Tone } from '@/data/types'
 import { MESSAGES } from '@/lib/messages'
-import { useOrg } from '@/data/provider'
+import { useLiveMode, useOrg } from '@/data/provider'
 import { composePreview } from './tone-preview'
 
 const toneSchema = z
@@ -40,6 +40,16 @@ const toneSchema = z
     message: MESSAGES.errors.toneRuleRequired,
     path: ['dos'],
   })
+
+/** Live mode stores name + description only (the API's tone shape); the rule
+ *  requirement would demand fields with nowhere to go. */
+const liveToneSchema = z.object({
+  name: z.string().min(1, MESSAGES.errors.toneNameRequired),
+  description: z.string().min(1, MESSAGES.errors.toneRuleRequired),
+  dos: z.string(),
+  donts: z.string(),
+  example: z.string(),
+})
 
 type ToneValues = z.infer<typeof toneSchema>
 
@@ -73,10 +83,11 @@ export function ToneEditorForm({
   submitLabel?: string
 }) {
   const org = useOrg()
+  const live = useLiveMode()
   const [preview, setPreview] = useState<ReturnType<typeof composePreview> | null>(null)
 
   const form = useForm<ToneValues>({
-    resolver: zodResolver(toneSchema),
+    resolver: zodResolver(live ? liveToneSchema : toneSchema),
     defaultValues: {
       name: initial?.name ?? '',
       description: initial?.description ?? '',
@@ -112,26 +123,35 @@ export function ToneEditorForm({
         placeholder="First-person, workshop-floor honesty from the founder."
         rows={2}
       />
-      <TextAreaField
-        name="dos"
-        label="Do"
-        description="One per line."
-        placeholder={'Write in first person\nMention what we tried and changed'}
-        rows={3}
-      />
-      <TextAreaField
-        name="donts"
-        label="Don't"
-        description="One per line."
-        placeholder={'Corporate we-speak\nHide the rough edges'}
-        rows={3}
-      />
-      <TextAreaField
-        name="example"
-        label="Example line (optional)"
-        description="A sample sentence in this tone, used to steer generation."
-        rows={2}
-      />
+      {live ? (
+        // The API stores name + description only; rule and example editors
+        // would write to nowhere, so they are absent with the reason stated —
+        // never smuggled into the description (open-items: backend request).
+        <p className="text-sm text-muted-foreground">{MESSAGES.notices.brandFieldsPending}</p>
+      ) : (
+        <>
+          <TextAreaField
+            name="dos"
+            label="Do"
+            description="One per line."
+            placeholder={'Write in first person\nMention what we tried and changed'}
+            rows={3}
+          />
+          <TextAreaField
+            name="donts"
+            label="Don't"
+            description="One per line."
+            placeholder={'Corporate we-speak\nHide the rough edges'}
+            rows={3}
+          />
+          <TextAreaField
+            name="example"
+            label="Example line (optional)"
+            description="A sample sentence in this tone, used to steer generation."
+            rows={2}
+          />
+        </>
+      )}
 
       {/* The point of Preview is the INTERACTION: brand voice and tone are in
           force at the same time, and seeing both lists side by side is what

@@ -89,6 +89,9 @@ export const MESSAGES = {
     /** I2 — the cross-note tones and brand voice both carry. */
     brandVoiceUnderTones:
       'Brand voice always applies underneath whatever tone is selected — tones vary the style, these rules never bend.',
+    /** INT-3 — fields the API does not store yet render disabled, not silent. */
+    brandFieldsPending:
+      "Don't-rules, examples, and per-tone writing rules arrive with a later backend phase — what you see here is exactly what is stored today.",
     // N4. Both are non-blocking and clear themselves.
     offline: "You're offline — changes will sync when you reconnect.",
     degraded: "We're having trouble reaching AlphaBeacon — retrying…",

@@ -674,3 +674,41 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   cancel, existing-user immediate add, the full role ladder incl. ownership
   transfer and the last-owner laws, remove, and the dead-token ceremony
 - Next: INT-3 — brand resources with the tone adapter (branch `int/03`)
+
+### 2026-07-30 15:40 — INT-3: the brand kit live, with the honest tone adapter
+
+- Did: wired all four brand resources through a new `src/data/brand.ts` seam
+  and extended the live sync (`fetchBrand` joins `fetchTeam` under one
+  `live/orgSynced` graft). Tones follow the adapter the user specified:
+  `preset → kind`, description rendered, and the rules/example editors are
+  ABSENT in live mode with `notices.brandFieldsPending` stating why — never
+  smuggled into `description`. Voices carry the app's brand-voice rules as
+  one flat list (each rule = one row); the don't/example editors are disabled
+  with the same note. Sources round-trip with the scheme restored on write
+  (assembled, not written — the house pattern from source-url) and stripped
+  on read per the scheme-less law; topics keep replace semantics, diffed into
+  row CRUD with an optimistic tag list. `source-url.ts` moved to `src/lib/`
+  (the data layer needed it; features keep importing it).
+- Tone deletion mirrors the documented cascade: the server drops the id from
+  every schedule, the seam dispatches the local delete too, and the live e2e
+  proves it against a harness-created schedule referencing the tone.
+- All three ToneEditor entry points (tones screen, schedule config,
+  onboarding) now save through the seam; the editor's zod relaxes to
+  name+description in live mode since the rule requirement would demand
+  fields with nowhere to go.
+- Phase: INT-3 (branch `int/03`)
+- Files: `src/data/brand.ts` + `src/data/adapters/brand-adapter.ts` (new),
+  `src/data/live-sync.ts`, `src/data/provider.tsx`, `src/api/types.ts`,
+  `src/lib/source-url.ts` (moved) + test, `src/features/settings/{brand-voice,
+  tones,sources}-screen.tsx`, `src/features/settings/tone-editor.tsx`,
+  `src/features/calendar/schedule-config-screen.tsx`,
+  `src/features/onboarding/onboarding-screen.tsx`, `src/lib/messages.ts`,
+  `e2e/live-brand.spec.ts` (new)
+- Decisions: the adapter rules were set by the task owner (no smuggling;
+  disable honestly; log the gap) — recorded in open-items 7
+- Verify: lint + typecheck + 340 unit green; static e2e 74 passed / 17 live
+  skipped; **live e2e 5/5 against the deployed API** — tone under the
+  adapter surviving reload, flat voice rules persisting, sources scheme-less
+  on screen and valid on the wire, topics diff-synced, and the
+  tone-deletion → schedule cascade
+- Next: INT-4 — schedules + event sources (+countries) + slots (`int/04`)

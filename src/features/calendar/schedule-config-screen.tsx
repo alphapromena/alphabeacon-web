@@ -30,6 +30,7 @@ import {
   useScreenPhase,
   useTones,
 } from '@/data/provider'
+import { useBrandActions } from '@/data/brand'
 import type { Schedule, Tone, Weekday } from '@/data/types'
 import { MESSAGES } from '@/lib/messages'
 import { TIMEZONES, zoneAbbreviation } from '@/lib/timezone'
@@ -49,6 +50,7 @@ export function ScheduleConfigScreen() {
   const billing = useBilling()
   const sources = useEventSources()
   const dispatch = useDataDispatch()
+  const brand = useBrandActions()
   const phase = useScreenPhase()
 
   const [draft, setDraft] = useState<Schedule>(saved)
@@ -214,7 +216,7 @@ export function ScheduleConfigScreen() {
         open={toneEditorOpen}
         onOpenChange={setToneEditorOpen}
         onSave={(tone: Tone) => {
-          dispatch({ type: 'tones/create', tone })
+          void brand.createTone(tone)
           patch({ toneIds: [...draft.toneIds, tone.id] })
           setToneEditorOpen(false)
           toastSuccess('Tone saved', { description: `${tone.name} is selected for this schedule.` })

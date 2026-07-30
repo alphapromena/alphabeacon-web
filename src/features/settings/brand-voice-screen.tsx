@@ -6,12 +6,13 @@
  * replaces these rules, when it layers on top of them, and saying so here is
  * cheaper than explaining it later.
  */
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router'
 import { SaveBar } from '@/components/ab/save-bar'
-import { toastSuccess } from '@/components/ab/toast'
+import { toastError, toastSuccess } from '@/components/ab/toast'
 import { Button } from '@/components/ui/button'
-import { useDataDispatch, useOrg } from '@/data/provider'
+import { useBrandActions } from '@/data/brand'
+import { useDataDispatch, useLiveMode, useOrg } from '@/data/provider'
 import { MESSAGES } from '@/lib/messages'
 import { RuleList } from './field-editors'
 
@@ -21,9 +22,23 @@ const clean = (values: string[]) => values.map((value) => value.trim()).filter(B
 export function BrandVoiceScreen() {
   const org = useOrg()
   const dispatch = useDataDispatch()
+  const brand = useBrandActions()
+  const live = useLiveMode()
 
   const saved = org.brandVoice
   const [draft, setDraft] = useState(saved)
+
+  // A live sync can land after mount; a pristine draft adopts it (the async
+  // sibling of state.md rule 4), an edited one is never clobbered.
+  const savedKey = JSON.stringify(saved)
+  const previousSavedKey = useRef(savedKey)
+  useEffect(() => {
+    setDraft((current) =>
+      JSON.stringify(current) === previousSavedKey.current ? saved : current,
+    )
+    previousSavedKey.current = savedKey
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- savedKey is the change signal
+  }, [savedKey])
 
   const dirty = JSON.stringify(draft) !== JSON.stringify(saved)
   const empty = saved.do.length === 0 && saved.dont.length === 0
@@ -44,30 +59,45 @@ export function BrandVoiceScreen() {
 
       <RuleList
         idPrefix="voice-do"
-        label="Do"
-        description="Things a draft should reach for."
+        label={live ? 'Voice rules' : 'Do'}
+        description={
+          live
+            ? 'What every draft must honour, in any tone.'
+            : 'Things a draft should reach for.'
+        }
         placeholder="Name the farm or the roast date when it matters"
         values={draft.do}
         onChange={(next) => setDraft((current) => ({ ...current, do: next }))}
       />
 
-      <RuleList
-        idPrefix="voice-dont"
-        label="Don't"
-        description="Things a draft must never do, in any tone."
-        placeholder="Call anything artisanal"
-        values={draft.dont}
-        onChange={(next) => setDraft((current) => ({ ...current, dont: next }))}
-      />
+      {live ? (
+        // The wire stores ONE flat rule list today; the don't/example split
+        // has no home yet (open-items — backend request), and a control that
+        // silently forgot its rows would be a lie.
+        <p className="text-sm text-muted-foreground">
+          {MESSAGES.notices.brandFieldsPending}
+        </p>
+      ) : (
+        <>
+          <RuleList
+            idPrefix="voice-dont"
+            label="Don't"
+            description="Things a draft must never do, in any tone."
+            placeholder="Call anything artisanal"
+            values={draft.dont}
+            onChange={(next) => setDraft((current) => ({ ...current, dont: next }))}
+          />
 
-      <RuleList
-        idPrefix="voice-example"
-        label="Example"
-        description="Optional. A line that sounds like you — illustration, not a rule."
-        placeholder="This lot landed Tuesday and we roasted it Thursday."
-        values={draft.examples}
-        onChange={(next) => setDraft((current) => ({ ...current, examples: next }))}
-      />
+          <RuleList
+            idPrefix="voice-example"
+            label="Example"
+            description="Optional. A line that sounds like you — illustration, not a rule."
+            placeholder="This lot landed Tuesday and we roasted it Thursday."
+            values={draft.examples}
+            onChange={(next) => setDraft((current) => ({ ...current, examples: next }))}
+          />
+        </>
+      )}
 
       <div>
         <Button asChild variant="ghost" size="sm">
@@ -78,17 +108,18 @@ export function BrandVoiceScreen() {
       <SaveBar
         dirty={dirty}
         onCancel={() => setDraft(saved)}
-        onSave={() => {
-          dispatch({
-            type: 'org/update',
-            patch: {
-              brandVoice: {
-                do: clean(draft.do),
-                dont: clean(draft.dont),
-                examples: clean(draft.examples),
-              },
-            },
-          })
+        onSave={async () => {
+          const next = {
+            do: clean(draft.do),
+            dont: clean(draft.dont),
+            examples: clean(draft.examples),
+          }
+          const result = await brand.saveVoiceRules(next.do)
+          if (!result.ok) {
+            toastError(MESSAGES.errors.generic)
+            return
+          }
+          dispatch({ type: 'org/update', patch: { brandVoice: next } })
           toastSuccess('Brand voice saved', {
             description: 'It applies underneath every tone from the next draft on.',
           })

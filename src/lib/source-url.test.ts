@@ -3,7 +3,7 @@ import {
   deriveSourceName,
   isSourceUrlValid,
   normalizeSourceUrl,
-} from '@/features/settings/source-url'
+} from '@/lib/source-url'
 
 describe('normalizeSourceUrl', () => {
   it('strips whatever scheme was pasted, and any trailing slash', () => {

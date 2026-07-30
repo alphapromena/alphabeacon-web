@@ -14,27 +14,28 @@ import { Rss, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { EmptyState } from '@/components/ab/empty-state'
 import { MonoNumber } from '@/components/ab/mono-number'
-import { toastSuccess } from '@/components/ab/toast'
+import { toastError, toastSuccess } from '@/components/ab/toast'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { useDataDispatch, useFollowedSources, useTopics } from '@/data/provider'
+import { useBrandActions } from '@/data/brand'
+import { useFollowedSources, useTopics } from '@/data/provider'
 import { shortDate } from '@/lib/format'
 import { MESSAGES } from '@/lib/messages'
 import { TagInput } from './field-editors'
-import { deriveSourceName, isSourceUrlValid, normalizeSourceUrl } from './source-url'
+import { deriveSourceName, isSourceUrlValid, normalizeSourceUrl } from '@/lib/source-url'
 
 export function SourcesScreen() {
   const sources = useFollowedSources()
   const topics = useTopics()
-  const dispatch = useDataDispatch()
+  const brand = useBrandActions()
 
   const [entry, setEntry] = useState('')
   const [error, setError] = useState<string | null>(null)
 
   const detected = isSourceUrlValid(entry) ? deriveSourceName(entry) : ''
 
-  const add = () => {
+  const add = async () => {
     const url = normalizeSourceUrl(entry)
     if (!url) {
       setError(MESSAGES.errors.sourceUrlRequired)
@@ -45,15 +46,14 @@ export function SourcesScreen() {
       return
     }
     setError(null)
-    dispatch({
-      type: 'sources/add',
-      source: {
-        id: `src_${url.replace(/[^a-z0-9]+/gi, '_')}`,
-        url,
-        name: deriveSourceName(url),
-        addedAt: new Date().toISOString(),
-      },
-    })
+    const result = await brand.addSource(url)
+    if (!result.ok) {
+      // The server may refuse what the local check accepted (its URL parser
+      // is the authority); its per-field message lands where the local one
+      // would have.
+      setError(result.fieldErrors[0]?.message ?? MESSAGES.errors.sourceUrlInvalid)
+      return
+    }
     setEntry('')
     toastSuccess('Source added', { description: 'Drafts start reading it on the next run.' })
   }
@@ -84,11 +84,11 @@ export function SourcesScreen() {
               onKeyDown={(event) => {
                 if (event.key === 'Enter') {
                   event.preventDefault()
-                  add()
+                  void add()
                 }
               }}
             />
-            <Button type="button" onClick={add}>
+            <Button type="button" onClick={() => void add()}>
               Add source
             </Button>
           </div>
@@ -130,7 +130,10 @@ export function SourcesScreen() {
                     variant="ghost"
                     size="icon"
                     aria-label={`Remove ${source.name}`}
-                    onClick={() => dispatch({ type: 'sources/remove', sourceId: source.id })}
+                    onClick={async () => {
+                      const result = await brand.removeSource(source.id)
+                      if (!result.ok) toastError(MESSAGES.errors.generic)
+                    }}
                   >
                     <Trash2 aria-hidden />
                   </Button>
@@ -154,7 +157,7 @@ export function SourcesScreen() {
           label="Add a topic"
           placeholder="single origin"
           values={topics}
-          onChange={(next) => dispatch({ type: 'topics/set', topics: next })}
+          onChange={(next) => void brand.setTopics(next)}
         />
 
         {topics.length === 0 && (
