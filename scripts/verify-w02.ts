@@ -13,7 +13,7 @@
 //   "axe + reduced-motion clean" -> the Playwright @axe / @reduced-motion specs
 
 import { spawnSync } from 'node:child_process'
-import { existsSync, readFileSync } from 'node:fs'
+import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -67,6 +67,113 @@ function capIsDeclaredOnce(): boolean {
       : `cap check failed -- declared:${declaresCap} schema:${schemaUsesCap} message:${messageExists}`,
   )
   results.push({ name: 'posts-per-day cap declared once', outcome: ok ? 'PASS' : 'FAIL' })
+  return ok
+}
+
+/**
+ * The cinematic layer's structural laws (design.md Part 5 -- "Marketing
+ * cinematic layer"). Behavioural tests cannot tell a canvas scrub from a
+ * video being seeked, or a guarded Lenis from an unconditional one -- these
+ * read the source. Per state.md rule 11, every check matches STRUCTURE (a
+ * call, a prop, an import), never prose.
+ */
+function cinematicLawsHold(): boolean {
+  console.log('\n=== M1 cinematic laws hold (structural) ===')
+  const marketingRoot = join(root, 'src', 'features', 'marketing')
+
+  const walk = (dir: string): string[] =>
+    readdirSync(dir).flatMap((entry) => {
+      const full = join(dir, entry)
+      return statSync(full).isDirectory() ? walk(full) : [full]
+    })
+
+  const files = walk(marketingRoot).filter((file) => /\.(ts|tsx)$/.test(file))
+
+  // Comments may QUOTE the laws they uphold (hero-scrub's doc comment names
+  // the currentTime ban; that is not a violation) -- so every textual check
+  // below runs against comment-stripped source. Same lesson as W6's
+  // "times are honest about zones" check.
+  const stripComments = (source: string) =>
+    source.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '')
+
+  const sources = new Map(files.map((file) => [file, stripComments(readFileSync(file, 'utf8'))]))
+  const named = (name: string) => {
+    const hit = files.find((file) => file.endsWith(name))
+    return hit ? (sources.get(hit) ?? '') : ''
+  }
+
+  const failures: string[] = []
+
+  // 1. The scrub runs on canvas frames, never on video currentTime.
+  for (const [file, source] of sources) {
+    if (source.includes('currentTime')) {
+      failures.push(`${file}: touches currentTime -- the scrub law forbids video seeking`)
+    }
+  }
+  const heroScrub = named('hero-scrub.tsx')
+  if (!/getContext\('2d'\)/.test(heroScrub) || !/HeroFrameStore/.test(heroScrub)) {
+    failures.push('hero-scrub.tsx: no canvas + HeroFrameStore -- the scrub must draw frames')
+  }
+
+  // 2. Reduced motion gets the finished frame, not a slower film.
+  if (
+    !/usePrefersReducedMotion/.test(heroScrub) ||
+    !/CINEMATIC_MEDIA\.heroStatic/.test(heroScrub)
+  ) {
+    failures.push('hero-scrub.tsx: missing the reduced-motion still path')
+  }
+
+  // 3. Lenis is never constructed when motion is reduced: the guard must
+  //    return before the constructor runs.
+  const lenis = named('use-lenis.ts')
+  const guardAt = lenis.indexOf('if (!enabled) return')
+  const buildAt = lenis.indexOf('new Lenis')
+  if (guardAt === -1 || buildAt === -1 || guardAt > buildAt) {
+    failures.push('use-lenis.ts: new Lenis is not behind the enabled guard')
+  }
+
+  // 4. Pricing stays on the one plan source: the hook, and no local records.
+  const home = named('marketing-home.tsx')
+  if (!/usePlans\(\)/.test(home)) failures.push('marketing-home.tsx: pricing lost usePlans()')
+  if (/priceMonthly\s*:/.test(home)) {
+    failures.push('marketing-home.tsx: declares plan data locally instead of reading the provider')
+  }
+
+  // 5. Every marketing <video> is muted inline ambience or a controlled
+  //    player -- silent, and either aria-hidden or pausable.
+  for (const [file, source] of sources) {
+    const chunks = source.split('<video').slice(1)
+    for (const chunk of chunks) {
+      const tag = chunk.slice(0, chunk.indexOf('/>'))
+      if (!/\bmuted\b/.test(tag) || !/\bplaysInline\b/.test(tag)) {
+        failures.push(`${file}: a <video> is missing muted/playsInline`)
+      }
+      if (!/aria-hidden/.test(tag) && !/\bcontrols\b/.test(tag)) {
+        failures.push(`${file}: a <video> is neither aria-hidden ambience nor a controls player`)
+      }
+    }
+  }
+
+  // 6. Media paths live in media.ts / hero-frames.ts only, so the asset
+  //    inventory has one home. Tests are exempt: they assert the paths.
+  for (const [file, source] of sources) {
+    if (file.endsWith('media.ts') || file.endsWith('hero-frames.ts')) continue
+    if (/\.test\.tsx?$/.test(file)) continue
+    if (source.includes("'/marketing/")) {
+      failures.push(`${file}: hardcodes a /marketing/ asset path -- add it to media.ts`)
+    }
+  }
+
+  // 7. The tone chips are the product's real tones, rendered the mandated way.
+  const toneMorph = named('tone-morph.tsx')
+  if (!/useTones\(\)/.test(toneMorph) || !/<ToneBadge/.test(toneMorph)) {
+    failures.push('tone-morph.tsx: chips must read useTones() and render ToneBadge')
+  }
+
+  for (const failure of failures) console.log(`  FAIL ${failure}`)
+  const ok = failures.length === 0
+  if (ok) console.log(`cinematic laws: ${files.length} marketing files clean`)
+  results.push({ name: 'M1 cinematic laws hold', outcome: ok ? 'PASS' : 'FAIL' })
   return ok
 }
 
@@ -134,6 +241,7 @@ function main(): void {
 
   if (!failed) {
     if (!capIsDeclaredOnce()) failed = true
+    if (!cinematicLawsHold()) failed = true
     if (!deliverablesExist()) failed = true
 
     if (skipE2e) {
@@ -146,6 +254,7 @@ function main(): void {
   } else {
     for (const name of [
       'posts-per-day cap declared once',
+      'M1 cinematic laws hold',
       'W2 deliverables exist',
       'e2e (@golden walk, marketing + auth axe)',
     ]) {
@@ -168,6 +277,10 @@ function main(): void {
   console.log('     overlay behaviour are hardest to get right.')
   console.log('  3. Marketing is light-only by design (decisions.md). Confirm it still')
   console.log('     reads correctly when the OS is set to dark.')
+  console.log('  4. Scrub the M1 hero end to end by hand -- the frame cadence, the clock,')
+  console.log('     and the 07:00 handoff are judged by feel, and the e2e only proves')
+  console.log('     they move. Then repeat with reduced motion on: the page must read as')
+  console.log('     designed, not as degraded.')
 
   process.exit(failed ? 1 : 0)
 }

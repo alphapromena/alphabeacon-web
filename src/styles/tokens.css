@@ -87,6 +87,16 @@
     oklch(0.6429 0.2461 16.08),
     oklch(0.5005 0.1795 10.57)
   );
+
+  /* Marketing cinematic layer (design.md Part 5 — "Marketing cinematic
+     layer"). The ink is the dark theme's own page color given a fixed name,
+     because the marketing hero sits in it REGARDLESS of theme: it is art
+     direction, not a theme. The seam grades the ink into whatever
+     `--background` currently is, so the handoff stays coherent under either
+     theme scope. (No dark-selector word may appear in this comment:
+     tokens.test.ts locates the dark block by its first occurrence.) */
+  --ab-ink: oklch(0.1921 0.004 286.02); /* #141416 */
+  --ab-cinema-seam: linear-gradient(to bottom, oklch(0.1921 0.004 286.02), var(--background));
 }
 
 .dark {

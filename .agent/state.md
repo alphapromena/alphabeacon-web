@@ -5,7 +5,7 @@ without reconstructing it from the session log. **Update this file at the end
 of any turn that finishes a phase or changes the plan.** `sessions.md` is the
 chronological record; this is the current picture.
 
-_Last updated: 2026-07-29, after W6 and the manual-pass remediation._
+_Last updated: 2026-07-30, after the M1 cinematic rebuild._
 
 ---
 
@@ -58,9 +58,19 @@ aspirational, not a rule this repo follows.
 | W6 Compose/analytics/settings/system | F1, G1–G2, I1–I7, N1, N2, N4 | Done · `verify:w06` green                                    |
 | **W7 Hardening + ship**              | —                            | **Next**                                                     |
 
-Current totals: **306 unit tests** (26 files), **68 e2e**, all green.
+Current totals: **316 unit tests** (28 files), **74 e2e**, all green.
 **No route is a stub any more** — `PlaceholderScreen` is deleted, and
 `verify:w06` fails if it comes back.
+
+**M1 was rebuilt as the cinematic scroll page on 2026-07-30** (design.md
+Part 5 — "Marketing cinematic layer"): a 200-frame canvas scrub of generated
+film (Seedance 2.0, one shared reference image), the HUD clock to 07:00, the
+pinned DRAFT/APPROVE/PUBLISH loop, the real-tones morph, honesty counters, the
+REAL `/today` recording in a browser frame, and the dawn-beacon CTA. App
+screens untouched; pricing still renders `usePlans()`; media ships as ~8.7 MB
+of local static assets under `public/marketing/`. One new dependency: `lenis`
+(guarded off under reduced motion). Awaiting the human: clip-1 take approval →
+one 4K re-render (open-items.md).
 
 ## What W7 needs (from `web-plan.md` §9)
 
@@ -122,6 +132,10 @@ These are learned the hard way; each cost a debugging cycle.
     people reach for is deleting the check. Match structure — a call, a guard, a
     catalogue key — not copy. The same trap bit twice more on 2026-07-29: a
     length-capped regex broke when a comment lengthened the tag it matched.
+    And twice more on 2026-07-30, from both directions: the new cinematic
+    checks matched their own doc comments until comments were stripped, and a
+    tokens.css comment naming the dark selector broke `tokens.test.ts`, which
+    locates the dark block by that string's first occurrence.
 
 ## Design laws with automated enforcement
 
@@ -151,6 +165,12 @@ read source, because these failure modes pass behavioural tests:
   (post-W6 remediation).
 - Every posting time renders through `PostingTime`, labelled by GMT offset, and
   no screen claims to know the audience's local time (post-W6 remediation).
+- The M1 cinematic laws (verify:w02): the scrub never touches `currentTime`;
+  the reduced-motion still path exists; Lenis sits behind the motion guard;
+  pricing keeps `usePlans()` with no local plan data; every marketing `<video>`
+  is muted+`playsInline` and either `aria-hidden` ambience or a `controls`
+  player; media paths live in `media.ts`; tone chips read `useTones()` and
+  render `ToneBadge`.
 - The palette is guarded by `src/styles/tokens.test.ts` — 49 contrast
   assertions, including the `bg-X/10 text-X` badge pattern.
 

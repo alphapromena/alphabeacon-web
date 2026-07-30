@@ -499,3 +499,52 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   the old one — the 360px pass and the screen-reader walk, since the focus,
   tablist and posting-time work moved the semantics the walk exists to check.
   W7 waits for those.
+
+### 2026-07-30 12:20 — M1 rebuilt as the cinematic scroll page (film generated, scrub built, laws extended)
+
+- Did: replaced the basic M1 landing with the cinematic scroll experience,
+  end to end in one turn — media generation through verification.
+- Film: one hero reference image (charcoal void, grey noise, pink beacon)
+  generated first, then six Seedance 2.0 clips (std/1080p/16:9/8s/silent) all
+  referencing it: three takes of the assembly clip plus the macro glide, the
+  morning desk, and the dawn beacon. **Take C** shipped as the scrub source
+  (most monotonic build); all three takes are held for approval. The product
+  footage is the REAL `/today` in the active world, recorded headlessly against
+  the dev server. Everything compressed to ~8.7 MB of local static assets
+  (H.264 CRF 26–30 faststart + a 200-frame 1600×900 WebP sequence).
+- Page: hero scrub on canvas frames (coarse-to-fine loader, eased target,
+  NEVER video currentTime), ALPHABEACON tracking in letter by letter, the
+  Geist Mono HUD clock 06:58→07:00 with "Your drafts are ready." at the lock,
+  ink→off-white seam, customer marquee (hover-paused, sr-only list), pinned
+  DRAFT/APPROVE/PUBLISH over the macro clip, tone chips from `useTones()`
+  morphing one sample (morph-only animation — an entrance fade put transient
+  low-contrast text on screen and axe caught it), honesty counters through
+  `useCountUp` (hero stat: 0 posts published without approval), the morning
+  clip handing over to the real recording in a browser frame (controls always),
+  pricing restyled but still `usePlans()`, the four FAQ items, and the dawn
+  CTA "Wake up to tomorrow's posts.". Reduced motion removes the film
+  wholesale; narrow viewports get the clip as an autoplay loop; 360px is
+  overflow-free (wordmark clamp + nowrap fixed after the shot showed a wrap).
+- Coverage: 6 e2e in `marketing-cinematic.spec.ts` (scrub+clock+canvas pixels,
+  monotonic pillar reveal, real-tone morph with aria-pressed, pricing parity,
+  reduced-motion sweep, 360px overflow) + front-door test updated; 10 unit
+  tests (hud-clock, frame order/nearest/paths); 7 structural laws in
+  `verify:w02` (currentTime ban, canvas+store, RM still path, Lenis guard
+  order, usePlans + no local plan data, video props, media.ts inventory,
+  ToneBadge+useTones) — comments stripped before matching, which its own first
+  run proved necessary. The tokens.css comment trap (naming the dark selector
+  inside :root broke the parser) is recorded under state.md rule 11.
+- Phase: M1 revision under W2's verify (W7 still NOT started)
+- Files: `src/features/marketing/marketing-home.tsx` (rewritten),
+  `src/features/marketing/cinematic/*` (12 new), `src/styles/{tokens,globals}.css`,
+  `public/marketing/*` (210 assets), `scripts/verify-w02.ts`,
+  `e2e/{marketing-cinematic.spec.ts,onboarding.spec.ts}`, `design.md` Part 5,
+  `package.json` (+lenis)
+- Decisions: see decisions.md — four entries dated 2026-07-30 (the layer, the
+  scrub law, lenis, one-reference film + take C)
+- Verify: `verify:w02` green (lint, typecheck, 316 unit, guard-static, build,
+  cap, cinematic laws, deliverables) + 74 e2e green + eyes-on-page screenshots
+  at six scroll depths, reduced motion and 360px against the live dev server
+- Next: the human — approve a clip-1 take (then one 4K re-render + re-extract,
+  drop-in), and run the two REOPENED sittings, whose scope now includes M1
+  (open-items.md). W7 waits for those.

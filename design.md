@@ -165,6 +165,68 @@ signal sweep on the card's top edge while the run is in flight. The caret beside
 the text is a static glyph — it does not blink, because a blinking cursor would
 be exactly the decorative animation this part exists to refuse.
 
+### The marketing cinematic layer (M1 only)
+
+The two rules above still hold for the **product**: inside the app, signal
+sweep and beacon pulse remain the only two animations. M1 is the exception this
+section exists to license and bound — a cinematic scroll experience telling the
+brand's one story (a signal sweeping order out of noise) with generated film.
+Nothing in this layer may leak into `AppShell`.
+
+**The inventory** (all of it lives under `src/features/marketing/`):
+
+- **Hero scrub** — 200 WebP frames of the beacon assembling the review queue,
+  drawn to a `<canvas>` keyed to scroll progress, eased so fast flicks settle.
+  THE LAW: the scrub runs on canvas frames, **never** on a `<video>` element's
+  `currentTime` — seeking is keyframe-quantized and stutters exactly when the
+  user is paying the most attention. `verify:w02` greps for it structurally.
+- **HUD clock** — Geist Mono, 06:58:00 → 07:00:00 mapped onto the scrub; at
+  07:00 the queue locks and "Your drafts are ready." lands. The product's
+  promise is a time, and the visitor drags that morning forward themselves.
+- **Wordmark track-in** — ALPHABEACON, Barlow 700, tracked 0.14em (Part 3),
+  letter by letter across early scrub progress. The letters are presentation
+  (`aria-hidden`); the h1's accessible name is plain text.
+- **Customer marquee** — a 36s drift, two list copies for a seamless loop,
+  paused on hover (WCAG 2.2.2). Screen readers get a static `sr-only` list.
+- **Pinned loop** — DRAFT. APPROVE. PUBLISH. over clip 2, one word per third
+  of a 300vh pin; a revealed word never un-reveals.
+- **Tone morph** — the sample sentence's word-by-word arrival (`ab-word-in`).
+  It runs only on a MORPH, never on first paint: an entrance fade would put
+  transiently low-contrast text in front of anyone looking as it mounts (axe
+  caught exactly that).
+- **Honesty counters** — `useCountUp`, unchanged; the count-up's
+  reduced-motion guarantee is inherited, not re-implemented.
+- **Ambient video** — clips 2/3/4 as muted, `playsInline`, `aria-hidden`
+  loops. The product recording is the exception: it keeps native `controls` in
+  every mode, because a pause must always exist.
+- **Lenis smooth scroll** — marketing route only, constructed only when motion
+  is allowed (decisions.md).
+
+**Reduced motion removes the film, it does not slow it.** No Lenis; the scrub
+never mounts (the finished frame renders as an `<img>`, clock resting at
+07:00:00); ambient videos become their posters; the marquee track is removed by
+the `data-ab-motion` kill switch and a static row stands in; all three loop
+words stand with their captions; counters render final figures; the product
+recording keeps controls and drops autoplay. The story is told in its end
+state. Playwright asserts the lot (`e2e/marketing-cinematic.spec.ts`).
+
+**Ink is art direction, not a theme.** The hero, the pinned loop and the final
+CTA sit in scoped `.dark` islands so their text uses the dark palette's tested
+contrast pairs; `--ab-ink` names that page color for the canvas backstop and
+scrims, and `--ab-cinema-seam` grades it into `--background` at the customer
+strip. Marketing remains light-only (Part 6 rule 8) — the islands are fixed.
+
+**Film grain** (`.ab-grain`, an inline feTurbulence tile) appears on the hero
+only. The signature pink stays display-only per Part 1: on ink it carries the
+beacon, the pillar periods, and the counters' hero figure — never body copy.
+
+**Provenance:** all film is generated (Seedance 2.0 on Higgsfield, one shared
+reference image so the world never changes between clips) and ships as local
+static assets under `public/marketing/` — the zero-network law covers media.
+The product recording is the real app, captured from a dev session, and is
+labelled as such on the page. The pipeline and the clip-take decisions live in
+decisions.md.
+
 ---
 
 ## Part 6 — The rules that outrank taste

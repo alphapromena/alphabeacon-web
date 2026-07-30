@@ -147,3 +147,78 @@
     display: none !important;
   }
 }
+
+/**
+ * Marketing cinematic layer (design.md Part 5 — "Marketing cinematic layer").
+ * M1-only motion. Everything here obeys the same law as the two signature
+ * animations: under prefers-reduced-motion it is removed, not slowed. The
+ * scroll scrub and Lenis are JS-side and guard themselves (use-lenis.ts,
+ * hero-scrub.tsx); the two CSS animations below ride the `data-ab-motion`
+ * kill switch and a belt-and-braces media query.
+ */
+
+/* Lenis's recommended host styles — inert unless Lenis adds its classes. */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* The customer strip's slow drift. Track holds two copies of the list, so
+   -50% is exactly one list-length: a seamless loop. Paused on hover so the
+   names can actually be read (WCAG 2.2.2's pause mechanism). */
+@keyframes ab-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+[data-ab-motion='marquee'] {
+  animation: ab-marquee 36s linear infinite;
+}
+
+[data-ab-motion='marquee']:hover {
+  animation-play-state: paused;
+}
+
+/* One word of the tone sample arriving. Applied by JS only when motion is
+   allowed; the media query is the second lock on the same door. */
+@keyframes ab-word-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.35em);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ab-word-in {
+  animation: ab-word-in 0.4s cubic-bezier(0, 0, 0.2, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ab-word-in {
+    animation: none !important;
+  }
+}
+
+/* Film grain, hero only. A tiled feTurbulence SVG rather than an asset:
+   nothing to fetch, and it costs ~300 bytes. */
+.ab-grain {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  opacity: 0.055;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+}

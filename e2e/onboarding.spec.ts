@@ -38,7 +38,10 @@ async function walkToPipelineStep(page: Page) {
 test('marketing is the front door when signed out', async ({ page }) => {
   await asVisitor(page)
 
-  await expect(page.getByRole('heading', { name: /AI co-pilot/i })).toBeVisible()
+  // The cinematic hero: the wordmark is the h1 (its letters are presentation;
+  // the accessible name is the sr-only text), the promise is the subtitle.
+  await expect(page.getByRole('heading', { level: 1, name: 'AlphaBeacon' })).toBeVisible()
+  await expect(page.getByText("Your marketing team's AI co-pilot")).toBeVisible()
   await expect(page.getByRole('heading', { name: 'Simple, predictable pricing' })).toBeVisible()
   // Pricing renders from the same module Billing reads.
   for (const plan of ['Free', 'Pro', 'Studio']) {

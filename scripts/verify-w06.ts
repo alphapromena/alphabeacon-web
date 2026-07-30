@@ -508,7 +508,9 @@ function main(): void {
   console.log('   - W1 screen-reader walk of the app shell (NVDA / VoiceOver)')
   console.log('   - W2 marketing copy read, wizard at phone width, marketing in a dark OS')
   console.log('   - W3 queue as one continuous tool, queue on a phone')
-  console.log('   - W4 month grid at phone width, timezone as the audience sees it')
+  // ("as the audience sees it" was this list's original wording; that claim
+  // was deleted from the product on 2026-07-29 and this echo follows it.)
+  console.log('   - W4 month grid at phone width, posting times read in the schedule zone')
   console.log('   - W5 D4 and E2 back to back, credits ledger read as a charge query')
 
   process.exit(failed ? 1 : 0)

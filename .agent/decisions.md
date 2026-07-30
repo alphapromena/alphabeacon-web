@@ -541,3 +541,60 @@ add a new entry that says it supersedes the old one.
   change its own billing, team or connections again.
 - Noted as a spec gap, not a feature invented: `screens4.md` I7 should gain the
   role control when it is next revised.
+
+### 2026-07-30 — M1 rebuilt as the cinematic scroll page; the layer is licensed in design.md Part 5
+
+- Why: the basic landing sold the product; it did not tell the brand's story.
+  The beacon — a signal sweeping order out of noise — is the one image this
+  brand owns, and a scroll-driven hero where the VISITOR does the sweeping puts
+  the product's promise (order by 07:00) in their hands. Part 5's "no other
+  animation" rule required extending, not sidestepping: the new section
+  licenses the layer, bounds it to M1, and holds it to the same reduced-motion
+  law as the two signature animations.
+- The app screens are untouched. Pricing still renders `usePlans()`; the four
+  FAQ items are unchanged; every asserted marketing behaviour (front door,
+  plan names, sign-in path, golden walk) still passes.
+- Instead of: a tasteful static refresh (does not differentiate), or a
+  three-D/WebGL build (heavier, and the brand's story is a film, not a model).
+
+### 2026-07-30 — The hero scrub runs on canvas frames, never on video currentTime
+
+- Why: seeking a video is keyframe-quantized and decode-latency-bound; it
+  stutters exactly when attention is highest. 200 WebP frames (1600×900,
+  ~8 MB with the rest of the media) drawn to a canvas scrub perfectly, load
+  coarse-to-fine (stride 8/2/1, resting frame promoted) and ease toward the
+  scroll target so fast flicks settle instead of strobing.
+- Enforced structurally: `verify:w02` fails on `currentTime` anywhere under
+  `features/marketing/` (comments stripped first — the law may be quoted).
+- Instead of: `video.currentTime` scrubbing — simpler, and visibly janky.
+
+### 2026-07-30 — lenis (new dependency) for the marketing scroll, guard-first
+
+- Why: the scrub's feel is the page's product; native wheel steps read as
+  jolts on a 420vh pin. Lenis is ~10 KB, runtime-network-free, and drives the
+  REAL scroll position, so `position: sticky`, anchors and the e2e's
+  scroll-driven asserts keep working.
+- The guard is the point: under `prefers-reduced-motion` Lenis is never
+  constructed (structurally checked), so reduced-motion scrolling is the
+  browser's own everywhere in the product.
+- Instead of: scroll-hijack libraries (own the scrollbar, break sticky and
+  a11y), or nothing (the scrub reads stepped on Windows wheel deltas).
+
+### 2026-07-30 — All M1 film is generated to ONE reference image; take C won the scrub
+
+- Why: four clips must read as one world. A single hero still (charcoal void,
+  grey noise, pink beacon low-left sweeping upper-right) was generated first
+  and passed as the image reference to every Seedance 2.0 render (std, 1080p,
+  16:9, 8s, no audio), so the world cannot drift between hero, macro, morning
+  and dawn.
+- Three takes of the assembly clip were rendered; **take C** shipped because
+  its build is the most monotonic — outlines snap in near half-way, text lines
+  stream in progressively, and the finished chips include an amber "flagged"
+  state unprompted. A scrub needs legible forward progress more than it needs
+  drama; take A's queue pops in fully formed, take B's cards are too small.
+- The product footage is the REAL app: `/today` in the active world, recorded
+  headlessly against the dev server, compressed alongside the film (H.264
+  CRF 26–30, faststart, silent). The page labels film and product separately —
+  the film earns attention, the recording earns trust.
+- Pending: a 4K re-render of take C for final frame re-extraction once the
+  takes are approved (open-items.md); the swap is drop-in, same filenames.
