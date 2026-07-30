@@ -5,7 +5,7 @@ without reconstructing it from the session log. **Update this file at the end
 of any turn that finishes a phase or changes the plan.** `sessions.md` is the
 chronological record; this is the current picture.
 
-_Last updated: 2026-07-30, after INT-1 (live auth)._
+_Last updated: 2026-07-30, after the integration merge (INT-0..5 on main)._
 
 ---
 
@@ -25,18 +25,18 @@ below).
 |            |                                                        |
 | ---------- | ------------------------------------------------------ |
 | Remote     | `github.com/alphapromena/alphabeacon-web` (private)    |
-| `main`     | `1717492` — everything through W6 + the cinematic M1   |
-| Phase tips | `w/00`…`w/06` all pushed, kept as the per-phase record |
+| `main`     | `b601622` — W0–W6 + cinematic M1 + **INT-0..5 merged** |
+| Phase tips | `w/00`…`w/06` and `int/00`…`int/05`, all pushed        |
 | Tags       | none                                                   |
 
 Every phase branch was cut from the previous one, so they stack linearly and
 `main` was fast-forwarded straight through them — no merge commits, one history:
 
 ```
-main = w/06-compose-analytics-settings ← cfe6607
-  └─ w/00-foundation ─ w/01-design-layer ─ w/02-marketing-auth-onboarding
-     ─ w/03-today-queue ─ w/04-calendar-connections ─ w/05-studio-billing
-     ─ w/06-compose-analytics-settings
+main ← b601622 (int/05 tip, fast-forwarded 2026-07-30)
+  └─ w/00 … w/06 ─ (M1 cinematic, posting-time fixes on main)
+     ─ int/00-client ─ int/01-auth ─ int/02-orgs ─ int/03-brand
+     ─ int/04-scheduling ─ int/05-notifications
 ```
 
 **Workflow from here (decided 2026-07-29):** the retroactive PRs for W0–W6 were
@@ -80,6 +80,13 @@ make a single-shot all-file matrix trip 429s by design. Fresh
 | INT-3 | Brand (voices, tones + adapter, sources, topics)         | Done (`int/03`) · live e2e 5/5 |
 | INT-4 | Schedules + event sources (+countries) + slots           | Done (`int/04`) · live e2e 3/3 (+1 gated on ingestion) |
 | INT-5 | Notifications (list, unread-count, read-all)             | Done (`int/05`) · live e2e 1/1 |
+
+**All six phases are MERGED to `main` (`b601622`, fast-forward — the int/NN
+branches stay as the per-phase record, like w/NN).** The integration's first
+pass is complete. Still static, awaiting backend phase 2: drafts/Today,
+connections, Studio, billing, analytics, compose, knowledge. The backend/
+product questions live in open-items 1–13; W7 still waits on the two
+reopened manual gates.
 
 Current totals: **340 unit tests** (31 files), **74 static e2e + 7 live e2e**, all green.
 **No route is a stub any more** — `PlaceholderScreen` is deleted, and

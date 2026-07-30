@@ -72,6 +72,18 @@ item to "Signed off" (with the date) only when a human has actually done it.
    change-password needed a home; they live in an "Your account" section at
    the bottom of I1, live mode only (the static demo has no account to edit).
    screens4.md should gain a proper home for it when next revised.
+12. **Voices edit is delete+create, so an edited line jumps to the top on
+    refetch (close-out note, non-blocking).** Rows have no identity beyond
+    their text in the current seam, and lists come back `createdAt DESC` —
+    editing a rule re-creates it, moving it to the top. If line order ever
+    matters, switch edits to `PATCH` on the row id; the API supports it. No
+    code change now.
+13. **Static-vs-live divergence on admin role powers (close-out note,
+    product question).** The demo's admins can change roles; the wire makes
+    role changes owner-only. It stays an explicit per-mode rule in
+    `useTeamPermissions()` — but either the API is stricter than screens4
+    intended, or the demo should tighten to match. Backend/product decides;
+    the frontend follows whichever answer.
 
 ### M1 cinematic — two items gated on the human (2026-07-30)
 

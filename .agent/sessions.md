@@ -805,3 +805,29 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   `e2e/live-team.spec.ts` (+1 test), wizard-finish timeouts in all live specs
 - Verify: lint + typecheck + 340 unit green; static e2e 74 passed; live-team
   6/6 against the deployed API
+
+### 2026-07-30 17:50 — Integration closed out: int/00…int/05 merged to main
+
+- Did: fast-forwarded `main` 1717492 → **b601622** through the whole stack
+  (INT-0 client/law, INT-1 auth, INT-2 orgs+sync, INT-3 brand, INT-4
+  scheduling, INT-5 notifications, + the review fixes). The `int/NN`
+  branches stay pushed as the per-phase record, same culture as `w/NN`.
+  state.md now shows the post-integration picture; two non-blocking
+  close-out notes recorded in open-items (12: voices edit is delete+create,
+  so an edited line jumps to the top on refetch — switch to PATCH-by-id if
+  order ever matters; 13: the static-vs-live divergence on admin role
+  powers is an explicit per-mode rule, logged as a product question for
+  backend/product to settle).
+- Final greens: lint · typecheck · **340 unit tests** (34 files) ·
+  guard-static (222 files) · build · **static e2e 74 passed** (live specs
+  self-skip) · live e2e against the deployed API, run per-suite: auth
+  **7/7**, team **6/6**, brand **5/5**, scheduling **3/3** (+1 honestly
+  gated on slot ingestion), notifications **1/1**.
+- Phase: integration complete. Still static by design: drafts/Today,
+  connections, Studio, billing, analytics, compose, knowledge (backend
+  phase 2).
+- Files: `.agent/{state,open-items,sessions}.md`
+- Decisions: none new — the close-out notes are open-items 12–13
+- Next: the backend answers in open-items 1–13 when they come; W7 remains
+  parked behind the two reopened manual gates (360px pass + screen-reader
+  walk, scope includes the cinematic M1).
