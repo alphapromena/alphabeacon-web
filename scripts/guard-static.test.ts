@@ -21,6 +21,30 @@ describe('findViolations', () => {
     expect(violations[0]).toMatchObject({ line: 1, rule: 'fetch' })
   })
 
+  it('allows fetch inside src/api/ — the one licensed directory', () => {
+    const content = 'const response = await fetch(`${base}${path}`)'
+    expect(findViolations('src/api/client.ts', content)).toEqual([])
+    expect(findViolations('src\\api\\client.ts', content)).toEqual([])
+  })
+
+  it('still bans everything else inside src/api/', () => {
+    expect(
+      findViolations('src/api/client.ts', "const base = 'https://hardcoded.example'"),
+    ).toMatchObject([{ rule: 'http-literal' }])
+    expect(findViolations('src/api/stream.ts', 'new EventSource(url)')).toMatchObject([
+      { rule: 'EventSource' },
+    ])
+  })
+
+  it('a fetch outside src/api/ is still a violation, even in src/apixyz', () => {
+    expect(findViolations('src/apixyz/sneaky.ts', "fetch('/x')")).toMatchObject([
+      { rule: 'fetch' },
+    ])
+    expect(findViolations('src/features/today/queue.ts', "fetch('/x')")).toMatchObject([
+      { rule: 'fetch' },
+    ])
+  })
+
   it('flags new WebSocket', () => {
     const content = "const socket = new WebSocket('wss://example.com/live')"
     const violations = findViolations('src/features/live.ts', content)

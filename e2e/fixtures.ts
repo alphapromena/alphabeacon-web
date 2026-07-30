@@ -1,10 +1,28 @@
 import { test as base, expect } from '@playwright/test'
 
-// The zero-external-network law (web-plan.md §1): the app talks to nothing.
-// Every e2e run asserts it — each page collects every request it issues, and at
-// fixture teardown every URL must be same-origin dev-server traffic or an
-// inline scheme. Anything else fails the test.
-const ALLOWED_URL_PREFIXES = ['http://localhost:5199', 'data:', 'blob:', 'about:'] as const
+// The network law (web-plan.md §1, amended by decisions.md 2026-07-30): in
+// STATIC mode the app talks to nothing — every request must be same-origin
+// dev-server traffic or an inline scheme, exactly as before. In LIVE mode
+// (VITE_API_BASE_URL set for the run) exactly ONE extra origin is legal: the
+// AlphaStudio API. Anything else still fails the test, so the amendment is a
+// single named exception, not a hole.
+const apiOrigin = (() => {
+  const base = process.env.VITE_API_BASE_URL
+  if (!base) return []
+  try {
+    return [new URL(base).origin]
+  } catch {
+    return []
+  }
+})()
+
+const ALLOWED_URL_PREFIXES = [
+  'http://localhost:5199',
+  'data:',
+  'blob:',
+  'about:',
+  ...apiOrigin,
+] as const
 
 export const test = base.extend({
   page: async ({ page }, use) => {

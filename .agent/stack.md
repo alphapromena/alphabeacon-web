@@ -60,15 +60,25 @@ before closing a phase run its `verify:wNN` and paste the output in the PR.
 
 ## Environment variables
 
-**None at runtime.** The app is static and reads no configuration. The only
-build input is the CDK stage name passed to `pnpm deploy`. If a task appears to
-need an env var, that is a signal the change belongs in the future integration
-plan, not here.
+Exactly **one**, and it is the mode switch:
+
+| Variable            | Where                     | Effect                                                                 |
+| ------------------- | ------------------------- | ---------------------------------------------------------------------- |
+| `VITE_API_BASE_URL` | `.env.local` (gitignored) | present → live mode for API-covered entities; absent → fully static |
+
+Read in exactly one file (`src/api/config.ts`). Never hardcoded, never
+committed — the guard's http-literal ban enforces that. Static mode (no env
+var) is the default, the demo, and the e2e test bed, and must keep working
+forever. The CDK stage name passed to `pnpm deploy` remains the only other
+build input.
 
 ## First run (fresh machine)
 
 1. Node 22 via nvm → `nvm use`; `corepack enable`.
-2. `pnpm install` → `pnpm dev` → open the printed URL. No `.env`, no token.
+2. `pnpm install` → `pnpm dev` → open the printed URL. Static mode needs no
+   `.env` and no token; for live mode create `.env.local` with
+   `VITE_API_BASE_URL` (ask a teammate for the deployed URL — it is never
+   committed).
 3. Sanity: `/dev/datasets` switches tenant states and `/dev/states` forces the
    loading and error presentations; `pnpm test` passes; toggle dark mode and
    reduced-motion and the shell behaves.

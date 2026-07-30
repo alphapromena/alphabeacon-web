@@ -59,16 +59,25 @@ numbers** — wrap in `MonoNumber`.
   limited analytics get the honesty note, not a broken chart; "Syncing…" never a
   stale zero.
 
-## Static rules (the whole build)
+## Network rules (the static rules, amended 2026-07-30 — see decisions.md)
 
-- The app makes no network calls. There is no endpoint, base URL, or token to
-  wire — `guard-static` fails the build and the e2e network assert fails the run.
+- Network code is legal ONLY in `src/api/`, and only in live mode
+  (`VITE_API_BASE_URL` set). Features, `ab/`, and `data/` stay network-free —
+  `ab/no-network`, `guard-static`, and the e2e assert all enforce it. No
+  `http(s)://` literal anywhere in `src/`, `src/api/` included.
+- **Static mode is permanent.** Without the env var the app is exactly the
+  static build: datasets, `/dev/datasets`, zero requests asserted by e2e.
 - Screens read data only through `DataProvider` hooks; entity modules under
   `src/data/entities/` are composed into datasets, never imported by features.
-- Every screen must be fully exercisable via `/dev/datasets` + `/dev/states` — if
-  a state needs a code change to appear, add a dataset or a record instead.
-- In-memory mutations are session-scoped and reset on refresh. Never build a
-  screen that implies durable persistence.
+  No screen may know which side of the seam its data came from.
+- API-covered entities adapt in the data layer (`src/api/types.ts` → app
+  types); fields the API lacks are never invented — disable honestly and log
+  the gap in `.agent/open-items.md`.
+- Every screen must remain fully exercisable via `/dev/datasets` +
+  `/dev/states` in static mode — if a state needs a code change to appear, add
+  a dataset or a record instead.
+- Static-mode mutations are session-scoped and reset on refresh. The one
+  durable record is the live-mode auth session (`src/api/session.ts`).
 
 ## Testing conventions
 

@@ -11,6 +11,20 @@ item to "Signed off" (with the date) only when a human has actually done it.
 
 ## Outstanding
 
+### Integration — questions for the backend dev / infra (2026-07-30, INT-0)
+
+1. **CSP `connect-src` (infra).** The 2026-07-23 CSP decision ships **no
+   `connect-src` entries at all** in the CloudFront response-headers policy —
+   correct for the static app, but a DEPLOYED live-mode build cannot reach
+   the API through it. When live mode first deploys, the policy needs
+   `connect-src` for the API origin (env-parameterized, per stage). Local dev
+   is unaffected. No action until a live-mode deploy is planned.
+2. **`postsPerDay` bounds disagree.** The API allows 1–24; the product's spec
+   caps at `MAX_POSTS_PER_DAY = 3` with a named catalogue message (a W2 verify
+   item). Conservative reading taken: the UI keeps its cap of 3 — the API
+   accepting more does not oblige the product to offer more. Backend dev:
+   confirm the product cap is intentional product law, or align the API.
+
 ### M1 cinematic — two items gated on the human (2026-07-30)
 
 **Clip-1 take approval → 4K re-render.** Three takes of the hero assembly clip

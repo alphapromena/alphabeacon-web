@@ -598,3 +598,46 @@ add a new entry that says it supersedes the old one.
   the film earns attention, the recording earns trust.
 - Pending: a 4K re-render of take C for final frame re-extraction once the
   takes are approved (open-items.md); the swap is drop-in, same filenames.
+
+### 2026-07-30 — THE STATIC LAW IS AMENDED: network code is legal only in src/api/, only in live mode
+
+- Why: the AlphaStudio API is deployed and the integration has begun. The law
+  the repo was built under ("no network calls of any kind") is consciously
+  changed, not eroded: network code is legal in exactly ONE directory
+  (`src/api/`), behind exactly ONE switch (`VITE_API_BASE_URL` in `.env.local`,
+  read by exactly one file, `src/api/config.ts`). Absent the switch the app is
+  byte-for-byte the static build — datasets, `/dev/datasets`, and an e2e suite
+  that still asserts zero requests. Static mode is not a fallback; it is the
+  demo and the test bed, kept working forever.
+- Enforcement moved with the law rather than dying: `ab/no-network` gained an
+  `allowNetworkGlobals` option scoped to `src/api/**`; `guard-static` exempts
+  only the `fetch` rule and only under `src/api/`; the e2e network assert
+  allows exactly one extra origin, and only when the env var is set for the
+  run. `http(s)://` literals remain banned EVERYWHERE in `src/` — the base URL
+  is environment-supplied, never source-supplied.
+- This supersedes the absolute wording of the 2026-07-23 "fully static" entry
+  (its spirit — provider hooks as the seam — is precisely what made this swap
+  cheap), and consciously revives the 2026-07-19 "mode known in two files"
+  intent in a new form: mode is known in ONE file now.
+- Instead of: a parallel "api branch" of the app (two products to maintain), or
+  killing guard-static (the first accidental fetch in a feature would sail in).
+
+### 2026-07-30 — One API client; 401 is the whole auth strategy; 429 surfaces, never auto-retries
+
+- Why: docs/api/api.md is the single source of truth and its conventions are
+  mechanical enough to centralize once: bare-JSON successes, one error
+  envelope switched on `code` (never message), decimal-string ids, `{items,
+  total}` pagination, `x-request-id` on everything. `src/api/client.ts` owns
+  all of it so no call site re-implements any of it.
+- 401: tokens are opaque and there is no refresh endpoint, so a token-carrying
+  401 means the session is dead — purge, toast, land on login. A 401 on an
+  anonymous call (a failed login) is a wrong password, NOT a dead session; the
+  client distinguishes by whether it attached a Bearer, and fires the
+  unauthorized hook once per breach, not once per parallel request.
+- 429: the client parses `Retry-After` into `retryAfterSeconds` and does NOT
+  auto-retry. Every rate limit in this API guards a human-triggered send
+  (codes, invites); a silent retry would burn the very budget the user is
+  waiting on. Surfacing the wait (countdown on the button) is the honest UI.
+- Instead of: a data-fetching library (caching semantics the provider already
+  owns; the seam is the provider, not the fetcher), or per-feature fetch
+  wrappers (the drift the one-client rule exists to prevent).

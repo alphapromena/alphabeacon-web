@@ -1,6 +1,10 @@
-// guard-static: enforces the no-network law over src/ (web-plan.md).
-// The app is static — no fetch, no XHR, no EventSource, no WebSocket, no axios,
-// no http(s) literals. Lines containing "w3.org" are allowlisted (SVG/xmlns).
+// guard-static: enforces the network law over src/ (web-plan.md, amended by
+// decisions.md 2026-07-30 for the AlphaStudio integration).
+// The law now reads: network code is legal ONLY inside src/api/ — everywhere
+// else under src/ there is no fetch, no XHR, no EventSource, no WebSocket, no
+// axios, and NOWHERE (src/api/ included) an http(s) literal: the API base URL
+// comes from the environment, never from source. Lines containing "w3.org"
+// are allowlisted (SVG/xmlns).
 // Run: pnpm guard:static (tsx scripts/guard-static.ts [--root <dir>])
 
 import { readdirSync, readFileSync, statSync, existsSync } from 'node:fs'
@@ -22,15 +26,26 @@ const RULES: { rule: string; pattern: RegExp }[] = [
   { rule: 'http-literal', pattern: /https?:\/\//i },
 ]
 
+/** fetch is allowed here and ONLY here; every other rule still applies. */
+const NETWORK_RULES_EXEMPT = new Set(['fetch'])
+
 const SCAN_EXTENSIONS = new Set(['.ts', '.tsx', '.css', '.html', '.svg', '.js', '.jsx'])
+
+/** The one directory licensed to speak HTTP (decisions.md 2026-07-30). */
+export function isApiLayerFile(filePath: string): boolean {
+  const normalized = filePath.replace(/\\/g, '/')
+  return normalized.includes('src/api/') || normalized.startsWith('api/')
+}
 
 export function findViolations(filePath: string, content: string): Violation[] {
   if (!SCAN_EXTENSIONS.has(extname(filePath).toLowerCase())) return []
+  const exemptFromNetworkGlobals = isApiLayerFile(filePath)
   const violations: Violation[] = []
   const lines = content.split(/\r?\n/)
   lines.forEach((line, index) => {
     if (line.includes('w3.org')) return
     for (const { rule, pattern } of RULES) {
+      if (exemptFromNetworkGlobals && NETWORK_RULES_EXEMPT.has(rule)) continue
       if (pattern.test(line)) {
         violations.push({ line: index + 1, rule, text: line.trim() })
       }

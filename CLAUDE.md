@@ -29,11 +29,17 @@ in the product docs; never contradict them silently.
    `decisions.md` before touching architecture, and skim the last entry in
    `sessions.md` for the most recent turn.
 
-2. **Follow the plan.** Work phases W0–W7 in order from `web-plan.md`. A phase
-   is done ONLY when its **Verify** passes (`pnpm verify:wNN`); paste the output
-   into the PR. **This app is static and makes no network calls** — no `fetch`,
-   no `EventSource`, no API client, no base URL, ever. `guard-static` enforces
-   it and the e2e network assert double-checks it; don't fight either.
+2. **Follow the plan.** Work phases W0–W7 in order from `web-plan.md` (the
+   INT-NN integration phases follow the same culture: branch per phase, verify
+   before advancing). A phase is done ONLY when its **Verify** passes
+   (`pnpm verify:wNN`); paste the output into the PR. **The network law
+   (amended 2026-07-30, decisions.md):** network code is legal ONLY in
+   `src/api/`, only in live mode (`VITE_API_BASE_URL` set). Everywhere else —
+   features, ab/, data/ — there is still no `fetch`, no `EventSource`, no base
+   URL, ever; and no `http(s)://` literal anywhere in `src/`. Without the env
+   var the app is fully static and the e2e suite asserts zero requests —
+   static mode must keep working forever. `ab/no-network`, `guard-static` and
+   the e2e assert all enforce this; don't fight any of them.
 
 3. **Use the shadcn skill.** Before creating or editing UI, consult it: run
    `shadcn search` / `shadcn docs <component>` (or the MCP tools) to learn the

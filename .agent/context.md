@@ -7,9 +7,14 @@
 
 **alphabeacon-web** is the face of AlphaBeacon: the marketing site that sells it
 and the React app where marketing teams review AI-drafted posts, generate media
-in Creative Studio, schedule and publish across channels, and watch performance —
-built as a **fully static app** with all data committed in `src/data/`. It makes
-no network calls at all. Backend integration is a separate, later plan.
+in Creative Studio, schedule and publish across channels, and watch performance.
+Built static-first with all data committed in `src/data/`, and since 2026-07-30
+wired to the **live AlphaStudio API** for the entities it covers (auth, me,
+orgs/members/invites, brand, scheduling, notifications) when
+`VITE_API_BASE_URL` is set. Without it the app is fully static — the demo and
+the test bed, kept working forever. Everything the API does not yet cover
+(drafts/Today, connections, Studio, billing, analytics, compose, knowledge)
+stays on the static datasets, awaiting backend phase 2.
 
 ## Users & personas
 
@@ -68,19 +73,20 @@ Agents: use these exact terms in code, commits, and UI copy — never synonyms.
 
 ## Non-goals / out of scope
 
-Any network call whatsoever · a real backend, API client, or mock server ·
-authentication against a real identity · persistence across a refresh · SSR
-framework migration · UI localization · native apps · hand-rolled component kits
-(shadcn + `ab/` compositions only). Business rules are _rendered_ here, not
-owned: the eventual API stays the authority on transitions, credit math, and
-entitlements.
+Network calls outside `src/api/` · mock servers · SSR framework migration · UI
+localization · native apps · hand-rolled component kits (shadcn + `ab/`
+compositions only) · inventing fields the API does not have (adapt in the data
+layer, log the gap). Business rules are _rendered_ here, not owned: the API is
+the authority on transitions, credit math, entitlements, and session expiry.
 
 ## External systems & integrations
 
-**None.** That is the defining property of this repo right now. There is no
-API, no AlphaProStudio contact, no contracts package, no identity provider, and
-no vendor SDK. Everything the UI displays lives in `src/data/`, and `guard-static`
-plus the e2e network assert exist to keep it that way.
+**One: the AlphaStudio API** (contract in `docs/api/api.md` + `openapi.json` —
+the single source of truth; when the frontend's model and the API disagree,
+the adapter adapts and the gap is logged, never invented around). Reached only
+through `src/api/`, only in live mode. In static mode the old truth still
+holds exactly: everything the UI displays lives in `src/data/`, and
+`ab/no-network` + `guard-static` + the e2e network assert keep it that way.
 
 ## Current stage & priorities
 

@@ -57,19 +57,31 @@ const noNetwork = {
     type: 'problem',
     docs: {
       description:
-        'Disallow browser network APIs and absolute http(s) URL literals anywhere under src/',
+        'Disallow browser network APIs and absolute http(s) URL literals under src/. ' +
+        'With allowNetworkGlobals (src/api/ only — decisions.md 2026-07-30) the API ' +
+        'globals are permitted but http(s) literals stay banned: the base URL comes ' +
+        'from the environment, never from source.',
     },
-    schema: [],
+    schema: [
+      {
+        type: 'object',
+        properties: { allowNetworkGlobals: { type: 'boolean' } },
+        additionalProperties: false,
+      },
+    ],
     messages: {
       network:
-        'This app is static — no network APIs or absolute http(s) URLs under src/ (guard-static also enforces this).',
+        'Network code is legal only in src/api/ (guard-static enforces the same law).',
+      httpLiteral:
+        'No absolute http(s) URLs in source — the API base URL comes from VITE_API_BASE_URL.',
     },
   },
   create(context) {
+    const allowNetworkGlobals = context.options[0]?.allowNetworkGlobals === true
     const checkStringValue = (node, value) => {
       if (typeof value !== 'string') return
       if (HTTP_URL_RE.test(value) && !value.includes('w3.org')) {
-        context.report({ node, messageId: 'network' })
+        context.report({ node, messageId: 'httpLiteral' })
       }
     }
     return {
@@ -77,6 +89,7 @@ const noNetwork = {
       // or member target. Checking the parent node type is enough to skip TS
       // type positions and object-literal property keys.
       Identifier(node) {
+        if (allowNetworkGlobals) return
         if (!NETWORK_GLOBALS.has(node.name)) return
         const parent = node.parent
         if (!parent) return
@@ -172,12 +185,22 @@ export default tseslint.config(
       'no-console': 'off',
     },
   },
-  // The static law: no network anywhere under src/
+  // The network law (amended 2026-07-30): no network anywhere under src/ —
+  // except src/api/, the one licensed directory, where the globals are legal
+  // but http(s) literals remain banned (the base URL is env-supplied).
   {
     files: ['src/**/*.{ts,tsx}'],
+    ignores: ['src/api/**'],
     plugins: { ab },
     rules: {
       'ab/no-network': 'error',
+    },
+  },
+  {
+    files: ['src/api/**/*.{ts,tsx}'],
+    plugins: { ab },
+    rules: {
+      'ab/no-network': ['error', { allowNetworkGlobals: true }],
     },
   },
   // The design law: semantic tokens only in features and ab compositions

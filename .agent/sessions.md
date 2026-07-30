@@ -548,3 +548,36 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
 - Next: the human — approve a clip-1 take (then one 4K re-render + re-extract,
   drop-in), and run the two REOPENED sittings, whose scope now includes M1
   (open-items.md). W7 waits for those.
+
+### 2026-07-30 13:50 — INT-0: the API client, the mode switch, and the amended law
+
+- Did: began the AlphaStudio integration. Step zero first: curled the deployed
+  health endpoint — 200 `{"ok":true}` with `x-request-id` present. Built
+  `src/api/` (config = the one file that reads `VITE_API_BASE_URL`; errors =
+  the envelope as a typed `ApiError` switched on `code` with accessors for the
+  two `details` shapes; client = Bearer injection, 401-with-token → one
+  unauthorized hook fire, 429 → `retryAfterSeconds` surfaced never auto-retried,
+  x-request-id sent + logged, 204 → undefined; session = `{token, expiresAt,
+  user, orgs}` in localStorage/sessionStorage by `rememberMe`, expired records
+  discarded on load). 18 unit tests pin all of it against a mocked fetch.
+- The amendment, enforced three ways: `ab/no-network` gained
+  `allowNetworkGlobals` scoped to `src/api/**` (http-literals still banned
+  there); `guard-static` exempts only `fetch` and only under `src/api/`; the
+  e2e fixture allows exactly one extra origin and only when the run exports
+  the env var. Playwright's webServer PINS static mode with an explicit empty
+  override, because vite would otherwise load `.env.local` under the suite.
+- Docs wired: CLAUDE.md rule 2, architecture.md (diagram, network law, live-mode
+  section, persistence, cheat sheet), context.md (one-liner, non-goals,
+  external systems), stack.md (env table, first run), conventions.md (network
+  rules). Two decisions recorded (the amended law; the client/401/429 design).
+  Two backend/infra questions logged in open-items (CSP connect-src on deploy;
+  postsPerDay 1–24 vs the product cap of 3).
+- Phase: INT-0 (branch `int/00`)
+- Files: `src/api/*` (7 new), `scripts/guard-static.ts` + test,
+  `eslint.config.js`, `e2e/fixtures.ts`, `playwright.config.ts`, `.env.local`
+  (gitignored), `docs/api/*` (committed contract), `.agent/*`, `CLAUDE.md`
+- Decisions: see decisions.md — two entries dated 2026-07-30 (INT-0)
+- Verify: lint + typecheck + 334 unit tests + guard-static (206 files) + build
+  green; full static e2e 74/74 green WITH `.env.local` present (the pin works);
+  health curl 200
+- Next: INT-1 — auth end to end against the live API (branch `int/01`)

@@ -56,7 +56,24 @@ aspirational, not a rule this repo follows.
 | W4 Calendar + connections            | C1–C4, B1–B3                 | Done · `verify:w04` green                                    |
 | W5 Studio + billing                  | E1–E4, H1–H4                 | Done · `verify:w05` green                                    |
 | W6 Compose/analytics/settings/system | F1, G1–G2, I1–I7, N1, N2, N4 | Done · `verify:w06` green                                    |
-| **W7 Hardening + ship**              | —                            | **Next**                                                     |
+| **W7 Hardening + ship**              | —                            | **Parked behind the two manual gates**                        |
+
+## Integration phases (AlphaStudio API — contract at `docs/api/api.md`)
+
+The static law was AMENDED on 2026-07-30 (decisions.md): network code is legal
+only in `src/api/`, only when `VITE_API_BASE_URL` is set (`.env.local`, never
+committed). Static mode remains the default and the e2e test bed. Hybrid per
+entity: covered entities go live; drafts/Today, connections, Studio, billing,
+analytics, compose and knowledge stay static, awaiting backend phase 2.
+
+| Phase | Scope                                                    | State       |
+| ----- | -------------------------------------------------------- | ----------- |
+| INT-0 | API client, env switch, guard amendments, docs           | In progress (`int/00`) |
+| INT-1 | Auth end to end against the live API                     | Next        |
+| INT-2 | Me + orgs + members + invites                            | Queued      |
+| INT-3 | Brand (voices, tones + adapter, sources, topics)         | Queued      |
+| INT-4 | Schedules + event sources (+countries) + slots           | Queued      |
+| INT-5 | Notifications (list, unread-count, read-all)             | Queued      |
 
 Current totals: **316 unit tests** (28 files), **74 e2e**, all green.
 **No route is a stub any more** — `PlaceholderScreen` is deleted, and

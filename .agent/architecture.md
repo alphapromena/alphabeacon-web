@@ -20,9 +20,13 @@
                     │        ▼                                   │
                     │  data/datasets/  ◀─ data/entities/         │
                     │  visitor · fresh · active · low-credits   │
-                    │  · needs-reauth · past-due                 │
+                    │  · needs-reauth · past-due · quiet-week    │
+                    │        │                                   │
+                    │        ▼  live mode only (INT phases)      │
+                    │  src/api/  ──▶  AlphaStudio API            │
                     └────────────────────────────────────────────┘
-                       no network boundary exists — nothing leaves
+              static mode: no network boundary exists — nothing leaves
+              live mode: exactly one boundary — src/api/ → the API origin
 ```
 
 ## Folder map (top level)
@@ -35,7 +39,8 @@
 | `src/data/types.ts`         | hand-written entity types + the zod schemas forms use                        | one of three integration reconciliation points                      |
 | `src/data/entities/`        | the records themselves, per entity                                           | composed into datasets; **never imported by `features/`**           |
 | `src/data/datasets/`        | whole-tenant states                                                          | the only way a screen reaches a different world                     |
-| `src/data/provider.tsx`     | `DataProvider` — active dataset, session, in-memory reducer, hooks           | the single seam a future API would resolve behind                   |
+| `src/data/provider.tsx`     | `DataProvider` — active dataset, session, in-memory reducer, hooks           | THE seam: in live mode, covered entities resolve through `src/api/` |
+| `src/api/`                  | the one HTTP client + wire types + session storage (AlphaStudio API)         | the only directory where network code is legal (decisions.md)       |
 | `src/lib/draft-status.ts`   | `DraftStatus` + `canTransition`                                              | buttons render from it                                              |
 | `src/lib/compose-player.ts` | timer-driven token player for F1                                             | replays `data/compose-scripts.ts`; no transport                     |
 | `src/lib/messages.ts`       | every designed error/empty string                                            | features never inline error copy                                    |
@@ -52,8 +57,10 @@
   state; a small theme store. No global store beyond the provider.
 - The draft state machine is imported from `lib/draft-status.ts`, never
   re-implemented; button visibility = `canTransition(current, target)`.
-- Nothing persists. A refresh returns to the active dataset's initial state,
-  and the dev routes say so.
+- Static mode persists nothing: a refresh returns to the active dataset's
+  initial state, and the dev routes say so. Live mode persists exactly one
+  extra thing — the auth session record (`src/api/session.ts`), in
+  localStorage with `rememberMe`, sessionStorage without.
 
 ## Data flow — one interaction, end to end
 
@@ -64,22 +71,46 @@ card's actions recompute from `canTransition('approved', …)` → the media but
 appears (it did not exist before) → D1's counts, derived from the same state,
 change in step. Failures are _designed_ rather than thrown: a screen renders an
 error state selected at `/dev/states` or implied by its dataset, with copy from
-`lib/messages.ts`. No request is made at any point.
+`lib/messages.ts`. In static mode, no request is made at any point.
 
-## The static law
+## The network law (the static law, amended 2026-07-30)
 
-The app has no network layer, and that is enforced twice:
-`scripts/guard-static.ts` fails the build if `fetch`, `axios`,
-`XMLHttpRequest`, `EventSource`, `WebSocket`, or an `http(s)://` literal appears
-under `src/`; and every Playwright run asserts zero network requests. Adding a
-screen means adding data, never a call.
+Network code is legal in exactly one place: `src/api/`. Enforced three times —
+`ab/no-network` (ESLint), `scripts/guard-static.ts` (build), and the e2e
+network assert (runtime). Everywhere else under `src/` there is still no
+`fetch`, `axios`, `XMLHttpRequest`, `EventSource`, or `WebSocket`; and NOWHERE,
+`src/api/` included, an `http(s)://` literal — the API base URL comes from
+`VITE_API_BASE_URL` (.env.local), never from source.
+
+**Static mode is the default and permanent.** Without the env var the app is
+exactly what it always was: datasets, `/dev/datasets`, zero requests, and the
+e2e suite asserts zero requests forever. With it, the covered entities go live
+behind the provider; e2e then allows exactly one extra origin — the API's.
+
+## Live mode (AlphaStudio integration, INT phases)
+
+- **Hybrid per entity.** Entities the API covers (auth/session, me, orgs +
+  members + invites, brand, schedules, event-sources, slots, notifications)
+  resolve through `src/api/` in live mode. Everything else — drafts/Today,
+  connections, Studio, billing/plans, analytics, compose, knowledge — stays on
+  the static datasets, marked in code as awaiting backend phase 2.
+- **No screen knows which side its data came from.** Features keep reading
+  provider hooks; the provider decides. That law survived integration on
+  purpose — it is what made integration a swap and not a rewrite.
+- **Adapters live in the data layer.** The API's wire shapes (`src/api/types.ts`)
+  are translated to the app's model (`src/data/types.ts`) at the seam; where
+  they disagree the adapter adapts and the gap is logged in open-items — the
+  frontend never invents fields the API does not have.
+- **Auth strategy is 401.** Tokens are opaque, there is no refresh endpoint;
+  any token-carrying 401 purges the session and lands on login with a toast.
 
 ## Routing
 
 - Route table: `src/routes.tsx`. Public marketing layout (`/`, light-only,
   pre-rendered) vs authed `AppShell` layout (Dashboard, Today, Calendar,
   Studio, Analytics, Connections, Billing, Settings).
-- Guards read the provider's fake session: signed-out (redirect to A2),
+- Guards read the provider's session (dataset-faked in static mode, real and
+  persisted in live mode): signed-out (redirect to A2),
   onboarding-incomplete (N3 resume), plan-based UI gating. Deep links: slot
   (`/calendar?slot=`), draft (`/today/:id`), checkout returns
   (`/billing/return?state=`), connect returns (`/connections?connect=`) — all
@@ -100,8 +131,10 @@ clean in CI (a failing assert); no analytics or telemetry vendors.
 
 ## Persistence
 
-None, by design. Theme preference in `localStorage`; everything else is
-provider state and resets on refresh.
+Two things, both named: the theme preference (`localStorage`, always) and the
+live-mode auth session (`src/api/session.ts` — localStorage with `rememberMe`,
+sessionStorage without; discarded on load if expired). Everything else is
+provider state and resets on refresh, in both modes.
 
 ## Cross-cutting
 
@@ -118,7 +151,7 @@ per screen. i18n: n/a (English UI).
 | new shadcn primitive  | `pnpm dlx shadcn@latest add <c>` → wrap opinions in `ab/` if needed                                                                                          |
 | customize a primitive | tokens or variant or `ab/` wrapper; if `ui/` must diverge, `shadcn diff` + decisions.md entry                                                                |
 | new data need         | type in `data/types.ts` → records in `data/entities/` → wire into the datasets → expose a provider hook → consume the hook                                   |
-| new interaction       | a reducer case in `data/provider.tsx` + a hook; never a call                                                                                                 |
+| new interaction       | a reducer case in `data/provider.tsx` + a hook; a call ONLY via `src/api/` for a live-covered entity, decided in the provider — never in a feature            |
 | new chart             | shadcn `chart` + tokens; mono axis numbers                                                                                                                   |
 | new dataset           | `src/data/datasets/<n>.ts` + register in the switcher                                                                                                        |
 | new route             | `routes.tsx` + guard + code-split boundary                                                                                                                   |
