@@ -30,10 +30,20 @@ export function AuthLayout({
       <div className="flex flex-col gap-8 px-6 py-10 sm:px-10">
         <Link
           to="/"
-          className="flex w-fit items-center gap-2 rounded-md font-display text-sm font-semibold tracking-[0.14em] uppercase focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+          className="flex w-fit items-center rounded-md focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
         >
-          <span aria-hidden className="size-6 rounded-md bg-brand" />
-          AlphaBeacon
+          {/* The Arabic wordmark, exactly as supplied (design.md Part 3). */}
+          <img
+            src="/brand/malaky-logo-charcoal.png"
+            alt="Malaky"
+            className="h-8 w-auto dark:hidden"
+          />
+          <img
+            src="/brand/malaky-logo-white.png"
+            alt=""
+            aria-hidden
+            className="hidden h-8 w-auto dark:block"
+          />
         </Link>
 
         <div className="mx-auto flex w-full max-w-[440px] flex-1 flex-col justify-center gap-6">

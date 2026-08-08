@@ -35,7 +35,7 @@ const CONNECTIVITY: { mode: Connectivity; label: string; note: string }[] = [
   {
     mode: 'degraded',
     label: 'Degraded service',
-    note: 'Forces the "having trouble reaching AlphaBeacon" banner.',
+    note: 'Forces the "having trouble reaching Malaky" banner.',
   },
 ]
 

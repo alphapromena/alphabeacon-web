@@ -55,7 +55,7 @@ async function login(page: Page, email: string, password: string) {
 async function signOut(page: Page) {
   await page.getByRole('button', { name: 'Account menu' }).click()
   await page.getByRole('menuitem', { name: 'Sign out', exact: true }).click()
-  await expect(page.getByRole('heading', { level: 1, name: 'AlphaBeacon' })).toBeVisible()
+  await expect(page.getByRole('heading', { level: 1, name: 'Malaky' })).toBeVisible()
 }
 
 async function openTeam(page: Page) {

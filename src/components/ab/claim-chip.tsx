@@ -1,5 +1,5 @@
 /**
- * The product's signature component: wherever AlphaBeacon states a fact, it
+ * The product's signature component: wherever Malaky states a fact, it
  * shows where that fact came from. A ClaimChip is that citation — source,
  * verification state, and an optional figure — so grounding travels attached to
  * the claim instead of living in a "sources" panel a user has to go find.

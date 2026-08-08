@@ -94,7 +94,7 @@ export const MESSAGES = {
       "Don't-rules, examples, and per-tone writing rules arrive with a later backend phase — what you see here is exactly what is stored today.",
     // N4. Both are non-blocking and clear themselves.
     offline: "You're offline — changes will sync when you reconnect.",
-    degraded: "We're having trouble reaching AlphaBeacon — retrying…",
+    degraded: "We're having trouble reaching Malaky — retrying…",
   },
 } as const
 

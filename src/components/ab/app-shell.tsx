@@ -131,14 +131,19 @@ function AppSidebar() {
     <Sidebar collapsible="icon">
       <SidebarHeader>
         <div className="flex h-10 items-center gap-2 px-1">
-          <span
-            aria-hidden
-            className="size-6 shrink-0 rounded-md bg-brand"
+          {/* The founder-approved Arabic wordmark, exactly as supplied
+              (design.md Part 3): charcoal on light, white on dark. */}
+          <img
+            src="/brand/malaky-logo-charcoal.png"
+            alt="Malaky"
+            className="h-7 w-auto shrink-0 dark:hidden"
           />
-          {/* The kit sets the wordmark in Barlow, all caps (design.md Part 3). */}
-          <span className="truncate font-display text-sm font-semibold tracking-[0.14em] uppercase group-data-[collapsible=icon]:hidden">
-            AlphaBeacon
-          </span>
+          <img
+            src="/brand/malaky-logo-white.png"
+            alt=""
+            aria-hidden
+            className="hidden h-7 w-auto shrink-0 dark:block"
+          />
         </div>
       </SidebarHeader>
       <SidebarContent>

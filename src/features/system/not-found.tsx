@@ -2,7 +2,7 @@
  * N2 — 404, on any unmatched route.
  *
  * The signal gradient stands in for an illustration: it is the product's one
- * piece of brand imagery, so a wrong turn still looks like AlphaBeacon rather
+ * piece of brand imagery, so a wrong turn still looks like Malaky rather
  * than like a server error page.
  *
  * The secondary route out is a real one. "Contact support" has no destination

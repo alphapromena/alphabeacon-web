@@ -160,14 +160,14 @@ test('with an org (harness-created), the shell appears; sign out and logout-all 
   // Sign out: session revoked server-side AND locally — marketing front door.
   await page.getByRole('button', { name: 'Account menu' }).click()
   await page.getByRole('menuitem', { name: 'Sign out', exact: true }).click()
-  await expect(page.getByRole('heading', { level: 1, name: 'AlphaBeacon' })).toBeVisible()
+  await expect(page.getByRole('heading', { level: 1, name: 'Malaky' })).toBeVisible()
 
   // Logout-all: sign in again, revoke everything, land back outside.
   await loginViaUi(page, emailA, NEW_PASSWORD)
   await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible()
   await page.getByRole('button', { name: 'Account menu' }).click()
   await page.getByRole('menuitem', { name: 'Sign out everywhere' }).click()
-  await expect(page.getByRole('heading', { level: 1, name: 'AlphaBeacon' })).toBeVisible()
+  await expect(page.getByRole('heading', { level: 1, name: 'Malaky' })).toBeVisible()
 })
 
 async function inviteNewUser(request: APIRequestContext, token: string, orgId: string) {

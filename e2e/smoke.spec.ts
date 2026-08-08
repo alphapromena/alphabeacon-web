@@ -29,10 +29,10 @@ test('boots on the seeded dashboard in both themes', async ({ page }) => {
   await page.goto('/')
   await expectDashboardStats(page)
 
-  // Barlow is the brand typeface (design.md Part 2) — asserted here so a
-  // missing @fontsource import silently falling back to system-ui fails.
+  // Inter is the (proposed) brand typeface (design.md Part 2) — asserted here
+  // so the vendored @font-face silently falling back to system-ui fails.
   const fontFamily = await page.evaluate(() => getComputedStyle(document.body).fontFamily)
-  expect(fontFamily).toContain('Barlow')
+  expect(fontFamily).toContain('Inter')
 
   await page.getByRole('button', { name: 'Switch to dark theme' }).click()
   await expect(page.locator('html')).toHaveClass(/\bdark\b/)
