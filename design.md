@@ -207,20 +207,37 @@ F1's token-by-token stream is **not** a third animation: it is content
 arriving. The caret beside it is a static glyph — a blinking cursor is exactly
 the decorative animation this part exists to refuse.
 
-### The marketing layer (M1 only)
+### The marketing layer (M1 only) — two tiers since 2026-08-08
 
-The cinematic scroll concept (2026-08 M1: ink hero, canvas scrub, Lenis,
-marquee, ambient film) is **retired** with the rebrand — see decisions.md; the
-assets live only in git history.
+**Tier 1 — calm (the base page, and the app's only tier).** M1's base motion
+budget is **one gentle fade-and-rise per section** as it first enters the
+viewport: an `IntersectionObserver` flips `data-mk-reveal`, and the animated
+state exists only inside a `prefers-reduced-motion: no-preference` media
+query in `globals.css` — under reduced motion every section renders
+finished, removed rather than slowed. The dark-ink cinematic concept of
+2026-07 (ink hero, film, marquee) stays retired; its assets live only in git
+history.
 
-M1's entire motion budget is now **one gentle fade-and-rise per section** as
-it first enters the viewport: an `IntersectionObserver` flips
-`data-mk-reveal`, and the animated state exists only inside a
-`prefers-reduced-motion: no-preference` media query in `globals.css` — under
-reduced motion every section renders finished, removed rather than slowed. No
-scroll scrubbing, no pinning, no marquee, no particles, no kinetic type, no
-video, no smooth-scroll library. `verify:w02` greps the marketing sources
-structurally for the banned primitives.
+**Tier 2 — cinematic-calm (AMENDMENT, 2026-08-08 · scoped to M1 only).**
+Scroll-scrubbed footage and pinned sections are allowed on the marketing
+page when the footage itself obeys the brand: warm ivory spaces, soft
+daylight, champagne gold as the only glow, charcoal UI, one slow drifting
+camera. The licensed direction is the Malaky interface itself as a floating
+glass-and-ivory object that assembles as the visitor scrolls
+(Apple-product-page language). The app keeps the strict calm law — nothing
+in this tier may leak into `AppShell`.
+
+Forbidden even in this tier: dark voids, particles, kinetic type slams, film
+grain, neon, AI clichés (robots, brains, circuits, glowing effects).
+Scrubbing runs on canvas frames in the hero only — never `<video
+currentTime>`. `prefers-reduced-motion` renders the tier-1 static page
+unchanged, poster stills in place of footage. With the cinematic layer, M1
+becomes **light-canonical**: the footage is graded for ivory, and the
+marketing route ignores the app theme (decisions.md).
+
+Implementation lands on `rb/01-motion` (state.md tracks it); `verify:w02`'s
+structural check is extended with the amended law in the same change. Until
+that layer ships, the base page's tier-1 rules are what is enforced.
 
 The one deliberate dark moment on the light page — the Call-to-Action panel —
 is a scoped `.dark` island (charcoal card, white wordmark, gold button), so
@@ -240,8 +257,10 @@ theme flip.
 6. Custom tones render identically to preset tones, everywhere.
 7. Reduced motion removes signature animation entirely.
 8. Light-first, everywhere: light is the brand's default face; dark is
-   charcoal with ivory text and the white wordmark. Every route, marketing
-   included, honors the selected theme.
+   charcoal with ivory text and the white wordmark. The app honors the
+   selected theme in every route; M1 becomes light-canonical when the
+   cinematic layer lands (Part 5 amendment, 2026-08-08) — its footage is
+   graded for ivory and the marketing route will ignore the app theme.
 9. A figure nobody reported is absent, never zero — "Syncing…" on a post, no
    delta at all where there is no comparable prior period.
 10. A metric moving the wrong way is `warning`, not `destructive`. Reach

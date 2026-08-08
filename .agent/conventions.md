@@ -46,9 +46,11 @@ numbers** — wrap in `MonoNumber`.
 
 ## Design law (design.md is the source; never hardcode)
 
-- Fonts: Space Grotesk (display) / Geist (UI) / Geist Mono (numbers via
-  `MonoNumber`). Tokens in `styles/tokens.css` (OKLCH, light+dark). App is
-  light+dark; **marketing is light-only**.
+- Fonts: **Inter** — single family, proposed pending founder confirmation
+  (`design.md` Part 2 is the source; numbers via `MonoNumber`,
+  `tabular-nums`). Tokens in `styles/tokens.css` (OKLCH, light+dark). App is
+  light+dark; M1 goes **light-canonical** with the rb/01 cinematic layer
+  (design.md Part 5 amendment).
 - Status is never color-only (`StatusBadge` = icon + text). Destructive dialogs
   name their consequence. Action labels persist through their flow (Approve →
   Approved…). Custom tones render identically to presets.

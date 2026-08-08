@@ -104,6 +104,26 @@ filenames (drop-in), re-derive the favicon/touch-icon crops, and consider an
 SVG favicon. Until then the PNGs are the only artwork and are never redrawn
 or edited (design.md Part 3).
 
+### Founder confirmation bundle (2026-08-08)
+
+**15. One sign-off on the whole brand-implementation picture**, gathered so
+the founder confirms once rather than piecemeal:
+
+- **Typography:** Inter (variable, single family) — proposed by engineering
+  because the kit names no typeface (decisions.md 2026-08-08). Swappable in
+  one `@font-face` block + three token lines if a different face is chosen.
+- **The gold split-by-role:** Champagne Gold `#C7A76A` reads 1.9:1 on ivory,
+  so light-theme `--brand` is the deepened `#9A7B4F` (display-only) and true
+  gold carries the dark theme (design.md Part 1.3). Confirm the derivation
+  is acceptable brand-wise.
+- **Motion-law amendment (M1 only):** the "cinematic-calm" tier — scrubbed
+  footage and pinned sections on the marketing page when the footage obeys
+  the brand; strict calm law everywhere else; reduced motion renders the
+  static page unchanged (design.md Part 5, 2026-08-08).
+- **The cinematic direction:** the Malaky interface as a floating
+  glass-and-ivory 3D object assembling on scroll (Apple-product-page
+  language), M1 light-canonical with footage graded for ivory.
+
 ### Two gates REOPENED — they must run against the fixed build
 
 The focus, tablist and posting-time changes of 2026-07-29 moved the very

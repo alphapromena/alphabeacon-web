@@ -877,3 +877,29 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
 - Verify: full chain green pre-merge (see previous entry); merge was ff-only
 - Next: founder confirms typography; vector wordmark (open-items 14).
   (The outage cleared minutes later — both branches pushed, main `72c2001`.)
+
+### 2026-08-08 17:30 — rb/01-motion: amendment encoded; generation BLOCKED (tools absent)
+
+- Did: cut `rb/01-motion` off main for the M1 cinematic layer (Apple-style
+  product-as-glass-object). Encoded the motion-law AMENDMENT before building,
+  per the brief: design.md Part 5 now carries two tiers (strict calm
+  everywhere; "cinematic-calm" scoped to M1 with the forbidden list and the
+  light-canonical rule), Part 6 rule 8 amended; conventions.md design-law
+  summary trued up; open-items 15 bundles the founder confirmations (Inter,
+  gold split, the amendment, the 3D-object direction). Captured the two
+  Seedance UI references from the running app in the Malaky theme (dashboard
+  + Today queue, Atlas Roasters world, static-mode server on :5174 — live
+  mode's signed-out boot hides the app at '/'; scratchpad `m1-refs/`).
+- **BLOCKED at the generation gate:** the `fable5-higgsfield` skill exists
+  nowhere on this machine and the `claude_ai_Higgsfield` MCP connector (used
+  for the 2026-07 footage) is not connected this session — verified via
+  skills dirs, plugins, ToolSearch, and the session transcript. No credits
+  spent; no engineering or verify-law changes attempted without footage
+  (see decisions.md). Resume path recorded there.
+- Phase: rb/01-motion, docs prefix only
+- Files: `design.md`, `.agent/{conventions,decisions,open-items,sessions}.md`
+- Decisions: see decisions.md — the motion-law amendment; the blocker record
+- Verify: docs-only change — lint/typecheck/test unaffected (base page laws
+  still the enforced tier; verify:w02 untouched by design)
+- Next: user reconnects the Higgsfield connector + provides the
+  fable5-higgsfield skill → hero image → clips 1–3 → engineering per brief

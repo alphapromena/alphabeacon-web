@@ -702,3 +702,51 @@ add a new entry that says it supersedes the old one.
 - Instead of: adapting the cinematic page to the new palette (the concept
   itself — scrubbing, pinning, film — is what the motion law forbids), or
   a from-scratch art direction (the kit already names the sections).
+
+### 2026-08-08 — Motion law AMENDED: a second tier, "cinematic-calm", scoped to M1 only
+
+- Why: the founder brief for `rb/01-motion` adds an Apple-product-page
+  cinematic layer to M1 — the Malaky interface as a floating glass object
+  assembling on scroll — which the strict gentle-fades law cannot license.
+  Rather than eroding the law case by case, it gains one explicit tier:
+  scroll-scrubbed footage and pinned sections are legal ON M1 ONLY, when the
+  footage itself obeys the brand (warm ivory spaces, soft daylight, champagne
+  gold as the only glow, charcoal UI, one slow drifting camera). The app
+  keeps the strict calm law; design.md Part 5 carries the full text,
+  including the forbidden list (dark voids, particles, kinetic type slams,
+  film grain, neon, AI clichés) that separates this from the retired 2026-07
+  ink concept.
+- `prefers-reduced-motion` renders the current static M1 unchanged — the §4
+  base page is the enhancement base AND the complete fallback, so the
+  cinematic layer can never become load-bearing.
+- **M1 becomes light-canonical with the layer:** the footage is graded for
+  ivory, so the marketing route will ignore the app theme when the layer
+  lands. This consciously supersedes the 2026-08-08 "every route honors the
+  theme" note for M1 alone; the app stays light+dark.
+- This tier, the product-as-3D-object direction, the Inter proposal, and the
+  gold split-by-role are bundled into ONE founder-confirmation open item
+  (open-items 15) so sign-off happens once, on the whole picture.
+- Instead of: quietly widening the calm law (the next exception would cite
+  this one), or building the layer as a law violation to fix later.
+
+### 2026-08-08 — rb/01-motion BLOCKED at generation: the pipeline's tools are absent this session
+
+- The brief's generation pipeline (`fable5-higgsfield` skill, archetype 8 +
+  the Higgsfield MCP connector for Seedance) is unavailable: the skill files
+  exist nowhere on this machine (user skills, repo skills, plugins all
+  checked), and the `claude_ai_Higgsfield` MCP server that generated the
+  2026-07 cinematic footage is not connected in this session (its tools are
+  absent from the registry; ToolSearch finds nothing). Both are
+  user-provided resources; neither can be substituted without changing what
+  the founder asked for — no footage was improvised from other tools, and
+  **no credits were spent**.
+- What DID land on `rb/01-motion`: the motion-law amendment (above),
+  design.md Part 5 two-tier rewrite, open-items 15 (founder bundle), and
+  the two UI reference screenshots for Seedance (real Malaky theme, Atlas
+  Roasters content — session scratchpad `m1-refs/`). Engineering and the
+  verify-law rewrite deliberately wait for the footage: a scrub with no
+  frames cannot pass its own check.
+- Resume path when the user reconnects the tooling: hero image first (the
+  consistency trick), then clips 1–3 with the hero + UI screenshots as
+  references to every generation, takes recorded in `m1-takes/`, then the
+  engineering layer per the brief.
