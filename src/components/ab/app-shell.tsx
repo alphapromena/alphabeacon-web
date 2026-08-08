@@ -133,7 +133,7 @@ function AppSidebar() {
         <div className="flex h-10 items-center gap-2 px-1">
           <span
             aria-hidden
-            className="size-6 shrink-0 rounded-md bg-[image:var(--signal-gradient)]"
+            className="size-6 shrink-0 rounded-md bg-brand"
           />
           {/* The kit sets the wordmark in Barlow, all caps (design.md Part 3). */}
           <span className="truncate font-display text-sm font-semibold tracking-[0.14em] uppercase group-data-[collapsible=icon]:hidden">

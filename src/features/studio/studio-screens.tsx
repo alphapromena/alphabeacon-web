@@ -145,7 +145,7 @@ export function StudioGalleryScreen() {
                           the brand's, and it never pretends to be output. */}
                       <span
                         aria-hidden
-                        className="flex h-28 items-center justify-center rounded-lg bg-[image:var(--signal-gradient)] text-primary-foreground"
+                        className="flex h-28 items-center justify-center rounded-lg bg-brand text-primary-foreground"
                       >
                         {model.kind === 'video' ? (
                           <Video className="size-8 opacity-80" />
@@ -294,7 +294,7 @@ export function StudioJobsScreen() {
                       className={cn(
                         'flex size-12 shrink-0 items-center justify-center rounded-lg',
                         job.status === 'succeeded'
-                          ? 'bg-[image:var(--signal-gradient)]'
+                          ? 'bg-brand'
                           : 'bg-muted',
                       )}
                     >
@@ -398,7 +398,7 @@ export function StudioAssetScreen() {
         <div className="grid gap-6 lg:grid-cols-[1fr_300px]">
           <div
             aria-label={asset.label}
-            className="flex aspect-video items-center justify-center rounded-xl bg-[image:var(--signal-gradient)] text-primary-foreground"
+            className="flex aspect-video items-center justify-center rounded-xl bg-brand text-primary-foreground"
           >
             {asset.kind === 'video' ? (
               <Video aria-hidden className="size-16 opacity-80" />

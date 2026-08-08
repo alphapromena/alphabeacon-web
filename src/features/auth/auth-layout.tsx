@@ -1,6 +1,6 @@
 /**
  * The frame every auth screen shares (A1–A4): a centered card on a branded
- * split background — the signal-gradient panel appears from 1024px, and the
+ * split background — the charcoal brand panel appears from 1024px, and the
  * form stands alone below that (screens4.md A1).
  *
  * The panel is the one place in the product where the signature pink runs at
@@ -32,7 +32,7 @@ export function AuthLayout({
           to="/"
           className="flex w-fit items-center gap-2 rounded-md font-display text-sm font-semibold tracking-[0.14em] uppercase focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
         >
-          <span aria-hidden className="size-6 rounded-md bg-[image:var(--signal-gradient)]" />
+          <span aria-hidden className="size-6 rounded-md bg-brand" />
           AlphaBeacon
         </Link>
 
@@ -57,7 +57,7 @@ export function AuthLayout({
         <aside className="relative hidden overflow-hidden bg-primary p-12 lg:flex lg:flex-col lg:justify-end">
           <span
             aria-hidden
-            className="absolute -top-24 -right-24 size-[28rem] rounded-full bg-[image:var(--signal-gradient)] opacity-70 blur-3xl"
+            className="absolute -top-24 -right-24 size-[28rem] rounded-full bg-brand opacity-70 blur-3xl"
           />
           <blockquote className="relative max-w-md text-primary-foreground">
             <p className="font-display text-3xl leading-tight font-semibold text-balance">

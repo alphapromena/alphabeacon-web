@@ -196,7 +196,7 @@ export function MarketingHome() {
         <div className="mx-auto grid max-w-6xl gap-8 px-6 py-12 sm:grid-cols-2 lg:grid-cols-4">
           <div className="flex flex-col gap-2">
             <span className="flex items-center gap-2 font-display text-sm font-semibold tracking-[0.14em] uppercase">
-              <span aria-hidden className="size-5 rounded bg-[image:var(--signal-gradient)]" />
+              <span aria-hidden className="size-5 rounded bg-brand" />
               AlphaBeacon
             </span>
             <p className="text-sm text-muted-foreground">Marketing that keeps its rhythm.</p>

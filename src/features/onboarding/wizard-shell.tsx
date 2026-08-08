@@ -42,7 +42,7 @@ export function WizardShell({
     <div className="flex min-h-svh flex-col items-center bg-background px-4 py-8 sm:py-14">
       <div className="flex w-full max-w-[640px] flex-col gap-6">
         <div className="flex items-center gap-2 self-center font-display text-sm font-semibold tracking-[0.14em] uppercase">
-          <span aria-hidden className="size-6 rounded-md bg-[image:var(--signal-gradient)]" />
+          <span aria-hidden className="size-6 rounded-md bg-brand" />
           AlphaBeacon
         </div>
 

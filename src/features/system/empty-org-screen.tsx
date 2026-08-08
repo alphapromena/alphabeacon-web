@@ -19,7 +19,7 @@ export function EmptyOrgScreen() {
 
   return (
     <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-background px-6 text-center">
-      <span aria-hidden className="size-10 rounded-xl bg-[image:var(--signal-gradient)]" />
+      <span aria-hidden className="size-10 rounded-xl bg-brand" />
       <div className="flex max-w-md flex-col gap-2">
         <h1 className="font-display text-2xl font-semibold tracking-tight">
           {MESSAGES.notices.setupIncomplete}

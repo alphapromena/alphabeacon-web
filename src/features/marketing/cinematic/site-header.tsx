@@ -28,7 +28,7 @@ export function SiteHeader({ solid }: { solid: boolean }) {
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
         {/* Wordmark per the kit: Barlow, all caps, tracked (design.md Part 3). */}
         <span className="flex items-center gap-2 font-display text-base font-semibold tracking-[0.14em] uppercase">
-          <span aria-hidden className="size-6 rounded-md bg-[image:var(--signal-gradient)]" />
+          <span aria-hidden className="size-6 rounded-md bg-brand" />
           AlphaBeacon
         </span>
         <nav aria-label="Marketing" className="flex items-center gap-1 sm:gap-4">

@@ -120,7 +120,7 @@ export function DraftCard({
           <div className="flex items-center gap-3 rounded-lg border border-border bg-muted p-3">
             <span
               aria-hidden
-              className="flex size-10 shrink-0 items-center justify-center rounded-md bg-[image:var(--signal-gradient)]"
+              className="flex size-10 shrink-0 items-center justify-center rounded-md bg-brand"
             />
             <span className="text-sm">{assetLabel}</span>
           </div>

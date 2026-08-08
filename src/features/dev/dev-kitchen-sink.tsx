@@ -249,9 +249,11 @@ export function DevKitchenSinkScreen() {
         >
           <Specimen label="Faces">
             <div className="flex flex-col gap-2">
-              <p className="font-display text-xl">Space Grotesk — display, for titles</p>
-              <p className="font-sans text-base">Geist — interface text, labels, and body copy</p>
-              <p className="font-mono text-base">Geist Mono — figures, times, and identifiers</p>
+              <p className="font-display text-xl">Inter — one family, display to caption</p>
+              <p className="font-sans text-base">Inter — interface text, labels, and body copy</p>
+              <p className="font-mono text-base tabular-nums">
+                Inter, tabular-nums — figures, times, and identifiers
+              </p>
             </div>
           </Specimen>
 

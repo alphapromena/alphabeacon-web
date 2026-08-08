@@ -40,7 +40,7 @@ export function BeaconDot({
         aria-hidden
         className={cn(
           'relative inline-flex size-2 rounded-full',
-          live ? 'bg-primary shadow-[var(--glow-signal)]' : 'bg-muted-foreground/40',
+          live ? 'bg-primary shadow-[var(--shadow-soft-md)]' : 'bg-muted-foreground/40',
         )}
       />
     </span>
@@ -65,7 +65,7 @@ export function SignalSweep({
     >
       <span
         data-ab-motion="signal-sweep"
-        className="block h-px w-1/2 bg-[image:var(--signal-gradient)]"
+        className="block h-px w-1/2 bg-brand"
       />
     </span>
   )

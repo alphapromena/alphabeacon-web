@@ -22,7 +22,7 @@ export function NotFoundScreen() {
       <div className="flex flex-col items-center gap-4">
         <span
           aria-hidden
-          className="h-1 w-40 rounded-full bg-[image:var(--signal-gradient)] shadow-[var(--glow-signal)]"
+          className="h-1 w-40 rounded-full bg-brand shadow-[var(--shadow-soft-md)]"
         />
         <p className="font-mono text-sm tracking-[0.3em] text-muted-foreground">404</p>
         <h1 className="font-display text-3xl font-semibold tracking-tight">Page not found</h1>

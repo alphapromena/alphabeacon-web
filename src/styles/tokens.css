@@ -1,158 +1,151 @@
 /**
- * AlphaBeacon design tokens — the Alpha Pro MENA brand, in OKLCH, light + dark.
+ * Malaky design tokens — the Malaky Brand Starter Guide v1.0, in OKLCH,
+ * light + dark.
  *
- * Source of truth: `design.md` (Part 1), written from the "Alpha MENA Branding
- * Kit". Every value below is either a kit color exactly, or a documented
- * derivation of one; nothing here is invented for taste alone.
+ * Source of truth: `design.md` (Part 1), written from
+ * `Docs/brand/Malaky_Brand_Standards_v1.pages`. Every value below is either a
+ * kit color exactly, or a documented derivation of one; nothing here is
+ * invented for taste alone.
  *
- * THE ONE RULE THAT SHAPES THIS FILE: the kit's signature pink #FF1E57 does not
- * meet WCAG AA as small text on light surfaces (3.77:1 on white, 3.24:1 on its
- * own 10% tint — AA needs 4.5:1). So the brand is split by ROLE rather than
- * watered down:
+ * THE RULE THAT SHAPES THIS FILE: Champagne Gold #C7A76A — the kit's primary
+ * accent — reads ~1.9:1 on the ivory page. It cannot carry text, and on light
+ * surfaces it cannot even carry large display type (3:1). So the gold family
+ * is split by ROLE, the same discipline the previous palette used:
  *
- *   --brand        #FF1E57  the signature. Logo, gradient, beacon glow, large
- *                           display type, marketing hero. NEVER small text.
- *   --brand-strong #E92156  the mid stop — gradients and hover only.
- *   --primary      #B1204A  the kit's deep rose #B7274F, darkened 0.017 in
- *                           lightness so it also clears AA on muted surfaces.
- *                           Every interactive text, link, ring, button fill.
+ *   --primary       #1D1D1F  Deep Charcoal. Buttons, interactive text, rings —
+ *                            exactly what the kit assigns it.
+ *   --brand         #9A7B4F  the gold family's voice on LIGHT surfaces: gold
+ *                            deepened toward Burnished Bronze until it clears
+ *                            3:1 for large display type (3.60:1 on ivory,
+ *                            still below 4.5 — display only, never body text).
+ *   --brand (dark)  #C7A76A  the true champagne gold, where charcoal gives it
+ *                            7.3:1 — the premium moment lives on dark.
  *
- * Both are the brand's own colors; only their jobs differ. `tokens.test.ts`
- * asserts every pair below and fails the build if a future edit breaks AA.
- * Measured ratios are quoted per token so the margin is visible when editing.
+ * `tokens.test.ts` asserts every pair below and fails the build if an edit
+ * breaks AA. Measured ratios are quoted per token so the margin is visible.
  */
 :root {
-  /* Kit off-white as the page, pure white as the raised surface. */
-  --background: oklch(0.9616 0.0017 67.8); /* #F3F2F1 */
-  --foreground: oklch(0.3169 0.0038 264.51); /* #313234 kit charcoal · 11.48:1 */
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.3169 0.0038 264.51); /* 12.83:1 */
+  /* Warm Ivory as the page, pure white as the raised surface. */
+  --background: oklch(0.9681 0.0074 80.72); /* #F7F4EF Warm Ivory */
+  --foreground: oklch(0.2316 0.0038 286.1); /* #1D1D1F Deep Charcoal · 15.16:1 */
+  --card: oklch(1 0 0); /* #FFFFFF */
+  --card-foreground: oklch(0.2316 0.0038 286.1); /* 16.34:1 */
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.3169 0.0038 264.51);
+  --popover-foreground: oklch(0.2316 0.0038 286.1);
 
-  /* Interactive rose: the kit's #B7274F darkened by 0.017 lightness so it also
-     clears AA on a muted surface. Text 5.91:1 on page, 6.61:1 on card, 4.55:1
-     on its own 10% tint; as a fill it carries white at 6.61:1. */
-  --primary: oklch(0.5005 0.1795 10.57); /* #B1204A */
-  --primary-foreground: oklch(1 0 0);
+  /* Deep Charcoal is the interactive color (kit: "primary text, logo,
+     buttons"). Ivory text on a charcoal fill: 14.05:1. */
+  --primary: oklch(0.2316 0.0038 286.1); /* #1D1D1F */
+  --primary-foreground: oklch(0.9681 0.0074 80.72); /* #F7F4EF */
 
-  --secondary: oklch(0.9262 0.0026 48.72); /* #E8E6E5 */
-  --secondary-foreground: oklch(0.3169 0.0038 264.51);
-  --muted: oklch(0.9262 0.0026 48.72);
-  --muted-foreground: oklch(0.474 0.0054 258.34); /* #5A5C5F · 5.39:1 on muted */
-  --accent: oklch(0.9413 0.0175 355.12); /* #F6E7EC pale rose */
-  --accent-foreground: oklch(0.5005 0.1795 10.57); /* 5.14:1 */
+  --secondary: oklch(0.936 0.0149 80.71); /* #EFE9DF Limestone */
+  --secondary-foreground: oklch(0.2316 0.0038 286.1);
+  --muted: oklch(0.936 0.0149 80.71);
+  --muted-foreground: oklch(0.4616 0.0137 84.59); /* #5C5850 · 5.04:1 on muted */
+  --accent: oklch(0.9363 0.0218 83.26); /* #F1E9DA gold-tinted wash */
+  --accent-foreground: oklch(0.4622 0.0619 72.47); /* #6E5330 · 5.36:1 */
 
-  /* Destructive is deliberately a brick red, ~18 degrees off the brand rose in
-     hue, so "delete" never reads as "primary action". shadcn renders it as a
-     tint: 5.04:1 on page, 5.61:1 on card, 4.56:1 on muted. */
-  --destructive: oklch(0.4985 0.1783 28.7); /* #B2251D */
-  --destructive-foreground: oklch(1 0 0); /* 6.6:1 on a solid fill */
-  --warning: oklch(0.4886 0.104 73.09); /* #835500 · tint 5.00 / 5.56 / 4.52 */
+  /* Terracotta family, split for gravity: warnings keep the kit's terracotta
+     (darkened until its 10% tint reads), destructive goes a step deeper and
+     redder so "delete" carries more weight than "careful". Both clear 4.5 on
+     their own tints over every surface. */
+  --destructive: oklch(0.4675 0.1162 37.15); /* #8F3E26 */
+  --destructive-foreground: oklch(1 0 0); /* 7.36:1 on the fill */
+  --warning: oklch(0.4773 0.0825 64.04); /* #7D5226 */
   --warning-foreground: oklch(1 0 0);
-  --success: oklch(0.469 0.1062 157.04); /* #0F6C42 · tint 5.04 / 5.60 / 4.55 */
+  --success: oklch(0.4716 0.0755 157); /* #33684A Muted Emerald, deepened */
   --success-foreground: oklch(1 0 0);
 
-  --border: oklch(0.8894 0.0035 67.78); /* #DCDAD8 — decorative dividers */
-  /* Form-control boundaries carry meaning, so this one clears WCAG 1.4.11's
-     3:1 rather than sitting at the usual near-invisible border value. */
-  --input: oklch(0.6365 0.0053 67.72); /* #8D8A88 · 3.05:1 page, 3.41:1 card */
-  --ring: oklch(0.5005 0.1795 10.57);
+  --border: oklch(0.8959 0.0216 85.95); /* #E3DCCD — light borders (kit) */
+  /* Form-control boundaries carry meaning: 3.19:1 on page, 3.44:1 on card. */
+  --input: oklch(0.617 0.0214 90.63); /* #8A8577 */
+  --ring: oklch(0.2316 0.0038 286.1); /* charcoal focus ring */
 
-  /* The brand, for the jobs where it is large or purely decorative. */
-  --brand: oklch(0.6429 0.2461 16.08); /* #FF1E57 */
-  --brand-strong: oklch(0.6047 0.227 14.26); /* #E92156 */
+  /* The gold family, split by role (see the header note). */
+  --brand: oklch(0.6023 0.0716 75.42); /* #9A7B4F · 3.60:1 — display only */
+  --brand-strong: oklch(0.5487 0.0735 71.79); /* #8C6A3F Burnished Bronze */
 
-  --chart-1: oklch(0.5005 0.1795 10.57);
-  --chart-2: oklch(0.6047 0.227 14.26);
-  --chart-3: oklch(0.4886 0.104 73.09);
-  --chart-4: oklch(0.469 0.1062 157.04);
-  --chart-5: oklch(0.474 0.0054 258.34);
+  --chart-1: oklch(0.2316 0.0038 286.1); /* charcoal */
+  --chart-2: oklch(0.5487 0.0735 71.79); /* bronze */
+  --chart-3: oklch(0.4716 0.0755 157); /* emerald */
+  --chart-4: oklch(0.4675 0.1162 37.15); /* terracotta-deep */
+  --chart-5: oklch(0.4616 0.0137 84.59); /* warm grey */
 
-  --radius: 1rem;
+  /* Soft-modern, slightly tighter than before: sm 8 · md 10 · lg 12 · xl 16
+     (design.md Part 4 — premium spacing, gentle corners). */
+  --radius: 0.75rem;
 
   --sidebar: oklch(1 0 0);
-  --sidebar-foreground: oklch(0.3169 0.0038 264.51);
-  --sidebar-primary: oklch(0.5005 0.1795 10.57);
-  --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.9413 0.0175 355.12);
-  --sidebar-accent-foreground: oklch(0.5005 0.1795 10.57);
-  --sidebar-border: oklch(0.8894 0.0035 67.78);
-  --sidebar-ring: oklch(0.5005 0.1795 10.57);
+  --sidebar-foreground: oklch(0.2316 0.0038 286.1);
+  --sidebar-primary: oklch(0.2316 0.0038 286.1);
+  --sidebar-primary-foreground: oklch(0.9681 0.0074 80.72);
+  --sidebar-accent: oklch(0.9363 0.0218 83.26);
+  --sidebar-accent-foreground: oklch(0.4622 0.0619 72.47);
+  --sidebar-border: oklch(0.8959 0.0216 85.95);
+  --sidebar-ring: oklch(0.2316 0.0038 286.1);
 
-  /* Signature surfaces (screens4.md §0.2): the beacon glow and the sweep. */
-  --glow-signal: 0 0 24px oklch(0.6429 0.2461 16.08 / 35%);
-  --signal-gradient: linear-gradient(
-    135deg,
-    oklch(0.6429 0.2461 16.08),
-    oklch(0.5005 0.1795 10.57)
-  );
-
-  /* Marketing cinematic layer (design.md Part 5 — "Marketing cinematic
-     layer"). The ink is the dark theme's own page color given a fixed name,
-     because the marketing hero sits in it REGARDLESS of theme: it is art
-     direction, not a theme. The seam grades the ink into whatever
-     `--background` currently is, so the handoff stays coherent under either
-     theme scope. (No dark-selector word may appear in this comment:
-     tokens.test.ts locates the dark block by its first occurrence.) */
-  --ab-ink: oklch(0.1921 0.004 286.02); /* #141416 */
-  --ab-cinema-seam: linear-gradient(to bottom, oklch(0.1921 0.004 286.02), var(--background));
+  /* Soft shadows (kit: "soft shadows", "minimal shadows" on buttons) — warm,
+     low-alpha, never a glow. The three elevation levels of design.md Part 4. */
+  --shadow-soft-sm: 0 1px 2px oklch(0.2316 0.0038 286.1 / 5%);
+  --shadow-soft-md: 0 2px 8px oklch(0.2316 0.0038 286.1 / 7%);
+  --shadow-soft-lg: 0 8px 28px oklch(0.2316 0.0038 286.1 / 9%);
 }
 
 .dark {
-  /* Near-black neutrals in the kit charcoal's hue family. */
-  --background: oklch(0.1921 0.004 286.02); /* #141416 */
-  --foreground: oklch(0.9616 0.0017 67.8); /* kit off-white · 16.46:1 */
-  --card: oklch(0.239 0.0041 264.49); /* #1E1F21 */
-  --card-foreground: oklch(0.9616 0.0017 67.8);
-  --popover: oklch(0.239 0.0041 264.49);
-  --popover-foreground: oklch(0.9616 0.0017 67.8);
+  /* Charcoal surfaces with ivory text (kit: dark = charcoal + ivory). */
+  --background: oklch(0.2316 0.0038 286.1); /* #1D1D1F */
+  --foreground: oklch(0.9681 0.0074 80.72); /* Warm Ivory · 14.05:1 */
+  --card: oklch(0.2615 0.0055 286.01); /* #242427 */
+  --card-foreground: oklch(0.9681 0.0074 80.72);
+  --popover: oklch(0.2615 0.0055 286.01);
+  --popover-foreground: oklch(0.9681 0.0074 80.72);
 
-  /* The rose has to lift on dark: the light rose would sit near 2:1 here. Brand
-     hue held constant, lightened — 6.94:1 on page, 5.37:1 on its own 10% tint
-     over a card, 4.60:1 over muted. */
-  --primary: oklch(0.7244 0.1768 9.27); /* #FF6F8E */
-  --primary-foreground: oklch(0.2033 0.0541 5.86); /* #2A0A13 · 6.88:1 on the fill */
+  /* The premium moment: champagne gold is the interactive color on dark.
+     Charcoal text on a gold fill: 7.34:1; gold as text on the page: 7.34:1;
+     on its 10% tint over a card: 6.06:1. */
+  --primary: oklch(0.7432 0.0876 82.76); /* #C7A76A Champagne Gold */
+  --primary-foreground: oklch(0.2316 0.0038 286.1);
 
-  --secondary: oklch(0.2892 0.0056 271.22); /* #2A2B2E */
-  --secondary-foreground: oklch(0.9616 0.0017 67.8);
-  --muted: oklch(0.2892 0.0056 271.22);
-  --muted-foreground: oklch(0.7218 0.0075 268.52); /* #A3A5AA · 5.74:1 on muted */
-  --accent: oklch(0.2782 0.027 351.03); /* #33232A */
-  --accent-foreground: oklch(0.7244 0.1768 9.27); /* 5.60:1 */
+  --secondary: oklch(0.2947 0.0072 285.95); /* #2C2C30 */
+  --secondary-foreground: oklch(0.9681 0.0074 80.72);
+  --muted: oklch(0.2947 0.0072 285.95);
+  --muted-foreground: oklch(0.7556 0.0182 84.59); /* #B5AFA3 · 5.87:1 on muted */
+  --accent: oklch(0.3102 0.0113 84.59); /* #33302A gold-warmed charcoal */
+  --accent-foreground: oklch(0.7432 0.0876 82.76); /* gold · 5.65:1 */
 
-  /* Lifted until it clears AA at the /20 tint shadcn uses for dark destructive
-     buttons (6.01 page / 5.29 card / 4.56 muted); kept in sRGB gamut. */
-  --destructive: oklch(0.8 0.1461 31.38); /* #FF9882 */
-  --destructive-foreground: oklch(0.2033 0.0541 5.86);
-  --warning: oklch(0.8208 0.147 80.74); /* #F5B942 */
-  --warning-foreground: oklch(0.2033 0.0541 5.86);
-  --success: oklch(0.8057 0.1581 159.64); /* #4ADE9B · tint 8.89 / 7.80 / 6.62 */
-  --success-foreground: oklch(0.2033 0.0541 5.86);
+  /* Lifted for dark, and destructive clears the /20 tint shadcn uses there. */
+  --destructive: oklch(0.7853 0.0928 39.94); /* #EDA58C */
+  --destructive-foreground: oklch(0.2316 0.0038 286.1);
+  --warning: oklch(0.7684 0.1003 71.28); /* #DCA96A */
+  --warning-foreground: oklch(0.2316 0.0038 286.1);
+  --success: oklch(0.752 0.0778 158.15); /* #84BE9C */
+  --success-foreground: oklch(0.2316 0.0038 286.1);
 
   --border: oklch(1 0 0 / 12%);
-  --input: oklch(0.525 0.0079 277); /* #696A6F · 3.41:1 page, 3.06:1 card */
-  --ring: oklch(0.7244 0.1768 9.27);
+  --input: oklch(0.5564 0.0191 88.06); /* #787367 · 3.30:1 page, 3.02:1 card */
+  --ring: oklch(0.7432 0.0876 82.76);
 
-  /* The logo keeps the exact brand pink in both themes. */
-  --brand: oklch(0.6429 0.2461 16.08);
-  --brand-strong: oklch(0.6047 0.227 14.26);
+  /* On dark the gold needs no split — it IS the brand voice here. */
+  --brand: oklch(0.7432 0.0876 82.76); /* #C7A76A */
+  --brand-strong: oklch(0.8073 0.079 83.02); /* #D9BC85 lighter champagne */
 
-  --chart-1: oklch(0.7244 0.1768 9.27);
-  --chart-2: oklch(0.7878 0.124 32.11);
-  --chart-3: oklch(0.8208 0.147 80.74);
-  --chart-4: oklch(0.8057 0.1581 159.64);
-  --chart-5: oklch(0.7218 0.0075 268.52);
+  --chart-1: oklch(0.7432 0.0876 82.76);
+  --chart-2: oklch(0.8073 0.079 83.02);
+  --chart-3: oklch(0.752 0.0778 158.15);
+  --chart-4: oklch(0.7853 0.0928 39.94);
+  --chart-5: oklch(0.7556 0.0182 84.59);
 
-  --sidebar: oklch(0.239 0.0041 264.49);
-  --sidebar-foreground: oklch(0.9616 0.0017 67.8);
-  --sidebar-primary: oklch(0.7244 0.1768 9.27);
-  --sidebar-primary-foreground: oklch(0.2033 0.0541 5.86);
-  --sidebar-accent: oklch(0.2782 0.027 351.03);
-  --sidebar-accent-foreground: oklch(0.7244 0.1768 9.27);
+  --sidebar: oklch(0.2615 0.0055 286.01);
+  --sidebar-foreground: oklch(0.9681 0.0074 80.72);
+  --sidebar-primary: oklch(0.7432 0.0876 82.76);
+  --sidebar-primary-foreground: oklch(0.2316 0.0038 286.1);
+  --sidebar-accent: oklch(0.3102 0.0113 84.59);
+  --sidebar-accent-foreground: oklch(0.7432 0.0876 82.76);
   --sidebar-border: oklch(1 0 0 / 12%);
-  --sidebar-ring: oklch(0.7244 0.1768 9.27);
+  --sidebar-ring: oklch(0.7432 0.0876 82.76);
 
-  --glow-signal: 0 0 28px oklch(0.6429 0.2461 16.08 / 50%);
-  --signal-gradient: linear-gradient(135deg, oklch(0.6429 0.2461 16.08), oklch(0.7244 0.1768 9.27));
+  /* Shadows barely read on charcoal; depth comes from the lifted surfaces. */
+  --shadow-soft-sm: 0 1px 2px oklch(0 0 0 / 20%);
+  --shadow-soft-md: 0 2px 8px oklch(0 0 0 / 25%);
+  --shadow-soft-lg: 0 8px 28px oklch(0 0 0 / 30%);
 }

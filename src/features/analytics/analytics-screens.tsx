@@ -571,7 +571,7 @@ export function ChannelDetailScreen() {
                           <div className="flex items-center gap-3">
                             <span
                               aria-hidden
-                              className="size-9 shrink-0 rounded-md bg-[image:var(--signal-gradient)]"
+                              className="size-9 shrink-0 rounded-md bg-brand"
                             />
                             <span className="line-clamp-2 max-w-[36ch]">{post.title}</span>
                           </div>
