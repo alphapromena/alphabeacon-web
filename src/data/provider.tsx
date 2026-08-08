@@ -30,7 +30,7 @@ import type { BrandGraft } from '@/data/adapters/brand-adapter'
 import type { TeamGraft } from '@/data/adapters/org-adapter'
 import type { SchedulingGraft } from '@/data/adapters/scheduling-adapter'
 import { fetchBrand, fetchInbox, fetchScheduling, fetchTeam, fetchViewerRole, refreshAuthSnapshot } from '@/data/live-sync'
-import { buildDataset, DATASETS, DEFAULT_DATASET_ID } from '@/data/datasets'
+import { buildDataset, DATASETS, resolveInitialDatasetId } from '@/data/datasets'
 import type {
   AppNotification,
   Asset,
@@ -1030,7 +1030,11 @@ const DataContext = createContext<DataContextValue | null>(null)
 
 export function DataProvider({
   children,
-  initialDatasetId = DEFAULT_DATASET_ID,
+  // Deploy-selectable boot world (STEP 0): a preview can pin its dataset via
+  // VITE_DEFAULT_DATASET; anything unknown falls back to the default.
+  initialDatasetId = resolveInitialDatasetId(
+    import.meta.env.VITE_DEFAULT_DATASET as string | undefined,
+  ),
 }: {
   children: ReactNode
   initialDatasetId?: DatasetId
