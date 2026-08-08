@@ -29,19 +29,23 @@ below).
 |            |                                                        |
 | ---------- | ------------------------------------------------------ |
 | Remote     | `github.com/alphapromena/alphabeacon-web` (private)    |
-| `main`     | `b601622` — W0–W6 + cinematic M1 + **INT-0..5 merged** |
-| Phase tips | `w/00`…`w/06` and `int/00`…`int/05`, all pushed        |
+| `main`     | `1ef8744` — W0–W6 + INT-0..5 + **Malaky rebrand merged** |
+| Phase tips | `w/00`…`w/06`, `int/00`…`int/05`, `rb/00-malaky`       |
 | Tags       | none                                                   |
 
 Every phase branch was cut from the previous one, so they stack linearly and
 `main` was fast-forwarded straight through them — no merge commits, one history:
 
 ```
-main ← b601622 (int/05 tip, fast-forwarded 2026-07-30)
+main ← 1ef8744 (rb/00-malaky tip, fast-forwarded 2026-08-08)
   └─ w/00 … w/06 ─ (M1 cinematic, posting-time fixes on main)
      ─ int/00-client ─ int/01-auth ─ int/02-orgs ─ int/03-brand
-     ─ int/04-scheduling ─ int/05-notifications
+     ─ int/04-scheduling ─ int/05-notifications ─ rb/00-malaky (Malaky rebrand)
 ```
+
+**Push status:** outbound network was down on 2026-08-08 when the merge
+landed — `rb/00-malaky` and `main` are merged locally; push both to origin
+when connectivity returns.
 
 **Workflow from here (decided 2026-07-29):** the retroactive PRs for W0–W6 were
 skipped deliberately — solo developer, no reviewer, no value. From W7 onward,

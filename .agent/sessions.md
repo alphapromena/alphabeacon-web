@@ -862,3 +862,18 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   `verify:w02 --skip-e2e` all PASS (M1 marketing laws hold)
 - Next: ff-merge `rb/00-malaky` to `main`; founder confirms typography;
   vector wordmark from the designer (open-items 14)
+
+### 2026-08-08 16:45 — Rebrand merged: main fast-forwarded to 1ef8744
+
+- Did: `main` b601622 → **1ef8744** (ff through `rb/00-malaky`: STEP 0
+  `01379f0`, kit `e5509de`, STEP 1 `c663e2f`, STEP 2 `bdab863`, STEP 3
+  `dc51825`, STEP 4 `1ef8744`). Push to origin BLOCKED by a total outbound
+  network outage (DNS timeouts to github.com and every host tried) — the
+  same outage that forced the vendored-Inter workaround earlier. Both
+  branches push clean once connectivity returns; state.md records it.
+- Phase: rebrand complete on main
+- Files: `.agent/{state,sessions}.md`
+- Decisions: none new
+- Verify: full chain green pre-merge (see previous entry); merge was ff-only
+- Next: push `rb/00-malaky` + `main` when the network returns; founder
+  confirms typography; vector wordmark (open-items 14)
