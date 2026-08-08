@@ -38,7 +38,7 @@ async function walkToPipelineStep(page: Page) {
 test('marketing is the front door when signed out', async ({ page }) => {
   await asVisitor(page)
 
-  // The cinematic hero: the wordmark is the h1 (its letters are presentation;
+  // The hero: the Arabic wordmark is the h1 (the artwork is presentation;
   // the accessible name is the sr-only text), the promise is the subtitle.
   await expect(page.getByRole('heading', { level: 1, name: 'Malaky' })).toBeVisible()
   await expect(page.getByText("Your marketing team's AI co-pilot")).toBeVisible()

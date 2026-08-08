@@ -2,7 +2,9 @@
  * Theming: next-themes drives the class-based light/dark switch (the shadcn
  * convention — ui/sonner.tsx reads it too). The only thing this app ever
  * persists is the theme preference, under the "ab-theme" key
- * (architecture.md — Persistence). Marketing routes are forced light in W2.
+ * (architecture.md — Persistence). Every route, marketing included, follows
+ * the selected theme (design.md Part 3: light-first; dark is charcoal with
+ * the white wordmark).
  */
 import { ThemeProvider as NextThemesProvider, useTheme } from 'next-themes'
 import type { ReactNode } from 'react'
