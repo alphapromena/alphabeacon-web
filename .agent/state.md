@@ -43,9 +43,8 @@ main ← 1ef8744 (rb/00-malaky tip, fast-forwarded 2026-08-08)
      ─ int/04-scheduling ─ int/05-notifications ─ rb/00-malaky (Malaky rebrand)
 ```
 
-**Push status:** outbound network was down on 2026-08-08 when the merge
-landed — `rb/00-malaky` and `main` are merged locally; push both to origin
-when connectivity returns.
+**Push status:** the 2026-08-08 outage cleared minutes after the merge —
+`rb/00-malaky` and `main` are pushed.
 
 **Workflow from here (decided 2026-07-29):** the retroactive PRs for W0–W6 were
 skipped deliberately — solo developer, no reviewer, no value. From W7 onward,

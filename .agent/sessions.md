@@ -875,5 +875,5 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
 - Files: `.agent/{state,sessions}.md`
 - Decisions: none new
 - Verify: full chain green pre-merge (see previous entry); merge was ff-only
-- Next: push `rb/00-malaky` + `main` when the network returns; founder
-  confirms typography; vector wordmark (open-items 14)
+- Next: founder confirms typography; vector wordmark (open-items 14).
+  (The outage cleared minutes later — both branches pushed, main `72c2001`.)
