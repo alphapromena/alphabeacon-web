@@ -641,3 +641,64 @@ add a new entry that says it supersedes the old one.
 - Instead of: a data-fetching library (caching semantics the provider already
   owns; the seam is the provider, not the fetcher), or per-feature fetch
   wrappers (the drift the one-client rule exists to prevent).
+
+### 2026-08-08 — AlphaBeacon → Malaky: the rebrand, in one branch (`rb/00-malaky`)
+
+- Why: full identity change by the founder — name, Arabic calligraphic
+  wordmark (ملاكي), palette, typography, motion language, and the marketing
+  concept. Source of truth is the **Malaky Brand Starter Guide v1.0**
+  (`Docs/brand/Malaky_Brand_Standards_v1.pages`; the kit arrived as an Apple
+  Pages bundle, not the PDF the brief named — the document text was recovered
+  from `Index/Document.iwa` with a hand-written snappy decoder and archived
+  under `Docs/brand/reference/`). The old Alpha MENA kit is deleted.
+- The palette split discipline carries over with new colors: Champagne Gold
+  `#C7A76A` reads 1.9:1 on ivory, so the gold is split BY ROLE exactly the way
+  the pink was — light `--primary` is Deep Charcoal (the kit assigns it
+  buttons), light `--brand` is gold deepened to `#9A7B4F` (display-only,
+  3.60:1), and dark `--primary`/`--brand` are the true gold (7.34:1 on
+  charcoal — the premium moment lives on dark). All 49 contrast assertions in
+  `tokens.test.ts` pass against the new palette unchanged.
+- Scope guards: static datasets and the DataProvider architecture untouched;
+  `package.json` name, internal `ab-` identifiers, storage keys, and the repo
+  name stay this phase — only user-facing surfaces changed.
+- Instead of: softening the gold until it reads as text (dilutes the accent
+  everywhere), or keeping pink for interactive states (the rebrand retires it
+  outright, including the signal gradient — no bright gradients, per kit).
+
+### 2026-08-08 — Typography: Inter, PROPOSED, pending founder confirmation
+
+- Why: the kit names **no typeface**. Something must render; Inter (variable,
+  single family display-to-caption) is the proposal — neutral, excellent
+  Latin + Arabic-adjacent numerics, `tabular-nums` support for `MonoNumber`'s
+  contract, and the "Apple designed software" personality the kit asks for.
+  Barlow and Geist Mono are retired with the old identity; `--font-mono` maps
+  to Inter so the mono-figures idiom survives any future swap.
+- **This is a proposal, not founder-approved brand law** — if the founder
+  names a face, swapping is one `@font-face` block + three token lines.
+- Vendored as local WOFF2 (`src/styles/fonts/`) with hand-written
+  `@font-face`: the npm registry was unreachable the day of the rebrand
+  (`@fontsource-variable/inter` timed out; files fetched from jsdelivr).
+  Swap to the @fontsource package when the registry returns.
+
+### 2026-08-08 — The cinematic M1 is retired; the kit's §4 flow replaces it
+
+- Why: the kit prescribes the marketing page's shape (Hero, Today's
+  Workspace, How Malaky Works, Memory, One Brand Every Channel, Human
+  Approval, Built for the Middle East, Call to Action, Footer) and a motion
+  law — gentle fades and subtle hovers ONLY — that the ink-void scrub
+  concept cannot satisfy. The 2026-07-30 cinematic build (canvas scrub, HUD
+  clock, Lenis, marquee, ambient film) is deleted along with its 8.4 MB of
+  `public/marketing/` assets and the `lenis` dependency; git history
+  preserves all of it. The pending clip-take approval (open-items) is void.
+- The new page's motion budget is one IntersectionObserver-flipped
+  fade-and-rise per section, with the animated state living only inside a
+  `prefers-reduced-motion: no-preference` query — reduced motion renders
+  every section finished. `verify:w02`'s structural laws were rewritten to
+  ban the retired primitives (video, canvas, scroll libraries, rAF loops).
+- Real product content per kit §5: tones + rules via `useTones()`, channels
+  via `useConnections()`, pricing via `usePlans()`; the workspace preview
+  quotes Atlas Roasters and says so. Page weight fell from ~8.7 MB of media
+  to ~150 KB of wordmark PNGs.
+- Instead of: adapting the cinematic page to the new palette (the concept
+  itself — scrubbing, pinning, film — is what the motion law forbids), or
+  a from-scratch art direction (the kit already names the sections).

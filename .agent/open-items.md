@@ -85,37 +85,40 @@ item to "Signed off" (with the date) only when a human has actually done it.
     intended, or the demo should tighten to match. Backend/product decides;
     the frontend follows whichever answer.
 
-### M1 cinematic — two items gated on the human (2026-07-30)
+### M1 cinematic items — RETIRED by the rebrand (2026-08-08)
 
-**Clip-1 take approval → 4K re-render.** Three takes of the hero assembly clip
-were generated; **take C** shipped (the most monotonic build — see decisions.md
-2026-07-30). All three takes are in the session scratchpad and linked in the
-session entry. Once a take is approved, re-render it once at 4K (Seedance std
-supports it; ~2–4× the 72-credit 1080p cost) and re-extract the 200-frame
-sequence + `hero-static.webp` to the same filenames — a drop-in swap, no code
-change. If a different take is preferred, the same pipeline command applies to
-it.
+The two items that sat here (clip-1 take approval → 4K re-render; the
+marquee's hover-only pause) are void: the cinematic M1 concept was retired
+with the Malaky rebrand (decisions.md 2026-08-08), its components and assets
+deleted (git history preserves them). No take will be approved and there is
+no marquee to pause.
 
-**The marquee's pause affordance is hover-only.** WCAG 2.2.2 wants a pause
-mechanism for the drifting customer strip; hover pauses it and reduced motion
-removes it, but there is no keyboard-reachable pause (nothing in the strip is
-focusable). Judge in sitting 2 whether that stands or the strip needs a
-control.
+### Malaky rebrand — one item gated on the designer (2026-08-08)
+
+**14. Vector wordmark original requested.** The supplied logo artwork exists
+only as three 610×352 raster PNGs
+(`public/brand/malaky-logo-{charcoal,gold,white}.png`), derived from the
+founder-approved wordmark. A vector original has been requested from the
+designer. When it arrives: re-export the three colorways to the same
+filenames (drop-in), re-derive the favicon/touch-icon crops, and consider an
+SVG favicon. Until then the PNGs are the only artwork and are never redrawn
+or edited (design.md Part 3).
 
 ### Two gates REOPENED — they must run against the fixed build
 
 The focus, tablist and posting-time changes of 2026-07-29 moved the very
 semantics two of the sittings exist to check, so their earlier sign-off no
-longer covers what is on screen now. **The 2026-07-30 M1 rebuild adds the
-cinematic page to both sittings' scope.**
+longer covers what is on screen now. **The 2026-08-08 Malaky rebrand replaces the
+cinematic M1 with the calm kit-flow page — both sittings' M1 scope is
+rewritten below.**
 
 **Sitting 1 — viewport and environment (~45 min).** Unchanged in scope, but the
 settings tablist, the role select and the longer posting-time strings are all
 new since it ran, and all three are width-sensitive. Re-walk 360px. Now also:
-the cinematic M1 at 360px (hero falls back to the loop video — confirmed clean
-in automation, judge it by eye), the scrub by hand on a real wheel/trackpad
-(cadence and the 07:00 handoff are judged by feel), and the page with OS dark
-mode on (marketing is light-only; the ink islands are fixed art direction).
+the Malaky M1 at 360px (every split section must collapse to one column; the
+workspace preview card must not overflow), and the page in BOTH themes — the
+rebrand made marketing theme-aware (light-first; dark is charcoal with the
+white wordmark, design.md Part 6 rule 8).
 
 **Sitting 2 — keyboard and screen reader (~60 min).** This one changed the most.
 Settings is now a `tablist`/`tab`/`tabpanel` with roving tabindex and manual
@@ -132,17 +135,15 @@ done. Listen specifically for:
 - posting times: `9:00 AM GMT+3 · 10:00 AM your time` reads as one string;
   confirm it is not heard as two unrelated numbers.
 
-New for the cinematic M1:
+New for the Malaky M1 (2026-08-08):
 
-- the hero reads as: heading "AlphaBeacon", the subtitle, then the ready line —
-  no letter soup from the tracked-in wordmark (letters are `aria-hidden`);
-- the customer strip announces as a plain list, never as moving text;
-- the loop section reads its `sr-only` sentence ("draft, approve, publish"),
-  not three shouted words;
-- the tone chips announce pressed state, and the sample swap (aria-live
-  polite) reads once, calmly, per change;
-- with reduced motion on: the page is complete and calm — finished hero frame,
-  posters, static strip — nothing reads as missing.
+- the hero reads as: heading "Malaky" (the Arabic wordmark image is
+  presentation; the name is `sr-only`), then the promise and the support line;
+- the workspace preview is `inert`: nothing inside it is focusable, and the
+  `sr-only` sentence before it describes what the illustration shows;
+- the tone card and channel tiles read as plain lists;
+- with reduced motion on: every section renders finished — the reveal fade
+  never exists (no-preference media query), nothing reads as missing.
 
 ---
 

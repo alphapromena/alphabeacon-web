@@ -18,7 +18,7 @@ _(Full source of truth: `design.md` Part 1. This is a cheat-sheet so a mockup to
 
 |                             |                                                                                                                                                                                                                                                                                                                |
 | --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Fonts**                   | Display/headings **and** body/UI: **Barlow** (400/500/600/700) — the Alpha MENA brand typeface. Data/mono: **Geist Mono** — always for numbers, stats, credit counts, timestamps, IDs, source URLs. _(Was Space Grotesk/Geist Sans; updated when the branding kit landed — `design.md` Part 2 is the source.)_ |
+| **Fonts**                   | One family for everything: **Inter** (variable) — proposed under the Malaky kit, pending founder confirmation. Numbers, stats, credit counts, timestamps, IDs, source URLs render with `tabular-nums` via `MonoNumber`. _(Was Barlow + Geist Mono under the Alpha MENA kit; rebranded 2026-08-08 — `design.md` Part 2 is the source.)_ |
 | **Type scale**              | display 48 · h1 38 · h2 30 · h3 24 · h4 20 · body-lg 18 · body 16 · body-sm 14 · caption 12 (uppercase, tracked, for eyebrows) · mono 13–16.                                                                                                                                                                   |
 | **Spacing**                 | Token scale 2/4/6/8/12/16/20/24/32/40/48/64/80px. Never raw px in a mockup — snap to this scale.                                                                                                                                                                                                               |
 | **Radius**                  | sm 8 · md 12 · lg 16 · xl 22 · pill 999. Soft-modern, never zero-radius.                                                                                                                                                                                                                                       |
@@ -405,7 +405,7 @@ _Framing: Studio is **the center where the user creates everything the company n
 
 ### N4 — Offline / degraded-service banner (global, conditional overlay on the top bar)
 
-**Contains:** a thin, non-blocking top banner — "You're offline — changes will sync when you reconnect" or "We're having trouble reaching AlphaBeacon — retrying…" — dismissible once resolved, non-modal.
+**Contains:** a thin, non-blocking top banner — "You're offline — changes will sync when you reconnect" or "We're having trouble reaching Malaky — retrying…" — dismissible once resolved, non-modal.
 
 ---
 

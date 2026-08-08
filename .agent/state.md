@@ -5,15 +5,19 @@ without reconstructing it from the session log. **Update this file at the end
 of any turn that finishes a phase or changes the plan.** `sessions.md` is the
 chronological record; this is the current picture.
 
-_Last updated: 2026-07-30, after the integration merge (INT-0..5 on main)._
+_Last updated: 2026-08-08, after the Malaky rebrand (`rb/00-malaky`)._
 
 ---
 
 ## In one paragraph
 
 `alphabeacon-web` is a static-first React SPA — every screen in
-`screens4.md`, rendered from typed data committed under `src/data/` — now
+`screens4.md`, rendered from typed data committed under `src/data/` —
 integrating with the **live AlphaStudio API** (contract: `docs/api/api.md`).
+**The product is now branded Malaky** (Arabic wordmark ملاكي, kit under
+`Docs/brand/`): new palette, Inter (proposed), calm motion law, and a
+rebuilt kit-flow marketing page (2026-08-08). `package.json`, internal `ab-`
+identifiers, and the repo name deliberately keep the old name this phase.
 Network code is legal only in `src/api/`, only when `VITE_API_BASE_URL` is set;
 without it the app is byte-for-byte the static build and the e2e suite asserts
 zero requests. Phases **W0–W6 are built and verified**; **W7 is parked behind
@@ -50,12 +54,13 @@ aspirational, not a rule this repo follows.
 | ------------------------------------ | ---------------------------- | ------------------------------------------------------------ |
 | W0 Foundation                        | —                            | Done · `verify:w00` green                                    |
 | W1 Design layer                      | —                            | Done · `verify:w01` green                                    |
-| — Brand pass                         | —                            | Done — real Alpha MENA palette + Barlow, `design.md` written |
+| — Brand pass                         | —                            | Superseded 2026-08-08 by the Malaky rebrand (below)          |
 | W2 Marketing/auth/onboarding         | M1, A1–A5, N3                | Done · `verify:w02` green                                    |
 | W3 Review queue                      | D1–D5                        | Done · `verify:w03` green                                    |
 | W4 Calendar + connections            | C1–C4, B1–B3                 | Done · `verify:w04` green                                    |
 | W5 Studio + billing                  | E1–E4, H1–H4                 | Done · `verify:w05` green                                    |
 | W6 Compose/analytics/settings/system | F1, G1–G2, I1–I7, N1, N2, N4 | Done · `verify:w06` green                                    |
+| — **Malaky rebrand** (`rb/00-malaky`) | M1 + every user-facing surface | Done 2026-08-08 — kit palette/typography/motion in `design.md`, name sweep, new M1, deploy fix (`VITE_DEFAULT_DATASET` + `vercel.json`) |
 | **W7 Hardening + ship**              | —                            | **Parked behind the two manual gates**                        |
 
 ## Integration phases (AlphaStudio API — contract at `docs/api/api.md`)
@@ -88,19 +93,19 @@ connections, Studio, billing, analytics, compose, knowledge. The backend/
 product questions live in open-items 1–13; W7 still waits on the two
 reopened manual gates.
 
-Current totals: **340 unit tests** (31 files), **74 static e2e + 7 live e2e**, all green.
+Current totals: **332 unit tests** (30 files), **static e2e 68 passed / 23 live-spec skips**, all green.
 **No route is a stub any more** — `PlaceholderScreen` is deleted, and
 `verify:w06` fails if it comes back.
 
-**M1 was rebuilt as the cinematic scroll page on 2026-07-30** (design.md
-Part 5 — "Marketing cinematic layer"): a 200-frame canvas scrub of generated
-film (Seedance 2.0, one shared reference image), the HUD clock to 07:00, the
-pinned DRAFT/APPROVE/PUBLISH loop, the real-tones morph, honesty counters, the
-REAL `/today` recording in a browser frame, and the dawn-beacon CTA. App
-screens untouched; pricing still renders `usePlans()`; media ships as ~8.7 MB
-of local static assets under `public/marketing/`. One new dependency: `lenis`
-(guarded off under reduced motion). Awaiting the human: clip-1 take approval →
-one 4K re-render (open-items.md).
+**M1 was rebuilt again on 2026-08-08 as the Malaky front door** (design.md
+Part 5 — "Marketing layer"): the kit's §4 flow in order on the warm-ivory
+surface, wordmark exactly as supplied, one gentle fade per section as the
+whole motion budget, real content via `useTones()`/`useConnections()`/
+`usePlans()`. The 2026-07-30 cinematic page (scrub, HUD clock, Lenis,
+marquee, film) is DELETED along with `public/marketing/` (~8.4 MB) and the
+`lenis` dependency — git history preserves them; the clip-take open item is
+void. Page weight: ~150 KB of wordmark PNGs. `verify:w02`'s structural laws
+now enforce the calm page.
 
 ## What W7 needs (from `web-plan.md` §9)
 

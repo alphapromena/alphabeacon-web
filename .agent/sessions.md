@@ -831,3 +831,34 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
 - Next: the backend answers in open-items 1–13 when they come; W7 remains
   parked behind the two reopened manual gates (360px pass + screen-reader
   walk, scope includes the cinematic M1).
+
+### 2026-08-08 16:20 — The Malaky rebrand: STEP 0–4 on `rb/00-malaky`
+
+- Did: full identity change AlphaBeacon → Malaky in five commits.
+  **STEP 0** `01379f0` — `VITE_DEFAULT_DATASET` (validated against the
+  registry, falls back to `DEFAULT_DATASET_ID`, unit-tested) + `vercel.json`
+  (SPA rewrite, immutable `/assets/*`, 86400 for `/marketing/*` + `/brand/*`).
+  Kit placed `e5509de` (recovered from the `.pages` bundle — see decisions).
+  **STEP 1** `c663e2f` — full token rewrite (gold split by role; all 49
+  contrast assertions green), Inter vendored, radius/shadow scales, favicon
+  cropped from the wordmark, kitchen sink verified in both themes.
+  **STEP 2** `bdab863` — name sweep (chrome lockups now carry the supplied
+  wordmark; messages, comments, e2e assertions moved to Malaky/Inter);
+  `package.json` + `ab-` internals stay by design.
+  **STEP 3** `dc51825` — M1 rebuilt as the kit's §4 flow, calm motion law,
+  real provider content; cinematic layer + 8.4 MB `public/marketing/` +
+  `lenis` deleted; `verify:w02` laws rewritten for the calm page.
+  **STEP 4** (this commit) — `design.md` rewritten as the Malaky system;
+  three decisions entries; open-items: cinematic items retired, item 14
+  (vector wordmark requested); state.md, screens4.md brand lines.
+- Phase: rebrand (`rb/00-malaky`, same culture as w/NN + int/NN)
+- Files: theme layer, marketing, chrome lockups, e2e specs, verify-w02,
+  `design.md`, `.agent/{state,decisions,open-items,sessions}.md`,
+  `screens4.md`, `Docs/brand/*`, `public/brand/*`, `vercel.json`
+- Decisions: see decisions.md — the rebrand; Inter proposed pending founder
+  confirmation; the cinematic M1 retired
+- Verify: lint · typecheck · **332 unit** (30 files) · guard-static (206
+  files) · build · **static e2e 68 passed / 23 live skips** ·
+  `verify:w02 --skip-e2e` all PASS (M1 marketing laws hold)
+- Next: ff-merge `rb/00-malaky` to `main`; founder confirms typography;
+  vector wordmark from the designer (open-items 14)

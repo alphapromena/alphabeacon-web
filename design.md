@@ -1,19 +1,23 @@
-# AlphaBeacon — Design System
+# Malaky — Design System
 
-The visual system of record for AlphaBeacon, derived from the **Alpha MENA
-Branding Kit** (`Alpha MENA Branding Kit.pdf`, in this repo). `screens4.md` says
-_what_ each screen contains; this document says _how_ everything looks.
+The visual system of record for **Malaky** (Arabic wordmark **ملاكي**), derived
+from the **Malaky Brand Starter Guide v1.0**
+(`Docs/brand/Malaky_Brand_Standards_v1.pages`, with the extracted text and page
+render under `Docs/brand/reference/`). `screens4.md` says _what_ each screen
+contains; this document says _how_ everything looks.
 
-The kit defines four things: a color palette, a typeface, logo variations, and
-logo usage rules. Everything else here — the neutral ramp, the status hues, the
-spacing and radius scales, the motion language — is derived from those four and
-recorded below so the derivation is auditable rather than assumed.
+The kit defines a palette, logo usage rules, a visual style ("Apple-inspired
+minimalism, premium Middle Eastern aesthetic"), a motion law ("gentle fades,
+subtle hover effects, no flashy animations"), and a personality ("trust before
+features"). It names **no typeface** — see Part 2. Everything else here — the
+derived hues, the spacing and radius scales — is recorded below so the
+derivation is auditable rather than assumed.
 
-**Implementation:** `src/styles/tokens.css` is the machine-readable copy of Part
-
-1. `src/styles/tokens.test.ts` asserts every contrast pair in this document and
-   fails the build if an edit breaks one. If this file and `tokens.css` ever
-   disagree, that is a bug in one of them — not a matter of taste.
+**Implementation:** `src/styles/tokens.css` is the machine-readable copy of
+Part 1. `src/styles/tokens.test.ts` asserts every contrast pair in this
+document and fails the build if an edit breaks one. If this file and
+`tokens.css` ever disagree, that is a bug in one of them — not a matter of
+taste.
 
 ---
 
@@ -21,60 +25,73 @@ recorded below so the derivation is auditable rather than assumed.
 
 ### 1.1 The kit palette
 
-| Swatch         | Hex       | OKLCH                         | Role in this product                                  |
-| -------------- | --------- | ----------------------------- | ----------------------------------------------------- |
-| Off-white      | `#F3F2F1` | `oklch(0.9616 0.0017 67.8)`   | Page background (light), body text (dark)             |
-| Signature pink | `#FF1E57` | `oklch(0.6429 0.2461 16.08)`  | `--brand` — logo, gradient, beacon glow, display type |
-| Mid rose       | `#E92156` | `oklch(0.6047 0.227 14.26)`   | `--brand-strong` — gradient stop, hover               |
-| Deep rose      | `#B7274F` | `oklch(0.5174 0.1795 10.57)`  | Basis of `--primary` (see 1.3)                        |
-| Charcoal       | `#313234` | `oklch(0.3169 0.0038 264.51)` | Body text (light), dark-theme neutral family          |
-| Black          | `#000000` | —                             | Logo on light backgrounds                             |
+| Swatch           | Hex       | OKLCH                         | Role in this product                             |
+| ---------------- | --------- | ----------------------------- | ------------------------------------------------ |
+| Deep Charcoal    | `#1D1D1F` | `oklch(0.2316 0.0038 286.1)`  | Primary text, logo, buttons; dark-theme surfaces |
+| Warm Ivory       | `#F7F4EF` | `oklch(0.9681 0.0074 80.72)`  | Page background (light), body text (dark)        |
+| Limestone        | `#EFE9DF` | `oklch(0.936 0.0149 80.71)`   | Secondary background (`--secondary`, `--muted`)  |
+| Champagne Gold   | `#C7A76A` | `oklch(0.7432 0.0876 82.76)`  | Primary accent — see 1.3 for where it may live   |
+| Burnished Bronze | `#8C6A3F` | `oklch(0.5487 0.0735 71.79)`  | Secondary accent (`--brand-strong`, light)       |
+| Muted Emerald    | `#3F7C57` | —                             | Basis of `--success` (deepened, see 1.4)         |
+| Terracotta       | `#B9654A` | —                             | Basis of `--warning` / `--destructive` (see 1.4) |
+
+The previous identity's signature pink `#FF1E57` and the
+`#FF1E57 → #B1204A` signal gradient are **retired everywhere**. No bright
+gradients exist anywhere in the product (kit: "No bright gradients").
 
 ### 1.2 The accessibility constraint
 
-Every piece of text in this product must clear **WCAG AA — 4.5:1** for small
-text, 3:1 for large text and meaningful UI boundaries. Measured against the
-kit's own palette:
+Every piece of text must clear **WCAG AA — 4.5:1** for small text, 3:1 for
+large text and meaningful UI boundaries. Measured against the kit's own
+palette:
 
-| Color     | As small text on white | On its own 10% tint | Verdict              |
-| --------- | ---------------------- | ------------------- | -------------------- |
-| `#FF1E57` | **3.77:1**             | **3.24:1**          | Fails — display only |
-| `#E92156` | **4.36:1**             | **3.74:1**          | Fails — display only |
-| `#B7274F` | 6.15:1                 | 5.24:1              | Passes               |
-| `#313234` | 12.83:1                | —                   | Passes               |
+| Color                    | As small text on ivory | Large-type minimum (3:1) | Verdict                  |
+| ------------------------ | ---------------------- | ------------------------ | ------------------------ |
+| `#C7A76A` Champagne Gold | **1.90:1**             | fails                    | Cannot carry text on light — not even display |
+| `#8C6A3F` Bronze         | **4.04:1**             | passes                   | Large type only on light |
+| `#3F7C57` Emerald        | **3.86:1**             | passes                   | Needs deepening for badges |
+| `#B9654A` Terracotta     | **3.05:1**             | passes                   | Needs deepening for badges |
+| `#1D1D1F` Charcoal       | **15.16:1**            | passes                   | Carries everything       |
 
-The 10% tint column is the `bg-X/10 text-X` pattern every status badge uses. It
-is stricter than text on the page, and it is where failures actually surface.
+The binding surface is the `bg-X/10 text-X` tint pattern every status badge
+uses — stricter than text on the page, and where failures actually surface.
 
-### 1.3 The resolution: split the brand by role, never dilute it
+### 1.3 The resolution: split the gold by role, never dilute it
 
-The signature pink is not softened and it is not dropped. It is assigned the
-jobs it can do accessibly, and a second kit color takes the jobs it cannot:
+Champagne gold is not softened into legibility and it is not dropped. It is
+assigned the surfaces where it genuinely reads, and the charcoal takes the
+jobs the kit already gave it:
 
-- **`--brand` `#FF1E57`** — the logo mark, the signal gradient, the beacon glow,
-  large display type, marketing hero art. Never small text, never body copy.
-- **`--primary` `#B1204A`** — every interactive text, link, focus ring, and
-  button fill. This is the kit's deep rose `#B7274F` darkened by 0.017 in
-  lightness so it clears AA on _muted_ surfaces too, not just white.
-
-Both are the brand's own colors. Only their jobs differ.
+- **`--primary`** — **Deep Charcoal on light, Champagne Gold on dark.** The
+  kit assigns charcoal "primary text, logo, buttons"; buttons and interactive
+  text are charcoal in the light theme. On dark, gold is the interactive
+  color: charcoal text on a gold fill reads 7.34:1, and the kit calls gold on
+  dark the premium treatment.
+- **`--brand` (light) `#9A7B4F`** — the gold family's voice on light surfaces:
+  gold deepened toward bronze until it clears 3:1 for large display type
+  (3.60:1 on ivory). Display only, never body text. The light-theme brand
+  contrast is asserted to sit in the `[3.0, 4.5)` window — readable as
+  display, never mistaken for a text color.
+- **`--brand` (dark) `#C7A76A`** — the true champagne gold (7.34:1 on
+  charcoal). The premium moment lives on dark: the gold wordmark, the gold
+  primary.
 
 ### 1.4 Adjustments made for AA, and why
 
-Every value that is not a kit color exactly:
+Every value that is not a kit color exactly (light / dark):
 
-| Token                   | Kit basis        | Shipped               | Why                                                                                                                                |
-| ----------------------- | ---------------- | --------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| `--primary` (light)     | `#B7274F`        | `#B1204A`             | `#B7274F` reads 4.26:1 on its own tint over a muted surface. Darkened until 4.55:1.                                                |
-| `--primary` (dark)      | `#B7274F`        | `#FF6F8E`             | The deep rose sits near 2:1 on a dark page. Same hue, lifted for dark.                                                             |
-| `--destructive` (light) | —                | `#B2251D`             | A brick red ~18° off the brand rose, so "delete" never reads as "primary action".                                                  |
-| `--destructive` (dark)  | —                | `#FF9882`             | Lifted until it clears AA at the `/20` tint shadcn uses for dark destructive buttons.                                              |
-| `--warning`             | —                | `#835500` / `#F5B942` | No kit equivalent; chosen to clear AA on both surfaces in both themes.                                                             |
-| `--success`             | —                | `#0F6C42` / `#4ADE9B` | As above.                                                                                                                          |
-| `--muted-foreground`    | `#313234` family | `#5A5C5F` / `#A3A5AA` | Secondary text that still clears 4.5:1 on muted surfaces.                                                                          |
-| `--input`               | —                | `#8D8A88` / `#696A6F` | Form-control boundaries carry meaning; these clear WCAG 1.4.11's 3:1 rather than sitting at the usual near-invisible border value. |
+| Token                | Kit basis           | Shipped               | Why                                                                     |
+| -------------------- | ------------------- | --------------------- | ----------------------------------------------------------------------- |
+| `--brand` (light)    | `#C7A76A` → bronze  | `#9A7B4F`             | Gold reads 1.9:1 on ivory; deepened until ≥3:1 for display type.        |
+| `--success`          | `#3F7C57`           | `#33684A` / `#84BE9C` | Deepened (lifted on dark) until 4.5:1 on its own 10% tint.              |
+| `--warning`          | `#B9654A` (softened)| `#7D5226` / `#DCA96A` | Terracotta's cautionary voice, darkened until its tints read.           |
+| `--destructive`      | `#B9654A` (deepened)| `#8F3E26` / `#EDA58C` | A step deeper and redder than warning so "delete" outweighs "careful"; >12° hue gap from `--primary` asserted. |
+| `--muted-foreground` | charcoal family     | `#5C5850` / `#B5AFA3` | Warm greys that clear 4.5:1 on Limestone / dark muted.                  |
+| `--input`            | —                   | `#8A8577` / `#787367` | Form-control boundaries carry meaning; ≥3:1 (WCAG 1.4.11) on page and card, unlike decorative `--border`. |
+| `--accent`           | gold family         | `#F1E9DA` / `#33302A` | A gold-tinted wash for hover/selected surfaces; its foreground pair clears 4.5:1. |
 
-`--border` stays deliberately subtle (decorative dividers, no 3:1 requirement).
+`--border` stays deliberately subtle (`#E3DCCD` light / 12% white dark) — the
+kit's "light borders"; decorative dividers carry no 3:1 requirement.
 
 ### 1.5 Semantic tokens
 
@@ -83,149 +100,132 @@ The full set lives in `src/styles/tokens.css`, light and dark:
 
 `background` `foreground` `card` `popover` `primary` `secondary` `muted`
 `accent` `destructive` `warning` `success` `border` `input` `ring`
-`chart-1…5` `sidebar*` `brand` `brand-strong` `glow-signal` `signal-gradient`
+`chart-1…5` `sidebar*` `brand` `brand-strong` `shadow-soft-sm/md/lg`
+
+Gone with the rebrand: `--signal-gradient`, `--glow-signal`, `--ab-ink`,
+`--ab-cinema-seam`.
 
 ---
 
 ## Part 2 — Typography
 
-**Barlow** is the brand typeface — the only one the kit specifies. It carries
-display and UI alike (`--font-display`, `--font-sans`), shipped self-hosted from
-`@fontsource/barlow` at weights 400/500/600/700.
+**The kit names no typeface.** The choice below is recorded in `decisions.md`
+as **proposed, pending founder confirmation** — everything else in this part
+is law regardless of which family finally carries it.
 
-**Geist Mono** carries every figure that matters — credits, counts,
-percentages, timestamps, IDs — through the `MonoNumber` component. The kit
-defines no monospace; tabular numerals are a functional requirement (columns
-must align, digits must not jitter as they count up), not a brand choice. This
-is the one documented departure from a kit-only font stack.
+**Inter** (variable, self-hosted) is the single family, display to caption:
+`--font-display`, `--font-sans`, and `--font-mono` all resolve to it. Barlow
+and Geist Mono are retired with the old identity.
 
-| Role                     | Face       | Weight  |
-| ------------------------ | ---------- | ------- |
-| Display / headings       | Barlow     | 600–700 |
-| Body / UI                | Barlow     | 400–500 |
-| Figures, timestamps, IDs | Geist Mono | 400–500 |
+Figures that matter — credits, counts, percentages, timestamps, IDs — still
+render through the `MonoNumber` component, which now means **Inter with
+`tabular-nums`**: columns align and digits do not jitter as they count up.
+That requirement is functional, not a brand choice, and it survives any
+future typeface swap.
 
-**Type scale** (unchanged from `screens4.md` §0.2): display 48 · h1 38 · h2 30 ·
-h3 24 · h4 20 · body-lg 18 · body 16 · body-sm 14 · caption 12 (uppercase,
-tracked) · mono 13–16.
+| Role                     | Face  | Weight  |
+| ------------------------ | ----- | ------- |
+| Display / headings       | Inter | 600–700 |
+| Body / UI                | Inter | 400–500 |
+| Figures, timestamps, IDs | Inter + `tabular-nums` | 400–500 |
+
+**Type scale** (unchanged from `screens4.md` §0.2): display 48 · h1 38 · h2 30
+· h3 24 · h4 20 · body-lg 18 · body 16 · body-sm 14 · caption 12 (uppercase,
+tracked) · mono 13–16. Kit: "Large headlines, short paragraphs, clear
+hierarchy."
+
+**Font files:** vendored WOFF2 under `src/styles/fonts/` with hand-written
+`@font-face` (see decisions.md — the npm registry was unreachable the day of
+the rebrand; swap to `@fontsource-variable/inter` when it returns).
 
 ---
 
 ## Part 3 — Logo
 
-From the kit's "LOGO DETAILS":
+From the kit, verbatim in spirit:
 
-- **Typeface:** Barlow, **all capital letters**.
-- **Color:** black on light backgrounds, white on dark backgrounds.
-- The kit also supplies a **logo mark** used alongside or instead of the
-  wordmark.
+- Use **only the founder-approved Arabic wordmark (ملاكي) exactly as
+  supplied**. Never redraw, simplify, edit, or distort it; never remove or
+  alter the decorative marks above the letters; preserve proportions and
+  spacing.
+- **Colorways:** Deep Charcoal (default, on light), Champagne Gold (premium),
+  White (on dark backgrounds).
+- The English wordmark "MALAKY" is secondary — only where Arabic is not
+  appropriate.
 
-**In this product:** the wordmark renders in Barlow, uppercase, tracked
-(`0.14em`) in the app rail and the marketing header. The mark is a rounded
-square carrying the signal gradient (`#FF1E57 → #B1204A`) — the one place the
-signature pink appears at full strength in the chrome. On the neutral surfaces
-this product uses, the wordmark takes `--foreground` (charcoal on light,
-off-white on dark), which satisfies the kit's black/white rule while keeping
-text contrast at 11:1 or better.
+**In this product:** the artwork enters only as `<img>` of the three supplied
+files (`public/brand/malaky-logo-{charcoal,gold,white}.png`) — the app rail,
+the auth and wizard lockups, and the marketing page all swap charcoal ↔ white
+with the theme; gold is reserved for premium brand moments (the marketing
+"Built for the Middle East" panel). The accessible name is always the plain
+text "Malaky" (`alt` or `sr-only`), never baked into the artwork. The favicon
+and touch icon are **crops** of the charcoal wordmark's rightmost glyph — a
+crop is the one manipulation allowed, because it edits nothing inside the
+frame. `verify:w02` greps structurally that marketing never redraws the mark.
+
+The vector original has been requested from the designer; until it arrives the
+610×352 PNGs are the only artwork (open-items).
 
 ---
 
 ## Part 4 — Spacing, radius, elevation
 
-The kit defines none of these; they carry over from `screens4.md` §0.2 and are
-recorded here so there is one source.
+The kit asks for "rounded corners, premium spacing, soft shadows, plenty of
+whitespace" and defines no numbers; these are the chosen values, recorded here
+so there is one source.
 
-- **Spacing scale:** 2 / 4 / 6 / 8 / 12 / 16 / 20 / 24 / 32 / 40 / 48 / 64 / 80.
-  Never a raw pixel value — snap to the scale.
-- **Radius:** sm 8 · md 12 · lg 16 (`--radius`) · xl 22 · pill 999. Soft-modern,
-  never zero-radius.
-- **Elevation:** three shadow levels, plus `--glow-signal` — a brand-pink glow
-  reserved for the beacon and generation-in-progress states.
+- **Spacing scale:** 2 / 4 / 6 / 8 / 12 / 16 / 20 / 24 / 32 / 40 / 48 / 64 /
+  80. Never a raw pixel value — snap to the scale.
+- **Radius:** sm 8 · md 10 · lg 12 (`--radius: 0.75rem`) · xl 16 · 2xl 20 ·
+  pill 999. Soft-modern, never zero-radius.
+- **Elevation:** three warm, low-alpha soft shadows —
+  `--shadow-soft-sm/md/lg` (charcoal at 5/7/9% alpha in light; deeper blacks
+  on dark, where lifted surface colors do most of the depth work). **Never a
+  glow.** The old `--glow-signal` is retired.
 
 ---
 
 ## Part 5 — Motion
 
-Two animations exist in this product, and only two:
+The kit's motion law: **"Gentle fades, subtle hover effects, no flashy
+animations."** Calm micro-animations only.
 
-- **Signal sweep** — a gradient line crossing a surface's top edge while work is
-  in flight.
+Two animations exist inside the product, and only two:
+
+- **Signal sweep** — a line crossing a surface's top edge while work is in
+  flight (now `--brand`, not a gradient).
 - **Beacon pulse** — the live-status ring, pulsing only while something needs
   attention.
 
-Both opt in through the `data-ab-motion` attribute; `styles/globals.css` removes
-them wholesale under `prefers-reduced-motion`, and Playwright asserts it. The
-count-up in `useCountUp` enforces the same rule in JavaScript, where CSS cannot
-reach: under reduced motion the final figure renders immediately rather than
-animating faster. No other animation may be added without extending this part.
+Both opt in through the `data-ab-motion` attribute; `styles/globals.css`
+removes them wholesale under `prefers-reduced-motion`, and Playwright asserts
+it. The count-up in `useCountUp` enforces the same rule in JavaScript, where
+CSS cannot reach: under reduced motion the final figure renders immediately.
+No other animation may be added without extending this part.
 
-F1's token-by-token stream is **not** a third animation: it is content arriving,
-the same way a list grows when data lands. The only motion on that screen is the
-signal sweep on the card's top edge while the run is in flight. The caret beside
-the text is a static glyph — it does not blink, because a blinking cursor would
-be exactly the decorative animation this part exists to refuse.
+F1's token-by-token stream is **not** a third animation: it is content
+arriving. The caret beside it is a static glyph — a blinking cursor is exactly
+the decorative animation this part exists to refuse.
 
-### The marketing cinematic layer (M1 only)
+### The marketing layer (M1 only)
 
-The two rules above still hold for the **product**: inside the app, signal
-sweep and beacon pulse remain the only two animations. M1 is the exception this
-section exists to license and bound — a cinematic scroll experience telling the
-brand's one story (a signal sweeping order out of noise) with generated film.
-Nothing in this layer may leak into `AppShell`.
+The cinematic scroll concept (2026-08 M1: ink hero, canvas scrub, Lenis,
+marquee, ambient film) is **retired** with the rebrand — see decisions.md; the
+assets live only in git history.
 
-**The inventory** (all of it lives under `src/features/marketing/`):
+M1's entire motion budget is now **one gentle fade-and-rise per section** as
+it first enters the viewport: an `IntersectionObserver` flips
+`data-mk-reveal`, and the animated state exists only inside a
+`prefers-reduced-motion: no-preference` media query in `globals.css` — under
+reduced motion every section renders finished, removed rather than slowed. No
+scroll scrubbing, no pinning, no marquee, no particles, no kinetic type, no
+video, no smooth-scroll library. `verify:w02` greps the marketing sources
+structurally for the banned primitives.
 
-- **Hero scrub** — 200 WebP frames of the beacon assembling the review queue,
-  drawn to a `<canvas>` keyed to scroll progress, eased so fast flicks settle.
-  THE LAW: the scrub runs on canvas frames, **never** on a `<video>` element's
-  `currentTime` — seeking is keyframe-quantized and stutters exactly when the
-  user is paying the most attention. `verify:w02` greps for it structurally.
-- **HUD clock** — Geist Mono, 06:58:00 → 07:00:00 mapped onto the scrub; at
-  07:00 the queue locks and "Your drafts are ready." lands. The product's
-  promise is a time, and the visitor drags that morning forward themselves.
-- **Wordmark track-in** — ALPHABEACON, Barlow 700, tracked 0.14em (Part 3),
-  letter by letter across early scrub progress. The letters are presentation
-  (`aria-hidden`); the h1's accessible name is plain text.
-- **Customer marquee** — a 36s drift, two list copies for a seamless loop,
-  paused on hover (WCAG 2.2.2). Screen readers get a static `sr-only` list.
-- **Pinned loop** — DRAFT. APPROVE. PUBLISH. over clip 2, one word per third
-  of a 300vh pin; a revealed word never un-reveals.
-- **Tone morph** — the sample sentence's word-by-word arrival (`ab-word-in`).
-  It runs only on a MORPH, never on first paint: an entrance fade would put
-  transiently low-contrast text in front of anyone looking as it mounts (axe
-  caught exactly that).
-- **Honesty counters** — `useCountUp`, unchanged; the count-up's
-  reduced-motion guarantee is inherited, not re-implemented.
-- **Ambient video** — clips 2/3/4 as muted, `playsInline`, `aria-hidden`
-  loops. The product recording is the exception: it keeps native `controls` in
-  every mode, because a pause must always exist.
-- **Lenis smooth scroll** — marketing route only, constructed only when motion
-  is allowed (decisions.md).
-
-**Reduced motion removes the film, it does not slow it.** No Lenis; the scrub
-never mounts (the finished frame renders as an `<img>`, clock resting at
-07:00:00); ambient videos become their posters; the marquee track is removed by
-the `data-ab-motion` kill switch and a static row stands in; all three loop
-words stand with their captions; counters render final figures; the product
-recording keeps controls and drops autoplay. The story is told in its end
-state. Playwright asserts the lot (`e2e/marketing-cinematic.spec.ts`).
-
-**Ink is art direction, not a theme.** The hero, the pinned loop and the final
-CTA sit in scoped `.dark` islands so their text uses the dark palette's tested
-contrast pairs; `--ab-ink` names that page color for the canvas backstop and
-scrims, and `--ab-cinema-seam` grades it into `--background` at the customer
-strip. Marketing remains light-only (Part 6 rule 8) — the islands are fixed.
-
-**Film grain** (`.ab-grain`, an inline feTurbulence tile) appears on the hero
-only. The signature pink stays display-only per Part 1: on ink it carries the
-beacon, the pillar periods, and the counters' hero figure — never body copy.
-
-**Provenance:** all film is generated (Seedance 2.0 on Higgsfield, one shared
-reference image so the world never changes between clips) and ships as local
-static assets under `public/marketing/` — the zero-network law covers media.
-The product recording is the real app, captured from a dev session, and is
-labelled as such on the page. The pipeline and the clip-take decisions live in
-decisions.md.
+The one deliberate dark moment on the light page — the Call-to-Action panel —
+is a scoped `.dark` island (charcoal card, white wordmark, gold button), so
+its text uses the dark palette's tested contrast pairs. It is a card, not a
+theme flip.
 
 ---
 
@@ -234,14 +234,19 @@ decisions.md.
 1. Contrast ≥ AA everywhere; the palette is guarded by `tokens.test.ts` and
    every screen is scanned by axe in both themes.
 2. Status is never color alone — always an icon and words as well.
-3. Numbers that matter are mono, via `MonoNumber`.
+3. Numbers that matter are mono (Inter `tabular-nums`), via `MonoNumber`.
 4. Destructive actions name their consequence.
 5. Action labels persist through their flow (Approve → Approved).
 6. Custom tones render identically to preset tones, everywhere.
 7. Reduced motion removes signature animation entirely.
-8. The app is light + dark; marketing is light-only.
+8. Light-first, everywhere: light is the brand's default face; dark is
+   charcoal with ivory text and the white wordmark. Every route, marketing
+   included, honors the selected theme.
 9. A figure nobody reported is absent, never zero — "Syncing…" on a post, no
    delta at all where there is no comparable prior period.
-10. A metric moving the wrong way is `warning`, not `destructive`. Reach falling
-    is news; it is not an error, and colouring it like one cries wolf on the
-    screen where a real failure has to stand out.
+10. A metric moving the wrong way is `warning`, not `destructive`. Reach
+    falling is news; it is not an error, and colouring it like one cries wolf
+    on the screen where a real failure has to stand out.
+11. The wordmark is never redrawn, recolored outside its three supplied
+    colorways, or distorted. Trust before features — when a flourish and
+    clarity compete, clarity wins.
