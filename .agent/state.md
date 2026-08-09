@@ -44,7 +44,9 @@ main ← rb/01-motion tip (67f99b4 + close-out, fast-forwarded 2026-08-09)
      ─ rb/01-motion (M1 cinematic layer, film + two-tier laws)
 ```
 
-**Push status:** `rb/01-motion` and `main` pushed 2026-08-09.
+**Push status:** merged locally 2026-08-09 (`main` = `rb/01-motion` tip,
+ff-only). Push to origin PENDING — the session's permission gate blocked
+`git push`; run `git push origin main rb/01-motion` to land both.
 
 **Workflow from here (decided 2026-07-29):** the retroactive PRs for W0–W6 were
 skipped deliberately — solo developer, no reviewer, no value. From W7 onward,
