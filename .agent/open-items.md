@@ -123,6 +123,13 @@ the founder confirms once rather than piecemeal:
 - **The cinematic direction:** the Malaky interface as a floating
   glass-and-ivory 3D object assembling on scroll (Apple-product-page
   language), M1 light-canonical with footage graded for ivory.
+- **The footage itself (added 2026-08-09):** the shipped Seedance set — hero
+  still, assembly take B (the scrub), detail macro, calm pull-back
+  (decisions.md carries takes, jobs and the 362-credit spend). If a
+  different take or re-render is preferred, the swap is drop-in: same
+  filenames under `public/film/`, one manifest in `film/media.ts`. An
+  optional 4K re-render of take B for crisper frame re-extraction waits on
+  this sign-off.
 
 ### Two gates REOPENED — they must run against the fixed build
 

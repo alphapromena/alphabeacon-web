@@ -7,12 +7,15 @@
  * Action, Footer — on the warm-ivory surface, wordmark exactly as supplied.
  * Deliberately outside `AppShell`: a prospect has no rail to navigate.
  *
- * Motion is the brand law's whole budget: a single gentle fade-and-rise as a
- * section first enters the viewport, and the hover states the primitives
- * already have. No scroll scrubbing, no pinning, no marquee, no video. Under
- * prefers-reduced-motion the fade never exists at all — the animated state
- * lives inside a no-preference media query in globals.css, so every section
- * renders finished.
+ * Motion is two-tier since the 2026-08-08 amendment (design.md Part 5): the
+ * base page's budget is a single gentle fade-and-rise per section, and the
+ * cinematic-calm tier — the hero scrub and two film bands under
+ * features/marketing/film/ — mounts ONLY when the browser affirms
+ * no-preference (useCinematicLayer). Under prefers-reduced-motion neither
+ * tier exists: the fade's animated state lives inside a no-preference media
+ * query in globals.css and the film layer never mounts, so every section
+ * renders finished. The route is light-canonical — the footage is graded for
+ * ivory, and the app theme is ignored here (Part 6 rule 8).
  *
  * Content is the product's own: tones and their rules from `useTones()`,
  * channels from `useConnections()`, pricing from the same `usePlans()` the
@@ -33,7 +36,12 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { useConnections, usePlans, useScreenPhase, useTones } from '@/data/provider'
 import { PLATFORMS } from '@/features/connections/platforms'
+import { AmbientClip } from '@/features/marketing/film/ambient-clip'
+import { FILM } from '@/features/marketing/film/media'
+import { ScrubHero } from '@/features/marketing/film/scrub-hero'
+import { useCinematicLayer } from '@/features/marketing/film/use-cinematic'
 import { MESSAGES } from '@/lib/messages'
+import { useTheme } from '@/lib/theme'
 import { cn } from '@/lib/utils'
 
 /**
@@ -243,58 +251,118 @@ const FAQ = [
   },
 ]
 
+/**
+ * The hero copy, shared verbatim by both tiers: the static hero renders it as
+ * the section body, the cinematic scrub pins it as stage one. Either way the
+ * wordmark is the h1 — its letters are presentation, the accessible name is
+ * the sr-only text (e2e relies on this).
+ */
+function HeroCopy() {
+  return (
+    <>
+      <h1>
+        <span className="sr-only">Malaky</span>
+        <Wordmark className="h-24 w-auto sm:h-28" />
+      </h1>
+      <p className="font-display text-4xl font-semibold tracking-tight text-balance sm:text-5xl">
+        Your marketing team&apos;s AI co-pilot
+      </p>
+      <p className="max-w-[46ch] text-lg text-muted-foreground">
+        Malaky drafts your posts every morning. You review, approve, and publish. Nothing
+        goes out without your sign-off.
+      </p>
+      <div className="flex flex-wrap items-center justify-center gap-3">
+        <Button asChild size="lg">
+          <Link to="/signup">Start free</Link>
+        </Button>
+        <Button asChild size="lg" variant="outline">
+          <a href="#how">How Malaky works</a>
+        </Button>
+      </div>
+    </>
+  )
+}
+
+function TodaysWorkspaceContent() {
+  return (
+    <>
+      <Reveal className="flex flex-col gap-4">
+        <h2 className="font-display text-3xl font-semibold tracking-tight">
+          Today&apos;s workspace
+        </h2>
+        <p className="max-w-[52ch] text-muted-foreground">
+          One screen each morning: the drafts Malaky wrote overnight, waiting for you. Approve
+          the good ones, edit the close ones, decline the rest. Ten minutes, and the week
+          keeps its rhythm.
+        </p>
+      </Reveal>
+      <Reveal>
+        <WorkspacePreview />
+      </Reveal>
+    </>
+  )
+}
+
 export function MarketingHome() {
   const plans = usePlans()
   const phase = useScreenPhase()
   const tones = useTones()
   const connections = useConnections()
   const voiceTone = tones.find((tone) => tone.rules.do.length > 0) ?? tones[0]
+  const cinematic = useCinematicLayer()
+
+  /* Light-canonical (design.md Part 6 rule 8, amended): the footage is graded
+     for ivory, so this route ignores the app theme. The preference itself is
+     untouched — the class is restored on the way out. */
+  const { resolvedTheme } = useTheme()
+  useEffect(() => {
+    const root = document.documentElement
+    root.classList.remove('dark')
+    return () => {
+      if (resolvedTheme === 'dark') root.classList.add('dark')
+    }
+  }, [resolvedTheme])
 
   return (
     <div className="min-h-svh bg-background text-foreground">
       <SiteHeader />
 
       <main>
-        {/* Hero — the wordmark is the h1: its letters are presentation, the
-            accessible name is the sr-only text (e2e relies on this). */}
-        <section className="mx-auto flex max-w-3xl flex-col items-center gap-6 px-6 pt-20 pb-24 text-center sm:pt-24">
-          <h1>
-            <span className="sr-only">Malaky</span>
-            <Wordmark className="h-24 w-auto sm:h-28" />
-          </h1>
-          <p className="font-display text-4xl font-semibold tracking-tight text-balance sm:text-5xl">
-            Your marketing team&apos;s AI co-pilot
-          </p>
-          <p className="max-w-[46ch] text-lg text-muted-foreground">
-            Malaky drafts your posts every morning. You review, approve, and publish. Nothing
-            goes out without your sign-off.
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            <Button asChild size="lg">
-              <Link to="/signup">Start free</Link>
-            </Button>
-            <Button asChild size="lg" variant="outline">
-              <a href="#how">How Malaky works</a>
-            </Button>
-          </div>
-        </section>
+        {cinematic ? (
+          <ScrubHero
+            intro={
+              <div className="flex flex-col items-center gap-6">
+                <HeroCopy />
+              </div>
+            }
+          />
+        ) : (
+          <section className="mx-auto flex max-w-3xl flex-col items-center gap-6 px-6 pt-20 pb-24 text-center sm:pt-24">
+            <HeroCopy />
+          </section>
+        )}
 
-        {/* Today's Workspace */}
-        <section className="mx-auto grid max-w-6xl items-center gap-12 px-6 py-20 lg:grid-cols-2">
-          <Reveal className="flex flex-col gap-4">
-            <h2 className="font-display text-3xl font-semibold tracking-tight">
-              Today&apos;s workspace
-            </h2>
-            <p className="max-w-[52ch] text-muted-foreground">
-              One screen each morning: the drafts Malaky wrote overnight, waiting for you. Approve
-              the good ones, edit the close ones, decline the rest. Ten minutes, and the week
-              keeps its rhythm.
-            </p>
-          </Reveal>
-          <Reveal>
-            <WorkspacePreview />
-          </Reveal>
-        </section>
+        {/* Today's Workspace — pinned over the detail macro when the layer is
+            on; the plain two-column section otherwise. Same content either way. */}
+        {cinematic ? (
+          <section className="relative h-[220vh]">
+            <div className="sticky top-0 flex h-svh items-center overflow-hidden">
+              <AmbientClip
+                src={FILM.detail}
+                poster={FILM.detailPoster}
+                className="absolute inset-0 size-full object-cover"
+              />
+              <div aria-hidden className="absolute inset-0 bg-background/55" />
+              <div className="relative mx-auto grid w-full max-w-6xl items-center gap-12 px-6 lg:grid-cols-2">
+                <TodaysWorkspaceContent />
+              </div>
+            </div>
+          </section>
+        ) : (
+          <section className="mx-auto grid max-w-6xl items-center gap-12 px-6 py-20 lg:grid-cols-2">
+            <TodaysWorkspaceContent />
+          </section>
+        )}
 
         {/* How Malaky Works */}
         <section id="how" className="border-t border-border">
@@ -553,22 +621,35 @@ export function MarketingHome() {
 
         {/* Call to Action — the one deliberate dark moment on the page: a
             scoped charcoal island (design.md Part 3: white wordmark on dark),
-            not a theme flip. */}
-        <section className="mx-auto max-w-6xl px-6 py-20">
-          <Reveal>
-            <div className="dark flex flex-col items-center gap-6 rounded-2xl border border-border bg-card px-6 py-16 text-center text-card-foreground">
-              <Wordmark tone="white" className="h-16 w-auto" />
-              <p className="font-display text-3xl font-semibold tracking-tight text-balance">
-                Tomorrow morning, your drafts are waiting
-              </p>
-              <p className="max-w-[44ch] text-muted-foreground">
-                Set up your workspace tonight. Review your first drafts with your first coffee.
-              </p>
-              <Button asChild size="lg">
-                <Link to="/signup">Start free</Link>
-              </Button>
-            </div>
-          </Reveal>
+            not a theme flip. With the layer on, the calm pull-back drifts
+            behind it — finished work, quiet order in the morning. */}
+        <section className="relative overflow-hidden py-20">
+          {cinematic && (
+            <>
+              <AmbientClip
+                src={FILM.calm}
+                poster={FILM.calmPoster}
+                className="absolute inset-0 size-full object-cover"
+              />
+              <div aria-hidden className="absolute inset-0 bg-background/40" />
+            </>
+          )}
+          <div className="relative mx-auto max-w-6xl px-6">
+            <Reveal>
+              <div className="dark flex flex-col items-center gap-6 rounded-2xl border border-border bg-card px-6 py-16 text-center text-card-foreground">
+                <Wordmark tone="white" className="h-16 w-auto" />
+                <p className="font-display text-3xl font-semibold tracking-tight text-balance">
+                  Tomorrow morning, your drafts are waiting
+                </p>
+                <p className="max-w-[44ch] text-muted-foreground">
+                  Set up your workspace tonight. Review your first drafts with your first coffee.
+                </p>
+                <Button asChild size="lg">
+                  <Link to="/signup">Start free</Link>
+                </Button>
+              </div>
+            </Reveal>
+          </div>
         </section>
       </main>
 

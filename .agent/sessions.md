@@ -926,3 +926,33 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   appear in the session registry (and ideally moves the skill folder up one
   level) → sweep → `models_explore` → balance → hero image with both refs →
   clips 1–3 → engineering → verify → merge
+
+### 2026-08-09 08:45 — rb/01-motion: the gate cleared; film generated; cinematic layer SHIPPED
+
+- Did: the whole generation-and-engineering arc in one sitting. Gate: the
+  claude.ai Higgsfield connector surfaced (85 tools) and the
+  `fable5-higgsfield` skill registered at its correct path — both halves of
+  the 2026-08-08 blocker cleared. Generation exactly per the brief:
+  `models_explore` confirmed `seedance_2_0` + `nano_banana_pro` (never
+  guessed), balance checked (2513.5 cr), hero image generated first with
+  BOTH UI refs, then 3 takes of the assembly clip + detail macro + calm
+  pull-back, every clip referencing the hero + both refs. **Take B** chosen
+  (monotonic build spread across the full duration; A dies at half-way, C's
+  droplets read as particles). Spend 362 credits, preflighted.
+- Engineering: `features/marketing/film/` (media.ts manifest, use-cinematic
+  gate, scrub-hero canvas sequence, ambient-clip), 193-frame WebP scrub
+  (4.8 MB) + two CRF-28 ambient clips, pinned workspace band, calm CTA
+  film, light-canonical effect, stage-fade CSS under no-preference.
+  `verify:w02` laws rewritten two-tier (cinematic primitives only in
+  `film/`, gate affirmed positively, film paths only in media.ts, frame
+  count asserted against disk, Lenis banned, currentTime banned); a
+  `@reduced-motion` e2e proves the layer never mounts.
+- Phase: rb/01-motion
+- Files: `src/features/marketing/{marketing-home.tsx,film/*}`,
+  `src/styles/globals.css`, `public/film/**`, `scripts/verify-w02.ts`,
+  `e2e/onboarding.spec.ts`, `design.md`, `.agent/*`
+- Decisions: two new — the footage record (take B, spend, jobs) and
+  no-Lenis (frame easing over smooth-scroll dependency)
+- Verify: `verify:w02` full run green (summary recorded in this entry's turn)
+- Next: founder sign-off on open-items 15 (now including the footage);
+  optional 4K re-render of take B for final frame re-extraction

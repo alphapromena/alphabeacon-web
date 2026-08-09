@@ -235,9 +235,13 @@ unchanged, poster stills in place of footage. With the cinematic layer, M1
 becomes **light-canonical**: the footage is graded for ivory, and the
 marketing route ignores the app theme (decisions.md).
 
-Implementation lands on `rb/01-motion` (state.md tracks it); `verify:w02`'s
-structural check is extended with the amended law in the same change. Until
-that layer ships, the base page's tier-1 rules are what is enforced.
+The layer SHIPPED on `rb/01-motion` (2026-08-09): the hero scrub runs the
+Seedance assembly clip as 193 canvas frames under
+`features/marketing/film/`, two ambient film bands carry the detail macro
+and the calm pull-back, and `verify:w02`'s structural check enforces the
+two-tier split — cinematic primitives legal only inside `film/`, the
+reduced-motion gate affirmed positively, film paths only in `media.ts`,
+scroll native (no Lenis; the rAF loop eases frame indices, never scroll).
 
 The one deliberate dark moment on the light page — the Call-to-Action panel —
 is a scoped `.dark` island (charcoal card, white wordmark, gold button), so

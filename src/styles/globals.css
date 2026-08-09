@@ -188,4 +188,25 @@
     opacity: 1;
     translate: 0 0;
   }
+
+  /* The cinematic tier's pinned copy (scrub-hero.tsx): stages cross-fade as
+     scroll progress crosses its bands. Inside the same no-preference query as
+     the reveal because the layer itself only mounts under no-preference —
+     this is defense in depth, not the gate. */
+  [data-mk-stage] {
+    opacity: 0;
+    translate: 0 12px;
+    transition:
+      opacity 0.6s cubic-bezier(0, 0, 0.2, 1),
+      translate 0.6s cubic-bezier(0, 0, 0.2, 1);
+  }
+
+  [data-mk-stage]:not([data-mk-stage='in']) {
+    pointer-events: none;
+  }
+
+  [data-mk-stage='in'] {
+    opacity: 1;
+    translate: 0 0;
+  }
 }

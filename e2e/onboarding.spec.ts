@@ -50,6 +50,18 @@ test('marketing is the front door when signed out', async ({ page }) => {
   await expect(page.getByText('Cancel anytime, no long-term contracts.')).toBeVisible()
 })
 
+test('@reduced-motion the cinematic layer never mounts', async ({ page }) => {
+  // The tier-2 license (design.md Part 5): under prefers-reduced-motion the
+  // tier-1 static page renders unchanged — no canvas, no film, no pin. The
+  // structural check proves the gate exists; this proves it closes.
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await asVisitor(page)
+  await expect(page.getByRole('heading', { level: 1, name: 'Malaky' })).toBeVisible()
+  await expect(page.getByText("Your marketing team's AI co-pilot")).toBeVisible()
+  await expect(page.locator('canvas')).toHaveCount(0)
+  await expect(page.locator('video')).toHaveCount(0)
+})
+
 test('@axe marketing and auth screens scan clean', async ({ page }) => {
   await asVisitor(page)
   expect((await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze()).violations).toEqual([])

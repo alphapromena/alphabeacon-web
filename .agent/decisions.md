@@ -778,3 +778,48 @@ add a new entry that says it supersedes the old one.
   registry (verify with a tool sweep before anything else), then
   `models_explore` → balance check → hero image with BOTH refs → clips 1–3
   → engineering → verify → merge.
+
+### 2026-08-09 — The M1 film is generated; take B won the scrub
+
+- Why each choice, in order. The connector surfaced this session (85 tools),
+  so the gate cleared. `models_explore` confirmed ids rather than guessing:
+  **seedance_2_0** (std/1080p/16:9/8s/silent — the recorded defaults) for
+  film and **nano_banana_pro** (2K, text-rendering strength — the refs are
+  UI screenshots whose text must survive) for the hero still. The hero image
+  was generated FIRST with both UI refs and passed to every clip, so the
+  glass object cannot drift between shots — consistency beats quality.
+- Three takes of the assembly clip only; singles elsewhere. **Take B**
+  shipped: its build spreads monotonically across the full 8 s, so every
+  scroll position maps to visible progress. Take A completes by half-way and
+  scrubs dead for the back half; take C floats glass droplets mid-assembly
+  that read as particles, which the tier forbids. Clips 2 (detail macro) and
+  3 (calm pull-back) were first-take accepts.
+- Spend: 2 (hero) + 5 × 72 = **362 credits**, preflighted with `get_cost`
+  before submission. Jobs: hero `394ba3f4`, takes `61e0a521`/`924ceaf3`
+  (shipped)/`2a253d80`, detail `afd189ed`, calm `2cab6a96`.
+- Web payload: 193 WebP frames 1536×864 (4.8 MB) + two H.264 CRF-28 clips
+  (~0.7 MB each) = 6.3 MB, ~90 % below the raw renders. Paths live only in
+  `film/media.ts`, and `verify:w02` asserts the declared frame count against
+  the files on disk.
+- Instead of: Seedance 2.5 (720p ceiling — below the recorded 1080p bar), or
+  accepting take C for its gold underglow (prettier single frames, but a
+  scrub is judged by its progress curve, not its stills).
+
+### 2026-08-09 — The scrub eases frames, not scroll: no Lenis this time
+
+- Why: the 2026-07 build smoothed wheel steps with Lenis AND a rAF lerp on
+  the frame index. The lerp alone absorbs wheel quantization for the canvas
+  (the only scroll-linked motion on the page — the pinned copy fades on band
+  crossings, which native scroll cannot jolt), and native scroll keeps
+  sticky, anchors, keyboard paging and assistive tech untouched — the same
+  properties the old decision valued Lenis for preserving. One less
+  dependency, and the reduced-motion story simplifies to "the layer never
+  mounts".
+- Instead of: reintroducing `lenis` (a new dependency needing its own guard
+  so reduced motion never constructs it — real cost, and its benefit here
+  was already covered by the easing), or scroll-hijack libraries (own the
+  scrollbar, break sticky and a11y — rejected in 2026-07 too).
+- `verify:w02` bans Lenis and animation libraries across marketing, permits
+  canvas/rAF/scroll-listeners only under `film/`, and requires the
+  `use-cinematic` gate to affirm `no-preference` positively — absence of a
+  match (jsdom, old browsers) renders the static page, never the layer.

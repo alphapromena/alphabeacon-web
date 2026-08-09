@@ -102,37 +102,78 @@ function marketingLawsHold(): boolean {
   }
 
   const failures: string[] = []
+  const isFilm = (file: string) => file.includes(join('marketing', 'film'))
 
-  // 1. The calm law (brand law: gentle fades and subtle hovers ONLY). No
-  //    video, no canvas, no scroll hijack, no animation library, no rAF loop:
-  //    the only legal motion primitives are the reveal attribute and CSS.
-  const banned: [RegExp, string][] = [
-    [/<video/, 'renders a <video> -- the calm law allows none'],
-    [/<canvas|getContext\(/, 'draws to a canvas -- the calm law allows none'],
-    [/from ['"]lenis['"]|new Lenis/, 'imports Lenis -- scroll must stay native'],
+  // 1a. Laws that bind BOTH tiers (design.md Part 5, amended 2026-08-08).
+  //     Scroll stays native and no animation library enters; the scrub eases
+  //     frame indices, never the scroll position. And footage is never
+  //     scrubbed via currentTime -- frames on canvas only.
+  const bannedEverywhere: [RegExp, string][] = [
+    [/from ['"]lenis['"]|new Lenis/, 'imports Lenis -- scroll stays native (decisions.md 2026-08-09)'],
     [/from ['"](gsap|motion|framer-motion)/, 'imports an animation library'],
-    [/requestAnimationFrame/, 'runs a rAF loop -- reveal is CSS-only'],
-    [/addEventListener\(['"]scroll['"]/, 'listens to scroll -- use IntersectionObserver'],
+    [/\.currentTime/, 'scrubs footage by currentTime -- frames on canvas only'],
+  ]
+  // 1b. The calm law still binds everything OUTSIDE film/: the cinematic
+  //     primitives are legal only inside the layer that the reduced-motion
+  //     gate controls.
+  const bannedOutsideFilm: [RegExp, string][] = [
+    [/<video/, 'renders a <video> outside film/ -- the calm tier allows none'],
+    [/<canvas|getContext\(/, 'draws to a canvas outside film/ -- the calm tier allows none'],
+    [/requestAnimationFrame/, 'runs a rAF loop outside film/ -- reveal is CSS-only'],
+    [/addEventListener\(['"]scroll['"]/, 'listens to scroll outside film/ -- use IntersectionObserver'],
   ]
   for (const [file, source] of sources) {
-    for (const [pattern, why] of banned) {
+    for (const [pattern, why] of bannedEverywhere) {
+      if (pattern.test(source)) failures.push(`${file}: ${why}`)
+    }
+    if (isFilm(file)) continue
+    for (const [pattern, why] of bannedOutsideFilm) {
       if (pattern.test(source)) failures.push(`${file}: ${why}`)
     }
   }
 
-  // 2. The reveal's animated state exists only under no-preference, so
-  //    reduced motion renders every section finished (removed, not slowed).
+  // 1c. Film video is ambience, and says so: muted, inline, decorative, with
+  //     a poster. A film clip that can grab focus or claim to be content is a
+  //     law violation, not a style choice.
+  for (const [file, source] of sources) {
+    if (!isFilm(file) || !/<video/.test(source)) continue
+    for (const required of ['muted', 'playsInline', 'aria-hidden', 'poster']) {
+      if (!source.includes(required)) {
+        failures.push(`${file}: film <video> is missing ${required}`)
+      }
+    }
+  }
+
+  // 1d. The reduced-motion gate is the tier's whole license: the hook must
+  //     consult the media query positively (mount only when no-preference
+  //     AFFIRMED), and the home page must render the scrub behind it.
+  const gate = named('use-cinematic.ts')
+  if (!/matchMedia/.test(gate) || !gate.includes('prefers-reduced-motion: no-preference')) {
+    failures.push('use-cinematic.ts: the layer gate must affirm no-preference via matchMedia')
+  }
+  const home = named('marketing-home.tsx')
+  if (!/useCinematicLayer\(\)/.test(home)) {
+    failures.push('marketing-home.tsx: the film layer lost its useCinematicLayer() gate')
+  }
+  if (/<ScrubHero/.test(home) && !/cinematic\s*\?/.test(home)) {
+    failures.push('marketing-home.tsx: ScrubHero must render behind the cinematic flag')
+  }
+
+  // 2. The reveal's and the stages' animated state exists only under
+  //    no-preference, so reduced motion renders every section finished
+  //    (removed, not slowed).
   const globals = readFileSync(join(root, 'src', 'styles', 'globals.css'), 'utf8')
   const noPref = globals.indexOf('prefers-reduced-motion: no-preference')
-  const reveal = globals.indexOf('[data-mk-reveal]')
-  if (noPref === -1 || reveal === -1 || reveal < noPref) {
-    failures.push('globals.css: [data-mk-reveal] styles are not inside the no-preference query')
+  for (const attribute of ['[data-mk-reveal]', '[data-mk-stage]']) {
+    const at = globals.indexOf(attribute)
+    if (noPref === -1 || at === -1 || at < noPref) {
+      failures.push(`globals.css: ${attribute} styles are not inside the no-preference query`)
+    }
   }
 
   // 3. The wordmark law (design.md Part 3): the Arabic artwork enters only as
   //    an <img> of one of the three supplied files -- never redrawn as SVG or
   //    text -- and no other asset directory is referenced.
-  const home = named('marketing-home.tsx')
   if (!/\/brand\/malaky-logo-(charcoal|gold|white)\.png/.test(home)) {
     failures.push('marketing-home.tsx: the supplied wordmark files are not used')
   }
@@ -140,6 +181,31 @@ function marketingLawsHold(): boolean {
     if (source.includes("'/marketing/")) {
       failures.push(`${file}: references /marketing/ -- that asset directory was retired`)
     }
+    // Film asset paths live in media.ts and nowhere else, so the payload has
+    // one manifest and the next asset swap is a one-file change.
+    if (!file.endsWith('media.ts') && /['"`]\/film\//.test(source)) {
+      failures.push(`${file}: film asset path outside media.ts`)
+    }
+  }
+
+  // 3b. The frame manifest tells the truth: the count media.ts declares is
+  //     the count public/film/hero actually holds.
+  const media = named('media.ts')
+  const declaredCount = Number(/HERO_FRAME_COUNT = (\d+)/.exec(media)?.[1] ?? NaN)
+  const heroDir = join(root, 'public', 'film', 'hero')
+  const actualCount = existsSync(heroDir)
+    ? readdirSync(heroDir).filter((entry) => entry.endsWith('.webp')).length
+    : 0
+  if (!Number.isFinite(declaredCount) || declaredCount !== actualCount) {
+    failures.push(
+      `media.ts declares ${declaredCount} hero frames; public/film/hero holds ${actualCount}`,
+    )
+  }
+
+  // 3c. Light-canonical (design.md Part 6 rule 8): the route ignores the app
+  //     theme -- the footage is graded for ivory.
+  if (!/classList\.remove\(['"]dark['"]\)/.test(home)) {
+    failures.push('marketing-home.tsx: the light-canonical effect is missing')
   }
 
   // 4. Pricing stays on the one plan source: the hook, and no local records.
@@ -168,8 +234,16 @@ function marketingLawsHold(): boolean {
 function deliverablesExist(): boolean {
   console.log('\n=== W2 deliverables exist ===')
   const required = [
-    // M1
+    // M1 (+ the cinematic film layer, rb/01-motion)
     'src/features/marketing/marketing-home.tsx',
+    'src/features/marketing/film/media.ts',
+    'src/features/marketing/film/use-cinematic.ts',
+    'src/features/marketing/film/scrub-hero.tsx',
+    'src/features/marketing/film/ambient-clip.tsx',
+    'public/film/detail.mp4',
+    'public/film/detail-poster.webp',
+    'public/film/calm.mp4',
+    'public/film/calm-poster.webp',
     // A1-A4
     'src/features/auth/auth-layout.tsx',
     'src/features/auth/signup-screen.tsx',
@@ -262,11 +336,12 @@ function main(): void {
   console.log('  2. Walk the wizard on a phone-width viewport -- the day pills, the')
   console.log('     stepper, and the tone sheet are the three places touch targets and')
   console.log('     overlay behaviour are hardest to get right.')
-  console.log('  3. Check M1 in both themes: light is the brand default; dark must show')
-  console.log('     the white wordmark on charcoal (design.md Part 3).')
-  console.log('  4. Scroll M1 end to end by hand -- every reveal should be a gentle fade,')
-  console.log('     nothing more. Then repeat with reduced motion on: the page must read')
-  console.log('     as designed, not as degraded.')
+  console.log('  3. M1 is light-canonical (Part 6 rule 8): confirm it renders light even')
+  console.log('     with the app in dark, and that the app itself still honors dark.')
+  console.log('  4. Scroll M1 end to end by hand -- the hero scrub should build the')
+  console.log('     interface smoothly with no frame pops, the pinned copy should land')
+  console.log('     on its bands, and every base reveal should stay a gentle fade. Then')
+  console.log('     repeat with reduced motion on: the static page, unchanged, no film.')
 
   process.exit(failed ? 1 : 0)
 }

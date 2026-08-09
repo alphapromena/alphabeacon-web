@@ -5,7 +5,7 @@ without reconstructing it from the session log. **Update this file at the end
 of any turn that finishes a phase or changes the plan.** `sessions.md` is the
 chronological record; this is the current picture.
 
-_Last updated: 2026-08-08, after the Malaky rebrand (`rb/00-malaky`)._
+_Last updated: 2026-08-09, after the M1 cinematic layer shipped (`rb/01-motion`)._
 
 ---
 
@@ -102,13 +102,22 @@ Current totals: **332 unit tests** (30 files), **static e2e 68 passed / 23 live-
 
 **M1 was rebuilt again on 2026-08-08 as the Malaky front door** (design.md
 Part 5 — "Marketing layer"): the kit's §4 flow in order on the warm-ivory
-surface, wordmark exactly as supplied, one gentle fade per section as the
-whole motion budget, real content via `useTones()`/`useConnections()`/
-`usePlans()`. The 2026-07-30 cinematic page (scrub, HUD clock, Lenis,
-marquee, film) is DELETED along with `public/marketing/` (~8.4 MB) and the
-`lenis` dependency — git history preserves them; the clip-take open item is
-void. Page weight: ~150 KB of wordmark PNGs. `verify:w02`'s structural laws
-now enforce the calm page.
+surface, wordmark exactly as supplied, real content via `useTones()`/
+`useConnections()`/`usePlans()`. The 2026-07-30 cinematic page (scrub, HUD
+clock, Lenis, marquee, film) is DELETED along with `public/marketing/`
+(~8.4 MB) and the `lenis` dependency — git history preserves them.
+
+**On 2026-08-09 the cinematic-calm tier SHIPPED on `rb/01-motion`** (design.md
+Part 5, tier 2): the hero scrub runs a Seedance 2.0 assembly clip (take B,
+generated against one hero-image reference + the two real-UI refs) as 193
+canvas frames under `features/marketing/film/`, with a pinned workspace band
+over the detail macro and the calm pull-back behind the CTA. The layer
+mounts only when `prefers-reduced-motion: no-preference` is AFFIRMED; the
+kit-flow page is the complete fallback. M1 is light-canonical (Part 6 rule
+8). Film payload 6.3 MB under `public/film/`, paths only in `film/media.ts`.
+`verify:w02` enforces the two-tier split structurally, and a
+`@reduced-motion` e2e proves the layer never mounts. Footage provenance and
+the 362-credit spend: decisions.md 2026-08-09.
 
 ## What W7 needs (from `web-plan.md` §9)
 
