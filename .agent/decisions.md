@@ -750,3 +750,31 @@ add a new entry that says it supersedes the old one.
   consistency trick), then clips 1–3 with the hero + UI screenshots as
   references to every generation, takes recorded in `m1-takes/`, then the
   engineering layer per the brief.
+
+### 2026-08-09 — generation gate re-checked: skill found, connector still absent
+
+- Supersedes half of the 2026-08-08 blocker: the `fable5-higgsfield` skill
+  NOW exists on this machine, at
+  `~/.claude/skills/fable5-higgsfield-skill/fable5-higgsfield/` (SKILL.md +
+  references/site-archetypes.md, both read). Note the extra nesting level —
+  the harness skill registry does not list it, so it is readable but not
+  invocable as a skill; moving `fable5-higgsfield/` up one level into
+  `~/.claude/skills/` would register it.
+- The other half stands: the claude.ai Higgsfield connector is still not in
+  this session's tool registry — three ToolSearch sweeps (by name, by
+  Seedance/model keywords, by generation keywords) surfaced zero
+  `mcp__claude_ai_Higgsfield__*` tools. The direct `higgsfield` HTTP server
+  was removed deliberately (Higgsfield's OAuth whitelists only claude.ai's
+  redirect URI, so Claude Code cannot complete its flow); it still appears
+  as an unauthenticatable stub. Per the skill and the standing instruction,
+  the Seedance model id must come from `models_explore` — never guessed —
+  so no generation was attempted and **no credits were spent**.
+- The two Seedance UI references survive: original in the 2026-08-08 session
+  scratchpad `m1-refs/` (`ref-dashboard-light.png`,
+  `ref-today-queue-light.png`), now also copied into the 2026-08-09 session
+  scratchpad `m1-refs/` as a hedge against temp cleanup.
+- Resume path unchanged, with one sharpened precondition: the connector must
+  actually surface as `mcp__claude_ai_Higgsfield__*` tools in the session
+  registry (verify with a tool sweep before anything else), then
+  `models_explore` → balance check → hero image with BOTH refs → clips 1–3
+  → engineering → verify → merge.

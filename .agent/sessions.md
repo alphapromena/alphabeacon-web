@@ -903,3 +903,26 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   still the enforced tier; verify:w02 untouched by design)
 - Next: user reconnects the Higgsfield connector + provides the
   fable5-higgsfield skill → hero image → clips 1–3 → engineering per brief
+
+### 2026-08-09 08:00 — rb/01-motion resume attempt: gate still blocked (skill found, connector absent)
+
+- Did: re-ran the generation gate. The `fable5-higgsfield` skill now exists
+  (`~/.claude/skills/fable5-higgsfield-skill/fable5-higgsfield/` — nested one
+  level too deep to register as an invocable skill, but SKILL.md and
+  references/site-archetypes.md were read directly). The claude.ai Higgsfield
+  connector is still absent: three ToolSearch registry sweeps found zero
+  `mcp__claude_ai_Higgsfield__*` tools; the removed direct `higgsfield`
+  server remains an unauthenticatable stub (OAuth incompatible with Claude
+  Code by design). No generation attempted, no credits spent. Copied the two
+  Seedance UI refs into the current session scratchpad `m1-refs/` as a
+  backup, and killed the leftover :5174 static Vite server (PID 11384; port
+  confirmed free).
+- Phase: rb/01-motion, docs prefix only
+- Files: `.agent/{decisions,sessions}.md`
+- Decisions: see decisions.md 2026-08-09 — gate half-cleared, resume
+  precondition sharpened
+- Verify: docs-only change — lint/typecheck/test unaffected
+- Next: user connects the **claude.ai Higgsfield connector** so its tools
+  appear in the session registry (and ideally moves the skill folder up one
+  level) → sweep → `models_explore` → balance → hero image with both refs →
+  clips 1–3 → engineering → verify → merge
