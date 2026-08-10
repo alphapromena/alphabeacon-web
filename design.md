@@ -218,30 +218,50 @@ finished, removed rather than slowed. The dark-ink cinematic concept of
 2026-07 (ink hero, film, marquee) stays retired; its assets live only in git
 history.
 
-**Tier 2 — cinematic-calm (AMENDMENT, 2026-08-08 · scoped to M1 only).**
-Scroll-scrubbed footage and pinned sections are allowed on the marketing
-page when the footage itself obeys the brand: warm ivory spaces, soft
-daylight, champagne gold as the only glow, charcoal UI, one slow drifting
-camera. The licensed direction is the Malaky interface itself as a floating
-glass-and-ivory object that assembles as the visitor scrolls
-(Apple-product-page language). The app keeps the strict calm law — nothing
-in this tier may leak into `AppShell`.
+**Tier 2 — cinematic-calm v2 (AMENDED 2026-08-10 by the V1 brief · M1
+only).** The tier is REDEFINED from scrubbed footage to
+**scroll-choreographed 3D card transforms** (brief §13, decisions.md D8):
+the hero object is the marketing Malaky produces — floating,
+publication-ready, channel-specific posts for the demo customer brands,
+each in that customer's own colors. Cards may float slightly, separate,
+change depth, rotate subtly, come forward when relevant, and reorganize as
+the story progresses. Motion is slow, premium, and scroll-led; the engine
+animates `transform`/`opacity` only, on native scroll (the no-Lenis
+decision stands), rAF-eased the way rb/01 eased frame indices. The app
+keeps the strict calm law — nothing in this tier may leak into `AppShell`.
+The rb/01 dashboard-as-glass-object film is retired from the route (D1);
+its masters live in the local takes archive and the Higgsfield library.
 
-Forbidden even in this tier: dark voids, particles, kinetic type slams, film
-grain, neon, AI clichés (robots, brains, circuits, glowing effects).
-Scrubbing runs on canvas frames in the hero only — never `<video
-currentTime>`. `prefers-reduced-motion` renders the tier-1 static page
-unchanged, poster stills in place of footage. With the cinematic layer, M1
-becomes **light-canonical**: the footage is graded for ivory, and the
-marketing route ignores the app theme (decisions.md).
+Forbidden even in this tier: bouncing, fast spinning, particles, exploding
+cards, excessive parallax (brief §13) — plus the house bans: dark voids,
+kinetic type slams, film grain, neon, AI clichés (robots, brains,
+circuits, glowing effects). No canvas frame sequences and no video on the
+marketing route — the film ban is now an assertion, and `<video
+currentTime>` stays banned repo-wide. `prefers-reduced-motion` renders the
+static tier-1 page: the scroll engine never mounts, and every scene's
+content is fully readable in normal document flow. M1 stays
+**light-canonical**: the route ignores the app theme (decisions.md).
 
-The layer SHIPPED on `rb/01-motion` (2026-08-09): the hero scrub runs the
-Seedance assembly clip as 193 canvas frames under
-`features/marketing/film/`, two ambient film bands carry the detail macro
-and the calm pull-back, and `verify:w02`'s structural check enforces the
-two-tier split — cinematic primitives legal only inside `film/`, the
-reduced-motion gate affirmed positively, film paths only in `media.ts`,
-scroll native (no Lenis; the rAF loop eases frame indices, never scroll).
+**Surfaces in this tier (brief §12):** 18–24 px corner radius, thin
+warm-gray borders, very subtle shadows, ivory/white surfaces, generous
+internal padding. No pervasive glassmorphism, no neon or glowing borders,
+no heavy gradients or giant drop shadows.
+
+**Customer-content palette exemption (D5):** Malaky chrome — navigation,
+section copy, buttons, chips, everything that is Malaky — stays strictly
+under the palette law: Warm Ivory / Deep Charcoal / Limestone surfaces,
+champagne gold as the only Malaky accent, used selectively (active states,
+tiny dividers, status details, CTA moments). Demo-brand artwork INSIDE a
+mock post may use that demo brand's own palette — that contrast is the
+story ("Malaky learns each customer's identity", brief §3/§10). The
+exemption covers card interiors only; it never licenses customer colors on
+Malaky chrome.
+
+**The copy system (brief §11):** large, short headlines, generous
+whitespace, always the pattern short statement → visual proof → short
+explanation. The headline set: "Your marketing, already done." · "Built
+overnight." · "It remembers your business." · "Malaky doesn't wait for a
+prompt." · "You approve what goes out." · "Arabic, natively."
 
 The one deliberate dark moment on the light page — the Call-to-Action panel —
 is a scoped `.dark` island (charcoal card, white wordmark, gold button), so

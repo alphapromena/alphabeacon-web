@@ -823,3 +823,105 @@ add a new entry that says it supersedes the old one.
   canvas/rAF/scroll-listeners only under `film/`, and requires the
   `use-cinematic` gate to affirm `no-preference` positively — absence of a
   match (jsdom, old browsers) renders the static page, never the layer.
+
+### 2026-08-10 — D1: the hero film is retired; a DOM/CSS 3D card system replaces it (rb/02)
+
+- Why: Abdullah's V1 brief (`Docs/brief/malaky-website-v1-brief-abdullah.md`)
+  changes the hero SUBJECT — the marketing Malaky produces, not the product
+  interface — and requires things baked video cannot deliver: a working
+  Approve · Edit · Decline moment, legible real text including native RTL
+  Arabic inside the cards, animated workflow-status transitions, the same
+  story as a mobile swipe/stack, and aggressive Core Web Vitals. Film v1
+  (frame sequences, `film/` components, media manifest) leaves the app and
+  `public/`; the masters stay in the local `m1-takes/` scratchpad and the
+  Higgsfield library. **This closes the 6.3 MB payload flag** — the film
+  payload leaves with the film.
+- Deferred option, recorded: `rb/03-ambient` may regenerate a Seedance
+  ambient layer with the NEW subject (floating output cards) once the card
+  designs exist to serve as generation references.
+- Instead of: adapting the rb/01 film to the new story (the subject itself
+  is what changed — no regrade fixes that), or generating new footage now
+  (the brief's interactivity requirements rule out baked video regardless).
+
+### 2026-08-10 — D2: one CTA pair sitewide (rb/02)
+
+- Why: brief §14 — one conversion goal. Primary is exactly "Start free";
+  secondary is exactly "See how it works →" (anchors to How Malaky works).
+  Every other variant (Book demo / Request demo / Join waitlist / Try
+  Malaky / Get started) is purged and `verify:w02` greps them banned.
+- Instead of: mixing launch models across sections — §14 names this
+  explicitly as the failure.
+
+### 2026-08-10 — D3: Pricing leaves V1 navigation and flow (DEFAULT; founder may flip) (rb/02)
+
+- Why: brief §15 + §28 — pricing is not finalized, billing is not in the
+  API, and the current static plans carry the model/credit terminology §28
+  bans. Publishing placeholder pricing is worse than omitting it. The route
+  code stays unlinked rather than deleted, and the seam is one small commit
+  from the §28 alternative (outcome-led Starter / Growth / Business, no
+  model names, no credits, no "all channels") if the founder finalizes
+  tiers.
+- Consciously retired with it: the rb-era verify law "pricing keeps
+  `usePlans()` on M1" — the marketing page no longer renders plans at all.
+  H1 (Billing) still reads `usePlans()` in the app, untouched.
+- Instead of: shipping the current Free/Pro/Studio cards (credit-led, model
+  names — both banned), or deleting the pricing code (the flip should be
+  cheap).
+
+### 2026-08-10 — D4: marketing payload budget re-set to ≤ 3.0 MB (rb/02)
+
+- Why: the film's 6.3 MB budget dies with the film (D1). The card system is
+  DOM/CSS; mock-post artwork lazy-loads per scene, prefers SVG/CSS
+  composition, and rasters only as WebP/AVIF where needed. The close-out
+  report states the measured number.
+- Instead of: inheriting the old budget — it existed to carry footage the
+  route no longer ships.
+
+### 2026-08-10 — D5: customer-content palette exemption (rb/02)
+
+- Why: the story is "Malaky learns each customer's identity" (brief §3,
+  §10) — demo-brand artwork INSIDE mock posts uses that demo brand's own
+  palette. Malaky chrome stays strictly under the palette law (Warm Ivory /
+  Deep Charcoal / Limestone; gold as the only Malaky accent). Written into
+  design.md Part 5 so guard checks don't misfire on card interiors.
+- Instead of: forcing demo content into Malaky's palette — it would erase
+  the exact point the hero makes.
+
+### 2026-08-10 — D6: platform marks are text labels, never imported logo assets (rb/02)
+
+- Why: channels are identified with subtle text labels (plus glyphs already
+  in the repo's icon set where suitable); third-party brand-logo assets
+  carry trademark and freshness burdens a V1 demo doesn't need. Roadmap
+  channels are labeled per §22/§34 and the claims map.
+- Instead of: importing platform logo packs — trademark exposure for no
+  storytelling gain.
+
+### 2026-08-10 — D7: where the brief disagrees with itself, the addendum wins (rb/02)
+
+- Why: §19–§35 is the later, fuller direction. Concretely: How Malaky works
+  is the 5-step visual workflow of §20 (not §6's six rows); the page flow is
+  §33's 17 items (not §17's 13); section headlines are "Built here. Written
+  for here." (§24), "Marketing without made-up facts." (§27), "Your company
+  has a voice. So do the people behind it." (§25/§33); the FAQ title is
+  "Frequently asked questions" (§29).
+- Instead of: implementing both halves literally — they conflict, and
+  silent averaging is how a page stops matching any brief.
+
+### 2026-08-10 — D8: motion law v2 — cinematic-calm becomes scroll-choreographed card transforms (rb/02)
+
+- Why: the brief keeps scroll-linked 3D but changes the medium. The M1
+  cinematic tier is REDEFINED from scrubbed footage to scroll-choreographed
+  3D card transforms: slow, premium, scroll-led; cards may float slightly,
+  separate, change depth, rotate subtly, come forward when relevant, and
+  reorganize (§13). Forbidden, now doubly confirmed by the brief: bouncing,
+  fast spinning, particles, exploding cards, excessive parallax — plus the
+  house bans (dark voids, neon, grain, kinetic type, AI clichés). §12
+  surface law folds in: 18–24 px radius, thin warm-gray borders, subtle
+  shadows, no pervasive glassmorphism, no heavy gradients or giant drop
+  shadows. Strict calm still governs everything outside M1; reduced motion
+  renders the static tier-1 page (the engine never mounts). The no-Lenis
+  and no-`currentTime` laws stand; the film-specific laws (canvas/video
+  licensing, frame-count-vs-disk) retire with the film, and the film ban
+  becomes an assertion: no canvas, no video on the marketing route.
+- Instead of: keeping the footage tier alongside the card tier — two motion
+  systems on one route is exactly the drift Part 5 exists to prevent.

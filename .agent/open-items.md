@@ -130,6 +130,38 @@ the founder confirms once rather than piecemeal:
   filenames under `public/film/`, one manifest in `film/media.ts`. An
   optional 4K re-render of take B for crisper frame re-extraction waits on
   this sign-off.
+- **2026-08-10 update (rb/02):** the film is RETIRED from the route by
+  Abdullah's V1 brief (decisions.md D1) — the take-approval and 4K
+  re-render lines above are VOID. Masters remain archived. The deferred
+  `rb/03-ambient` option (new-subject ambient footage) is recorded in D1.
+
+### Website V1 founder items (2026-08-10, rb/02-v1-brief)
+
+**16. Claims-map sign-off + Arabic copy review + pricing + push.** Four
+things only Abdullah can close, gathered for one sitting:
+
+- **Claims map** (`Docs/brief/claims-map.md`): every row marked *founder
+  decision* — the proactive-drafting promise (#6/#7), memory breadth (#4),
+  native Arabic generation (#8), executive LinkedIn (#9), channel
+  adaptation (#10), source traceability (#13), learning loop (#14), data
+  protection (#15), cancel/plans (#16) — each either stands for launch,
+  softens, or gains a "coming soon" label (brief §34).
+- **Arabic copy review:** every Arabic string in the demo content (demo
+  brand names, the ArabicSocialCard campaign, the §24 split-screen) needs a
+  native read for register, punctuation and RTL hierarchy — written by the
+  build, not by a native speaker.
+- **Pricing decision (D3):** V1 ships without Pricing by default. If tiers
+  are finalized, the §28 outcome-led packaging (Starter / Growth /
+  Business) flips on in one small commit at the seam left in STEP 5.
+- **Push approval:** rb/02-v1-brief merges/pushes only on explicit founder
+  approval (same gate as rb/01).
+
+**17. Brief §32 — product pillars, recorded and OUT OF SCOPE here.** The
+ten V1 product pillars (Brand Brain, Morning Workspace, Proactive Planner,
+Multi-Voice Content, Native Arabic System, Approval Guardrail, Source
+Confidence, Channel Adaptation, Learning Loop, Performance Feedback) are
+app-side direction the website promise must converge with. Recorded so the
+product plan can pick them up; nothing app-side changes on rb/02.
 
 ### Two gates REOPENED — they must run against the fixed build
 
