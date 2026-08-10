@@ -6,8 +6,8 @@
 //        -> the `visitor` dataset plus e2e/onboarding.spec.ts
 //   "Playwright golden: signup -> verify -> onboard -> dashboard"
 //        -> the @golden test, run below and asserted to exist
-//   "marketing pricing and H1 pricing assert equal from one module"
-//        -> src/data/entities/plans.test.ts (structural: both read usePlans())
+//   "plans stay one source" -> src/data/entities/plans.test.ts (H1 reads
+//        usePlans(); marketing renders no plans since D3, 2026-08-10)
 //   "posts_per_day=4 blocked with the named message"
 //        -> the cap canary below, plus the e2e cap test
 //   "axe + reduced-motion clean" -> the Playwright @axe / @reduced-motion specs
@@ -102,61 +102,82 @@ function marketingLawsHold(): boolean {
   }
 
   const failures: string[] = []
-  const isFilm = (file: string) => file.includes(join('marketing', 'film'))
+  const isOutputs = (file: string) => file.includes(join('marketing', 'outputs'))
 
-  // 1a. Laws that bind BOTH tiers (design.md Part 5, amended 2026-08-08).
-  //     Scroll stays native and no animation library enters; the scrub eases
-  //     frame indices, never the scroll position. And footage is never
-  //     scrubbed via currentTime -- frames on canvas only.
+  // 1a. Laws that bind the WHOLE route (design.md Part 5 v2, D8). Scroll
+  //     stays native, no animation library enters, nothing scrubs footage --
+  //     and the film ban is now an assertion: no canvas, no video, anywhere
+  //     on the marketing route.
   const bannedEverywhere: [RegExp, string][] = [
-    [/from ['"]lenis['"]|new Lenis/, 'imports Lenis -- scroll stays native (decisions.md 2026-08-09)'],
+    [/from ['"]lenis['"]|new Lenis/, 'imports Lenis -- scroll stays native'],
     [/from ['"](gsap|motion|framer-motion)/, 'imports an animation library'],
-    [/\.currentTime/, 'scrubs footage by currentTime -- frames on canvas only'],
+    [/\.currentTime/, 'touches currentTime -- footage scrubbing is retired'],
+    [/<video/, 'renders a <video> -- the film is retired from this route (D1)'],
+    [/<canvas|getContext\(/, 'draws to a canvas -- the film is retired from this route (D1)'],
+    [/['"`]\/film\//, 'references /film/ -- that asset directory was retired (D1)'],
+    [/['"`]\/marketing\//, 'references /marketing/ -- that asset directory was retired'],
   ]
-  // 1b. The calm law still binds everything OUTSIDE film/: the cinematic
-  //     primitives are legal only inside the layer that the reduced-motion
-  //     gate controls.
-  const bannedOutsideFilm: [RegExp, string][] = [
-    [/<video/, 'renders a <video> outside film/ -- the calm tier allows none'],
-    [/<canvas|getContext\(/, 'draws to a canvas outside film/ -- the calm tier allows none'],
-    [/requestAnimationFrame/, 'runs a rAF loop outside film/ -- reveal is CSS-only'],
-    [/addEventListener\(['"]scroll['"]/, 'listens to scroll outside film/ -- use IntersectionObserver'],
+  // 1b. Cinematic primitives are legal only inside outputs/ -- the card
+  //     engine the reduced-motion gate controls.
+  const bannedOutsideOutputs: [RegExp, string][] = [
+    [/requestAnimationFrame/, 'runs a rAF loop outside outputs/ -- reveal is CSS-only'],
+    [/addEventListener\(['"]scroll['"]/, 'listens to scroll outside outputs/ -- use IntersectionObserver'],
   ]
   for (const [file, source] of sources) {
     for (const [pattern, why] of bannedEverywhere) {
       if (pattern.test(source)) failures.push(`${file}: ${why}`)
     }
-    if (isFilm(file)) continue
-    for (const [pattern, why] of bannedOutsideFilm) {
+    if (isOutputs(file)) continue
+    for (const [pattern, why] of bannedOutsideOutputs) {
       if (pattern.test(source)) failures.push(`${file}: ${why}`)
     }
   }
 
-  // 1c. Film video is ambience, and says so: muted, inline, decorative, with
-  //     a poster. A film clip that can grab focus or claim to be content is a
-  //     law violation, not a style choice.
+  // 1c. The engine animates transform/opacity only (D8) -- every style
+  //     assignment in outputs/ is on the compositor allow-list.
+  const styleProp = /\.style\.(\w+)\s*=/g
   for (const [file, source] of sources) {
-    if (!isFilm(file) || !/<video/.test(source)) continue
-    for (const required of ['muted', 'playsInline', 'aria-hidden', 'poster']) {
-      if (!source.includes(required)) {
-        failures.push(`${file}: film <video> is missing ${required}`)
+    if (!isOutputs(file)) continue
+    for (const match of source.matchAll(styleProp)) {
+      if (!['transform', 'opacity', 'zIndex'].includes(match[1])) {
+        failures.push(`${file}: engine sets style.${match[1]} -- transform/opacity only`)
       }
     }
   }
 
   // 1d. The reduced-motion gate is the tier's whole license: the hook must
-  //     consult the media query positively (mount only when no-preference
-  //     AFFIRMED), and the home page must render the scrub behind it.
-  const gate = named('use-cinematic.ts')
+  //     affirm no-preference positively, and the story must mount the engine
+  //     behind it.
+  const gate = named('use-media.ts')
   if (!/matchMedia/.test(gate) || !gate.includes('prefers-reduced-motion: no-preference')) {
-    failures.push('use-cinematic.ts: the layer gate must affirm no-preference via matchMedia')
+    failures.push('use-media.ts: the layer gate must affirm no-preference via matchMedia')
   }
-  const home = named('marketing-home.tsx')
-  if (!/useCinematicLayer\(\)/.test(home)) {
-    failures.push('marketing-home.tsx: the film layer lost its useCinematicLayer() gate')
+  const story = named('scroll-story.tsx')
+  if (!/useCinematicLayer\(\)/.test(story)) {
+    failures.push('scroll-story.tsx: the engine lost its useCinematicLayer() gate')
   }
-  if (/<ScrubHero/.test(home) && !/cinematic\s*\?/.test(home)) {
-    failures.push('marketing-home.tsx: ScrubHero must render behind the cinematic flag')
+  if (!/data-mk-engine/.test(story)) {
+    failures.push('scroll-story.tsx: the engine root lost data-mk-engine (the e2e hook)')
+  }
+  if (!/cinematic\s*&&\s*wide\s*\?/.test(story)) {
+    failures.push('scroll-story.tsx: the engine must render behind the gate AND the width check')
+  }
+
+  // 1d2. The D5 palette exemption is scoped: raw customer colors live in
+  //      demo-brands.ts alone. This check reads RAW source (the disable is
+  //      a comment), so it runs against `files`, not `sources`.
+  for (const file of files) {
+    if (file.endsWith('demo-brands.ts')) continue
+    if (readFileSync(file, 'utf8').includes('ab/no-raw-color')) {
+      failures.push(`${file}: borrows the D5 raw-color exemption -- demo-brands.ts only`)
+    }
+  }
+
+  // 1e. Native RTL is structural, not styling: the Arabic card declares its
+  //     direction and language.
+  const cards = named('post-cards.tsx')
+  if (!/dir="rtl"/.test(cards) || !/lang="ar"/.test(cards)) {
+    failures.push('post-cards.tsx: the Arabic card must declare dir="rtl" and lang="ar"')
   }
 
   // 2. The reveal's and the stages' animated state exists only under
@@ -173,54 +194,53 @@ function marketingLawsHold(): boolean {
 
   // 3. The wordmark law (design.md Part 3): the Arabic artwork enters only as
   //    an <img> of one of the three supplied files -- never redrawn as SVG or
-  //    text -- and no other asset directory is referenced.
+  //    text.
+  const home = named('marketing-home.tsx')
   if (!/\/brand\/malaky-logo-(charcoal|gold|white)\.png/.test(home)) {
     failures.push('marketing-home.tsx: the supplied wordmark files are not used')
   }
-  for (const [file, source] of sources) {
-    if (source.includes("'/marketing/")) {
-      failures.push(`${file}: references /marketing/ -- that asset directory was retired`)
-    }
-    // Film asset paths live in media.ts and nowhere else, so the payload has
-    // one manifest and the next asset swap is a one-file change.
-    if (!file.endsWith('media.ts') && /['"`]\/film\//.test(source)) {
-      failures.push(`${file}: film asset path outside media.ts`)
-    }
-  }
-
-  // 3b. The frame manifest tells the truth: the count media.ts declares is
-  //     the count public/film/hero actually holds.
-  const media = named('media.ts')
-  const declaredCount = Number(/HERO_FRAME_COUNT = (\d+)/.exec(media)?.[1] ?? NaN)
-  const heroDir = join(root, 'public', 'film', 'hero')
-  const actualCount = existsSync(heroDir)
-    ? readdirSync(heroDir).filter((entry) => entry.endsWith('.webp')).length
-    : 0
-  if (!Number.isFinite(declaredCount) || declaredCount !== actualCount) {
-    failures.push(
-      `media.ts declares ${declaredCount} hero frames; public/film/hero holds ${actualCount}`,
-    )
-  }
 
   // 3c. Light-canonical (design.md Part 6 rule 8): the route ignores the app
-  //     theme -- the footage is graded for ivory.
+  //     theme.
   if (!/classList\.remove\(['"]dark['"]\)/.test(home)) {
     failures.push('marketing-home.tsx: the light-canonical effect is missing')
   }
 
-  // 4. Pricing stays on the one plan source: the hook, and no local records.
-  if (!/usePlans\(\)/.test(home)) failures.push('marketing-home.tsx: pricing lost usePlans()')
-  if (/priceMonthly\s*:/.test(home)) {
-    failures.push('marketing-home.tsx: declares plan data locally instead of reading the provider')
+  // 4. Copy laws (brief §2/§14/§19/§28/§29 via D2/D7; comment-stripped, the
+  //    whole marketing route). The site sells outcomes -- never the old
+  //    positioning, model names, or credit terminology -- and exactly one
+  //    CTA pair exists.
+  const copyBans: [RegExp, string][] = [
+    [/co-?pilot/i, 'the co-pilot positioning is retired (brief §2)'],
+    [/\bdrafting model/i, 'model terminology is banned on the marketing route (§28)'],
+    [/\b(Balanced|Precise|Creative) drafting/i, 'model names are banned on the marketing route (§28)'],
+    [/\bcredits?\b/i, 'credit terminology is banned on the marketing route (§28)'],
+    [/Book demo|Request demo|Join waitlist|Try Malaky|Request early access|Get started/i, 'a banned CTA variant (D2: Start free / See how it works only)'],
+    [/Questions people ask/, 'the FAQ title is "Frequently asked questions" (§29)'],
+  ]
+  for (const [file, source] of sources) {
+    for (const [pattern, why] of copyBans) {
+      if (pattern.test(source)) failures.push(`${file}: ${why}`)
+    }
+  }
+  if (!home.includes('Start free') || !home.includes('See how it works')) {
+    failures.push('marketing-home.tsx: the D2 CTA pair is incomplete')
+  }
+  if (!home.includes('Frequently asked questions')) {
+    failures.push('marketing-home.tsx: the FAQ heading is missing (§29)')
+  }
+  if (!home.includes('Your marketing, already done.')) {
+    failures.push('marketing-home.tsx: the §2 hero headline is missing')
   }
 
-  // 5. Real product content (kit §5): tones and channels come from the
-  //    provider, rendered the mandated way.
-  if (!/useTones\(\)/.test(home) || !/<ToneBadge/.test(home)) {
-    failures.push('marketing-home.tsx: Memory must read useTones() and render ToneBadge')
-  }
-  if (!/useConnections\(\)/.test(home)) {
-    failures.push('marketing-home.tsx: the channels section must read useConnections()')
+  // 5. Retired laws, recorded so their absence is conscious (decisions.md
+  //    2026-08-10): "pricing keeps usePlans()" retired with D3 (no plans on
+  //    the page; the seam re-links the same source if it flips), and the kit
+  //    §5 real-product-content laws (useTones/ToneBadge/useConnections)
+  //    retired with the §33 flow — demo-brand content replaces them, and no
+  //    local plan data may return:
+  if (/priceMonthly\s*:/.test(home)) {
+    failures.push('marketing-home.tsx: declares plan data locally (D3 keeps plans off this page)')
   }
 
   for (const failure of failures) console.log(`  FAIL ${failure}`)
@@ -234,16 +254,18 @@ function marketingLawsHold(): boolean {
 function deliverablesExist(): boolean {
   console.log('\n=== W2 deliverables exist ===')
   const required = [
-    // M1 (+ the cinematic film layer, rb/01-motion)
+    // M1 (+ the output story, rb/02-v1-brief)
     'src/features/marketing/marketing-home.tsx',
-    'src/features/marketing/film/media.ts',
-    'src/features/marketing/film/use-cinematic.ts',
-    'src/features/marketing/film/scrub-hero.tsx',
-    'src/features/marketing/film/ambient-clip.tsx',
-    'public/film/detail.mp4',
-    'public/film/detail-poster.webp',
-    'public/film/calm.mp4',
-    'public/film/calm-poster.webp',
+    'src/features/marketing/reveal.tsx',
+    'src/features/marketing/pricing-section.tsx', // the D3 seam, unlinked
+    'src/features/marketing/outputs/demo-brands.ts',
+    'src/features/marketing/outputs/post-cards.tsx',
+    'src/features/marketing/outputs/approval-demo.tsx',
+    'src/features/marketing/outputs/story-layout.ts',
+    'src/features/marketing/outputs/scroll-story.tsx',
+    'src/features/marketing/outputs/story-sections.tsx',
+    'src/features/marketing/outputs/workspace-section.tsx',
+    'src/features/marketing/outputs/use-media.ts',
     // A1-A4
     'src/features/auth/auth-layout.tsx',
     'src/features/auth/signup-screen.tsx',
@@ -332,16 +354,17 @@ function main(): void {
 
   console.log('\nMANUAL -- human judgement; verify by hand (web-plan.md W2 Verify):')
   console.log('  1. Read the marketing copy as a prospect would: does the hero say what')
-  console.log('     the product does, and does the pricing answer the question it raises?')
+  console.log('     Malaky makes, and does every section answer one of the five brief')
+  console.log('     questions (what / why different / why trust / built for me / next)?')
   console.log('  2. Walk the wizard on a phone-width viewport -- the day pills, the')
   console.log('     stepper, and the tone sheet are the three places touch targets and')
   console.log('     overlay behaviour are hardest to get right.')
   console.log('  3. M1 is light-canonical (Part 6 rule 8): confirm it renders light even')
   console.log('     with the app in dark, and that the app itself still honors dark.')
-  console.log('  4. Scroll M1 end to end by hand -- the hero scrub should build the')
-  console.log('     interface smoothly with no frame pops, the pinned copy should land')
-  console.log('     on its bands, and every base reveal should stay a gentle fade. Then')
-  console.log('     repeat with reduced motion on: the static page, unchanged, no film.')
+  console.log('  4. Scroll M1 end to end by hand -- the card story should separate, focus')
+  console.log('     and reorganize slowly with no bounce or pop; approve the S5 card and')
+  console.log('     watch it schedule; on a phone the cards swipe; with reduced motion on,')
+  console.log('     the static layout is complete and readable, no engine.')
 
   process.exit(failed ? 1 : 0)
 }

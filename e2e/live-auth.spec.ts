@@ -1,14 +1,14 @@
-/**
+﻿/**
  * INT-1's verify: one real account driven through every auth path on the
  * DEPLOYED AlphaStudio API, through the real UI.
  *
  * Runs only when the run opts into live mode (VITE_API_BASE_URL exported to
- * both the Playwright process and the webServer — see playwright.config.ts);
+ * both the Playwright process and the webServer â€” see playwright.config.ts);
  * the default static suite skips this file entirely.
  *
  * Care with the API's rate limits (60 s between code sends, 5/hour per
  * email+purpose): every account is a fresh qa+<timestamp> address, each
- * purpose sends at most once per address — and the ONE deliberate extra send
+ * purpose sends at most once per address â€” and the ONE deliberate extra send
  * (an immediate resend) exists precisely to prove the 429 countdown UI.
  * Dev convenience per the contract: every emailed code is 000000.
  *
@@ -68,7 +68,7 @@ async function loginViaUi(page: Page, email: string, password: string) {
   await page.getByRole('button', { name: 'Sign in' }).click()
 }
 
-test('signup → verify with the emailed code → logged in, org-less, at onboarding', async ({
+test('signup â†’ verify with the emailed code â†’ logged in, org-less, at onboarding', async ({
   page,
 }) => {
   await signUpViaUi(page, 'QA Person A', emailA)
@@ -93,7 +93,7 @@ test('a second signup: resend immediately proves the 429 countdown, wrong passwo
   await page.getByRole('button', { name: 'Resend code' }).click()
   await expect(page.getByRole('alert')).toContainText('Too many requests')
 
-  // Wrong password on an unverified account is still the vague 401 — no
+  // Wrong password on an unverified account is still the vague 401 â€” no
   // account enumeration, no verification oracle.
   await loginViaUi(page, emailB, 'Wrong-password-9')
   await expect(page.getByRole('alert')).toContainText('Incorrect email or password')
@@ -104,7 +104,7 @@ test('correct password + unverified email routes to the verify screen, which fin
 }) => {
   await loginViaUi(page, emailB, PASSWORD)
 
-  // 403 email_not_verified → A3, with the address carried along.
+  // 403 email_not_verified â†’ A3, with the address carried along.
   await expect(page.getByRole('heading', { name: 'Check your inbox' })).toBeVisible()
   await expect(page.getByText(`We sent a 6-digit code to ${emailB}`)).toBeVisible()
 
@@ -112,7 +112,7 @@ test('correct password + unverified email routes to the verify screen, which fin
   await expect(page.getByText('finish setting up your workspace')).toBeVisible()
 })
 
-test('forgot → reset via the documented deep link revokes everything; only the new password works', async ({
+test('forgot â†’ reset via the documented deep link revokes everything; only the new password works', async ({
   page,
 }) => {
   // Request the reset from the UI (this also proves the anti-enumeration
@@ -122,7 +122,7 @@ test('forgot → reset via the documented deep link revokes everything; only the
   await page.getByRole('button', { name: 'Send reset link' }).click()
   await expect(page.getByRole('heading', { name: 'Check your inbox' })).toBeVisible()
 
-  // The email's deep link: /reset-password?email=…&code=…
+  // The email's deep link: /reset-password?email=â€¦&code=â€¦
   await page.goto(`/reset-password?email=${encodeURIComponent(emailA)}&code=${CODE}`)
   await expect(page.getByRole('heading', { name: 'Set a new password' })).toBeVisible()
   await page.getByLabel('New password', { exact: true }).fill(NEW_PASSWORD)
@@ -152,22 +152,22 @@ test('with an org (harness-created), the shell appears; sign out and logout-all 
   expect(created.status(), await created.text()).toBe(201)
 
   // The stored session's `orgs` is a login-time snapshot, so the new org is
-  // not in it — a fresh login returns it (INT-2 makes boot refresh /me/orgs;
+  // not in it â€” a fresh login returns it (INT-2 makes boot refresh /me/orgs;
   // open-items item 6). With an org, the dashboard owns '/'.
   await loginViaUi(page, emailA, NEW_PASSWORD)
   await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible()
 
-  // Sign out: session revoked server-side AND locally — marketing front door.
+  // Sign out: session revoked server-side AND locally â€” marketing front door.
   await page.getByRole('button', { name: 'Account menu' }).click()
   await page.getByRole('menuitem', { name: 'Sign out', exact: true }).click()
-  await expect(page.getByRole('heading', { level: 1, name: 'Malaky' })).toBeVisible()
+  await expect(page.getByRole('heading', { level: 1, name: 'Your marketing, already done.' })).toBeVisible()
 
   // Logout-all: sign in again, revoke everything, land back outside.
   await loginViaUi(page, emailA, NEW_PASSWORD)
   await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible()
   await page.getByRole('button', { name: 'Account menu' }).click()
   await page.getByRole('menuitem', { name: 'Sign out everywhere' }).click()
-  await expect(page.getByRole('heading', { level: 1, name: 'Malaky' })).toBeVisible()
+  await expect(page.getByRole('heading', { level: 1, name: 'Your marketing, already done.' })).toBeVisible()
 })
 
 async function inviteNewUser(request: APIRequestContext, token: string, orgId: string) {
@@ -231,7 +231,7 @@ test('a token-carrying 401 purges the session and lands on login with the toast'
     )
   })
   // The reload boots from the corrupted record and the sync's GET /me comes
-  // back 401 — an ordinary authed read finding a dead session. The ceremony:
+  // back 401 â€” an ordinary authed read finding a dead session. The ceremony:
   // purge, toast, land on login.
   await page.goto('/')
   await expect(page.getByRole('heading', { name: 'Welcome back' })).toBeVisible()

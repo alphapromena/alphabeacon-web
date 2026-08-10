@@ -38,28 +38,57 @@ async function walkToPipelineStep(page: Page) {
 test('marketing is the front door when signed out', async ({ page }) => {
   await asVisitor(page)
 
-  // The hero: the Arabic wordmark is the h1 (the artwork is presentation;
-  // the accessible name is the sr-only text), the promise is the subtitle.
-  await expect(page.getByRole('heading', { level: 1, name: 'Malaky' })).toBeVisible()
-  await expect(page.getByText("Your marketing team's AI co-pilot")).toBeVisible()
-  await expect(page.getByRole('heading', { name: 'Simple, predictable pricing' })).toBeVisible()
-  // Pricing renders from the same module Billing reads.
-  for (const plan of ['Free', 'Pro', 'Studio']) {
-    await expect(page.getByRole('heading', { name: plan, exact: true })).toBeVisible()
-  }
-  await expect(page.getByText('Cancel anytime, no long-term contracts.')).toBeVisible()
+  // The V1 hero (brief §2): the headline is the h1; the wordmark lives in
+  // the navigation, which carries the brand alone.
+  await expect(
+    page.getByRole('heading', { level: 1, name: 'Your marketing, already done.' }),
+  ).toBeVisible()
+  await expect(page.getByText('Malaky learns your business and prepares')).toBeVisible()
+  await expect(page.getByRole('heading', { name: "Today's workspace" })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Frequently asked questions' })).toBeVisible()
+  // Pricing is out of the V1 flow (D3): no nav item, no section.
+  await expect(page.getByRole('link', { name: 'Pricing' })).toHaveCount(0)
+  await expect(page.getByRole('heading', { name: 'Simple, predictable pricing' })).toHaveCount(0)
 })
 
-test('@reduced-motion the cinematic layer never mounts', async ({ page }) => {
-  // The tier-2 license (design.md Part 5): under prefers-reduced-motion the
-  // tier-1 static page renders unchanged — no canvas, no film, no pin. The
+test('@reduced-motion the scroll engine never mounts', async ({ page }) => {
+  // The tier-2 license (design.md Part 5 v2): under prefers-reduced-motion
+  // the static layout renders — complete and readable, engine-free. The
   // structural check proves the gate exists; this proves it closes.
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await asVisitor(page)
-  await expect(page.getByRole('heading', { level: 1, name: 'Malaky' })).toBeVisible()
-  await expect(page.getByText("Your marketing team's AI co-pilot")).toBeVisible()
+  await expect(
+    page.getByRole('heading', { level: 1, name: 'Your marketing, already done.' }),
+  ).toBeVisible()
+  await expect(page.locator('[data-mk-engine]')).toHaveCount(0)
   await expect(page.locator('canvas')).toHaveCount(0)
   await expect(page.locator('video')).toHaveCount(0)
+  // The story's content is all still there, in document flow.
+  await expect(page.getByText('Built overnight.')).toBeVisible()
+  await expect(page.getByText('You approve what goes out.')).toBeVisible()
+})
+
+test('the Arabic demo content is native RTL', async ({ page }) => {
+  await asVisitor(page)
+  // The §24 split screen: the Arabic panel declares direction and language,
+  // and renders the campaign as Arabic — not a mirrored English layout.
+  const arabicPanel = page.locator('[dir="rtl"][lang="ar"]', {
+    hasText: 'العيد على طاولة واحدة.',
+  })
+  await expect(arabicPanel).toBeVisible()
+  await expect(arabicPanel).toHaveCSS('direction', 'rtl')
+})
+
+test('S5: approving the demo post schedules it and updates memory', async ({ page }) => {
+  // The control-loop moment (brief §23): Approve · Edit · Decline are real
+  // affordances, and Approve animates the card into its Scheduled state.
+  // The static tier renders the same ApprovalDemo, so the interaction is
+  // asserted on the layout every visitor can reach.
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await asVisitor(page)
+  await page.getByRole('button', { name: 'Approve', exact: true }).click()
+  await expect(page.getByText('Scheduled · Mon 09:00')).toBeVisible()
+  await expect(page.getByText('Memory updated from your approval.')).toBeVisible()
 })
 
 test('@axe marketing and auth screens scan clean', async ({ page }) => {

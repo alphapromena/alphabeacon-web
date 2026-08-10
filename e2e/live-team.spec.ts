@@ -1,6 +1,6 @@
-/**
+﻿/**
  * INT-2's verify: me + orgs + members + invites against the DEPLOYED API,
- * driven through the real UI — the wizard creates the org, I1 renames it,
+ * driven through the real UI â€” the wizard creates the org, I1 renames it,
  * the account section changes the password, and the team screen exercises
  * invite (new AND existing user), resend's rate limit, cancel, the
  * three-tier role ladder, the last-owner laws, leave, and remove.
@@ -55,7 +55,7 @@ async function login(page: Page, email: string, password: string) {
 async function signOut(page: Page) {
   await page.getByRole('button', { name: 'Account menu' }).click()
   await page.getByRole('menuitem', { name: 'Sign out', exact: true }).click()
-  await expect(page.getByRole('heading', { level: 1, name: 'Malaky' })).toBeVisible()
+  await expect(page.getByRole('heading', { level: 1, name: 'Your marketing, already done.' })).toBeVisible()
 }
 
 async function openTeam(page: Page) {
@@ -82,7 +82,7 @@ test('the onboarding wizard creates the org LIVE; the dashboard follows', async 
   await page.getByRole('button', { name: 'Go to your dashboard' }).click()
 
   // The org now EXISTS server-side; the resync flipped the world onto it.
-  // Finish is org + preset tones + schedule + sources — give the burst room.
+  // Finish is org + preset tones + schedule + sources â€” give the burst room.
   await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible({
     timeout: 25_000,
   })
@@ -98,7 +98,7 @@ test('I1 renames the org through PATCH, and the name survives a reload', async (
   await page.getByRole('button', { name: 'Save changes' }).click()
   await expect(page.getByText('Organization saved')).toBeVisible()
 
-  // A reload re-syncs from the server — the rename was real, not local.
+  // A reload re-syncs from the server â€” the rename was real, not local.
   await page.goto('/settings/organization')
   await expect(page.getByLabel('Organization name')).toHaveValue(ORG_RENAMED)
 })
@@ -134,7 +134,7 @@ test('inviting a NEW user: coded email, resend rate-limits honestly, cancel remo
   await expect(page.getByText('Invite sent')).toBeVisible()
   await expect(page.getByText(invitee)).toBeVisible()
 
-  // A second send inside 60 s is the documented rate limit — the toast says
+  // A second send inside 60 s is the documented rate limit â€” the toast says
   // the wait, never a silent refusal.
   await page.getByRole('button', { name: 'Resend' }).click()
   await expect(page.getByText(/Too many requests/)).toBeVisible()
@@ -153,7 +153,7 @@ test('inviting an EXISTING user adds them immediately, and the role ladder holds
   await login(page, owner, NEW_PASSWORD)
   await openTeam(page)
 
-  // Existing user → membership added on the spot; no pending invite.
+  // Existing user â†’ membership added on the spot; no pending invite.
   await page.getByRole('button', { name: 'Invite member' }).click()
   await page.getByLabel('Work email').fill(invitee)
   await page.getByRole('button', { name: 'Send invite' }).click()
@@ -167,7 +167,7 @@ test('inviting an EXISTING user adds them immediately, and the role ladder holds
   await expect(ownerRow.getByText(/You are the only owner/)).toBeVisible()
   await expect(ownerRow.getByRole('button', { name: 'Leave' })).toHaveCount(0)
 
-  // Up the ladder: member → admin (immediate) → owner (ownership transfer).
+  // Up the ladder: member â†’ admin (immediate) â†’ owner (ownership transfer).
   await memberRow.getByLabel(/Role for/).selectOption('admin')
   await expect(page.getByText(/is now an admin/)).toBeVisible()
   await memberRow.getByLabel(/Role for/).selectOption('owner')
@@ -211,11 +211,11 @@ test('an ADMIN viewing a team with an owner: no remove on the owner, no role sel
   await login(page, invitee, PASSWORD)
   await openTeam(page)
 
-  // …they can manage members (invite is offered),
+  // â€¦they can manage members (invite is offered),
   await expect(page.getByRole('button', { name: 'Invite member' })).toBeVisible()
-  // …they cannot change ANY role (owner-only on the wire) — badges, no selects,
+  // â€¦they cannot change ANY role (owner-only on the wire) â€” badges, no selects,
   await expect(page.getByLabel(/Role for/)).toHaveCount(0)
-  // …and the owner's row offers no Remove (equal-or-higher is a 403 the UI
+  // â€¦and the owner's row offers no Remove (equal-or-higher is a 403 the UI
   // never renders a path to).
   const ownerRow = page.locator('tr').filter({ hasText: owner })
   await expect(ownerRow.getByText('owner', { exact: true })).toBeVisible()
