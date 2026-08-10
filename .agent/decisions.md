@@ -886,6 +886,10 @@ add a new entry that says it supersedes the old one.
   design.md Part 5 so guard checks don't misfire on card interiors.
 - Instead of: forcing demo content into Malaky's palette — it would erase
   the exact point the hero makes.
+- Mechanism: one file-level `eslint-disable ab/no-raw-color` in
+  `outputs/demo-brands.ts` (the palettes' single home), and `verify:w02`
+  fails any other marketing file that borrows the disable — the exemption
+  cannot creep.
 
 ### 2026-08-10 — D6: platform marks are text labels, never imported logo assets (rb/02)
 
@@ -925,3 +929,33 @@ add a new entry that says it supersedes the old one.
   becomes an assertion: no canvas, no video on the marketing route.
 - Instead of: keeping the footage tier alongside the card tier — two motion
   systems on one route is exactly the drift Part 5 exists to prevent.
+
+### 2026-08-10 — The verify:w02 gate amendment, in full (rb/02)
+
+- Why: the operating order requires every gate change logged. Kept: lint,
+  typecheck, unit, guard-static, build, posts-per-day cap, deliverables,
+  wordmark law, light-canonical, reveal/stage CSS under no-preference.
+  **Added:** film ban as assertion (no canvas/video/`/film/` on the route);
+  rAF + scroll listeners legal only in `outputs/`; engine style writes
+  allow-listed to transform/opacity/zIndex; the no-preference gate affirmed
+  in `use-media.ts` and consumed in `scroll-story.tsx` behind gate AND
+  width; `dir="rtl"`+`lang="ar"` structural on the Arabic card; the D5
+  raw-color exemption scoped to demo-brands.ts; copy laws (no co-pilot, no
+  model names/"drafting model"/credit terminology, one CTA pair, FAQ title).
+  **Retired:** frame-count-vs-disk and film `<video>` attribute checks (die
+  with the film, D1); "pricing keeps usePlans()" (D3 — the no-local-plan-
+  data half survives); kit §5 real-product-content laws (useTones/ToneBadge/
+  useConnections on M1) — superseded by the brief's §31 demo-brand
+  consistency, which the demo-brands module + verify enforce instead.
+  **e2e:** front door asserts the §2 hero and pricing's absence;
+  reduced-motion rewritten to "engine never mounts, static layout complete";
+  new RTL and S5-approval tests; live-spec h1 assertions updated.
+- Instead of: silently deleting failing checks — the amendment IS the
+  record of what protection moved where.
+- One conscious deviation from the operating order's §2c: `content-visibility`
+  per scene was evaluated and REJECTED — it skips layout of off-screen
+  contents, which breaks the visibility semantics the e2e suite asserts on
+  below-fold sections, and the route it would optimize transfers ~0.6 MB
+  with zero raster demo artwork. The CWV work it targeted is carried by
+  transform/opacity-only animation (compositor-composited) and the D4
+  payload result instead.

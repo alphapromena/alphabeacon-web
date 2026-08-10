@@ -5,7 +5,8 @@ without reconstructing it from the session log. **Update this file at the end
 of any turn that finishes a phase or changes the plan.** `sessions.md` is the
 chronological record; this is the current picture.
 
-_Last updated: 2026-08-09, after the M1 cinematic layer shipped (`rb/01-motion`)._
+_Last updated: 2026-08-10, after Website V1 (`rb/02-v1-brief`) — built and
+verified, **awaiting founder sign-off; not merged, not pushed**._
 
 ---
 
@@ -29,7 +30,8 @@ below).
 |            |                                                        |
 | ---------- | ------------------------------------------------------ |
 | Remote     | `github.com/alphapromena/alphabeacon-web` (private)    |
-| `main`     | `rb/01-motion` tip — W0–W6 + INT-0..5 + rebrand + **M1 cinematic layer** |
+| `main`     | `rb/01-motion` tip — W0–W6 + INT-0..5 + rebrand + M1 cinematic layer |
+| `rb/02-v1-brief` | Website V1 per Abdullah's brief — **local only, awaiting founder approval to merge/push** (open-items 16) |
 | Phase tips | `w/00`…`w/06`, `int/00`…`int/05`, `rb/00-malaky`, `rb/01-motion` |
 | Tags       | none                                                   |
 
@@ -65,6 +67,8 @@ aspirational, not a rule this repo follows.
 | W5 Studio + billing                  | E1–E4, H1–H4                 | Done · `verify:w05` green                                    |
 | W6 Compose/analytics/settings/system | F1, G1–G2, I1–I7, N1, N2, N4 | Done · `verify:w06` green                                    |
 | — **Malaky rebrand** (`rb/00-malaky`) | M1 + every user-facing surface | Done 2026-08-08 — kit palette/typography/motion in `design.md`, name sweep, new M1, deploy fix (`VITE_DEFAULT_DATASET` + `vercel.json`) |
+| — **M1 cinematic layer** (`rb/01-motion`) | M1 | Done 2026-08-09, merged — then superseded by the V1 brief (film retired, D1) |
+| — **Website V1** (`rb/02-v1-brief`) | M1 | Built + verified 2026-08-10 — **branch only, awaiting founder sign-off (open-items 16)** |
 | **W7 Hardening + ship**              | —                            | **Parked behind the two manual gates**                        |
 
 ## Integration phases (AlphaStudio API — contract at `docs/api/api.md`)
@@ -97,28 +101,27 @@ connections, Studio, billing, analytics, compose, knowledge. The backend/
 product questions live in open-items 1–13; W7 still waits on the two
 reopened manual gates.
 
-Current totals: **332 unit tests** (30 files), **static e2e 68 passed / 23 live-spec skips**, all green.
+Current totals: **337 unit tests** (31 files), **static e2e 71 passed / 23 live-spec skips**, all green (rb/02).
 **No route is a stub any more** — `PlaceholderScreen` is deleted, and
 `verify:w06` fails if it comes back.
 
-**M1 was rebuilt again on 2026-08-08 as the Malaky front door** (design.md
-Part 5 — "Marketing layer"): the kit's §4 flow in order on the warm-ivory
-surface, wordmark exactly as supplied, real content via `useTones()`/
-`useConnections()`/`usePlans()`. The 2026-07-30 cinematic page (scrub, HUD
-clock, Lenis, marquee, film) is DELETED along with `public/marketing/`
-(~8.4 MB) and the `lenis` dependency — git history preserves them.
-
-**On 2026-08-09 the cinematic-calm tier SHIPPED on `rb/01-motion`** (design.md
-Part 5, tier 2): the hero scrub runs a Seedance 2.0 assembly clip (take B,
-generated against one hero-image reference + the two real-UI refs) as 193
-canvas frames under `features/marketing/film/`, with a pinned workspace band
-over the detail macro and the calm pull-back behind the CTA. The layer
-mounts only when `prefers-reduced-motion: no-preference` is AFFIRMED; the
-kit-flow page is the complete fallback. M1 is light-canonical (Part 6 rule
-8). Film payload 6.3 MB under `public/film/`, paths only in `film/media.ts`.
-`verify:w02` enforces the two-tier split structurally, and a
-`@reduced-motion` e2e proves the layer never mounts. Footage provenance and
-the 362-credit spend: decisions.md 2026-08-09.
+**M1 is Abdullah's Website V1 on `rb/02-v1-brief` (2026-08-10, branch
+only):** the hero is the marketing Malaky produces — a scroll-choreographed
+3D story of publication-ready posts for four persistent demo brands
+(`features/marketing/outputs/`), with the S5 Approve·Edit·Decline control
+loop, the §5 workspace showcase, the §20–§27 proof sections (5-step
+workflow, channel adaptation, two voices, Built here + EN/AR split screen,
+proactive calendar, sources), the §29 eleven-question FAQ, and the dark CTA.
+Hero H1: "Your marketing, already done." Pricing is OUT per D3 (seam in
+`pricing-section.tsx`, unlinked). The rb/01 dashboard-as-glass-object film
+is retired (D1) and `public/film/` deleted — masters archived; the earlier
+2026-07 ink concept remains deleted too. The engine mounts only when
+no-preference is AFFIRMED and the viewport is wide; the static layout is the
+complete fallback and the mobile swipe story. M1 stays light-canonical.
+Claims discipline lives in `Docs/brief/claims-map.md`; founder items in
+open-items 16. Payload ~0.62 MB transferred vs the 3.0 MB D4 budget.
+(History: the 2026-08-08 kit-flow rebuild and the 2026-08-09 film layer —
+both superseded by the V1 brief; decisions.md D1–D8.)
 
 ## What W7 needs (from `web-plan.md` §9)
 

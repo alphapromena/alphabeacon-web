@@ -956,3 +956,44 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
 - Verify: `verify:w02` full run green (summary recorded in this entry's turn)
 - Next: founder sign-off on open-items 15 (now including the footage);
   optional 4K re-render of take B for final frame re-extraction
+
+### 2026-08-10 — rb/02-v1-brief: Abdullah's Website V1 implemented end to end (NOT pushed)
+
+- Did: the full operating order for the V1 brief
+  (`Docs/brief/malaky-website-v1-brief-abdullah.md`, committed verbatim).
+  STEP 0: D1–D8 in decisions.md, motion law v2 + D5 palette exemption +
+  §11 copy system in design.md Part 5, `Docs/brief/claims-map.md` (17
+  claims, verdicts seeded from INT reality), open-items 16 (founder
+  bundle: claims sign-off, Arabic copy review, pricing, push) and 17
+  (§32 pillars recorded, app-side untouched).
+- The build: `features/marketing/outputs/` — 4 demo brands (bilingual,
+  fictional, own palettes scoped by the D5 eslint exemption), 7
+  publication-ready mock post components with workflow chips (no fake
+  engagement anywhere), the scroll-choreographed card engine
+  (transform/opacity only, native scroll, rAF-eased, data-driven
+  keyframes in story-layout.ts with its own unit suite), the S5
+  Approve·Edit·Decline demo with the "Memory updated from your approval"
+  touch, the §5 workspace showcase (pick a row, see the output), and the
+  §20–§27 story sections including the EN/AR split screen. marketing-home
+  rebuilt to the §33 flow; hero is "Your marketing, already done."; the
+  film layer and `public/film/` are DELETED (D1 — masters archived);
+  Pricing is out per D3 with the seam preserved in pricing-section.tsx
+  (unlinked); FAQ is the §29 eleven, answered from the claims map; the
+  dark CTA carries the wordmark prominently with the approval visual, no
+  product-dashboard imagery.
+- Gates: verify:w02 laws rewritten (see the gates-amendment decision);
+  e2e updated + extended (front door, engine-never-mounts, native RTL,
+  S5 approval); live-spec h1 assertions updated. Conscious deviation:
+  §2c content-visibility rejected (breaks e2e visibility semantics;
+  payload makes it moot) — logged in decisions.
+- Counts: units 332 → 337 (+5 story-layout); static e2e 69 → 71 passed
+  (+RTL, +S5) / 23 live skips. Payload: ~0.62 MB transferred (gz) vs the
+  3.0 MB D4 budget; film's 6.3 MB reclaimed.
+- Phase: rb/02-v1-brief, branch only — **deliberately NOT merged, NOT
+  pushed**; both wait on the founder (open-items 16).
+- Files: `src/features/marketing/**` (rebuilt), `scripts/verify-w02.ts`,
+  `e2e/{onboarding,live-auth,live-team}.spec.ts`, `design.md`,
+  `Docs/brief/*`, `.agent/*`
+- Decisions: D1–D8, the gates amendment, the D5 mechanism
+- Verify: full `verify:w02` green (71 e2e); summary in the run report
+- Next: Abdullah walks the page; closes open-items 16; push on approval
