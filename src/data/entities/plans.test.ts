@@ -1,11 +1,10 @@
 /**
- * Pricing parity. screens4.md's consistency checklist requires that the price
- * on the marketing page and the price in Billing are "visually distinct in
- * chrome but numerically identical — same source data, no copy drift".
- *
- * The strongest guarantee is structural: both screens read `usePlans()`, which
- * resolves to this one module. This test pins that structure — a second plan
- * list appearing anywhere is the failure it is designed to catch.
+ * Pricing parity. Billing (H1) reads `usePlans()`, which resolves to this one
+ * module — a second plan list appearing anywhere is the failure this test is
+ * designed to catch. (The marketing page no longer renders plans at all:
+ * Pricing left the V1 flow on 2026-08-10, decisions.md D3. If the founder
+ * flips D3, the seam in features/marketing/pricing-section.tsx re-links the
+ * SAME `usePlans()` source, and this test's guarantee covers it again.)
  */
 import { describe, expect, it } from 'vitest'
 import { DATASETS } from '@/data/datasets'
