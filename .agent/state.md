@@ -31,7 +31,7 @@ below).
 | ---------- | ------------------------------------------------------ |
 | Remote     | `github.com/alphapromena/alphabeacon-web` (private)    |
 | `main`     | `rb/01-motion` tip — W0–W6 + INT-0..5 + rebrand + M1 cinematic layer |
-| `rb/02-v1-brief` | Website V1 per Abdullah's brief — **local only, awaiting founder approval to merge/push** (open-items 16) |
+| `rb/02-v1-brief` | Website V1 per Abdullah's brief — **pushed 2026-08-10 on user instruction; merge to `main` still awaits the open-items 16 sign-offs** |
 | Phase tips | `w/00`…`w/06`, `int/00`…`int/05`, `rb/00-malaky`, `rb/01-motion` |
 | Tags       | none                                                   |
 
