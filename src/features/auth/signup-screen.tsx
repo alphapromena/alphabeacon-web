@@ -147,6 +147,19 @@ export function SignUpScreen() {
         <FormField
           name="terms"
           label="I agree to the terms of service and the privacy policy."
+          description={
+            <>
+              Read the{' '}
+              <a href="/terms" target="_blank" rel="noreferrer" className="underline underline-offset-2">
+                Terms of Service
+              </a>{' '}
+              and the{' '}
+              <a href="/privacy" target="_blank" rel="noreferrer" className="underline underline-offset-2">
+                Privacy Policy
+              </a>
+              .
+            </>
+          }
           orientation="horizontal"
         >
           {({ invalid, value, onChange, ...field }) => (

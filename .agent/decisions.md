@@ -1024,3 +1024,28 @@ add a new entry that says it supersedes the old one.
 - Instead of: leaving label-only cards the founder rejected twice, real
   platform logos/screenshots (trademark + D6), or scattering raw hexes
   outside the exempt module.
+
+### 2026-08-11 — Production pass: code-split, early-access CTA, legal pages
+
+- Why: founder-directed production-readiness sprint. (1) The route table
+  now lazy-loads every screen except the marketing front door — visitor
+  '/' JS fell 1,314→612 kB raw (391→189 kB gzip; recharts/analytics is
+  its own 360 kB chunk), measured before/after; Suspense fallback is a
+  quiet aria-busy spinner. (2) The D2 CTA pair is AMENDED: self-service
+  publishing is not live, so per the founder's rule the acquisition CTA
+  is "Request early access" everywhere public, "Start free" joins the
+  banned list (launch models must never mix), and the unlinked
+  pricing-section seam is exempted so the flip back stays one edit.
+  verify-w02 + the golden-walk e2e encode the new pair. (3) /privacy and
+  /terms are real routed documents linked from the footer and the signup
+  consent line (FormField.description widened to ReactNode for the
+  links); both flagged for counsel in open-items 17. (4) index.html
+  carries production metadata (canonical, OG, Twitter) on malaky.ai
+  URLs, with robots.txt + sitemap.xml; the OG card is the supplied
+  wordmark composed onto brand ivory — no generated imagery. (5) The
+  hero's pinned story shrank 620→420 vh and the orbit loop reads the
+  viewport only on resize, never per frame.
+- Instead of: shipping the whole app to every visitor, leaving dead
+  legal anchors and an aspirational "Start free", or hand-waving the
+  claims (the audit against the shipped product is in
+  Docs/brief/claims-map.md).

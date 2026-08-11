@@ -211,7 +211,11 @@ the decorative animation this part exists to refuse.
 
 **Tier 1 — calm (the base page, and the app's only tier).** M1's base motion
 budget is **one gentle fade-and-rise per section** as it first enters the
-viewport: an `IntersectionObserver` flips `data-mk-reveal`, and the animated
+viewport, plus (production pass 2026-08-11) **state-driven micro-transitions**
+on the interactive demos — the workspace approval loop, the how-it-works
+active step, the memory learning moment, the calendar reveal — all
+`motion-safe:` transitions of transform/opacity/color whose finished state
+renders immediately under reduced motion: an `IntersectionObserver` flips `data-mk-reveal`, and the animated
 state exists only inside a `prefers-reduced-motion: no-preference` media
 query in `globals.css` — under reduced motion every section renders
 finished, removed rather than slowed. The dark-ink cinematic concept of

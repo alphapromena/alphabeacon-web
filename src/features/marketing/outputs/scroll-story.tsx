@@ -161,13 +161,19 @@ function StoryEngine({ intro }: { intro: ReactNode }) {
     let angle = 0
     let speed = 1
     let last = performance.now()
+    /* No reads inside the frame loop: the horizontal radius is derived
+       from the viewport once here and again on resize only. */
+    let radiusX = ORBIT.radiusXFor(window.innerWidth)
+    const onResize = () => {
+      radiusX = ORBIT.radiusXFor(window.innerWidth)
+    }
+    window.addEventListener('resize', onResize)
     const tick = (now: number) => {
       const dt = Math.min((now - last) / 1000, 0.1)
       last = now
       const slowed = hovered.size > 0 || sceneRef.current === 4
       speed += ((slowed ? 0.45 : 1) - speed) * 0.06
       angle = (angle + (dt * 360 * speed) / ORBIT.periodSeconds) % 360
-      const radiusX = ORBIT.radiusXFor(window.innerWidth)
       for (const id of CARD_IDS) {
         const node = ambientRefs.current[id]
         if (!node) continue
@@ -183,12 +189,13 @@ function StoryEngine({ intro }: { intro: ReactNode }) {
 
     return () => {
       cancelAnimationFrame(raf)
+      window.removeEventListener('resize', onResize)
       cleanups.forEach((fn) => fn())
     }
   }, [])
 
   return (
-    <section ref={sectionRef} data-mk-engine className="relative h-[620vh]">
+    <section ref={sectionRef} data-mk-engine className="relative h-[420vh]">
       <div className="sticky top-0 h-svh overflow-hidden">
         {/* Copy rail — one block per scene, cross-fading on scene changes. */}
         <div className="absolute top-1/2 left-[max(1.5rem,4vw)] z-20 w-[30vw] max-w-md -translate-y-1/2">

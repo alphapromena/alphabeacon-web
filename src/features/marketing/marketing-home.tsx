@@ -109,7 +109,7 @@ function SiteHeader() {
             <Link to="/login">Sign in</Link>
           </Button>
           <Button asChild>
-            <Link to="/signup">Start free</Link>
+            <Link to="/signup">Request early access</Link>
           </Button>
         </div>
       </div>
@@ -130,7 +130,7 @@ function HeroIntro() {
       </p>
       <div className="flex flex-wrap items-center gap-3">
         <Button asChild size="lg">
-          <Link to="/signup">Start free</Link>
+          <Link to="/signup">Request early access</Link>
         </Button>
         <Button asChild size="lg" variant="outline">
           <a href="#how">See how it works →</a>
@@ -284,7 +284,7 @@ export function MarketingHome() {
                   Set up your brand once. Malaky starts preparing what comes next.
                 </p>
                 <Button asChild size="lg">
-                  <Link to="/signup">Start free</Link>
+                  <Link to="/signup">Request early access</Link>
                 </Button>
               </div>
               <div aria-hidden inert className="hidden select-none lg:block">
@@ -314,8 +314,8 @@ export function MarketingHome() {
             {
               heading: 'Legal',
               links: [
-                ['Privacy', '#privacy'],
-                ['Terms', '#terms'],
+                ['Privacy', '/privacy'],
+                ['Terms', '/terms'],
               ],
             },
           ].map((column) => (

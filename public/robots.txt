@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+Disallow: /today
+Disallow: /calendar
+Disallow: /studio
+Disallow: /billing
+Disallow: /analytics
+Disallow: /settings
+Disallow: /connections
+Disallow: /generate
+Disallow: /onboarding
+
+Sitemap: https://malaky.ai/sitemap.xml

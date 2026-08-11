@@ -90,7 +90,10 @@ export function FormField({
 }: {
   name: string
   label: string
-  description?: string
+  /** ReactNode so a consent line can carry real links to the documents it
+   * names (signup's Terms/Privacy) — still rendered inside the described-by
+   * wiring. */
+  description?: ReactNode
   children: (field: FormFieldRenderProps) => ReactNode
   orientation?: 'vertical' | 'horizontal' | 'responsive'
 }) {

@@ -1,5 +1,5 @@
-import { Check, ShieldCheck } from 'lucide-react'
-import type { ReactNode } from 'react'
+import { Bell, Check, ShieldCheck } from 'lucide-react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 import { Reveal } from '../reveal'
 import { DEMO_BRANDS } from './demo-brands'
@@ -12,12 +12,17 @@ import {
   NewsletterCard,
   StatusChip,
 } from './post-cards'
+import { useCinematicLayer } from './use-media'
 
 /**
- * The lower-page story sections (brief §20–§27): product proof between
- * concise copy, alternating so no two text-only sections touch (§31). All
- * demo content draws from the four demo brands; Malaky chrome stays on
- * Malaky's palette (D5).
+ * The lower-page story sections (brief §20–§27; production pass
+ * 2026-08-11): product proof between concise copy. How-it-works is one
+ * connected journey with a single commanding step; Memory visibly learns
+ * from an approval; the calendar section SHOWS the campaign Malaky
+ * prepared early. Every timed sequence is gated on the cinematic layer —
+ * reduced motion renders the finished state immediately — and all demo
+ * content draws from the four demo brands; Malaky chrome stays on
+ * Malaky's palette (D5). No brains, no particles, no AI clichés.
  */
 
 function SectionShell({
@@ -55,10 +60,37 @@ function SectionShell({
   )
 }
 
+/** Fires once when the node first enters the viewport. */
+function useInViewOnce(threshold = 0.35) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [inView, setInView] = useState(false)
+  useEffect(() => {
+    const node = ref.current
+    if (!node) return
+    if (typeof IntersectionObserver !== 'function') {
+      setInView(true)
+      return
+    }
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setInView(true)
+          observer.disconnect()
+        }
+      },
+      { threshold },
+    )
+    observer.observe(node)
+    return () => observer.disconnect()
+  }, [threshold])
+  return { ref, inView }
+}
+
 /* ------------------------------------------------------------------ §20 */
 
-const STEPS: { title: string; copy: string; visual: ReactNode }[] = [
+const STEPS: { short: string; title: string; copy: string; visual: ReactNode }[] = [
   {
+    short: 'Introduce',
     title: 'Introduce your business once',
     copy: 'Logo, brand colors, products, audience, goals, tone, approved sources and key dates.',
     visual: (
@@ -75,6 +107,7 @@ const STEPS: { title: string; copy: string; visual: ReactNode }[] = [
     ),
   },
   {
+    short: 'Learn',
     title: 'Malaky learns your brand',
     copy: 'It builds persistent brand memory from your information, preferences and approvals.',
     visual: (
@@ -89,6 +122,7 @@ const STEPS: { title: string; copy: string; visual: ReactNode }[] = [
     ),
   },
   {
+    short: 'Prepare',
     title: 'Your marketing is prepared',
     copy: 'Posts, campaigns and executive content appear proactively around your schedule and what is coming next.',
     visual: (
@@ -99,6 +133,7 @@ const STEPS: { title: string; copy: string; visual: ReactNode }[] = [
     ),
   },
   {
+    short: 'Review',
     title: 'You review and approve',
     copy: 'Edit, approve or decline. Nothing goes out without your sign-off.',
     visual: (
@@ -109,6 +144,7 @@ const STEPS: { title: string; copy: string; visual: ReactNode }[] = [
     ),
   },
   {
+    short: 'Publish & Learn',
     title: 'Malaky publishes and learns',
     copy: 'Approved work is scheduled to supported channels, and future drafts improve from your decisions.',
     visual: (
@@ -121,28 +157,97 @@ const STEPS: { title: string; copy: string; visual: ReactNode }[] = [
 ]
 
 export function HowMalakyWorksSection() {
+  const cinematic = useCinematicLayer()
+  const { ref, inView } = useInViewOnce()
+  const [active, setActive] = useState(0)
+  const [engaged, setEngaged] = useState(false)
+
+  /* One step commands attention at a time; the journey walks itself until
+     the visitor takes over by picking a step. */
+  useEffect(() => {
+    if (!cinematic || engaged || !inView) return
+    const interval = setInterval(() => setActive((step) => (step + 1) % STEPS.length), 3200)
+    return () => clearInterval(interval)
+  }, [cinematic, engaged, inView])
+
   return (
     <SectionShell
       id="how"
       headline="How Malaky works"
-      copy="Five steps, one morning ritual. Introduce your business once; from then on the work is waiting before you ask."
+      copy="Five steps, one connected system. Introduce your business once; from then on the work is waiting before you ask."
     >
-      <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-        {STEPS.map((step, index) => (
-          <Reveal
-            key={step.title}
-            className="flex flex-col gap-3 rounded-[1.25rem] border border-border bg-card p-5 shadow-xs"
-          >
-            <span className="font-mono text-xs text-muted-foreground tabular-nums">
-              {String(index + 1).padStart(2, '0')}
-            </span>
-            <h3 className="text-sm font-semibold">{step.title}</h3>
-            <p className="text-xs/relaxed text-muted-foreground">{step.copy}</p>
-            <div aria-hidden inert className="mt-auto select-none">
-              {step.visual}
+      <div ref={ref} className="mt-10">
+        {/* The flow indicator: numbered stations on one line. */}
+        <div aria-hidden className="mb-6 hidden items-center gap-0 lg:flex">
+          {STEPS.map((step, index) => (
+            <div key={step.short} className={cn('flex items-center', index < STEPS.length - 1 && 'flex-1')}>
+              <span
+                className={cn(
+                  'grid size-6 shrink-0 place-items-center rounded-full border text-[11px] font-semibold',
+                  'motion-safe:transition-colors motion-safe:duration-500',
+                  index <= active
+                    ? 'border-foreground bg-foreground text-background'
+                    : 'border-border bg-background text-muted-foreground',
+                )}
+              >
+                {index + 1}
+              </span>
+              {index < STEPS.length - 1 && (
+                <span className="relative mx-2 h-px flex-1 overflow-hidden rounded-full bg-border">
+                  <span
+                    className={cn(
+                      'absolute inset-0 origin-left bg-foreground',
+                      'motion-safe:transition-transform motion-safe:duration-700',
+                      index < active ? 'scale-x-100' : 'scale-x-0',
+                    )}
+                  />
+                </span>
+              )}
             </div>
-          </Reveal>
-        ))}
+          ))}
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+          {STEPS.map((step, index) => {
+            const isActive = index === active
+            return (
+              <button
+                key={step.title}
+                type="button"
+                aria-pressed={isActive}
+                onClick={() => {
+                  setEngaged(true)
+                  setActive(index)
+                }}
+                className={cn(
+                  'flex flex-col gap-3 rounded-[1.25rem] border p-5 text-left',
+                  'focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none',
+                  'motion-safe:transition-all motion-safe:duration-500',
+                  isActive
+                    ? 'border-foreground/20 bg-card shadow-[var(--shadow-soft-lg)] lg:scale-[1.03]'
+                    : 'border-border bg-muted/40 shadow-xs',
+                )}
+              >
+                <span className="font-mono text-xs text-muted-foreground tabular-nums">
+                  {String(index + 1).padStart(2, '0')} · {step.short}
+                </span>
+                <h3 className="text-sm font-semibold">{step.title}</h3>
+                <p className="text-xs/relaxed text-muted-foreground">{step.copy}</p>
+                <div
+                  aria-hidden
+                  inert
+                  className={cn(
+                    'mt-auto select-none',
+                    'motion-safe:transition-opacity motion-safe:duration-500',
+                    isActive ? 'opacity-100' : 'opacity-0 lg:opacity-100',
+                  )}
+                >
+                  {step.visual}
+                </div>
+              </button>
+            )
+          })}
+        </div>
       </div>
     </SectionShell>
   )
@@ -241,41 +346,98 @@ const MEMORY_TAG_TONE = {
 }
 
 export function MemorySection() {
+  const cinematic = useCinematicLayer()
+  const { ref, inView } = useInViewOnce()
+  /* The living event (§21): 0 idle → 1 approval notification → 2 the
+     Past approvals row absorbs it → 3 memory confirmed. Reduced motion
+     renders the finished state (3) immediately. */
+  const [step, setStep] = useState(0)
+
+  useEffect(() => {
+    if (!inView) return
+    if (!cinematic) {
+      setStep(3)
+      return
+    }
+    const timers = [
+      setTimeout(() => setStep(1), 700),
+      setTimeout(() => setStep(2), 1800),
+      setTimeout(() => setStep(3), 2800),
+    ]
+    return () => timers.forEach(clearTimeout)
+  }, [cinematic, inView])
+
   return (
     <SectionShell
       tinted
       headline="Malaky remembers your business."
       copy="Teach Malaky once. Your brand voice, products, audience, offers, approved facts, preferences and past decisions become the starting point for every future draft — persistent business intelligence, not a settings form."
     >
-      <div className="mt-10 grid items-start gap-8 lg:grid-cols-2">
+      <div ref={ref} className="mt-10 grid items-start gap-8 lg:grid-cols-2">
         <Reveal className="flex flex-col overflow-hidden rounded-[1.25rem] border border-border bg-card shadow-xs">
           <ul className="flex flex-col divide-y divide-border">
-            {MEMORY_ROWS.map((row) => (
-              <li key={row.item} className="flex items-center justify-between gap-3 px-5 py-3">
-                <span className="text-sm">{row.item}</span>
-                <span
+            {MEMORY_ROWS.map((row) => {
+              const highlighted = row.item === 'Past approvals' && step >= 2
+              return (
+                <li
+                  key={row.item}
                   className={cn(
-                    'rounded-full px-2 py-0.5 text-xs font-medium',
-                    MEMORY_TAG_TONE[row.tag],
+                    'flex items-center justify-between gap-3 px-5 py-3',
+                    'motion-safe:transition-colors motion-safe:duration-500',
+                    highlighted && 'bg-accent',
                   )}
                 >
-                  {row.tag}
-                </span>
-              </li>
-            ))}
+                  <span className={cn('text-sm', highlighted && 'font-medium')}>{row.item}</span>
+                  <span
+                    className={cn(
+                      'rounded-full px-2 py-0.5 text-xs font-medium',
+                      'motion-safe:transition-colors motion-safe:duration-500',
+                      highlighted ? 'bg-success/10 text-success' : MEMORY_TAG_TONE[row.tag],
+                    )}
+                  >
+                    {highlighted ? 'learned ✓' : row.tag}
+                  </span>
+                </li>
+              )
+            })}
           </ul>
         </Reveal>
-        <Reveal className="flex flex-col gap-3 text-sm text-muted-foreground">
-          <p className="max-w-[46ch]">
-            Every approval teaches it something. Approve a launch-morning announcement and the
-            next launch starts with one — that is the{' '}
-            <span className="font-medium text-foreground">memory updated from your approval</span>{' '}
-            moment you saw above.
-          </p>
-          <p className="max-w-[46ch]">
-            Decline with a reason, and the reason is remembered too.
-          </p>
-        </Reveal>
+
+        <div className="flex flex-col gap-4">
+          {/* The event feed: an approval arrives, memory absorbs it. */}
+          <div aria-live="polite" className="flex min-h-24 flex-col gap-2">
+            <div
+              className={cn(
+                'flex items-center gap-2 self-start rounded-xl border border-border bg-card px-4 py-2.5 shadow-xs',
+                'motion-safe:transition-all motion-safe:duration-500',
+                step >= 1 ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0',
+              )}
+            >
+              <Bell aria-hidden className="size-3.5 text-muted-foreground" />
+              <span className="text-sm">CEO LinkedIn post approved</span>
+              <Check aria-hidden className="size-3.5 text-success" />
+            </div>
+            <p
+              className={cn(
+                'text-sm font-medium text-success',
+                'motion-safe:transition-opacity motion-safe:duration-500',
+                step >= 3 ? 'opacity-100' : 'opacity-0',
+              )}
+            >
+              Memory updated ✓
+            </p>
+          </div>
+
+          <Reveal className="flex flex-col gap-3 text-sm text-muted-foreground">
+            <p className="max-w-[46ch]">
+              Every approval teaches it something. Approve a launch-morning announcement and the
+              next launch starts with one — that is the{' '}
+              <span className="font-medium text-foreground">memory updated from your approval</span>{' '}
+              moment you saw above.
+            </p>
+            <p className="max-w-[46ch]">Decline with a reason, and the reason is remembered too.</p>
+          </Reveal>
+        </div>
       </div>
     </SectionShell>
   )
@@ -290,46 +452,124 @@ const OCCASIONS = [
   { label: 'UAE National Day', state: 'future' },
 ] as const
 
+const NURA = DEMO_BRANDS.nura
+
 export function CalendarSection() {
+  const cinematic = useCinematicLayer()
+  const { ref, inView } = useInViewOnce()
+  /* 0 idle → 1 timeline draws → 2 National Day activates → 3 the prepared
+     campaign appears. Reduced motion renders the proof immediately. */
+  const [step, setStep] = useState(0)
+
+  useEffect(() => {
+    if (!inView) return
+    if (!cinematic) {
+      setStep(3)
+      return
+    }
+    const timers = [
+      setTimeout(() => setStep(1), 300),
+      setTimeout(() => setStep(2), 1400),
+      setTimeout(() => setStep(3), 2300),
+    ]
+    return () => timers.forEach(clearTimeout)
+  }, [cinematic, inView])
+
   return (
     <SectionShell
       headline="Malaky knows what's coming."
       copy="Important dates should not depend on someone remembering to prompt an AI tool. Malaky tracks your calendar — the region's occasions and your own key dates — and prepares relevant campaigns before the opportunity arrives."
     >
-      <Reveal className="mt-10 rounded-[1.25rem] border border-border bg-card p-6 shadow-xs">
-        <div aria-hidden className="flex items-center gap-2">
-          {OCCASIONS.map((occasion, index) => (
-            <div key={occasion.label} className="flex flex-1 items-center gap-2">
-              <span
-                className={cn(
-                  'size-2.5 shrink-0 rounded-full',
-                  occasion.state === 'next' ? 'bg-brand' : 'bg-border',
+      <div ref={ref}>
+        <Reveal className="mt-10 rounded-[1.25rem] border border-border bg-card p-6 shadow-xs">
+          {/* The timeline draws in, then the next occasion takes focus. */}
+          <div aria-hidden className="flex items-center gap-2">
+            {OCCASIONS.map((occasion, index) => (
+              <div key={occasion.label} className="flex flex-1 items-center gap-2">
+                <span
+                  className={cn(
+                    'size-2.5 shrink-0 rounded-full',
+                    'motion-safe:transition-all motion-safe:duration-500',
+                    step >= 1 ? 'opacity-100' : 'opacity-0',
+                    occasion.state === 'next' && step >= 2 ? 'scale-125 bg-brand' : 'bg-border',
+                  )}
+                  style={{ transitionDelay: cinematic ? `${index * 140}ms` : undefined }}
+                />
+                {index < OCCASIONS.length - 1 && (
+                  <span className="h-px flex-1 overflow-hidden rounded-full bg-border">
+                    <span
+                      className={cn(
+                        'block h-full origin-left bg-foreground/25',
+                        'motion-safe:transition-transform motion-safe:duration-700',
+                        step >= 1 ? 'scale-x-100' : 'scale-x-0',
+                      )}
+                      style={{ transitionDelay: cinematic ? `${index * 140}ms` : undefined }}
+                    />
+                  </span>
                 )}
-              />
-              {index < OCCASIONS.length - 1 && <span className="h-px flex-1 bg-border" />}
-            </div>
-          ))}
-        </div>
-        <div className="mt-2 flex flex-wrap gap-x-6 gap-y-1 text-xs text-muted-foreground">
-          {OCCASIONS.map((occasion) => (
-            <span
-              key={occasion.label}
-              className={cn(occasion.state === 'next' && 'font-medium text-foreground')}
-            >
-              {occasion.label}
-            </span>
-          ))}
-        </div>
-        <div className="mt-6 flex flex-wrap items-center gap-3 rounded-xl border border-border bg-background px-4 py-3">
-          <StatusChip state="prepared" />
-          <span className="text-sm">
-            Nura Living — National Day collection teaser
-          </span>
-          <span className="text-xs text-muted-foreground sm:ml-auto">
-            Ready 12 days before the date
-          </span>
-        </div>
-      </Reveal>
+              </div>
+            ))}
+          </div>
+          <div className="mt-2 flex flex-wrap gap-x-6 gap-y-1 text-xs text-muted-foreground">
+            {OCCASIONS.map((occasion) => (
+              <span
+                key={occasion.label}
+                className={cn(
+                  'motion-safe:transition-colors motion-safe:duration-500',
+                  occasion.state === 'next' && step >= 2 && 'font-medium text-foreground',
+                )}
+              >
+                {occasion.label}
+                {occasion.state === 'next' && step >= 2 && (
+                  <span className="ml-1.5 text-muted-foreground">· 12 days away</span>
+                )}
+              </span>
+            ))}
+          </div>
+
+          {/* The proof: not "a campaign was prepared" — the campaign. */}
+          <div
+            aria-live="polite"
+            className={cn(
+              'mt-6 flex flex-wrap items-center gap-4 rounded-xl border border-border bg-background px-4 py-3',
+              'motion-safe:transition-all motion-safe:duration-500',
+              step >= 3 ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0',
+            )}
+          >
+            {step >= 3 && (
+              <>
+                {/* The campaign thumbnail — Nura's own colors, no new assets. */}
+                <span
+                  aria-hidden
+                  className="relative h-16 w-24 shrink-0 overflow-hidden rounded-lg"
+                  style={{
+                    background: `linear-gradient(160deg, ${NURA.palette.surface} 0%, ${NURA.palette.accent} 150%)`,
+                  }}
+                >
+                  <span
+                    className="absolute bottom-0 left-1/2 h-2/3 w-1/2 -translate-x-1/2 rounded-t-full"
+                    style={{ background: NURA.palette.primary }}
+                  />
+                  <span
+                    className="absolute inset-x-0 bottom-1 text-center text-[7px] font-semibold tracking-wide text-white uppercase"
+                  >
+                    National Day
+                  </span>
+                </span>
+                <div className="flex min-w-0 flex-col gap-1">
+                  <span className="text-sm font-medium">
+                    Nura Living — National Day collection teaser
+                  </span>
+                  <span className="flex flex-wrap items-center gap-2">
+                    <StatusChip state="needsReview" label="Ready for review" />
+                    <span className="text-xs text-success">Prepared 12 days early ✓</span>
+                  </span>
+                </div>
+              </>
+            )}
+          </div>
+        </Reveal>
+      </div>
     </SectionShell>
   )
 }

@@ -1178,3 +1178,36 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   hero screenshots confirm platform recognition without reading labels
 - Next: founder eyeballs production; Arabic engagement strings join the
   open-items 16 native review
+
+### 2026-08-11 15:30 — Production-readiness pass shipped (P0–P3)
+
+- Did: the founder's 15-item production sprint. P0: route table lazy-loads
+  everything but marketing (visitor JS 391→189 kB gzip measured on the
+  built bundle; analytics/recharts split out), hero story 620→420 vh,
+  orbit loop freed of per-frame viewport reads. P1: Today's Workspace is
+  an interactive approval demo (Ready for review → Approved → Scheduled ·
+  18:00 → Memory updated ✓, aria-live, local state only); How Malaky
+  works is a connected journey (numbered stations, drawn progress line,
+  one commanding step, auto-walk until the visitor picks); Memory plays
+  the approval→learned ✓→Memory updated ✓ event; the calendar draws its
+  timeline, activates Saudi National Day (12 days away) and SHOWS the
+  prepared Nura teaser with "Prepared 12 days early ✓ / Ready for
+  review". P2: CTA switched to the early-access launch model (decisions),
+  /privacy + /terms shipped and linked (signup consent now links the real
+  documents), production metadata + OG card + robots + sitemap on
+  malaky.ai. P3: QA on the built bundle — LCP 316 ms local, CLS 0.003,
+  6 requests, keyboard focus visible, engine at 1024+/strip below,
+  /privacy loads directly.
+- Phase: rb/02 follow-up (production pass)
+- Files: `src/routes.tsx`, `src/features/system/legal-screens.tsx` (new),
+  `src/features/marketing/**`, `src/features/auth/signup-screen.tsx`,
+  `src/components/ab/form.tsx`, `index.html`, `public/{robots.txt,
+  sitemap.xml,brand/og-malaky.png}`, `scripts/verify-w02.ts`,
+  `e2e/onboarding.spec.ts`, `design.md`, `.agent/*`
+- Decisions: see decisions.md — Production pass: code-split, early-access
+  CTA, legal pages
+- Verify: lint+typecheck+test green (337); full `pnpm e2e` 71 passed /
+  23 live skips; verify:w02 e2e-inclusive PASS after the S5 spec learned
+  the second approval loop
+- Next: open-items 17 (counsel, mailbox, OG eyeball, CTA flip-back
+  condition); Lighthouse on the deployed domain when convenient

@@ -227,3 +227,17 @@ New for the Malaky M1 (2026-08-08):
   dashboard, and the empty states via `/dev/datasets`, reviewed against the
   Alpha MENA kit after the brand landed. Approved by the reviewer, including the
   `--brand` / `--primary` split.
+
+## 17. Production pass artifacts needing a human (2026-08-11)
+
+- [ ] **Legal review**: `/privacy` and `/terms` (src/features/system/
+      legal-screens.tsx) were drafted plain-language by the pass and are
+      live. Counsel must review before paid acquisition.
+- [ ] **support@malaky.ai** is the contact address on both documents —
+      confirm the mailbox exists and is watched.
+- [ ] **OG image** (`public/brand/og-malaky.png`) is the wordmark on ivory,
+      composed from the supplied logo asset — founder eyeball wanted.
+- [ ] **Launch model**: acquisition CTA is now "Request early access"
+      (item 12's rule: self-serve publishing backend is not live). Flip to
+      "Start free" via marketing-home + verify-w02 CTA law + e2e matcher
+      + pricing-section seam when self-service is real.

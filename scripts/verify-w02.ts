@@ -215,16 +215,23 @@ function marketingLawsHold(): boolean {
     [/\bdrafting model/i, 'model terminology is banned on the marketing route (§28)'],
     [/\b(Balanced|Precise|Creative) drafting/i, 'model names are banned on the marketing route (§28)'],
     [/\bcredits?\b/i, 'credit terminology is banned on the marketing route (§28)'],
-    [/Book demo|Request demo|Join waitlist|Try Malaky|Request early access|Get started/i, 'a banned CTA variant (D2: Start free / See how it works only)'],
+    // AMENDED by the founder's 2026-08-11 production pass (item 12): the
+    // launch model is early access until self-service publishing ships, so
+    // "Request early access" is THE acquisition CTA and "Start free" joins
+    // the banned list -- the two launch models must never mix. The
+    // pricing-section seam keeps its "Start free" for the flip back; it is
+    // unlinked and exempted below.
+    [/Book demo|Request demo|Join waitlist|Try Malaky|Get started|Start free/i, 'a banned CTA variant (launch model: Request early access / See how it works only)'],
     [/Questions people ask/, 'the FAQ title is "Frequently asked questions" (§29)'],
   ]
   for (const [file, source] of sources) {
+    if (file.endsWith('pricing-section.tsx')) continue // the unlinked seam
     for (const [pattern, why] of copyBans) {
       if (pattern.test(source)) failures.push(`${file}: ${why}`)
     }
   }
-  if (!home.includes('Start free') || !home.includes('See how it works')) {
-    failures.push('marketing-home.tsx: the D2 CTA pair is incomplete')
+  if (!home.includes('Request early access') || !home.includes('See how it works')) {
+    failures.push('marketing-home.tsx: the CTA pair is incomplete (Request early access / See how it works)')
   }
   if (!home.includes('Frequently asked questions')) {
     failures.push('marketing-home.tsx: the FAQ heading is missing (§29)')

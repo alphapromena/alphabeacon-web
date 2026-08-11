@@ -83,12 +83,21 @@ test('S5: approving the demo post schedules it and updates memory', async ({ pag
   // The control-loop moment (brief §23): Approve · Edit · Decline are real
   // affordances, and Approve animates the card into its Scheduled state.
   // The static tier renders the same ApprovalDemo, so the interaction is
-  // asserted on the layout every visitor can reach.
+  // asserted on the layout every visitor can reach. Since the production
+  // pass, Today's Workspace carries a second, independent approval loop —
+  // the hero demo is the FIRST Approve in document order, the workspace's
+  // is the LAST, and both are walked here.
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await asVisitor(page)
-  await page.getByRole('button', { name: 'Approve', exact: true }).click()
+  await page.getByRole('button', { name: 'Approve', exact: true }).first().click()
   await expect(page.getByText('Scheduled · Mon 09:00')).toBeVisible()
   await expect(page.getByText('Memory updated from your approval.')).toBeVisible()
+
+  // The workspace loop (production pass item 4): Ready for review →
+  // Approved → Scheduled · 18:00 → the memory touch.
+  await page.getByRole('button', { name: 'Approve', exact: true }).last().click()
+  await expect(page.getByText('Scheduled · 18:00').first()).toBeVisible()
+  await expect(page.getByText('Memory updated ✓').first()).toBeVisible()
 })
 
 test('@axe marketing and auth screens scan clean', async ({ page }) => {
@@ -107,7 +116,7 @@ test('@axe marketing and auth screens scan clean', async ({ page }) => {
 test('@golden signup → verify → onboarding → dashboard', async ({ page }) => {
   await asVisitor(page)
 
-  await page.getByRole('link', { name: 'Start free' }).first().click()
+  await page.getByRole('link', { name: 'Request early access' }).first().click()
   await expect(page.getByRole('heading', { name: 'Create your account' })).toBeVisible()
 
   await page.getByLabel('Full name').fill('Lena Park')
