@@ -1267,3 +1267,35 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   malaky.ai / www / 1.malaky.ai
 - Next: founder — approve the Higgsfield manifest, wire the
   request-access destination, cut malaky.ai DNS over to Vercel
+
+### 2026-08-11 19:45 — Campaign photography lands in the cards
+
+- Did: founder approved real campaign photography via platform mockups.
+  Four WebP stills into `public/campaigns/` (85 kB total) rendering
+  through the §26 ContentAsset slot; `campaign-photos.ts` maps brand →
+  still via `photoFor(brand)` so Instagram, LinkedIn company, Arabic
+  social, Facebook, newsletter and X each pick the right photograph from
+  the brand they were handed. Type lockups stay live HTML over a palette
+  scrim — crisp, translatable, RTL-correct. Meezan stays text-first.
+  REJECTED from the same upload: the SpaceX/X post (real company, real
+  person's account) — shipping it would claim Malaky produced SpaceX's
+  marketing; Baker Tilly Saudi parked in open-items 19 pending the
+  written permission the founder says exists. A generated rocket still
+  was made for the X reference and dropped (no aerospace demo brand; a
+  fifth brand would break the frozen set).
+- Phase: rb/02 follow-up (photography pass)
+- Files: `public/campaigns/*.webp` (4 new), `src/features/marketing/
+  outputs/{campaign-photos.ts (new),post-cards.tsx,content-asset.tsx}`,
+  `.agent/*`
+- Decisions: see decisions.md — Campaign photography enters through the
+  asset slot
+- Verify: lint + typecheck + 337 unit + guard-static + build + M1
+  marketing laws + W2 deliverables ALL PASS. e2e: the marketing specs
+  pass; the suite as a whole is FLAKY ON THIS CONTAINER under full-suite
+  parallel load (4 cores, load avg 2.6) — calendar-connections,
+  design-layer:167 and settings-a11y:197 fail in varying combinations.
+  PROVEN PRE-EXISTING: stashing this change and running the full suite on
+  the previous commit fails the SAME three app-shell specs. A standalone
+  full run earlier passed 72/72, and each spec passes in isolation. None
+  touches the marketing route.
+- Next: deploy; founder to supply the Baker Tilly permission document

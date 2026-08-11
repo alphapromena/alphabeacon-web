@@ -262,3 +262,15 @@ New for the Malaky M1 (2026-08-08):
       `1.malaky.ai` and `alphabeacon-web.vercel.app`. Someone with GoDaddy
       DNS access must point the apex + www at Vercel (per the Vercel
       domains panel) before the canonical/OG URLs on malaky.ai are real.
+
+## 19. Founder-supplied reference posts (2026-08-11)
+
+- [ ] **Baker Tilly Saudi Arabia**: the founder supplied their LinkedIn
+      post as a reference and states written permission exists. NOT
+      shipped — attach the written permission to this item, and confirm
+      what it covers (using their post as demo content on malaky.ai is a
+      public claim about a real client), before any Baker Tilly creative
+      or name appears on the site.
+- [x] **SpaceX / X post**: declined and not shipped. It is a real
+      company's real post carrying a real person's account; presenting it
+      as Malaky's demo output would claim work Malaky did not do.

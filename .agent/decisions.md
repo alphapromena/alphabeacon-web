@@ -1079,3 +1079,32 @@ add a new entry that says it supersedes the old one.
   vendor (network law), letting `<video>` in anywhere (the scrubbed-film
   ban stands), or leaving the D1 gate contradicting the approved §26
   architecture until the Reel lands.
+
+### 2026-08-11 — Campaign photography enters through the asset slot
+
+- Why: the founder supplied platform mockups approving real campaign
+  photography for the demo brands. Four stills now sit in
+  `public/campaigns/` (85 kB total, WebP, 560–720 px) and render through
+  the §26 `ContentAsset` slot: Falak's night-highway fleet, Nura's sunlit
+  linen-and-clay interior, Zaytoun's overhead iftar table. `photoFor
+  (brand)` in `campaign-photos.ts` maps brand → still, so every card
+  picks the right photograph from the brand it was handed and no call
+  site has to know. THE SPLIT IS THE POINT: photography carries the mood
+  as a background layer, and every headline, Arabic line, route lockup
+  and CTA stays live HTML on top of a palette scrim — crisp at any size,
+  translatable, editable without regenerating an asset, and RTL-correct.
+  Meezan stays deliberately photograph-free (advisory work has no product
+  shot; the executive post is stronger text-first). D6 still holds: the
+  stills contain no third-party logos, no real brands, no recognisable
+  people, and platform identity is still layout plus generic glyphs.
+- REJECTED from the same upload: the SpaceX/X post (a real company's real
+  post with a real person's account — shipping it would claim Malaky
+  produced SpaceX's marketing) and the Baker Tilly Saudi LinkedIn post
+  (a real firm; the founder states written permission exists, so it is
+  parked in open-items 19 pending the document rather than declined).
+  A generated rocket still was produced for the X reference and dropped:
+  no demo brand is aerospace, and inventing a fifth brand would break the
+  frozen four-brand set.
+- Instead of: shipping real brands' posts as Malaky's demo work, or
+  baking headline type into the images (which would lose crispness,
+  translation and RTL shaping).

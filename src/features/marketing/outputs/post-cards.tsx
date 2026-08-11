@@ -24,6 +24,8 @@ import type { CSSProperties, ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 import { PLATFORM, type DemoBrand } from './demo-brands'
 import { BrandLogo } from './brand-logos'
+import { photoFor } from './campaign-photos'
+import { ContentAsset } from './content-asset'
 
 /**
  * Mock marketing outputs (brief §3, §31; full-fidelity pass 2026-08-11):
@@ -258,6 +260,7 @@ export function InstagramCard({
   stateLabel,
   visualTitle = 'The Summer Collection',
   caption = 'Linen, clay, and light. The summer collection arrives Thursday — made to be lived in.',
+  photo,
   className,
 }: {
   brand: DemoBrand
@@ -265,6 +268,9 @@ export function InstagramCard({
   stateLabel?: string
   visualTitle?: string
   caption?: string
+  /** Campaign photography behind the type lockup; omit for the pure
+   * palette creative. */
+  photo?: string
   className?: string
 }) {
   const handle = handleFor(brand).slice(1).toLowerCase()
@@ -281,8 +287,11 @@ export function InstagramCard({
           <MoreHorizontal className="ml-auto size-4 shrink-0 text-muted-foreground" />
         </div>
 
-        {/* The 4:5 campaign creative — the customer's colors, designed as
-            an ad, not a placeholder. */}
+        {/* The 4:5 campaign creative. `photo` layers real campaign
+            photography UNDER the type lockup (founder-approved pass,
+            2026-08-11) — the headline stays live HTML so it renders
+            crisp at every size and stays translatable. Without a photo
+            the palette lockup below is the creative, unchanged. */}
         <div
           className="relative -mx-1 aspect-[4/5] overflow-hidden rounded-lg"
           style={{
@@ -290,14 +299,33 @@ export function InstagramCard({
               'linear-gradient(160deg, var(--db-surface) 0%, var(--db-surface) 55%, var(--db-accent) 140%)',
           }}
         >
-          <div
-            className="absolute bottom-0 left-1/2 h-[68%] w-[54%] -translate-x-1/2 rounded-t-full"
-            style={{ background: 'var(--db-primary)' }}
-          />
-          <div
-            className="absolute top-[8%] right-[10%] size-12 rounded-full"
-            style={{ background: 'var(--db-accent)' }}
-          />
+          {(photo ?? photoFor(brand)) ? (
+            <>
+              <ContentAsset
+                asset={{ type: 'image', src: (photo ?? photoFor(brand))!, alt: '', aspectRatio: '4 / 5' }}
+                className="absolute inset-0 size-full"
+              />
+              {/* The scrim is what keeps the overlaid type legible. */}
+              <span
+                className="absolute inset-0"
+                style={{
+                  background:
+                    'linear-gradient(to top, color-mix(in oklab, var(--db-ink) 82%, transparent) 0%, transparent 55%)',
+                }}
+              />
+            </>
+          ) : (
+            <>
+              <div
+                className="absolute bottom-0 left-1/2 h-[68%] w-[54%] -translate-x-1/2 rounded-t-full"
+                style={{ background: 'var(--db-primary)' }}
+              />
+              <div
+                className="absolute top-[8%] right-[10%] size-12 rounded-full"
+                style={{ background: 'var(--db-accent)' }}
+              />
+            </>
+          )}
           <div className="absolute inset-x-0 bottom-0 flex flex-col items-center gap-1 pb-4">
             <p className="text-[9px] font-semibold tracking-[0.22em] text-white/80 uppercase">
               {brand.name}
@@ -341,11 +369,13 @@ export function LinkedInCompanyCard({
   brand,
   state = 'needsReview',
   stateLabel,
+  photo,
   className,
 }: {
   brand: DemoBrand
   state?: WorkflowState
   stateLabel?: string
+  photo?: string
   className?: string
 }) {
   return (
@@ -370,17 +400,33 @@ export function LinkedInCompanyCard({
           <span className="text-muted-foreground">…see more</span>
         </p>
 
-        {/* The launch creative: the customer's navy + orange, full bleed. */}
+        {/* The launch creative: the customer's navy + orange, full bleed,
+            over the fleet photography when one is supplied. */}
         <div
-          className="-mx-1 flex flex-col gap-2 overflow-hidden rounded-lg p-4"
+          className="relative -mx-1 flex flex-col gap-2 overflow-hidden rounded-lg p-4"
           style={{ background: 'var(--db-primary)' }}
         >
-          <p className="font-display text-lg/tight font-semibold text-white">
+          {(photo ?? photoFor(brand)) && (
+            <>
+              <ContentAsset
+                asset={{ type: 'image', src: (photo ?? photoFor(brand))!, alt: '', aspectRatio: '16 / 9' }}
+                className="absolute inset-0 size-full"
+              />
+              <span
+                className="absolute inset-0"
+                style={{
+                  background:
+                    'linear-gradient(105deg, var(--db-primary) 8%, color-mix(in oklab, var(--db-primary) 55%, transparent) 62%, transparent 100%)',
+                }}
+              />
+            </>
+          )}
+          <p className="relative font-display text-lg/tight font-semibold text-white">
             SAME-DAY.
             <br />
             <span style={{ color: 'var(--db-accent)' }}>BOTH WAYS.</span>
           </p>
-          <div className="flex items-center gap-2">
+          <div className="relative flex items-center gap-2">
             <span className="text-[11px] font-semibold text-white">RUH</span>
             <span
               className="h-0.5 flex-1 rounded-full"
@@ -399,7 +445,7 @@ export function LinkedInCompanyCard({
             />
             <span className="text-[11px] font-semibold text-white">JED</span>
           </div>
-          <p className="text-[10px] text-white/75">Riyadh ⇄ Jeddah · from Monday</p>
+          <p className="relative text-[10px] text-white/75">Riyadh ⇄ Jeddah · from Monday</p>
         </div>
 
         {/* Social proof + the action row. */}
@@ -476,6 +522,7 @@ export function ArabicSocialCard({
   headlineAr = 'رمضان يجمعنا',
   bodyAr = 'قائمة إفطار عائلية جديدة — من قلب المطبخ الشامي. احجزوا طاولتكم قبل المغرب، ونحن نهتم بالباقي.',
   ctaAr = 'احجز الآن',
+  photo,
   className,
 }: {
   brand: DemoBrand
@@ -484,6 +531,7 @@ export function ArabicSocialCard({
   headlineAr?: string
   bodyAr?: string
   ctaAr?: string
+  photo?: string
   className?: string
 }) {
   return (
@@ -502,18 +550,37 @@ export function ArabicSocialCard({
           <MoreHorizontal className="mr-auto size-4 shrink-0 text-muted-foreground" />
         </div>
 
-        {/* The Ramadan creative — the brand's deep olive + warm red. */}
+        {/* The Ramadan creative — the brand's deep olive + warm red, over
+            the iftar table when a photo is supplied. Arabic type stays
+            live HTML so it renders and shapes natively. */}
         <div
-          className="-mx-1 flex flex-col items-center gap-1.5 overflow-hidden rounded-lg px-3 py-5"
+          className="relative -mx-1 flex flex-col items-center gap-1.5 overflow-hidden rounded-lg px-3 py-5"
           style={{
             background:
               'linear-gradient(200deg, var(--db-primary) 0%, var(--db-ink) 130%)',
           }}
         >
-          <p className="text-[9px] font-semibold tracking-widest text-white/75">{brand.nameAr}</p>
-          <p className="font-display text-xl font-semibold text-white">{headlineAr}</p>
+          {(photo ?? photoFor(brand)) && (
+            <>
+              <ContentAsset
+                asset={{ type: 'image', src: (photo ?? photoFor(brand))!, alt: '', aspectRatio: '3 / 2' }}
+                className="absolute inset-0 size-full"
+              />
+              <span
+                className="absolute inset-0"
+                style={{
+                  background:
+                    'linear-gradient(200deg, color-mix(in oklab, var(--db-ink) 72%, transparent) 0%, color-mix(in oklab, var(--db-ink) 55%, transparent) 100%)',
+                }}
+              />
+            </>
+          )}
+          <p className="relative text-[9px] font-semibold tracking-widest text-white/75">
+            {brand.nameAr}
+          </p>
+          <p className="relative font-display text-xl font-semibold text-white">{headlineAr}</p>
           <span
-            className="mt-1 rounded-full px-3 py-0.5 text-[10px] font-semibold text-white"
+            className="relative mt-1 rounded-full px-3 py-0.5 text-[10px] font-semibold text-white"
             style={{ background: 'var(--db-accent)' }}
           >
             قائمة الإفطار العائلية
@@ -552,11 +619,13 @@ export function NewsletterCard({
   brand,
   state = 'approved',
   stateLabel,
+  photo,
   className,
 }: {
   brand: DemoBrand
   state?: WorkflowState
   stateLabel?: string
+  photo?: string
   className?: string
 }) {
   return (
@@ -583,13 +652,28 @@ export function NewsletterCard({
           </span>
         </div>
         <div
-          className="flex flex-col gap-1.5 px-4 py-4"
+          className="relative flex flex-col gap-1.5 px-4 py-4"
           style={{ background: 'var(--db-primary)' }}
         >
-          <p className="font-display text-base/tight font-semibold text-white">
+          {(photo ?? photoFor(brand)) && (
+            <>
+              <ContentAsset
+                asset={{ type: 'image', src: (photo ?? photoFor(brand))!, alt: '', aspectRatio: '16 / 9' }}
+                className="absolute inset-0 size-full"
+              />
+              <span
+                className="absolute inset-0"
+                style={{
+                  background:
+                    'linear-gradient(95deg, var(--db-primary) 12%, color-mix(in oklab, var(--db-primary) 50%, transparent) 70%, transparent 100%)',
+                }}
+              />
+            </>
+          )}
+          <p className="relative font-display text-base/tight font-semibold text-white">
             Same-day delivery is here.
           </p>
-          <div className="flex items-center gap-2">
+          <div className="relative flex items-center gap-2">
             <span className="text-[10px] font-semibold text-white">RUH</span>
             <span
               className="h-0.5 w-14 rounded-full"
@@ -626,6 +710,7 @@ export function FacebookCard({
   stateLabel,
   copy = "Iftar with the whole family, without the wait. Our Ramadan family set serves six — book a table before maghrib and it's on the table when you arrive.",
   banner = 'Family iftar · serves 6',
+  photo,
   className,
 }: {
   brand: DemoBrand
@@ -633,18 +718,38 @@ export function FacebookCard({
   stateLabel?: string
   copy?: string
   banner?: string
+  photo?: string
   className?: string
 }) {
   return (
     <CardShell brand={brand} channel="facebook" state={state} stateLabel={stateLabel} className={className}>
       <BrandHeader brand={brand} />
       <p className="text-xs/relaxed">{copy}</p>
-      <div
-        aria-hidden
-        className="flex h-10 items-center justify-center rounded-xl text-xs font-semibold"
-        style={{ background: 'var(--db-surface)', color: 'var(--db-primary)' }}
-      >
-        {banner}
+      <div aria-hidden className="relative overflow-hidden rounded-xl">
+        {(photo ?? photoFor(brand)) ? (
+          <>
+            <ContentAsset
+              asset={{ type: 'image', src: (photo ?? photoFor(brand))!, alt: '', aspectRatio: '3 / 2' }}
+              className="w-full"
+            />
+            <span
+              className="absolute inset-x-0 bottom-0 px-3 py-2 text-xs font-semibold text-white"
+              style={{
+                background:
+                  'linear-gradient(to top, color-mix(in oklab, var(--db-ink) 85%, transparent), transparent)',
+              }}
+            >
+              {banner}
+            </span>
+          </>
+        ) : (
+          <div
+            className="flex h-10 items-center justify-center text-xs font-semibold"
+            style={{ background: 'var(--db-surface)', color: 'var(--db-primary)' }}
+          >
+            {banner}
+          </div>
+        )}
       </div>
     </CardShell>
   )
@@ -656,11 +761,13 @@ export function XCard({
   brand,
   state = 'prepared',
   stateLabel,
+  photo,
   className,
 }: {
   brand: DemoBrand
   state?: WorkflowState
   stateLabel?: string
+  photo?: string
   className?: string
 }) {
   return (
@@ -684,6 +791,14 @@ export function XCard({
         <p className="text-xs/relaxed">
           Noon cutoff, evening delivery. Riyadh ⇄ Jeddah goes same-day on Monday.
         </p>
+        {/* X's media card: rounded, bordered, 16:9 — the shape a post with
+            an attached image actually takes. */}
+        {(photo ?? photoFor(brand)) && (
+          <ContentAsset
+            asset={{ type: 'image', src: (photo ?? photoFor(brand))!, alt: '', aspectRatio: '16 / 9' }}
+            className="overflow-hidden rounded-xl border border-border"
+          />
+        )}
         <div className="flex items-center justify-between text-[10px] text-muted-foreground">
           <span className="inline-flex items-center gap-1">
             <MessageCircle className="size-3.5" />5
