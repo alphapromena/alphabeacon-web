@@ -1004,3 +1004,23 @@ add a new entry that says it supersedes the old one.
 - Instead of: real platform logos/screenshots (trademark + D6), fake
   like counts (§5), or leaving the generic label-only cards the founder
   rejected.
+
+### 2026-08-11 — Full-fidelity posts: demo engagement numbers, platform hues, fictional logo marks
+
+- Why: the founder explicitly directed realistic engagement data ("These
+  numbers are DEMO DATA"), platform interface colors, and believable
+  fictional brand logos — overriding the V1 brief's §5 no-engagement rule
+  for the mock posts. The line now: engagement numbers are INVENTED data
+  on INVENTED brands inside clearly-illustrative previews (aria-hidden
+  interiors); Malaky chrome still never shows a fabricated metric. D6
+  still stands — no third-party logo assets; platform identity is layout
+  plus generic glyphs plus interface hues (PLATFORM in demo-brands.ts,
+  the module holding the one raw-color exemption, so the color law's
+  scope is unchanged). The four customer logos are hand-drawn inline SVG
+  marks (brand-logos.tsx) filled from each brand's own palette — no new
+  assets, no new colors. Three layers stay distinct: Malaky owns the
+  wrapper, the platform owns the interior interface, the customer owns
+  the content.
+- Instead of: leaving label-only cards the founder rejected twice, real
+  platform logos/screenshots (trademark + D6), or scattering raw hexes
+  outside the exempt module.

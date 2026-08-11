@@ -1152,3 +1152,29 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   confirm each channel is recognizable without reading labels
 - Next: founder eyeballs realism on production; Arabic strings (incl.
   sectorAr) join the open-items 16 native review
+
+### 2026-08-11 14:40 — Full-fidelity platform posts (founder-directed)
+
+- Did: the realism pass the founder asked for, no generated images.
+  brand-logos.tsx: four inline-SVG fictional marks (Falak orbit, Zaytoun
+  olive sprig, Nura arch, Meezan scales) filled from brand palettes.
+  demo-brands.ts: followers lines + PLATFORM interface hues (scoped to
+  the exempt module). post-cards.tsx: Instagram gains 4:5 designed
+  creative, red-heart action row, "1,248 likes", caption, "View all 32
+  comments", timestamp; LinkedIn company gains followers/globe header,
+  SAME-DAY. BOTH WAYS. navy+orange creative with truck, reaction cluster
+  "142" + "18 comments · 7 reposts", action row; executive post gains
+  gradient person avatar + "98"/"12 comments"; Arabic post is fully RTL
+  with Eastern-Arabic engagement (١٦٦ إعجابًا / التعليقات الـ٢٤) and a
+  Ramadan creative; newsletter gains From/To/Subject chrome + branded
+  email; X gains handle + reply/repost/like/views counts. Orbit, hero
+  copy, Malaky chrome untouched.
+- Phase: rb/02 follow-up (M1 only)
+- Files: `src/features/marketing/outputs/{post-cards.tsx,demo-brands.ts,brand-logos.tsx}`,
+  `.agent/{decisions,sessions}.md`
+- Decisions: see decisions.md — Full-fidelity posts
+- Verify: lint+typecheck+test green (337); verify:w02 --skip-e2e PASS
+  (raw-color exemption still demo-brands-only, RTL law holds); e2e 7/7;
+  hero screenshots confirm platform recognition without reading labels
+- Next: founder eyeballs production; Arabic engagement strings join the
+  open-items 16 native review

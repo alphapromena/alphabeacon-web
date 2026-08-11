@@ -29,6 +29,8 @@ export interface DemoBrand {
   /** The sector as the brand would say it in Arabic (native, not translated). */
   sectorAr: string
   monogram: string
+  /** Follower line the LinkedIn-style headers show — demo data. */
+  followers: string
   /** The brand's own colors — card interiors only (D5). */
   palette: {
     primary: string
@@ -49,6 +51,7 @@ export const DEMO_BRANDS: Record<DemoBrand['id'], DemoBrand> = {
     sector: 'Logistics',
     sectorAr: 'شركة شحن',
     monogram: 'FL',
+    followers: '12,480 followers',
     palette: { primary: '#1F3A5F', accent: '#E8823A', surface: '#EEF2F7', ink: '#14263C' },
     narrative: 'Launching a same-day delivery lane between Riyadh and Jeddah.',
     person: { name: 'Omar Suleiman', role: 'Founder, Falak Logistics', initials: 'OS' },
@@ -60,6 +63,7 @@ export const DEMO_BRANDS: Record<DemoBrand['id'], DemoBrand> = {
     sector: 'Restaurant',
     sectorAr: 'مطبخ شامي',
     monogram: 'BZ',
+    followers: '9,120 followers',
     palette: { primary: '#5A6B3B', accent: '#A63D2F', surface: '#F4F1E7', ink: '#2F3520' },
     narrative: 'A family iftar set menu for Ramadan, and an Eid feast to follow.',
     person: { name: 'Rania Khalil', role: 'Owner, Bayt Zaytoun', initials: 'RK' },
@@ -71,6 +75,7 @@ export const DEMO_BRANDS: Record<DemoBrand['id'], DemoBrand> = {
     sector: 'Retail',
     sectorAr: 'تجارة تجزئة',
     monogram: 'N',
+    followers: '28.4K followers',
     palette: { primary: '#8D5A78', accent: '#E0B084', surface: '#F6EFF3', ink: '#3D2635' },
     narrative: 'The summer home collection drops — linen, clay, and light.',
     person: { name: 'Noor Al-Sayegh', role: 'Creative Director, Nura Living', initials: 'NA' },
@@ -82,6 +87,7 @@ export const DEMO_BRANDS: Record<DemoBrand['id'], DemoBrand> = {
     sector: 'Professional services',
     sectorAr: 'استشارات مهنية',
     monogram: 'M',
+    followers: '4,306 followers',
     palette: { primary: '#23616B', accent: '#7FB6BF', surface: '#EBF2F3', ink: '#12333A' },
     narrative: 'Guiding clients through the Q3 VAT filing deadline, calmly.',
     person: { name: 'Layla Haddad', role: 'Managing Partner, Meezan Advisory', initials: 'LH' },
@@ -89,3 +95,19 @@ export const DEMO_BRANDS: Record<DemoBrand['id'], DemoBrand> = {
 }
 
 export const DEMO_BRAND_LIST: DemoBrand[] = Object.values(DEMO_BRANDS)
+
+/**
+ * Platform interface hues for the mock posts (founder-directed realism
+ * pass, 2026-08-11): generic UI colors that make a LinkedIn post read as
+ * LinkedIn and an Instagram heart read as a heart — colors only, never
+ * imported logo assets (D6 stands). Scoped here because this module holds
+ * the marketing route's one raw-color exemption.
+ */
+export const PLATFORM = {
+  linkedin: {
+    like: '#378FE9',
+    love: '#DF704D',
+    celebrate: '#6DAE4F',
+  },
+  instagram: { heart: '#FF3040' },
+} as const
