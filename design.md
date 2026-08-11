@@ -223,12 +223,12 @@ only).** The tier is REDEFINED from scrubbed footage to
 **scroll-choreographed 3D card transforms** (brief §13, decisions.md D8):
 the hero object is the marketing Malaky produces — floating,
 publication-ready, channel-specific posts for the demo customer brands,
-each in that customer's own colors. Cards may float slightly, separate,
-change depth, rotate subtly, come forward when relevant, and reorganize as
-the story progresses. Motion is slow, premium, and scroll-led; the engine
-animates `transform`/`opacity` only, on native scroll (the no-Lenis
-decision stands), rAF-eased the way rb/01 eased frame indices. The app
-keeps the strict calm law — nothing in this tier may leak into `AppShell`.
+each in that customer's own colors. **Amended 2026-08-11 (founder-directed):
+the cards do not move on scroll.** They hold one resting fan for the whole
+story; scrolling the pinned section advances only the copy beats (headline
+cross-fades, the memory chips, the approval moment, the channel row). The
+app keeps the strict calm law — nothing in this tier may leak into
+`AppShell`.
 
 Since 2026-08-11 (founder-directed) the cards also carry a **continuous
 ambient idle drift** so the composition never freezes between scrolls:

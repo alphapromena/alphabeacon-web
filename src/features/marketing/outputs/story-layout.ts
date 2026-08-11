@@ -95,6 +95,14 @@ const DISTRIBUTED: Layout = {
 
 const LAYOUTS: Layout[] = [STACKED, FANNED, REMEMBERED, PROACTIVE, FOCUSED, DISTRIBUTED, DISTRIBUTED]
 
+/**
+ * The resting arrangement (founder-directed 2026-08-11): scroll no longer
+ * moves the cards — every card holds the readable fan for the whole story
+ * while the ambient drift keeps it alive; scroll advances only the copy.
+ * The scene layouts above remain the sampler's (tested) vocabulary.
+ */
+export const RESTING: Record<CardId, CardPose> = FANNED
+
 function smoothstep(t: number): number {
   return t * t * (3 - 2 * t)
 }

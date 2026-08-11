@@ -12,17 +12,19 @@ import {
   XCard,
 } from './post-cards'
 import { AMBIENT, ambientStyle } from './motion-tokens'
-import { CARD_IDS, poseTransform, posesAt, sceneFor, type CardId } from './story-layout'
+import { CARD_IDS, RESTING, poseTransform, sceneFor, type CardId } from './story-layout'
 import { useCinematicLayer, useMediaQuery } from './use-media'
 
 /**
- * The 3D output story (brief §3–§4): one continuous scroll choreography.
- * The engine animates `transform`/`opacity` only, on native scroll, with
- * the same rAF easing discipline as rb/01 — the loop eases scroll progress,
- * never the scroll position. It mounts only when the browser affirms
- * no-preference AND the viewport is wide enough for the field; everywhere
- * else the same story renders as a static, fully readable flow whose card
- * strip swipes natively on mobile (§31).
+ * The 3D output story (brief §3–§4), amended 2026-08-11 by founder
+ * direction: the cards do NOT move on scroll. They hold the resting fan
+ * (story-layout RESTING) and the ambient drift is their only motion;
+ * scrolling the pinned section advances the copy beats — headline
+ * cross-fades, the memory chips, the approval moment, the channel row —
+ * via the scene state alone. The engine mounts only when the browser
+ * affirms no-preference AND the viewport is wide enough for the field;
+ * everywhere else the same story renders as a static, fully readable flow
+ * whose card strip swipes natively on mobile (§31).
  */
 
 const SCENE_COPY: { headline: string; body: string }[] = [
@@ -92,71 +94,34 @@ function CardForSlot({ id, active }: { id: CardId; active: boolean }) {
 
 function StoryEngine({ intro }: { intro: ReactNode }) {
   const sectionRef = useRef<HTMLElement>(null)
-  const cardRefs = useRef<Partial<Record<CardId, HTMLDivElement | null>>>({})
   const [scene, setScene] = useState(0)
 
+  /* Founder-directed 2026-08-11: scroll no longer moves the cards. The
+     listener only reads progress to advance the copy beat; every card
+     holds RESTING (styled once in JSX below) and the ambient drift is the
+     only motion. */
   useEffect(() => {
     const section = sectionRef.current
     if (!section) return
 
-    let current = 0
-    let target = 0
-    let raf = 0
-    let running = false
     let renderedScene = -1
 
-    const apply = () => {
-      const poses = posesAt(current)
-      for (const id of CARD_IDS) {
-        const node = cardRefs.current[id]
-        if (!node) continue
-        const pose = poses[id]
-        node.style.transform = poseTransform(pose)
-        node.style.opacity = String(pose.o)
-        node.style.zIndex = String(pose.z)
-      }
-      const sceneNow = sceneFor(current)
+    const onScroll = () => {
+      const rect = section.getBoundingClientRect()
+      const span = rect.height - window.innerHeight
+      const progress = span > 0 ? Math.min(Math.max(-rect.top / span, 0), 1) : 0
+      const sceneNow = sceneFor(progress)
       if (sceneNow !== renderedScene) {
         renderedScene = sceneNow
         setScene(sceneNow)
       }
     }
 
-    const tick = () => {
-      current += (target - current) * 0.16
-      if (Math.abs(target - current) < 0.0005) current = target
-      apply()
-      if (current !== target) {
-        raf = requestAnimationFrame(tick)
-      } else {
-        running = false
-      }
-    }
-
-    const kick = () => {
-      if (running) return
-      running = true
-      raf = requestAnimationFrame(tick)
-    }
-
-    const readTarget = () => {
-      const rect = section.getBoundingClientRect()
-      const span = rect.height - window.innerHeight
-      target = span > 0 ? Math.min(Math.max(-rect.top / span, 0), 1) : 0
-    }
-
-    const onScroll = () => {
-      readTarget()
-      kick()
-    }
-
     window.addEventListener('scroll', onScroll, { passive: true })
     window.addEventListener('resize', onScroll)
-    readTarget()
-    kick()
+    onScroll()
 
     return () => {
-      cancelAnimationFrame(raf)
       window.removeEventListener('scroll', onScroll)
       window.removeEventListener('resize', onScroll)
     }
@@ -186,26 +151,27 @@ function StoryEngine({ intro }: { intro: ReactNode }) {
 
         {/* The card field. */}
         <div className="absolute inset-0">
-          {CARD_IDS.map((id) => (
-            <div
-              key={id}
-              ref={(node) => {
-                cardRefs.current[id] = node
-              }}
-              className="absolute top-[44%] left-[64%] w-72 will-change-transform"
-            >
-              {/* Nested on purpose: the engine writes `transform` on the
-                  outer slot, the ambient drift animates this inner wrapper —
-                  the two never touch the same element (no fighting). Paused
-                  while the approval moment owns the company card. */}
+          {CARD_IDS.map((id) => {
+            const pose = RESTING[id]
+            return (
               <div
-                data-mk-ambient={id === 'company' && scene === 4 ? 'paused' : ''}
-                style={ambientStyle(AMBIENT[id])}
+                key={id}
+                className="absolute top-[44%] left-[64%] w-72"
+                style={{ transform: poseTransform(pose), opacity: pose.o, zIndex: pose.z }}
               >
-                <CardForSlot id={id} active={scene === 4} />
+                {/* Nested on purpose: the slot holds the resting pose, the
+                    ambient drift animates this inner wrapper — the only
+                    motion the cards have. Paused while the approval moment
+                    owns the company card. */}
+                <div
+                  data-mk-ambient={id === 'company' && scene === 4 ? 'paused' : ''}
+                  style={ambientStyle(AMBIENT[id])}
+                >
+                  <CardForSlot id={id} active={scene === 4} />
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
 
           {/* S3 — memory chips floating near the work. */}
           <div data-mk-stage={scene === 2 ? 'in' : ''} className="pointer-events-none">

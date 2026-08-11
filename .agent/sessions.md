@@ -1054,3 +1054,23 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
 - Decisions: none
 - Verify: docs-only commit; code verified in the 12:15 entry
 - Next: walk open-items 16 against production
+
+### 2026-08-11 12:40 — Scroll no longer moves the cards (founder-directed)
+
+- Did: second founder amendment of the day — "I don't want them to move on
+  scroll." The engine's rAF pose interpolation is gone: every card now
+  holds the RESTING fan (story-layout exports it; the scene layouts stay
+  as the tested sampler vocabulary), styled once in JSX, with the ambient
+  drift as the cards' only motion. The scroll listener survives solely to
+  advance the copy beats — headline cross-fades, memory chips, the S5
+  approval moment, the channel row all still ride the scene state.
+  design.md tier-2 amended to match.
+- Phase: rb/02 follow-up (M1 only)
+- Files: `src/features/marketing/outputs/{scroll-story.tsx,story-layout.ts}`,
+  `design.md`, `.agent/sessions.md`
+- Decisions: none (founder instruction, recorded here and in design.md)
+- Verify: lint+typecheck+test green (337); verify:w02 --skip-e2e PASS;
+  e2e front door + both @reduced-motion + S5 approval + @axe marketing +
+  @golden approve 6/6; browser check: card slot transforms byte-identical
+  across a full scroll, copy beats advance, drift keeps running
+- Next: founder eyeballs the resting fan on production
