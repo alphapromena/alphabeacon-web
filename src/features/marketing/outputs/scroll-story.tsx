@@ -11,20 +11,20 @@ import {
   NewsletterCard,
   XCard,
 } from './post-cards'
-import { AMBIENT, ambientStyle, ambientTransform } from './motion-tokens'
-import { CARD_IDS, RESTING, poseTransform, sceneFor, type CardId } from './story-layout'
+import { AMBIENT, ORBIT, ambientStyle, orbitPose } from './motion-tokens'
+import { CARD_IDS, sceneFor, type CardId } from './story-layout'
 import { useCinematicLayer, useMediaQuery } from './use-media'
 
 /**
  * The 3D output story (brief §3–§4), amended 2026-08-11 by founder
- * direction: the cards do NOT move on scroll. They hold the resting fan
- * (story-layout RESTING) and the ambient drift is their only motion;
- * scrolling the pinned section advances the copy beats — headline
- * cross-fades, the memory chips, the approval moment, the channel row —
- * via the scene state alone. The engine mounts only when the browser
- * affirms no-preference AND the viewport is wide enough for the field;
- * everywhere else the same story renders as a static, fully readable flow
- * whose card strip swipes natively on mobile (§31).
+ * direction (final form): the cards travel a single autonomous 3D ORBIT —
+ * a slow luxury-showroom carousel on the hero's right side — and scroll
+ * never touches them. Scrolling the pinned section advances only the copy
+ * beats (headline cross-fades, memory chips, the approval moment, the
+ * channel row) via the scene state. The engine mounts only when the
+ * browser affirms no-preference AND the viewport is wide enough for the
+ * field; everywhere else the same story renders as a static, fully
+ * readable flow whose card strip swipes natively on mobile (§31).
  */
 
 const SCENE_COPY: { headline: string; body: string }[] = [
@@ -130,17 +130,18 @@ function StoryEngine({ intro }: { intro: ReactNode }) {
     }
   }, [])
 
-  /* The ambient 3D loop: a continuous rAF pose per card, composed from
-     per-axis sine waves (motion-tokens). transform-only writes on the
-     NESTED inner wrapper — the slot's resting pose above it never changes,
-     so the two layers cannot fight. Hover eases `damp` down (the card
-     calms and straightens) and `lift` up (forward + slightly larger);
-     leaving eases back — nothing snaps. The approval moment calms the
-     company card the same way. rAF stops in background tabs by itself. */
+  /* The orbit loop: one autonomous 3D ring the six cards travel around,
+     continuously — never tied to scroll. The angle integrates dt × an
+     eased speed: hovering any card (or the approval beat, so the demo is
+     clickable) slows the orbit smoothly to ~0.45× and it eases back up —
+     the system never stops and nothing snaps. Depth (sin of each card's
+     angle) drives transform, opacity AND z-index every frame, so cards
+     genuinely pass in front of and behind each other. rAF pauses in
+     background tabs by itself. */
   useEffect(() => {
-    const state = {} as Record<CardId, { damp: number; lift: number }>
+    const lifts = {} as Record<CardId, number>
     const hovered = new Set<CardId>()
-    for (const id of CARD_IDS) state[id] = { damp: 1, lift: 0 }
+    for (const id of CARD_IDS) lifts[id] = 0
 
     const cleanups: (() => void)[] = []
     for (const id of CARD_IDS) {
@@ -157,16 +158,24 @@ function StoryEngine({ intro }: { intro: ReactNode }) {
     }
 
     let raf = 0
-    const tick = () => {
-      const t = performance.now() / 1000
+    let angle = 0
+    let speed = 1
+    let last = performance.now()
+    const tick = (now: number) => {
+      const dt = Math.min((now - last) / 1000, 0.1)
+      last = now
+      const slowed = hovered.size > 0 || sceneRef.current === 4
+      speed += ((slowed ? 0.45 : 1) - speed) * 0.06
+      angle = (angle + (dt * 360 * speed) / ORBIT.periodSeconds) % 360
+      const radiusX = ORBIT.radiusXFor(window.innerWidth)
       for (const id of CARD_IDS) {
         const node = ambientRefs.current[id]
         if (!node) continue
-        const calm = hovered.has(id) || (id === 'company' && sceneRef.current === 4)
-        const s = state[id]
-        s.damp += ((calm ? 0.3 : 1) - s.damp) * 0.08
-        s.lift += ((hovered.has(id) ? 1 : 0) - s.lift) * 0.08
-        node.style.transform = ambientTransform(AMBIENT[id], t, s.damp, s.lift)
+        lifts[id] += ((hovered.has(id) ? 1 : 0) - lifts[id]) * 0.08
+        const pose = orbitPose(ORBIT.angles[id] + angle, radiusX, lifts[id])
+        node.style.transform = pose.transform
+        node.style.opacity = String(pose.opacity.toFixed(3))
+        node.style.zIndex = String(pose.zIndex)
       }
       raf = requestAnimationFrame(tick)
     }
@@ -202,29 +211,19 @@ function StoryEngine({ intro }: { intro: ReactNode }) {
 
         {/* The card field. */}
         <div className="absolute inset-0">
-          {CARD_IDS.map((id) => {
-            const pose = RESTING[id]
-            return (
-              <div
-                key={id}
-                className="absolute top-[44%] left-[64%] w-72"
-                style={{ transform: poseTransform(pose), opacity: pose.o, zIndex: pose.z }}
-              >
-                {/* Nested on purpose: the slot holds the resting pose, the
-                    rAF loop above writes this wrapper's 3D pose — the only
-                    motion the cards have. */}
-                <div
-                  ref={(node) => {
-                    ambientRefs.current[id] = node
-                  }}
-                  data-mk-card3d
-                  className="will-change-transform"
-                >
-                  <CardForSlot id={id} active={scene === 4} />
-                </div>
+          {CARD_IDS.map((id) => (
+            <div
+              key={id}
+              ref={(node) => {
+                ambientRefs.current[id] = node
+              }}
+              className="absolute top-[44%] left-[64%] w-72 will-change-transform"
+            >
+              <div data-mk-card3d>
+                <CardForSlot id={id} active={scene === 4} />
               </div>
-            )
-          })}
+            </div>
+          ))}
 
           {/* S3 — memory chips floating near the work. */}
           <div data-mk-stage={scene === 2 ? 'in' : ''} className="pointer-events-none">

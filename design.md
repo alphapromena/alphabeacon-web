@@ -230,20 +230,22 @@ cross-fades, the memory chips, the approval moment, the channel row). The
 app keeps the strict calm law — nothing in this tier may leak into
 `AppShell`.
 
-Since 2026-08-11 (founder-directed, strengthened the same day) the cards
-carry a **continuous ambient 3D pose** — their only motion: per-card
-rotateX (≤ ~2°), rotateY (≤ ~3°), rotateZ (≤ ~1.5°), drift (5–14 px
-horizontal, 8–18 px vertical), depth breathing (translateZ) and a static
-depth layer, under a per-card `perspective(1400px)`. The pose is composed
-each frame from per-axis sine waves at incommensurate frequencies
-(`motion-tokens.ts`), so no card's motion visibly repeats and no two
-cards ever move in step; the company card is the anchor and moves least
-(≤ ~1°, single-digit drift). The pose writes to a wrapper NESTED inside
-the resting slot, so layers never fight. Hovering eases the card calmer,
-forward and ~1.5% larger (never a snap); the narrow-viewport swipe strip
-keeps a light Z-only CSS drift at ~45% amplitude; under reduced motion
-none of it exists (the engine never mounts and the strip keyframes live
-inside the no-preference query).
+Since 2026-08-11 (founder-directed, final form the same day) the cards
+travel **one autonomous 3D orbit** — a slow luxury-showroom carousel on
+the hero's right side, and the cards' only motion. Six cards, 60° apart
+on an elliptical ring (horizontal radius ~280–430 px resolved from the
+viewport, vertical 70 px, depth 250 px), one revolution every 28 s.
+Depth drives everything each frame: scale 0.90→1.05, opacity 0.72→1,
+z-index 0→18 (the copy rail sits at z-20 and stays readable), so cards
+naturally pass in front of and behind each other. Orientation stays
+viewer-facing (rotateY ≤10°, rotateX ≤3°, rotateZ ≤2°) under a per-card
+`perspective(1500px)` — per-frame opacity makes every slot a grouping
+element, which would flatten a shared preserve-3d scene. Hovering any
+card (or the approval beat, so the demo stays clickable) eases the orbit
+to ~0.45× — never a stop — and lifts the hovered card forward with +2 %
+scale; scroll never touches the orbit. The narrow-viewport swipe strip
+keeps a light Z-only CSS drift; under reduced motion the engine never
+mounts and the static layered composition renders instead.
 The rb/01 dashboard-as-glass-object film is retired from the route (D1);
 its masters live in the local takes archive and the Higgsfield library.
 

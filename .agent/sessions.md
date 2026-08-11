@@ -1100,3 +1100,31 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   mobile strip alive; reduced motion mounts nothing
 - Next: founder eyeballs the gallery feel on production; amplitudes tune
   in motion-tokens.ts
+
+### 2026-08-11 13:30 — The hero becomes an orbital carousel (founder-directed)
+
+- Did: fourth and definitive motion amendment — "the cards rotate around
+  a central point." Independent floating is gone; the engine now runs ONE
+  autonomous elliptical 3D orbit (motion-tokens ORBIT + pure orbitPose):
+  six cards 60° apart, 28 s per revolution, horizontal radius resolved
+  from the viewport (280–430 px) so the orbit lives in the hero's right
+  side, vertical 70 px, depth 250 px. Depth drives scale/opacity/z-index
+  per frame — cards pass in front of and behind each other; orientation
+  stays viewer-facing (≤10°/3°/2°). Hover or the approval beat eases the
+  orbit to ~0.45× (never stops) and lifts the hovered card. The angle
+  integrates dt × eased speed, so slowdowns never jump. RESTING removed
+  from story-layout (the fan is no longer a resting pose); strip and
+  reduced-motion tiers unchanged.
+- Phase: rb/02 follow-up (M1 only)
+- Files: `src/features/marketing/outputs/{motion-tokens.ts,scroll-story.tsx,story-layout.ts}`,
+  `design.md`, `.agent/sessions.md`
+- Decisions: none (founder instruction; mechanics here + design.md)
+- Verify: lint+typecheck+test green (337); verify:w02 --skip-e2e PASS;
+  e2e 6/6; 20 s no-scroll observation: every card sweeps ~570–685 px
+  horizontally and ~480 px in depth, the front-most card cycles through
+  all six, opacity and z-index track depth, hover slows without stopping,
+  reduced motion mounts nothing
+- Next: founder eyeballs the showroom feel on production; period/radii
+  tune in ORBIT (motion-tokens.ts). Mobile deliberately keeps the swipe
+  strip so cards never cover the headline — a reduced mobile orbit is a
+  follow-up if wanted
