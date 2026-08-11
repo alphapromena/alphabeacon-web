@@ -209,4 +209,44 @@
     opacity: 1;
     translate: 0 0;
   }
+
+  /* The hero cards' ambient idle drift: continuous, so the composition
+     never freezes when scrolling stops. Animates a NESTED wrapper — the
+     scroll engine owns `transform` on the outer card slot, so the two
+     systems write to different elements and cannot cancel each other. One
+     keyframe track, parameterized per card by the custom properties
+     motion-tokens.ts emits (each card gets its own duration, phase,
+     distance and rotation). Hovering pauses the drift so the work is easy
+     to inspect; 'paused' does the same while an interaction owns the card.
+     Inside the same no-preference query as everything else: reduced motion
+     removes the drift, it never slows it. */
+  @keyframes mk-ambient-drift {
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+    }
+    25% {
+      transform: translate3d(calc(var(--mk-amb-x) * 0.6), calc(var(--mk-amb-y) * -1), 0)
+        rotate(var(--mk-amb-r)) scale(calc(1 + var(--mk-amb-b)));
+    }
+    50% {
+      transform: translate3d(var(--mk-amb-x), calc(var(--mk-amb-y) * 0.35), 0)
+        rotate(calc(var(--mk-amb-r) * -0.5)) scale(1);
+    }
+    75% {
+      transform: translate3d(calc(var(--mk-amb-x) * -0.55), var(--mk-amb-y), 0)
+        rotate(calc(var(--mk-amb-r) * 0.65)) scale(calc(1 - var(--mk-amb-b)));
+    }
+  }
+
+  [data-mk-ambient] {
+    animation: mk-ambient-drift var(--mk-amb-dur, 12s) ease-in-out infinite;
+    animation-delay: var(--mk-amb-phase, 0s);
+    will-change: transform;
+  }
+
+  [data-mk-ambient]:hover,
+  [data-mk-ambient='paused'] {
+    animation-play-state: paused;
+  }
 }

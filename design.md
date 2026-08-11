@@ -229,6 +229,18 @@ the story progresses. Motion is slow, premium, and scroll-led; the engine
 animates `transform`/`opacity` only, on native scroll (the no-Lenis
 decision stands), rAF-eased the way rb/01 eased frame indices. The app
 keeps the strict calm law — nothing in this tier may leak into `AppShell`.
+
+Since 2026-08-11 (founder-directed) the cards also carry a **continuous
+ambient idle drift** so the composition never freezes between scrolls:
+each card floats on its own duration (8–16 s), phase, distance (2–8 px)
+and rotation (≤ 0.8°), with a whisper of scale breathing. The drift is a
+CSS keyframe animation on a wrapper NESTED inside the scroll-owned slot —
+scroll wrapper → ambient wrapper → card — so the two systems write
+`transform` on different elements and can never cancel each other
+(`motion-tokens.ts` holds the per-card profiles). Hovering a card pauses
+its drift for inspection; the narrow-viewport swipe strip drifts at half
+amplitude; under reduced motion the animation does not exist at all (same
+no-preference query as everything else).
 The rb/01 dashboard-as-glass-object film is retired from the route (D1);
 its masters live in the local takes archive and the Higgsfield library.
 

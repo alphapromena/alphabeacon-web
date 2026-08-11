@@ -11,6 +11,7 @@ import {
   NewsletterCard,
   XCard,
 } from './post-cards'
+import { AMBIENT, ambientStyle } from './motion-tokens'
 import { CARD_IDS, poseTransform, posesAt, sceneFor, type CardId } from './story-layout'
 import { useCinematicLayer, useMediaQuery } from './use-media'
 
@@ -193,7 +194,16 @@ function StoryEngine({ intro }: { intro: ReactNode }) {
               }}
               className="absolute top-[44%] left-[64%] w-72 will-change-transform"
             >
-              <CardForSlot id={id} active={scene === 4} />
+              {/* Nested on purpose: the engine writes `transform` on the
+                  outer slot, the ambient drift animates this inner wrapper —
+                  the two never touch the same element (no fighting). Paused
+                  while the approval moment owns the company card. */}
+              <div
+                data-mk-ambient={id === 'company' && scene === 4 ? 'paused' : ''}
+                style={ambientStyle(AMBIENT[id])}
+              >
+                <CardForSlot id={id} active={scene === 4} />
+              </div>
             </div>
           ))}
 
@@ -245,11 +255,15 @@ function StoryStatic({ intro }: { intro: ReactNode }) {
       <div className="flex snap-x snap-mandatory gap-4 overflow-x-auto px-6 pb-4">
         {CARD_IDS.map((id) => (
           <div key={id} className="w-[85vw] max-w-xs shrink-0 snap-center">
-            {id === 'company' ? (
-              <ApprovalDemo active={false} />
-            ) : (
-              <CardForSlot id={id} active={false} />
-            )}
+            {/* Reduced amplitude on the swipe strip (brief §20); under
+                reduced motion the drift never runs at all. */}
+            <div data-mk-ambient="" style={ambientStyle(AMBIENT[id], 0.5)}>
+              {id === 'company' ? (
+                <ApprovalDemo active={false} />
+              ) : (
+                <CardForSlot id={id} active={false} />
+              )}
+            </div>
           </div>
         ))}
       </div>

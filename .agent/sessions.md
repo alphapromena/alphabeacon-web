@@ -997,3 +997,31 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
 - Decisions: D1–D8, the gates amendment, the D5 mechanism
 - Verify: full `verify:w02` green (71 e2e); summary in the run report
 - Next: Abdullah walks the page; closes open-items 16; push on approval
+
+### 2026-08-11 12:15 — Hero cards never freeze: ambient idle drift shipped (motion only)
+
+- Did: added the continuous ambient layer to the hero card story on
+  `claude/malaky-hero-cards-motion-om8r2t` (cut from `rb/02-v1-brief`'s
+  tip). Scroll choreography untouched; each card gained a nested inner
+  wrapper animated by `mk-ambient-drift` with its own duration, phase,
+  distance and rotation (motion-tokens.ts). Hover pauses the hovered
+  card; S5's approval moment pauses the company card; the mobile strip
+  drifts at half amplitude; reduced motion removes the drift entirely.
+  A founder message mid-session cut all other work (no new images, no
+  Higgsfield assets, no design changes) — the five generated stills were
+  dropped unused (decisions.md records the 10-credit spend), and early
+  edits beyond motion (opacity hierarchy, workspace rework, pointer
+  parallax) were reverted before commit.
+- Phase: rb/02 follow-up (M1 only)
+- Files: `src/features/marketing/outputs/motion-tokens.ts` (new),
+  `src/features/marketing/outputs/scroll-story.tsx`,
+  `src/styles/globals.css`, `design.md`, `.agent/{decisions,sessions}.md`
+- Decisions: see decisions.md — Ambient idle drift: CSS keyframes on a
+  nested wrapper, not more rAF
+- Verify: lint+typecheck+test green (337); `verify:w02 --skip-e2e` PASS;
+  marketing e2e (front door, both @reduced-motion, @axe marketing) 4/4;
+  scripted browser protocol 11/11 (15 s idle drift with outer transform
+  frozen, slow+fast scroll, hover pause, mobile strip drift, reduced
+  motion: engine absent + animation-name none)
+- Next: founder eyeballs the drift feel (amplitudes tune in one place,
+  motion-tokens.ts); open-items 16 unchanged

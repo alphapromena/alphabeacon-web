@@ -959,3 +959,30 @@ add a new entry that says it supersedes the old one.
   with zero raster demo artwork. The CWV work it targeted is carried by
   transform/opacity-only animation (compositor-composited) and the D4
   payload result instead.
+
+### 2026-08-11 — Ambient idle drift: CSS keyframes on a nested wrapper, not more rAF
+
+- Why: the founder narrowed the sprint to ONE change — the hero cards must
+  keep moving when scrolling stops (float, drift, tiny rotation, depth
+  breathing; 8–16 s cycles, 2–8 px, ≤ 0.8°, per-card duration/phase so
+  nothing moves in step). The scroll engine already owns `transform` on
+  each card slot, so the drift animates a NESTED inner wrapper — scroll
+  wrapper → ambient wrapper → card — and the two systems write different
+  elements, which is what makes them compose instead of cancel. The
+  per-card profiles live in `outputs/motion-tokens.ts`; the one keyframe
+  track (`mk-ambient-drift`, parameterized by custom properties) lives in
+  the same no-preference query as every other marketing animation, so
+  reduced motion removes the drift rather than slowing it. Hover pauses a
+  card's drift (`animation-play-state`), and the engine sets the same
+  pause on the company card during the S5 approval moment. The static
+  swipe strip drifts at half amplitude.
+- Instead of: folding idle motion into the engine's rAF loop (would keep a
+  rAF alive forever for motion CSS animates for free on the compositor,
+  and would mix two motion sources into one transform string), or a
+  library (banned by the gate).
+- Also recorded, honestly: before the founder's mid-session scope
+  narrowing arrived, this session generated five Higgsfield campaign
+  stills (nano banana, 10 credits, balance 1427.5 → 1417.5) intended for
+  the cards. The narrowed brief forbids new assets — the stills were never
+  committed and remain unused in the Higgsfield library; no repo bytes
+  changed. Generation for this route stays paused until the founder asks.
