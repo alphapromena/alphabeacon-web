@@ -254,3 +254,11 @@ New for the Malaky M1 (2026-08-08):
       awaits founder approval. Nothing has been generated. On approval:
       three stills + the one Nura Reel (9:16, poster-first, ≤1.5 MB
       target) through the `content-asset.tsx` seam.
+- [ ] **malaky.ai DNS cutover**: discovered 2026-08-11 while verifying the
+      Phase 2 deploy — `malaky.ai` and `www.malaky.ai` still resolve to
+      GoDaddy Website Builder (13.248.243.5 / 76.223.105.230), which serves
+      a placeholder site, NOT the Vercel deployment. Vercel holds the
+      `malaky.ai` alias and serves the correct build on
+      `1.malaky.ai` and `alphabeacon-web.vercel.app`. Someone with GoDaddy
+      DNS access must point the apex + www at Vercel (per the Vercel
+      domains panel) before the canonical/OG URLs on malaky.ai are real.

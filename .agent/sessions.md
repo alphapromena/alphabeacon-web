@@ -1248,3 +1248,22 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   flaked once, green in isolation and on the full rerun
 - Next: push + PR, fast-forward rb/02-v1-brief and main, verify
   production; Higgsfield generation only after manifest approval
+
+### 2026-08-11 19:05 — Phase 2 shipped to production; malaky.ai DNS gap found
+
+- Did: pushed ac49f67 to the work branch, fast-forwarded rb/02-v1-brief
+  and main; draft PR #3 opened (PR #2 was already merged and cannot be
+  reused). Vercel production READY on ac49f67 and verified serving the
+  Phase 2 bundle (index-Bl6hwrHI.js, byte-identical hash to the local
+  build) on alphabeacon-web.vercel.app and 1.malaky.ai. FOUND: the
+  malaky.ai apex + www still resolve to GoDaddy Website Builder, not
+  Vercel — the alias exists on Vercel's side but the registrar DNS was
+  never cut over. Added to open-items 18; only someone with GoDaddy
+  access can fix it.
+- Phase: rb/02 follow-up (Phase 2)
+- Files: `.agent/open-items.md`, `.agent/sessions.md`
+- Decisions: none
+- Verify: production HTML fetched and hash-compared; DNS resolved for
+  malaky.ai / www / 1.malaky.ai
+- Next: founder — approve the Higgsfield manifest, wire the
+  request-access destination, cut malaky.ai DNS over to Vercel
