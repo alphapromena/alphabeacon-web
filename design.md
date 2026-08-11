@@ -230,17 +230,20 @@ cross-fades, the memory chips, the approval moment, the channel row). The
 app keeps the strict calm law — nothing in this tier may leak into
 `AppShell`.
 
-Since 2026-08-11 (founder-directed) the cards also carry a **continuous
-ambient idle drift** so the composition never freezes between scrolls:
-each card floats on its own duration (8–16 s), phase, distance (2–8 px)
-and rotation (≤ 0.8°), with a whisper of scale breathing. The drift is a
-CSS keyframe animation on a wrapper NESTED inside the scroll-owned slot —
-scroll wrapper → ambient wrapper → card — so the two systems write
-`transform` on different elements and can never cancel each other
-(`motion-tokens.ts` holds the per-card profiles). Hovering a card pauses
-its drift for inspection; the narrow-viewport swipe strip drifts at half
-amplitude; under reduced motion the animation does not exist at all (same
-no-preference query as everything else).
+Since 2026-08-11 (founder-directed, strengthened the same day) the cards
+carry a **continuous ambient 3D pose** — their only motion: per-card
+rotateX (≤ ~2°), rotateY (≤ ~3°), rotateZ (≤ ~1.5°), drift (5–14 px
+horizontal, 8–18 px vertical), depth breathing (translateZ) and a static
+depth layer, under a per-card `perspective(1400px)`. The pose is composed
+each frame from per-axis sine waves at incommensurate frequencies
+(`motion-tokens.ts`), so no card's motion visibly repeats and no two
+cards ever move in step; the company card is the anchor and moves least
+(≤ ~1°, single-digit drift). The pose writes to a wrapper NESTED inside
+the resting slot, so layers never fight. Hovering eases the card calmer,
+forward and ~1.5% larger (never a snap); the narrow-viewport swipe strip
+keeps a light Z-only CSS drift at ~45% amplitude; under reduced motion
+none of it exists (the engine never mounts and the strip keyframes live
+inside the no-preference query).
 The rb/01 dashboard-as-glass-object film is retired from the route (D1);
 its masters live in the local takes archive and the Higgsfield library.
 

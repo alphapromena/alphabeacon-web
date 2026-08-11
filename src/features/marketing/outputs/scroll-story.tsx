@@ -11,7 +11,7 @@ import {
   NewsletterCard,
   XCard,
 } from './post-cards'
-import { AMBIENT, ambientStyle } from './motion-tokens'
+import { AMBIENT, ambientStyle, ambientTransform } from './motion-tokens'
 import { CARD_IDS, RESTING, poseTransform, sceneFor, type CardId } from './story-layout'
 import { useCinematicLayer, useMediaQuery } from './use-media'
 
@@ -94,12 +94,14 @@ function CardForSlot({ id, active }: { id: CardId; active: boolean }) {
 
 function StoryEngine({ intro }: { intro: ReactNode }) {
   const sectionRef = useRef<HTMLElement>(null)
+  const ambientRefs = useRef<Partial<Record<CardId, HTMLDivElement | null>>>({})
   const [scene, setScene] = useState(0)
+  const sceneRef = useRef(0)
 
   /* Founder-directed 2026-08-11: scroll no longer moves the cards. The
      listener only reads progress to advance the copy beat; every card
-     holds RESTING (styled once in JSX below) and the ambient drift is the
-     only motion. */
+     holds RESTING (styled once in JSX below) and the ambient 3D layer is
+     the only motion. */
   useEffect(() => {
     const section = sectionRef.current
     if (!section) return
@@ -113,6 +115,7 @@ function StoryEngine({ intro }: { intro: ReactNode }) {
       const sceneNow = sceneFor(progress)
       if (sceneNow !== renderedScene) {
         renderedScene = sceneNow
+        sceneRef.current = sceneNow
         setScene(sceneNow)
       }
     }
@@ -124,6 +127,54 @@ function StoryEngine({ intro }: { intro: ReactNode }) {
     return () => {
       window.removeEventListener('scroll', onScroll)
       window.removeEventListener('resize', onScroll)
+    }
+  }, [])
+
+  /* The ambient 3D loop: a continuous rAF pose per card, composed from
+     per-axis sine waves (motion-tokens). transform-only writes on the
+     NESTED inner wrapper — the slot's resting pose above it never changes,
+     so the two layers cannot fight. Hover eases `damp` down (the card
+     calms and straightens) and `lift` up (forward + slightly larger);
+     leaving eases back — nothing snaps. The approval moment calms the
+     company card the same way. rAF stops in background tabs by itself. */
+  useEffect(() => {
+    const state = {} as Record<CardId, { damp: number; lift: number }>
+    const hovered = new Set<CardId>()
+    for (const id of CARD_IDS) state[id] = { damp: 1, lift: 0 }
+
+    const cleanups: (() => void)[] = []
+    for (const id of CARD_IDS) {
+      const node = ambientRefs.current[id]
+      if (!node) continue
+      const enter = () => hovered.add(id)
+      const leave = () => hovered.delete(id)
+      node.addEventListener('pointerenter', enter)
+      node.addEventListener('pointerleave', leave)
+      cleanups.push(() => {
+        node.removeEventListener('pointerenter', enter)
+        node.removeEventListener('pointerleave', leave)
+      })
+    }
+
+    let raf = 0
+    const tick = () => {
+      const t = performance.now() / 1000
+      for (const id of CARD_IDS) {
+        const node = ambientRefs.current[id]
+        if (!node) continue
+        const calm = hovered.has(id) || (id === 'company' && sceneRef.current === 4)
+        const s = state[id]
+        s.damp += ((calm ? 0.3 : 1) - s.damp) * 0.08
+        s.lift += ((hovered.has(id) ? 1 : 0) - s.lift) * 0.08
+        node.style.transform = ambientTransform(AMBIENT[id], t, s.damp, s.lift)
+      }
+      raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+
+    return () => {
+      cancelAnimationFrame(raf)
+      cleanups.forEach((fn) => fn())
     }
   }, [])
 
@@ -160,12 +211,14 @@ function StoryEngine({ intro }: { intro: ReactNode }) {
                 style={{ transform: poseTransform(pose), opacity: pose.o, zIndex: pose.z }}
               >
                 {/* Nested on purpose: the slot holds the resting pose, the
-                    ambient drift animates this inner wrapper — the only
-                    motion the cards have. Paused while the approval moment
-                    owns the company card. */}
+                    rAF loop above writes this wrapper's 3D pose — the only
+                    motion the cards have. */}
                 <div
-                  data-mk-ambient={id === 'company' && scene === 4 ? 'paused' : ''}
-                  style={ambientStyle(AMBIENT[id])}
+                  ref={(node) => {
+                    ambientRefs.current[id] = node
+                  }}
+                  data-mk-card3d
+                  className="will-change-transform"
                 >
                   <CardForSlot id={id} active={scene === 4} />
                 </div>

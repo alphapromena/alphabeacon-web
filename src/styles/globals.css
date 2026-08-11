@@ -249,4 +249,17 @@
   [data-mk-ambient='paused'] {
     animation-play-state: paused;
   }
+
+  /* The engine's 3D cards ([data-mk-card3d] — the rAF-posed inner wrapper):
+     hovering deepens the shadow softly while the loop eases the card
+     forward and calm; leaving eases it back. Radius matches the card so
+     the shadow hugs its silhouette. */
+  [data-mk-card3d] {
+    border-radius: 1.25rem;
+    transition: box-shadow 0.45s cubic-bezier(0, 0, 0.2, 1);
+  }
+
+  [data-mk-card3d]:hover {
+    box-shadow: 0 28px 56px -28px rgb(28 25 20 / 0.28);
+  }
 }

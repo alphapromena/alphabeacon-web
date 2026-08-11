@@ -1074,3 +1074,29 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   @golden approve 6/6; browser check: card slot transforms byte-identical
   across a full scroll, copy beats advance, drift keeps running
 - Next: founder eyeballs the resting fan on production
+
+### 2026-08-11 13:00 — Ambient motion strengthened to full 3D (founder-directed)
+
+- Did: third motion amendment of the day — "stronger ambient 3D motion,
+  motion only." The engine's inner wrapper is now posed every frame by a
+  rAF loop: per-axis sine waves at incommensurate frequencies give each
+  card its own rotateX/Y/Z, drift, depth breathing and static depth layer
+  under per-card perspective(1400px) (motion-tokens.ts holds profiles +
+  the pure ambientTransform). Company card stays the calm anchor; hover
+  eases damp↓/lift↑ (calmer, forward, +1.5%, soft shadow via CSS) and
+  eases back; the S5 approval moment calms the company card the same way.
+  Strip keeps the light CSS drift at 0.45 amplitude. Perspective sits
+  inside each card's transform because the X slot's opacity (0.9) is a
+  grouping property that would flatten preserve-3d for that card.
+- Phase: rb/02 follow-up (M1 only)
+- Files: `src/features/marketing/outputs/{motion-tokens.ts,scroll-story.tsx}`,
+  `src/styles/globals.css`, `design.md`, `.agent/sessions.md`
+- Decisions: none (founder instruction; mechanics recorded here + design.md)
+- Verify: lint+typecheck+test green (337); verify:w02 --skip-e2e PASS;
+  e2e 6/6 (front door, both @reduced-motion, S5 approval, @axe marketing,
+  @golden approve); 30 s no-scroll observation: 11/11 distinct poses per
+  card, full 3D transforms, never two cards in the same pose; hover scale
+  eased to exactly 1.015 with rotations damped to ≤0.45°, eased back to 1;
+  mobile strip alive; reduced motion mounts nothing
+- Next: founder eyeballs the gallery feel on production; amplitudes tune
+  in motion-tokens.ts
