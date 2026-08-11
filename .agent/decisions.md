@@ -986,3 +986,21 @@ add a new entry that says it supersedes the old one.
   the cards. The narrowed brief forbids new assets — the stills were never
   committed and remain unused in the Higgsfield library; no repo bytes
   changed. Generation for this route stays paused until the founder asks.
+
+### 2026-08-11 — Card realism: platform anatomy yes, logos and counts still no
+
+- Why: the founder asked each hero card to read as its channel's REAL post
+  format at a glance. The §5 fake-engagement ban and D6 logo ban both
+  stand — the line drawn: platform identity comes from LAYOUT (Instagram's
+  header/artwork/actions/caption stack, LinkedIn's person-vs-company
+  headers and Like·Comment·Repost·Send row, an email's From/Subject
+  chrome, X's handle-and-glyph anatomy) with generic lucide glyphs and NO
+  numbers — action rows are aria-hidden icon affordances, never counts,
+  followers, or third-party logo assets. The Malaky wrapper (radius,
+  border, soft shadow, tiny channel label, workflow chip) stays OUTSIDE
+  the platform anatomy — Malaky previews the channel, it does not clone
+  it. demo-brands gains `sectorAr` so the Arabic card's category line is
+  native per brand (open-items 16 review covers the new strings).
+- Instead of: real platform logos/screenshots (trademark + D6), fake
+  like counts (§5), or leaving the generic label-only cards the founder
+  rejected.

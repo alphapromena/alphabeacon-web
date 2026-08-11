@@ -1128,3 +1128,27 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   tune in ORBIT (motion-tokens.ts). Mobile deliberately keeps the swipe
   strip so cards never cover the headline — a reduced mobile orbit is a
   follow-up if wanted
+
+### 2026-08-11 14:00 — Cards become platform-native inside the Malaky wrapper
+
+- Did: realism pass on post-cards.tsx (founder-directed; orbit untouched).
+  Instagram: avatar header, artwork, like/comment/share/save glyph row,
+  handle-led caption. LinkedIn company: square avatar, "Logistics
+  company", 2h·globe, …see more, route graphic, action row. LinkedIn
+  executive: round avatar, person/role header, text-first, action row.
+  Arabic: fully RTL header/creative/actions/caption/CTA with native
+  sectorAr. Newsletter: From/Subject chrome, hero band, body, CTA — reads
+  as email. X: avatar, @handle·2h, short copy, glyph row, Coming soon
+  kept. All states stay on the wrapper edge; no logos, no fabricated
+  numbers (decisions.md).
+- Phase: rb/02 follow-up (M1 only)
+- Files: `src/features/marketing/outputs/{post-cards.tsx,demo-brands.ts}`,
+  `.agent/{decisions,sessions}.md`
+- Decisions: see decisions.md — Card realism: platform anatomy yes, logos
+  and counts still no
+- Verify: lint+typecheck+test green (337); verify:w02 --skip-e2e PASS
+  (dir/lang law holds); e2e subset 7/7 twice (one flaky parallel axe run
+  passed solo and in both reruns); hero screenshots at two orbit moments
+  confirm each channel is recognizable without reading labels
+- Next: founder eyeballs realism on production; Arabic strings (incl.
+  sectorAr) join the open-items 16 native review

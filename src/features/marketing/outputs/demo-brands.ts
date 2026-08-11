@@ -26,6 +26,8 @@ export interface DemoBrand {
   /** Arabic name — the brand's own mark, not a translation artifact. */
   nameAr: string
   sector: string
+  /** The sector as the brand would say it in Arabic (native, not translated). */
+  sectorAr: string
   monogram: string
   /** The brand's own colors — card interiors only (D5). */
   palette: {
@@ -45,6 +47,7 @@ export const DEMO_BRANDS: Record<DemoBrand['id'], DemoBrand> = {
     name: 'Falak Logistics',
     nameAr: 'فلك للشحن',
     sector: 'Logistics',
+    sectorAr: 'شركة شحن',
     monogram: 'FL',
     palette: { primary: '#1F3A5F', accent: '#E8823A', surface: '#EEF2F7', ink: '#14263C' },
     narrative: 'Launching a same-day delivery lane between Riyadh and Jeddah.',
@@ -55,6 +58,7 @@ export const DEMO_BRANDS: Record<DemoBrand['id'], DemoBrand> = {
     name: 'Bayt Zaytoun',
     nameAr: 'بيت زيتون',
     sector: 'Restaurant',
+    sectorAr: 'مطبخ شامي',
     monogram: 'BZ',
     palette: { primary: '#5A6B3B', accent: '#A63D2F', surface: '#F4F1E7', ink: '#2F3520' },
     narrative: 'A family iftar set menu for Ramadan, and an Eid feast to follow.',
@@ -65,6 +69,7 @@ export const DEMO_BRANDS: Record<DemoBrand['id'], DemoBrand> = {
     name: 'Nura Living',
     nameAr: 'نورا ليفينج',
     sector: 'Retail',
+    sectorAr: 'تجارة تجزئة',
     monogram: 'N',
     palette: { primary: '#8D5A78', accent: '#E0B084', surface: '#F6EFF3', ink: '#3D2635' },
     narrative: 'The summer home collection drops — linen, clay, and light.',
@@ -75,6 +80,7 @@ export const DEMO_BRANDS: Record<DemoBrand['id'], DemoBrand> = {
     name: 'Meezan Advisory',
     nameAr: 'ميزان للاستشارات',
     sector: 'Professional services',
+    sectorAr: 'استشارات مهنية',
     monogram: 'M',
     palette: { primary: '#23616B', accent: '#7FB6BF', surface: '#EBF2F3', ink: '#12333A' },
     narrative: 'Guiding clients through the Q3 VAT filing deadline, calmly.',
