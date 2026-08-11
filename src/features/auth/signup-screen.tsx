@@ -63,7 +63,7 @@ export function SignUpScreen() {
       title="Create your account"
       subtitle="Connect your channels, review what we draft, and publish everywhere."
       aside={{
-        heading: 'Your marketing team, with a co-pilot that never misses a slot.',
+        heading: 'Marketing that arrives ready — you keep the final say.',
         body: 'Drafts arrive every morning. You approve what fits, create the art, and publish across every channel you connect.',
       }}
       footer={

@@ -123,13 +123,32 @@ function marketingLawsHold(): boolean {
     [/requestAnimationFrame/, 'runs a rAF loop outside outputs/ -- reveal is CSS-only'],
     [/addEventListener\(['"]scroll['"]/, 'listens to scroll outside outputs/ -- use IntersectionObserver'],
   ]
+  // AMENDED for Phase 2 §26 (decisions.md 2026-08-11): content-asset.tsx is
+  // the ONE legal <video> seam on the route — the manifest's approved Reel
+  // will render there poster-first, muted, in-view only, reduced-motion →
+  // poster. The scrubbed-film ban (D1) otherwise stands: currentTime and
+  // canvas stay banned everywhere, video stays banned everywhere else, and
+  // the seam's own constraints are asserted in 1f below.
+  const isVideoSeam = (file: string) => file.endsWith('content-asset.tsx')
   for (const [file, source] of sources) {
     for (const [pattern, why] of bannedEverywhere) {
+      if (pattern.source === '<video' && isVideoSeam(file)) continue
       if (pattern.test(source)) failures.push(`${file}: ${why}`)
     }
     if (isOutputs(file)) continue
     for (const [pattern, why] of bannedOutsideOutputs) {
       if (pattern.test(source)) failures.push(`${file}: ${why}`)
+    }
+  }
+
+  // 1f. The video seam's license is conditional: poster-first, muted, no
+  //     eager download, and gated on the cinematic layer.
+  const assetSeam = named('content-asset.tsx')
+  if (assetSeam) {
+    for (const requirement of ['preload="none"', 'muted', 'poster', 'useCinematicLayer']) {
+      if (!assetSeam.includes(requirement)) {
+        failures.push(`content-asset.tsx: the video seam lost its ${requirement} constraint`)
+      }
     }
   }
 

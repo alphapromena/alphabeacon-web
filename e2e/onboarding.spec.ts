@@ -113,10 +113,39 @@ test('@axe marketing and auth screens scan clean', async ({ page }) => {
   expect((await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze()).violations).toEqual([])
 })
 
+test('the request-access flow takes real details and confirms', async ({ page }) => {
+  // Phase 2 §24: the marketing CTAs land on the early-access request, not
+  // the app's signup. Empty submit speaks in designed messages; a complete
+  // request earns the "You're on the list." confirmation.
+  await asVisitor(page)
+  await page.getByRole('link', { name: 'Request early access' }).first().click()
+  await expect(page.getByRole('heading', { name: 'Request early access' })).toBeVisible()
+
+  await page.getByRole('button', { name: 'Request access' }).click()
+  await expect(
+    page.getByText('Tell us your name so drafts can be attributed to you.'),
+  ).toBeVisible()
+
+  await page.getByLabel('Full name').fill('Maya Haddad')
+  await page.getByLabel('Work email').fill('maya@falak.example')
+  await page.getByLabel('Company').fill('Falak Logistics')
+  await page.getByLabel('Country').fill('Saudi Arabia')
+  await page.getByLabel('Your role').click()
+  await page.getByRole('option', { name: 'Founder / CEO' }).click()
+  await page.getByRole('button', { name: 'Request access' }).click()
+
+  await expect(page.getByRole('heading', { name: "You're on the list." })).toBeVisible()
+  await expect(page.getByText('maya@falak.example')).toBeVisible()
+})
+
 test('@golden signup → verify → onboarding → dashboard', async ({ page }) => {
   await asVisitor(page)
 
-  await page.getByRole('link', { name: 'Request early access' }).first().click()
+  // Early-access model: the marketing CTA opens the request form, so the
+  // app's own signup is reached the way a returning prospect would —
+  // Sign in, then "Create an account".
+  await page.getByRole('link', { name: 'Sign in' }).click()
+  await page.getByRole('link', { name: 'Create an account' }).click()
   await expect(page.getByRole('heading', { name: 'Create your account' })).toBeVisible()
 
   await page.getByLabel('Full name').fill('Lena Park')

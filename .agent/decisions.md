@@ -1049,3 +1049,33 @@ add a new entry that says it supersedes the old one.
   legal anchors and an aspirational "Start free", or hand-waving the
   claims (the audit against the shipped product is in
   Docs/brief/claims-map.md).
+
+### 2026-08-11 — Phase 2: request-access flow, event seam, one legal video slot
+
+- Why: founder's Phase 2 brief (category-defining polish, no redesign;
+  everything from 90fb8b2 preserved). (1) `/request-access` is now the
+  acquisition front door — real fields (name, work email, company,
+  country, website, role, optional "handle first") through the one form
+  layer, confirmation reads "You're on the list." The submission goes
+  NOWHERE over the network by law: it buffers through the same seam as
+  marketing events (`analytics.ts` → `window.dataLayer` + localStorage),
+  and open-items 18 gates launch on wiring a real destination. The
+  golden e2e walk reaches the app's signup via Sign in → "Create an
+  account" instead. (2) `analytics.ts` is the privacy-conscious event
+  seam (§23): named funnel events, flat payloads, no identifiers, no
+  vendor — `track()` buffers on `window.__malakyEvents` and pushes to
+  `dataLayer` when a tag manager exists, so an approved vendor plugs in
+  without touching call sites. (3) The D1 film ban is AMENDED with one
+  scoped exemption: `content-asset.tsx` is the single legal `<video>`
+  seam on the marketing route (§26 asset architecture — css | image |
+  carousel | video), constraints machine-checked (poster-first,
+  `preload="none"`, muted, cinematic-layer gated, in-view src). No video
+  ships until the Higgsfield manifest (Docs/brief/asset-manifest-
+  phase2.md) is approved; the reduced-motion e2e still asserts zero
+  `<video>` elements render. (4) Calendar shows business-specific dates
+  (diamond marker, "your date") with Falak's launch campaign already
+  prepared; the facts panel is interactive (claim → highlighted source).
+- Instead of: a request form that silently posts to an unapproved
+  vendor (network law), letting `<video>` in anywhere (the scrubbed-film
+  ban stands), or leaving the D1 gate contradicting the approved §26
+  architecture until the Reel lands.

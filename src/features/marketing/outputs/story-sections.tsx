@@ -13,6 +13,8 @@ import {
   StatusChip,
 } from './post-cards'
 import { useCinematicLayer } from './use-media'
+import { BrandLogo } from './brand-logos'
+import { track, type MarketingEvent } from '../analytics'
 
 /**
  * The lower-page story sections (brief §20–§27; production pass
@@ -61,7 +63,7 @@ function SectionShell({
 }
 
 /** Fires once when the node first enters the viewport. */
-function useInViewOnce(threshold = 0.35) {
+function useInViewOnce(threshold = 0.35, event?: MarketingEvent) {
   const ref = useRef<HTMLDivElement>(null)
   const [inView, setInView] = useState(false)
   useEffect(() => {
@@ -75,6 +77,7 @@ function useInViewOnce(threshold = 0.35) {
       ([entry]) => {
         if (entry.isIntersecting) {
           setInView(true)
+          if (event) track(event, undefined, { once: true })
           observer.disconnect()
         }
       },
@@ -82,7 +85,7 @@ function useInViewOnce(threshold = 0.35) {
     )
     observer.observe(node)
     return () => observer.disconnect()
-  }, [threshold])
+  }, [threshold, event])
   return { ref, inView }
 }
 
@@ -94,15 +97,20 @@ const STEPS: { short: string; title: string; copy: string; visual: ReactNode }[]
     title: 'Introduce your business once',
     copy: 'Logo, brand colors, products, audience, goals, tone, approved sources and key dates.',
     visual: (
-      <div className="flex flex-wrap gap-1.5">
-        {['Logo', 'Colors', 'Products', 'Audience', 'Tone', 'Key dates'].map((chip) => (
-          <span
-            key={chip}
-            className="rounded-full border border-border bg-background px-2 py-0.5 text-[11px] text-muted-foreground"
-          >
-            {chip}
-          </span>
-        ))}
+      <div className="flex flex-col gap-1.5">
+        <span className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+          <BrandLogo brand={DEMO_BRANDS.falak} className="size-4" /> Falak Logistics
+        </span>
+        <div className="flex flex-wrap gap-1.5">
+          {['Navy & orange', 'Confident, direct', 'Same-day delivery'].map((chip) => (
+            <span
+              key={chip}
+              className="rounded-full border border-border bg-background px-2 py-0.5 text-[11px] text-muted-foreground"
+            >
+              {chip}
+            </span>
+          ))}
+        </div>
       </div>
     ),
   },
@@ -112,7 +120,7 @@ const STEPS: { short: string; title: string; copy: string; visual: ReactNode }[]
     copy: 'It builds persistent brand memory from your information, preferences and approvals.',
     visual: (
       <div className="flex flex-col gap-1.5">
-        {['Brand voice', 'Preferences', 'Approvals'].map((chip) => (
+        {['Voice — confident, direct', 'Audience — Saudi shippers', 'Launch dates tracked'].map((chip) => (
           <span key={chip} className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
             <Check aria-hidden className="size-3 text-success" />
             {chip}
@@ -127,8 +135,10 @@ const STEPS: { short: string; title: string; copy: string; visual: ReactNode }[]
     copy: 'Posts, campaigns and executive content appear proactively around your schedule and what is coming next.',
     visual: (
       <div className="flex flex-col gap-1.5">
-        <StatusChip state="prepared" label="Instagram · Prepared" />
-        <StatusChip state="prepared" label="Newsletter · Prepared" />
+        <span className="rounded-lg border border-border bg-background px-2 py-1.5 text-[10px]/relaxed text-muted-foreground">
+          Same-day, both ways. Our Riyadh ⇄ Jeddah lane opens Monday…
+        </span>
+        <StatusChip state="prepared" label="LinkedIn · Prepared" />
       </div>
     ),
   },
@@ -158,7 +168,7 @@ const STEPS: { short: string; title: string; copy: string; visual: ReactNode }[]
 
 export function HowMalakyWorksSection() {
   const cinematic = useCinematicLayer()
-  const { ref, inView } = useInViewOnce()
+  const { ref, inView } = useInViewOnce(0.35, 'how_it_works_view')
   const [active, setActive] = useState(0)
   const [engaged, setEngaged] = useState(false)
 
@@ -258,13 +268,14 @@ export function HowMalakyWorksSection() {
 const FALAK = DEMO_BRANDS.falak
 
 export function EveryChannelSection() {
+  const { ref } = useInViewOnce(0.2, 'channel_demo_view')
   return (
     <SectionShell
       tinted
       headline="One idea. Made right for every channel."
       copy="Malaky keeps the same brand and message, then adapts the format, length and creative for each channel. One launch, six shapes — none of them copy-pasted."
     >
-      <div className="mt-10 grid items-start gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div ref={ref} className="mt-10 grid items-start gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <Reveal>
           <InstagramCard
             brand={FALAK}
@@ -307,19 +318,26 @@ export function EveryChannelSection() {
 /* ------------------------------------------------------------------ §25 */
 
 export function TwoVoicesSection() {
+  const { ref } = useInViewOnce(0.35, 'executive_linkedin_view')
   return (
     <SectionShell
       headline="Your company has a voice. So do the people behind it."
       copy="Malaky can prepare company content and personal LinkedIn content for founders, executives and sales leaders — each with its own voice and goals. The same launch, told two ways."
     >
-      <div className="mt-10 grid items-start gap-4 sm:grid-cols-2 lg:max-w-3xl">
+      <div ref={ref} className="mt-10 grid items-start gap-x-4 gap-y-2 sm:grid-cols-2 lg:max-w-3xl">
         <Reveal>
+          <p className="mb-2 text-xs font-medium tracking-wider text-muted-foreground uppercase">
+            The company announces
+          </p>
           <LinkedInCompanyCard brand={FALAK} state="prepared" />
         </Reveal>
         <Reveal>
+          <p className="mb-2 text-xs font-medium tracking-wider text-muted-foreground uppercase">
+            The founder tells the story
+          </p>
           <LinkedInExecutiveCard
             brand={FALAK}
-            copy="We didn't add a same-day lane because it's fashionable. We added it because 40% of our support tickets asked one question: can it arrive today? From Monday, the answer is yes."
+            copy="Six months ago our operations team kept hearing one question: can it arrive today? 40% of support tickets, the same ask. From Monday, the answer is yes."
           />
         </Reveal>
       </div>
@@ -347,22 +365,26 @@ const MEMORY_TAG_TONE = {
 
 export function MemorySection() {
   const cinematic = useCinematicLayer()
-  const { ref, inView } = useInViewOnce()
-  /* The living event (§21): 0 idle → 1 approval notification → 2 the
-     Past approvals row absorbs it → 3 memory confirmed. Reduced motion
-     renders the finished state (3) immediately. */
+  const { ref, inView } = useInViewOnce(0.35, 'memory_demo_view')
+  /* The living loop (§21, Phase 2 §9): Malaky doesn't just store, it gets
+     better from decisions. 0 idle → 1 approval notification → 2 the Past
+     approvals row absorbs it → 3 memory confirmed → 4 an EDIT arrives
+     ("Make this less promotional.") → 5 the preference is learned.
+     Reduced motion renders the finished state (5) immediately. */
   const [step, setStep] = useState(0)
 
   useEffect(() => {
     if (!inView) return
     if (!cinematic) {
-      setStep(3)
+      setStep(5)
       return
     }
     const timers = [
       setTimeout(() => setStep(1), 700),
       setTimeout(() => setStep(2), 1800),
       setTimeout(() => setStep(3), 2800),
+      setTimeout(() => setStep(4), 4200),
+      setTimeout(() => setStep(5), 5400),
     ]
     return () => timers.forEach(clearTimeout)
   }, [cinematic, inView])
@@ -377,7 +399,9 @@ export function MemorySection() {
         <Reveal className="flex flex-col overflow-hidden rounded-[1.25rem] border border-border bg-card shadow-xs">
           <ul className="flex flex-col divide-y divide-border">
             {MEMORY_ROWS.map((row) => {
-              const highlighted = row.item === 'Past approvals' && step >= 2
+              const highlighted =
+                (row.item === 'Past approvals' && step >= 2) ||
+                (row.item === 'Content preferences' && step >= 5)
               return (
                 <li
                   key={row.item}
@@ -426,6 +450,25 @@ export function MemorySection() {
             >
               Memory updated ✓
             </p>
+            <div
+              className={cn(
+                'flex items-center gap-2 self-start rounded-xl border border-border bg-card px-4 py-2.5 shadow-xs',
+                'motion-safe:transition-all motion-safe:duration-500',
+                step >= 4 ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0',
+              )}
+            >
+              <span className="text-sm text-muted-foreground">You edited:</span>
+              <span className="text-sm">&ldquo;Make this less promotional.&rdquo;</span>
+            </div>
+            <p
+              className={cn(
+                'text-sm font-medium text-success',
+                'motion-safe:transition-opacity motion-safe:duration-500',
+                step >= 5 ? 'opacity-100' : 'opacity-0',
+              )}
+            >
+              Preference learned: less promotional tone ✓
+            </p>
           </div>
 
           <Reveal className="flex flex-col gap-3 text-sm text-muted-foreground">
@@ -446,31 +489,36 @@ export function MemorySection() {
 /* ------------------------------------------------------------------ §26 */
 
 const OCCASIONS = [
-  { label: 'Ramadan', state: 'past' },
-  { label: 'Eid al-Fitr', state: 'past' },
-  { label: 'Saudi National Day', state: 'next' },
-  { label: 'UAE National Day', state: 'future' },
+  { label: 'Ramadan', kind: 'regional', focus: 0 },
+  { label: 'Eid al-Fitr', kind: 'regional', focus: 0 },
+  { label: 'Saudi National Day', kind: 'regional', focus: 2 },
+  { label: 'Riyadh ⇄ Jeddah launch', kind: 'business', focus: 4 },
+  { label: 'UAE National Day', kind: 'regional', focus: 0 },
 ] as const
 
 const NURA = DEMO_BRANDS.nura
 
 export function CalendarSection() {
   const cinematic = useCinematicLayer()
-  const { ref, inView } = useInViewOnce()
+  const { ref, inView } = useInViewOnce(0.35, 'calendar_demo_view')
   /* 0 idle → 1 timeline draws → 2 National Day activates → 3 the prepared
-     campaign appears. Reduced motion renders the proof immediately. */
+     campaign appears → 4 Falak's OWN launch date activates (Phase 2 §11:
+     the dates only your business knows) → 5 its campaign is already
+     waiting. Reduced motion renders the finished proof immediately. */
   const [step, setStep] = useState(0)
 
   useEffect(() => {
     if (!inView) return
     if (!cinematic) {
-      setStep(3)
+      setStep(5)
       return
     }
     const timers = [
       setTimeout(() => setStep(1), 300),
       setTimeout(() => setStep(2), 1400),
       setTimeout(() => setStep(3), 2300),
+      setTimeout(() => setStep(4), 3700),
+      setTimeout(() => setStep(5), 4500),
     ]
     return () => timers.forEach(clearTimeout)
   }, [cinematic, inView])
@@ -482,49 +530,60 @@ export function CalendarSection() {
     >
       <div ref={ref}>
         <Reveal className="mt-10 rounded-[1.25rem] border border-border bg-card p-6 shadow-xs">
-          {/* The timeline draws in, then the next occasion takes focus. */}
+          {/* The timeline draws in; occasions take focus one at a time.
+             Business dates are square markers — yours, not the region's. */}
           <div aria-hidden className="flex items-center gap-2">
-            {OCCASIONS.map((occasion, index) => (
-              <div key={occasion.label} className="flex flex-1 items-center gap-2">
-                <span
-                  className={cn(
-                    'size-2.5 shrink-0 rounded-full',
-                    'motion-safe:transition-all motion-safe:duration-500',
-                    step >= 1 ? 'opacity-100' : 'opacity-0',
-                    occasion.state === 'next' && step >= 2 ? 'scale-125 bg-brand' : 'bg-border',
+            {OCCASIONS.map((occasion, index) => {
+              const focused = occasion.focus > 0 && step >= occasion.focus
+              return (
+                <div key={occasion.label} className="flex flex-1 items-center gap-2">
+                  <span
+                    className={cn(
+                      'size-2.5 shrink-0',
+                      occasion.kind === 'business' ? 'rotate-45 rounded-[3px]' : 'rounded-full',
+                      'motion-safe:transition-all motion-safe:duration-500',
+                      step >= 1 ? 'opacity-100' : 'opacity-0',
+                      focused ? 'scale-125 bg-brand' : 'bg-border',
+                    )}
+                    style={{ transitionDelay: cinematic ? `${index * 140}ms` : undefined }}
+                  />
+                  {index < OCCASIONS.length - 1 && (
+                    <span className="h-px flex-1 overflow-hidden rounded-full bg-border">
+                      <span
+                        className={cn(
+                          'block h-full origin-left bg-foreground/25',
+                          'motion-safe:transition-transform motion-safe:duration-700',
+                          step >= 1 ? 'scale-x-100' : 'scale-x-0',
+                        )}
+                        style={{ transitionDelay: cinematic ? `${index * 140}ms` : undefined }}
+                      />
+                    </span>
                   )}
-                  style={{ transitionDelay: cinematic ? `${index * 140}ms` : undefined }}
-                />
-                {index < OCCASIONS.length - 1 && (
-                  <span className="h-px flex-1 overflow-hidden rounded-full bg-border">
-                    <span
-                      className={cn(
-                        'block h-full origin-left bg-foreground/25',
-                        'motion-safe:transition-transform motion-safe:duration-700',
-                        step >= 1 ? 'scale-x-100' : 'scale-x-0',
-                      )}
-                      style={{ transitionDelay: cinematic ? `${index * 140}ms` : undefined }}
-                    />
-                  </span>
-                )}
-              </div>
-            ))}
+                </div>
+              )
+            })}
           </div>
           <div className="mt-2 flex flex-wrap gap-x-6 gap-y-1 text-xs text-muted-foreground">
-            {OCCASIONS.map((occasion) => (
-              <span
-                key={occasion.label}
-                className={cn(
-                  'motion-safe:transition-colors motion-safe:duration-500',
-                  occasion.state === 'next' && step >= 2 && 'font-medium text-foreground',
-                )}
-              >
-                {occasion.label}
-                {occasion.state === 'next' && step >= 2 && (
-                  <span className="ml-1.5 text-muted-foreground">· 12 days away</span>
-                )}
-              </span>
-            ))}
+            {OCCASIONS.map((occasion) => {
+              const focused = occasion.focus > 0 && step >= occasion.focus
+              return (
+                <span
+                  key={occasion.label}
+                  className={cn(
+                    'motion-safe:transition-colors motion-safe:duration-500',
+                    focused && 'font-medium text-foreground',
+                  )}
+                >
+                  {occasion.label}
+                  {occasion.kind === 'business' && (
+                    <span className="ml-1.5 text-muted-foreground">· your date</span>
+                  )}
+                  {occasion.label === 'Saudi National Day' && step >= 2 && (
+                    <span className="ml-1.5 text-muted-foreground">· 12 days away</span>
+                  )}
+                </span>
+              )
+            })}
           </div>
 
           {/* The proof: not "a campaign was prepared" — the campaign. */}
@@ -568,6 +627,39 @@ export function CalendarSection() {
               </>
             )}
           </div>
+
+          {/* The dates only your business knows get the same treatment. */}
+          <div
+            aria-live="polite"
+            className={cn(
+              'mt-3 flex flex-wrap items-center gap-4 rounded-xl border border-border bg-background px-4 py-3',
+              'motion-safe:transition-all motion-safe:duration-500',
+              step >= 5 ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0',
+            )}
+          >
+            {step >= 5 && (
+              <>
+                <span
+                  aria-hidden
+                  className="grid h-16 w-24 shrink-0 place-items-center overflow-hidden rounded-lg"
+                  style={{ background: FALAK.palette.primary }}
+                >
+                  <BrandLogo brand={FALAK} className="size-7" />
+                </span>
+                <div className="flex min-w-0 flex-col gap-1">
+                  <span className="text-sm font-medium">
+                    Falak Logistics — Riyadh ⇄ Jeddah launch announcement
+                  </span>
+                  <span className="flex flex-wrap items-center gap-2">
+                    <StatusChip state="prepared" label="Launch week · Prepared" />
+                    <span className="text-xs text-muted-foreground">
+                      From your calendar — nobody asked
+                    </span>
+                  </span>
+                </div>
+              </>
+            )}
+          </div>
         </Reveal>
       </div>
     </SectionShell>
@@ -592,13 +684,14 @@ const PROOF_BLOCKS = [
 ]
 
 export function BuiltHereSection() {
+  const { ref } = useInViewOnce(0.2, 'arabic_section_view')
   return (
     <SectionShell
       tinted
       headline="Built here. Written for here."
       copy="Malaky understands the language, business rhythm and calendar of the region — from native Arabic and RTL creative to the occasions that shape what your customers care about."
     >
-      <div className="mt-10 grid gap-4 sm:grid-cols-3">
+      <div ref={ref} className="mt-10 grid gap-4 sm:grid-cols-3">
         {PROOF_BLOCKS.map((block) => (
           <Reveal
             key={block.title}
@@ -642,7 +735,17 @@ export function BuiltHereSection() {
 
 /* ------------------------------------------------------------------ §27 */
 
+const CLAIMS: { claim: string; source: number }[] = [
+  { claim: '“noon cutoff, evening delivery”', source: 0 },
+  { claim: '“same-day, both ways”', source: 1 },
+]
+
 export function FactsSection() {
+  /* §15: trust as an interaction, not a paragraph. Selecting a claim from
+     the post lights up the exact source that backs it. */
+  const [activeClaim, setActiveClaim] = useState(0)
+  const activeSource = CLAIMS[activeClaim].source
+
   return (
     <SectionShell
       headline="Marketing without made-up facts."
@@ -653,30 +756,61 @@ export function FactsSection() {
           <LinkedInCompanyCard brand={FALAK} state="needsReview" stateLabel="Ready for review" />
         </Reveal>
         <Reveal className="max-w-md">
-          <details
-            open
-            className="rounded-[1.25rem] border border-border bg-card p-5 shadow-xs"
-          >
-            <summary className="cursor-pointer text-sm font-medium">
-              Sources for this post
-            </summary>
-            <ul className="mt-3 flex flex-col gap-2.5">
-              <li className="flex items-start gap-2 text-xs text-muted-foreground">
-                <ShieldCheck aria-hidden className="mt-0.5 size-3.5 shrink-0 text-success" />
-                <span>
-                  <span className="font-medium text-foreground">falak.example/operations</span> —
-                  lane schedule and the noon cutoff
-                </span>
-              </li>
-              <li className="flex items-start gap-2 text-xs text-muted-foreground">
-                <Check aria-hidden className="mt-0.5 size-3.5 shrink-0 text-success" />
-                <span>
-                  <span className="font-medium text-foreground">Approved business facts</span> —
-                  the same-day delivery promise, approved by you
-                </span>
-              </li>
+          <div className="rounded-[1.25rem] border border-border bg-card p-5 shadow-xs">
+            <p className="text-sm font-medium">Every claim in this post is backed</p>
+            <div className="mt-3 flex flex-wrap gap-1.5" role="group" aria-label="Claims in this post">
+              {CLAIMS.map((entry, index) => (
+                <button
+                  key={entry.claim}
+                  type="button"
+                  aria-pressed={index === activeClaim}
+                  onClick={() => setActiveClaim(index)}
+                  className={cn(
+                    'rounded-full border px-2.5 py-1 text-xs',
+                    'focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none',
+                    'motion-safe:transition-colors motion-safe:duration-300',
+                    index === activeClaim
+                      ? 'border-foreground/20 bg-foreground text-background'
+                      : 'border-border bg-background text-muted-foreground hover:text-foreground',
+                  )}
+                >
+                  {entry.claim}
+                </button>
+              ))}
+            </div>
+            <ul className="mt-4 flex flex-col gap-1.5">
+              {[
+                {
+                  icon: ShieldCheck,
+                  title: 'falak.example/operations',
+                  detail: 'lane schedule and the noon cutoff',
+                },
+                {
+                  icon: Check,
+                  title: 'Approved business facts',
+                  detail: 'the same-day delivery promise, approved by you',
+                },
+              ].map((source, index) => (
+                <li
+                  key={source.title}
+                  className={cn(
+                    'flex items-start gap-2 rounded-lg px-2 py-1.5 text-xs text-muted-foreground',
+                    'motion-safe:transition-colors motion-safe:duration-300',
+                    index === activeSource && 'bg-accent',
+                  )}
+                >
+                  <source.icon aria-hidden className="mt-0.5 size-3.5 shrink-0 text-success" />
+                  <span>
+                    <span className="font-medium text-foreground">{source.title}</span>{' '}
+                    — {source.detail}
+                  </span>
+                </li>
+              ))}
             </ul>
-          </details>
+            <p className="mt-3 text-xs text-muted-foreground">
+              Select a claim to see what backs it. If a claim has no source, it doesn't ship.
+            </p>
+          </div>
         </Reveal>
       </div>
     </SectionShell>

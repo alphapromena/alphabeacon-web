@@ -1211,3 +1211,40 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   the second approval loop
 - Next: open-items 17 (counsel, mailbox, OG eyeball, CTA flip-back
   condition); Lighthouse on the deployed domain when convenient
+
+### 2026-08-11 18:50 — Phase 2 code pass: brand-continuous demos, events, request-access
+
+- Did: Phase 2 brief executed code-first, nothing generated (manifest
+  gate honored — Docs/brief/asset-manifest-phase2.md awaits approval).
+  How-works steps carry Falak visuals end to end (BrandLogo, chips, the
+  Riyadh ⇄ Jeddah preview); Memory learns from an EDIT too ("Make this
+  less promotional." → "Preference learned ✓", Content preferences row
+  lights); the calendar adds Falak's own launch date (diamond "your
+  date" marker) with its campaign already prepared; the facts panel is
+  interactive (select a claim → its source highlights); two-voices got
+  contrast labels + founder-story copy; the workspace preview animates
+  between rows, the checkmark zooms in, and the header counts down
+  "5 prepared · N to review · about N+1 min" to "Today's marketing:
+  done ✓". New: `analytics.ts` (vendor-free track() seam, funnel events
+  wired across hero/sections/FAQ/CTAs), `/request-access` (real fields,
+  designed messages, "You're on the list." confirmation, buffered
+  locally — open-items 18), `content-asset.tsx` (§26 css|image|carousel|
+  video slot; the ONE legal <video> seam, constraints machine-checked in
+  verify-w02 1f), dark final CTA gained a whisper brand-gold radial.
+  Microcopy sweep: signup aside lost "co-pilot"; "no credit card" →
+  "no card details" (§28 scanner). Golden e2e reaches signup via
+  Sign in → Create an account; new request-access spec.
+- Phase: rb/02 follow-up (Phase 2)
+- Files: `src/features/marketing/{analytics.ts,request-access-screen.tsx,
+  marketing-home.tsx}` (2 new), `src/features/marketing/outputs/
+  {story-sections.tsx,workspace-section.tsx,content-asset.tsx}` (1 new),
+  `src/routes.tsx`, `src/lib/messages.ts`, `src/features/auth/
+  signup-screen.tsx`, `scripts/verify-w02.ts`, `e2e/onboarding.spec.ts`,
+  `Docs/brief/asset-manifest-phase2.md` (new), `.agent/*`
+- Decisions: see decisions.md — Phase 2: request-access flow, event
+  seam, one legal video slot
+- Verify: verify:w02 full PASS (lint, typecheck, 337 unit, guard-static,
+  build, marketing laws, e2e incl. golden + axe); settings-a11y:197
+  flaked once, green in isolation and on the full rerun
+- Next: push + PR, fast-forward rb/02-v1-brief and main, verify
+  production; Higgsfield generation only after manifest approval

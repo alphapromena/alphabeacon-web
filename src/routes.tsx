@@ -85,6 +85,7 @@ const el = {
   settingsKnowledge: () => lazyEl(() => import('@/features/settings/knowledge-screen'), 'KnowledgeScreen'),
   settingsTeam: () => lazyEl(() => import('@/features/settings/team-screen'), 'TeamScreen'),
   legal: (doc: 'privacy' | 'terms') => lazyEl(() => import('@/features/system/legal-screens'), doc === 'privacy' ? 'PrivacyScreen' : 'TermsScreen'),
+  requestAccess: () => lazyEl(() => import('@/features/marketing/request-access-screen'), 'RequestAccessScreen'),
   notFound: () => lazyEl(() => import('@/features/system/not-found'), 'NotFoundScreen'),
   devDatasets: () => lazyEl(() => import('@/features/dev/dev-datasets'), 'DevDatasetsScreen'),
   devStates: () => lazyEl(() => import('@/features/dev/dev-states'), 'DevStatesScreen'),
@@ -139,6 +140,9 @@ export const router = createBrowserRouter([
   // marketing footer and the signup consent line.
   { path: '/privacy', element: el.legal('privacy') },
   { path: '/terms', element: el.legal('terms') },
+
+  // The early-access front door (Phase 2 §24) — public, marketing-owned.
+  { path: '/request-access', element: el.requestAccess() },
 
   // Area D — the review queue
   { path: '/today', element: <Authed>{el.today()}</Authed> },

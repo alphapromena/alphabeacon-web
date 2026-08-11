@@ -26,6 +26,11 @@ export const MESSAGES = {
     passwordTooWeak: 'Add a number or a symbol to make this harder to guess.',
     passwordsDoNotMatch: 'Both passwords need to match.',
     orgNameRequired: 'Name your organization — you can change it later.',
+
+    // Early access (M-series request form).
+    requestCompanyRequired: 'Tell us your company so we know who the workspace is for.',
+    requestCountryRequired: 'Tell us where you operate — Malaky prepares around your calendar.',
+    requestRoleRequired: 'Pick the role closest to yours.',
     termsRequired: 'Accept the terms to create your account.',
     signInIncorrect: 'Incorrect email or password.',
     signInLockedOut: 'Too many attempts. Try again in',

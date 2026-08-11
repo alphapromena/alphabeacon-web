@@ -20,6 +20,7 @@ import { MonoNumber } from '@/components/ab/mono-number'
 import { Button } from '@/components/ui/button'
 import { useTheme } from '@/lib/theme'
 import { cn } from '@/lib/utils'
+import { track } from './analytics'
 import { ApprovalDemo } from './outputs/approval-demo'
 import { OutputStory } from './outputs/scroll-story'
 import {
@@ -109,7 +110,9 @@ function SiteHeader() {
             <Link to="/login">Sign in</Link>
           </Button>
           <Button asChild>
-            <Link to="/signup">Request early access</Link>
+            <Link to="/request-access" onClick={() => track('request_access_click', { from: 'header' })}>
+              Request early access
+            </Link>
           </Button>
         </div>
       </div>
@@ -130,7 +133,9 @@ function HeroIntro() {
       </p>
       <div className="flex flex-wrap items-center gap-3">
         <Button asChild size="lg">
-          <Link to="/signup">Request early access</Link>
+          <Link to="/request-access" onClick={() => track('request_access_click', { from: 'hero' })}>
+            Request early access
+          </Link>
         </Button>
         <Button asChild size="lg" variant="outline">
           <a href="#how">See how it works →</a>
@@ -200,6 +205,10 @@ export function MarketingHome() {
     }
   }, [resolvedTheme])
 
+  useEffect(() => {
+    track('hero_view', undefined, { once: true })
+  }, [])
+
   return (
     <div className="min-h-svh bg-background text-foreground">
       <SiteHeader />
@@ -254,10 +263,14 @@ export function MarketingHome() {
               Frequently asked questions
             </h2>
             <div className="mt-8 flex flex-col gap-3">
-              {FAQ.map((item) => (
+              {FAQ.map((item, index) => (
                 <details
                   key={item.q}
                   className="group rounded-lg border border-border bg-card px-4 py-3"
+                  onToggle={(event) => {
+                    if (event.currentTarget.open)
+                      track('faq_open', { question: index }, { once: true })
+                  }}
                 >
                   <summary className="cursor-pointer list-none font-medium marker:content-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none">
                     {item.q}
@@ -274,8 +287,15 @@ export function MarketingHome() {
             it — no product-dashboard imagery. */}
         <section className="mx-auto max-w-6xl px-6 py-20">
           <Reveal>
-            <div className="dark grid items-center gap-10 rounded-2xl border border-border bg-card px-8 py-14 text-card-foreground lg:grid-cols-[1fr_18rem] lg:px-12">
-              <div className="flex flex-col items-start gap-5">
+            <div className="dark relative grid items-center gap-10 overflow-hidden rounded-2xl border border-border bg-card px-8 py-14 text-card-foreground lg:grid-cols-[1fr_18rem] lg:px-12">
+              {/* The one permitted flourish (§16): a barely-there golden
+                  aura behind the mark — brand token at whisper opacity,
+                  static, invisible to reduced-data budgets. */}
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-0 bg-radial-[at_18%_0%] from-brand/15 via-transparent to-transparent"
+              />
+              <div className="relative flex flex-col items-start gap-5">
                 <Wordmark tone="white" className="h-20 w-auto" />
                 <p className="font-display text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
                   Tomorrow&apos;s marketing is already waiting.
@@ -284,10 +304,15 @@ export function MarketingHome() {
                   Set up your brand once. Malaky starts preparing what comes next.
                 </p>
                 <Button asChild size="lg">
-                  <Link to="/signup">Request early access</Link>
+                  <Link
+                    to="/request-access"
+                    onClick={() => track('request_access_click', { from: 'final' })}
+                  >
+                    Request early access
+                  </Link>
                 </Button>
               </div>
-              <div aria-hidden inert className="hidden select-none lg:block">
+              <div aria-hidden inert className="relative hidden select-none lg:block">
                 <ApprovalDemo active={false} />
               </div>
             </div>

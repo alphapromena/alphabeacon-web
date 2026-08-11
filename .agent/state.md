@@ -30,7 +30,7 @@ below).
 |            |                                                        |
 | ---------- | ------------------------------------------------------ |
 | Remote     | `github.com/alphapromena/alphabeacon-web` (private)    |
-| `main`     | Production line — V1 page + orbital hero + full-fidelity posts + the 2026-08-11 production pass (code-split, early-access CTA, legal pages, SEO); open-items 16–17 hold the human gates |
+| `main`     | Production line — V1 page + orbital hero + full-fidelity posts + the 2026-08-11 production pass (code-split, early-access CTA, legal pages, SEO) + the Phase 2 code pass (request-access flow, analytics seam, brand-continuous demos, content-asset slot); open-items 16–18 hold the human gates |
 | `rb/02-v1-brief` | Website V1 per Abdullah's brief + the 2026-08-11 ambient idle drift — merged to `main` 2026-08-11 (founder-instructed production push; open-items 16 checks still to be walked) |
 | Phase tips | `w/00`…`w/06`, `int/00`…`int/05`, `rb/00-malaky`, `rb/01-motion` |
 | Tags       | none                                                   |

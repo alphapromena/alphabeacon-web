@@ -241,3 +241,16 @@ New for the Malaky M1 (2026-08-08):
       (item 12's rule: self-serve publishing backend is not live). Flip to
       "Start free" via marketing-home + verify-w02 CTA law + e2e matcher
       + pricing-section seam when self-service is real.
+
+## 18. Phase 2 gates (2026-08-11)
+
+- [ ] **Request-access destination**: `/request-access` validates and
+      confirms, but the submission only buffers locally (analytics seam +
+      localStorage) — the network law allows nothing else and no form
+      vendor is approved. Wire a real destination (API endpoint or an
+      approved vendor via the dataLayer seam) BEFORE driving paid or
+      public traffic to the page; the copy promises a reply.
+- [ ] **Higgsfield asset manifest**: `Docs/brief/asset-manifest-phase2.md`
+      awaits founder approval. Nothing has been generated. On approval:
+      three stills + the one Nura Reel (9:16, poster-first, ≤1.5 MB
+      target) through the `content-asset.tsx` seam.

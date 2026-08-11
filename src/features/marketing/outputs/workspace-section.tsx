@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { track } from '../analytics'
 import { DEMO_BRANDS } from './demo-brands'
 import {
   ArabicSocialCard,
@@ -100,12 +101,22 @@ export function WorkspaceSection() {
 
   const approve = () => {
     const id = row.id
+    track('workspace_approve_demo', { row: id }, { once: true })
     setPhases((current) => ({ ...current, [id]: 'approved' }))
     clearTimeout(scheduleTimer.current)
     scheduleTimer.current = setTimeout(() => {
       setPhases((current) => (current[id] === 'approved' ? { ...current, [id]: 'scheduled' } : current))
     }, 900)
   }
+
+  /* The honest time signal (Phase 2 §7): how much review work is left in
+     the queue, not an invented ROI number. Approving, declining or
+     scheduling a row shortens it until the day reads done. */
+  const remaining = ROWS.filter(
+    (candidate) =>
+      candidate.reviewable &&
+      !['approved', 'scheduled', 'declined'].includes(phases[candidate.id] ?? ''),
+  ).length
 
   const chipFor = (candidate: WorkspaceRow) => {
     const rowPhase = phases[candidate.id]
@@ -119,9 +130,19 @@ export function WorkspaceSection() {
   return (
     <div className="grid items-start gap-8 lg:grid-cols-[1fr_20rem]">
       <div className="flex flex-col overflow-hidden rounded-[1.25rem] border border-border bg-card shadow-[var(--shadow-soft-lg)]">
-        <div className="flex items-center justify-between border-b border-border px-5 py-3">
+        <div className="flex items-center justify-between gap-3 border-b border-border px-5 py-3">
           <span className="text-sm font-medium">Today</span>
-          <span className="text-xs text-muted-foreground">5 items prepared · 3 need review</span>
+          <span aria-live="polite" className="text-xs text-muted-foreground">
+            {remaining > 0 ? (
+              <>
+                5 prepared · {remaining} to review · about {remaining + 1} min
+              </>
+            ) : (
+              <span className="font-medium text-success motion-safe:animate-in motion-safe:fade-in-0 motion-safe:duration-500">
+                Today&apos;s marketing: done ✓
+              </span>
+            )}
+          </span>
         </div>
         <ul className="flex flex-col divide-y divide-border">
           {ROWS.map((candidate) => (
@@ -129,7 +150,10 @@ export function WorkspaceSection() {
               <button
                 type="button"
                 aria-pressed={candidate.id === selected}
-                onClick={() => setSelected(candidate.id)}
+                onClick={() => {
+                  setSelected(candidate.id)
+                  track('workspace_interaction', { row: candidate.id }, { once: true })
+                }}
                 className={cn(
                   'flex w-full flex-wrap items-center gap-x-3 gap-y-1 px-5 py-3 text-left',
                   'motion-safe:transition-colors hover:bg-muted/50',
@@ -149,7 +173,15 @@ export function WorkspaceSection() {
       </div>
 
       <div aria-live="polite" className="mx-auto flex w-full max-w-xs flex-col gap-3 lg:mx-0">
-        <div className={cn(phase === 'editing' && 'rounded-[1.25rem] ring-2 ring-primary')}>
+        {/* Keyed on the row so switching rows re-runs the entrance — the
+           preview arrives instead of snapping. */}
+        <div
+          key={row.id}
+          className={cn(
+            'motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-2 motion-safe:duration-300',
+            phase === 'editing' && 'rounded-[1.25rem] ring-2 ring-primary',
+          )}
+        >
           {row.card}
         </div>
 
@@ -185,7 +217,9 @@ export function WorkspaceSection() {
             )}
             <p className="min-h-5 text-xs/relaxed text-muted-foreground">
               {phase === 'scheduled' && (
-                <span className="font-medium text-success">Memory updated ✓</span>
+                <span className="inline-block font-medium text-success motion-safe:animate-in motion-safe:fade-in-0 motion-safe:zoom-in-75 motion-safe:duration-300">
+                  Memory updated ✓
+                </span>
               )}
               {phase === 'approved' && 'Approved — scheduling…'}
               {phase === 'editing' && 'Edit in place — your words, then your approval.'}
