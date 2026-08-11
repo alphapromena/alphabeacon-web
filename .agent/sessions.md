@@ -1025,3 +1025,16 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   motion: engine absent + animation-name none)
 - Next: founder eyeballs the drift feel (amplitudes tune in one place,
   motion-tokens.ts); open-items 16 unchanged
+
+### 2026-08-11 12:25 — Ambient drift to production (user-instructed)
+
+- Did: on the founder's instruction, fast-forwarded `rb/02-v1-brief` to the
+  ambient-drift commit (PR #2 merges by fast-forward — no merge commit,
+  matching the repo's one-history rule) and promoted the resulting Vercel
+  build to production. Production had been the 2a9b538 rb/02 build, which
+  is why the cards only moved on scroll there.
+- Phase: rb/02 follow-up (M1 only)
+- Files: `.agent/sessions.md`
+- Decisions: none
+- Verify: covered by the previous entry (unchanged code, docs-only commit)
+- Next: nothing — open-items 16 still governs the rb/02 → main merge
