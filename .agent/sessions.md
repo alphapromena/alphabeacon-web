@@ -1038,3 +1038,19 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
 - Decisions: none
 - Verify: covered by the previous entry (unchanged code, docs-only commit)
 - Next: nothing — open-items 16 still governs the rb/02 → main merge
+
+### 2026-08-11 12:30 — main fast-forwarded for the production deploy
+
+- Did: the Vercel project's production branch is `main` (branch builds are
+  previews; the earlier rb/02 production was a manual dashboard promote),
+  so on the founder's "push it to production" the whole line —
+  V1 page + ambient drift — was fast-forwarded onto `main`. One history,
+  no merge commit; `rb/02-v1-brief` and the work branch point at the same
+  sha. Production content is unchanged from what the founder already
+  promoted, plus the drift. The open-items 16 sittings remain to be
+  walked; state.md now says so against main rather than against a branch.
+- Phase: rb/02 follow-up
+- Files: `.agent/state.md`, `.agent/sessions.md`
+- Decisions: none
+- Verify: docs-only commit; code verified in the 12:15 entry
+- Next: walk open-items 16 against production
