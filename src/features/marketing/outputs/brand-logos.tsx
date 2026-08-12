@@ -2,7 +2,7 @@ import { cn } from '@/lib/utils'
 import type { DemoBrand } from './demo-brands'
 
 /**
- * Tiny vector logo marks for the four fictional demo brands (founder
+ * Tiny vector logo marks for the five fictional demo brands (founder
  * directive 2026-08-11: believable logos, not letter avatars). Drawn
  * inline as SVG so no assets ship; every fill comes from the brand's own
  * palette in demo-brands.ts — no raw colors here, and the Malaky wordmark
@@ -14,6 +14,8 @@ import type { DemoBrand } from './demo-brands'
  * - Bayt Zaytoun: an olive sprig — stem and two leaves.
  * - Nura Living: the arch-window motif its campaign artwork already uses.
  * - Meezan ("scales"): a balance — beam, pivot, two pans.
+ * - Orbital Reach: a planet limb with an ascending trajectory and its
+ *   satellite at the tip — deliberately unlike Falak's flat orbit ring.
  */
 export function BrandLogo({
   brand,
@@ -68,6 +70,25 @@ export function BrandLogo({
         <svg viewBox="0 0 24 24" className="size-[70%]">
           <path d="M6.5 20v-7.5a5.5 5.5 0 0 1 11 0V20Z" fill={surface} />
           <circle cx="17.5" cy="6.5" r="2.2" fill={accent} />
+        </svg>
+      )}
+      {brand.id === 'orbital' && (
+        <svg viewBox="0 0 24 24" className="size-[70%]">
+          <path
+            d="M3.5 17.5a9.5 9.5 0 0 1 17 0"
+            fill="none"
+            stroke={surface}
+            strokeWidth="1.5"
+            strokeLinecap="round"
+          />
+          <path
+            d="M5 20c5-1.5 10.5-6 13.5-13"
+            fill="none"
+            stroke={accent}
+            strokeWidth="1.5"
+            strokeLinecap="round"
+          />
+          <circle cx="18.6" cy="6.6" r="2.1" fill={accent} />
         </svg>
       )}
       {brand.id === 'meezan' && (

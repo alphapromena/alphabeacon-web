@@ -762,12 +762,15 @@ export function XCard({
   state = 'prepared',
   stateLabel,
   photo,
+  copy = 'Noon cutoff, evening delivery. Riyadh ⇄ Jeddah goes same-day on Monday.',
   className,
 }: {
   brand: DemoBrand
   state?: WorkflowState
   stateLabel?: string
   photo?: string
+  /** The post itself — brand-specific, since one X card serves any brand. */
+  copy?: string
   className?: string
 }) {
   return (
@@ -788,9 +791,7 @@ export function XCard({
           </div>
           <MoreHorizontal className="ml-auto size-4 shrink-0 text-muted-foreground" />
         </div>
-        <p className="text-xs/relaxed">
-          Noon cutoff, evening delivery. Riyadh ⇄ Jeddah goes same-day on Monday.
-        </p>
+        <p className="text-xs/relaxed">{copy}</p>
         {/* X's media card: rounded, bordered, 16:9 — the shape a post with
             an attached image actually takes. */}
         {(photo ?? photoFor(brand)) && (

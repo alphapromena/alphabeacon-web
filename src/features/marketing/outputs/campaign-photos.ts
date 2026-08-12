@@ -16,6 +16,7 @@ export const CAMPAIGN_PHOTOS: Partial<Record<DemoBrand['id'], string>> = {
   falak: '/campaigns/falak-truck.webp',
   nura: '/campaigns/nura-interior.webp',
   zaytoun: '/campaigns/zaytoun-iftar.webp',
+  orbital: '/campaigns/orbital-launch.webp',
   // meezan is deliberately text-first — advisory work has no product shot,
   // and its executive post is stronger without one.
 }

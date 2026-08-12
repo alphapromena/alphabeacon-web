@@ -88,7 +88,13 @@ function CardForSlot({ id, active }: { id: CardId; active: boolean }) {
     case 'newsletter':
       return <NewsletterCard brand={DEMO_BRANDS.falak} state="approved" />
     case 'x':
-      return <XCard brand={DEMO_BRANDS.falak} state="prepared" />
+      return (
+        <XCard
+          brand={DEMO_BRANDS.orbital}
+          state="prepared"
+          copy="Aurora-1 is up. Twelve satellites deployed to low Earth orbit, liftoff 08:42 UTC. Built for global connectivity."
+        />
+      )
   }
 }
 

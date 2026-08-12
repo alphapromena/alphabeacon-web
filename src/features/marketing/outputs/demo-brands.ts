@@ -3,8 +3,10 @@
    exemption is scoped to this module; verify:w02 fails any other marketing
    file that borrows this disable. */
 /**
- * The four persistent demo brands (brief §31): logistics, restaurant,
- * retail, professional services. Every mock output on the marketing route
+ * The five persistent demo brands (brief §31): logistics, restaurant,
+ * retail, professional services, and — added with the founder's approved
+ * campaign photography — satellite connectivity, which is what the
+ * text-first X post announces. Every mock output on the marketing route
  * draws from THIS module, so the site reads as one product demo rather than
  * a collage. All names are invented; domains use .example; no real
  * trademarks. Arabic strings await native review (open-items 16).
@@ -20,7 +22,7 @@ export interface DemoPerson {
 }
 
 export interface DemoBrand {
-  id: 'falak' | 'zaytoun' | 'nura' | 'meezan'
+  id: 'falak' | 'zaytoun' | 'nura' | 'meezan' | 'orbital'
   /** Latin name, as the brand writes it. */
   name: string
   /** Arabic name — the brand's own mark, not a translation artifact. */
@@ -91,6 +93,18 @@ export const DEMO_BRANDS: Record<DemoBrand['id'], DemoBrand> = {
     palette: { primary: '#23616B', accent: '#7FB6BF', surface: '#EBF2F3', ink: '#12333A' },
     narrative: 'Guiding clients through the Q3 VAT filing deadline, calmly.',
     person: { name: 'Layla Haddad', role: 'Managing Partner, Meezan Advisory', initials: 'LH' },
+  },
+  orbital: {
+    id: 'orbital',
+    name: 'Orbital Reach',
+    nameAr: 'أوربيتال ريتش',
+    sector: 'Satellite connectivity',
+    sectorAr: 'فضاء واتصالات',
+    monogram: 'OR',
+    followers: '184K followers',
+    palette: { primary: '#0B1B2E', accent: '#4DA3E8', surface: '#E8EEF5', ink: '#08131F' },
+    narrative: 'Aurora-1 reaches orbit and deploys the first twelve satellites.',
+    person: { name: 'Dana Kassar', role: 'Chief Engineer, Orbital Reach', initials: 'DK' },
   },
 }
 

@@ -1299,3 +1299,24 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   full run earlier passed 72/72, and each spec passes in isolation. None
   touches the marketing route.
 - Next: deploy; founder to supply the Baker Tilly permission document
+
+### 2026-08-11 20:05 — The X post gets its brand: Orbital Reach
+
+- Did: fixed the gap from the photography pass — `orbital-launch.webp`
+  shipped but nothing referenced it, and the hero's X card still ran
+  Falak's logistics copy. Added Orbital Reach as the FIFTH demo brand
+  (satellite connectivity; deep-space navy + sky blue, its own SVG mark:
+  planet limb, ascending trajectory, satellite at the tip — deliberately
+  unlike Falak's flat orbit ring). XCard's post text became a `copy` prop
+  (one card, any brand) and the hero now renders the Aurora-1 launch
+  announcement over the rocket still. Founder's uploaded X mockup is now
+  represented by a fictional brand end to end — no real company.
+- Phase: rb/02 follow-up (campaign photography)
+- Files: `src/features/marketing/outputs/{demo-brands.ts,brand-logos.tsx,
+  campaign-photos.ts,post-cards.tsx,scroll-story.tsx}`, `.agent/sessions.md`
+- Decisions: none new — extends the 2026-08-11 photography entry
+- Verify: verify:w02 full PASS (lint, typecheck, 337 unit, guard-static,
+  build, marketing laws, e2e incl. golden + axe); hero screenshot checked
+  at 1440, zero non-200 responses under /campaigns/
+- Next: nothing on this thread; founder gates unchanged (manifest,
+  request-access destination, malaky.ai DNS, Baker Tilly permission doc)
