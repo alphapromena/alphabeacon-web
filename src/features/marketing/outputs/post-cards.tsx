@@ -13,7 +13,7 @@ import {
 } from 'lucide-react'
 import type { CSSProperties, ReactNode } from 'react'
 import { cn } from '@/lib/utils'
-import { type DemoBrand } from './demo-brands'
+import { PLATFORM_UI, type DemoBrand, type PlatformId } from './demo-brands'
 import { BrandLogo, PersonAvatar } from './brand-logos'
 import { photoFor } from './campaign-photos'
 import { ContentAsset } from './content-asset'
@@ -105,19 +105,22 @@ export function ChannelLabel({
   channel: 'instagram' | 'linkedin-company' | 'linkedin-executive' | 'facebook' | 'x' | 'newsletter' | 'arabic'
   comingSoon?: boolean
 }) {
+  // Each glyph carries its platform's own brand COLOR (PLATFORM_UI.glyph),
+  // which is what makes the channel readable at a glance. The artwork is
+  // still ours — colors are not the trademarked mark (D6; open-items 20).
   const meta = {
-    instagram: { icon: Camera, label: 'Instagram' },
-    'linkedin-company': { icon: Briefcase, label: 'LinkedIn · Company' },
-    'linkedin-executive': { icon: Briefcase, label: 'LinkedIn · Executive' },
-    facebook: { icon: Users, label: 'Facebook' },
-    x: { icon: AtSign, label: 'X' },
-    newsletter: { icon: Mail, label: 'Newsletter' },
-    arabic: { icon: Camera, label: 'Arabic social' },
-  }[channel]
+    instagram: { icon: Camera, label: 'Instagram', platform: 'instagram' },
+    'linkedin-company': { icon: Briefcase, label: 'LinkedIn · Company', platform: 'linkedin' },
+    'linkedin-executive': { icon: Briefcase, label: 'LinkedIn · Executive', platform: 'linkedin' },
+    facebook: { icon: Users, label: 'Facebook', platform: 'facebook' },
+    x: { icon: AtSign, label: 'X', platform: 'x' },
+    newsletter: { icon: Mail, label: 'Newsletter', platform: 'newsletter' },
+    arabic: { icon: Camera, label: 'Arabic social', platform: 'instagram' },
+  }[channel] as { icon: typeof Camera; label: string; platform: PlatformId }
   const Icon = meta.icon
   return (
     <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
-      <Icon aria-hidden className="size-3.5" />
+      <Icon aria-hidden className="size-3.5" style={{ color: PLATFORM_UI[meta.platform].glyph }} />
       {meta.label}
       {comingSoon && (
         <span className="rounded-full border border-border px-1.5 py-px text-[10px] uppercase tracking-wide">

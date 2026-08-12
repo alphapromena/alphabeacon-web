@@ -155,6 +155,8 @@ export const PLATFORM_UI = {
     muted: '#737373',
     border: '#DBDBDB',
     accent: '#FF3040',
+    /** The platform's own brand color, for the channel glyph. */
+    glyph: '#E1306C',
     chrome: '#FFFFFF',
   },
   linkedin: {
@@ -164,6 +166,8 @@ export const PLATFORM_UI = {
     muted: '#5E5E5E',
     border: '#E0E0E0',
     accent: '#0A66C2',
+    /** The platform's own brand color, for the channel glyph. */
+    glyph: '#0A66C2',
     chrome: '#FFFFFF',
   },
   facebook: {
@@ -173,6 +177,8 @@ export const PLATFORM_UI = {
     muted: '#65676B',
     border: '#CED0D4',
     accent: '#1877F2',
+    /** The platform's own brand color, for the channel glyph. */
+    glyph: '#1877F2',
     chrome: '#FFFFFF',
   },
   x: {
@@ -182,6 +188,8 @@ export const PLATFORM_UI = {
     muted: '#71767B',
     border: '#2F3336',
     accent: '#1D9BF0',
+    /** The platform's own brand color, for the channel glyph. */
+    glyph: '#0F1419',
     chrome: '#000000',
   },
   newsletter: {
@@ -191,6 +199,9 @@ export const PLATFORM_UI = {
     muted: '#5E5E5E',
     border: '#DDDDDD',
     accent: '#0A66C2',
+    /** Email has no single vendor color — a neutral ink keeps it from
+     * impersonating one mail client. */
+    glyph: '#5E5E5E',
     /** The mail client's own header band, behind From/Subject. */
     chrome: '#F5F6F7',
   },

@@ -1347,3 +1347,20 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   hero, cross-channel and workspace screenshots reviewed at 1440
 - Next: open-items 20 (platform logo trademark call) if the founder wants
   the real marks; hero orbit and motion untouched as instructed
+
+### 2026-08-12 06:45 — Channel glyphs carry each platform's brand color
+
+- Did: founder follow-up ("add the colors to each one logo"). PLATFORM_UI
+  gained a `glyph` color per network and ChannelLabel now tints its icon
+  with it — Instagram magenta #E1306C, LinkedIn #0A66C2, Facebook
+  #1877F2, X near-black #0F1419, Arabic social on the Instagram hue
+  (it renders in an Instagram frame), Newsletter a neutral #5E5E5E so it
+  impersonates no single mail vendor. Colors only: the glyph artwork is
+  still ours, so D6 holds and open-items 20 (real marks, trademark call)
+  is unchanged.
+- Phase: rb/02 follow-up (card realism)
+- Files: `src/features/marketing/outputs/{demo-brands.ts,post-cards.tsx}`,
+  `.agent/sessions.md`
+- Decisions: none new — extends the 2026-08-12 platform-surface entry
+- Verify: verify:w02 full PASS; labels checked at 2x on both card rows
+- Next: nothing on this thread
