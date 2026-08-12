@@ -1108,3 +1108,33 @@ add a new entry that says it supersedes the old one.
 - Instead of: shipping real brands' posts as Malaky's demo work, or
   baking headline type into the images (which would lose crispness,
   translation and RTL shaping).
+
+### 2026-08-12 — Posts render on the PLATFORM's surface, not Malaky's
+
+- Why: founder review — the cards "still feel like generic SaaS mockups".
+  The cause was structural, not decorative: every post rendered on
+  Malaky's warm ivory `bg-card`, inherited Malaky's foreground colors and
+  radius, so six different networks read as six Malaky panels. Fix:
+  `platform-chrome.tsx` + `PLATFORM_UI` give each network its own
+  surface/ink/muted/border/accent, published as `--pf-*` custom
+  properties by `PlatformFrame`; every header, reaction cluster, action
+  row and counts row reads color from the PLATFORM. X is now black,
+  Instagram/LinkedIn/Facebook white on their own grays, the newsletter
+  gets mail-client chrome. Malaky's channel label + workflow badge stay
+  strictly OUTSIDE the frame (the founder's three-layer rule: platform UI
+  / customer brand / Malaky workflow). Executive posts get a drawn
+  portrait avatar (`PersonAvatar`) instead of initials, so a personal
+  account no longer reads as a second company page. Engagement is a
+  structured `engagement` prop per card, and brands carry `brandVoice`,
+  so a card can later be driven entirely by data.
+- Instead of: restyling each card one-off again (the previous two passes
+  did that and the founder rejected both), or importing real platform
+  logos — D6 still bans third-party logo assets, and reproducing
+  Instagram/LinkedIn/Facebook/X marks is a trademark call for counsel,
+  not a design call. Recognition here comes from surface, chrome, layout
+  and type, which is most of the signal; open-items 20 carries the logo
+  question if the founder wants the marks added under brand guidelines.
+- Naming: the `*Card` exports stay (≈37 call sites + e2e); the founder's
+  requested `InstagramPost` / `LinkedInCompanyPost` / … names are
+  exported as aliases of the same components, so new code reads the way
+  the brief asks without a rename churn through the route.

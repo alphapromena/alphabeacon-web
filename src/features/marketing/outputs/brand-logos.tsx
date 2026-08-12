@@ -2,6 +2,49 @@ import { cn } from '@/lib/utils'
 import type { DemoBrand } from './demo-brands'
 
 /**
+ * A person's avatar for the executive post (founder pass 2026-08-12, §4).
+ * Initials read as "account with no photo"; a real executive account has a
+ * portrait. This draws a soft studio-portrait silhouette — head, shoulders,
+ * a warm rim light — from the brand's own palette, so the personal post is
+ * visibly a PERSON and not a second company page. No image asset ships.
+ */
+export function PersonAvatar({ brand, className }: { brand: DemoBrand; className?: string }) {
+  const { primary, accent, surface, ink } = brand.palette
+  return (
+    <span
+      aria-hidden
+      className={cn('grid shrink-0 place-items-center overflow-hidden rounded-full', className ?? 'size-9')}
+    >
+      <svg viewBox="0 0 40 40" className="size-full">
+        <defs>
+          <linearGradient id={`pa-bg-${brand.id}`} x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor={surface} />
+            <stop offset="100%" stopColor={accent} />
+          </linearGradient>
+          <linearGradient id={`pa-fg-${brand.id}`} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={primary} />
+            <stop offset="100%" stopColor={ink} />
+          </linearGradient>
+        </defs>
+        <rect width="40" height="40" fill={`url(#pa-bg-${brand.id})`} />
+        {/* Shoulders, then head — a portrait crop, not an icon. */}
+        <path d="M4 40c0-8.6 7.2-13.4 16-13.4S36 31.4 36 40Z" fill={`url(#pa-fg-${brand.id})`} />
+        <circle cx="20" cy="15.4" r="7.6" fill={`url(#pa-fg-${brand.id})`} />
+        {/* Rim light along the left edge — what makes it read as a photo. */}
+        <path
+          d="M12.9 11.6a7.6 7.6 0 0 0 .6 8.7"
+          fill="none"
+          stroke={surface}
+          strokeOpacity="0.45"
+          strokeWidth="1.4"
+          strokeLinecap="round"
+        />
+      </svg>
+    </span>
+  )
+}
+
+/**
  * Tiny vector logo marks for the five fictional demo brands (founder
  * directive 2026-08-11: believable logos, not letter avatars). Drawn
  * inline as SVG so no assets ship; every fill comes from the brand's own

@@ -274,3 +274,16 @@ New for the Malaky M1 (2026-08-08):
 - [x] **SpaceX / X post**: declined and not shipped. It is a real
       company's real post carrying a real person's account; presenting it
       as Malaky's demo output would claim work Malaky did not do.
+
+## 20. Platform logo marks — trademark call (2026-08-12)
+
+- [ ] The founder asked for real platform logos (Instagram / LinkedIn /
+      Facebook / X) inside the demo cards. Not shipped: D6 bans
+      third-party logo assets, and reproducing those marks on a public
+      marketing page is a trademark question (usually fine as nominative
+      use under each platform's brand guidelines, but it is counsel's
+      call, not the design system's). Recognition currently comes from
+      each platform's surface, chrome, layout and type — which carries
+      most of the signal. To enable: get sign-off, amend D6 in
+      decisions.md, add the marks to `platform-chrome.tsx`, and relax the
+      verify-w02 logo assertion.

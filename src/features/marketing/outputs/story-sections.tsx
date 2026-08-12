@@ -280,6 +280,7 @@ export function EveryChannelSection() {
           <InstagramCard
             brand={FALAK}
             visualTitle="Same day. Both ways."
+            ctaLabel="Book a pickup"
             caption="Riyadh ⇄ Jeddah goes same-day on Monday. Noon cutoff, evening delivery."
           />
         </Reveal>

@@ -1320,3 +1320,30 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   at 1440, zero non-200 responses under /campaigns/
 - Next: nothing on this thread; founder gates unchanged (manifest,
   request-access destination, malaky.ai DNS, Baker Tilly permission doc)
+
+### 2026-08-12 06:20 — Posts moved onto the platforms' own surfaces
+
+- Did: founder review said the cards still read as generic SaaS mockups.
+  Root cause was structural — every post sat on Malaky's ivory `bg-card`
+  and inherited Malaky's ink. New `platform-chrome.tsx` + `PLATFORM_UI`
+  publish each network's surface/ink/muted/border/accent as `--pf-*`
+  vars through `PlatformFrame`; all chrome (headers, LinkedIn + Facebook
+  reaction clusters, action rows, Instagram action bar, X counts row)
+  reads from the platform. X is black, IG/LI/FB white, newsletter gets
+  mail-client chrome with a brand masthead. Malaky's label + badge stay
+  outside the frame. Executive card gets a drawn `PersonAvatar` portrait
+  (not initials) and stays text-first with no banner. Brand logos now
+  also sign each creative. Engagement became a structured prop on every
+  card; brands gained `brandVoice`; `*Post` aliases added per §9.
+  Fixed two content bugs found in QA: the Instagram CTA chip and the
+  newsletter sender address were hardcoded to one brand, now derived.
+- Phase: rb/02 follow-up (card realism)
+- Files: `src/features/marketing/outputs/{platform-chrome.tsx (new),
+  post-cards.tsx,demo-brands.ts,brand-logos.tsx,story-sections.tsx}`,
+  `.agent/*`
+- Decisions: see decisions.md — Posts render on the PLATFORM's surface
+- Verify: verify:w02 full PASS (lint, typecheck, 337 unit, guard-static,
+  build, marketing laws, e2e 72 passed incl. golden + axe + RTL law);
+  hero, cross-channel and workspace screenshots reviewed at 1440
+- Next: open-items 20 (platform logo trademark call) if the founder wants
+  the real marks; hero orbit and motion untouched as instructed

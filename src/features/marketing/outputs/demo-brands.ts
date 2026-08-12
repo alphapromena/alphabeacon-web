@@ -42,6 +42,9 @@ export interface DemoBrand {
   }
   /** The one campaign this brand runs across the whole site (§31). */
   narrative: string
+  /** How this brand writes — the line a real brand-voice setting would
+   * hold, so any future card can be generated from data alone. */
+  brandVoice: string
   person: DemoPerson
 }
 
@@ -56,6 +59,7 @@ export const DEMO_BRANDS: Record<DemoBrand['id'], DemoBrand> = {
     followers: '12,480 followers',
     palette: { primary: '#1F3A5F', accent: '#E8823A', surface: '#EEF2F7', ink: '#14263C' },
     narrative: 'Launching a same-day delivery lane between Riyadh and Jeddah.',
+    brandVoice: 'Confident and operational. Short sentences, concrete promises, no hype.',
     person: { name: 'Omar Suleiman', role: 'Founder, Falak Logistics', initials: 'OS' },
   },
   zaytoun: {
@@ -68,6 +72,7 @@ export const DEMO_BRANDS: Record<DemoBrand['id'], DemoBrand> = {
     followers: '9,120 followers',
     palette: { primary: '#5A6B3B', accent: '#A63D2F', surface: '#F4F1E7', ink: '#2F3520' },
     narrative: 'A family iftar set menu for Ramadan, and an Eid feast to follow.',
+    brandVoice: 'Warm and hospitable. Family-first, generous, never salesy.',
     person: { name: 'Rania Khalil', role: 'Owner, Bayt Zaytoun', initials: 'RK' },
   },
   nura: {
@@ -80,6 +85,7 @@ export const DEMO_BRANDS: Record<DemoBrand['id'], DemoBrand> = {
     followers: '28.4K followers',
     palette: { primary: '#8D5A78', accent: '#E0B084', surface: '#F6EFF3', ink: '#3D2635' },
     narrative: 'The summer home collection drops — linen, clay, and light.',
+    brandVoice: 'Calm editorial. Quiet luxury, tactile nouns, plenty of white space.',
     person: { name: 'Noor Al-Sayegh', role: 'Creative Director, Nura Living', initials: 'NA' },
   },
   meezan: {
@@ -92,6 +98,7 @@ export const DEMO_BRANDS: Record<DemoBrand['id'], DemoBrand> = {
     followers: '4,306 followers',
     palette: { primary: '#23616B', accent: '#7FB6BF', surface: '#EBF2F3', ink: '#12333A' },
     narrative: 'Guiding clients through the Q3 VAT filing deadline, calmly.',
+    brandVoice: 'Precise and reassuring. Plain language about complicated rules.',
     person: { name: 'Layla Haddad', role: 'Managing Partner, Meezan Advisory', initials: 'LH' },
   },
   orbital: {
@@ -104,6 +111,7 @@ export const DEMO_BRANDS: Record<DemoBrand['id'], DemoBrand> = {
     followers: '184K followers',
     palette: { primary: '#0B1B2E', accent: '#4DA3E8', surface: '#E8EEF5', ink: '#08131F' },
     narrative: 'Aurora-1 reaches orbit and deploys the first twelve satellites.',
+    brandVoice: 'Understated engineering pride. Facts first, wonder second.',
     person: { name: 'Dana Kassar', role: 'Chief Engineer, Orbital Reach', initials: 'DK' },
   },
 }
@@ -124,4 +132,75 @@ export const PLATFORM = {
     celebrate: '#6DAE4F',
   },
   instagram: { heart: '#FF3040' },
+} as const
+
+/**
+ * The full interface palette per platform (founder pass 2026-08-12).
+ *
+ * Why this exists: the cards used to inherit Malaky's warm ivory `bg-card`,
+ * so every "post" read as one more Malaky panel — the exact "generic SaaS
+ * mockup" failure the founder called out. A real feed is the PLATFORM's
+ * surface, not the tool's: Instagram and LinkedIn are white on near-black
+ * type, X is black on near-white. Rendering each post on its own surface
+ * is what makes the platform recognizable before any label is read.
+ *
+ * D6 still stands: colors, chrome and layout only — no imported or traced
+ * third-party logo assets. See open-items 20 for the trademark question.
+ */
+export const PLATFORM_UI = {
+  instagram: {
+    name: 'Instagram',
+    surface: '#FFFFFF',
+    ink: '#131313',
+    muted: '#737373',
+    border: '#DBDBDB',
+    accent: '#FF3040',
+    chrome: '#FFFFFF',
+  },
+  linkedin: {
+    name: 'LinkedIn',
+    surface: '#FFFFFF',
+    ink: '#1B1B1B',
+    muted: '#5E5E5E',
+    border: '#E0E0E0',
+    accent: '#0A66C2',
+    chrome: '#FFFFFF',
+  },
+  facebook: {
+    name: 'Facebook',
+    surface: '#FFFFFF',
+    ink: '#080809',
+    muted: '#65676B',
+    border: '#CED0D4',
+    accent: '#1877F2',
+    chrome: '#FFFFFF',
+  },
+  x: {
+    name: 'X',
+    surface: '#000000',
+    ink: '#E7E9EA',
+    muted: '#71767B',
+    border: '#2F3336',
+    accent: '#1D9BF0',
+    chrome: '#000000',
+  },
+  newsletter: {
+    name: 'Email',
+    surface: '#FFFFFF',
+    ink: '#1B1B1B',
+    muted: '#5E5E5E',
+    border: '#DDDDDD',
+    accent: '#0A66C2',
+    /** The mail client's own header band, behind From/Subject. */
+    chrome: '#F5F6F7',
+  },
+} as const
+
+export type PlatformId = keyof typeof PLATFORM_UI
+
+/** Facebook's reaction hues — the three-dot cluster under a post. */
+export const FACEBOOK_REACTIONS = {
+  like: '#1877F2',
+  love: '#F33E58',
+  wow: '#F7B125',
 } as const

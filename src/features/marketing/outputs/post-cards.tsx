@@ -1,53 +1,57 @@
 import {
   AtSign,
-  Award,
-  BarChart2,
-  Bookmark,
   Briefcase,
   CalendarClock,
   Camera,
   Check,
   CircleAlert,
-  Globe,
-  Heart,
   Mail,
-  MessageCircle,
-  MoreHorizontal,
-  Repeat2,
   Send,
   Sparkles,
-  ThumbsUp,
   Truck,
   Users,
 } from 'lucide-react'
 import type { CSSProperties, ReactNode } from 'react'
 import { cn } from '@/lib/utils'
-import { PLATFORM, type DemoBrand } from './demo-brands'
-import { BrandLogo } from './brand-logos'
+import { type DemoBrand } from './demo-brands'
+import { BrandLogo, PersonAvatar } from './brand-logos'
 import { photoFor } from './campaign-photos'
 import { ContentAsset } from './content-asset'
+import {
+  FacebookActionRow,
+  FacebookReactions,
+  InstagramActionRow,
+  LinkedInActionRow,
+  LinkedInReactions,
+  PfMuted,
+  PlatformFrame,
+  PostMenu,
+  PostedMeta,
+  XCountsRow,
+} from './platform-chrome'
 
 /**
- * Mock marketing outputs (brief §3, §31; full-fidelity pass 2026-08-11):
- * three distinct layers, kept distinct on purpose —
+ * Mock marketing outputs — three layers, kept strictly separate
+ * (founder pass 2026-08-12; brief §3, §31):
  *
- *   1. MALAKY owns the wrapper: radius, warm border, soft shadow, the tiny
- *      channel label and the workflow chip, always OUTSIDE the platform's
- *      own anatomy.
- *   2. The PLATFORM owns the interior interface: Instagram's header /
- *      4:5 creative / actions / likes / caption / comments / timestamp,
- *      LinkedIn's page-vs-person headers, reaction clusters and action
- *      row, an email's From/Subject/To chrome, X's handle-and-counts row.
- *      Platform identity comes from layout, glyphs and interface hues
- *      (PLATFORM in demo-brands) — never imported logo assets (D6).
- *   3. The CUSTOMER owns the content: each brand's own logo mark
- *      (brand-logos.tsx) and palette (D5, demo-brands only) carry the
- *      creative, so the hero reads as many brands inside one system.
+ *   1. MALAKY owns the OUTER row only: the channel label and the workflow
+ *      badge, on Malaky's warm card, ABOVE the post. Malaky's ivory and
+ *      gold never touch the post itself.
+ *   2. The PLATFORM owns its own frame: surface, ink, border and radius
+ *      come from PLATFORM_UI via `PlatformFrame`, so Instagram is white,
+ *      X is black, and each network's chrome (headers, reaction clusters,
+ *      action rows, counts) matches the real thing. Identity is layout,
+ *      color and typography — never an imported logo asset (D6;
+ *      open-items 20 carries the trademark question).
+ *   3. The CUSTOMER owns the content: their logo mark, their palette,
+ *      their words, their campaign creative.
  *
- * Engagement numbers are DEMO DATA by founder directive (2026-08-11,
- * decisions.md) — invented brands, invented numbers, presented as the
- * preview a real feed would show. Interiors stay `aria-hidden` where they
- * are illustration; nothing promises a click it cannot honour.
+ * The founder's quality bar: hide the Malaky label and the platform is
+ * still obvious; hide the platform chrome and the brand is still obvious.
+ *
+ * Engagement numbers are DEMO DATA on INVENTED brands (decisions.md
+ * 2026-08-11) and are passed as structured `engagement` props so any card
+ * can later be driven by real data without touching its markup.
  */
 
 export type WorkflowState =
@@ -101,9 +105,6 @@ export function ChannelLabel({
   channel: 'instagram' | 'linkedin-company' | 'linkedin-executive' | 'facebook' | 'x' | 'newsletter' | 'arabic'
   comingSoon?: boolean
 }) {
-  // Neutral glyphs, matching features/connections/platforms.ts: lucide has
-  // no brand marks, and D6 bans importing third-party logo assets — the
-  // channel NAME is the identity.
   const meta = {
     instagram: { icon: Camera, label: 'Instagram' },
     'linkedin-company': { icon: Briefcase, label: 'LinkedIn · Company' },
@@ -127,6 +128,7 @@ export function ChannelLabel({
   )
 }
 
+/** The customer's palette, published to the post interior as `--db-*`. */
 function brandVars(brand: DemoBrand): CSSProperties {
   return {
     '--db-primary': brand.palette.primary,
@@ -141,6 +143,20 @@ function handleFor(brand: DemoBrand): string {
   return '@' + brand.name.replace(/[^A-Za-z0-9]/g, '')
 }
 
+/** e.g. Falak Logistics → news@falak.example (invented domain, .example). */
+function senderAddress(brand: DemoBrand): string {
+  return 'news@' + brand.name.split(' ')[0].toLowerCase() + '.example'
+}
+
+/** Lowercase handle without the @, the way Instagram shows a username. */
+function usernameFor(brand: DemoBrand): string {
+  return brand.name.toLowerCase().replace(/[^a-z0-9]/g, '_')
+}
+
+/**
+ * The Malaky wrapper: workflow chrome only, and only on the outside. The
+ * post itself is handed to `PlatformFrame` by each card below.
+ */
 function CardShell({
   brand,
   channel,
@@ -162,14 +178,12 @@ function CardShell({
     <article
       style={brandVars(brand)}
       className={cn(
-        'flex w-full flex-col gap-3 rounded-[1.25rem] border border-border bg-card p-4',
+        'flex w-full flex-col gap-2.5 rounded-[1.25rem] border border-border bg-card p-3',
         'shadow-[var(--shadow-soft-lg)]',
         className,
       )}
     >
-      {/* The Malaky wrapper chrome (§7): channel + workflow state live on
-          the outer edge, never inside the platform's own anatomy. */}
-      <div className="flex items-center justify-between gap-2">
+      <div className="flex items-center justify-between gap-2 px-1">
         <ChannelLabel channel={channel} comingSoon={comingSoon} />
         <StatusChip state={state} label={stateLabel} />
       </div>
@@ -178,89 +192,29 @@ function CardShell({
   )
 }
 
-function BrandHeader({ brand, person }: { brand: DemoBrand; person?: boolean }) {
-  return (
-    <div className="flex items-center gap-2.5">
-      {person ? (
-        <span
-          aria-hidden
-          className="grid size-9 shrink-0 place-items-center rounded-full text-xs font-semibold text-white"
-          style={{ background: 'var(--db-primary)' }}
-        >
-          {brand.person.initials}
-        </span>
-      ) : (
-        <BrandLogo brand={brand} />
-      )}
-      <div className="min-w-0 leading-tight">
-        <p className="truncate text-sm font-medium">{person ? brand.person.name : brand.name}</p>
-        <p className="truncate text-xs text-muted-foreground">
-          {person ? brand.person.role : brand.sector}
-        </p>
-      </div>
-    </div>
-  )
+/** The photo a card should use, unless one is passed explicitly. */
+function mediaFor(brand: DemoBrand, photo?: string) {
+  return photo ?? photoFor(brand)
 }
 
-/** LinkedIn's reaction cluster — the three overlapped hue dots every feed
- * shows, then the count. Demo data. */
-function ReactionCluster({ count }: { count: string }) {
-  return (
-    <span className="inline-flex items-center gap-1.5">
-      <span className="flex -space-x-1">
-        <span
-          className="grid size-4 place-items-center rounded-full ring-1 ring-card"
-          style={{ background: PLATFORM.linkedin.like }}
-        >
-          <ThumbsUp className="size-2.5 text-white" />
-        </span>
-        <span
-          className="grid size-4 place-items-center rounded-full ring-1 ring-card"
-          style={{ background: PLATFORM.linkedin.love }}
-        >
-          <Heart className="size-2.5 text-white" />
-        </span>
-        <span
-          className="grid size-4 place-items-center rounded-full ring-1 ring-card"
-          style={{ background: PLATFORM.linkedin.celebrate }}
-        >
-          <Award className="size-2.5 text-white" />
-        </span>
-      </span>
-      <span className="text-[11px] text-muted-foreground">{count}</span>
-    </span>
-  )
+/* ------------------------------------------------------------- Instagram */
+
+export interface InstagramEngagement {
+  likes: string
+  comments: string
+  time: string
 }
 
-/** LinkedIn's action row — Like · Comment · Repost · Send. */
-function LinkedInActions() {
-  const actions: { icon: typeof ThumbsUp; label: string }[] = [
-    { icon: ThumbsUp, label: 'Like' },
-    { icon: MessageCircle, label: 'Comment' },
-    { icon: Repeat2, label: 'Repost' },
-    { icon: Send, label: 'Send' },
-  ]
-  return (
-    <div className="flex items-center justify-between border-t border-border pt-2 text-muted-foreground">
-      {actions.map(({ icon: Icon, label }) => (
-        <span key={label} className="inline-flex items-center gap-1 text-[11px] font-medium">
-          <Icon className="size-3.5" />
-          {label}
-        </span>
-      ))}
-    </div>
-  )
-}
-
-/** Instagram — a real feed post: header, 4:5 creative, actions, likes,
- * caption, comments, timestamp (Nura by default). */
+/** Instagram — the real feed anatomy on Instagram's own white surface. */
 export function InstagramCard({
   brand,
   state = 'prepared',
   stateLabel,
   visualTitle = 'The Summer Collection',
   caption = 'Linen, clay, and light. The summer collection arrives Thursday — made to be lived in.',
+  ctaLabel = 'Discover the collection',
   photo,
+  engagement = { likes: '1,248 likes', comments: 'View all 32 comments', time: '2 hours ago' },
   className,
 }: {
   brand: DemoBrand
@@ -268,159 +222,169 @@ export function InstagramCard({
   stateLabel?: string
   visualTitle?: string
   caption?: string
-  /** Campaign photography behind the type lockup; omit for the pure
-   * palette creative. */
+  /** The chip on the creative — a campaign line, so it must follow the
+   * brand rather than sit hardcoded to one of them. */
+  ctaLabel?: string
   photo?: string
+  engagement?: InstagramEngagement
   className?: string
 }) {
-  const handle = handleFor(brand).slice(1).toLowerCase()
+  const username = usernameFor(brand)
+  const media = mediaFor(brand, photo)
   return (
     <CardShell brand={brand} channel="instagram" state={state} stateLabel={stateLabel} className={className}>
-      <div aria-hidden className="flex flex-col gap-2.5 select-none">
-        {/* Feed header. */}
-        <div className="flex items-center gap-2.5">
-          <BrandLogo brand={brand} round className="size-8" />
+      <PlatformFrame platform="instagram">
+        {/* Feed header: story-ring avatar, username, location, ⋯ */}
+        <div className="flex items-center gap-2.5 px-3 py-2.5">
+          <span
+            className="grid shrink-0 place-items-center rounded-full p-[2px]"
+            style={{
+              background:
+                'conic-gradient(from 210deg, var(--db-accent), var(--db-primary), var(--db-ink), var(--db-accent))',
+            }}
+          >
+            <BrandLogo brand={brand} round className="size-7 ring-2 [--tw-ring-color:var(--pf-surface)] ring-2" />
+          </span>
           <div className="min-w-0 leading-tight">
-            <p className="truncate text-xs font-semibold">{handle}</p>
-            <p className="truncate text-[10px] text-muted-foreground">{brand.sector}</p>
+            <p className="truncate text-xs font-semibold">{username}</p>
+            <PfMuted className="block truncate text-[10px]">Riyadh, Saudi Arabia</PfMuted>
           </div>
-          <MoreHorizontal className="ml-auto size-4 shrink-0 text-muted-foreground" />
+          <PostMenu />
         </div>
 
-        {/* The 4:5 campaign creative. `photo` layers real campaign
-            photography UNDER the type lockup (founder-approved pass,
-            2026-08-11) — the headline stays live HTML so it renders
-            crisp at every size and stays translatable. Without a photo
-            the palette lockup below is the creative, unchanged. */}
+        {/* The 4:5 creative — the customer's own campaign, full bleed. */}
         <div
-          className="relative -mx-1 aspect-[4/5] overflow-hidden rounded-lg"
+          className="relative aspect-[4/5] w-full overflow-hidden"
           style={{
             background:
-              'linear-gradient(160deg, var(--db-surface) 0%, var(--db-surface) 55%, var(--db-accent) 140%)',
+              'linear-gradient(160deg, var(--db-surface) 0%, var(--db-surface) 52%, var(--db-accent) 145%)',
           }}
         >
-          {(photo ?? photoFor(brand)) ? (
+          {media ? (
             <>
               <ContentAsset
-                asset={{ type: 'image', src: (photo ?? photoFor(brand))!, alt: '', aspectRatio: '4 / 5' }}
+                asset={{ type: 'image', src: media, alt: '', aspectRatio: '4 / 5' }}
                 className="absolute inset-0 size-full"
               />
-              {/* The scrim is what keeps the overlaid type legible. */}
               <span
                 className="absolute inset-0"
                 style={{
                   background:
-                    'linear-gradient(to top, color-mix(in oklab, var(--db-ink) 82%, transparent) 0%, transparent 55%)',
+                    'linear-gradient(to top, color-mix(in oklab, var(--db-ink) 84%, transparent) 0%, transparent 58%)',
                 }}
               />
             </>
           ) : (
             <>
-              <div
+              <span
                 className="absolute bottom-0 left-1/2 h-[68%] w-[54%] -translate-x-1/2 rounded-t-full"
                 style={{ background: 'var(--db-primary)' }}
               />
-              <div
+              <span
                 className="absolute top-[8%] right-[10%] size-12 rounded-full"
                 style={{ background: 'var(--db-accent)' }}
               />
             </>
           )}
-          <div className="absolute inset-x-0 bottom-0 flex flex-col items-center gap-1 pb-4">
-            <p className="text-[9px] font-semibold tracking-[0.22em] text-white/80 uppercase">
+          {/* The brand signs its own creative. */}
+          <span className="absolute top-3 left-3 flex items-center gap-1.5">
+            <BrandLogo brand={brand} className="size-5" />
+            <span className="text-[9px] font-semibold tracking-[0.18em] text-white uppercase drop-shadow">
               {brand.name}
-            </p>
-            <p className="px-3 text-center font-display text-base font-semibold text-white">
+            </span>
+          </span>
+          <div className="absolute inset-x-0 bottom-0 flex flex-col items-center gap-1 pb-4">
+            <p className="px-4 text-center font-display text-lg/tight font-semibold text-white">
               {visualTitle}
             </p>
             <span
-              className="mt-1 rounded-full px-2.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide"
+              className="mt-1 rounded-full px-3 py-0.5 text-[9px] font-semibold tracking-wide uppercase"
               style={{ background: 'var(--db-surface)', color: 'var(--db-ink)' }}
             >
-              Arrives Thursday
+              {ctaLabel}
             </span>
           </div>
         </div>
 
-        {/* Actions, likes, caption, comments, time. */}
-        <div className="flex items-center gap-3.5">
-          <Heart className="size-[1.15rem]" style={{ color: PLATFORM.instagram.heart }} fill={PLATFORM.instagram.heart} />
-          <MessageCircle className="size-[1.15rem] text-foreground" />
-          <Send className="size-[1.15rem] text-foreground" />
-          <Bookmark className="ml-auto size-[1.15rem] text-foreground" />
-        </div>
-        <div className="flex flex-col gap-0.5">
-          <p className="text-xs font-semibold">1,248 likes</p>
+        <InstagramActionRow />
+        <div className="flex flex-col gap-0.5 px-3 pt-1.5 pb-3">
+          <p className="text-xs font-semibold">{engagement.likes}</p>
           <p className="text-xs/relaxed">
-            <span className="font-semibold">{handle}</span> {caption}{' '}
-            <span className="text-muted-foreground">more</span>
+            <span className="font-semibold">{username}</span> {caption}{' '}
+            <PfMuted>more</PfMuted>
           </p>
-          <p className="text-[11px] text-muted-foreground">View all 32 comments</p>
-          <p className="text-[9px] tracking-wide text-muted-foreground uppercase">2 hours ago</p>
+          <PfMuted className="text-[11px]">{engagement.comments}</PfMuted>
+          <PfMuted className="text-[9px] tracking-wide uppercase">{engagement.time}</PfMuted>
         </div>
-      </div>
+      </PlatformFrame>
     </CardShell>
   )
 }
 
-/** LinkedIn Company — a company-page post with the branded launch creative
- * (Falak by default). */
+/* -------------------------------------------------------------- LinkedIn */
+
+/** LinkedIn Company — page header, copy, full-bleed creative, reactions. */
 export function LinkedInCompanyCard({
   brand,
   state = 'needsReview',
   stateLabel,
   photo,
+  copy = 'Same-day, both ways. Our Riyadh ⇄ Jeddah lane opens Monday — cutoff at noon, delivered before your customers finish dinner.',
+  engagement = { reactions: '142', comments: '18 comments · 7 reposts' },
   className,
 }: {
   brand: DemoBrand
   state?: WorkflowState
   stateLabel?: string
   photo?: string
+  copy?: string
+  engagement?: { reactions: string; comments: string }
   className?: string
 }) {
+  const media = mediaFor(brand, photo)
   return (
     <CardShell brand={brand} channel="linkedin-company" state={state} stateLabel={stateLabel} className={className}>
-      <div aria-hidden className="flex flex-col gap-2.5 select-none">
-        {/* Page header. */}
-        <div className="flex items-start gap-2.5">
-          <BrandLogo brand={brand} />
+      <PlatformFrame platform="linkedin">
+        <div className="flex items-start gap-2.5 px-3 py-2.5">
+          <BrandLogo brand={brand} className="size-11" />
           <div className="min-w-0 leading-tight">
             <p className="truncate text-sm font-semibold">{brand.name}</p>
-            <p className="truncate text-[10px] text-muted-foreground">{brand.followers}</p>
-            <p className="flex items-center gap-1 text-[10px] text-muted-foreground">
-              2h · <Globe className="size-2.5" />
-            </p>
+            <PfMuted className="block truncate text-[10px]">{brand.followers}</PfMuted>
+            <PostedMeta />
           </div>
-          <MoreHorizontal className="ml-auto size-4 shrink-0 text-muted-foreground" />
+          <PostMenu />
         </div>
 
-        <p className="text-xs/relaxed">
-          Same-day, both ways. Our Riyadh ⇄ Jeddah lane opens Monday — cutoff at noon, delivered
-          before your customers finish dinner.{' '}
-          <span className="text-muted-foreground">…see more</span>
+        <p className="px-3 pb-2.5 text-xs/relaxed">
+          {copy} <PfMuted>…see more</PfMuted>
         </p>
 
-        {/* The launch creative: the customer's navy + orange, full bleed,
-            over the fleet photography when one is supplied. */}
+        {/* The launch creative: navy field, orange accent, white type. */}
         <div
-          className="relative -mx-1 flex flex-col gap-2 overflow-hidden rounded-lg p-4"
+          className="relative flex w-full flex-col gap-2 overflow-hidden p-4"
           style={{ background: 'var(--db-primary)' }}
         >
-          {(photo ?? photoFor(brand)) && (
+          {media && (
             <>
               <ContentAsset
-                asset={{ type: 'image', src: (photo ?? photoFor(brand))!, alt: '', aspectRatio: '16 / 9' }}
+                asset={{ type: 'image', src: media, alt: '', aspectRatio: '16 / 9' }}
                 className="absolute inset-0 size-full"
               />
               <span
                 className="absolute inset-0"
                 style={{
                   background:
-                    'linear-gradient(105deg, var(--db-primary) 8%, color-mix(in oklab, var(--db-primary) 55%, transparent) 62%, transparent 100%)',
+                    'linear-gradient(105deg, var(--db-primary) 10%, color-mix(in oklab, var(--db-primary) 55%, transparent) 64%, transparent 100%)',
                 }}
               />
             </>
           )}
+          <span className="relative flex items-center gap-1.5">
+            <BrandLogo brand={brand} className="size-5" />
+            <span className="text-[9px] font-semibold tracking-[0.18em] text-white uppercase">
+              {brand.name}
+            </span>
+          </span>
           <p className="relative font-display text-lg/tight font-semibold text-white">
             SAME-DAY.
             <br />
@@ -435,7 +399,7 @@ export function LinkedInCompanyCard({
                   'repeating-linear-gradient(90deg, var(--db-accent) 0 8px, transparent 8px 14px)',
               }}
             />
-            <Truck className="size-4" style={{ color: 'var(--db-accent)' }} />
+            <Truck aria-hidden className="size-4" style={{ color: 'var(--db-accent)' }} />
             <span
               className="h-0.5 flex-1 rounded-full"
               style={{
@@ -448,73 +412,133 @@ export function LinkedInCompanyCard({
           <p className="relative text-[10px] text-white/75">Riyadh ⇄ Jeddah · from Monday</p>
         </div>
 
-        {/* Social proof + the action row. */}
-        <div className="flex items-center justify-between">
-          <ReactionCluster count="142" />
-          <span className="text-[11px] text-muted-foreground">18 comments · 7 reposts</span>
-        </div>
-        <LinkedInActions />
-      </div>
+        <LinkedInReactions count={engagement.reactions} comments={engagement.comments} />
+        <LinkedInActionRow />
+      </PlatformFrame>
     </CardShell>
   )
 }
 
-/** LinkedIn Executive — a person's text-first post: Malaky writes for
- * PEOPLE, not just company pages (Meezan's managing partner by default). */
+/** LinkedIn Executive — a PERSON's post: portrait avatar, text-first, no
+ * company banner. This is the card that proves Malaky writes for people. */
 export function LinkedInExecutiveCard({
   brand,
   state = 'prepared',
   stateLabel,
   copy = "Most VAT penalties I see aren't about money — they're about calendars. The filings that go wrong are the ones nobody owned until the last week. Q3 closes soon: decide today who owns yours.",
+  engagement = { reactions: '98', comments: '12 comments' },
   className,
 }: {
   brand: DemoBrand
   state?: WorkflowState
   stateLabel?: string
   copy?: string
+  engagement?: { reactions: string; comments: string }
   className?: string
 }) {
   return (
     <CardShell brand={brand} channel="linkedin-executive" state={state} stateLabel={stateLabel} className={className}>
-      <div aria-hidden className="flex flex-col gap-2.5 select-none">
-        {/* Person header — clearly a human, not a page. */}
-        <div className="flex items-start gap-2.5">
-          <span
-            className="grid size-9 shrink-0 place-items-center rounded-full text-xs font-semibold text-white ring-2 ring-card"
-            style={{
-              background:
-                'linear-gradient(145deg, var(--db-primary) 20%, var(--db-ink) 100%)',
-            }}
-          >
-            {brand.person.initials}
-          </span>
+      <PlatformFrame platform="linkedin">
+        <div className="flex items-start gap-2.5 px-3 py-2.5">
+          <PersonAvatar brand={brand} className="size-11" />
           <div className="min-w-0 leading-tight">
             <p className="truncate text-sm font-semibold">{brand.person.name}</p>
-            <p className="truncate text-[10px] text-muted-foreground">{brand.person.role}</p>
-            <p className="flex items-center gap-1 text-[10px] text-muted-foreground">
-              2h · <Globe className="size-2.5" />
-            </p>
+            <PfMuted className="block truncate text-[10px]">{brand.person.role}</PfMuted>
+            <PostedMeta />
           </div>
-          <MoreHorizontal className="ml-auto size-4 shrink-0 text-muted-foreground" />
+          <PostMenu />
         </div>
 
-        <p className="text-xs/relaxed">
-          {copy} <span className="text-muted-foreground">…see more</span>
+        {/* Text-first: a personal post has no banner unless it earns one. */}
+        <p className="px-3 pb-3 text-xs/relaxed">
+          {copy} <PfMuted>…see more</PfMuted>
         </p>
 
-        <div className="flex items-center justify-between">
-          <ReactionCluster count="98" />
-          <span className="text-[11px] text-muted-foreground">12 comments</span>
-        </div>
-        <LinkedInActions />
-      </div>
+        <LinkedInReactions count={engagement.reactions} comments={engagement.comments} />
+        <LinkedInActionRow />
+      </PlatformFrame>
     </CardShell>
   )
 }
 
-/** Arabic social — a real Arabic feed post, RTL from the first pixel
- * (Zaytoun by default): header, Ramadan creative, actions, engagement,
- * caption, all native. */
+/* -------------------------------------------------------------- Facebook */
+
+/** Facebook — page header, copy, full-bleed creative, reactions, 3 actions. */
+export function FacebookCard({
+  brand,
+  state = 'prepared',
+  stateLabel,
+  copy = "Iftar with the whole family, without the wait. Our Ramadan family set serves six — book a table before maghrib and it's on the table when you arrive.",
+  banner = 'Family iftar · serves 6',
+  photo,
+  engagement = { reactions: '214', meta: '27 comments · 48 shares' },
+  className,
+}: {
+  brand: DemoBrand
+  state?: WorkflowState
+  stateLabel?: string
+  copy?: string
+  banner?: string
+  photo?: string
+  engagement?: { reactions: string; meta: string }
+  className?: string
+}) {
+  const media = mediaFor(brand, photo)
+  return (
+    <CardShell brand={brand} channel="facebook" state={state} stateLabel={stateLabel} className={className}>
+      <PlatformFrame platform="facebook">
+        <div className="flex items-start gap-2.5 px-3 py-2.5">
+          <BrandLogo brand={brand} round className="size-10" />
+          <div className="min-w-0 leading-tight">
+            <p className="truncate text-sm font-semibold">{brand.name}</p>
+            <PfMuted className="block truncate text-[10px]">{brand.followers}</PfMuted>
+            <PostedMeta />
+          </div>
+          <PostMenu />
+        </div>
+
+        <p className="px-3 pb-2.5 text-xs/relaxed">{copy}</p>
+
+        <div className="relative w-full overflow-hidden">
+          {media ? (
+            <>
+              <ContentAsset
+                asset={{ type: 'image', src: media, alt: '', aspectRatio: '3 / 2' }}
+                className="w-full"
+              />
+              <span
+                className="absolute inset-x-0 bottom-0 flex items-center gap-1.5 px-3 py-2 text-[11px] font-semibold text-white"
+                style={{
+                  background:
+                    'linear-gradient(to top, color-mix(in oklab, var(--db-ink) 88%, transparent), transparent)',
+                }}
+              >
+                <BrandLogo brand={brand} className="size-4" />
+                {banner}
+              </span>
+            </>
+          ) : (
+            <div
+              className="flex h-16 items-center justify-center gap-2 text-xs font-semibold text-white"
+              style={{ background: 'var(--db-primary)' }}
+            >
+              <BrandLogo brand={brand} className="size-5" />
+              {banner}
+            </div>
+          )}
+        </div>
+
+        <FacebookReactions count={engagement.reactions} meta={engagement.meta} />
+        <FacebookActionRow />
+      </PlatformFrame>
+    </CardShell>
+  )
+}
+
+/* --------------------------------------------------------- Arabic social */
+
+/** Arabic social — RTL from the first pixel: Arabic name, Arabic handle,
+ * Arabic-first hierarchy, mirrored chrome, Eastern-Arabic counts. */
 export function ArabicSocialCard({
   brand,
   state = 'prepared',
@@ -523,6 +547,7 @@ export function ArabicSocialCard({
   bodyAr = 'قائمة إفطار عائلية جديدة — من قلب المطبخ الشامي. احجزوا طاولتكم قبل المغرب، ونحن نهتم بالباقي.',
   ctaAr = 'احجز الآن',
   photo,
+  engagement = { likes: '١٦٦ إعجابًا', comments: 'عرض التعليقات الـ٢٤ جميعها', time: 'قبل ساعتين' },
   className,
 }: {
   brand: DemoBrand
@@ -532,247 +557,217 @@ export function ArabicSocialCard({
   bodyAr?: string
   ctaAr?: string
   photo?: string
+  engagement?: { likes: string; comments: string; time: string }
   className?: string
 }) {
+  const media = mediaFor(brand, photo)
   return (
     <CardShell brand={brand} channel="arabic" state={state} stateLabel={stateLabel} className={className}>
-      {/* The interior is a real RTL document: direction, alignment and
-          punctuation are Arabic-first, not a mirrored English layout. */}
-      <div dir="rtl" lang="ar" aria-hidden className="flex flex-col gap-2.5 text-right select-none">
-        <div className="flex items-center gap-2.5">
-          <BrandLogo brand={brand} round className="size-8" />
-          <div className="min-w-0 leading-tight">
-            <p className="truncate text-xs font-semibold" style={{ color: 'var(--db-ink)' }}>
-              {brand.nameAr}
-            </p>
-            <p className="truncate text-[10px] text-muted-foreground">{brand.sectorAr}</p>
+      <PlatformFrame platform="instagram">
+        {/* dir="rtl" on the frame itself, so the chrome mirrors natively
+            rather than being an English layout with Arabic text poured in. */}
+        <div dir="rtl" lang="ar" className="text-right">
+          <div className="flex items-center gap-2.5 px-3 py-2.5">
+            <span
+              className="grid shrink-0 place-items-center rounded-full p-[2px]"
+              style={{
+                background:
+                  'conic-gradient(from 210deg, var(--db-accent), var(--db-primary), var(--db-ink), var(--db-accent))',
+              }}
+            >
+              <BrandLogo brand={brand} round className="size-7" />
+            </span>
+            <div className="min-w-0 leading-tight">
+              <p className="truncate text-xs font-semibold">{brand.nameAr}</p>
+              <PfMuted className="block truncate text-[10px]">{brand.sectorAr}</PfMuted>
+            </div>
+            <PostMenu />
           </div>
-          <MoreHorizontal className="mr-auto size-4 shrink-0 text-muted-foreground" />
-        </div>
 
-        {/* The Ramadan creative — the brand's deep olive + warm red, over
-            the iftar table when a photo is supplied. Arabic type stays
-            live HTML so it renders and shapes natively. */}
-        <div
-          className="relative -mx-1 flex flex-col items-center gap-1.5 overflow-hidden rounded-lg px-3 py-5"
-          style={{
-            background:
-              'linear-gradient(200deg, var(--db-primary) 0%, var(--db-ink) 130%)',
-          }}
-        >
-          {(photo ?? photoFor(brand)) && (
-            <>
-              <ContentAsset
-                asset={{ type: 'image', src: (photo ?? photoFor(brand))!, alt: '', aspectRatio: '3 / 2' }}
-                className="absolute inset-0 size-full"
-              />
-              <span
-                className="absolute inset-0"
-                style={{
-                  background:
-                    'linear-gradient(200deg, color-mix(in oklab, var(--db-ink) 72%, transparent) 0%, color-mix(in oklab, var(--db-ink) 55%, transparent) 100%)',
-                }}
-              />
-            </>
-          )}
-          <p className="relative text-[9px] font-semibold tracking-widest text-white/75">
-            {brand.nameAr}
-          </p>
-          <p className="relative font-display text-xl font-semibold text-white">{headlineAr}</p>
-          <span
-            className="relative mt-1 rounded-full px-3 py-0.5 text-[10px] font-semibold text-white"
-            style={{ background: 'var(--db-accent)' }}
+          <div
+            className="relative aspect-[4/5] w-full overflow-hidden"
+            style={{
+              background: 'linear-gradient(200deg, var(--db-primary) 0%, var(--db-ink) 130%)',
+            }}
           >
-            قائمة الإفطار العائلية
-          </span>
-        </div>
+            {media && (
+              <>
+                <ContentAsset
+                  asset={{ type: 'image', src: media, alt: '', aspectRatio: '4 / 5' }}
+                  className="absolute inset-0 size-full"
+                />
+                <span
+                  className="absolute inset-0"
+                  style={{
+                    background:
+                      'linear-gradient(to top, color-mix(in oklab, var(--db-ink) 86%, transparent) 0%, transparent 62%)',
+                  }}
+                />
+              </>
+            )}
+            <span className="absolute top-3 right-3 flex items-center gap-1.5">
+              <BrandLogo brand={brand} className="size-5" />
+              <span className="text-[10px] font-semibold text-white drop-shadow">{brand.nameAr}</span>
+            </span>
+            <div className="absolute inset-x-0 bottom-0 flex flex-col items-center gap-1.5 pb-4">
+              <p className="px-4 text-center font-display text-xl font-semibold text-white">
+                {headlineAr}
+              </p>
+              <span
+                className="rounded-full px-3 py-0.5 text-[10px] font-semibold text-white"
+                style={{ background: 'var(--db-accent)' }}
+              >
+                قائمة الإفطار العائلية
+              </span>
+            </div>
+          </div>
 
-        <div className="flex items-center gap-3.5 text-foreground">
-          <Heart
-            className="size-[1.15rem]"
-            style={{ color: PLATFORM.instagram.heart }}
-            fill={PLATFORM.instagram.heart}
-          />
-          <MessageCircle className="size-[1.15rem]" />
-          <Send className="size-[1.15rem]" />
-          <Bookmark className="mr-auto size-[1.15rem]" />
+          <InstagramActionRow />
+          <div className="flex flex-col gap-0.5 px-3 pt-1.5 pb-3">
+            <p className="text-xs font-semibold">{engagement.likes}</p>
+            <p className="text-xs/relaxed">
+              <span className="font-semibold">{brand.nameAr}</span> {bodyAr}
+            </p>
+            <PfMuted className="text-[11px]">{engagement.comments}</PfMuted>
+            <span
+              className="mt-1.5 self-start rounded-full px-3 py-1 text-[11px] font-semibold text-white"
+              style={{ background: 'var(--db-accent)' }}
+            >
+              {ctaAr}
+            </span>
+            <PfMuted className="mt-0.5 text-[9px]">{engagement.time}</PfMuted>
+          </div>
         </div>
-        <div className="flex flex-col gap-0.5">
-          <p className="text-xs font-semibold">١٦٦ إعجابًا</p>
-          <p className="text-xs/relaxed">{bodyAr}</p>
-          <p className="text-[11px] text-muted-foreground">عرض التعليقات الـ٢٤ جميعها</p>
-        </div>
-        <span
-          className="self-start rounded-full px-3 py-1 text-xs font-medium text-white"
-          style={{ background: 'var(--db-accent)' }}
-        >
-          {ctaAr}
-        </span>
-      </div>
+      </PlatformFrame>
     </CardShell>
   )
 }
 
-/** Newsletter — an email preview, unmistakably not social: envelope
- * chrome, then the branded email itself (Falak by default). */
+/* ------------------------------------------------------------ Newsletter */
+
+/** Newsletter — an email client's chrome, then the brand's own email. */
 export function NewsletterCard({
   brand,
   state = 'approved',
   stateLabel,
   photo,
+  subject = 'Same-day delivery is here.',
   className,
 }: {
   brand: DemoBrand
   state?: WorkflowState
   stateLabel?: string
   photo?: string
+  subject?: string
   className?: string
 }) {
+  const media = mediaFor(brand, photo)
   return (
     <CardShell brand={brand} channel="newsletter" state={state} stateLabel={stateLabel} className={className}>
-      <div aria-hidden className="overflow-hidden rounded-xl border border-border select-none">
-        {/* Envelope chrome: From / To / Subject. */}
-        <div className="flex flex-col gap-0.5 border-b border-border bg-background px-4 py-2">
-          <p className="truncate text-[11px] text-muted-foreground">
-            <span className="font-medium text-foreground">From:</span> {brand.name}
+      <PlatformFrame platform="newsletter">
+        {/* Client chrome — the part that says "this is an inbox". */}
+        <div
+          className="flex flex-col gap-1 border-b px-3 py-2.5"
+          style={{ borderColor: 'var(--pf-border)', background: 'var(--pf-chrome)' }}
+        >
+          <p className="truncate text-[11px]">
+            <PfMuted>From:</PfMuted>{' '}
+            <span className="font-semibold">{brand.name}</span>{' '}
+            <PfMuted>&lt;{senderAddress(brand)}&gt;</PfMuted>
           </p>
-          <p className="truncate text-[11px] text-muted-foreground">
-            <span className="font-medium text-foreground">To:</span> Falak customers
-          </p>
-          <p className="truncate text-[11px] text-muted-foreground">
-            <span className="font-medium text-foreground">Subject:</span> Same-day delivery is
-            here.
+          <p className="truncate text-[11px]">
+            <PfMuted>Subject:</PfMuted> <span className="font-semibold">{subject}</span>
           </p>
         </div>
-        {/* The email itself: brand masthead, hero creative, body, CTA. */}
-        <div className="flex items-center gap-2 bg-background px-4 py-2">
+
+        {/* The brand's masthead — its own bar, in its own color. */}
+        <div
+          className="flex items-center gap-2 px-3 py-2.5"
+          style={{ background: 'var(--db-primary)' }}
+        >
           <BrandLogo brand={brand} className="size-5" />
-          <span className="text-[11px] font-semibold" style={{ color: 'var(--db-ink)' }}>
+          <span className="text-[11px] font-semibold tracking-[0.16em] text-white uppercase">
             {brand.name}
           </span>
         </div>
+
+        {/* Hero creative. */}
         <div
-          className="relative flex flex-col gap-1.5 px-4 py-4"
-          style={{ background: 'var(--db-primary)' }}
+          className="relative flex w-full flex-col gap-1.5 px-4 py-5"
+          style={{ background: 'var(--db-ink)' }}
         >
-          {(photo ?? photoFor(brand)) && (
+          {media && (
             <>
               <ContentAsset
-                asset={{ type: 'image', src: (photo ?? photoFor(brand))!, alt: '', aspectRatio: '16 / 9' }}
+                asset={{ type: 'image', src: media, alt: '', aspectRatio: '16 / 9' }}
                 className="absolute inset-0 size-full"
               />
               <span
                 className="absolute inset-0"
                 style={{
                   background:
-                    'linear-gradient(95deg, var(--db-primary) 12%, color-mix(in oklab, var(--db-primary) 50%, transparent) 70%, transparent 100%)',
+                    'linear-gradient(95deg, var(--db-primary) 14%, color-mix(in oklab, var(--db-primary) 48%, transparent) 72%, transparent 100%)',
                 }}
               />
             </>
           )}
-          <p className="relative font-display text-base/tight font-semibold text-white">
-            Same-day delivery is here.
-          </p>
+          <p className="relative font-display text-base/tight font-semibold text-white">{subject}</p>
           <div className="relative flex items-center gap-2">
             <span className="text-[10px] font-semibold text-white">RUH</span>
             <span
-              className="h-0.5 w-14 rounded-full"
+              className="h-0.5 w-12 rounded-full"
               style={{
                 background:
                   'repeating-linear-gradient(90deg, var(--db-accent) 0 6px, transparent 6px 11px)',
               }}
             />
-            <Truck className="size-3.5" style={{ color: 'var(--db-accent)' }} />
+            <Truck aria-hidden className="size-3.5" style={{ color: 'var(--db-accent)' }} />
             <span className="text-[10px] font-semibold text-white">JED</span>
           </div>
         </div>
-        <div className="flex flex-col gap-1.5 bg-background px-4 py-3">
-          <p className="text-xs/relaxed text-muted-foreground">
-            From Monday, orders placed before noon arrive the same evening — Riyadh to Jeddah
-            and back.
+
+        <div className="flex flex-col gap-2 px-4 py-3">
+          <p className="text-xs/relaxed">
+            From Monday, orders placed before noon arrive the same evening — Riyadh to Jeddah and
+            back.
           </p>
           <span
-            className="mt-1 self-start rounded-md px-3 py-1.5 text-xs font-medium text-white"
+            className="mt-0.5 self-start rounded-md px-3 py-1.5 text-[11px] font-semibold text-white"
             style={{ background: 'var(--db-accent)' }}
           >
             See how it changes your delivery promise
           </span>
+          <PfMuted className="mt-1 text-[9px]">
+            You're receiving this because you ship with {brand.name}. · Unsubscribe
+          </PfMuted>
         </div>
-      </div>
+      </PlatformFrame>
     </CardShell>
   )
 }
 
-/** Facebook — localized, customer-facing (Zaytoun by default). */
-export function FacebookCard({
-  brand,
-  state = 'prepared',
-  stateLabel,
-  copy = "Iftar with the whole family, without the wait. Our Ramadan family set serves six — book a table before maghrib and it's on the table when you arrive.",
-  banner = 'Family iftar · serves 6',
-  photo,
-  className,
-}: {
-  brand: DemoBrand
-  state?: WorkflowState
-  stateLabel?: string
-  copy?: string
-  banner?: string
-  photo?: string
-  className?: string
-}) {
-  return (
-    <CardShell brand={brand} channel="facebook" state={state} stateLabel={stateLabel} className={className}>
-      <BrandHeader brand={brand} />
-      <p className="text-xs/relaxed">{copy}</p>
-      <div aria-hidden className="relative overflow-hidden rounded-xl">
-        {(photo ?? photoFor(brand)) ? (
-          <>
-            <ContentAsset
-              asset={{ type: 'image', src: (photo ?? photoFor(brand))!, alt: '', aspectRatio: '3 / 2' }}
-              className="w-full"
-            />
-            <span
-              className="absolute inset-x-0 bottom-0 px-3 py-2 text-xs font-semibold text-white"
-              style={{
-                background:
-                  'linear-gradient(to top, color-mix(in oklab, var(--db-ink) 85%, transparent), transparent)',
-              }}
-            >
-              {banner}
-            </span>
-          </>
-        ) : (
-          <div
-            className="flex h-10 items-center justify-center text-xs font-semibold"
-            style={{ background: 'var(--db-surface)', color: 'var(--db-primary)' }}
-          >
-            {banner}
-          </div>
-        )}
-      </div>
-    </CardShell>
-  )
-}
+/* --------------------------------------------------------------------- X */
 
-/** X — a text-first post with the counts row; publishing is roadmap, and
- * the Malaky label says so (§34). */
+/** X — black surface, white type, the counts row. Publishing is roadmap
+ * and the Malaky label says so (§34). */
 export function XCard({
   brand,
   state = 'prepared',
   stateLabel,
   photo,
   copy = 'Noon cutoff, evening delivery. Riyadh ⇄ Jeddah goes same-day on Monday.',
+  engagement = { replies: '211', reposts: '732', likes: '4.1K', views: '287.6K' },
   className,
 }: {
   brand: DemoBrand
   state?: WorkflowState
   stateLabel?: string
   photo?: string
-  /** The post itself — brand-specific, since one X card serves any brand. */
   copy?: string
+  engagement?: { replies: string; reposts: string; likes: string; views: string }
   className?: string
 }) {
+  const media = mediaFor(brand, photo)
   return (
     <CardShell
       brand={brand}
@@ -782,46 +777,44 @@ export function XCard({
       stateLabel={stateLabel}
       className={className}
     >
-      <div aria-hidden className="flex flex-col gap-2 select-none">
-        <div className="flex items-start gap-2.5">
-          <BrandLogo brand={brand} round className="size-8" />
+      <PlatformFrame platform="x">
+        <div className="flex items-start gap-2.5 px-3 pt-2.5">
+          <BrandLogo brand={brand} round className="size-9" />
           <div className="min-w-0 leading-tight">
-            <p className="truncate text-xs font-semibold">{brand.name}</p>
-            <p className="truncate text-[10px] text-muted-foreground">{handleFor(brand)} · 2h</p>
+            <p className="truncate text-xs font-bold">{brand.name}</p>
+            <PfMuted className="block truncate text-[11px]">{handleFor(brand)} · 2h</PfMuted>
           </div>
-          <MoreHorizontal className="ml-auto size-4 shrink-0 text-muted-foreground" />
+          <PostMenu />
         </div>
-        <p className="text-xs/relaxed">{copy}</p>
-        {/* X's media card: rounded, bordered, 16:9 — the shape a post with
-            an attached image actually takes. */}
-        {(photo ?? photoFor(brand)) && (
-          <ContentAsset
-            asset={{ type: 'image', src: (photo ?? photoFor(brand))!, alt: '', aspectRatio: '16 / 9' }}
-            className="overflow-hidden rounded-xl border border-border"
-          />
+        <p className="px-3 pt-2 pb-2.5 text-xs/relaxed">{copy}</p>
+        {media && (
+          <div className="px-3 pb-2">
+            <ContentAsset
+              asset={{ type: 'image', src: media, alt: '', aspectRatio: '16 / 9' }}
+              className="overflow-hidden rounded-2xl border [border-color:var(--pf-border)]"
+            />
+          </div>
         )}
-        <div className="flex items-center justify-between text-[10px] text-muted-foreground">
-          <span className="inline-flex items-center gap-1">
-            <MessageCircle className="size-3.5" />5
-          </span>
-          <span className="inline-flex items-center gap-1">
-            <Repeat2 className="size-3.5" />
-            11
-          </span>
-          <span className="inline-flex items-center gap-1">
-            <Heart className="size-3.5" />
-            27
-          </span>
-          <span className="inline-flex items-center gap-1">
-            <BarChart2 className="size-3.5" />
-            8.4K
-          </span>
-          <span className="inline-flex items-center gap-1">
-            <Bookmark className="size-3.5" />
-            <Send className="size-3.5" />
-          </span>
-        </div>
-      </div>
+        <XCountsRow {...engagement} />
+      </PlatformFrame>
     </CardShell>
   )
+}
+
+/* ----------------------------------------------------------------------- */
+
+/**
+ * Platform-named aliases (§9). The `*Card` names are the established API
+ * across ~37 call sites and the e2e suite; these are the same components
+ * under the names the founder asked for, so new code can read as
+ * `InstagramPost` without a rename churn through the whole route.
+ */
+export {
+  InstagramCard as InstagramPost,
+  LinkedInCompanyCard as LinkedInCompanyPost,
+  LinkedInExecutiveCard as LinkedInExecutivePost,
+  FacebookCard as FacebookPost,
+  ArabicSocialCard as ArabicSocialPost,
+  NewsletterCard as NewsletterPreview,
+  XCard as XPost,
 }
