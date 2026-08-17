@@ -34,7 +34,8 @@ below).
 | ---------- | ------------------------------------------------------ |
 | Remote     | `github.com/alphapromena/alphabeacon-web` (private)    |
 | `main`     | Production line — V1 page + orbital hero + full-fidelity posts + the 2026-08-11 production pass (code-split, early-access CTA, legal pages, SEO) + the Phase 2 code pass (request-access flow, analytics seam, brand-continuous demos, content-asset slot); open-items 16–18 hold the human gates |
-| `rb/02-v1-brief` | Website V1 per Abdullah's brief + the 2026-08-11 ambient idle drift + the M1 card-realism passes through 2026-08-12 (`6c598b2`). **`main` is at `3f9f3b4` and is an ancestor of this branch — the last five commits, including the platform-surface and channel-glyph work, are on `rb/02` only and have NOT been fast-forwarded to `main`.** Flagged 2026-08-17. |
+| `rb/02-v1-brief` | Website V1 per Abdullah's brief + the ambient idle drift + the M1 card-realism passes through 2026-08-12 — tip `6c598b2`, and `origin/main` is at the same commit, so the production line has all of it |
+| Local `main` ref | **STALE at `3f9f3b4`** (noticed 2026-08-17). `origin/main` == `rb/02-v1-brief` == `6c598b2`; the local ref simply was never fast-forwarded, so `git log main..` locally over-reports by 22 commits. Harmless, but `git fetch && git checkout main && git merge --ff-only origin/main` before trusting a local `main` comparison. |
 | `int/06-contract` | **The 2026-08-17 contract refresh** — cut from `rb/02-v1-brief` (`6c598b2`), per the founder's stated base |
 | Phase tips | `w/00`…`w/06`, `int/00`…`int/05`, `rb/00-malaky`, `rb/01-motion` |
 | Tags       | none                                                   |

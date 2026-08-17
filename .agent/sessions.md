@@ -1426,7 +1426,9 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   fix. Smoke run green twice — wallet 5000 → 5000 text-only, 5000 → 4997 with one
   3-cent render under `LIVE_MEDIA=1` (exactly the catalog's advertised price).
   No live e2e spec: INT-6 ships no UI.
+- Also noticed: the LOCAL `main` ref is stale at `3f9f3b4` while `origin/main`
+  is at `6c598b2` (== `rb/02-v1-brief`), so a local `main..` comparison
+  over-reports by 22 commits. Production has everything; only the local ref
+  lags. Recorded in state.md.
 - Next: INT-7 — brand rules live + I4's tone preview (`int/07-brand-rules`).
-  Two things for the founder first: the seven backend questions in open-items
-  21–27, and the `main`-vs-`rb/02` gap flagged in state.md (the last five M1
-  commits are on `rb/02` only).
+  For the founder first: the seven backend questions now in open-items 21–27.
