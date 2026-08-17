@@ -18,3 +18,11 @@ cdk.out/
 !.env.example
 *.pem
 *.key
+
+# The AlphaProStudio Postman ENVIRONMENT holds a live HMAC key (the service
+# key + edge secret the backend signs with). The frontend never signs anything
+# — it reaches AlphaProStudio only through our own /alphastudio/ proxy — so this
+# file has no business in the repo at all. The collection (schemas only, no
+# secrets) IS committed; the environment never is.
+alphaprostudio.environment.json
+*.environment.json

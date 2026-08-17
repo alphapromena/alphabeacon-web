@@ -1133,6 +1133,16 @@
                             "closed"
                           ]
                         },
+                        "country": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
                         "createdAt": {
                           "type": "string",
                           "format": "date-time",
@@ -1149,6 +1159,7 @@
                         "name",
                         "slug",
                         "status",
+                        "country",
                         "createdAt",
                         "updatedAt"
                       ]
@@ -1280,6 +1291,16 @@
                             "closed"
                           ]
                         },
+                        "country": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
                         "createdAt": {
                           "type": "string",
                           "format": "date-time",
@@ -1296,6 +1317,7 @@
                         "name",
                         "slug",
                         "status",
+                        "country",
                         "createdAt",
                         "updatedAt"
                       ]
@@ -1406,6 +1428,16 @@
                         "closed"
                       ]
                     },
+                    "country": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "createdAt": {
                       "type": "string",
                       "format": "date-time",
@@ -1422,6 +1454,7 @@
                     "name",
                     "slug",
                     "status",
+                    "country",
                     "createdAt",
                     "updatedAt"
                   ]
@@ -1479,6 +1512,128 @@
         "responses": {
           "204": {
             "description": "Org closed"
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "orgId",
+            "required": true
+          }
+        ]
+      }
+    },
+    "/api/orgs/{orgId}/country": {
+      "put": {
+        "operationId": "putApiOrgsByOrgIdCountry",
+        "tags": [
+          "Orgs"
+        ],
+        "summary": "Set the org's country",
+        "description": "Admin or owner. Changing to a NEW country loads the org's holiday calendar from the external holidays.lookup capability and replaces the previous one (an empty result means the country has none) — expect the call to take ~10 s. Re-sending the current country succeeds immediately without a reload. Unknown/inactive country → 400; the holiday service failing → 502 with nothing changed.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated org + holiday load result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "org": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "pattern": "^\\d+$"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "slug": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "active",
+                            "suspended",
+                            "closed"
+                          ]
+                        },
+                        "country": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+                        },
+                        "updatedAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "name",
+                        "slug",
+                        "status",
+                        "country",
+                        "createdAt",
+                        "updatedAt"
+                      ]
+                    },
+                    "holidaysCount": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "reloaded": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "org",
+                    "holidaysCount",
+                    "reloaded"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "country": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "country"
+                ]
+              }
+            }
           }
         },
         "parameters": [
@@ -2050,6 +2205,1503 @@
         ]
       }
     },
+    "/api/orgs/{orgId}/alphastudio/wallet": {
+      "get": {
+        "operationId": "getApiOrgsByOrgIdAlphastudioWallet",
+        "tags": [
+          "AlphaStudio"
+        ],
+        "summary": "Wallet balance",
+        "description": "Proxy to the AlphaProStudio service `GET /v1/wallet` for this org's tenant — the response is the upstream's, passed through. `availableCents` is what the next generation request is checked against. New orgs are funded automatically on creation; there is no client-facing funding endpoint. Upstream down → 502.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The org's wallet",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "cents": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "heldCents": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "availableCents": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "cents",
+                    "heldCents",
+                    "availableCents"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "orgId",
+            "required": true
+          }
+        ]
+      }
+    },
+    "/api/orgs/{orgId}/alphastudio/usage": {
+      "get": {
+        "operationId": "getApiOrgsByOrgIdAlphastudioUsage",
+        "tags": [
+          "AlphaStudio"
+        ],
+        "summary": "Usage metering",
+        "description": "Proxy to the AlphaProStudio service `GET /v1/usage` — the response is the upstream's, passed through. `from`/`to` are inclusive UTC days (YYYY-MM-DD); `group_by` is model | tenant | capability (default model). `model` and `capability` report the org's own usage; `tenant` reports across every org of this app (the upstream's cross-tenant billing view). A backwards or >400-day window → 400; upstream down → 502.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Usage for the window",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "from": {
+                      "type": "string"
+                    },
+                    "to": {
+                      "type": "string"
+                    },
+                    "groupBy": {
+                      "type": "string",
+                      "enum": [
+                        "model",
+                        "tenant",
+                        "capability"
+                      ]
+                    },
+                    "groups": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "key": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "unit": {
+                            "type": "string"
+                          },
+                          "qty": {
+                            "type": "number"
+                          },
+                          "costUsdEstimate": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "key",
+                          "unit",
+                          "qty",
+                          "costUsdEstimate"
+                        ]
+                      }
+                    },
+                    "days": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "day": {
+                            "type": "string"
+                          },
+                          "unit": {
+                            "type": "string"
+                          },
+                          "qty": {
+                            "type": "number"
+                          },
+                          "costUsdEstimate": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "day",
+                          "unit",
+                          "qty",
+                          "costUsdEstimate"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "from",
+                    "to",
+                    "groupBy",
+                    "groups",
+                    "days"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "from",
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+            },
+            "required": true
+          },
+          {
+            "in": "query",
+            "name": "to",
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+            },
+            "required": true
+          },
+          {
+            "in": "query",
+            "name": "group_by",
+            "schema": {
+              "default": "model",
+              "type": "string",
+              "enum": [
+                "model",
+                "tenant",
+                "capability"
+              ]
+            }
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "orgId",
+            "required": true
+          }
+        ]
+      }
+    },
+    "/api/orgs/{orgId}/alphastudio/catalog/capabilities/{capability}": {
+      "get": {
+        "operationId": "getApiOrgsByOrgIdAlphastudioCatalogCapabilitiesByCapability",
+        "tags": [
+          "AlphaStudio"
+        ],
+        "summary": "Capability discovery",
+        "description": "Proxy to the AlphaProStudio service `GET /v1/catalog/capabilities/:capability` — the response is the upstream's, passed through: which model aliases the capability may run on and whether the plan choice is the caller's at all (`selectable: false` = the capability pins its model). Ask plainly for every reachable model, or with `?plan=` for the row that grade would render on. An unknown or not-granted capability → 404 (the upstream answers both identically); a plan the catalog does not have → 400; upstream down → 502.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The capability's catalog view",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "capability": {
+                      "type": "string"
+                    },
+                    "selectable": {
+                      "type": "boolean"
+                    },
+                    "field": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "plan": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "models": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "alias": {
+                            "type": "string"
+                          },
+                          "kind": {
+                            "type": "string"
+                          },
+                          "plan": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "alias",
+                          "kind",
+                          "plan"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "capability",
+                    "selectable",
+                    "field",
+                    "plan",
+                    "models"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "capability",
+            "schema": {
+              "type": "string",
+              "maxLength": 64,
+              "pattern": "^[a-z0-9]+(?:[._-][a-z0-9]+)*$"
+            },
+            "required": true
+          },
+          {
+            "in": "query",
+            "name": "plan",
+            "schema": {
+              "type": "string",
+              "maxLength": 32,
+              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+            }
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "orgId",
+            "required": true
+          }
+        ]
+      }
+    },
+    "/api/orgs/{orgId}/alphastudio/posts/tones-preview": {
+      "post": {
+        "operationId": "postApiOrgsByOrgIdAlphastudioPostsTonesPreview",
+        "tags": [
+          "AlphaStudio"
+        ],
+        "summary": "Preview a tone",
+        "description": "Proxy to `POST /v1/run/tones.preview` — SYNC: the finished run comes back inline with one sample line in `outputs[0].content.sample`, for the tone editor. The body is frontend-owned and forwards verbatim: `tone` travels inline (required upstream); `brandVoice` is optional — send it and it is authoritative, omit it and the platform reads the org's pushed context bundle. Expect a few seconds.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The finished run",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "runId": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "capability": {
+                      "type": "string"
+                    },
+                    "mode": {
+                      "type": "string"
+                    },
+                    "outputs": {
+                      "type": "array",
+                      "items": {}
+                    }
+                  },
+                  "required": [
+                    "runId",
+                    "status"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": {}
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "orgId",
+            "required": true
+          }
+        ]
+      }
+    },
+    "/api/orgs/{orgId}/alphastudio/posts/generate": {
+      "post": {
+        "operationId": "postApiOrgsByOrgIdAlphastudioPostsGenerate",
+        "tags": [
+          "AlphaStudio"
+        ],
+        "summary": "Generate social posts",
+        "description": "Proxy to `POST /v1/run/social-posts.generate` — BATCH: answers 202 `{ runId, status: 'queued' }`; the judged, grounded drafts are pullable via `GET .../posts/runs/:runId` (a run reaches `completed` within a couple of seconds). The body is frontend-owned and forwards verbatim: 1–3 inline `tones` (unique ids), `plan` picks the whole recipe, `attachedEvent.rules` (the holidays.lookup shape) outrank tone and brand rules. Over-budget fan-out (tones × perTone > 6) or duplicate tone ids → 400.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "The run, queued",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "runId": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "runId",
+                    "status"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": {}
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "orgId",
+            "required": true
+          }
+        ]
+      }
+    },
+    "/api/orgs/{orgId}/alphastudio/posts/runs/{runId}": {
+      "get": {
+        "operationId": "getApiOrgsByOrgIdAlphastudioPostsRunsByRunId",
+        "tags": [
+          "AlphaStudio"
+        ],
+        "summary": "Read a run",
+        "description": "Proxy to `GET /v1/runs/:runId` — status + outputs for a run this org started (`queued → running → completed | failed`). Also how a result is recovered when a callback was missed: the run record is terminal and pullable regardless of delivery. Model steps name the app's own aliases — no vendor ref ever appears. Unknown run, or another org's → 404.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The run",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "runId": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "capability": {
+                      "type": "string"
+                    },
+                    "mode": {
+                      "type": "string"
+                    },
+                    "outputs": {
+                      "type": "array",
+                      "items": {}
+                    }
+                  },
+                  "required": [
+                    "runId",
+                    "status"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "runId",
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]{1,128}$"
+            },
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "orgId",
+            "required": true
+          }
+        ]
+      }
+    },
+    "/api/orgs/{orgId}/alphastudio/media/jobs": {
+      "post": {
+        "operationId": "postApiOrgsByOrgIdAlphastudioMediaJobs",
+        "tags": [
+          "AlphaStudio"
+        ],
+        "summary": "Create a media job",
+        "description": "Proxy to `POST /v1/media/jobs` — ONE endpoint whose body shape the FRONTEND decides: the body's `capability` field (default media.generate) selects the schema the upstream parses it with; everything passes through verbatim. 202 `{ jobId, status: 'queued' }` — balanced renders settle in seconds, dearer plans finish later; poll the job. The org's wallet pays: an estimate the wallet cannot cover → 402 wallet_insufficient. A retired `modelAlias` field → 400 (send `plan`).",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "The job, queued",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "jobId": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "capability": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "jobId",
+                    "status"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": {}
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "orgId",
+            "required": true
+          }
+        ]
+      },
+      "get": {
+        "operationId": "getApiOrgsByOrgIdAlphastudioMediaJobs",
+        "tags": [
+          "AlphaStudio"
+        ],
+        "summary": "List media jobs",
+        "description": "Proxy to `GET /v1/media/jobs`, newest first. Assets are listed WITHOUT presigned urls — mint one via `POST .../media/assets/:assetId/presign` for the ones you open.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The org's media jobs",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "jobs": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "jobId": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string"
+                          },
+                          "capability": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "jobId",
+                          "status"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "jobs"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "orgId",
+            "required": true
+          }
+        ]
+      }
+    },
+    "/api/orgs/{orgId}/alphastudio/media/jobs/{jobId}": {
+      "get": {
+        "operationId": "getApiOrgsByOrgIdAlphastudioMediaJobsByJobId",
+        "tags": [
+          "AlphaStudio"
+        ],
+        "summary": "Read a media job",
+        "description": "Proxy to `GET /v1/media/jobs/:jobId` — the polling endpoint. Assets on a finished job arrive WITH presigned GET urls (1 h) already minted. No provider or vendor model ref ever appears. Unknown job, or another org's → 404.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The job",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "jobId": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "capability": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "jobId",
+                    "status"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "jobId",
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]{1,128}$"
+            },
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "orgId",
+            "required": true
+          }
+        ]
+      }
+    },
+    "/api/orgs/{orgId}/alphastudio/media/assets/presign": {
+      "post": {
+        "operationId": "postApiOrgsByOrgIdAlphastudioMediaAssetsPresign",
+        "tags": [
+          "AlphaStudio"
+        ],
+        "summary": "Presign a media asset upload",
+        "description": "Proxy to `POST /v1/media/assets/presign` — the org's OWN image, in (for reference-image capabilities like images.edit). Returns an assetId and a presigned PUT; send the bytes there with exactly the requested mediaType. A mediaType outside png/jpeg/webp → 400. Nothing is generated or metered.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "The upload target",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "assetId": {
+                      "type": "string"
+                    },
+                    "uploadUrl": {
+                      "type": "string"
+                    },
+                    "mediaType": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "assetId",
+                    "uploadUrl",
+                    "mediaType"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "mediaType": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "pattern": "^[\\w.+-]+\\/[\\w.+-]+$"
+                  }
+                },
+                "required": [
+                  "mediaType"
+                ],
+                "additionalProperties": {}
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "orgId",
+            "required": true
+          }
+        ]
+      }
+    },
+    "/api/orgs/{orgId}/alphastudio/media/assets/{assetId}/presign": {
+      "post": {
+        "operationId": "postApiOrgsByOrgIdAlphastudioMediaAssetsByAssetIdPresign",
+        "tags": [
+          "AlphaStudio"
+        ],
+        "summary": "Presign a media asset for download",
+        "description": "Proxy to `POST /v1/media/assets/:assetId/presign` (no body) — a presigned, expiring GET over an asset this org owns; this is what goes into `params.referenceImages`. The read IS the ownership check: unknown and not-yours are the same 404, on purpose.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The presigned GET",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "url": {
+                      "type": "string"
+                    },
+                    "expiresAt": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "url",
+                    "expiresAt"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assetId",
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]{1,128}$"
+            },
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "orgId",
+            "required": true
+          }
+        ]
+      }
+    },
+    "/api/orgs/{orgId}/alphastudio/media/assets/{assetId}": {
+      "delete": {
+        "operationId": "deleteApiOrgsByOrgIdAlphastudioMediaAssetsByAssetId",
+        "tags": [
+          "AlphaStudio"
+        ],
+        "summary": "Delete a media asset",
+        "description": "Proxy to `DELETE /v1/media/assets/:assetId`: removes an asset this org owns — a render output or an upload — deleting the object and the row together. Unknown or not-yours → 404.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Asset deleted"
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assetId",
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]{1,128}$"
+            },
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "orgId",
+            "required": true
+          }
+        ]
+      }
+    },
+    "/api/orgs/{orgId}/alphastudio/rag/collections": {
+      "post": {
+        "operationId": "postApiOrgsByOrgIdAlphastudioRagCollections",
+        "tags": [
+          "AlphaStudio"
+        ],
+        "summary": "Create a knowledge collection",
+        "description": "Proxy to `POST /v1/rag/collections`. A collection pins ONE embedding model alias and ONE chunk profile for its lifetime. `scope: tenant` = only this org sees it; `app` = every org of this app. A name already used in the scope, or an alias the app does not hold → 400. Unknown fields pass through to the upstream schema.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "The created collection",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "collectionId": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "scope": {
+                      "type": "string"
+                    },
+                    "embeddingModel": {
+                      "type": "string"
+                    },
+                    "chunkProfile": {
+                      "type": "string"
+                    },
+                    "activeIndex": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "collectionId",
+                    "name",
+                    "scope",
+                    "embeddingModel",
+                    "chunkProfile",
+                    "activeIndex",
+                    "status"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "scope": {
+                    "type": "string",
+                    "enum": [
+                      "tenant",
+                      "app"
+                    ]
+                  },
+                  "embeddingModel": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64
+                  },
+                  "chunkProfile": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "additionalProperties": {}
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "orgId",
+            "required": true
+          }
+        ]
+      },
+      "get": {
+        "operationId": "getApiOrgsByOrgIdAlphastudioRagCollections",
+        "tags": [
+          "AlphaStudio"
+        ],
+        "summary": "List knowledge collections",
+        "description": "Proxy to `GET /v1/rag/collections`: every collection this org can see — its own, plus every collection created with `scope: app`. Another org's collections are not listed and are 404 by id.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The visible collections",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "collections": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "collectionId": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "scope": {
+                            "type": "string"
+                          },
+                          "embeddingModel": {
+                            "type": "string"
+                          },
+                          "chunkProfile": {
+                            "type": "string"
+                          },
+                          "activeIndex": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "collectionId",
+                          "name",
+                          "scope",
+                          "embeddingModel",
+                          "chunkProfile",
+                          "activeIndex",
+                          "status"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "collections"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "orgId",
+            "required": true
+          }
+        ]
+      }
+    },
+    "/api/orgs/{orgId}/alphastudio/rag/collections/{collectionId}/sources": {
+      "get": {
+        "operationId": "getApiOrgsByOrgIdAlphastudioRagCollectionsByCollectionIdSources",
+        "tags": [
+          "AlphaStudio"
+        ],
+        "summary": "List a collection's sources",
+        "description": "Proxy to `GET /v1/rag/collections/:collectionId/sources`: every source with its ingestion state (`Uploading → Processing → Ready | Failed`). A presigned upload that was never PUT stays visible as `Uploading`. Unknown collection → 404.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The collection's sources",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "sourceId": {
+                            "type": "string"
+                          },
+                          "collectionId": {
+                            "type": "string"
+                          },
+                          "kind": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string"
+                          },
+                          "chunkCount": {
+                            "type": "number"
+                          },
+                          "deduped": {
+                            "type": "boolean"
+                          }
+                        },
+                        "required": [
+                          "sourceId",
+                          "status"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "sources"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "collectionId",
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]{1,128}$"
+            },
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "orgId",
+            "required": true
+          }
+        ]
+      },
+      "post": {
+        "operationId": "postApiOrgsByOrgIdAlphastudioRagCollectionsByCollectionIdSources",
+        "tags": [
+          "AlphaStudio"
+        ],
+        "summary": "Add a source to a collection",
+        "description": "Proxy to `POST /v1/rag/collections/:collectionId/sources` — two body shapes on `kind`: `push` (send `content` you already have, with `title`/`mediaType`) or `url` (an http/https URL the platform fetches under its SSRF rules). 202, not 200: ingestion is asynchronous — the source comes back `Processing`; poll it or watch the sources list. Unknown collection → 404.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "The source, queued for ingestion",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "sourceId": {
+                      "type": "string"
+                    },
+                    "collectionId": {
+                      "type": "string"
+                    },
+                    "kind": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "chunkCount": {
+                      "type": "number"
+                    },
+                    "deduped": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "sourceId",
+                    "status"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "collectionId",
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]{1,128}$"
+            },
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "orgId",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "const": "push"
+                      },
+                      "title": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 300
+                      },
+                      "mediaType": {
+                        "type": "string",
+                        "maxLength": 100
+                      },
+                      "content": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 2000000
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "content"
+                    ],
+                    "additionalProperties": {}
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "const": "url"
+                      },
+                      "url": {
+                        "type": "string",
+                        "maxLength": 2048,
+                        "pattern": "^https?:\\/\\/"
+                      },
+                      "title": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 300
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "url"
+                    ],
+                    "additionalProperties": {}
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/orgs/{orgId}/alphastudio/rag/collections/{collectionId}/sources/presign": {
+      "post": {
+        "operationId": "postApiOrgsByOrgIdAlphastudioRagCollectionsByCollectionIdSourcesPresign",
+        "tags": [
+          "AlphaStudio"
+        ],
+        "summary": "Presign a source upload",
+        "description": "Proxy to `POST /v1/rag/collections/:collectionId/sources/presign`. Step 1 of an upload: the source row exists as `Uploading` the moment this returns. PUT the bytes to `uploadUrl` with EXACTLY the requested `mediaType` (it is part of the signature); ingestion starts by itself when the object lands — there is no 'complete' call. Presigns live 15 minutes. Media types the platform cannot extract (e.g. image/png) → 400.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "The upload target",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "sourceId": {
+                      "type": "string"
+                    },
+                    "uploadUrl": {
+                      "type": "string"
+                    },
+                    "expiresAt": {
+                      "type": "string"
+                    },
+                    "mediaType": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "sourceId",
+                    "uploadUrl",
+                    "expiresAt",
+                    "mediaType"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "collectionId",
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]{1,128}$"
+            },
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "orgId",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "filename": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 256
+                  },
+                  "mediaType": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "pattern": "^[\\w.+-]+\\/[\\w.+-]+$"
+                  }
+                },
+                "required": [
+                  "filename",
+                  "mediaType"
+                ],
+                "additionalProperties": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/orgs/{orgId}/alphastudio/rag/sources/{sourceId}": {
+      "get": {
+        "operationId": "getApiOrgsByOrgIdAlphastudioRagSourcesBySourceId",
+        "tags": [
+          "AlphaStudio"
+        ],
+        "summary": "Read a source",
+        "description": "Proxy to `GET /v1/rag/sources/:sourceId` — poll this to watch ingestion settle. `failureReason` appears only on `Failed` and comes from a closed vocabulary, never a stack trace. Unknown source, or another org's → 404.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The source",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "sourceId": {
+                      "type": "string"
+                    },
+                    "collectionId": {
+                      "type": "string"
+                    },
+                    "kind": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "chunkCount": {
+                      "type": "number"
+                    },
+                    "deduped": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "sourceId",
+                    "status"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sourceId",
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]{1,128}$"
+            },
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "orgId",
+            "required": true
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "deleteApiOrgsByOrgIdAlphastudioRagSourcesBySourceId",
+        "tags": [
+          "AlphaStudio"
+        ],
+        "summary": "Delete a source",
+        "description": "Proxy to `DELETE /v1/rag/sources/:sourceId`. Vectors are removed inline, BEFORE this returns — `vectorsDeleted` makes that checkable. Deleting an already-deleted source → 404. Unlike the rest of this API, a successful delete answers 200 with a body, not 204 — the upstream's shape is passed through.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The deletion result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "sourceId": {
+                      "type": "string"
+                    },
+                    "vectorsDeleted": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "sourceId",
+                    "vectorsDeleted"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sourceId",
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]{1,128}$"
+            },
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "orgId",
+            "required": true
+          }
+        ]
+      }
+    },
     "/api/orgs/{orgId}/brand/voices": {
       "get": {
         "operationId": "getApiOrgsByOrgIdBrandVoices",
@@ -2084,8 +3736,38 @@
                             "type": "string",
                             "pattern": "^\\d+$"
                           },
+                          "name": {
+                            "type": "string"
+                          },
                           "description": {
                             "type": "string"
+                          },
+                          "rules": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string",
+                                  "pattern": "^\\d+$"
+                                },
+                                "kind": {
+                                  "type": "string",
+                                  "enum": [
+                                    "do",
+                                    "dont"
+                                  ]
+                                },
+                                "text": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "kind",
+                                "text"
+                              ]
+                            }
                           },
                           "createdAt": {
                             "type": "string",
@@ -2101,7 +3783,9 @@
                         "required": [
                           "id",
                           "orgId",
+                          "name",
                           "description",
+                          "rules",
                           "createdAt",
                           "updatedAt"
                         ]
@@ -2159,6 +3843,7 @@
           "Brand"
         ],
         "summary": "Create a voice",
+        "description": "Creates a voice. Also refreshes the org's AlphaProStudio context bundle server-side (best-effort; a failed refresh never fails the write).",
         "security": [
           {
             "bearerAuth": []
@@ -2180,8 +3865,38 @@
                       "type": "string",
                       "pattern": "^\\d+$"
                     },
+                    "name": {
+                      "type": "string"
+                    },
                     "description": {
                       "type": "string"
+                    },
+                    "rules": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "pattern": "^\\d+$"
+                          },
+                          "kind": {
+                            "type": "string",
+                            "enum": [
+                              "do",
+                              "dont"
+                            ]
+                          },
+                          "text": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "kind",
+                          "text"
+                        ]
+                      }
                     },
                     "createdAt": {
                       "type": "string",
@@ -2197,7 +3912,9 @@
                   "required": [
                     "id",
                     "orgId",
+                    "name",
                     "description",
+                    "rules",
                     "createdAt",
                     "updatedAt"
                   ]
@@ -2213,13 +3930,45 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
                   "description": {
                     "type": "string",
                     "minLength": 1,
                     "maxLength": 2000
+                  },
+                  "rules": {
+                    "default": [],
+                    "maxItems": 50,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "do",
+                            "dont"
+                          ]
+                        },
+                        "text": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 500
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "text"
+                      ]
+                    }
                   }
                 },
                 "required": [
+                  "name",
                   "description"
                 ]
               }
@@ -2267,8 +4016,38 @@
                       "type": "string",
                       "pattern": "^\\d+$"
                     },
+                    "name": {
+                      "type": "string"
+                    },
                     "description": {
                       "type": "string"
+                    },
+                    "rules": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "pattern": "^\\d+$"
+                          },
+                          "kind": {
+                            "type": "string",
+                            "enum": [
+                              "do",
+                              "dont"
+                            ]
+                          },
+                          "text": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "kind",
+                          "text"
+                        ]
+                      }
                     },
                     "createdAt": {
                       "type": "string",
@@ -2284,7 +4063,9 @@
                   "required": [
                     "id",
                     "orgId",
+                    "name",
                     "description",
+                    "rules",
                     "createdAt",
                     "updatedAt"
                   ]
@@ -2319,7 +4100,7 @@
           "Brand"
         ],
         "summary": "Update a voice",
-        "description": "Partial update — send only the fields that change (at least one).",
+        "description": "Partial update — send only the fields that change (at least one). Also refreshes the org's AlphaProStudio context bundle server-side (best-effort; a failed refresh never fails the write).",
         "security": [
           {
             "bearerAuth": []
@@ -2341,8 +4122,38 @@
                       "type": "string",
                       "pattern": "^\\d+$"
                     },
+                    "name": {
+                      "type": "string"
+                    },
                     "description": {
                       "type": "string"
+                    },
+                    "rules": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "pattern": "^\\d+$"
+                          },
+                          "kind": {
+                            "type": "string",
+                            "enum": [
+                              "do",
+                              "dont"
+                            ]
+                          },
+                          "text": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "kind",
+                          "text"
+                        ]
+                      }
                     },
                     "createdAt": {
                       "type": "string",
@@ -2358,7 +4169,9 @@
                   "required": [
                     "id",
                     "orgId",
+                    "name",
                     "description",
+                    "rules",
                     "createdAt",
                     "updatedAt"
                   ]
@@ -2393,10 +4206,40 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
                   "description": {
                     "type": "string",
                     "minLength": 1,
                     "maxLength": 2000
+                  },
+                  "rules": {
+                    "maxItems": 50,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "do",
+                            "dont"
+                          ]
+                        },
+                        "text": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 500
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "text"
+                      ]
+                    }
                   }
                 }
               }
@@ -2410,7 +4253,7 @@
           "Brand"
         ],
         "summary": "Delete a voice",
-        "description": "Hard delete — brand resources have no soft-delete flag.",
+        "description": "Hard delete — brand resources have no soft-delete flag. Also refreshes the org's AlphaProStudio context bundle server-side (best-effort; a failed refresh never fails the write).",
         "security": [
           {
             "bearerAuth": []
@@ -2425,6 +4268,149 @@
           {
             "in": "path",
             "name": "id",
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d+$"
+            },
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "orgId",
+            "required": true
+          }
+        ]
+      }
+    },
+    "/api/orgs/{orgId}/brand/voices/{id}/rules": {
+      "post": {
+        "operationId": "postApiOrgsByOrgIdBrandVoicesByIdRules",
+        "tags": [
+          "Brand"
+        ],
+        "summary": "Add a rule to a voice",
+        "description": "Appends one do/don't rule. Unknown voice, or one belonging to another org → 404. Also refreshes the org's AlphaProStudio context bundle server-side (best-effort; a failed refresh never fails the write).",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "The created rule",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "pattern": "^\\d+$"
+                    },
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "do",
+                        "dont"
+                      ]
+                    },
+                    "text": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "kind",
+                    "text"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d+$"
+            },
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "orgId",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "do",
+                      "dont"
+                    ]
+                  },
+                  "text": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 500
+                  }
+                },
+                "required": [
+                  "kind",
+                  "text"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/orgs/{orgId}/brand/voices/{id}/rules/{ruleId}": {
+      "delete": {
+        "operationId": "deleteApiOrgsByOrgIdBrandVoicesByIdRulesByRuleId",
+        "tags": [
+          "Brand"
+        ],
+        "summary": "Delete a rule from a voice",
+        "description": "Unknown rule, a rule of another voice, or a voice of another org → 404. Also refreshes the org's AlphaProStudio context bundle server-side (best-effort; a failed refresh never fails the write).",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Rule deleted"
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d+$"
+            },
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "ruleId",
             "schema": {
               "type": "string",
               "pattern": "^\\d+$"
@@ -2485,6 +4471,33 @@
                           "description": {
                             "type": "string"
                           },
+                          "rules": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string",
+                                  "pattern": "^\\d+$"
+                                },
+                                "kind": {
+                                  "type": "string",
+                                  "enum": [
+                                    "do",
+                                    "dont"
+                                  ]
+                                },
+                                "text": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "kind",
+                                "text"
+                              ]
+                            }
+                          },
                           "createdAt": {
                             "type": "string",
                             "format": "date-time",
@@ -2502,6 +4515,7 @@
                           "name",
                           "preset",
                           "description",
+                          "rules",
                           "createdAt",
                           "updatedAt"
                         ]
@@ -2559,6 +4573,7 @@
           "Brand"
         ],
         "summary": "Create a tone",
+        "description": "Creates a tone.",
         "security": [
           {
             "bearerAuth": []
@@ -2589,6 +4604,33 @@
                     "description": {
                       "type": "string"
                     },
+                    "rules": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "pattern": "^\\d+$"
+                          },
+                          "kind": {
+                            "type": "string",
+                            "enum": [
+                              "do",
+                              "dont"
+                            ]
+                          },
+                          "text": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "kind",
+                          "text"
+                        ]
+                      }
+                    },
                     "createdAt": {
                       "type": "string",
                       "format": "date-time",
@@ -2606,6 +4648,7 @@
                     "name",
                     "preset",
                     "description",
+                    "rules",
                     "createdAt",
                     "updatedAt"
                   ]
@@ -2634,6 +4677,32 @@
                   "preset": {
                     "default": false,
                     "type": "boolean"
+                  },
+                  "rules": {
+                    "default": [],
+                    "maxItems": 50,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "do",
+                            "dont"
+                          ]
+                        },
+                        "text": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 500
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "text"
+                      ]
+                    }
                   }
                 },
                 "required": [
@@ -2694,6 +4763,33 @@
                     "description": {
                       "type": "string"
                     },
+                    "rules": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "pattern": "^\\d+$"
+                          },
+                          "kind": {
+                            "type": "string",
+                            "enum": [
+                              "do",
+                              "dont"
+                            ]
+                          },
+                          "text": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "kind",
+                          "text"
+                        ]
+                      }
+                    },
                     "createdAt": {
                       "type": "string",
                       "format": "date-time",
@@ -2711,6 +4807,7 @@
                     "name",
                     "preset",
                     "description",
+                    "rules",
                     "createdAt",
                     "updatedAt"
                   ]
@@ -2776,6 +4873,33 @@
                     "description": {
                       "type": "string"
                     },
+                    "rules": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "pattern": "^\\d+$"
+                          },
+                          "kind": {
+                            "type": "string",
+                            "enum": [
+                              "do",
+                              "dont"
+                            ]
+                          },
+                          "text": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "kind",
+                          "text"
+                        ]
+                      }
+                    },
                     "createdAt": {
                       "type": "string",
                       "format": "date-time",
@@ -2793,6 +4917,7 @@
                     "name",
                     "preset",
                     "description",
+                    "rules",
                     "createdAt",
                     "updatedAt"
                   ]
@@ -2839,6 +4964,31 @@
                   },
                   "preset": {
                     "type": "boolean"
+                  },
+                  "rules": {
+                    "maxItems": 50,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "do",
+                            "dont"
+                          ]
+                        },
+                        "text": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 500
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "text"
+                      ]
+                    }
                   }
                 }
               }
@@ -2867,6 +5017,149 @@
           {
             "in": "path",
             "name": "id",
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d+$"
+            },
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "orgId",
+            "required": true
+          }
+        ]
+      }
+    },
+    "/api/orgs/{orgId}/brand/tones/{id}/rules": {
+      "post": {
+        "operationId": "postApiOrgsByOrgIdBrandTonesByIdRules",
+        "tags": [
+          "Brand"
+        ],
+        "summary": "Add a rule to a tone",
+        "description": "Appends one do/don't rule. Unknown tone, or one belonging to another org → 404.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "The created rule",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "pattern": "^\\d+$"
+                    },
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "do",
+                        "dont"
+                      ]
+                    },
+                    "text": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "kind",
+                    "text"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d+$"
+            },
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "orgId",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "do",
+                      "dont"
+                    ]
+                  },
+                  "text": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 500
+                  }
+                },
+                "required": [
+                  "kind",
+                  "text"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/orgs/{orgId}/brand/tones/{id}/rules/{ruleId}": {
+      "delete": {
+        "operationId": "deleteApiOrgsByOrgIdBrandTonesByIdRulesByRuleId",
+        "tags": [
+          "Brand"
+        ],
+        "summary": "Delete a rule from a tone",
+        "description": "Unknown rule, a rule of another tone, or a tone of another org → 404.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Rule deleted"
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d+$"
+            },
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "ruleId",
             "schema": {
               "type": "string",
               "pattern": "^\\d+$"
@@ -2997,6 +5290,7 @@
           "Brand"
         ],
         "summary": "Create a source",
+        "description": "Creates a source. Also refreshes the org's AlphaProStudio context bundle server-side (best-effort; a failed refresh never fails the write).",
         "security": [
           {
             "bearerAuth": []
@@ -3170,7 +5464,7 @@
           "Brand"
         ],
         "summary": "Update a source",
-        "description": "Partial update — send only the fields that change (at least one).",
+        "description": "Partial update — send only the fields that change (at least one). Also refreshes the org's AlphaProStudio context bundle server-side (best-effort; a failed refresh never fails the write).",
         "security": [
           {
             "bearerAuth": []
@@ -3269,7 +5563,7 @@
           "Brand"
         ],
         "summary": "Delete a source",
-        "description": "Hard delete — brand resources have no soft-delete flag.",
+        "description": "Hard delete — brand resources have no soft-delete flag. Also refreshes the org's AlphaProStudio context bundle server-side (best-effort; a failed refresh never fails the write).",
         "security": [
           {
             "bearerAuth": []
@@ -3410,6 +5704,7 @@
           "Brand"
         ],
         "summary": "Create a topic",
+        "description": "Creates a topic. Also refreshes the org's AlphaProStudio context bundle server-side (best-effort; a failed refresh never fails the write).",
         "security": [
           {
             "bearerAuth": []
@@ -3570,7 +5865,7 @@
           "Brand"
         ],
         "summary": "Update a topic",
-        "description": "Partial update — send only the fields that change (at least one).",
+        "description": "Partial update — send only the fields that change (at least one). Also refreshes the org's AlphaProStudio context bundle server-side (best-effort; a failed refresh never fails the write).",
         "security": [
           {
             "bearerAuth": []
@@ -3661,7 +5956,7 @@
           "Brand"
         ],
         "summary": "Delete a topic",
-        "description": "Hard delete — brand resources have no soft-delete flag.",
+        "description": "Hard delete — brand resources have no soft-delete flag. Also refreshes the org's AlphaProStudio context bundle server-side (best-effort; a failed refresh never fails the write).",
         "security": [
           {
             "bearerAuth": []
@@ -3681,6 +5976,129 @@
               "pattern": "^\\d+$"
             },
             "required": true
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "orgId",
+            "required": true
+          }
+        ]
+      }
+    },
+    "/api/orgs/{orgId}/holidays": {
+      "get": {
+        "operationId": "getApiOrgsByOrgIdHolidays",
+        "tags": [
+          "Holidays"
+        ],
+        "summary": "List the org's holidays",
+        "description": "Calendar order (date ascending), offset-paginated. The calendar is loaded when the org's country is set (PUT /orgs/:orgId/country) and empty until then. Read-only — holidays are replaced wholesale by a country change, never edited here.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A page of holidays",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "pattern": "^\\d+$"
+                          },
+                          "orgId": {
+                            "type": "string",
+                            "pattern": "^\\d+$"
+                          },
+                          "date": {
+                            "type": "string",
+                            "format": "date",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                          },
+                          "event": {
+                            "type": "string"
+                          },
+                          "rules": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "kind": {
+                                  "type": "string"
+                                },
+                                "text": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "kind",
+                                "text"
+                              ]
+                            }
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "orgId",
+                          "date",
+                          "event",
+                          "rules",
+                          "createdAt"
+                        ]
+                      }
+                    },
+                    "total": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "items",
+                    "total"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "default": 20,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "schema": {
+              "default": 0,
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
           },
           {
             "schema": {
@@ -5432,6 +7850,45 @@
                   "skip"
                 ]
               }
+            }
+          }
+        }
+      }
+    },
+    "/api/webhooks/callback": {
+      "post": {
+        "operationId": "postApiWebhooksCallback",
+        "tags": [
+          "Webhooks"
+        ],
+        "summary": "Receive a webhook callback",
+        "description": "Accepts any JSON payload from an external sender and acknowledges it. No auth — external services cannot hold a session token.",
+        "responses": {
+          "200": {
+            "description": "Payload received",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "received": {
+                      "type": "boolean",
+                      "const": true
+                    }
+                  },
+                  "required": [
+                    "received"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {}
             }
           }
         }
