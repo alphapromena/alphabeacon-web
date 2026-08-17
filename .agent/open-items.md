@@ -25,13 +25,20 @@ item to "Signed off" (with the date) only when a human has actually done it.
    accepting more does not oblige the product to offer more. Backend dev:
    confirm the product cap is intentional product law, or align the API.
 3. **CORS blocks the documented `x-request-id` request header (found INT-1,
-   2026-07-30).** The contract says a client may send its own id, but the
-   Function URL's CORS policy allows only `content-type, authorization`
-   request headers — a browser preflight naming `x-request-id` receives no
-   CORS grant and every call is blocked. The client now sends no id and logs
-   the server's (from the envelope's `requestId`; the response header is
-   likely unexposed too). Backend dev: add `x-request-id` to
-   `Access-Control-Allow-Headers` and `Access-Control-Expose-Headers`.
+   2026-07-30; RE-CONFIRMED INT-6, 2026-08-17).** The contract says a client
+   may send its own id, but the Function URL's CORS policy allows only
+   `content-type, authorization` request headers — a browser preflight naming
+   `x-request-id` receives no CORS grant and every call is blocked. The client
+   now sends no id and logs the server's (from the envelope's `requestId`).
+   Backend dev: add `x-request-id` to `Access-Control-Allow-Headers` and
+   `Access-Control-Expose-Headers`.
+   **INT-6 measurement** (`Docs/api/alphastudio-shapes.md`, preflight
+   captures): `access-control-allow-methods: *` — so `PUT` and the new proxy
+   paths ARE reachable from a browser, and the country + generate surfaces are
+   buildable. But `access-control-allow-headers: content-type,authorization`
+   is unchanged and there is **no `access-control-expose-headers` at all**, so
+   the server's own id is not readable from a response either. Only the
+   envelope's `requestId` is available to a bug report.
 4. **Org roles are three-tier (`owner|admin|member`); the app's model is
    two-tier.** INT-1's session adapter collapses `owner → admin` for display
    (an owner can do everything the admin UI offers). INT-2 must teach the
@@ -46,12 +53,18 @@ item to "Signed off" (with the date) only when a human has actually done it.
    + `GET /me/orgs` on every session establishment and rewrites the stored
    record in place; the token is the only trusted persisted fact.
 7. **Tone rules/examples and voice do/don't/examples have no wire home
-   (INT-3).** The API stores tones as `{name, description, preset}` and
-   voices as one `description` per row. Live mode disables the rule/example
-   editors with a note (`notices.brandFieldsPending`) and carries voice rules
-   as ONE flat list — nothing is smuggled into descriptions. Backend dev:
-   tones want `rules {do, dont}` + `example`; voices want a kind (do/don't)
-   and an examples home.
+   (INT-3) — PARTLY CLOSED 2026-08-17 by the new contract.** The backend
+   shipped what was asked for: voices gained a required `name` and both voices
+   and tones now carry `rules[]` of `{id, kind: do|dont, text}`, embedded in
+   every read, replaced wholesale by `PATCH { rules }`, with single-rule
+   append/delete endpoints as well. INT-7 lifts the INT-3 restriction and
+   enables the do/don't editors.
+   **Still homeless:** a tone's `example` and a voice's `examples`. Their
+   editors stay disabled and `notices.brandFieldsPending` narrows to name only
+   those. Backend dev: is an examples home coming, or should the product drop
+   the field? (A tone `example` DOES exist on the run body the proxy forwards,
+   so the platform understands the concept — it simply has nowhere to be
+   stored between runs.)
 8. **A fresh live org has no preset tones and no slot ingestion yet
    (INT-4).** The five preset tones are product law ("always present"), so
    `finishOnboarding` seeds them via the API's own `preset` flag — backend
@@ -84,6 +97,65 @@ item to "Signed off" (with the date) only when a human has actually done it.
     `useTeamPermissions()` — but either the API is stricter than screens4
     intended, or the demo should tighten to match. Backend/product decides;
     the frontend follows whichever answer.
+
+### Integration — questions from the 2026-08-17 contract (INT-6)
+
+Every one of these was raised by something the smoke run measured, and the
+evidence is in `Docs/api/alphastudio-shapes.md`. Answers change what INT-7…11
+build, so they are worth asking as a batch.
+
+21. **Are event-sources and slots superseded by org country + holidays?**
+    The new `PUT /orgs/:orgId/country` loads the calendar and
+    `GET /orgs/:orgId/holidays` reads it, with the capability's do/don't rules
+    attached — which is everything C2/C3/C4 needed. The `event-sources` +
+    `slots` surface still exists and is still wired (INT-4), but the two now
+    overlap, and slot ingestion has still never produced a slot (item 8).
+    Decide: does the app keep asking users to create event sources, or is
+    country the single control (which is what D-INT-F assumes)? And if slots
+    stay: **when does ingestion fire?**
+22. **A list-runs endpoint, and a server-side draft store.** Only
+    `GET .../posts/runs/:runId` exists — there is no way to enumerate an org's
+    runs. INT-10 therefore keeps a per-org localStorage ledger of run ids
+    (D-INT-G), which does not survive a different browser and is not a real
+    history. Also: every draft came back carrying a **`proposalId`**
+    (`prop_…`), so the proposals ledger clearly exists upstream — but
+    `/v1/proposals` and `/v1/published-social` are **not proxied**, so
+    approve / decline / published-history cannot be built. Are they coming?
+    Until they are, F1's action row is Copy + Create visual only.
+23. **Prices in the catalog — is `cost` a contract or an accident?** Model rows
+    carry `cost` as `{ images: "0.03" }` / `{ video_seconds: "0.07" }` decimal
+    strings, alongside `displayHint`, `capabilitySchema`, `capabilities` and
+    `appMetadata.min_plan`. None of that is in api.md. E1 would like to show a
+    real price per model — confirm these fields are stable enough to render,
+    or E1 falls back to "charged to your balance".
+    Related: **all ten probed capabilities are granted** to this app
+    (`media.generate`, `social-posts.media`, `images.edit`,
+    `photoshoot.generate`, `brand-assets.generate`, `logos.generate`,
+    `logos.redesign`, `video-ads.generate`, `tones.preview`,
+    `social-posts.generate`) — confirm that is intended for `alphabeacon` and
+    not a playground grant that will narrow later, because E1's gallery is
+    built from it.
+24. **S3 CORS for a browser `PUT`** (media assets + RAG sources). The presigned
+    upload works from Node — proven, `200` on both buckets with real bytes. A
+    browser additionally needs the bucket's own CORS to allow `PUT` from the
+    app origin, and that cannot be tested outside a browser. If it is not
+    configured, reference images (E2) and file upload (I6) are unbuildable and
+    both surfaces stay hidden. Please confirm/configure and say which origins.
+25. **Two fields the docs and the wire disagree about.** `slot` on
+    `posts/generate` reads as optional in api.md but a body without it is a
+    `400`. `embeddingModel` on `rag/collections` is documented optional but a
+    body without it is a `400`. Both are now treated as required — please
+    correct api.md (or the validation), so the next reader is not misled.
+26. **Server-side preset-tone seeding, now with rules** (extends item 8). A
+    fresh live org still has no preset tones, so `finishOnboarding` seeds the
+    five through the API — and as of this contract it must also send each
+    preset's `rules`. If the backend seeds server-side instead, a non-wizard
+    org path gets them too and the wizard's job shrinks.
+27. **Is `guardrail_text_units` metering worth surfacing?** The usage read
+    returns three units for one generate run (`input_tokens`,
+    `output_tokens`, `guardrail_text_units`). H3 will group by capability and
+    show them as-is; confirm that is the right granularity for an end user, or
+    whether the app should sum to one number per capability.
 
 ### M1 cinematic items — RETIRED by the rebrand (2026-08-08)
 

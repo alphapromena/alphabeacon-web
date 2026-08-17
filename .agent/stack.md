@@ -41,6 +41,7 @@ dependencies are public — no private registry, no token.
 | e2e — state specs / goldens / axe          | `pnpm e2e` / `pnpm e2e --grep @golden` / `pnpm e2e --grep @axe`                                     |
 | lint / format / typecheck                  | `pnpm lint` / `pnpm format` / `pnpm typecheck`                                                      |
 | static guard (also in CI)                  | `pnpm guard:static`                                                                                 |
+| observe the live proxy shapes (INT-6)      | `pnpm smoke:alphastudio` (needs `VITE_API_BASE_URL`; `LIVE_MEDIA=1` adds one paid render)            |
 | lighthouse budgets                         | `pnpm lh`                                                                                           |
 | build                                      | `pnpm build`                                                                                        |
 | deploy                                     | `pnpm run deploy --stage <dev\|staging\|prod>` (plain `pnpm deploy` is shadowed by a pnpm built-in) |
@@ -60,11 +61,12 @@ before closing a phase run its `verify:wNN` and paste the output in the PR.
 
 ## Environment variables
 
-Exactly **one**, and it is the mode switch:
+Exactly **one** reaches the app, and it is the mode switch:
 
 | Variable            | Where                     | Effect                                                                 |
 | ------------------- | ------------------------- | ---------------------------------------------------------------------- |
 | `VITE_API_BASE_URL` | `.env.local` (gitignored) | present → live mode for API-covered entities; absent → fully static |
+| `LIVE_MEDIA`        | shell, dev machine only   | `1` lets `smoke:alphastudio` and the live studio spec spend on ONE real render (D-INT-I). Never read by app code. |
 
 Read in exactly one file (`src/api/config.ts`). Never hardcoded, never
 committed — the guard's http-literal ban enforces that. Static mode (no env

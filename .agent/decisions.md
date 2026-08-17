@@ -1138,3 +1138,161 @@ add a new entry that says it supersedes the old one.
   requested `InstagramPost` / `LinkedInCompanyPost` / … names are
   exported as aliases of the same components, so new code reads the way
   the brief asks without a rename churn through the route.
+
+### 2026-08-17 — D-INT-A: the proxy law, and its ONE presigned-PUT exemption
+
+- Why: Ward's instruction of 2026-08-17 — "do not connect to the APIs in
+  [the AlphaProStudio environment / collection] directly; only from the main
+  API and its grouped `/alphastudio/`." So every generation call is
+  `…/orgs/:orgId/alphastudio/*` on our own API with the normal Bearer session.
+  The frontend never addresses the upstream service, never signs anything: no
+  HMAC, no `x-aps-*` headers, no service key, no edge secret.
+- The one exception, and it is unavoidable: our API mints a presigned `PUT` and
+  the bytes go straight to object storage, because the platform deliberately
+  never proxies bytes. That request lives in `src/api/upload.ts`
+  (`uploadToPresignedUrl`) and is kept as narrow as an exception can be — the
+  url is never composed locally, no `Authorization` is attached (the signature
+  IS the authorization, and sending our session token to a third-party origin
+  would leak it), and the `Content-Type` is exactly the one the presign was
+  issued for, because it is part of the S3 signature.
+- Enforcement, so this is law rather than intention: `guard-static` now runs a
+  second rule set over `src/` banning `cloudfront.net`, `x-aps-`, the upstream
+  `v1` route prefix, `svc[_-]?key` and `edge[_-]?secret` in CODE, and narrows
+  the `fetch` licence from "anywhere in `src/api/`" to exactly two files —
+  `client.ts` and `upload.ts`. A third network caller now fails the build.
+- The proxy rules read CODE ONLY, comments stripped by `codeOf()`. Deliberate:
+  the upstream routes and headers are things this repo's docs SHOULD name, and
+  a check that matched prose would fire on the very comments explaining the
+  proxy and then get deleted (state.md's "a structural check must not match
+  prose"). The first implementation was a full string-aware lexer and it was
+  the wrong tool — one apostrophe in JSX prose opened a string it never closed
+  and blanked the rest of the file, i.e. a guard that silently stops guarding.
+  The line-scoped scanner has two documented blind spots that can only LOSE a
+  match, never invent one, and law 1 already covers both.
+- The AlphaProStudio Postman **environment** is gitignored by name and by
+  pattern (`*.environment.json`): it carries a live HMAC service key. The
+  **collection** is committed — it is schemas, and it is the authority for the
+  bodies our proxy forwards verbatim.
+- Instead of: calling the service directly with a key shipped to the browser
+  (the reason the proxy exists), or leaving the proxy law as prose in this file
+  (the next agent would have had only good intentions to go on).
+
+### 2026-08-17 — D-INT-H: proxy types are transcribed from observed JSON, never from prose
+
+- Why: `/alphastudio/*` returns the upstream's shape unchanged and the contract
+  says new fields "may appear without notice". api.md's examples are
+  illustrative, and the OpenAPI document declares the proxy responses loosely
+  on purpose (`{ runId, status, capability?, mode?, outputs?: any[] }`). Types
+  written from either would have been guesses.
+- So `scripts/smoke-alphastudio.ts` (`pnpm smoke:alphastudio`) drives one fresh
+  QA org through every proxy surface against the deployed API and writes every
+  response body verbatim to `Docs/api/alphastudio-shapes.md`. THAT file is what
+  `src/api/types.ts`'s proxy half is transcribed from; anything the run did not
+  prove is optional, and unknown fields are tolerated rather than stripped.
+- It paid for itself immediately. Four things the docs had wrong or silent:
+  1. **`slot` is REQUIRED** on `posts/generate` (a body without it → `400`).
+  2. **`embeddingModel` is REQUIRED** on `rag/collections`, though api.md marks
+     it optional (without it → `400`; `embed-default` is the alias this app
+     holds).
+  3. **`toneId` and `rationale` live INSIDE `outputs[].content`**, not beside
+     it — a type with them at the output level would have read `undefined`
+     forever, and rendered a draft with no tone and no rationale.
+  4. **Catalog model rows carry far more than documented**: `displayHint` (a
+     ready-made vendor-free label), `cost` (a decimal-string price — so E1 CAN
+     show one, and the render below proved it exact), `capabilitySchema` (a real
+     JSON Schema for that model's `params`, which is exactly what W5's generated
+     params form consumes), `capabilities`, and `appMetadata.min_plan`.
+  5. **A media job's lifecycle is `queued → submitted → succeeded`**, not a
+     run's `queued → running → completed`. A shared status type or poll
+     predicate across the two would have hung on the first render.
+  6. **A job response echoes `modelAlias`** (which catalog row served it) even
+     though a job REQUEST is refused by name for carrying that field. Read-only
+     in, banned out.
+- Instead of: transcribing api.md's examples (three of the four above would
+  have shipped as bugs), or writing everything as `unknown` and probing at
+  every call site (the drift the one-client rule exists to prevent).
+
+### 2026-08-17 — D-INT-D: the plan vocabulary is not the schedule's alias vocabulary
+
+- Why: two different surfaces name models two different ways and it would be
+  easy — and wrong — to collapse them. On-demand runs and media jobs take
+  `plan ∈ balanced | creative | precise`, which maps DIRECTLY onto the app's
+  `gm_balanced | gm_creative | gm_precise` with nothing eliminated. A schedule
+  takes `modelAlias ∈ fast | balanced | quality`, whose pairing is still
+  unconfirmed (open-items 9) and where INT-4 had to give Creative the leftover
+  `fast`.
+- So `ApiPlan` is its own type and `MODEL_ALIAS_BY_ID` is untouched. The two
+  vocabularies never map onto each other, even though both contain the word
+  "balanced".
+- Instead of: one shared table (it would have propagated INT-4's unconfirmed
+  guess into a surface that has no need of it).
+
+### 2026-08-17 — D-INT-E: live mode shows money, not credits
+
+- Why: the wallet is cents (`{ cents, heldCents, availableCents }`), the
+  catalog's prices and `costUsdEstimate` are USD decimal STRINGS, and the
+  refusal is `402 wallet_insufficient`. Nothing on the wire is a credit.
+  Inventing an exchange rate would put a made-up number in front of a user
+  about their own money.
+- So live mode shows currency: `availableCents` (the number the next request is
+  actually checked against — not `cents`), plus "reserved" when
+  `heldCents > 0`. The static demo keeps its credits ledger, unchanged.
+- `costUsdEstimate` and the catalog `cost` are rendered as trimmed decimal
+  strings and never `parseFloat`ed — a float there is a rounding error in
+  someone's billing.
+- There is **no funding endpoint** on this API (orgs are funded once, 5000
+  cents, server-side at creation). So the 402 state says so honestly and
+  preserves the user's input rather than offering a top-up that does not exist.
+- Instead of: a synthetic credit rate (dishonest), or hiding the balance
+  entirely (the 402 would then be unexplainable).
+
+### 2026-08-17 — D-INT-B/C/F/G: the four interpretations INT-7…10 are built on
+
+Recorded here as the founder set them; each is implemented in its own phase.
+
+- **D-INT-B — brand voice is ONE canonical voice row.** Live mode holds the
+  org's brand voice on a single row named `Brand voice` (created lazily on
+  first write, description a plain sentence), and its `rules` are the app's
+  do/don't. READS flatten every voice's rules in creation order — exactly how
+  the backend builds the context bundle, so what the user sees is what
+  generation gets. INT-3-era rows exist only on QA orgs, so there is no
+  migration code. `examples` still has no wire home: its editor stays disabled
+  with the honest note.
+- **D-INT-C — tone rules go live; `example` does not.** `rules[]` ↔
+  `{do[], dont[]}`; save is `PATCH { rules }`, whole-list replace, which is
+  exactly the editor's save semantics (the single-rule endpoints exist but the
+  UI has no use for them). `example` has no wire home, so the "fields pending"
+  note narrows to name only that.
+- **D-INT-F — country is the single holiday control.** In live mode
+  `PUT /orgs/:orgId/country` replaces C2's "create a holidays event source"
+  step; holidays render read-only in C3/C4 with their do/don't rules.
+  Event-sources and slots stay wired for reading and skip (INT-4), but the UI
+  stops asking a user to create them. Whether they are superseded is a
+  question for the backend.
+- **D-INT-G — F1 is batch, not stream, and its results are read-only.** The
+  proxy has no stream endpoint, so there is no fake token streaming: calm
+  progress, then drafts. Attributions, flags and rationale are always visible
+  (upstream terms require sources to stay visible). Approve/decline/schedule
+  stay hidden in live mode because there is no drafts wire, and a per-org local
+  run ledger (localStorage, runIds only) makes results re-pullable via the run
+  read until a list endpoint exists. A ledger id that answers 404 is dropped.
+
+### 2026-08-17 — D-INT-I: what a live suite is allowed to spend
+
+- Why: every fresh QA org spends the platform's own starter funding (5000
+  cents), and renders cost real money while text runs cost fractions of a cent.
+  Left unstated, a live suite would quietly become a bill.
+- So: live suites use `plan: balanced`, one text run and one tones-preview at
+  most; a media render happens only under `LIVE_MEDIA=1`; the wallet is read
+  before and after and printed in the log. The smoke run's measured numbers,
+  which set the expectation for every later suite:
+  - text only (no render): **5000 → 5000 cents.** One generate, one preview and
+    one refused no-slot probe metered to about `0.0055` USD in total, which
+    rounds to 0 cents. The asset and RAG byte flows are free by design.
+  - with `LIVE_MEDIA=1`: **5000 → 4997 cents** — one balanced 1:1 png render is
+    3 cents, exactly the `cost.images: "0.03"` the catalog advertises for
+    `image-balanced`. So the catalog's price is trustworthy enough for E1 to
+    show, and a render is ~1600× a text run: the env-var gate is the whole
+    difference between a cheap suite and an expensive one.
+- Instead of: leaving cost to judgement per session (the first expensive
+  mistake would have been discovered on an invoice).

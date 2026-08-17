@@ -5,8 +5,9 @@ without reconstructing it from the session log. **Update this file at the end
 of any turn that finishes a phase or changes the plan.** `sessions.md` is the
 chronological record; this is the current picture.
 
-_Last updated: 2026-08-10, after Website V1 (`rb/02-v1-brief`) — built and
-verified, **awaiting founder sign-off; not merged, not pushed**._
+_Last updated: 2026-08-17, after **INT-6** (`int/06-contract`) — the
+2026-08-17 API contract landed, the client hardened, the proxy law enforced,
+and the live proxy shapes captured. **Not merged, not pushed.**_
 
 ---
 
@@ -14,7 +15,9 @@ verified, **awaiting founder sign-off; not merged, not pushed**._
 
 `alphabeacon-web` is a static-first React SPA — every screen in
 `screens4.md`, rendered from typed data committed under `src/data/` —
-integrating with the **live AlphaStudio API** (contract: `docs/api/api.md`).
+integrating with the **live AlphaStudio API** (contract: `Docs/api/api.md`,
+refreshed 2026-08-17 to 62 paths; `Docs/api/changelog.md` is the per-change
+record and `Docs/api/alphastudio-shapes.md` is the observed proxy truth).
 **The product is now branded Malaky** (Arabic wordmark ملاكي, kit under
 `Docs/brand/`): new palette, Inter (proposed), calm motion law, and a
 rebuilt kit-flow marketing page (2026-08-08). `package.json`, internal `ab-`
@@ -31,7 +34,8 @@ below).
 | ---------- | ------------------------------------------------------ |
 | Remote     | `github.com/alphapromena/alphabeacon-web` (private)    |
 | `main`     | Production line — V1 page + orbital hero + full-fidelity posts + the 2026-08-11 production pass (code-split, early-access CTA, legal pages, SEO) + the Phase 2 code pass (request-access flow, analytics seam, brand-continuous demos, content-asset slot); open-items 16–18 hold the human gates |
-| `rb/02-v1-brief` | Website V1 per Abdullah's brief + the 2026-08-11 ambient idle drift — merged to `main` 2026-08-11 (founder-instructed production push; open-items 16 checks still to be walked) |
+| `rb/02-v1-brief` | Website V1 per Abdullah's brief + the 2026-08-11 ambient idle drift + the M1 card-realism passes through 2026-08-12 (`6c598b2`). **`main` is at `3f9f3b4` and is an ancestor of this branch — the last five commits, including the platform-surface and channel-glyph work, are on `rb/02` only and have NOT been fast-forwarded to `main`.** Flagged 2026-08-17. |
+| `int/06-contract` | **The 2026-08-17 contract refresh** — cut from `rb/02-v1-brief` (`6c598b2`), per the founder's stated base |
 | Phase tips | `w/00`…`w/06`, `int/00`…`int/05`, `rb/00-malaky`, `rb/01-motion` |
 | Tags       | none                                                   |
 
@@ -73,11 +77,23 @@ aspirational, not a rule this repo follows.
 
 ## Integration phases (AlphaStudio API — contract at `docs/api/api.md`)
 
-The static law was AMENDED on 2026-07-30 (decisions.md): network code is legal
-only in `src/api/`, only when `VITE_API_BASE_URL` is set (`.env.local`, never
+The static law was AMENDED on 2026-07-30 and narrowed on 2026-08-17
+(decisions.md): network code is legal only in `src/api/client.ts` and
+`src/api/upload.ts`, only when `VITE_API_BASE_URL` is set (`.env.local`, never
 committed). Static mode remains the default and the e2e test bed. Hybrid per
-entity: covered entities go live; drafts/Today, connections, Studio, billing,
-analytics, compose and knowledge stay static, awaiting backend phase 2.
+entity: covered entities go live, the rest stay static (list below).
+
+**The proxy law (Ward, 2026-08-17) — read this before touching generation.**
+Everything AI-generative goes through OUR API's `/orgs/:orgId/alphastudio/*`
+with the normal Bearer session. The frontend never talks to the AlphaProStudio
+service, never signs anything, holds no service key. `guard-static` now fails
+the build on `cloudfront.net`, `x-aps-`, the upstream `v1` route prefix,
+`svc[_-]?key` or `edge[_-]?secret` appearing in code under `src/`. The one
+non-API request the app is allowed is a presigned `PUT` of file bytes, in
+`src/api/upload.ts` and nowhere else. `Docs/api/alphaprostudio.postman.json`
+documents the upstream and is committed; its **environment file holds a live
+HMAC key and must never enter the repo** — it is gitignored by name and by
+`*.environment.json`.
 
 **Running the live suites:** one spec at a time (`$env:VITE_API_BASE_URL=…;
 pnpm e2e --grep live-<phase>`), the way each phase was verified — the API's
@@ -93,15 +109,41 @@ make a single-shot all-file matrix trip 429s by design. Fresh
 | INT-3 | Brand (voices, tones + adapter, sources, topics)         | Done (`int/03`) · live e2e 5/5 |
 | INT-4 | Schedules + event sources (+countries) + slots           | Done (`int/04`) · live e2e 3/3 (+1 gated on ingestion) |
 | INT-5 | Notifications (list, unread-count, read-all)             | Done (`int/05`) · live e2e 1/1 |
+| INT-6 | **Contract refresh, client hardening, the smoke run**    | **Done (`int/06-contract`)** · smoke run green, no live spec (INT-6 ships no UI) |
+| INT-7 | Brand rules live + I4's tone preview                    | Next |
+| INT-8 | Org country + holidays (wizard, I1, C2–C4)              | Planned |
+| INT-9 | Wallet + usage (balance chip, the 402 state, H3)        | Planned |
+| INT-10 | On-demand generate F1 (batch runs + local run ledger)  | Planned |
+| INT-11 | Studio media E1–E4 + I6 knowledge (RAG)               | Planned |
 
-**All six phases are MERGED to `main` (`b601622`, fast-forward — the int/NN
-branches stay as the per-phase record, like w/NN).** The integration's first
-pass is complete. Still static, awaiting backend phase 2: drafts/Today,
-connections, Studio, billing, analytics, compose, knowledge. The backend/
-product questions live in open-items 1–13; W7 still waits on the two
-reopened manual gates.
+**INT-0…5 are MERGED to `main` (`b601622`, fast-forward — the int/NN branches
+stay as the per-phase record, like w/NN).** INT-6 is on its own branch and NOT
+merged.
 
-Current totals: **337 unit tests** (31 files), **static e2e 71 passed / 23 live-spec skips**, all green (rb/02).
+**What the 2026-08-17 contract changed (INT-6).** 40 paths → 62. Brand voices
+gained a required `name`, and voices AND tones gained `rules[]` (do/don't,
+embedded in every read, `PATCH` replaces the whole list) — which lifts the
+INT-3 restriction (open-items 7 is now partly closed; only a tone's `example`
+and a voice's `examples` remain homeless). Orgs gained `country`, plus
+`PUT /orgs/:id/country` (~10 s: it loads the holiday calendar) and a read-only
+`GET /orgs/:id/holidays` carrying each day's do/don't rules. Two new error
+codes: `402 wallet_insufficient` and `502 bad_gateway`. And a whole new
+namespace — `/orgs/:orgId/alphastudio/*`: wallet, usage, capability catalog,
+posts runs (sync preview + batch generate), media jobs/assets, RAG knowledge —
+a **pure proxy** to the external AlphaProStudio service, which the frontend
+never addresses directly (decisions.md D-INT-A).
+
+**Still NOT on the wire, and still static:** drafts / Today (D1–D3), the
+publish/schedule dialog (D5), channel connections + OAuth (B1–B3), analytics
+(G1–G2), plans / subscription / checkout (H1, H2, H4), any streaming (F1's
+token stream — the proxy has no stream endpoint), and proposals +
+published-social (they exist upstream but are not proxied). None of it is
+invented or faked: where a spec promised something the wire cannot deliver, the
+honest subset ships and the deviation is logged. The backend questions live in
+open-items 1–13 and 21–27; W7 still waits on the two reopened manual gates.
+
+Current totals after INT-6: **355 unit tests** (33 files, +18), **static e2e
+72 passed / 23 live-spec skips**, guard-static 227 files clean, all green.
 **No route is a stub any more** — `PlaceholderScreen` is deleted, and
 `verify:w06` fails if it comes back.
 
@@ -187,6 +229,36 @@ These are learned the hard way; each cost a debugging cycle.
     checks matched their own doc comments until comments were stripped, and a
     tokens.css comment naming the dark selector broke `tokens.test.ts`, which
     locates the dark block by that string's first occurrence.
+12. **A comment stripper that tracks string state will swallow a file.** INT-6
+    needed guard-static to read code without comments, and the obvious
+    implementation — a lexer that enters "string mode" on a quote — dies on the
+    first apostrophe in JSX prose ("Don't"): the string never closes and every
+    following line is blanked, so the guard silently stops guarding. That is
+    worse than a guard with a known gap. `codeOf()` is line-scoped instead, and
+    its two blind spots can only LOSE a match, never invent one. If you extend
+    it, keep that direction of failure.
+13. **api.md is not the wire.** Three fields the 2026-08-17 docs describe one
+    way behave another: `slot` is required on a generate run, `embeddingModel`
+    is required on a RAG collection, and a draft's `toneId`/`rationale` live
+    INSIDE `outputs[].content`, not beside it. Types for anything under
+    `/alphastudio/*` come from `Docs/api/alphastudio-shapes.md`
+    (`pnpm smoke:alphastudio`) — never from an example in prose.
+14. **Playwright's `count()` does not auto-wait, so it is never a readiness
+    gate.** Two specs flaked only under parallel load for this reason (found
+    INT-6, present since the 2026-08-11 code-split): the route's lazy chunk was
+    still arriving, `count()` returned 0, and the test either skipped its whole
+    loop and failed as "no such slot" or compared against a stale zero. Waiting
+    for `[aria-busy="true"]` to reach 0 does NOT cover it either — that
+    assertion can pass in the window before the fallback even mounts. Assert
+    `expect(locator.first()).toBeVisible()` first; that retries, `count()`
+    does not.
+15. **A `verify:wNN` you are not running is a check that has already broken.**
+    `keyboard-focus rules hold` (w06) had been failing since 2026-08-11 because
+    the code-split moved route elements behind a lazy loader and its regex
+    matched the old literal markup — six days unnoticed, because the rb/02 work
+    ran `verify:w02`. The law was intact; only the check was stale. When you
+    branch, run the gate you are about to be judged by BEFORE writing code, so
+    you know which failures are yours.
 
 ## Design laws with automated enforcement
 
@@ -224,6 +296,10 @@ read source, because these failure modes pass behavioural tests:
   render `ToneBadge`.
 - The palette is guarded by `src/styles/tokens.test.ts` — 49 contrast
   assertions, including the `bg-X/10 text-X` badge pattern.
+- The proxy law (INT-6, `guard:static`): `fetch` exists in exactly two files,
+  and no code under `src/` may name the upstream origin, its signing headers,
+  its route prefix, or either service secret. Comments may name all of them —
+  the rules read code only.
 
 ## Open manual gates
 
@@ -264,8 +340,9 @@ Useful commands (full list in `.agent/stack.md`):
 
 ```bash
 pnpm dev                 # http://localhost:5173
-pnpm verify:w06          # the last completed phase; --skip-e2e for a fast pass
+pnpm verify:w06          # the last completed W phase; --skip-e2e for a fast pass
 pnpm lint && pnpm typecheck && pnpm test
+pnpm smoke:alphastudio   # live: re-observe the proxy shapes (needs VITE_API_BASE_URL)
 ```
 
 `/dev/datasets` switches tenant worlds, `/dev/states` forces loading, error and

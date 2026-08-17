@@ -19,11 +19,16 @@
  *   surfacing the wait is the honest behaviour;
  * - x-request-id: sent on every request, and the server's echo logged, so a
  *   bug report can always cite the id the server logs carry;
- * - 204 → resolves to undefined; `{ items, total }` pagination is typed via
- *   `Paginated<T>` with limit/offset in `query`.
+ * - every 2xx shape the contract uses: `204` → undefined, `202` → the accepted
+ *   receipt (`{ runId }` / `{ jobId }` / a queued source — the proxy surfaces
+ *   are asynchronous), and a `DELETE` that answers `200` WITH a body (the RAG
+ *   source delete, whose upstream shape passes through) — all handled by one
+ *   rule rather than a per-caller special case;
+ * - `{ items, total }` pagination is typed via `Paginated<T>`, limit/offset in
+ *   `query`.
  */
 import { apiBaseUrl } from './config'
-import { ApiError, type ApiErrorCode, type ApiErrorDetails } from './errors'
+import { ApiError, codeForStatus, type ApiErrorCode, type ApiErrorDetails } from './errors'
 
 type QueryValue = string | number | boolean | undefined
 export type Query = Record<string, QueryValue>
@@ -87,7 +92,7 @@ export interface RequestOptions {
 }
 
 export async function api<T>(
-  method: 'GET' | 'POST' | 'PATCH' | 'DELETE',
+  method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
   path: string,
   options: RequestOptions = {},
 ): Promise<T> {
@@ -128,8 +133,7 @@ export async function api<T>(
 
   if (response.ok) {
     if (token) unauthorizedNotified = false
-    if (response.status === 204) return undefined as T
-    return (await response.json()) as T
+    return (await readSuccessBody<T>(response)) as T
   }
 
   const error = await toApiError(response, serverId)
@@ -151,6 +155,31 @@ export async function api<T>(
   throw error
 }
 
+/**
+ * One rule for every 2xx the contract can send.
+ *
+ * `204` is bodiless by definition, and an empty body on any other success is
+ * read the same way rather than crashing: `response.json()` on `''` throws a
+ * SyntaxError, which would escape as a raw error instead of an `ApiError` and
+ * bypass every catch site in the data layer. A body that is present but
+ * unparseable is a real fault, so it becomes an `ApiError` and says which
+ * request produced it.
+ */
+async function readSuccessBody<T>(response: Response): Promise<T | undefined> {
+  if (response.status === 204) return undefined
+  const text = await response.text()
+  if (text.trim() === '') return undefined
+  try {
+    return JSON.parse(text) as T
+  } catch {
+    throw new ApiError(
+      response.status,
+      'internal',
+      'The server sent a response this app could not read.',
+    )
+  }
+}
+
 async function toApiError(response: Response, serverId: string | undefined): Promise<ApiError> {
   let code: ApiErrorCode = 'internal'
   let message = 'Internal server error'
@@ -169,8 +198,11 @@ async function toApiError(response: Response, serverId: string | undefined): Pro
     }
   } catch {
     // A non-JSON error body (gateway timeout page, truncated response) still
-    // needs a coherent ApiError; synthesize the code from the status.
-    code = response.status === 429 ? 'rate_limited' : response.status >= 500 ? 'internal' : code
+    // needs a coherent ApiError; synthesize the code from the status. 502
+    // matters most here: an infrastructure gateway page carries no envelope,
+    // and the difference between "upstream failed, nothing changed" and the
+    // generic internal error is the whole message the user reads.
+    code = codeForStatus(response.status) ?? code
   }
 
   const retryAfterHeader = response.headers.get('retry-after')

@@ -41,6 +41,11 @@ test('a post still waiting on analytics says Syncing, never a zero', async ({ pa
   // Hunt for the slot holding the published post rather than assuming which
   // chip it is — the calendar's layout is not the thing under test here.
   const chips = page.getByRole('button', { name: /:00/ })
+  // `count()` does NOT auto-wait. Under parallel load the route's lazy chunk can
+  // still be arriving here, and a `count()` of 0 would skip the loop and fail as
+  // "no such slot" rather than waiting. Assert one chip is really on screen
+  // first; that assertion retries, `count()` does not.
+  await expect(chips.first()).toBeVisible()
   let found = false
   for (let index = 0; index < (await chips.count()); index += 1) {
     await chips.nth(index).click()
@@ -62,6 +67,8 @@ test('skipping a slot is reversible today, and says so', async ({ page }) => {
 
   // A future slot with nothing drafted yet is the one that can be skipped.
   const chips = page.getByRole('button', { name: /:00/ })
+  // Same reason as above: wait for the grid to be real before counting it.
+  await expect(chips.first()).toBeVisible()
   const count = await chips.count()
   let opened = false
   for (let index = 0; index < count; index += 1) {

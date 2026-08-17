@@ -167,11 +167,70 @@ describe('api()', () => {
   })
 
   it('survives a non-JSON error body by synthesizing from the status', async () => {
+    // An infrastructure gateway page carries no envelope, and 502 is precisely
+    // where the synthesized code earns its keep: "upstream failed, nothing
+    // changed" and the generic internal error read very differently on screen.
     fetchMock.mockResolvedValue(
       new Response('<html>Bad gateway</html>', { status: 502, headers: { 'x-request-id': 's' } }),
     )
     const error = await capture(api('GET', '/me'))
-    expect(error.code).toBe('internal')
+    expect(error.code).toBe('bad_gateway')
     expect(error.status).toBe(502)
+  })
+
+  it('carries the two codes the 2026-08-17 contract added', async () => {
+    fetchMock.mockResolvedValue(
+      jsonResponse(402, {
+        error: { code: 'wallet_insufficient', message: 'Wallet cannot cover this request' },
+      }),
+    )
+    const wallet = await capture(api('POST', '/orgs/1/alphastudio/media/jobs', { body: {} }))
+    expect(wallet.code).toBe('wallet_insufficient')
+    expect(wallet.status).toBe(402)
+
+    fetchMock.mockResolvedValue(
+      jsonResponse(502, { error: { code: 'bad_gateway', message: 'Upstream unavailable' } }),
+    )
+    const upstream = await capture(api('PUT', '/orgs/1/country', { body: { country: 'JO' } }))
+    expect(upstream.code).toBe('bad_gateway')
+  })
+
+  it('treats 202 as a JSON success — the async surfaces answer a receipt', async () => {
+    fetchMock.mockResolvedValue(jsonResponse(202, { runId: 'run_1', status: 'queued' }))
+    await expect(
+      api('POST', '/orgs/1/alphastudio/posts/generate', { body: { tones: [] } }),
+    ).resolves.toEqual({ runId: 'run_1', status: 'queued' })
+  })
+
+  it('reads a DELETE that answers 200 WITH a body (the RAG source delete)', async () => {
+    fetchMock.mockResolvedValue(jsonResponse(200, { sourceId: 'src_1', vectorsDeleted: 12 }))
+    await expect(api('DELETE', '/orgs/1/alphastudio/rag/sources/src_1')).resolves.toEqual({
+      sourceId: 'src_1',
+      vectorsDeleted: 12,
+    })
+  })
+
+  it('sends PUT with a JSON body', async () => {
+    fetchMock.mockResolvedValue(jsonResponse(200, { holidaysCount: 11, reloaded: true }))
+    await api('PUT', '/orgs/1/country', { body: { country: 'JO' } })
+    const [, init] = fetchMock.mock.calls[0]
+    expect((init as RequestInit).method).toBe('PUT')
+    expect((init as RequestInit).body).toBe('{"country":"JO"}')
+  })
+
+  it('resolves an EMPTY 200 body to undefined instead of throwing a SyntaxError', async () => {
+    // A raw SyntaxError would escape as something no catch site in the data
+    // layer is shaped for; every failure this client produces is an ApiError.
+    fetchMock.mockResolvedValue(new Response('', { status: 200 }))
+    await expect(api('POST', '/orgs/1/notifications/read-all')).resolves.toBeUndefined()
+  })
+
+  it('turns an unreadable success body into an ApiError, not a raw throw', async () => {
+    fetchMock.mockResolvedValue(
+      new Response('{"truncated":', { status: 200, headers: { 'content-type': 'application/json' } }),
+    )
+    const error = await capture(api('GET', '/me'))
+    expect(error).toBeInstanceOf(ApiError)
+    expect(error.code).toBe('internal')
   })
 })

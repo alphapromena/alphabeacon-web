@@ -227,8 +227,21 @@ function focusRulesHold(): boolean {
 
   // Settings must stay a ROUTE layout. The moment a screen wraps itself in the
   // layout again, the nav unmounts per section and focus goes to the body.
+  //
+  // Matched on STRUCTURE, not on the literal element markup: the 2026-08-11
+  // code-split pass (90fb8b2) moved every route element behind a lazy loader,
+  // the old `element: (<Authed><SettingsLayout` pattern stopped matching, and
+  // this check failed silently for six days because the rb/02 work ran
+  // verify:w02 rather than w06 (state.md trap 11, again). What actually matters
+  // is that the /settings route mounts ONE layout element and hangs the
+  // sections off it as children, whatever wrapper or loader is in between.
+  const settingsRoute = routes.slice(routes.indexOf("path: '/settings',"))
+  const settingsRouteHead = settingsRoute.slice(0, 600)
   const layoutIsRouted =
-    /<Outlet\s*\/>/.test(layout) && /element: \(\s*<Authed>\s*<SettingsLayout/.test(routes)
+    /<Outlet\s*\/>/.test(layout) &&
+    routes.includes("path: '/settings',") &&
+    /settingsLayout\(\)/.test(settingsRouteHead) &&
+    /children:\s*\[/.test(settingsRouteHead)
   const screensDoNotWrap = [
     'organization-screen',
     'brand-voice-screen',

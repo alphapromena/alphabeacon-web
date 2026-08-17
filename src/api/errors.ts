@@ -20,6 +20,20 @@ export const API_ERROR_CODES = [
   'not_found',
   'conflict',
   'rate_limited',
+  /**
+   * 402 — the org's AlphaProStudio wallet cannot cover the generation being
+   * asked for. Actionable, and the reason it has its own code instead of
+   * hiding inside 400/502: the UI must show the balance rather than a generic
+   * failure. There is no funding endpoint on this API (orgs are funded once,
+   * server-side, at creation), so the honest state says so.
+   */
+  'wallet_insufficient',
+  /**
+   * 502 — an upstream service failed. The contract's promise is the whole
+   * value of this code: **nothing changed**. A retry is safe, and no screen
+   * needs to reconcile a half-applied write.
+   */
+  'bad_gateway',
   'internal',
 ] as const
 
@@ -75,4 +89,35 @@ export class ApiError extends Error {
 /** Narrowing helper for catch blocks. */
 export function isApiError(value: unknown): value is ApiError {
   return value instanceof ApiError
+}
+
+/**
+ * The code a bare HTTP status implies, for the two places no envelope arrives:
+ * an infrastructure gateway page (no JSON to switch on) and a presigned S3
+ * `PUT`, which answers XML and knows nothing about this contract. `400` stays
+ * `bad_request` rather than `validation_failed` — without `details` there is
+ * nothing structured to say, which is exactly the difference between the two.
+ * `undefined` means "the status alone does not decide it; keep your default".
+ */
+export function codeForStatus(status: number): ServerErrorCode | undefined {
+  switch (status) {
+    case 400:
+      return 'bad_request'
+    case 401:
+      return 'unauthorized'
+    case 402:
+      return 'wallet_insufficient'
+    case 403:
+      return 'forbidden'
+    case 404:
+      return 'not_found'
+    case 409:
+      return 'conflict'
+    case 429:
+      return 'rate_limited'
+    case 502:
+      return 'bad_gateway'
+    default:
+      return status >= 500 ? 'internal' : undefined
+  }
 }

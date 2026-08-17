@@ -61,12 +61,25 @@ numbers** — wrap in `MonoNumber`.
   limited analytics get the honesty note, not a broken chart; "Syncing…" never a
   stale zero.
 
-## Network rules (the static rules, amended 2026-07-30 — see decisions.md)
+## Network rules (the static rules, amended 2026-07-30 and 2026-08-17)
 
-- Network code is legal ONLY in `src/api/`, and only in live mode
-  (`VITE_API_BASE_URL` set). Features, `ab/`, and `data/` stay network-free —
-  `ab/no-network`, `guard-static`, and the e2e assert all enforce it. No
-  `http(s)://` literal anywhere in `src/`, `src/api/` included.
+- Network code is legal ONLY in `src/api/client.ts` and `src/api/upload.ts`,
+  and only in live mode (`VITE_API_BASE_URL` set). Features, `ab/`, `data/` —
+  and the rest of `src/api/` — stay network-free; `ab/no-network`,
+  `guard-static`, and the e2e assert all enforce it. No `http(s)://` literal
+  anywhere in `src/`, `src/api/` included.
+- **Never call AlphaProStudio directly** (Ward, 2026-08-17; decisions.md
+  D-INT-A). Generation goes through our API's `/orgs/:orgId/alphastudio/*` with
+  the normal Bearer session — no HMAC, no `x-aps-*`, no service key, no edge
+  secret, and `guard-static` fails the build on any of those literals in code.
+  The AlphaProStudio Postman *environment* must never be committed; the
+  *collection* is committed and is the authority for the bodies the proxy
+  forwards verbatim.
+- **Proxy types come from observed JSON**, not from api.md's examples: capture
+  with `pnpm smoke:alphastudio`, transcribe from
+  `Docs/api/alphastudio-shapes.md`, keep unproven fields optional.
+- `costUsdEstimate` and catalog `cost` are decimal STRINGS — display them,
+  never `parseFloat` them for arithmetic.
 - **Static mode is permanent.** Without the env var the app is exactly the
   static build: datasets, `/dev/datasets`, zero requests asserted by e2e.
 - Screens read data only through `DataProvider` hooks; entity modules under

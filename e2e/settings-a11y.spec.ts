@@ -199,6 +199,12 @@ test('adding a brand-voice rule puts the cursor in the new row', async ({ page }
   await page.getByRole('tab', { name: 'Brand voice' }).click()
   await expect(page.getByRole('heading', { name: 'Brand voice', level: 1 })).toBeVisible()
 
+  // The h1 renders DURING the loading skeleton, so it is not a readiness signal
+  // (state.md trap 2). Counting before the rows land read `before` as 0, and the
+  // assertion below then compared 1 against the dataset's three rules plus the
+  // new one — this test flaked for exactly that reason.
+  await expect(page.locator('[aria-busy="true"]')).toHaveCount(0)
+
   const before = await page.getByRole('textbox', { name: /^Do rule/ }).count()
   await page.getByRole('button', { name: 'Add do', exact: true }).click()
 

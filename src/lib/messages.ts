@@ -64,6 +64,15 @@ export const MESSAGES = {
     lastOwner: 'You are the only owner. Make someone else an owner first.',
     teamActionFailed: 'That team change did not go through. Try again in a moment.',
     knowledgeUnreadable: 'We could not read that file. Try a text-based PDF, DOCX, TXT, or CSV.',
+
+    // Generation, live mode (INT-6 — the two codes the 2026-08-17 contract
+    // added). Both are states a screen renders, not toasts to shrug at.
+    /** 402 wallet_insufficient. There is no self-serve top-up on this API. */
+    walletInsufficient:
+      "Your balance can't cover this generation. There's no self-serve top-up yet — contact support and we'll add funds.",
+    /** 502 bad_gateway. The contract guarantees nothing changed — say so. */
+    upstreamUnavailable:
+      'The generation service is unavailable right now. Nothing was changed or charged — try again in a moment.',
   },
   empty: {
     dashboardFresh: 'Your pipeline has not started yet — finish setup to see drafts here.',

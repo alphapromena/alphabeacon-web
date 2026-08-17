@@ -73,14 +73,26 @@ change in step. Failures are _designed_ rather than thrown: a screen renders an
 error state selected at `/dev/states` or implied by its dataset, with copy from
 `lib/messages.ts`. In static mode, no request is made at any point.
 
-## The network law (the static law, amended 2026-07-30)
+## The network law (the static law, amended 2026-07-30 and 2026-08-17)
 
-Network code is legal in exactly one place: `src/api/`. Enforced three times —
-`ab/no-network` (ESLint), `scripts/guard-static.ts` (build), and the e2e
-network assert (runtime). Everywhere else under `src/` there is still no
-`fetch`, `axios`, `XMLHttpRequest`, `EventSource`, or `WebSocket`; and NOWHERE,
-`src/api/` included, an `http(s)://` literal — the API base URL comes from
-`VITE_API_BASE_URL` (.env.local), never from source.
+Network code is legal in exactly one place: `src/api/`, and since 2026-08-17 in
+exactly **two files** inside it — `client.ts` (every API call) and `upload.ts`
+(the one non-API request the app makes: bytes to a presigned url our API just
+minted, because the platform never proxies bytes; decisions.md D-INT-A).
+Enforced three times — `ab/no-network` (ESLint), `scripts/guard-static.ts`
+(build), and the e2e network assert (runtime). Everywhere else under `src/`
+there is still no `fetch`, `axios`, `XMLHttpRequest`, `EventSource`, or
+`WebSocket`; and NOWHERE, `src/api/` included, an `http(s)://` literal — the
+API base URL comes from `VITE_API_BASE_URL` (.env.local), never from source.
+
+**The proxy law (Ward, 2026-08-17).** Everything AI-generative reaches the
+external AlphaProStudio service through OUR API's
+`/orgs/:orgId/alphastudio/*` namespace, with the normal Bearer session. The
+frontend never addresses that service, never signs a request and holds no
+service credential, so `guard-static` also bans the marks of doing so in code
+under `src/`: `cloudfront.net`, `x-aps-`, the upstream `v1` route prefix,
+`svc[_-]?key`, `edge[_-]?secret`. Those rules read code with comments stripped,
+so documentation may still name what code may not do.
 
 **Static mode is the default and permanent.** Without the env var the app is
 exactly what it always was: datasets, `/dev/datasets`, zero requests, and the
@@ -90,10 +102,19 @@ behind the provider; e2e then allows exactly one extra origin — the API's.
 ## Live mode (AlphaStudio integration, INT phases)
 
 - **Hybrid per entity.** Entities the API covers (auth/session, me, orgs +
-  members + invites, brand, schedules, event-sources, slots, notifications)
-  resolve through `src/api/` in live mode. Everything else — drafts/Today,
-  connections, Studio, billing/plans, analytics, compose, knowledge — stays on
-  the static datasets, marked in code as awaiting backend phase 2.
+  members + invites + country/holidays, brand incl. rules, schedules,
+  event-sources, slots, notifications) resolve through `src/api/` in live mode.
+  The 2026-08-17 contract adds the `/alphastudio/*` proxies — wallet, usage,
+  capability catalog, posts runs, media jobs/assets, RAG knowledge — wired in
+  INT-7…11. Everything else — drafts/Today, connections, publish/schedule,
+  billing/plans/checkout, analytics, streaming, proposals — stays on the static
+  datasets, marked in code as awaiting a later backend phase.
+- **Two type populations, two levels of trust.** `src/api/types.ts` above the
+  proxy divider is our API's own shape: versioned with it, a missing field is a
+  bug. Below it, every type is an upstream shape our API forwards unchanged,
+  transcribed from JSON actually observed in `Docs/api/alphastudio-shapes.md`
+  (`pnpm smoke:alphastudio`) rather than from prose — the contract states new
+  fields may appear without notice (decisions.md D-INT-H).
 - **No screen knows which side its data came from.** Features keep reading
   provider hooks; the provider decides. That law survived integration on
   purpose — it is what made integration a swap and not a rewrite.

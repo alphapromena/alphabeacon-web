@@ -10,6 +10,16 @@
  * - ids are Postgres bigints serialized as DECIMAL STRINGS — opaque, no math;
  * - timestamps are ISO 8601 UTC strings;
  * - paginated lists are `{ items, total }` with limit/offset query params.
+ *
+ * TWO KINDS OF TYPE LIVE HERE, and the difference decides how defensively each
+ * is written. The types above the proxy divider are OURS: our API owns them,
+ * they are versioned with it, and a missing field is a bug. Everything under
+ * "AlphaStudio proxies" is an UPSTREAM shape — our API forwards the external
+ * service's response unchanged and the contract says new fields "may appear
+ * without notice". Those types are therefore written from JSON actually
+ * observed on the wire (Docs/api/alphastudio-shapes.md, captured by
+ * `scripts/smoke-alphastudio.ts`), never from guesswork; anything not proven
+ * there is optional, and unknown fields are tolerated rather than stripped.
  */
 
 export interface Paginated<T> {
@@ -68,6 +78,13 @@ export interface ApiOrg {
   name: string
   slug: string
   status: string
+  /**
+   * ISO 3166-1 alpha-2, uppercase; `null` until the org sets one. Rides on
+   * every org response, and it is the ONLY holiday control the frontend has:
+   * `PUT /orgs/:id/country` loads the calendar server-side (decisions.md
+   * D-INT-F).
+   */
+  country: string | null
   createdAt?: string
   updatedAt?: string
 }
@@ -107,7 +124,46 @@ export interface InviteReceipt {
   invitedNewUser: boolean
 }
 
-// --- Brand (INT-3): four org-scoped resources, one CRUD surface -------------
+// --- Org country + holidays (INT-8) -----------------------------------------
+// OURS, not a proxy: the holiday rows are stored by our API. The lookup behind
+// them is external, which is why the country write is slow (~10 s) and can fail
+// with 502 — and when it does, nothing changed.
+
+/** `PUT /orgs/:orgId/country` → 200. */
+export interface CountryReceipt {
+  /** The org as it now stands, `country` included. */
+  org: ApiOrg
+  /** Rows in the calendar after the write. `0` is a real answer, not an error. */
+  holidaysCount: number
+  /**
+   * `false` = the org already had this country: a cheap success that fetched
+   * nothing and left the calendar alone. Worth surfacing quietly rather than
+   * claiming a reload that did not happen.
+   */
+  reloaded: boolean
+}
+
+/**
+ * One row of `GET /orgs/:orgId/holidays`, in calendar order. Read-only by
+ * design: rows are written exclusively by the country flow and replaced
+ * wholesale, so there is no create/update/delete to model. No `updatedAt`.
+ */
+export interface ApiHoliday {
+  id: string
+  orgId: string
+  /** Plain calendar date, no time, no zone. */
+  date: string
+  event: string
+  /**
+   * The lookup capability's own do/don't guidance, stored raw. `kind` is `do`
+   * or `dont` today but the contract says to treat an unknown kind as generic
+   * rather than failing — hence `string`, not `ApiRuleKind`.
+   */
+  rules: { kind: string; text: string }[]
+  createdAt: string
+}
+
+// --- Brand (INT-3, rules added 2026-08-17): four resources, one CRUD surface -
 
 interface BrandRow {
   id: string
@@ -116,14 +172,40 @@ interface BrandRow {
   updatedAt: string
 }
 
+/**
+ * A do/don't rule on a voice or a tone. `kind` is a closed set here — the API
+ * validates it — unlike the holiday rules below, which come from an external
+ * capability and may carry a kind we have never seen.
+ */
+export type ApiRuleKind = 'do' | 'dont'
+
+export interface ApiRule {
+  id: string
+  kind: ApiRuleKind
+  text: string
+}
+
+/** What a write sends: rules have no client-chosen id (ids are reissued). */
+export type ApiRuleInput = Pick<ApiRule, 'kind' | 'text'>
+
 export interface ApiTone extends BrandRow {
   name: string
   description: string
   preset: boolean
+  /**
+   * Embedded in EVERY read — list, get, create, update — in creation order, so
+   * the rules never need a second call. On `PATCH`, sending `rules` replaces
+   * the whole list (`[]` clears it); omitting it leaves them untouched.
+   */
+  rules: ApiRule[]
 }
 
 export interface ApiVoice extends BrandRow {
+  /** Required on create since 2026-08-17 — a voice without one is a 400. */
+  name: string
   description: string
+  /** Same embed and replace semantics as a tone's. */
+  rules: ApiRule[]
 }
 
 export interface ApiSource extends BrandRow {
@@ -202,4 +284,499 @@ export interface ApiSlot {
   status: 'review' | 'skipped' | 'approved'
   title: string
   kind: string
+}
+
+// ============================================================================
+// AlphaStudio proxies — UPSTREAM SHAPES (INT-9 … INT-11)
+// ============================================================================
+//
+// Everything below crosses `/orgs/:orgId/alphastudio/*`, which our API forwards
+// to the external AlphaProStudio service unchanged. Three consequences, and all
+// three are why these types look different from the ones above:
+//
+// 1. The frontend still only ever calls OUR API, with the normal Bearer
+//    session. It never reaches the upstream service, never signs a request,
+//    never holds a service key (Ward, 2026-08-17; guard-static enforces it).
+// 2. The contract states new fields "may appear without notice". So these
+//    types describe what was OBSERVED on the wire — see
+//    Docs/api/alphastudio-shapes.md — and stay tolerant of the rest. Unknown
+//    fields are carried, not stripped; anything the smoke run did not prove is
+//    optional.
+// 3. Request bodies here are OURS to get right. Our API validates them loosely
+//    and forwards them verbatim, so a wrong body comes back as an upstream
+//    `400 bad_request`, not a local schema error. The Postman collection
+//    (Docs/api/alphaprostudio.postman.json) is the authority for their shape.
+
+/**
+ * The plan vocabulary for on-demand runs and media jobs — a grade, and the
+ * whole recipe behind it. Deliberately SEPARATE from a schedule's `modelAlias`
+ * (`fast|balanced|quality`), which is a different vocabulary on a different
+ * surface (decisions.md D-INT-D); the two must never be mapped onto each other.
+ */
+export type ApiPlan = 'balanced' | 'creative' | 'precise'
+
+// --- Wallet + usage (INT-9) --------------------------------------------------
+
+/**
+ * `GET .../alphastudio/wallet`. Money in CENTS — there is no credit here, and
+ * live mode never invents an exchange rate (decisions.md D-INT-E). Orgs are
+ * funded once at creation; there is no funding endpoint on this API.
+ */
+export interface ApiWallet {
+  /** Funded and not yet settled away — INCLUDING anything currently held. */
+  cents: number
+  /** Reserved by jobs in flight; released or settled when they finish. */
+  heldCents: number
+  /**
+   * `cents - heldCents`, and the number the next request is actually checked
+   * against. Watch this one, not `cents`.
+   */
+  availableCents: number
+}
+
+/** One row of a usage read, at whichever grain was asked for. */
+export interface ApiUsageGroup {
+  /** `null` for unattributed usage. */
+  key: string | null
+  unit: string
+  qty: number
+  /**
+   * A DECIMAL STRING, on purpose. Never `parseFloat` it: display it as given,
+   * and if a total is ever needed, sum it in integer units parsed from the
+   * string (decisions.md D-INT-E).
+   */
+  costUsdEstimate: string
+}
+
+/** The same row at day grain, for charts and reconciliation. */
+export interface ApiUsageDay extends Omit<ApiUsageGroup, 'key'> {
+  /** Inclusive UTC day, `YYYY-MM-DD`. */
+  day: string
+}
+
+/**
+ * `GET .../alphastudio/usage?from&to&group_by`.
+ *
+ * `model` and `capability` report this org's own usage. `tenant` reports across
+ * EVERY org of this app (its keys are org ids) — it is a billing view and must
+ * never back an end-user chart.
+ */
+export interface ApiUsage {
+  from: string
+  to: string
+  groupBy: ApiUsageGrain
+  groups: ApiUsageGroup[]
+  days: ApiUsageDay[]
+}
+
+export type ApiUsageGrain = 'model' | 'tenant' | 'capability'
+
+/** The two grains an end-user screen may ask for (D-INT-E). */
+export type ApiUserUsageGrain = Exclude<ApiUsageGrain, 'tenant'>
+
+// --- Capability catalog (INT-11) ---------------------------------------------
+
+/**
+ * One model a capability can run on, named by the APP'S OWN ALIAS — never a
+ * vendor model or a provider. Every field below was observed on the wire; a row
+ * may carry more, so read defensively.
+ *
+ * Two of these turned out to be worth more than the docs suggested:
+ * `displayHint` is a ready-made friendly label (E1 needs no name table of its
+ * own), and `capabilitySchema` is a real JSON Schema for that model's `params`
+ * — which is exactly what W5's "the params form is generated from the model's
+ * schema, and may not name a model or a parameter" law was built to consume.
+ */
+export interface ApiCatalogModel {
+  alias: string
+  /** `image` | `video` observed; keep it open. */
+  kind: string
+  /** The grade that resolves to this row. */
+  plan: string
+  /** A human label with no vendor in it, e.g. "Balanced image". */
+  displayHint?: string
+  /** JSON Schema for this model's `params` — the source for the params form. */
+  capabilitySchema?: Record<string, unknown>
+  /** Which capabilities this alias may be named for. */
+  capabilities?: string[]
+  /**
+   * Unit → decimal-string price, e.g. `{ images: "0.03" }` or
+   * `{ video_seconds: "0.07" }`. A DECIMAL STRING like `costUsdEstimate`:
+   * display it, never `parseFloat` it for arithmetic.
+   */
+  cost?: Record<string, string>
+  /** App-side gating metadata, e.g. `{ min_plan: "pro" }`. */
+  appMetadata?: Record<string, unknown>
+}
+
+/**
+ * `GET .../alphastudio/catalog/capabilities/:capability[?plan=]`.
+ *
+ * THE source for E1's gallery — no model list is ever hardcoded (INT-11).
+ * A capability that is unknown OR not granted answers 404, identically and on
+ * purpose, so "granted" is something to probe rather than assume.
+ */
+export interface ApiCapabilityCatalog {
+  capability: string
+  /**
+   * `false` = the capability pins its model, and a `plan` sent to its run is
+   * IGNORED rather than refused.
+   */
+  selectable: boolean
+  /** Which request field the plan belongs in; `null` when pinned. */
+  field: string | null
+  /** Echoes the `?plan=` filter, `null` on the plain read. */
+  plan: string | null
+  models: ApiCatalogModel[]
+}
+
+// --- Posts runs (INT-7 preview, INT-10 generate) -----------------------------
+
+/** A tone as a RUN carries it: inline, used for this run, never stored. */
+export interface ApiRunTone {
+  /** Unique within one request. Our tone id, sent through as-is. */
+  id?: string
+  name: string
+  description?: string
+  rules?: ApiRuleInput[]
+  example?: string
+  language?: string
+}
+
+/** `POST .../posts/tones-preview` — sync; the finished run comes back inline. */
+export interface TonesPreviewRequest {
+  /** Required upstream. */
+  tone: ApiRunTone
+  /**
+   * OPTIONAL, and omitting it is the deliberate choice (INT-7): the platform
+   * then falls back to the org's pushed context bundle, which is what real
+   * generation grounds on. Sending it overrides the bundle entirely — never a
+   * merge — so a preview that sent one would not preview the real thing.
+   */
+  brandVoice?: { rules: ApiRuleInput[] }
+  language?: string
+}
+
+/** The day a run is being written for. */
+export interface ApiRunSlot {
+  /** Our own reference for the slot; echoed back untouched. */
+  ref?: string
+  dateISO: string
+  /** `HH:MM`. */
+  time?: string
+  /** IANA zone name. */
+  timezone?: string
+}
+
+/**
+ * An occasion attached to a run. Its `rules` OUTRANK the tone's and the
+ * brand's — a holiday from the org's own calendar drops straight in, which is
+ * exactly the `{ kind, text }` shape `ApiHoliday.rules` already carries.
+ */
+export interface ApiAttachedEvent {
+  title: string
+  dateISO: string
+  rules?: { kind: string; text: string }[]
+}
+
+/** `POST .../posts/generate` — batch; answers a receipt, not the drafts. */
+export interface PostsGenerateRequest {
+  /** 1–3, ids unique. `tones.length × options.perTone` may not exceed 6. */
+  tones: ApiRunTone[]
+  plan?: ApiPlan
+  /**
+   * REQUIRED, despite reading as optional in the docs: the smoke run's
+   * no-slot probe came back `400` (Docs/api/alphastudio-shapes.md). F1 must
+   * always send one — today, now, schedule timezone or the browser's.
+   */
+  slot: ApiRunSlot
+  attachedEvent?: ApiAttachedEvent
+  options?: { perTone?: 1 | 2 }
+}
+
+/** A `202` from a batch run: the drafts are pulled from the run endpoint. */
+export interface RunReceipt {
+  runId: string
+  status: ApiRunStatus
+}
+
+export type ApiRunStatus = 'queued' | 'running' | 'completed' | 'failed'
+
+/**
+ * One output of a run.
+ *
+ * `content` is a bag whose keys follow the capability, and the OBSERVED shapes
+ * are why it is not flattened: `tones.preview` answers `{ sample }`, while
+ * `social-posts.generate` answers `{ toneId, content, rationale }` — the tone
+ * id and the rationale live INSIDE `content`, not beside it. Read them through
+ * the two aliases below rather than by hand.
+ */
+export interface ApiRunOutput {
+  index: number
+  content: Record<string, unknown>
+  /** Guardrail findings. Always rendered, never hidden (design law). */
+  flags?: unknown[]
+  /** Where the claim came from. Upstream terms require these stay visible. */
+  attributions?: unknown[]
+  /** `social-posts.generate` only: the run's own scoring of this draft. */
+  judge?: { score?: number; voice?: number; grounding?: number; repetition?: number }
+  /**
+   * A proposal record DOES exist upstream for every draft — but the proposals
+   * surface is not proxied, so this id is currently unusable. Kept because it
+   * is the handle an approve/decline wire would need (open-items question).
+   */
+  proposalId?: string
+}
+
+/** `content` of a `social-posts.generate` output, as observed. */
+export interface ApiPostDraftContent {
+  /** Filled by the engine from the request's tones — never echoed by a model. */
+  toneId?: string
+  content?: string
+  rationale?: string
+}
+
+/** `content` of a `tones.preview` output, as observed. */
+export interface ApiTonePreviewContent {
+  sample?: string
+}
+
+/**
+ * `GET .../posts/runs/:runId`, and the inline answer of the sync preview.
+ *
+ * Also the recovery path for a missed callback: the record is pullable
+ * regardless of delivery, which is what makes the local run ledger workable
+ * (D-INT-G). Unknown, or another org's → 404.
+ */
+export interface ApiRun {
+  runId: string
+  status: ApiRunStatus
+  capability?: string
+  capabilityVersion?: number
+  /** `sync` | `batch`. */
+  mode?: string
+  outputs?: ApiRunOutput[]
+  /** Steps named by the app's own aliases; no vendor ref ever appears. */
+  modelVersions?: { step: string; alias: string }[]
+  /** Provenance of the prompts that wrote the run. Not user-facing. */
+  promptVersions?: { capability: string; name: string; version: number; contentHash: string }[]
+  /** Present on `failed`. */
+  error?: unknown
+  createdAt?: string
+  updatedAt?: string
+}
+
+// --- Media jobs + assets (INT-11) --------------------------------------------
+
+/** End-user text the platform quarantines; at most 6 per job. */
+export interface ApiMediaGuidance {
+  /** `headline` | `palette` | `style` | `subject` | `instruction` | `scene`. */
+  role: string
+  text: string
+}
+
+/**
+ * `POST .../media/jobs` — ONE endpoint whose body shape the frontend decides:
+ * `capability` selects the schema the upstream parses it with. `modelAlias` is
+ * retired and REFUSED BY NAME, so it must never be sent; ask for a `plan`.
+ */
+export interface MediaJobRequest {
+  /** Defaults to `media.generate` upstream when omitted. */
+  capability?: string
+  plan?: ApiPlan
+  /** `image` | `video`, where the capability serves both. Omitted = image. */
+  kind?: string
+  prompt?: string
+  /** Only for capabilities that own the brief (e.g. an edit). */
+  instruction?: string
+  params?: Record<string, unknown>
+  origin?: { kind?: string; ref?: string }
+  guidance?: ApiMediaGuidance[]
+  style?: Record<string, unknown>
+  /** The fan-out surface: one render per item, each tagged by its `ref`. */
+  posts?: { ref: string; content: string; tone?: ApiRunTone }[]
+}
+
+/**
+ * A media job's lifecycle, OBSERVED: `queued → submitted → succeeded`. Note it
+ * is NOT a run's vocabulary — a run reaches `completed`, a job reaches
+ * `succeeded` — so the two must never share a status type or a poll predicate.
+ * Left open because only the happy path has been watched end to end.
+ */
+export type ApiMediaJobStatus = 'queued' | 'submitted' | 'succeeded' | 'failed' | (string & {})
+
+/**
+ * One rendered asset. `url` is a presigned GET, minted for 1 hour and ONLY on a
+ * finished job read — the list endpoint deliberately omits it, so a screen mints
+ * one per asset the user actually opens.
+ */
+export interface ApiMediaAsset {
+  assetId: string
+  url?: string
+  expiresAt?: string
+  mediaType?: string
+  /** `image` | `video`. */
+  kind?: string
+  /** Observed: `{ width, height, synthetic }`. Useful for laying out E4. */
+  meta?: Record<string, unknown>
+}
+
+/**
+ * `GET .../media/jobs/:jobId` — the polling endpoint. What is absent is as
+ * deliberate as what is present: no provider, no vendor model, no route.
+ *
+ * `modelAlias` here is the platform's ANSWER — which catalog row served the
+ * render. It is safe to read and must never be SENT: on a request the field is
+ * retired and refused by name (see `MediaJobRequest`).
+ */
+export interface ApiMediaJob {
+  jobId: string
+  status: ApiMediaJobStatus
+  capability?: string
+  plan?: string
+  /** Resolved by the platform. Read-only — never echo it back on a request. */
+  modelAlias?: string
+  assets?: ApiMediaAsset[]
+  origin?: { kind?: string; ref?: string }
+  /** Present on failure. */
+  error?: unknown
+  createdAt?: string
+  updatedAt?: string
+}
+
+/**
+ * The `202` from job intake. Observed to be the FULL job object (with
+ * `assets: []`), not the three documented fields — so the receipt and the poll
+ * read the same type, and a caller can render immediately.
+ */
+export type MediaJobReceipt = ApiMediaJob
+
+/** A fan-out answers a LIST, because one request produced several jobs. */
+export interface MediaJobFanOutReceipt {
+  jobs: MediaJobReceipt[]
+}
+
+/** `GET .../media/jobs` → newest first, assets WITHOUT presigned urls. */
+export interface ApiMediaJobList {
+  jobs: ApiMediaJob[]
+}
+
+/**
+ * `POST .../media/assets/presign` → 201. The org's own image, in: `PUT` the
+ * bytes to `uploadUrl` with exactly this `mediaType` (it is part of the
+ * signature) via `uploadToPresignedUrl`. png/jpeg/webp only. Nothing is metered.
+ */
+export interface MediaUploadTicket {
+  assetId: string
+  uploadUrl: string
+  mediaType: string
+  expiresAt?: string
+}
+
+/**
+ * `POST .../media/assets/:assetId/presign` → 200. The read IS the ownership
+ * check: unknown and not-yours are the same 404, on purpose. Good for an hour.
+ */
+export interface MediaDownloadTicket {
+  url: string
+  expiresAt: string
+  assetId?: string
+}
+
+// --- RAG knowledge (INT-11) --------------------------------------------------
+
+/**
+ * A knowledge collection. It PINS its embedding model alias and chunk profile
+ * for its lifetime, so the choice is made once at creation and never edited.
+ */
+export interface ApiRagCollection {
+  collectionId: string
+  name: string
+  /** `tenant` = this org only; `app` = every org of this app. */
+  scope: string
+  embeddingModel: string
+  chunkProfile: string
+  activeIndex: string
+  status: string
+  createdAt?: string
+  updatedAt?: string
+}
+
+export interface ApiRagCollectionList {
+  collections: ApiRagCollection[]
+}
+
+/** `POST .../rag/collections` → 201. A duplicate name in a scope is a 400. */
+export interface RagCollectionRequest {
+  name: string
+  scope?: 'tenant' | 'app'
+  /**
+   * REQUIRED here, though api.md marks it optional: the smoke run's
+   * without-it probe came back `400` (Docs/api/alphastudio-shapes.md). It is
+   * the app's own alias — a vendor id never crosses this wire — and
+   * `embed-default` is the one this app holds.
+   */
+  embeddingModel: string
+  chunkProfile?: string
+}
+
+/**
+ * `POST .../rag/collections/:id/sources` → 202. Two shapes on `kind`: `push`
+ * sends text we already hold, `url` has the platform fetch it (http/https only).
+ */
+export type RagSourceRequest =
+  | { kind: 'push'; title: string; mediaType: string; content: string }
+  | { kind: 'url'; url: string; title?: string }
+
+/**
+ * Ingestion state, upstream's own capitalisation. `Uploading` is a presigned
+ * row whose bytes have not landed; a source that never receives them simply
+ * stays there.
+ */
+export type ApiRagSourceStatus = 'Uploading' | 'Processing' | 'Ready' | 'Failed'
+
+export interface ApiRagSource {
+  sourceId: string
+  collectionId?: string
+  kind?: string
+  status: ApiRagSourceStatus
+  /** What this source contributed, once `Ready`. */
+  chunkCount?: number
+  /** `true` = identical content already existed: nothing embedded or billed. */
+  deduped?: boolean
+  /** Only on `Failed`, from a closed vocabulary. */
+  failureReason?: string
+  title?: string
+  mediaType?: string
+  /** How dedupe is decided; appears once the content has been read. */
+  contentHash?: string
+  createdAt?: string
+  updatedAt?: string
+}
+
+export interface ApiRagSourceList {
+  sources: ApiRagSource[]
+}
+
+/**
+ * `POST .../rag/collections/:id/sources/presign` → 201. The source row exists
+ * as `Uploading` immediately; `PUT` the bytes with EXACTLY this `mediaType`
+ * within 15 minutes and ingestion starts by itself — there is no "complete"
+ * call. A media type the platform cannot extract is a 400.
+ */
+export interface RagUploadTicket {
+  sourceId: string
+  uploadUrl: string
+  expiresAt: string
+  mediaType: string
+}
+
+/**
+ * `DELETE .../rag/sources/:id` → **200 with a body**, not this API's usual 204:
+ * the upstream shape passes through. Vectors are removed inline before the
+ * response, and `vectorsDeleted` is what makes that checkable.
+ */
+export interface RagDeleteReceipt {
+  sourceId: string
+  vectorsDeleted: number
 }
