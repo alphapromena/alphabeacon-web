@@ -1364,3 +1364,69 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
 - Decisions: none new — extends the 2026-08-12 platform-surface entry
 - Verify: verify:w02 full PASS; labels checked at 2x on both card rows
 - Next: nothing on this thread
+
+### 2026-08-17 14:30 — INT-6: the new contract landed, the proxy law enforced, the shapes observed
+
+- Did: the backend dev's 2026-08-17 contract replaced the old one whole
+  (`api.md` + `openapi.json` 0.1.0 / 62 paths, new `changelog.md`, and the
+  upstream `alphaprostudio.postman.json` as reference only). The Postman
+  ENVIRONMENT is gitignored by name and by `*.environment.json` — it carries a
+  live HMAC key; it was not in the tree, and now it cannot be.
+- The client learned every shape the new surface uses: `PUT`; one
+  `readSuccessBody()` rule for 204, the `202` receipts the async proxies answer,
+  and the RAG delete's 200-with-a-body; an EMPTY success body resolving to
+  `undefined` instead of throwing a raw SyntaxError past every catch site.
+  `wallet_insufficient` (402) and `bad_gateway` (502) joined the codes, with
+  `codeForStatus()` for the two places no envelope arrives — a gateway page and
+  a presigned S3 PUT. A non-JSON 502 now reads as `bad_gateway`, which is the
+  difference between "nothing changed" and "something went wrong on our side".
+- `src/api/upload.ts` is the ONE non-API request the app makes (D-INT-A): no
+  Bearer, exactly the signed `Content-Type`, url never composed locally.
+- Ward's rule 1 became a build failure rather than an intention: guard-static
+  bans `cloudfront.net`, `x-aps-`, the upstream v1 route prefix, `svc[_-]?key`
+  and `edge[_-]?secret` in code under `src/`, and the `fetch` licence narrowed
+  from all of `src/api/` to exactly `client.ts` + `upload.ts`. The new rules read
+  CODE with comments removed, so docs may still name what code may not do.
+  The first implementation was a string-aware lexer and it was wrong: one
+  apostrophe in JSX prose opened a string it never closed and blanked the rest of
+  the file — a guard that silently stops guarding. Replaced with a line-scoped
+  scanner whose two blind spots can only lose a match, never invent one.
+- `pnpm smoke:alphastudio` drove one fresh QA org through every proxy surface
+  against the deployed API and wrote `Docs/api/alphastudio-shapes.md` verbatim.
+  It earned its keep: `slot` is REQUIRED on a generate run, `embeddingModel` is
+  REQUIRED on a RAG collection (api.md says optional for both), a draft's
+  `toneId`/`rationale` live INSIDE `outputs[].content`, a media job's lifecycle
+  is `queued → submitted → succeeded` (not a run's `completed`), a job response
+  echoes the `modelAlias` a request is refused for sending, and the catalog rows
+  carry `displayHint`, `cost`, `capabilitySchema`, `capabilities` and
+  `appMetadata.min_plan` — none of it documented. All ten probed capabilities are
+  granted, all four RAG media types extract, and CORS allows `PUT` and the new
+  paths (but still not `x-request-id`, and it exposes no headers at all).
+- **Two pre-existing failures found and fixed, not caused by this phase.**
+  `keyboard-focus rules hold` (verify:w06) had been red since the 2026-08-11
+  code-split, whose lazy loaders broke its regex — the law was intact, the check
+  was stale; repaired to match structure. And two e2e specs flaked under
+  parallel load because `count()` does not auto-wait and was serving as a
+  readiness gate; both assert visibility first now. Confirmed both failures
+  reproduce on the base commit before any of my code.
+- Phase: INT-6 (branch `int/06-contract`, cut from `rb/02-v1-brief` `6c598b2`)
+- Files: `Docs/api/{api.md,openapi.json,changelog.md,alphaprostudio.postman.json,
+  alphastudio-shapes.md}`, `.gitignore`, `src/api/{errors,client,types}.ts`,
+  `src/api/upload.ts` + `upload.test.ts` (new), `src/api/client.test.ts`,
+  `src/lib/messages.ts`, `scripts/{guard-static.ts,guard-static.test.ts,
+  smoke-alphastudio.ts (new),verify-w06.ts}`, `e2e/{settings-a11y,
+  calendar-connections}.spec.ts`, `package.json`, `.agent/*`
+- Decisions: see decisions.md — D-INT-A (proxy law + the one presigned-PUT
+  exemption), D-INT-H (types from observed JSON), D-INT-D (plan vs schedule
+  alias vocabularies), D-INT-E (money not credits), D-INT-B/C/F/G (the
+  interpretations INT-7…10 build on), D-INT-I (what a live suite may spend)
+- Verify: lint + typecheck + **355 unit** (33 files, +18) + guard-static (227
+  files) + build green; **verify:w06 PASS**, **verify:w02 PASS**; static e2e
+  **72 passed / 23 live skips**, four consecutive clean full runs after the flake
+  fix. Smoke run green twice — wallet 5000 → 5000 text-only, 5000 → 4997 with one
+  3-cent render under `LIVE_MEDIA=1` (exactly the catalog's advertised price).
+  No live e2e spec: INT-6 ships no UI.
+- Next: INT-7 — brand rules live + I4's tone preview (`int/07-brand-rules`).
+  Two things for the founder first: the seven backend questions in open-items
+  21–27, and the `main`-vs-`rb/02` gap flagged in state.md (the last five M1
+  commits are on `rb/02` only).
