@@ -1562,3 +1562,35 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   / 36 skips**; **live e2e `live-wallet` 4/4**. Wallet unchanged at 5000 cents
   across the suite — it reads and meters, it does not spend.
 - Next: INT-10 — on-demand generate F1 (`int/10-generate`).
+
+### 2026-08-18 11:35 — INT-10: F1 runs for real, and its results are read-only
+
+- Did: `src/data/generate.ts` (the seam + the localStorage run ledger) and
+  `live-generate.tsx` (the live F1). A run is queued, polled 1.5s → 3s → 5s and
+  then steady, and stops at 90 s with "still working — see Recent runs" rather
+  than an error, because the run really is still going. Drafts come from the
+  OBSERVED shape: `toneId` and `rationale` read from inside
+  `outputs[].content`, which is the single detail that would have failed
+  silently had the types come from prose.
+- The action row is Copy + Create visual. Approve/decline/schedule are absent,
+  not disabled — there is no drafts wire to record them in. Flags,
+  attributions and rationale render whenever present.
+- `slot` is required and built from now in the schedule's timezone; the
+  over-budget fan-out is refused client-side so a 400 becomes a sentence.
+- **A bug the static suite structurally could not find:** the poll's unmount
+  guard shared an effect with an `orgId` dependency, so the first orgId change
+  latched `cancelled` to true and every later poll returned at its first check.
+  The screen sat on "Writing your drafts…" with nothing to show. Nothing in
+  static mode polls. Fixed by giving the guard its own dependency-free effect,
+  and recorded in decisions.md as a shape that recurs.
+- Phase: INT-10 (branch `int/10-generate`, cut from `int/09-wallet`)
+- Files: `src/data/generate.ts` + test (new),
+  `src/features/generate/{live-generate.tsx (new),generate-screen.tsx}`,
+  `src/lib/messages.ts`, `e2e/live-generate.spec.ts` (new), `.agent/*`
+- Decisions: see decisions.md — INT-10 (two interactions behind one route, the
+  screens4 F1 deviation, the latched-guard bug)
+- Verify: lint + typecheck + **391 unit** (+11) + guard-static (239 files) +
+  build green; **verify:w06 PASS**; static e2e **72 passed / 38 skips**;
+  **live e2e `live-generate` 2/2** — one balanced run, one tone, perTone 1,
+  re-pulled from the ledger after a reload in the same context.
+- Next: INT-11 — Studio media + knowledge (`int/11-studio-knowledge`).
