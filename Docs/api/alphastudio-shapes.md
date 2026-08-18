@@ -3639,3 +3639,71 @@ access-control-max-age: 3600
   "total": 2
 }
 ```
+
+## Proposals & published-social — NOT PROXIED (probed 2026-08-18)
+
+Probed because every draft a run produces comes back carrying a `proposalId`
+(`prop_…`), so the proposals ledger demonstrably exists upstream — the question
+was only whether our API exposes it. It does not, yet.
+
+### 1. The live contract is unchanged
+
+`GET {base}/openapi` was fetched and diffed against the committed
+`Docs/api/openapi.json`:
+
+```
+live      version 0.1.0 · 62 paths
+committed version 0.1.0 · 62 paths
+added:   0
+removed: 0
+paths matching /proposal|published/: (none)
+```
+
+So the contract in this repo is current. Nothing has been added since the
+2026-08-17 drop.
+
+### 2. A route-level probe agrees, and here is how to read it
+
+**The trap: an UNAUTHENTICATED probe proves nothing.** Auth runs before
+routing, so every path — including deliberate nonsense like
+`/orgs/1/alphastudio/posts/runs` — answers `401 unauthorized`. A first pass
+that reads those 401s as "the route exists, it just needs a token" would
+conclude the opposite of the truth. The probe must carry a real session and a
+real org id, and it needs a known-good control and a known-bad control to be
+worth anything.
+
+Authenticated, on an org the caller owns:
+
+| Status | code | Method | Path |
+| ------ | ---- | ------ | ---- |
+| **200** | — | GET | `/orgs/:id/alphastudio/wallet` — **control: exists** |
+| **404** | `not_found` | GET | `/orgs/:id/alphastudio/nonexistent-xyz` — **control: does not** |
+| 404 | `not_found` | GET | `/orgs/:id/alphastudio/proposals` |
+| 404 | `not_found` | GET | `/orgs/:id/alphastudio/proposals?state=pending&limit=10` |
+| 404 | `not_found` | POST | `/orgs/:id/alphastudio/proposals/:id/approve` |
+| 404 | `not_found` | POST | `/orgs/:id/alphastudio/proposals/:id/decline` |
+| 404 | `not_found` | GET | `/orgs/:id/alphastudio/published-social` |
+| 404 | `not_found` | POST | `/orgs/:id/alphastudio/published-social` |
+| 404 | `not_found` | POST | `/orgs/:id/alphastudio/published-social/delete` |
+| 404 | `not_found` | GET | `/orgs/:id/alphastudio/posts/proposals` |
+| 404 | `not_found` | GET | `/orgs/:id/proposals` (outside the proxy namespace) |
+
+Every candidate answers exactly what a route that does not exist answers, and
+nothing answers what a route that does exist answers.
+
+### 3. What that means for the frontend
+
+No generation run was made for this probe: with no list endpoint to call, a run
+would have spent the org's funding to learn nothing. The relevant shape is
+already captured above — `outputs[].proposalId`, e.g.
+`prop_bf6fd4c695b9c20418ac5050`.
+
+- INT-10's position stands: F1's drafts are read-only, and approve / decline /
+  schedule remain ABSENT rather than disabled (decisions.md D-INT-G).
+- The `proposalId` keeps being stored in the local run ledger and never
+  rendered. It is the handle the day the surface is proxied, and storing it now
+  costs nothing.
+- open-items 21(b) stays OPEN, now with evidence rather than an assumption.
+
+Re-run with `pnpm smoke:alphastudio` once the backend says the surface is up;
+the diff in §1 is the cheap check that tells you whether it is worth probing.

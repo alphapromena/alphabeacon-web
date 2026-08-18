@@ -132,7 +132,16 @@ build, so they are worth asking as a batch.
     Decide: does the app keep asking users to create event sources, or is
     country the single control (which is what D-INT-F assumes)? And if slots
     stay: **when does ingestion fire?**
-22. **A list-runs endpoint, and a server-side draft store.** Only
+22. **STILL OPEN, now with evidence (probed 2026-08-18).** The live
+    `GET /openapi` is byte-identical to the committed contract — 62 paths,
+    nothing added — and an AUTHENTICATED route probe answers `404 not_found`
+    for every proposals and published-social candidate, matching a deliberate
+    nonsense route while `wallet` answers 200. Evidence and method are in
+    `Docs/api/alphastudio-shapes.md` ("Proposals & published-social — NOT
+    PROXIED"). Note for whoever re-probes: an unauthenticated probe proves
+    nothing, because auth runs before routing and EVERY path answers 401.
+    The original question:
+    **A list-runs endpoint, and a server-side draft store.** Only
     `GET .../posts/runs/:runId` exists — there is no way to enumerate an org's
     runs. INT-10 therefore keeps a per-org localStorage ledger of run ids
     (D-INT-G), which does not survive a different browser and is not a real
