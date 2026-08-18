@@ -1263,12 +1263,16 @@ Recorded here as the founder set them; each is implemented in its own phase.
   exactly the editor's save semantics (the single-rule endpoints exist but the
   UI has no use for them). `example` has no wire home, so the "fields pending"
   note narrows to name only that.
-- **D-INT-F — country is the single holiday control.** In live mode
-  `PUT /orgs/:orgId/country` replaces C2's "create a holidays event source"
-  step; holidays render read-only in C3/C4 with their do/don't rules.
-  Event-sources and slots stay wired for reading and skip (INT-4), but the UI
-  stops asking a user to create them. Whether they are superseded is a
-  question for the backend.
+- **D-INT-F — country is the single holiday control. CONFIRMED BY THE BACKEND
+  2026-08-17** (Ward: event-sources and slots ARE superseded; the backend feeds
+  holidays into scheduling automatically). So the INT-8 reading is stronger
+  than the original decision: live mode does not merely stop ASKING for event
+  sources, it does not CALL them — `fetchScheduling` reads the schedule and the
+  holiday calendar and nothing else, because two round trips whose answers the
+  product no longer acts on are worse than none. C3/C4 render holidays
+  read-only with their do/don't rules; there is no per-day skip, because there
+  is none on the wire. The INT-4 event-source and slot adapters stay in the
+  codebase for the STATIC demo and are annotated as retired on the live path.
 - **D-INT-G — F1 is batch, not stream, and its results are read-only.** The
   proxy has no stream endpoint, so there is no fake token streaming: calm
   progress, then drafts. Attributions, flags and rationale are always visible
@@ -1319,3 +1323,26 @@ Recorded here as the founder set them; each is implemented in its own phase.
   with no bundle becomes "save your brand voice first" rather than a shrug.
 - The composer moved to `src/lib/tone-preview.ts`: the data layer calls it now,
   and a feature is the wrong home for something the data layer depends on.
+
+### 2026-08-18 — INT-8: what the country replaced, and the empty state it exposed
+
+- **The wizard's country is set LAST, after the org, tones and schedule.** It
+  is the only step that takes ten seconds and the only one whose failure must
+  not cost the user everything before it. Order: org → preset tones (with
+  rules) → schedule (with the REAL tone ids the seeding just minted) → country.
+- **open-items 10's empty-`toneIds` note is CLOSED.** The wizard picks tones by
+  static ids that mean nothing server-side; `finishOnboarding` now maps the
+  seeding's own answers back by name, so the schedule is created with ids that
+  resolve. Verified on the wire: `toneIds: ["186","187","188","189","190"]`.
+- **The country control is NOT part of I1's save bar.** It saves through its
+  own ~10 s call, and an all-or-nothing form commit would either block on it or
+  report a success it had not finished. It sits in its own section instead.
+- **A no-op says so.** `reloaded: false` gets its own quiet line, and the Save
+  button is disabled when nothing would change — spending ten seconds to
+  re-load an identical calendar is unkind, and announcing "11 holidays loaded"
+  for a call that loaded nothing is a small lie.
+- **Found by the live spec: C3's empty state was keyed on slots alone.** With
+  slots gone from the live wire, a calendar full of real holidays rendered
+  "Nothing scheduled yet" and hid them. Now empty means empty — the grid earns
+  its place if EITHER slots or occasions have something in them. This is the
+  kind of bug only a live run finds: every static world has slots.

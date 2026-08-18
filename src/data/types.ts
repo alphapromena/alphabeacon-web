@@ -38,6 +38,14 @@ export interface Org {
   /** A locally-read data URL from I1's picker; no asset is ever fetched. */
   logo?: string
   brandVoice: BrandVoice
+  /**
+   * ISO 3166-1 alpha-2, or null when nothing is set. LIVE MODE ONLY: it is
+   * the single holiday control (decisions.md D-INT-F, confirmed by the
+   * backend 2026-08-17) — setting it loads the org's calendar server-side and
+   * scheduling consumes it automatically. Absent in the static demo, which
+   * keeps its own event sources.
+   */
+  country?: string | null
   /** Onboarding progress; N3 resumes at `resumeStep` when incomplete. */
   onboarding: { completed: boolean; resumeStep: 1 | 2 | 3 | 4 | 5 }
 }
@@ -201,6 +209,13 @@ export interface CalendarEvent {
   name: string
   /** ISO date (day precision). */
   date: string
+  /**
+   * How the day should be treated, when the occasion carries guidance
+   * (live-mode holidays do; the static demo's events do not). `kind` is `do`
+   * or `dont` today, but it comes from an external capability — an unknown
+   * kind renders as generic guidance rather than being dropped or guessed.
+   */
+  rules?: { kind: string; text: string }[]
 }
 
 export type SlotStatus = 'pending' | 'generating' | 'review' | 'done' | 'skipped'

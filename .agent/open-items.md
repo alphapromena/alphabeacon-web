@@ -65,7 +65,12 @@ item to "Signed off" (with the date) only when a human has actually done it.
    the field? (A tone `example` DOES exist on the run body the proxy forwards,
    so the platform understands the concept — it simply has nowhere to be
    stored between runs.)
-8. **A fresh live org has no preset tones and no slot ingestion yet
+8. **PARTLY CLOSED 2026-08-18.** The SLOT-INGESTION half is void: Ward
+   confirmed on 2026-08-17 that event-sources and slots are superseded by the
+   org country + holidays, and INT-8 stopped calling both endpoints in live
+   mode — so "when does ingestion fire" no longer has a consumer. The
+   PRESET-SEEDING half stays open (see item 26). Original, for the record:
+   **A fresh live org has no preset tones and no slot ingestion yet
    (INT-4).** The five preset tones are product law ("always present"), so
    `finishOnboarding` seeds them via the API's own `preset` flag — backend
    asked to seed server-side instead so a non-wizard org path gets them too.
@@ -75,7 +80,12 @@ item to "Signed off" (with the date) only when a human has actually done it.
 9. **Model alias pairing (INT-4).** THE mapping table pairs Balanced↔balanced
    and Precise↔quality confidently; Creative took the remaining `fast`.
    Backend dev: confirm which product model each alias should mean.
-10. **Google Calendar sources have no API home (INT-4).** Live mode offers
+10. **PARTLY CLOSED 2026-08-18 — the `toneIds` half.** The wizard now seeds the
+   preset tones first and maps their minted ids into the schedule it creates,
+   so a live schedule is born with real tone ids (verified on the wire:
+   `["186","187","188","189","190"]`). Google Calendar still has no API home,
+   and in live mode the option is absent rather than disabled. Original:
+   **Google Calendar sources have no API home (INT-4).** Live mode offers
    country holidays only (the option is absent, not disabled); the static
    demo keeps the Google stub. Also: the wizard's schedule POST sends
    `toneIds: []` because tones cannot exist before the org does — tones are

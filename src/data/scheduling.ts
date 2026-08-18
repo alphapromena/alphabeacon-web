@@ -18,15 +18,17 @@
 import { api } from '@/api/client'
 import { isLiveMode } from '@/api/config'
 import { isApiError } from '@/api/errors'
-import type { ApiCountry, ApiEventSource, ApiSchedule, ApiSlot } from '@/api/types'
+import type {
+  ApiCountry,
+  ApiEventSource,
+  ApiSchedule,
+  ApiSlot,
+  CountryReceipt,
+} from '@/api/types'
 import type { AuthActionResult } from '@/data/auth'
 import { fetchCountries } from '@/data/live-sync'
 import { MODEL_ALIAS_BY_ID } from '@/data/adapters/scheduling-adapter'
-import {
-  useDataDispatch,
-  useLiveScheduleId,
-  useLiveWorkingOrgId,
-} from '@/data/provider'
+import { useDataDispatch, useLiveScheduleId, useLiveWorkingOrgId } from '@/data/provider'
 import type { CalendarSource, Schedule } from '@/data/types'
 
 /** The countries reference list, re-exported so features stay off src/api. */
@@ -97,6 +99,41 @@ export function useSchedulingActions() {
       }
     },
 
+    /**
+     * The org's country - and, since 2026-08-17, the ONLY holiday control
+     * (D-INT-F, confirmed by the backend). Setting a NEW one loads the whole
+     * calendar from an external capability, so it takes about ten seconds;
+     * callers must keep the control busy for the duration rather than letting
+     * someone press it twice.
+     *
+     * Three answers worth telling apart, and the receipt distinguishes them:
+     * - `reloaded: true`  - a new calendar landed; `holidaysCount` is how many.
+     * - `reloaded: false` - same country as before. Nothing was fetched and
+     *   nothing changed; saying "loaded 11 holidays" would be a small lie.
+     * - `502`             - the lookup failed and NOTHING changed, which is
+     *   the contract's own promise and the reason the copy can say so.
+     */
+    async setCountry(
+      countryCode: string,
+    ): Promise<AuthActionResult & { holidaysCount?: number; reloaded?: boolean }> {
+      if (!live || !orgId) return ok
+      try {
+        const receipt = await api<CountryReceipt>('PUT', `/orgs/${orgId}/country`, {
+          body: { country: countryCode },
+        })
+        resync()
+        return { ok: true, holidaysCount: receipt.holidaysCount, reloaded: receipt.reloaded }
+      } catch (error) {
+        return failure(error)
+      }
+    },
+
+    /**
+     * STATIC DEMO ONLY since 2026-08-17. Event sources are superseded by the
+     * org country (D-INT-F), and live mode neither creates nor reads them -
+     * `setCountry` above is the whole surface. Kept because the demo world
+     * still has its own sources to add and remove.
+     */
     async addHolidaySource(
       countryCode: string,
       staticSource: CalendarSource,

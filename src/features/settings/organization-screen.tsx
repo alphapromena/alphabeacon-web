@@ -12,6 +12,7 @@
  */
 import { Trash2, Upload } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
+import { CountryPicker } from '@/components/ab/country-picker'
 import { SaveBar } from '@/components/ab/save-bar'
 import { toastError, toastSuccess } from '@/components/ab/toast'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -19,7 +20,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { useDataDispatch, useOrg, useSchedule } from '@/data/provider'
+import { useDataDispatch, useLiveMode, useOrg, useSchedule } from '@/data/provider'
 import { useAccountActions } from '@/data/account'
 import { MESSAGES } from '@/lib/messages'
 import { TIMEZONES, zoneAbbreviation } from '@/lib/timezone'
@@ -28,6 +29,7 @@ import { TagInput } from './field-editors'
 
 export function OrganizationScreen() {
   const org = useOrg()
+  const live = useLiveMode()
   const schedule = useSchedule()
   const dispatch = useDataDispatch()
   const account = useAccountActions()
@@ -51,9 +53,7 @@ export function OrganizationScreen() {
   const savedKey = JSON.stringify(saved)
   const previousSavedKey = useRef(savedKey)
   useEffect(() => {
-    setDraft((current) =>
-      JSON.stringify(current) === previousSavedKey.current ? saved : current,
-    )
+    setDraft((current) => (JSON.stringify(current) === previousSavedKey.current ? saved : current))
     previousSavedKey.current = savedKey
     // eslint-disable-next-line react-hooks/exhaustive-deps -- savedKey is the change signal
   }, [savedKey])
@@ -199,6 +199,22 @@ export function OrganizationScreen() {
           </select>
         </div>
       </section>
+
+      {live && (
+        // The country is NOT part of this form's draft: it saves through its
+        // own ~10-second call and the save bar's all-or-nothing commit would
+        // either block on it or lie about it. It lives here because I1 is
+        // where "where we operate" belongs (D-INT-F).
+        <section className="flex flex-col gap-4 border-t border-border pt-6">
+          <div className="flex flex-col gap-1">
+            <h2 className="text-sm font-medium">Where you operate</h2>
+            <p className="text-sm text-muted-foreground">
+              Your country decides which public holidays Malaky plans around.
+            </p>
+          </div>
+          <CountryPicker idPrefix="i1-country" />
+        </section>
+      )}
 
       <AccountSection />
 

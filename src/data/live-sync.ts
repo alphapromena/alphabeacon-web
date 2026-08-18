@@ -15,12 +15,11 @@ import { isApiError } from '@/api/errors'
 import { updateStoredSession } from '@/api/session'
 import type {
   ApiCountry,
-  ApiEventSource,
   ApiNotification,
   ApiInvite,
   ApiMember,
+  ApiHoliday,
   ApiSchedule,
-  ApiSlot,
   ApiSource,
   ApiTone,
   ApiTopic,
@@ -35,7 +34,11 @@ import type {
 import { adaptBrand, type BrandGraft } from '@/data/adapters/brand-adapter'
 import { adaptTeam, type TeamGraft } from '@/data/adapters/org-adapter'
 import { adaptNotifications } from '@/data/adapters/notification-adapter'
-import { adaptScheduling, type SchedulingGraft } from '@/data/adapters/scheduling-adapter'
+import {
+  adaptHolidays,
+  adaptSchedule,
+  type SchedulingGraft,
+} from '@/data/adapters/scheduling-adapter'
 
 /** Fresh user + orgs; the stored record is rewritten in the same storage. */
 export async function refreshAuthSnapshot(current: AuthSession): Promise<AuthSession> {
@@ -54,14 +57,19 @@ export async function refreshAuthSnapshot(current: AuthSession): Promise<AuthSes
 }
 
 /**
- * The VIEWER's own role in this org, from the workspace root — the
+ * The workspace root: the VIEWER's own role in this org, and the org's
+ * country. The role is the
  * authoritative "who am I here" (`GET /orgs/:orgId` resolves the caller's
  * membership; platform admins arrive as a synthetic owner). Permissions
  * derive from THIS, never from scanning the members list.
  */
-export async function fetchViewerRole(orgId: string): Promise<OrgRole> {
+export async function fetchOrgRoot(
+  orgId: string,
+): Promise<{ role: OrgRole; country: string | null }> {
   const root = await api<OrgRoot>('GET', `/orgs/${orgId}`)
-  return root.membership.role
+  // The country rides on every org response since 2026-08-17, and this is the
+  // one call that already reads the org itself - so it costs nothing extra.
+  return { role: root.membership.role, country: root.org.country ?? null }
 }
 
 /** Members + pending invites for the working org, adapted for the world. */
@@ -84,30 +92,58 @@ export async function fetchTeam(orgId: string): Promise<TeamGraft> {
 let countriesCache: ApiCountry[] | null = null
 export async function fetchCountries(orgId: string): Promise<ApiCountry[]> {
   if (countriesCache) return countriesCache
-  const list = await api<Paginated<ApiCountry>>(
-    'GET',
-    `/orgs/${orgId}/event-sources/countries`,
-  )
+  const list = await api<Paginated<ApiCountry>>('GET', `/orgs/${orgId}/event-sources/countries`)
   countriesCache = list.items
   return list.items
 }
 
-/** Schedules, event sources and their slots — the when of the pipeline. */
+/**
+ * The when of the pipeline: the schedule, plus the org's holiday calendar.
+ *
+ * NO event-source and NO slot call (INT-8). Ward confirmed on 2026-08-17 that
+ * both are superseded by the org country and its holidays, and that the
+ * backend feeds holidays into scheduling itself - so those requests would be
+ * two round trips whose answers the product no longer acts on. The adapters
+ * for them stay in the codebase for the static demo.
+ */
 export async function fetchScheduling(orgId: string): Promise<SchedulingGraft> {
-  const [schedules, sources, slots, countries] = await Promise.all([
+  const [schedules, holidays] = await Promise.all([
     api<Paginated<ApiSchedule>>('GET', `/orgs/${orgId}/schedules`, { query: { limit: 20 } }),
-    api<Paginated<ApiEventSource>>('GET', `/orgs/${orgId}/event-sources`, {
-      query: { limit: 100 },
-    }),
-    api<Paginated<ApiSlot>>('GET', `/orgs/${orgId}/slots`, { query: { limit: 100 } }),
-    fetchCountries(orgId),
+    fetchHolidays(orgId),
   ])
-  return adaptScheduling(
-    schedules.items,
-    sources.items,
-    slots.items,
-    Object.fromEntries(countries.map((country) => [country.code, country.name])),
-  )
+  const first = schedules.items[0] ?? null
+  return {
+    schedule: first ? adaptSchedule(first) : null,
+    scheduleId: first?.id ?? null,
+    // Superseded: the country is the source, and there is no keep-or-skip on
+    // the wire, so an empty list is the honest answer rather than demo data
+    // dressed as live data.
+    eventSources: [],
+    events: adaptHolidays(holidays),
+    slots: [],
+  }
+}
+
+/**
+ * The whole calendar, in calendar order.
+ *
+ * Paginated to `total` rather than one page: a year of holidays for some
+ * countries runs past the default 20, and a calendar that silently stopped in
+ * March would look like the rest of the year has no occasions.
+ */
+export async function fetchHolidays(orgId: string): Promise<ApiHoliday[]> {
+  const first = await api<Paginated<ApiHoliday>>('GET', `/orgs/${orgId}/holidays`, {
+    query: { limit: 100, offset: 0 },
+  })
+  const items = [...first.items]
+  while (items.length < first.total && first.items.length > 0) {
+    const page = await api<Paginated<ApiHoliday>>('GET', `/orgs/${orgId}/holidays`, {
+      query: { limit: 100, offset: items.length },
+    })
+    if (page.items.length === 0) break
+    items.push(...page.items)
+  }
+  return items
 }
 
 /** The signed-in user's inbox for this org + the true unread count. */

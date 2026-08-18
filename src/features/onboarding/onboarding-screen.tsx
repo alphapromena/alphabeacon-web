@@ -28,6 +28,7 @@ import {
   useDataDispatch,
   useEventSources,
   useGenerationModels,
+  useLiveMode,
   useOrg,
   useSchedule,
   useTones,
@@ -317,8 +318,16 @@ function StepConnect({ onBack, onNext }: { onBack: () => void; onNext: () => voi
 function StepCalendar({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
   const sources = useEventSources()
   const dispatch = useDataDispatch()
+  const live = useLiveMode()
   const [country, setCountry] = useState(HOLIDAY_FEEDS[0])
 
+  /**
+   * The wizard runs BEFORE the org exists, and the country endpoint is
+   * org-scoped - so the choice is parked here as a source row and
+   * `finishOnboarding` turns it into the one `PUT .../country` after the org
+   * is created. In live mode that is the whole step: event sources are
+   * superseded (D-INT-F), so there is one country, no Google, and no list.
+   */
   const addHolidays = () => {
     const source: CalendarSource = {
       id: `src_${country.toLowerCase().replace(/\s+/g, '_')}`,
@@ -327,21 +336,35 @@ function StepCalendar({ onBack, onNext }: { onBack: () => void; onNext: () => vo
       status: 'active',
     }
     if (sources.some((s) => s.id === source.id)) return
+    // One country, not a set: in live mode a second choice REPLACES the first,
+    // because `PUT .../country` takes exactly one and silently using the first
+    // of several would ignore what the user last clicked.
+    if (live) {
+      for (const existing of sources.filter((s) => s.kind === 'holiday')) {
+        dispatch({ type: 'eventSources/remove', sourceId: existing.id })
+      }
+    }
     dispatch({ type: 'eventSources/add', source })
   }
+
+  const chosen = sources.find((s) => s.kind === 'holiday')
 
   return (
     <WizardShell
       step={3}
-      title="Connect your calendar"
-      description="So we can plan posts around what matters to your audience — launches, holidays, local events."
+      title={live ? 'Where do you operate?' : 'Connect your calendar'}
+      description={
+        live
+          ? "Malaky loads that country's public holidays and plans posts around them."
+          : 'So we can plan posts around what matters to your audience — launches, holidays, local events.'
+      }
       onBack={onBack}
       onSkip={onNext}
       primary={<Button onClick={onNext}>Continue</Button>}
     >
       <div className="flex flex-col gap-5">
         <div className="flex flex-col gap-2">
-          <Label htmlFor="holiday-country">Country holidays</Label>
+          <Label htmlFor="holiday-country">{live ? 'Country' : 'Country holidays'}</Label>
           <div className="flex gap-2">
             <select
               id="holiday-country"
@@ -357,65 +380,76 @@ function StepCalendar({ onBack, onNext }: { onBack: () => void; onNext: () => vo
             </select>
             <Button type="button" variant="outline" onClick={addHolidays}>
               <Plus aria-hidden />
-              Add
+              {live ? 'Choose' : 'Add'}
             </Button>
           </div>
+          {live && chosen && (
+            <p className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Check aria-hidden className="size-4 text-primary" />
+              {chosen.label.replace(' public holidays', '')} — loaded when you finish setup.
+            </p>
+          )}
         </div>
 
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="google-calendar">Google Calendar</Label>
-          <Button
-            id="google-calendar"
-            type="button"
-            variant="outline"
-            className="justify-start"
-            onClick={() =>
-              dispatch({
-                type: 'eventSources/add',
-                source: {
-                  id: 'src_google',
-                  kind: 'google',
-                  label: 'Google Calendar',
-                  status: 'active',
-                  calendars: [{ id: 'cal_primary', name: 'Primary', enabled: true }],
-                },
-              })
-            }
-            disabled={sources.some((s) => s.kind === 'google')}
-          >
-            <CalendarDays aria-hidden />
-            {sources.some((s) => s.kind === 'google')
-              ? 'Google Calendar connected'
-              : 'Connect Google Calendar'}
-          </Button>
-        </div>
-
-        {sources.length === 0 ? (
-          <p className="rounded-lg border border-dashed border-border p-4 text-sm text-muted-foreground">
-            {MESSAGES.empty.noEventSources}
-          </p>
-        ) : (
-          <ul className="flex flex-col gap-2">
-            {sources.map((source) => (
-              <li
-                key={source.id}
-                className="flex items-center justify-between gap-3 rounded-lg border border-border px-3 py-2 text-sm"
-              >
-                <span className="flex items-center gap-2">
-                  <Check aria-hidden className="size-4 text-primary" />
-                  {source.label}
-                </span>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => dispatch({ type: 'eventSources/remove', sourceId: source.id })}
-                >
-                  Remove
-                </Button>
-              </li>
-            ))}
-          </ul>
+        {!live && (
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="google-calendar">Google Calendar</Label>
+            <Button
+              id="google-calendar"
+              type="button"
+              variant="outline"
+              className="justify-start"
+              onClick={() =>
+                dispatch({
+                  type: 'eventSources/add',
+                  source: {
+                    id: 'src_google',
+                    kind: 'google',
+                    label: 'Google Calendar',
+                    status: 'active',
+                    calendars: [{ id: 'cal_primary', name: 'Primary', enabled: true }],
+                  },
+                })
+              }
+              disabled={sources.some((s) => s.kind === 'google')}
+            >
+              <CalendarDays aria-hidden />
+              {sources.some((s) => s.kind === 'google')
+                ? 'Google Calendar connected'
+                : 'Connect Google Calendar'}
+            </Button>
+          </div>
         )}
+
+        {/* The chosen-country line above already reports the live state; this
+            list is the static demo's multi-source view. */}
+        {!live &&
+          (sources.length === 0 ? (
+            <p className="rounded-lg border border-dashed border-border p-4 text-sm text-muted-foreground">
+              {MESSAGES.empty.noEventSources}
+            </p>
+          ) : (
+            <ul className="flex flex-col gap-2">
+              {sources.map((source) => (
+                <li
+                  key={source.id}
+                  className="flex items-center justify-between gap-3 rounded-lg border border-border px-3 py-2 text-sm"
+                >
+                  <span className="flex items-center gap-2">
+                    <Check aria-hidden className="size-4 text-primary" />
+                    {source.label}
+                  </span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => dispatch({ type: 'eventSources/remove', sourceId: source.id })}
+                  >
+                    Remove
+                  </Button>
+                </li>
+              ))}
+            </ul>
+          ))}
       </div>
     </WizardShell>
   )

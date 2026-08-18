@@ -7,9 +7,11 @@
  * keeping — losing a token should not lose a configuration.
  */
 import { CalendarDays, Flag, Plus, RefreshCw } from 'lucide-react'
+import { Link } from 'react-router'
 import { useState, useEffect } from 'react'
 import { AppShell } from '@/components/ab/app-shell'
 import { ConfirmDialog } from '@/components/ab/confirm-dialog'
+import { CountryPicker } from '@/components/ab/country-picker'
 import { EmptyState } from '@/components/ab/empty-state'
 import { ErrorState } from '@/components/ab/error-state'
 import { SkeletonList } from '@/components/ab/skeletons'
@@ -43,6 +45,7 @@ const COUNTRIES = [
 ]
 
 export function EventSourcesScreen() {
+  const live = useLiveMode()
   const sources = useEventSources()
   const dispatch = useDataDispatch()
   const scheduling = useSchedulingActions()
@@ -58,6 +61,21 @@ export function EventSourcesScreen() {
           message={MESSAGES.errors.screenLoadFailed}
           onRetry={() => dispatch({ type: 'dev/force', mode: 'none' })}
         />
+      ) : live ? (
+        // LIVE MODE: the country IS the event source (D-INT-F, confirmed by
+        // the backend 2026-08-17). Holidays are loaded server-side and fed
+        // into scheduling automatically, so there is nothing here to create,
+        // connect or remove - and offering an "Add a source" button that the
+        // wire cannot honour would be the exact dishonesty this repo refuses.
+        <div className="mx-auto flex max-w-[680px] flex-col gap-4">
+          <div className="flex flex-col gap-3 rounded-xl border border-border p-4">
+            <CountryPicker idPrefix="c2-country" />
+          </div>
+          <p className="text-sm text-muted-foreground">{MESSAGES.notices.eventSourcesSuperseded}</p>
+          <Button asChild variant="ghost" size="sm" className="self-start">
+            <Link to="/calendar">See the calendar →</Link>
+          </Button>
+        </div>
       ) : (
         <div className="mx-auto flex max-w-[680px] flex-col gap-4">
           {sources.length === 0 ? (
@@ -140,9 +158,7 @@ export function EventSourcesScreen() {
                           title={`Remove ${source.label}?`}
                           consequence="Future slots stop being planned around these events. Posts already scheduled against one keep their date and their event name."
                           confirmLabel="Remove source"
-                          onConfirm={() =>
-                            void scheduling.removeEventSource(source.id)
-                          }
+                          onConfirm={() => void scheduling.removeEventSource(source.id)}
                         />
                       </div>
                     </div>

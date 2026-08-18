@@ -1476,3 +1476,45 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   country + holidays, against open-item 21(a), to be applied in INT-8.
 - Next: INT-8 — org country + holidays, with the addendum's amendments
   (`int/08-country`).
+
+### 2026-08-18 10:05 — INT-8: the country becomes the only holiday control
+
+- Did: applied the founder's addendum (Ward confirmed 2026-08-17 that
+  event-sources and slots ARE superseded, and that the backend feeds holidays
+  into scheduling itself). Live mode now reads the schedule and the holiday
+  calendar and NOTHING else — `fetchScheduling` makes no event-source and no
+  slot call at all, because two round trips whose answers the product no longer
+  acts on are worse than none. The INT-4 adapters for both stay in the
+  codebase for the static demo, annotated as retired on the live path.
+- `PUT /orgs/:orgId/country` behind a shared `CountryPicker` used in three
+  places (wizard step 3, I1, C2). It holds the ~10 s lookup with a calm busy
+  label, refuses a double press, disables Save when nothing would change, tells
+  a `reloaded: false` no-op apart from a real load, turns a 502 into "nothing
+  changed" and a 400 into a field error. Members see it read-only.
+- `fetchHolidays` paginates to `total` — a year of holidays can run past one
+  page, and a calendar that stopped in March would look like the rest of the
+  year had no occasions. C3 renders each holiday as an occasion; one with
+  guidance is a button that opens the new read-only `OccasionSheet` ("How
+  Malaky will treat this day"), with do, don't, and unknown kinds rendered as
+  generic guidance rather than dropped or guessed into the wrong half.
+- The wizard's order is now org → preset tones (with rules) → schedule with
+  the REAL tone ids the seeding minted → country. That closes the `toneIds`
+  half of open-items 10: verified on the wire as `["186","187","188","189","190"]`.
+- **The live run found a real bug the static suite structurally cannot:** C3's
+  empty state was keyed on slots alone, so with slots gone from the live wire a
+  calendar full of real holidays rendered "Nothing scheduled yet" and hid them.
+  Empty now means empty — the grid shows if EITHER slots or occasions exist.
+- Phase: INT-8 (branch `int/08-country`, cut from `int/07-brand-rules`)
+- Files: `src/data/adapters/scheduling-adapter.ts` (+ `holidays.test.ts`),
+  `src/data/{live-sync,scheduling,account,provider,types}.ts(x)`,
+  `src/components/ab/country-picker.tsx` (new),
+  `src/features/calendar/{occasion-sheet.tsx (new),calendar-screen,event-sources-screen}.tsx`,
+  `src/features/settings/organization-screen.tsx`,
+  `src/features/onboarding/onboarding-screen.tsx`, `src/lib/messages.ts`,
+  `e2e/live-country.spec.ts` (new), `.agent/*`
+- Decisions: see decisions.md — D-INT-F marked CONFIRMED, plus the INT-8 entry
+  (country set last, the control outside the save bar, the empty-state bug)
+- Verify: lint + typecheck + **370 unit** (+5) + guard-static (231 files) +
+  build green; **verify:w06 PASS**, **verify:w04 PASS**; static e2e **72 passed
+  / 32 skips**; **live e2e `live-country` 4/4**.
+- Next: INT-9 — wallet + usage (`int/09-wallet`).

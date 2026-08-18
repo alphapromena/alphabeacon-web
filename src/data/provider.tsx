@@ -34,7 +34,7 @@ import {
   fetchInbox,
   fetchScheduling,
   fetchTeam,
-  fetchViewerRole,
+  fetchOrgRoot,
   refreshAuthSnapshot,
 } from '@/data/live-sync'
 import { buildDataset, DATASETS, resolveInitialDatasetId } from '@/data/datasets'
@@ -134,6 +134,8 @@ export type DataAction =
       scheduling: SchedulingGraft | null
       inbox: { notifications: AppNotification[]; unread: number } | null
       viewerRole: OrgRole | null
+      /** The org's country (live only); null when unset or unknown. */
+      country?: string | null
     }
   // --- auth (A1–A4) ---------------------------------------------------------
   | { type: 'auth/signUp'; name: string; email: string; orgName: string }
@@ -263,16 +265,21 @@ export function dataReducer(state: DataState, action: DataAction): DataState {
                 tones: action.brand.tones,
                 followedSources: action.brand.sources,
                 topics: action.brand.topics,
-                org: {
-                  ...state.world.org,
-                  // Every voice row's rules, flattened in creation order —
-                  // the same order the backend builds the context bundle in,
-                  // so this IS what the next generation is grounded on
-                  // (D-INT-B). `examples` still has no wire home.
-                  brandVoice: action.brand.brandVoice,
-                },
               }
             : {}),
+          // ONE org patch, built from both halves. Nesting `org` inside the
+          // brand branch worked only because brand and country happen to
+          // arrive together, and a second `org:` key elsewhere in this literal
+          // would silently clobber the first.
+          org: {
+            ...state.world.org,
+            // Every voice row's rules, flattened in creation order — the same
+            // order the backend builds the context bundle in, so this IS what
+            // the next generation is grounded on (D-INT-B). `examples` still
+            // has no wire home.
+            ...(action.brand ? { brandVoice: action.brand.brandVoice } : {}),
+            country: action.country ?? null,
+          },
           ...(action.scheduling
             ? {
                 eventSources: action.scheduling.eventSources,
@@ -1117,15 +1124,23 @@ export function DataProvider({
         }
         const orgId = refreshed.orgs[0]?.id
         if (orgId) {
-          const [team, brand, scheduling, inbox, viewerRole] = await Promise.all([
+          const [team, brand, scheduling, inbox, root] = await Promise.all([
             fetchTeam(orgId),
             fetchBrand(orgId),
             fetchScheduling(orgId),
             fetchInbox(orgId),
-            fetchViewerRole(orgId),
+            fetchOrgRoot(orgId),
           ])
           if (cancelled) return
-          dispatch({ type: 'live/orgSynced', team, brand, scheduling, inbox, viewerRole })
+          dispatch({
+            type: 'live/orgSynced',
+            team,
+            brand,
+            scheduling,
+            inbox,
+            viewerRole: root.role,
+            country: root.country,
+          })
         } else {
           dispatch({
             type: 'live/orgSynced',

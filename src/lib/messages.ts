@@ -72,6 +72,10 @@ export const MESSAGES = {
     previewRateLimited: 'Too many previews just now. Try again in about a minute.',
     previewFailed: "We couldn't write a preview just now. Your tone is unchanged — try again.",
 
+    // Org country (INT-8). The lookup is external, so a refusal is about the
+    // value, not about the network.
+    countryInvalid: 'Pick a country from the list — holidays are only available for these.',
+
     // Generation, live mode (INT-6 — the two codes the 2026-08-17 contract
     // added). Both are states a screen renders, not toasts to shrug at.
     /** 402 wallet_insufficient. There is no self-serve top-up on this API. */
@@ -96,6 +100,8 @@ export const MESSAGES = {
     noTopics: 'No topics yet — add a few so drafts stay on subjects you care about.',
     noKnowledge: 'No documents yet — upload your price list, FAQs, or product notes.',
     noInvites: 'Invite your team to collaborate.',
+    noCountry: 'No country set yet — your calendar has no public holidays in it.',
+    noHolidays: 'No public holidays left this year for this country.',
   },
   /** Non-error copy that must stay identical wherever it appears. */
   notices: {
@@ -119,6 +125,18 @@ export const MESSAGES = {
       'Example lines arrive with a later backend phase — everything else on this screen is saved exactly as you write it.',
     /** I2/I5 — why a save here matters, said where the saving happens. */
     reachesNextGeneration: 'Saved changes reach the next generation automatically.',
+    // Org country (INT-8) — the single holiday control in live mode.
+    countryLoadsHolidays:
+      "Setting this loads that country's public holidays into your calendar, and drafts start working around them.",
+    countryLoading: 'Loading your calendar…',
+    countryUnchanged: 'Already set to that country — nothing was reloaded.',
+    countryAdminOnly: 'Only an admin or owner can change this.',
+    /** C2 in live mode: there is nothing to add here any more, and why. */
+    eventSourcesSuperseded:
+      'Your country is the event source now — public holidays load automatically and scheduling works around them. Calendars you keep yourself will connect here in a later phase.',
+    /** C4 — what the day's rules actually are. */
+    holidayGuidance: 'How Malaky will treat this day',
+    holidayGenericRule: 'General guidance for this day.',
     // N4. Both are non-blocking and clear themselves.
     offline: "You're offline — changes will sync when you reconnect.",
     degraded: "We're having trouble reaching Malaky — retrying…",

@@ -13,7 +13,7 @@
 import { api } from '@/api/client'
 import { isLiveMode } from '@/api/config'
 import { isApiError } from '@/api/errors'
-import type { ApiOrg, ApiSchedule, ApiTone, ApiUser } from '@/api/types'
+import type { ApiOrg, ApiSchedule, ApiTone, ApiUser, CountryReceipt } from '@/api/types'
 import { MODEL_ALIAS_BY_ID } from '@/data/adapters/scheduling-adapter'
 import type { AuthActionResult } from '@/data/auth'
 import { joinRules } from '@/data/adapters/brand-adapter'
@@ -79,12 +79,22 @@ export function useAccountActions() {
     },
 
     /**
-     * The wizard's Finish, in one transaction-shaped action: the wizard runs
-     * BEFORE the org exists in live mode, so its collected schedule and
-     * holiday choices must ride along with the org creation — otherwise the
-     * five steps would configure a world that vanishes at the last click.
-     * Failures after the org exists are non-fatal (the settings screens can
-     * redo them); the resync at the end reads back whatever landed.
+     * Finishing the wizard is where the workspace becomes real. Everything the
+     * steps collected has to be written HERE, in this order, because none of
+     * it can exist before the org does:
+     *
+     *   org -> preset tones (with their rules) -> schedule (with the REAL tone
+     *   ids the seeding just minted) -> country (which loads the holidays)
+     *
+     * The tone step is what closes open-items 10's empty-`toneIds` note: the
+     * wizard picks tones by their STATIC ids, which mean nothing server-side,
+     * so the seeding's own answers are mapped back by name and the schedule
+     * gets ids that actually resolve.
+     *
+     * Country is last and deliberately so: it takes ~10 s and a failure there
+     * must not cost the user the org, the tones or the schedule. Everything
+     * after the org is best-effort for the same reason - the settings screens
+     * can redo any of it, and the resync at the end reads back what landed.
      */
     async finishOnboarding(input: {
       orgName: string
@@ -97,13 +107,12 @@ export function useAccountActions() {
           body: { name: input.orgName },
         })
         const orgId = created.org.id
+
         // The five preset tones are product law ("always present", tones.ts);
         // the API has no seeding, so the org's first owner plants them here,
-        // marked with the wire's own `preset` flag. Since the 2026-08-17
-        // contract they arrive WITH their rules, so a seeded preset is the
-        // whole tone rather than a name and a sentence (D-INT-C). Backend
-        // still asked to seed server-side instead (open-items 8, 26).
-        await Promise.allSettled(
+        // marked with the wire's own `preset` flag and carrying their rules
+        // (D-INT-C). Backend still asked to seed server-side (open-items 26).
+        const seeded = await Promise.allSettled(
           PRESET_TONES.map((tone) =>
             api<ApiTone>('POST', `/orgs/${orgId}/brand/tones`, {
               body: {
@@ -115,27 +124,41 @@ export function useAccountActions() {
             }),
           ),
         )
-        await Promise.allSettled([
-          api<ApiSchedule>('POST', `/orgs/${orgId}/schedules`, {
-            body: {
-              timezone: input.schedule.timezone,
-              days: input.schedule.activeDays,
-              generateAt: input.schedule.generateAt,
-              postsPerDay: input.schedule.postsPerDay,
-              modelAlias: MODEL_ALIAS_BY_ID[input.schedule.modelId] ?? 'balanced',
-              // Tone ids collected statically have no live meaning pre-org;
-              // tones are picked again in settings once they exist (INT-3).
-              toneIds: [],
-              eventAware: input.schedule.attachToEvents,
-              active: input.schedule.started,
-            },
-          }),
-          ...input.holidayCountryCodes.map((country) =>
-            api('POST', `/orgs/${orgId}/event-sources`, {
-              body: { kind: 'holidays', country },
-            }),
-          ),
-        ])
+
+        // Static preset id -> the id the API just minted, matched by name.
+        const liveToneIdByStaticId: Record<string, string> = {}
+        seeded.forEach((result, index) => {
+          if (result.status === 'fulfilled') {
+            liveToneIdByStaticId[PRESET_TONES[index].id] = result.value.id
+          }
+        })
+        const toneIds = input.schedule.toneIds
+          .map((staticId) => liveToneIdByStaticId[staticId])
+          .filter(Boolean)
+
+        await api<ApiSchedule>('POST', `/orgs/${orgId}/schedules`, {
+          body: {
+            timezone: input.schedule.timezone,
+            days: input.schedule.activeDays,
+            generateAt: input.schedule.generateAt,
+            postsPerDay: input.schedule.postsPerDay,
+            modelAlias: MODEL_ALIAS_BY_ID[input.schedule.modelId] ?? 'balanced',
+            toneIds,
+            eventAware: input.schedule.attachToEvents,
+            active: input.schedule.started,
+          },
+        }).catch(() => undefined)
+
+        // The country loads the holiday calendar and scheduling consumes it
+        // automatically (D-INT-F). One country, not a list of sources: the
+        // event-source surface it replaced is superseded.
+        const country = input.holidayCountryCodes[0]
+        if (country) {
+          await api<CountryReceipt>('PUT', `/orgs/${orgId}/country`, {
+            body: { country },
+          }).catch(() => undefined)
+        }
+
         dispatch({ type: 'live/resync' })
         return ok
       } catch (error) {

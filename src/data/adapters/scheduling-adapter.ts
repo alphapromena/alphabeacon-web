@@ -7,6 +7,12 @@
  * quality pair semantically; Creative takes the remaining `fast` (logged in
  * open-items for the backend to confirm).
  *
+ * RETIRED BY THE BACKEND (2026-08-17): event sources and slots are superseded
+ * by the org country + its holiday calendar, and LIVE MODE NO LONGER CALLS
+ * EITHER endpoint. `adaptScheduling`'s source/slot halves below are kept for
+ * the STATIC demo, which still has its own event sources and skippable slots;
+ * they are dead code on the live path by design, not by oversight.
+ *
  * SLOTS are the API's event keep-or-skip records (date + title + kind, no
  * time); the app's calendar slots carry a wall-clock time and draft links.
  * The graft renders each wire slot as an event + a decision slot pair:
@@ -16,7 +22,7 @@
  * skipped slot carries today's date as skippedAt so the undo affordance is
  * available, since the API allows un-skip at any time.
  */
-import type { ApiEventSource, ApiSchedule, ApiSlot } from '@/api/types'
+import type { ApiEventSource, ApiHoliday, ApiSchedule, ApiSlot } from '@/api/types'
 import type { CalendarEvent, CalendarSource, Schedule, Slot } from '@/data/types'
 
 /**
@@ -97,3 +103,29 @@ export function adaptScheduling(
     })),
   }
 }
+
+/**
+ * Holidays -> read-only calendar occasions (INT-8, decisions.md D-INT-F).
+ *
+ * The org's country IS the holiday control: setting it loads this calendar
+ * server-side, and the backend feeds it into scheduling automatically (Ward,
+ * 2026-08-17). So live mode renders these as occasions with no decision on
+ * them - there is no keep-or-skip on the wire, and offering one would be a
+ * button that does nothing.
+ *
+ * The rules ride along on the occasion because they are the interesting part:
+ * they are what generation will actually obey on that day.
+ */
+export function adaptHolidays(holidays: ApiHoliday[]): CalendarEvent[] {
+  return holidays.map((holiday) => ({
+    id: `hol_${holiday.id}`,
+    // Holidays have no event-source row - the country is the source now.
+    sourceId: HOLIDAY_SOURCE_ID,
+    name: holiday.event,
+    date: holiday.date,
+    rules: holiday.rules ?? [],
+  }))
+}
+
+/** One synthetic source id, so an occasion still has a provenance to name. */
+export const HOLIDAY_SOURCE_ID = 'country-holidays'

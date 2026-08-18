@@ -35,6 +35,7 @@ import {
 } from '@/data/provider'
 import { zoneAbbreviation } from '@/lib/timezone'
 import { cn } from '@/lib/utils'
+import { OccasionSheet } from './occasion-sheet'
 import { SlotSheet } from './slot-sheet'
 
 const WEEKDAY_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
@@ -70,6 +71,7 @@ export function CalendarScreen() {
   const slots = useSlots()
   const drafts = useDrafts()
   const events = useCalendarEvents()
+  const [openOccasionId, setOpenOccasionId] = useState<string | null>(null)
   const analytics = useAnalytics()
   const schedule = useSchedule()
   const dispatch = useDataDispatch()
@@ -82,6 +84,7 @@ export function CalendarScreen() {
   // open sheet is always re-derived from the live data.
   const [openSlotId, setOpenSlotId] = useState<string | null>(null)
   const openSlot = slots.find((slot) => slot.id === openSlotId) ?? null
+  const openOccasion = events.find((event) => event.id === openOccasionId) ?? null
 
   const days = useMemo(
     () => (view === 'month' ? monthGrid(anchor) : weekGrid(anchor)),
@@ -127,7 +130,11 @@ export function CalendarScreen() {
           message="We could not load your calendar. Your schedule is unaffected — try again."
           onRetry={() => dispatch({ type: 'dev/force', mode: 'none' })}
         />
-      ) : slots.length === 0 ? (
+      ) : slots.length === 0 && events.length === 0 ? (
+        // Empty means EMPTY. Live mode has no slots on the wire any more
+        // (D-INT-F), so keying this on slots alone hid a calendar that was
+        // full of real occasions — the days generation is already planning
+        // around. The grid earns its place if either has something in it.
         <EmptyState
           icon={TriangleAlert}
           title="Nothing scheduled yet"
@@ -238,11 +245,25 @@ export function CalendarScreen() {
                           : 'text-muted-foreground',
                       )}
                     />
-                    {dayEvent && (
-                      <span className="truncate text-[0.65rem] font-medium text-primary">
-                        {dayEvent.name}
-                      </span>
-                    )}
+                    {dayEvent &&
+                      // An occasion that carries guidance is worth opening:
+                      // its rules outrank tone and brand rules on that day, so
+                      // "why will this draft read differently" has an answer.
+                      // A demo event carries none, so it stays plain text
+                      // rather than growing an affordance that opens nothing.
+                      (dayEvent.rules && dayEvent.rules.length > 0 ? (
+                        <button
+                          type="button"
+                          onClick={() => setOpenOccasionId(dayEvent.id)}
+                          className="truncate rounded text-[0.65rem] font-medium text-primary underline-offset-2 hover:underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+                        >
+                          {dayEvent.name}
+                        </button>
+                      ) : (
+                        <span className="truncate text-[0.65rem] font-medium text-primary">
+                          {dayEvent.name}
+                        </span>
+                      ))}
                   </div>
 
                   {daySlots.map((slot) => {
@@ -286,6 +307,12 @@ export function CalendarScreen() {
         slot={openSlot}
         open={openSlot !== null}
         onOpenChange={(next) => !next && setOpenSlotId(null)}
+      />
+
+      <OccasionSheet
+        occasion={openOccasion}
+        open={openOccasion !== null}
+        onOpenChange={(next) => !next && setOpenOccasionId(null)}
       />
     </AppShell>
   )
