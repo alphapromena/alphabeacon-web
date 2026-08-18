@@ -141,7 +141,13 @@ build, so they are worth asking as a batch.
     `/v1/proposals` and `/v1/published-social` are **not proxied**, so
     approve / decline / published-history cannot be built. Are they coming?
     Until they are, F1's action row is Copy + Create visual only.
-23. **Prices in the catalog — is `cost` a contract or an accident?** Model rows
+23. **PARTLY ANSWERED by observation — still needs the backend's word.** INT-11
+    now RENDERS `cost`, `displayHint`, `capabilitySchema` and
+    `appMetadata.min_plan` in E1/E2, because they are the only honest source
+    for a price, a name and a params form. If any of them is incidental rather
+    than contractual, say so and E1 falls back to "charged to your balance".
+    Original question:
+    **Prices in the catalog — is `cost` a contract or an accident?** Model rows
     carry `cost` as `{ images: "0.03" }` / `{ video_seconds: "0.07" }` decimal
     strings, alongside `displayHint`, `capabilitySchema`, `capabilities` and
     `appMetadata.min_plan`. None of that is in api.md. E1 would like to show a
@@ -154,7 +160,14 @@ build, so they are worth asking as a batch.
     `social-posts.generate`) — confirm that is intended for `alphabeacon` and
     not a playground grant that will narrow later, because E1's gallery is
     built from it.
-24. **S3 CORS for a browser `PUT`** (media assets + RAG sources). The presigned
+24. **ANSWERED 2026-08-18 — S3 CORS ALLOWS THE BROWSER PUT.** Proven in
+    Chromium against the live buckets by `e2e/live-knowledge.spec.ts` (a real
+    .txt file presigned, PUT from the browser, ingested to `Ready`) and by
+    `live-studio`'s render, whose asset the browser GETs from storage. Both
+    surfaces ship; neither is hidden. The e2e network law now allows exactly
+    one extra shape — a url carrying the AWS SigV4 signature our API issued
+    (decisions.md D-INT-A, widened). Original question:
+    **S3 CORS for a browser `PUT`** (media assets + RAG sources). The presigned
     upload works from Node — proven, `200` on both buckets with real bytes. A
     browser additionally needs the bucket's own CORS to allow `PUT` from the
     app origin, and that cannot be tested outside a browser. If it is not
@@ -170,6 +183,15 @@ build, so they are worth asking as a batch.
     five through the API — and as of this contract it must also send each
     preset's `rules`. If the backend seeds server-side instead, a non-wizard
     org path gets them too and the wizard's job shrinks.
+28. **INT-12 candidates — the five granted capabilities with no composer yet.**
+    `photoshoot.generate`, `brand-assets.generate`, `logos.generate`,
+    `logos.redesign` and `video-ads.generate` are all granted to this app and
+    listed in E1, but ship without a form (amendment 6): their bodies need
+    fields this phase did not verify end to end — reference images (1–4),
+    `params.count`, `params.imageUrl`, `params.generateAudio`. Their observed
+    `capabilitySchema`s are captured in `Docs/api/alphastudio-shapes.md`, so
+    each is a form and a live spec away.
+
 27. **Is `guardrail_text_units` metering worth surfacing?** The usage read
     returns three units for one generate run (`input_tokens`,
     `output_tokens`, `guardrail_text_units`). H3 will group by capability and

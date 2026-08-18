@@ -105,6 +105,8 @@ export const MESSAGES = {
     noFollowedSources: 'No sources yet — add a feed so drafts have something current to work from.',
     noTopics: 'No topics yet — add a few so drafts stay on subjects you care about.',
     noKnowledge: 'No documents yet — upload your price list, FAQs, or product notes.',
+    noCapabilities: 'Nothing in the studio is available to this workspace yet.',
+    noJobs: 'Nothing rendered yet — create something and it shows up here.',
     noInvites: 'Invite your team to collaborate.',
     noCountry: 'No country set yet — your calendar has no public holidays in it.',
     noHolidays: 'No public holidays left this year for this country.',
@@ -162,6 +164,12 @@ export const MESSAGES = {
       'These are read-only for now: approving and scheduling arrive when the drafts backend does.',
     runLedgerLocal: 'Kept in this browser so you can re-open a result — not a full history yet.',
     visualComingNext: 'Visuals for a draft arrive with the Studio integration.',
+    // Studio, live mode (INT-11).
+    chargedToBalance: 'charged to your balance',
+    capabilityComingSoon: 'Available to your workspace — the form for it arrives in a later phase.',
+    knowledgeUploadBlocked:
+      'Uploading a file from the browser is not available yet. Paste the text or add a link instead.',
+    knowledgeAccepts: 'PDF, Word, plain text or Markdown.',
     /** C4 — what the day's rules actually are. */
     holidayGuidance: 'How Malaky will treat this day',
     holidayGenericRule: 'General guidance for this day.',

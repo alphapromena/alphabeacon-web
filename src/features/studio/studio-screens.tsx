@@ -37,9 +37,13 @@ import {
   useDataDispatch,
   useDrafts,
   useJobs,
+  useLiveMode,
   useScreenPhase,
   useStudioModels,
 } from '@/data/provider'
+import { LiveComposer } from './live-composer'
+import { LiveGallery } from './live-gallery'
+import { LiveJobs } from './live-jobs'
 import { canTransition } from '@/lib/draft-status'
 import { relativeTime } from '@/lib/format'
 import { cn } from '@/lib/utils'
@@ -51,6 +55,21 @@ import { useComposer, TIER_RANK } from './use-composer'
 // ---------------------------------------------------------------------------
 
 export function StudioGalleryScreen() {
+  const live = useLiveMode()
+  // LIVE: the gallery is the CATALOG (INT-11). Nothing about which models
+  // exist is knowable statically, so the live half reads them rather than
+  // rendering the demo's model records.
+  if (live) {
+    return (
+      <AppShell title="Studio" context="What your workspace can render">
+        <LiveGallery />
+      </AppShell>
+    )
+  }
+  return <StaticStudioGalleryScreen />
+}
+
+function StaticStudioGalleryScreen() {
   const models = useStudioModels()
   const billing = useBilling()
   const balance = useCreditBalance()
@@ -197,6 +216,18 @@ export function StudioGalleryScreen() {
 // ---------------------------------------------------------------------------
 
 export function StudioComposerScreen() {
+  const live = useLiveMode()
+  if (live) {
+    return (
+      <AppShell title="Create" context="A visual, on demand">
+        <LiveComposer />
+      </AppShell>
+    )
+  }
+  return <StaticStudioComposerScreen />
+}
+
+function StaticStudioComposerScreen() {
   const billing = useBilling()
   const navigate = useNavigate()
   const [params] = useState(() => new URLSearchParams(window.location.search))
@@ -235,6 +266,18 @@ export function StudioComposerScreen() {
 // ---------------------------------------------------------------------------
 
 export function StudioJobsScreen() {
+  const live = useLiveMode()
+  if (live) {
+    return (
+      <AppShell title="Your renders" context="Everything this workspace has made">
+        <LiveJobs />
+      </AppShell>
+    )
+  }
+  return <StaticStudioJobsScreen />
+}
+
+function StaticStudioJobsScreen() {
   const jobs = useJobs()
   const models = useStudioModels()
   const drafts = useDrafts()
@@ -293,9 +336,7 @@ export function StudioJobsScreen() {
                       aria-hidden
                       className={cn(
                         'flex size-12 shrink-0 items-center justify-center rounded-lg',
-                        job.status === 'succeeded'
-                          ? 'bg-brand'
-                          : 'bg-muted',
+                        job.status === 'succeeded' ? 'bg-brand' : 'bg-muted',
                       )}
                     >
                       {job.status === 'running' ? (

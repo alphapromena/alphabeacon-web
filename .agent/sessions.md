@@ -1594,3 +1594,46 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   **live e2e `live-generate` 2/2** — one balanced run, one tone, perTone 1,
   re-pulled from the ledger after a reload in the same context.
 - Next: INT-11 — Studio media + knowledge (`int/11-studio-knowledge`).
+
+### 2026-08-18 12:40 — INT-11: the Studio and Knowledge go live; the second pass closes
+
+- Did: `src/data/studio.ts` (media + knowledge seams) and four live surfaces —
+  E1 gallery, E2 composer, E3/E4 jobs and assets, I6 knowledge. E1 renders
+  nothing that was not read from the catalog: `displayHint` is the card name,
+  `cost` is the price, `appMetadata.min_plan` is the plan badge, and E2's
+  params form is generated from each model's `capabilitySchema`. None of those
+  four fields is in api.md; all four came from the smoke run.
+- A composer ships only for `media.generate`, `social-posts.media` and
+  `images.edit` (amendment 6). The other five granted capabilities are listed
+  as coming soon rather than given a guessed body; they are now open-item 28
+  with their observed schemas already captured.
+- I6 creates the org's one `knowledge` collection lazily (duplicate → 400 →
+  list → reuse, exactly as the smoke run proved), takes a file, a URL or
+  pasted text, and polls each source through Uploading → Processing → Ready,
+  showing `deduped` and `failureReason` as they arrive.
+- **open-item 24 is ANSWERED: S3 CORS allows the browser PUT.** Proven in
+  Chromium against the live buckets, not argued from the Node result. Both the
+  file upload and the reference-image door are real surfaces.
+- **The network law's exemption widened, narrowly and on purpose.** Showing a
+  render needs a presigned GET as well as the presigned PUT, because the
+  platform hands finished jobs presigned urls precisely so the client loads
+  them. The e2e predicate is now "a url carrying the AWS SigV4 signature OUR
+  API issued", live mode only; an unsigned request to any host still fails.
+- Found while proving E4: arriving from the composer named a job in the query
+  string, so it was already "open", its Open button never rendered, nothing
+  minted its asset url, and a finished render sat there invisible. It now
+  opens itself the moment it settles.
+- Phase: INT-11 (branch `int/11-studio-knowledge`, cut from `int/10-generate`)
+- Files: `src/data/studio.ts` + test (new),
+  `src/features/studio/{live-gallery,live-composer,live-jobs}.tsx` (new) +
+  `studio-screens.tsx`, `src/features/settings/{live-knowledge.tsx (new),
+  knowledge-screen.tsx}`, `src/lib/messages.ts`, `e2e/fixtures.ts`,
+  `e2e/{live-studio,live-knowledge}.spec.ts` (new), `.agent/*`
+- Decisions: see decisions.md — INT-11 (the catalog is the gallery, the
+  widened exemption, the composer split)
+- Verify: lint + typecheck + **395 unit** (+4) + guard-static (245 files) +
+  build green; **verify:w05 PASS**, **verify:w06 PASS**; static e2e **72 passed
+  / 45 skips**; **live e2e `live-studio` 4/4** (including one real render under
+  LIVE_MEDIA=1, E2 → E3 → E4) and **`live-knowledge` 3/3**.
+- Next: nothing — INT-6…INT-11 are complete. Close-out report to the founder;
+  nothing merged, nothing pushed.

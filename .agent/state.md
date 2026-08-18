@@ -5,8 +5,9 @@ without reconstructing it from the session log. **Update this file at the end
 of any turn that finishes a phase or changes the plan.** `sessions.md` is the
 chronological record; this is the current picture.
 
-_Last updated: 2026-08-18, after **INT-10** (`int/10-generate`) — F1 runs real
-batch generations and renders read-only drafts. INT-9 put money on screen; INT-6 landed the
+_Last updated: 2026-08-18, after **INT-11** (`int/11-studio-knowledge`) — the
+Studio and Knowledge run against the live platform. INT-10 made F1 real; INT-9
+put money on screen; INT-6 landed the
 contract and the observed shapes; INT-7 put brand rules on the wire; INT-8 made
 the org country the single holiday control. **Not merged, not pushed.**_
 
@@ -91,8 +92,10 @@ with the normal Bearer session. The frontend never talks to the AlphaProStudio
 service, never signs anything, holds no service key. `guard-static` now fails
 the build on `cloudfront.net`, `x-aps-`, the upstream `v1` route prefix,
 `svc[_-]?key` or `edge[_-]?secret` appearing in code under `src/`. The one
-non-API request the app is allowed is a presigned `PUT` of file bytes, in
-`src/api/upload.ts` and nowhere else. `Docs/api/alphaprostudio.postman.json`
+non-API request the app is allowed is presigned STORAGE traffic our API just
+signed — a `PUT` of file bytes through `src/api/upload.ts`, and the browser's
+own `GET` of an asset it is displaying. The e2e law allows exactly that shape
+(an AWS SigV4 signature we minted) and nothing else. `Docs/api/alphaprostudio.postman.json`
 documents the upstream and is committed; its **environment file holds a live
 HMAC key and must never enter the repo** — it is gitignored by name and by
 `*.environment.json`.
@@ -116,7 +119,7 @@ make a single-shot all-file matrix trip 429s by design. Fresh
 | INT-8 | Org country + holidays (wizard, I1, C2–C4)              | **Done (`int/08-country`)** · live e2e 4/4 |
 | INT-9 | Wallet + usage (balance chip, the 402 state, H3)        | **Done (`int/09-wallet`)** · live e2e 4/4 |
 | INT-10 | On-demand generate F1 (batch runs + local run ledger)  | **Done (`int/10-generate`)** · live e2e 2/2 |
-| INT-11 | Studio media E1–E4 + I6 knowledge (RAG)               | Next |
+| INT-11 | Studio media E1–E4 + I6 knowledge (RAG)               | **Done (`int/11-studio-knowledge`)** · live e2e 4/4 studio (incl. a real render) + 3/3 knowledge |
 
 **INT-0…5 are MERGED to `main` (`b601622`, fast-forward — the int/NN branches
 stay as the per-phase record, like w/NN).** INT-6 is on its own branch and NOT
@@ -144,8 +147,10 @@ invented or faked: where a spec promised something the wire cannot deliver, the
 honest subset ships and the deviation is logged. The backend questions live in
 open-items 1–13 and 21–27; W7 still waits on the two reopened manual gates.
 
-Current totals after INT-10: **391 unit tests** (36 files), **static e2e
-72 passed / 38 live-spec skips**, guard-static 239 files clean, all green.
+Current totals after INT-11: **395 unit tests** (37 files), **static e2e
+72 passed / 45 live-spec skips**, guard-static 245 files clean, all green.
+**The integration's second pass is complete: INT-6 … INT-11 all done, all on
+their own branches, none merged and none pushed.**
 **No route is a stub any more** — `PlaceholderScreen` is deleted, and
 `verify:w06` fails if it comes back.
 

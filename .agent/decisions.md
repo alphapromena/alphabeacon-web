@@ -1411,3 +1411,39 @@ Recorded here as the founder set them; each is implemented in its own phase.
   on "Writing your drafts…" forever, with no error to show for it. An unmount
   guard must be its own dependency-free effect. Only a live run surfaces this:
   in static mode nothing polls.
+
+### 2026-08-18 — INT-11: the catalog IS the gallery, and the exemption widened
+
+- **E1 renders nothing that was not read from the wire.** Card names are the
+  catalog's own `displayHint`, prices are its `cost` decimal strings, plan gates
+  are `appMetadata.min_plan`, and E2's params form is generated from each
+  model's `capabilitySchema` — the same law W5 already held statically ("the
+  form may not name a model or a parameter"), now fed by a real JSON Schema.
+  None of those four fields is documented in api.md; all four were found by the
+  smoke run (D-INT-H). The live spec asserts NO vendor name appears anywhere in
+  the gallery, which is the only way that stays true.
+- **A composer ships only where the body is fully known** (`media.generate`,
+  `social-posts.media`, `images.edit` — the founder's amendment 6). The other
+  granted capabilities are listed honestly as "arrives in a later phase" rather
+  than given a form built on a guessed body. Their observed schemas are in
+  `Docs/api/alphastudio-shapes.md` for whoever picks them up.
+- **THE NETWORK LAW'S EXEMPTION WIDENED, deliberately and narrowly.** D-INT-A
+  licensed one non-API request: a presigned PUT. Showing a render needs a
+  second — the browser GETs the asset from storage, because the platform hands
+  finished jobs presigned GET urls precisely so the client loads them and never
+  proxies bytes. The e2e predicate is therefore "a url carrying the AWS SigV4
+  signature OUR API just issued", in live mode only. An unsigned request to any
+  host still fails the law, which is the case the guard exists for.
+- **open-item 24 is ANSWERED: S3 CORS allows the browser PUT.** Proven in
+  Chromium against the live buckets, not argued from the Node result — the
+  founder's amendment 7 was right that we could answer it ourselves. Both the
+  reference-image door and I6's file upload are therefore real surfaces, not
+  hidden ones.
+- **Found while proving E4:** arriving from the composer names a job in the
+  query string, so it was already "open" and its Open button never rendered —
+  meaning nothing ever minted its asset url and a finished render sat there
+  invisible. It now opens itself the moment it settles, which is what the user
+  came for anyway.
+- **The list stays url-less on purpose.** Minting a presigned url per asset
+  across a page is a signing call per row for links most people never open, so
+  E3 lists without them and E4 mints one per asset actually opened.

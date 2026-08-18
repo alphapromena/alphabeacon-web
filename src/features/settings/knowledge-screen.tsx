@@ -17,7 +17,8 @@ import { MonoNumber } from '@/components/ab/mono-number'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { Spinner } from '@/components/ui/spinner'
-import { useDataDispatch, useKnowledgeDocs } from '@/data/provider'
+import { useDataDispatch, useKnowledgeDocs, useLiveMode } from '@/data/provider'
+import { LiveKnowledge } from './live-knowledge'
 import type { KnowledgeDoc } from '@/data/types'
 import { MESSAGES } from '@/lib/messages'
 import { cn } from '@/lib/utils'
@@ -38,6 +39,14 @@ const STATUS_WORD: Record<KnowledgeDoc['status'], string> = {
 }
 
 export function KnowledgeScreen() {
+  const live = useLiveMode()
+  // LIVE: the org's real RAG collection (INT-11). The static demo keeps its
+  // own upload lifecycle, which has no server behind it.
+  if (live) return <LiveKnowledge />
+  return <StaticKnowledgeScreen />
+}
+
+function StaticKnowledgeScreen() {
   const docs = useKnowledgeDocs()
   const dispatch = useDataDispatch()
   const { accept, retry } = useKnowledgeUpload()
