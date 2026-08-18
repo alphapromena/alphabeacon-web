@@ -65,6 +65,13 @@ export const MESSAGES = {
     teamActionFailed: 'That team change did not go through. Try again in a moment.',
     knowledgeUnreadable: 'We could not read that file. Try a text-based PDF, DOCX, TXT, or CSV.',
 
+    // I4's live preview (INT-7). Three outcomes worth telling apart: the org
+    // has nothing to ground on yet, the platform is busy, and everything else.
+    previewNeedsBrandVoice:
+      'Save your brand voice first — a preview is written against it, so there is nothing to ground on yet.',
+    previewRateLimited: 'Too many previews just now. Try again in about a minute.',
+    previewFailed: "We couldn't write a preview just now. Your tone is unchanged — try again.",
+
     // Generation, live mode (INT-6 — the two codes the 2026-08-17 contract
     // added). Both are states a screen renders, not toasts to shrug at.
     /** 402 wallet_insufficient. There is no self-serve top-up on this API. */
@@ -103,9 +110,15 @@ export const MESSAGES = {
     /** I2 — the cross-note tones and brand voice both carry. */
     brandVoiceUnderTones:
       'Brand voice always applies underneath whatever tone is selected — tones vary the style, these rules never bend.',
-    /** INT-3 — fields the API does not store yet render disabled, not silent. */
-    brandFieldsPending:
-      "Don't-rules, examples, and per-tone writing rules arrive with a later backend phase — what you see here is exactly what is stored today.",
+    /**
+     * INT-7 — the note NARROWED. Rules landed on the wire in the 2026-08-17
+     * contract, so do/don't editors are real in live mode; only the example
+     * line still has nowhere to be stored between runs (open-items 7).
+     */
+    brandExamplesPending:
+      'Example lines arrive with a later backend phase — everything else on this screen is saved exactly as you write it.',
+    /** I2/I5 — why a save here matters, said where the saving happens. */
+    reachesNextGeneration: 'Saved changes reach the next generation automatically.',
     // N4. Both are non-blocking and clear themselves.
     offline: "You're offline — changes will sync when you reconnect.",
     degraded: "We're having trouble reaching Malaky — retrying…",

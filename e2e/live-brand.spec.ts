@@ -15,6 +15,7 @@ const PASSWORD = 'Roasted2Order!'
 const CODE = '000000'
 const owner = `qa+${RUN}b@alphapromena.com`
 const ORG_NAME = `QA Brand Org ${RUN}`
+const MESSAGE_REACHES_GENERATION = 'Saved changes reach the next generation automatically.'
 
 test.skip(!API_BASE, 'live-mode run only (export VITE_API_BASE_URL)')
 test.describe.configure({ mode: 'serial' })
@@ -81,13 +82,14 @@ test('a custom tone: created under the adapter, edited, and it survives a reload
   await openSettingsTab(page, 'Tones')
   await page.getByRole('link', { name: 'Create custom tone' }).first().click()
 
-  // The honest adapter: name + description are stored; the rule and example
-  // editors are ABSENT with the reason stated, never smuggled.
-  await expect(page.getByText(/arrive with a later backend phase/)).toBeVisible()
-  await expect(page.getByLabel('Do', { exact: true })).toHaveCount(0)
+  // INT-7: rules landed on the wire, so both editors are real now; only the
+  // example line is still absent, and the note says so by name.
+  await expect(page.getByText(/Example lines arrive with a later backend phase/)).toBeVisible()
+  await expect(page.getByLabel('Do', { exact: true })).toHaveCount(1)
 
   await page.getByLabel('Tone name').fill('Roastery floor')
   await page.getByLabel('What this tone sounds like').fill('Warm, specific, smells of coffee.')
+  await page.getByLabel('Do', { exact: true }).fill('Name the roast date')
   await page.getByRole('button', { name: 'Create tone' }).click()
   await expect(page.getByText('Tone created')).toBeVisible()
   await expect(page.getByText('Roastery floor')).toBeVisible()
@@ -101,10 +103,11 @@ test('voice rules: the flat live list persists through the API', async ({ page }
   await login(page, owner, PASSWORD)
   await openSettingsTab(page, 'Brand voice')
 
-  // Live mode: one list, and the split's absence is explained.
-  await expect(page.getByText(/arrive with a later backend phase/)).toBeVisible()
+  // Live mode now has BOTH lists; only examples are explained as absent.
+  await expect(page.getByText(/Example lines arrive with a later backend phase/)).toBeVisible()
+  await expect(page.getByText(MESSAGE_REACHES_GENERATION)).toBeVisible()
 
-  await page.getByRole('button', { name: 'Add voice rules' }).click()
+  await page.getByRole('button', { name: 'Add do', exact: true }).click()
   await page.locator('input[id^="voice-do"]').last().fill('Name the farm when it matters')
   await page.getByRole('button', { name: 'Save changes' }).click()
   await expect(page.getByText('Brand voice saved')).toBeVisible()

@@ -16,6 +16,7 @@ import { isApiError } from '@/api/errors'
 import type { ApiOrg, ApiSchedule, ApiTone, ApiUser } from '@/api/types'
 import { MODEL_ALIAS_BY_ID } from '@/data/adapters/scheduling-adapter'
 import type { AuthActionResult } from '@/data/auth'
+import { joinRules } from '@/data/adapters/brand-adapter'
 import { PRESET_TONES } from '@/data/entities/tones'
 import { useDataDispatch, useLiveWorkingOrgId } from '@/data/provider'
 import type { Schedule } from '@/data/types'
@@ -98,12 +99,19 @@ export function useAccountActions() {
         const orgId = created.org.id
         // The five preset tones are product law ("always present", tones.ts);
         // the API has no seeding, so the org's first owner plants them here,
-        // marked with the wire's own `preset` flag. Backend asked to seed
-        // server-side instead (open-items).
+        // marked with the wire's own `preset` flag. Since the 2026-08-17
+        // contract they arrive WITH their rules, so a seeded preset is the
+        // whole tone rather than a name and a sentence (D-INT-C). Backend
+        // still asked to seed server-side instead (open-items 8, 26).
         await Promise.allSettled(
           PRESET_TONES.map((tone) =>
             api<ApiTone>('POST', `/orgs/${orgId}/brand/tones`, {
-              body: { name: tone.name, description: tone.description, preset: true },
+              body: {
+                name: tone.name,
+                description: tone.description,
+                preset: true,
+                rules: joinRules(tone.rules),
+              },
             }),
           ),
         )

@@ -1,0 +1,195 @@
+/**
+ * INT-7's verify: the two things the 2026-08-17 contract unblocked, against
+ * the DEPLOYED API through the real UI.
+ *
+ * 1. Tone rules are real (D-INT-C) - created with the tone, read back after a
+ *    reload, REPLACED wholesale by a PATCH, and clearable to empty. The
+ *    replace semantics are the part worth pinning: `PATCH { rules }` swaps the
+ *    whole list, so an edit that drops a rule must actually drop it server
+ *    side rather than leave an orphan behind.
+ * 2. The brand voice is ONE canonical row (D-INT-B) - written once, edited in
+ *    place, read back flattened. INT-3 wrote a row per rule and an edited line
+ *    jumped to the top on refetch (open-items 12); the assertion on ORDER
+ *    below is what proves that is gone.
+ * 3. "Preview this tone" runs the real capability and comes back with a
+ *    non-empty sample, with `brandVoice` omitted so the platform grounds on
+ *    the org's pushed bundle - the same thing generation uses.
+ */
+import type { Page } from '@playwright/test'
+import { expect, test } from './fixtures'
+
+const API_BASE = process.env.VITE_API_BASE_URL
+const RUN = Date.now()
+const PASSWORD = 'Roasted2Order!'
+const CODE = '000000'
+const owner = `qa+${RUN}r@alphapromena.com`
+const ORG_NAME = `QA Rules Org ${RUN}`
+
+test.skip(!API_BASE, 'live-mode run only (export VITE_API_BASE_URL)')
+test.describe.configure({ mode: 'serial' })
+
+async function login(page: Page) {
+  await page.goto('/login')
+  await page.getByLabel('Work email').fill(owner)
+  await page.getByLabel('Password', { exact: true }).fill(PASSWORD)
+  await page.getByRole('button', { name: 'Sign in' }).click()
+  await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible({
+    timeout: 20_000,
+  })
+}
+
+async function openSettingsTab(page: Page, tab: string) {
+  await page.getByRole('link', { name: 'Settings' }).first().click()
+  await page.getByRole('tab', { name: tab }).click()
+  await expect(page.locator('[aria-busy="true"]')).toHaveCount(0)
+}
+
+/** Custom tones are edited from their card; that link is named "Edit". */
+async function editTone(page: Page, name: string) {
+  await page
+    .locator('[data-slot="card"]')
+    .filter({ hasText: name })
+    .getByRole('link', { name: 'Edit' })
+    .click()
+  await expect(page.getByLabel('Tone name')).toHaveValue(name)
+}
+
+test('a fresh owner + org, made through the product', async ({ page }) => {
+  await page.goto('/signup')
+  await page.getByLabel('Full name').fill('QA Rules Owner')
+  await page.getByLabel('Work email').fill(owner)
+  await page.getByLabel('Password', { exact: true }).fill(PASSWORD)
+  await page.getByLabel('Organization name').fill(ORG_NAME)
+  await page.getByRole('checkbox', { name: /terms of service/ }).click()
+  await page.getByRole('button', { name: 'Create account' }).click()
+  await expect(page.getByRole('heading', { name: 'Check your inbox' })).toBeVisible({
+    timeout: 20_000,
+  })
+  await page.locator('[data-input-otp]').click()
+  await page.keyboard.type(CODE)
+  await expect(page.getByText('finish setting up your workspace')).toBeVisible({ timeout: 20_000 })
+
+  await page.getByRole('link', { name: /Resume setup/ }).click()
+  await page.getByLabel('Company name').fill(ORG_NAME)
+  await page.getByLabel('What you offer, in one line').fill('Coffee, roasted to order.')
+  await page.getByLabel('What sets you apart').fill('Small batch')
+  await page.getByRole('button', { name: 'Add' }).click()
+  await page.getByRole('button', { name: 'Continue' }).click()
+  await page.getByRole('button', { name: 'Skip for now' }).click()
+  await page.getByRole('button', { name: 'Skip for now' }).click()
+  await page.getByRole('button', { name: 'Start pipeline' }).click()
+  await page.getByRole('button', { name: 'Go to your dashboard' }).click()
+  // Org + five preset tones WITH their rules + schedule: a burst of writes.
+  await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible({
+    timeout: 30_000,
+  })
+})
+
+test('the seeded presets arrive with their rules, not just a name', async ({ page }) => {
+  await login(page)
+  await openSettingsTab(page, 'Tones')
+  // Product law says the five presets are always present; INT-7 says they are
+  // whole tones. Presets are view-only, so the proof is on the card itself:
+  // its rules render, which under INT-3 they never could.
+  const preset = page.locator('[data-slot="card"]').filter({ hasText: 'Data-driven' }).first()
+  await expect(preset).toBeVisible()
+  await expect(preset).toContainText('Open with the strongest figure')
+  await expect(preset).toContainText('Round beyond recognition')
+})
+
+test('a tone keeps its rules, and a PATCH replaces the whole list', async ({ page }) => {
+  await login(page)
+  await openSettingsTab(page, 'Tones')
+  await page.getByRole('link', { name: 'Create custom tone' }).first().click()
+
+  await page.getByLabel('Tone name').fill('Roastery floor')
+  await page.getByLabel('What this tone sounds like').fill('Warm, specific, smells of coffee.')
+  await page.getByLabel('Do', { exact: true }).fill('Name the farm\nName the roast date')
+  await page.getByLabel("Don't", { exact: true }).fill('Say artisanal')
+  await page.getByRole('button', { name: 'Create tone' }).click()
+  await expect(page.getByText('Tone created')).toBeVisible()
+
+  // A reload re-reads the server: the rules are really stored.
+  await page.goto('/settings/tones')
+  await editTone(page, 'Roastery floor')
+  await expect(page.getByLabel('Do', { exact: true })).toHaveValue(
+    'Name the farm\nName the roast date',
+  )
+  await expect(page.getByLabel("Don't", { exact: true })).toHaveValue('Say artisanal')
+
+  // Replace, not append: one do-rule survives and the don't is gone.
+  await page.getByLabel('Do', { exact: true }).fill('Name the roast date')
+  await page.getByLabel("Don't", { exact: true }).fill('')
+  // The routed editor labels its submit by intent: "Create tone" when new,
+  // "Save changes" when editing the tone that already exists.
+  await page.getByRole('button', { name: 'Save changes' }).click()
+  await expect(page.getByText('Tone saved')).toBeVisible({ timeout: 20_000 })
+
+  await page.goto('/settings/tones')
+  await editTone(page, 'Roastery floor')
+  await expect(page.getByLabel('Do', { exact: true })).toHaveValue('Name the roast date')
+  await expect(page.getByLabel("Don't", { exact: true })).toHaveValue('')
+})
+
+test('the brand voice writes to one row, and an edit does not reorder it', async ({ page }) => {
+  await login(page)
+  await openSettingsTab(page, 'Brand voice')
+
+  await page.getByRole('button', { name: 'Add do', exact: true }).click()
+  await page.locator('input[id^="voice-do"]').last().fill('Name the farm when it matters')
+  await page.getByRole('button', { name: 'Add do', exact: true }).click()
+  await page.locator('input[id^="voice-do"]').last().fill('Say what changed this week')
+  await page.getByRole('button', { name: "Add don't", exact: true }).click()
+  await page.locator('input[id^="voice-dont"]').last().fill('Call anything artisanal')
+  await page.getByRole('button', { name: 'Save changes' }).click()
+  await expect(page.getByText('Brand voice saved')).toBeVisible({ timeout: 20_000 })
+
+  await page.goto('/settings/brand-voice')
+  await expect(page.locator('input[id^="voice-do"]').first()).toHaveValue(
+    'Name the farm when it matters',
+  )
+  await expect(page.locator('input[id^="voice-dont"]').first()).toHaveValue(
+    'Call anything artisanal',
+  )
+
+  // Edit the FIRST rule. Under INT-3 this deleted and re-created the row, so
+  // it came back at the top of a newest-first list - the list reordered itself
+  // under the user. One canonical row cannot do that.
+  await page.locator('input[id^="voice-do"]').first().fill('Name the farm, always')
+  await page.getByRole('button', { name: 'Save changes' }).click()
+  await expect(page.getByText('Brand voice saved')).toBeVisible({ timeout: 20_000 })
+
+  await page.goto('/settings/brand-voice')
+  await expect(page.locator('input[id^="voice-do"]').first()).toHaveValue('Name the farm, always')
+  await expect(page.locator('input[id^="voice-do"]').nth(1)).toHaveValue(
+    'Say what changed this week',
+  )
+})
+
+test('Preview this tone returns a real sample from the platform', async ({ page }) => {
+  await login(page)
+  await openSettingsTab(page, 'Tones')
+  await page.getByRole('link', { name: 'Create custom tone' }).first().click()
+
+  await page.getByLabel('Tone name').fill('Counter service')
+  await page
+    .getByLabel('What this tone sounds like')
+    .fill('Plain and warm, the way you would say it across the counter.')
+  await page.getByLabel('Do', { exact: true }).fill('Name one concrete detail')
+
+  await page.getByRole('button', { name: 'Preview this tone' }).click()
+  // A sync run: a few seconds upstream.
+  await expect(page.getByText('A real sample, written in this tone just now.')).toBeVisible({
+    timeout: 45_000,
+  })
+  // The sample is real prose, not an echo of what was typed, and the rules
+  // that shaped it are listed beside it. Length rather than a pattern: no
+  // English sentence has twenty consecutive word characters, and asserting on
+  // wording would pin a model's output.
+  const card = page.locator('div').filter({ hasText: 'Shaped by:' }).last()
+  const sample = card.locator('p').first()
+  const text = ((await sample.textContent()) ?? '').trim()
+  expect(text.length).toBeGreaterThan(20)
+  expect(text).not.toContain('Plain and warm, the way you would say it')
+  await expect(card).toContainText('Name one concrete detail')
+})

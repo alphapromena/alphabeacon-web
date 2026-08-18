@@ -105,6 +105,15 @@ evidence is in `Docs/api/alphastudio-shapes.md`. Answers change what INT-7…11
 build, so they are worth asking as a batch.
 
 21. **Are event-sources and slots superseded by org country + holidays?**
+    **(a) ANSWERED by Ward, 2026-08-17: YES.** Event-sources and slots ARE
+    superseded; the backend feeds holidays into scheduling automatically.
+    To apply in INT-8: live mode renders holidays only in C3/C4 (read-only —
+    there is no per-day skip on the wire) and makes NO event-source or slot
+    call at all; the INT-4 adapters stay for the static demo, annotated
+    "retired by backend, live mode does not call them"; the wizard's holidays
+    step becomes the country picker; D-INT-F gains "confirmed by backend
+    2026-08-17". This also closes the slot-ingestion half of item 8 — the
+    preset-seeding half stays open. The original question, for the record:
     The new `PUT /orgs/:orgId/country` loads the calendar and
     `GET /orgs/:orgId/holidays` reads it, with the capability's do/don't rules
     attached — which is everything C2/C3/C4 needed. The `event-sources` +

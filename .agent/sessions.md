@@ -1432,3 +1432,47 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   lags. Recorded in state.md.
 - Next: INT-7 — brand rules live + I4's tone preview (`int/07-brand-rules`).
   For the founder first: the seven backend questions now in open-items 21–27.
+
+### 2026-08-18 09:20 — INT-7: tone and voice rules go live; I4 previews for real
+
+- Did: the adapter, the seam and both editors moved onto the rules the
+  2026-08-17 contract added. Tones carry `{do, dont}` both ways (D-INT-C) and
+  `PATCH { rules }` replaces the whole list, which is exactly what an editor's
+  Save means — so the single-rule endpoints stay unused. The brand voice became
+  ONE canonical row named `Brand voice` (D-INT-B), created lazily and PATCHed
+  in place; reads flatten EVERY voice's rules in creation order, because that
+  is the order the backend builds the context bundle in, so what I2 shows is
+  what the next run is grounded on.
+- The live-only tone schema is gone. It existed because requiring "at least one
+  do or don't" would have demanded fields with nowhere to go; rules have a home
+  now, so one schema serves both modes.
+- `brandFieldsPending` → `brandExamplesPending`, naming only what is actually
+  missing. A stale "everything is pending" note beside working editors trains
+  people to ignore the notice that still matters. I2 also gained the I5 line,
+  "Saved changes reach the next generation automatically" — true because every
+  committed voice mutation re-pushes the context bundle server-side.
+- I4's Preview is real in live mode: `posts/tones-preview` with `brandVoice`
+  DELIBERATELY omitted, so the platform grounds on the org's pushed bundle —
+  the same thing generation uses. The card says which it is showing ("A real
+  sample, written in this tone just now" vs "Composed from what you have
+  typed"), and the rule list stays beside it in both modes. A 502 becomes
+  "save your brand voice first"; 429 gets its own line.
+- The wizard's preset seeding now sends each preset's rules, so a seeded
+  preset is a whole tone rather than a name and a sentence.
+- `composePreview` moved to `src/lib/tone-preview.ts` as `composeTonePreview`:
+  the data layer calls it now, and a feature is the wrong home for that.
+- Phase: INT-7 (branch `int/07-brand-rules`, cut from `int/06-contract`)
+- Files: `src/data/adapters/brand-adapter.ts` (rewritten) + its new test,
+  `src/data/{brand,provider,account}.ts(x)`, `src/lib/{messages,tone-preview}.ts`,
+  `src/features/settings/{brand-voice-screen,tone-editor}.tsx`,
+  `e2e/live-brand-rules.spec.ts` (new), `e2e/live-brand.spec.ts`, `.agent/*`
+- Decisions: see decisions.md — D-INT-C in practice (one tone schema, where
+  `example` went, the preview's omitted brandVoice)
+- Verify: lint + typecheck + **365 unit** (+10) + guard-static (228 files) +
+  build green; **verify:w06 PASS**; static e2e **72 passed / 28 skips**;
+  **live e2e `live-brand-rules` 5/5**, and `live-brand` re-run **5/5** after
+  updating the two assertions that pinned the INT-3 restriction.
+- Also recorded: Ward's answer that event-sources/slots ARE superseded by
+  country + holidays, against open-item 21(a), to be applied in INT-8.
+- Next: INT-8 — org country + holidays, with the addendum's amendments
+  (`int/08-country`).

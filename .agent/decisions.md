@@ -1296,3 +1296,26 @@ Recorded here as the founder set them; each is implemented in its own phase.
     difference between a cheap suite and an expensive one.
 - Instead of: leaving cost to judgement per session (the first expensive
   mistake would have been discovered on an invoice).
+
+### 2026-08-17 - D-INT-C in practice: one tone schema, and where `example` went
+
+- INT-7 removed `liveToneSchema`, the live-only relaxation INT-3 needed. Its
+  whole reason was that requiring "at least one do or don't" would have
+  demanded fields with nowhere to be stored; rules have a wire home now, so
+  one schema serves both modes and the requirement is real again.
+- `notices.brandFieldsPending` became `notices.brandExamplesPending` and now
+  names only what is actually missing. A stale "everything is pending" note
+  beside working editors would train users to ignore the notice that still
+  matters.
+- I4's Preview became two things behind one action (`previewTone`): live mode
+  runs `posts/tones-preview` and shows a REAL sample; static mode composes as
+  before. The card says which of the two it is showing - "A real sample,
+  written in this tone just now" vs "Composed from what you have typed". The
+  rule list beside it is unchanged in both, because that list is what the
+  screen exists to answer and it is honest either way.
+- `brandVoice` is deliberately omitted from the preview request. The platform
+  falls back to the org's pushed context bundle and never merges, so sending
+  one would preview something real generation does not use. A `502` on an org
+  with no bundle becomes "save your brand voice first" rather than a shrug.
+- The composer moved to `src/lib/tone-preview.ts`: the data layer calls it now,
+  and a feature is the wrong home for something the data layer depends on.

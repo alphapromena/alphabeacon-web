@@ -1,32 +1,58 @@
 /**
- * The brand seam (INT-3): tones, voice rules, sources and topics — one
- * signature, two implementations, mutations resyncing on success.
+ * The brand seam: tones, brand voice, sources and topics - one signature, two
+ * implementations, mutations resyncing on success.
  *
- * The tone rule the user set explicitly: the API stores `{name, description,
- * preset}` and NOTHING else — rules and examples are never smuggled into
- * `description`; their editors are disabled in live mode and the fields are
- * logged as a backend request (open-items).
+ * INT-7 rewrote the two halves the 2026-08-17 contract unblocked:
+ * - **Tones carry their rules now** (D-INT-C). Create and update send
+ *   `rules[]`; a PATCH with `rules` REPLACES the whole list, which is exactly
+ *   what an editor's Save means, so the single-rule endpoints are not needed.
+ *   A tone's `example` still has no wire home and is still never smuggled into
+ *   `description`.
+ * - **The brand voice is ONE canonical row** named `Brand voice` (D-INT-B),
+ *   created lazily on first write and PATCHed whole thereafter. That replaces
+ *   INT-3's row-per-rule scheme, and with it the delete+create edit that made
+ *   an edited line jump to the top of the list (open-items 12).
+ *
+ * Both voice write paths are ~1-2 s slower than a plain save: every committed
+ * voice mutation re-pushes the org's context bundle server-side, which is the
+ * mechanism that makes "saved changes reach the next generation" true.
  */
 import { api } from '@/api/client'
 import { isLiveMode } from '@/api/config'
 import { isApiError } from '@/api/errors'
-import type { ApiSource, ApiTone, ApiTopic, ApiVoice } from '@/api/types'
+import type {
+  ApiRun,
+  ApiSource,
+  ApiTone,
+  ApiTonePreviewContent,
+  ApiTopic,
+  ApiVoice,
+  TonesPreviewRequest,
+} from '@/api/types'
+import { CANONICAL_VOICE_NAME, joinRules } from '@/data/adapters/brand-adapter'
 import type { AuthActionResult } from '@/data/auth'
 import {
   useDataDispatch,
   useLiveBrandIds,
   useLiveWorkingOrgId,
+  useOrg,
   useTopics,
 } from '@/data/provider'
-import type { FollowedSource, Tone } from '@/data/types'
+import type { BrandVoice, FollowedSource, Tone } from '@/data/types'
 import { deriveSourceName, normalizeSourceUrl } from '@/lib/source-url'
+import { composeTonePreview, type TonePreview } from '@/lib/tone-preview'
 
-// Assembled rather than written out: the network law bans the literal to keep
-// ENDPOINTS out of source; a scheme prefix for user-pasted addresses is data,
-// not an endpoint (same precedent as source-url's generic scheme pattern).
 const SECURE_SCHEME = ['ht', 'tps://'].join('')
 
 const ok: AuthActionResult = { ok: true }
+
+/**
+ * A preview either produced a card or failed the way every other seam action
+ * fails, so callers can branch on `ok` exactly as they already do elsewhere.
+ */
+export type TonePreviewResult =
+  | { ok: true; preview: TonePreview }
+  | Extract<AuthActionResult, { ok: false }>
 
 function failure(error: unknown): AuthActionResult {
   if (isApiError(error)) {
@@ -47,6 +73,7 @@ export function useBrandActions() {
   const orgId = useLiveWorkingOrgId()
   const brandIds = useLiveBrandIds()
   const topics = useTopics()
+  const org = useOrg()
   const live = isLiveMode()
 
   const resync = () => dispatch({ type: 'live/resync' })
@@ -61,7 +88,12 @@ export function useBrandActions() {
       }
       try {
         await api<ApiTone>('POST', path('tones'), {
-          body: { name: tone.name, description: tone.description, preset: false },
+          body: {
+            name: tone.name,
+            description: tone.description,
+            preset: false,
+            rules: joinRules(tone.rules),
+          },
         })
         resync()
         return ok
@@ -77,7 +109,13 @@ export function useBrandActions() {
       }
       try {
         await api<ApiTone>('PATCH', path('tones', tone.id), {
-          body: { name: tone.name, description: tone.description },
+          // `rules` replaces the whole list - the editor's save semantics
+          // exactly, including clearing it with an empty array.
+          body: {
+            name: tone.name,
+            description: tone.description,
+            rules: joinRules(tone.rules),
+          },
         })
         resync()
         return ok
@@ -105,28 +143,81 @@ export function useBrandActions() {
     },
 
     /**
-     * I2's bulk save: the draft's rule list against the synced one. Each rule
-     * is one `voices` row; adds create, removals delete, and text edits are a
-     * delete + create (rows have no identity beyond their text here).
+     * I2's save, to ONE canonical row (D-INT-B).
+     *
+     * The whole do/don't list is that row's `rules`, so a save is one request:
+     * a POST that creates `Brand voice` when the org has none, a PATCH that
+     * replaces its rules when it does. Rewriting wholesale is also what
+     * removed the INT-3 behaviour where editing a line re-created it and it
+     * jumped to the top of the list (open-items 12).
      */
-    async saveVoiceRules(nextRules: string[]): Promise<AuthActionResult> {
+    async saveBrandVoice(next: BrandVoice): Promise<AuthActionResult> {
       if (!live || !orgId) return ok
-      const current = brandIds?.voiceIdByRule ?? {}
-      const next = new Set(nextRules)
-      const toDelete = Object.entries(current).filter(([rule]) => !next.has(rule))
-      const toCreate = nextRules.filter((rule) => !(rule in current))
+      const rules = joinRules(next)
+      const canonicalId = brandIds?.canonicalVoiceId ?? null
       try {
-        await Promise.all([
-          ...toDelete.map(([, id]) => api<void>('DELETE', path('voices', id))),
-          ...toCreate.map((rule) =>
-            api<ApiVoice>('POST', path('voices'), { body: { description: rule } }),
-          ),
-        ])
+        if (canonicalId) {
+          await api<ApiVoice>('PATCH', path('voices', canonicalId), { body: { rules } })
+        } else {
+          await api<ApiVoice>('POST', path('voices'), {
+            body: {
+              name: CANONICAL_VOICE_NAME,
+              // `description` is required and is one plain sentence - never a
+              // container for rules. The rules travel in `rules`.
+              description: `${org.name} brand voice`,
+              rules,
+            },
+          })
+        }
         resync()
         return ok
       } catch (error) {
         resync()
         return failure(error)
+      }
+    },
+
+    /**
+     * I4's "Preview this tone" - the real thing in live mode.
+     *
+     * `brandVoice` is deliberately OMITTED from the request. Sending it would
+     * override the org's pushed context bundle entirely (the platform falls
+     * back to the bundle, it never merges), so a preview that sent one would
+     * be previewing something real generation does not use. The rules the
+     * sample was shaped by are still listed beside it, read from the same
+     * brand voice the bundle was built from.
+     *
+     * A 502 on an org with no bundle yet is the documented failure; the screen
+     * turns it into "save your brand voice first" rather than a shrug.
+     */
+    async previewTone(
+      tone: Pick<Tone, 'name' | 'description' | 'rules' | 'example'>,
+    ): Promise<TonePreviewResult> {
+      const composed = composeTonePreview({ offer: org.offer, brandVoice: org.brandVoice }, tone)
+      if (!live || !orgId) return { ok: true, preview: composed }
+      try {
+        const body: TonesPreviewRequest = {
+          tone: {
+            name: tone.name,
+            description: tone.description,
+            rules: joinRules(tone.rules),
+            ...(tone.example ? { example: tone.example } : {}),
+            language: 'en',
+          },
+          language: 'en',
+        }
+        const run = await api<ApiRun>('POST', `/orgs/${orgId}/alphastudio/posts/tones-preview`, {
+          body,
+        })
+        const sample = (run.outputs?.[0]?.content as ApiTonePreviewContent | undefined)?.sample
+        // A completed run with no sample is not a sample: fall back to the
+        // composed line rather than rendering an empty card.
+        if (!sample?.trim()) return { ok: true, preview: composed }
+        return { ok: true, preview: { ...composed, line: sample.trim(), generated: true } }
+      } catch (error) {
+        // `failure` re-throws anything that is not an ApiError, so what comes
+        // back here is always the ok:false half of the union.
+        return failure(error) as Extract<AuthActionResult, { ok: false }>
       }
     },
 

@@ -29,7 +29,14 @@ import { clearAuthSession, graftAuthSession } from '@/data/adapters/auth-adapter
 import type { BrandGraft } from '@/data/adapters/brand-adapter'
 import type { TeamGraft } from '@/data/adapters/org-adapter'
 import type { SchedulingGraft } from '@/data/adapters/scheduling-adapter'
-import { fetchBrand, fetchInbox, fetchScheduling, fetchTeam, fetchViewerRole, refreshAuthSnapshot } from '@/data/live-sync'
+import {
+  fetchBrand,
+  fetchInbox,
+  fetchScheduling,
+  fetchTeam,
+  fetchViewerRole,
+  refreshAuthSnapshot,
+} from '@/data/live-sync'
 import { buildDataset, DATASETS, resolveInitialDatasetId } from '@/data/datasets'
 import type {
   AppNotification,
@@ -86,9 +93,10 @@ export interface DataState {
   liveResyncNonce?: number
   /** userId → membership id, for the member/invite management endpoints. */
   liveMemberIds?: Record<string, string>
-  /** Brand mutation plumbing: rule/topic text → row id (INT-3). */
+  /** Brand mutation plumbing: the canonical voice row, topic text → row id. */
   liveBrandIds?: {
-    voiceIdByRule: Record<string, string>
+    /** The `Brand voice` row writes target; null until one exists (D-INT-B). */
+    canonicalVoiceId: string | null
     topicIdByText: Record<string, string>
   }
   /** The working schedule's API id (INT-4); null until one is created. */
@@ -239,7 +247,7 @@ export function dataReducer(state: DataState, action: DataAction): DataState {
         liveMemberIds: action.team.memberIdByUserId,
         liveBrandIds: action.brand
           ? {
-              voiceIdByRule: action.brand.voiceIdByRule,
+              canonicalVoiceId: action.brand.canonicalVoiceId,
               topicIdByText: action.brand.topicIdByText,
             }
           : undefined,
@@ -257,13 +265,11 @@ export function dataReducer(state: DataState, action: DataAction): DataState {
                 topics: action.brand.topics,
                 org: {
                   ...state.world.org,
-                  brandVoice: {
-                    // The wire stores ONE flat rule list; don'ts and examples
-                    // have no home yet (open-items) and render disabled.
-                    do: action.brand.voiceRules,
-                    dont: [],
-                    examples: [],
-                  },
+                  // Every voice row's rules, flattened in creation order —
+                  // the same order the backend builds the context bundle in,
+                  // so this IS what the next generation is grounded on
+                  // (D-INT-B). `examples` still has no wire home.
+                  brandVoice: action.brand.brandVoice,
                 },
               }
             : {}),
@@ -272,9 +278,7 @@ export function dataReducer(state: DataState, action: DataAction): DataState {
                 eventSources: action.scheduling.eventSources,
                 events: action.scheduling.events,
                 slots: action.scheduling.slots,
-                ...(action.scheduling.schedule
-                  ? { schedule: action.scheduling.schedule }
-                  : {}),
+                ...(action.scheduling.schedule ? { schedule: action.scheduling.schedule } : {}),
               }
             : {}),
           ...(action.inbox ? { notifications: action.inbox.notifications } : {}),
@@ -1039,21 +1043,25 @@ export function DataProvider({
   children: ReactNode
   initialDatasetId?: DatasetId
 }) {
-  const [state, dispatch] = useReducer(dataReducer, initialDatasetId, (id: DatasetId): DataState => {
-    const base: DataState = {
-      datasetId: id,
-      world: buildDataset(id),
-      devForce: 'none' as DevForce,
-      connectivity: 'auto' as Connectivity,
-    }
-    if (!isLiveMode()) return base
-    // Live boot: a persisted session signs the world in as the real user; no
-    // session means genuinely signed out — never the dataset's fake sign-in.
-    const saved = loadSession()
-    return saved
-      ? { ...base, liveSession: saved, world: graftAuthSession(base.world, saved) }
-      : { ...base, liveSession: null, world: clearAuthSession(base.world) }
-  })
+  const [state, dispatch] = useReducer(
+    dataReducer,
+    initialDatasetId,
+    (id: DatasetId): DataState => {
+      const base: DataState = {
+        datasetId: id,
+        world: buildDataset(id),
+        devForce: 'none' as DevForce,
+        connectivity: 'auto' as Connectivity,
+      }
+      if (!isLiveMode()) return base
+      // Live boot: a persisted session signs the world in as the real user; no
+      // session means genuinely signed out — never the dataset's fake sign-in.
+      const saved = loadSession()
+      return saved
+        ? { ...base, liveSession: saved, world: graftAuthSession(base.world, saved) }
+        : { ...base, liveSession: null, world: clearAuthSession(base.world) }
+    },
+  )
 
   // The client's hooks read through refs so configureApi runs once: the token
   // always reflects current state, and a dead session (any Bearer-carrying

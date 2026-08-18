@@ -33,9 +33,7 @@ export function BrandVoiceScreen() {
   const savedKey = JSON.stringify(saved)
   const previousSavedKey = useRef(savedKey)
   useEffect(() => {
-    setDraft((current) =>
-      JSON.stringify(current) === previousSavedKey.current ? saved : current,
-    )
+    setDraft((current) => (JSON.stringify(current) === previousSavedKey.current ? saved : current))
     previousSavedKey.current = savedKey
     // eslint-disable-next-line react-hooks/exhaustive-deps -- savedKey is the change signal
   }, [savedKey])
@@ -59,44 +57,40 @@ export function BrandVoiceScreen() {
 
       <RuleList
         idPrefix="voice-do"
-        label={live ? 'Voice rules' : 'Do'}
-        description={
-          live
-            ? 'What every draft must honour, in any tone.'
-            : 'Things a draft should reach for.'
-        }
+        label="Do"
+        description="Things a draft should reach for."
         placeholder="Name the farm or the roast date when it matters"
         values={draft.do}
         onChange={(next) => setDraft((current) => ({ ...current, do: next }))}
       />
 
-      {live ? (
-        // The wire stores ONE flat rule list today; the don't/example split
-        // has no home yet (open-items — backend request), and a control that
-        // silently forgot its rows would be a lie.
-        <p className="text-sm text-muted-foreground">
-          {MESSAGES.notices.brandFieldsPending}
-        </p>
-      ) : (
-        <>
-          <RuleList
-            idPrefix="voice-dont"
-            label="Don't"
-            description="Things a draft must never do, in any tone."
-            placeholder="Call anything artisanal"
-            values={draft.dont}
-            onChange={(next) => setDraft((current) => ({ ...current, dont: next }))}
-          />
+      <RuleList
+        idPrefix="voice-dont"
+        label="Don't"
+        description="Things a draft must never do, in any tone."
+        placeholder="Call anything artisanal"
+        values={draft.dont}
+        onChange={(next) => setDraft((current) => ({ ...current, dont: next }))}
+      />
 
-          <RuleList
-            idPrefix="voice-example"
-            label="Example"
-            description="Optional. A line that sounds like you — illustration, not a rule."
-            placeholder="This lot landed Tuesday and we roasted it Thursday."
-            values={draft.examples}
-            onChange={(next) => setDraft((current) => ({ ...current, examples: next }))}
-          />
-        </>
+      {live ? (
+        // Rules landed on the wire in the 2026-08-17 contract, so both lists
+        // above are real now. Examples still have nowhere to be stored, and a
+        // control that silently forgot its rows would be a lie.
+        <p className="text-sm text-muted-foreground">{MESSAGES.notices.brandExamplesPending}</p>
+      ) : (
+        <RuleList
+          idPrefix="voice-example"
+          label="Example"
+          description="Optional. A line that sounds like you — illustration, not a rule."
+          placeholder="This lot landed Tuesday and we roasted it Thursday."
+          values={draft.examples}
+          onChange={(next) => setDraft((current) => ({ ...current, examples: next }))}
+        />
+      )}
+
+      {live && (
+        <p className="text-sm text-muted-foreground">{MESSAGES.notices.reachesNextGeneration}</p>
       )}
 
       <div>
@@ -114,7 +108,7 @@ export function BrandVoiceScreen() {
             dont: clean(draft.dont),
             examples: clean(draft.examples),
           }
-          const result = await brand.saveVoiceRules(next.do)
+          const result = await brand.saveBrandVoice(next)
           if (!result.ok) {
             toastError(MESSAGES.errors.generic)
             return

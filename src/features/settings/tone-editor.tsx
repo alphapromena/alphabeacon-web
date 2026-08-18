@@ -25,8 +25,9 @@ import {
 } from '@/components/ui/sheet'
 import type { Tone } from '@/data/types'
 import { MESSAGES } from '@/lib/messages'
-import { useLiveMode, useOrg } from '@/data/provider'
-import { composePreview } from './tone-preview'
+import { useBrandActions } from '@/data/brand'
+import { useLiveMode } from '@/data/provider'
+import type { TonePreview } from '@/lib/tone-preview'
 
 const toneSchema = z
   .object({
@@ -40,16 +41,6 @@ const toneSchema = z
     message: MESSAGES.errors.toneRuleRequired,
     path: ['dos'],
   })
-
-/** Live mode stores name + description only (the API's tone shape); the rule
- *  requirement would demand fields with nowhere to go. */
-const liveToneSchema = z.object({
-  name: z.string().min(1, MESSAGES.errors.toneNameRequired),
-  description: z.string().min(1, MESSAGES.errors.toneRuleRequired),
-  dos: z.string(),
-  donts: z.string(),
-  example: z.string(),
-})
 
 type ToneValues = z.infer<typeof toneSchema>
 
@@ -82,12 +73,16 @@ export function ToneEditorForm({
   onCancel: () => void
   submitLabel?: string
 }) {
-  const org = useOrg()
   const live = useLiveMode()
-  const [preview, setPreview] = useState<ReturnType<typeof composePreview> | null>(null)
+  const brand = useBrandActions()
+  const [preview, setPreview] = useState<TonePreview | null>(null)
+  const [previewing, setPreviewing] = useState(false)
+  const [previewError, setPreviewError] = useState<string | null>(null)
 
   const form = useForm<ToneValues>({
-    resolver: zodResolver(live ? liveToneSchema : toneSchema),
+    // One schema in both modes now: rules have a wire home, so requiring at
+    // least one no longer demands a field with nowhere to go (D-INT-C).
+    resolver: zodResolver(toneSchema),
     defaultValues: {
       name: initial?.name ?? '',
       description: initial?.description ?? '',
@@ -123,42 +118,51 @@ export function ToneEditorForm({
         placeholder="First-person, workshop-floor honesty from the founder."
         rows={2}
       />
+      <TextAreaField
+        name="dos"
+        label="Do"
+        description="One per line."
+        placeholder={'Write in first person\nMention what we tried and changed'}
+        rows={3}
+      />
+      <TextAreaField
+        name="donts"
+        label="Don't"
+        description="One per line."
+        placeholder={'Corporate we-speak\nHide the rough edges'}
+        rows={3}
+      />
       {live ? (
-        // The API stores name + description only; rule and example editors
-        // would write to nowhere, so they are absent with the reason stated —
-        // never smuggled into the description (open-items: backend request).
-        <p className="text-sm text-muted-foreground">{MESSAGES.notices.brandFieldsPending}</p>
+        // Rules landed on the wire in the 2026-08-17 contract, so both lists
+        // above are real now. The example line still has nowhere to be stored
+        // between runs, so its editor stays absent with the reason stated -
+        // never smuggled into the description (open-items 7).
+        <p className="text-sm text-muted-foreground">{MESSAGES.notices.brandExamplesPending}</p>
       ) : (
-        <>
-          <TextAreaField
-            name="dos"
-            label="Do"
-            description="One per line."
-            placeholder={'Write in first person\nMention what we tried and changed'}
-            rows={3}
-          />
-          <TextAreaField
-            name="donts"
-            label="Don't"
-            description="One per line."
-            placeholder={'Corporate we-speak\nHide the rough edges'}
-            rows={3}
-          />
-          <TextAreaField
-            name="example"
-            label="Example line (optional)"
-            description="A sample sentence in this tone, used to steer generation."
-            rows={2}
-          />
-        </>
+        <TextAreaField
+          name="example"
+          label="Example line (optional)"
+          description="A sample sentence in this tone, used to steer generation."
+          rows={2}
+        />
       )}
 
       {/* The point of Preview is the INTERACTION: brand voice and tone are in
           force at the same time, and seeing both lists side by side is what
-          stops someone writing a tone that quietly contradicts the voice. */}
+          stops someone writing a tone that quietly contradicts the voice.
+          In live mode the line above the list is a REAL sample, written by the
+          same capability generation uses and grounded on the same context
+          bundle - so the card labels which of the two it is showing. */}
+      {previewError && <p className="text-sm text-destructive">{previewError}</p>}
+
       {preview && (
         <div className="flex flex-col gap-2 rounded-lg border border-border bg-muted p-3">
           <p className="text-sm">{preview.line}</p>
+          <p className="text-xs text-muted-foreground">
+            {preview.generated
+              ? 'A real sample, written in this tone just now.'
+              : 'Composed from what you have typed — not generated.'}
+          </p>
           <p className="text-xs text-muted-foreground">Shaped by:</p>
           <ul className="flex flex-col gap-1 text-xs text-muted-foreground">
             {preview.applied.map((entry, index) => (
@@ -179,23 +183,36 @@ export function ToneEditorForm({
         <Button
           type="button"
           variant="outline"
-          onClick={() => {
+          disabled={previewing}
+          onClick={async () => {
             const values = form.getValues()
-            setPreview(
-              composePreview(
-                { offer: org.offer, brandVoice: org.brandVoice },
-                {
-                  name: values.name,
-                  description: values.description,
-                  example: values.example,
-                  rules: { do: toLines(values.dos), dont: toLines(values.donts) },
-                },
-              ),
+            setPreviewing(true)
+            setPreviewError(null)
+            const result = await brand.previewTone({
+              name: values.name,
+              description: values.description,
+              example: values.example.trim() || undefined,
+              rules: { do: toLines(values.dos), dont: toLines(values.donts) },
+            })
+            setPreviewing(false)
+            if (result.ok) {
+              setPreview(result.preview)
+              return
+            }
+            setPreview(null)
+            // A 502 here means the org has no pushed context bundle yet, which
+            // is a thing the user can actually fix - so say which thing.
+            setPreviewError(
+              result.code === 'bad_gateway'
+                ? MESSAGES.errors.previewNeedsBrandVoice
+                : result.code === 'rate_limited'
+                  ? MESSAGES.errors.previewRateLimited
+                  : MESSAGES.errors.previewFailed,
             )
           }}
         >
           <Eye aria-hidden />
-          Preview
+          {previewing ? 'Previewing…' : live ? 'Preview this tone' : 'Preview'}
         </Button>
         <div className="flex items-center gap-2">
           <Button type="button" variant="ghost" onClick={onCancel}>
