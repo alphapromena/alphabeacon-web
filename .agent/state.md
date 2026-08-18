@@ -5,8 +5,8 @@ without reconstructing it from the session log. **Update this file at the end
 of any turn that finishes a phase or changes the plan.** `sessions.md` is the
 chronological record; this is the current picture.
 
-_Last updated: 2026-08-18, after **INT-9** (`int/09-wallet`) — live mode shows
-money rather than credits, and H3 reads real metering. INT-6 landed the
+_Last updated: 2026-08-18, after **INT-10** (`int/10-generate`) — F1 runs real
+batch generations and renders read-only drafts. INT-9 put money on screen; INT-6 landed the
 contract and the observed shapes; INT-7 put brand rules on the wire; INT-8 made
 the org country the single holiday control. **Not merged, not pushed.**_
 
@@ -115,8 +115,8 @@ make a single-shot all-file matrix trip 429s by design. Fresh
 | INT-7 | Brand rules live + I4's tone preview                    | **Done (`int/07-brand-rules`)** · live e2e 5/5 (+ live-brand 5/5 re-run) |
 | INT-8 | Org country + holidays (wizard, I1, C2–C4)              | **Done (`int/08-country`)** · live e2e 4/4 |
 | INT-9 | Wallet + usage (balance chip, the 402 state, H3)        | **Done (`int/09-wallet`)** · live e2e 4/4 |
-| INT-10 | On-demand generate F1 (batch runs + local run ledger)  | Next |
-| INT-11 | Studio media E1–E4 + I6 knowledge (RAG)               | Planned |
+| INT-10 | On-demand generate F1 (batch runs + local run ledger)  | **Done (`int/10-generate`)** · live e2e 2/2 |
+| INT-11 | Studio media E1–E4 + I6 knowledge (RAG)               | Next |
 
 **INT-0…5 are MERGED to `main` (`b601622`, fast-forward — the int/NN branches
 stay as the per-phase record, like w/NN).** INT-6 is on its own branch and NOT
@@ -144,8 +144,8 @@ invented or faked: where a spec promised something the wire cannot deliver, the
 honest subset ships and the deviation is logged. The backend questions live in
 open-items 1–13 and 21–27; W7 still waits on the two reopened manual gates.
 
-Current totals after INT-9: **380 unit tests** (35 files), **static e2e
-72 passed / 36 live-spec skips**, guard-static 236 files clean, all green.
+Current totals after INT-10: **391 unit tests** (36 files), **static e2e
+72 passed / 38 live-spec skips**, guard-static 239 files clean, all green.
 **No route is a stub any more** — `PlaceholderScreen` is deleted, and
 `verify:w06` fails if it comes back.
 

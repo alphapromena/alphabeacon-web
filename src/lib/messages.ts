@@ -76,6 +76,12 @@ export const MESSAGES = {
     // value, not about the network.
     countryInvalid: 'Pick a country from the list — holidays are only available for these.',
 
+    // On-demand generation, live mode (INT-10).
+    /** Refused client-side: the upstream refuses an over-budget fan-out too. */
+    fanoutTooLarge: 'That is more than 6 drafts. Pick fewer tones, or one draft per tone.',
+    runFailed: 'That run did not finish. Nothing was charged for a failed run — try again.',
+    runMissing: 'That run is no longer available, so it has been removed from your recent runs.',
+
     // Generation, live mode (INT-6 — the two codes the 2026-08-17 contract
     // added). Both are states a screen renders, not toasts to shrug at.
     /** 402 wallet_insufficient. There is no self-serve top-up on this API. */
@@ -145,6 +151,17 @@ export const MESSAGES = {
     /** C2 in live mode: there is nothing to add here any more, and why. */
     eventSourcesSuperseded:
       'Your country is the event source now — public holidays load automatically and scheduling works around them. Calendars you keep yourself will connect here in a later phase.',
+    // On-demand generation, live mode (INT-10).
+    occasionOutranks: "The day's own guidance outranks your tone and brand rules for that post.",
+    generateNotesPending:
+      'Steering notes are not on the wire yet — for now drafts follow your tones, brand voice, sources and knowledge.',
+    generateWorking: 'Writing your drafts…',
+    generateStillWorking:
+      'Still working. It keeps running even if you leave — check Recent runs in a minute.',
+    draftsReadOnly:
+      'These are read-only for now: approving and scheduling arrive when the drafts backend does.',
+    runLedgerLocal: 'Kept in this browser so you can re-open a result — not a full history yet.',
+    visualComingNext: 'Visuals for a draft arrive with the Studio integration.',
     /** C4 — what the day's rules actually are. */
     holidayGuidance: 'How Malaky will treat this day',
     holidayGenericRule: 'General guidance for this day.',

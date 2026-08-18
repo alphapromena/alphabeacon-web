@@ -1380,3 +1380,34 @@ Recorded here as the founder set them; each is implemented in its own phase.
   with three units) though it did not draw the wallet down — consistent with
   the upstream collection calling it free. So a fresh org has usage rows before
   it has generated anything.
+
+### 2026-08-18 — INT-10: F1 becomes two interactions behind one route
+
+- **Live F1 is a different INTERACTION, not a different data source.** The
+  provider law ("no screen knows which side its data came from") holds for
+  data; it cannot hold for a screen whose static half streams tokens into an
+  editable draft while its live half queues a batch and renders read-only
+  results. So `GenerateScreen` branches once, at the top, and each half is
+  whole — rather than one component carrying two contradictory lifecycles.
+- **The screens4.md F1 deviation, recorded:** no stream (the proxy has no
+  stream endpoint), and an action row of Copy + Create visual only. Approve,
+  decline and schedule are ABSENT rather than disabled, because an approval
+  that cannot be recorded anywhere is a button that lies — the same rule that
+  keeps the media entry point absent before approval in D2.
+- **Flags, attributions and rationale are rendered unconditionally when
+  present.** A hidden guardrail flag is worse than no guardrail, and the
+  upstream terms require sources to stay visible.
+- **`slot` is built from NOW in the schedule's timezone.** It is required (the
+  smoke run proved it; api.md does not say so), and the schedule's zone is the
+  clock the org's posting day is measured in — the browser's is the fallback
+  before a schedule exists.
+- **The client refuses an over-budget fan-out first.** Upstream refuses rather
+  than truncating, so refusing locally turns a 400 into a sentence naming which
+  number to change.
+- **A bug worth recording, because the shape recurs:** the poll's `cancelled`
+  ref was cleaned up by an effect that also depended on `orgId`. The first
+  orgId change ran the cleanup, latched `cancelled` to true, and nothing ever
+  reset it — so every later poll returned at its first check and the screen sat
+  on "Writing your drafts…" forever, with no error to show for it. An unmount
+  guard must be its own dependency-free effect. Only a live run surfaces this:
+  in static mode nothing polls.

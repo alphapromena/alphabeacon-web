@@ -34,10 +34,12 @@ import {
   useBilling,
   useDataDispatch,
   useDrafts,
+  useLiveMode,
   useSchedule,
   useScreenPhase,
   useTones,
 } from '@/data/provider'
+import { LiveGenerate } from './live-generate'
 import type { Claim } from '@/data/types'
 import { useComposePlayer } from '@/lib/compose-player'
 import { MESSAGES } from '@/lib/messages'
@@ -56,6 +58,25 @@ const STATUS_LINE = {
 } as const
 
 export function GenerateScreen() {
+  const live = useLiveMode()
+
+  // LIVE MODE IS A DIFFERENT INTERACTION, not a different data source: the
+  // proxy has no stream endpoint and no drafts store, so F1 becomes a queued
+  // run with read-only results (decisions.md D-INT-G). Same route, same title,
+  // honest subset — the deviation from screens4.md F1 is recorded there and in
+  // the live component's own doc comment.
+  if (live) {
+    return (
+      <AppShell title="Generate" context="A post, on demand">
+        <LiveGenerate />
+      </AppShell>
+    )
+  }
+
+  return <StaticGenerateScreen />
+}
+
+function StaticGenerateScreen() {
   const tones = useTones()
   const schedule = useSchedule()
   const billing = useBilling()
