@@ -1518,3 +1518,47 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   build green; **verify:w06 PASS**, **verify:w04 PASS**; static e2e **72 passed
   / 32 skips**; **live e2e `live-country` 4/4**.
 - Next: INT-9 — wallet + usage (`int/09-wallet`).
+
+### 2026-08-18 10:55 — INT-9: live mode shows money, and the arithmetic is exact
+
+- Did: the wallet joined the org sync (`fetchWallet`, non-fatal on failure) and
+  got a provider slice plus a `useWalletActions` seam with `refresh()` and a
+  `usage()` whose grain type makes `tenant` a COMPILE ERROR rather than a
+  review note — it reports across every org of this app, so it can never back
+  an end-user chart.
+- `src/lib/money.ts` is new and is the reason no screen calls `parseFloat` on
+  money: integer cents for the wallet, exact BigInt addition for the
+  twelve-decimal `costUsdEstimate` strings, and `< $0.0001` instead of
+  `$0.0000` for a real charge too small to show — a charge displayed as zero is
+  the one output nobody can act on. Ten unit tests, including the smoke run's
+  own five captured values summing to `$0.0055`.
+- The balance chip and dashboard tile show `availableCents` (the number the
+  next request is checked against), add a "reserved" clause when `heldCents`
+  is non-zero, and read "funding pending" on an all-zero wallet rather than
+  claiming an empty one. H3 in live mode became balance + a real metering
+  read-back with a capability/model toggle; H1/H2 carry an honest note that
+  plans and checkout are not connected.
+- `InsufficientBalance` (the 402 state) is built and unit-covered but NOT yet
+  mounted: no live surface can produce a 402 until F1 generates (INT-10) and E2
+  renders (INT-11). Wiring it into static screens that never make a request
+  would be dead code, so it lands with the surfaces that can raise it.
+- **The live run found the credits vocabulary leaking:** the dashboard tile
+  still said "Credits balance" over a wallet holding $50.00, and the rail said
+  "Plan and credits". Both split by mode now, and the spec asserts no credits
+  wording survives into live mode at all.
+- Also observed: `holidays.lookup` IS metered (three units in the usage table)
+  though it does not draw the wallet down — so a fresh org has usage rows
+  before it has generated anything. Recorded in decisions.md.
+- Phase: INT-9 (branch `int/09-wallet`, cut from `int/08-country`)
+- Files: `src/lib/money.ts` + test (new), `src/data/wallet.ts` (new),
+  `src/data/{provider,live-sync}.ts(x)`, `src/components/ab/{app-shell,
+  insufficient-balance (new)}.tsx`, `src/features/billing/{billing-screens,
+  usage-view (new)}.tsx`, `src/features/dashboard/dashboard-screen.tsx`,
+  `src/lib/messages.ts`, `e2e/live-wallet.spec.ts` (new), `.agent/*`
+- Decisions: see decisions.md — INT-9 (two currencies, exact arithmetic,
+  tenant unreachable by type, unit displayed as it arrives)
+- Verify: lint + typecheck + **380 unit** (+10) + guard-static (236 files) +
+  build green; **verify:w05 PASS**, **verify:w06 PASS**; static e2e **72 passed
+  / 36 skips**; **live e2e `live-wallet` 4/4**. Wallet unchanged at 5000 cents
+  across the suite — it reads and meters, it does not spend.
+- Next: INT-10 — on-demand generate F1 (`int/10-generate`).

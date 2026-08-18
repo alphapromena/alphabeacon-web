@@ -62,9 +62,13 @@ import {
   useBilling,
   useCreditBalance,
   useDrafts,
+  useLiveMode,
   useOrg,
   useSession,
 } from '@/data/provider'
+import { isFundingPending, useWallet } from '@/data/wallet'
+import { MESSAGES } from '@/lib/messages'
+import { formatCents } from '@/lib/money'
 import { cn } from '@/lib/utils'
 
 /** Rail order is fixed by screens4.md §0.4 — do not reorder casually. */
@@ -219,10 +223,52 @@ function PastDueBanner() {
   )
 }
 
-/** Always visible, because credits gate the Studio (screens4.md §0.4). */
+/**
+ * Always visible, because the balance gates the Studio (screens4.md §0.4).
+ *
+ * Two currencies of discourse, never converted into each other (D-INT-E): the
+ * static demo counts CREDITS from its ledger, live mode shows MONEY from the
+ * wallet. `availableCents` is the number shown, not `cents`, because it is the
+ * one the next request is actually checked against — a wallet whose balance is
+ * entirely held cannot spend a penny of it, and showing the larger number
+ * would be the more comforting lie.
+ */
 function PlanCreditChip() {
   const billing = useBilling()
   const credits = useCreditBalance()
+  const wallet = useWallet()
+  const live = useLiveMode()
+
+  if (live) {
+    // Funding is server-side and best-effort at org creation, so an all-zero
+    // wallet means it has not landed yet — that is a WAIT, not an error, and
+    // certainly not "you have no money".
+    const pending = isFundingPending(wallet)
+    const low = wallet !== null && !pending && wallet.availableCents < 100
+    return (
+      <Link
+        to="/billing/credits"
+        className={cn(
+          'hidden items-center gap-1.5 rounded-full border border-border px-3 py-1 text-xs font-medium transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none sm:inline-flex',
+          low && 'border-warning/60 text-warning',
+        )}
+      >
+        {wallet === null || pending ? (
+          <span className="text-muted-foreground">{MESSAGES.notices.balanceUnavailable}</span>
+        ) : (
+          <>
+            <span>{formatCents(wallet.availableCents)}</span>
+            {wallet.heldCents > 0 && (
+              <span className="text-muted-foreground">
+                · {formatCents(wallet.heldCents)} reserved
+              </span>
+            )}
+          </>
+        )}
+      </Link>
+    )
+  }
+
   const low = credits < 50
   return (
     <Link

@@ -33,12 +33,17 @@ import {
   useDataDispatch,
   useJobs,
   useLedger,
+  useLiveMode,
   usePlans,
   useScreenPhase,
 } from '@/data/provider'
+import { isFundingPending, useWallet } from '@/data/wallet'
 import type { LedgerEntryType, PlanTier } from '@/data/types'
 import { shortDate } from '@/lib/format'
+import { MESSAGES } from '@/lib/messages'
+import { formatCents } from '@/lib/money'
 import { cn } from '@/lib/utils'
+import { UsageView } from './usage-view'
 
 const TIER_RANK: Record<PlanTier, number> = { free: 0, pro: 1, studio: 2 }
 
@@ -51,9 +56,11 @@ export function PlansScreen() {
   const billing = useBilling()
   const dispatch = useDataDispatch()
   const phase = useScreenPhase()
+  const live = useLiveMode()
 
   return (
     <AppShell title="Plans" context="Same prices as the public site — one source">
+      {live && <StaticBillingNote />}
       {phase === 'loading' ? (
         <SkeletonCardGrid cards={3} columns={3} label="Loading plans" />
       ) : phase === 'error' ? (
@@ -147,7 +154,21 @@ export function PlansScreen() {
 // H2 — Subscription
 // ---------------------------------------------------------------------------
 
+/** H1/H2/H4 are not on the wire; live mode says so rather than pretending. */
+function StaticBillingNote() {
+  return (
+    <p className="mx-auto w-full max-w-[880px] rounded-lg border border-border bg-muted px-3 py-2 text-sm text-muted-foreground">
+      {MESSAGES.notices.billingStatic}{' '}
+      <Link className="underline underline-offset-4" to="/billing/credits">
+        See your balance
+      </Link>
+      .
+    </p>
+  )
+}
+
 export function SubscriptionScreen() {
+  const live = useLiveMode()
   const billing = useBilling()
   const plans = usePlans()
   const dispatch = useDataDispatch()
@@ -158,6 +179,7 @@ export function SubscriptionScreen() {
 
   return (
     <AppShell title="Subscription" context={plan?.name}>
+      {live && <StaticBillingNote />}
       {phase === 'loading' ? (
         <SkeletonList rows={3} label="Loading your subscription" />
       ) : phase === 'error' ? (
@@ -305,6 +327,42 @@ export function CreditsScreen() {
   const jobs = useJobs()
   const dispatch = useDataDispatch()
   const phase = useScreenPhase()
+  const live = useLiveMode()
+  const wallet = useWallet()
+
+  // LIVE MODE HAS NO LEDGER. The wire offers a wallet and a metering
+  // read-back, not the entry-by-entry history the demo keeps, so this screen
+  // answers the same question from the only honest source there is (D-INT-E).
+  // Nothing is converted into credits: the balance is money here.
+  if (live) {
+    const pending = isFundingPending(wallet)
+    return (
+      <AppShell title="Balance" context="What this workspace has, and what it spent">
+        <div className="mx-auto flex w-full max-w-[880px] flex-col gap-6">
+          <section className="flex flex-col gap-2 rounded-xl border border-border p-4">
+            <h2 className="text-sm font-medium">Available</h2>
+            {wallet === null || pending ? (
+              <p className="text-sm text-muted-foreground">{MESSAGES.notices.balanceUnavailable}</p>
+            ) : (
+              <>
+                <p className="text-2xl font-semibold tabular-nums">
+                  {formatCents(wallet.availableCents)}
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  {wallet.heldCents > 0
+                    ? `${formatCents(wallet.heldCents)} is reserved by work in flight, and settles when it finishes. Your total balance is ${formatCents(wallet.cents)}.`
+                    : 'Nothing is reserved right now — the whole balance is available to spend.'}
+                </p>
+              </>
+            )}
+            <p className="text-xs text-muted-foreground">{MESSAGES.notices.noSelfServeTopUp}</p>
+          </section>
+
+          <UsageView />
+        </div>
+      </AppShell>
+    )
+  }
 
   const rows = [...ledger].sort((a, b) => b.at.localeCompare(a.at))
   const outstanding = outstandingHolds(ledger)

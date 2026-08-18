@@ -131,6 +131,17 @@ export const MESSAGES = {
     countryLoading: 'Loading your calendar…',
     countryUnchanged: 'Already set to that country — nothing was reloaded.',
     countryAdminOnly: 'Only an admin or owner can change this.',
+    /**
+     * INT-9 — an all-zero wallet is funding that has not landed yet, not an
+     * empty one, and not an error. Orgs are funded server-side at creation.
+     */
+    balanceUnavailable: 'Balance unavailable — funding pending',
+    /** There is no self-serve top-up endpoint on this API, so say so once. */
+    noSelfServeTopUp:
+      "There's no self-serve top-up yet — contact support and we'll add funds to your workspace.",
+    /** H1/H2/H4 in live mode: plans are not on the wire. */
+    billingStatic:
+      'Plans and checkout are not connected yet. Your workspace runs on its balance, and this page is a preview of what is coming.',
     /** C2 in live mode: there is nothing to add here any more, and why. */
     eventSourcesSuperseded:
       'Your country is the event source now — public holidays load automatically and scheduling works around them. Calendars you keep yourself will connect here in a later phase.',

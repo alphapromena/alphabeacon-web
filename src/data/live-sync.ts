@@ -20,6 +20,7 @@ import type {
   ApiMember,
   ApiHoliday,
   ApiSchedule,
+  ApiWallet,
   ApiSource,
   ApiTone,
   ApiTopic,
@@ -165,4 +166,21 @@ export async function fetchBrand(orgId: string): Promise<BrandGraft> {
     api<Paginated<ApiTopic>>('GET', `/orgs/${orgId}/brand/topics`, list),
   ])
   return adaptBrand(tones.items, voices.items, sources.items, topics.items)
+}
+
+/**
+ * The org's balance (INT-9). Read alongside the rest of the org sync so every
+ * screen that gates on money renders in the same pass instead of flashing a
+ * zero it would have to correct.
+ *
+ * A failure answers null rather than throwing: a balance that cannot be read
+ * must not take the whole workspace sync down with it, and the chip renders
+ * an honest "unavailable" instead of a wrong number.
+ */
+export async function fetchWallet(orgId: string): Promise<ApiWallet | null> {
+  try {
+    return await api<ApiWallet>('GET', `/orgs/${orgId}/alphastudio/wallet`)
+  } catch {
+    return null
+  }
 }

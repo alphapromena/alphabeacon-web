@@ -38,11 +38,14 @@ import {
   useCreditBalance,
   useDataDispatch,
   useDrafts,
+  useLiveMode,
   useNotifications,
   useOrg,
   useScreenPhase,
   useSession,
 } from '@/data/provider'
+import { isFundingPending, useWallet } from '@/data/wallet'
+import { formatCents } from '@/lib/money'
 import { relativeTime } from '@/lib/format'
 import { MESSAGES } from '@/lib/messages'
 import { cn } from '@/lib/utils'
@@ -59,7 +62,7 @@ const QUICK_LINKS: { to: string; label: string; description: string; icon: Lucid
   { to: '/studio', label: 'Creative Studio', description: 'Images and video', icon: Sparkles },
   { to: '/analytics', label: 'Analytics', description: 'Reach and engagement', icon: BarChart3 },
   { to: '/connections', label: 'Connections', description: 'Channels and permissions', icon: Plug },
-  { to: '/billing', label: 'Billing', description: 'Plan and credits', icon: CreditCard },
+  { to: '/billing', label: 'Billing', description: 'Plan and balance', icon: CreditCard },
   { to: '/settings', label: 'Settings', description: 'Brand voice, tones, team', icon: Settings },
 ]
 
@@ -72,6 +75,8 @@ export function DashboardScreen() {
   const drafts = useDrafts()
   const connections = useConnections()
   const credits = useCreditBalance()
+  const live = useLiveMode()
+  const wallet = useWallet()
   const notifications = useNotifications()
   const activity = useActivity()
   const dispatch = useDataDispatch()
@@ -139,13 +144,32 @@ export function DashboardScreen() {
               icon={CalendarCheck}
               to="/calendar"
             />
-            <StatCard
-              label="Credits balance"
-              value={credits}
-              icon={Coins}
-              to="/studio"
-              tone={credits < 50 ? 'warning' : 'default'}
-            />
+            {/* Money in live mode, credits in the demo, never converted
+                between the two (D-INT-E). A tile that said "458 credits" over
+                a wallet holding $50.00 would be the clearest possible lie. */}
+            {live ? (
+              <StatCard
+                label="Available balance"
+                value={
+                  wallet && !isFundingPending(wallet) ? formatCents(wallet.availableCents) : '—'
+                }
+                icon={Coins}
+                to="/billing/credits"
+                tone={
+                  wallet && !isFundingPending(wallet) && wallet.availableCents < 100
+                    ? 'warning'
+                    : 'default'
+                }
+              />
+            ) : (
+              <StatCard
+                label="Credits balance"
+                value={credits}
+                icon={Coins}
+                to="/studio"
+                tone={credits < 50 ? 'warning' : 'default'}
+              />
+            )}
             <StatCard
               label="Connections needing attention"
               value={needsAttention}

@@ -1346,3 +1346,37 @@ Recorded here as the founder set them; each is implemented in its own phase.
   "Nothing scheduled yet" and hid them. Now empty means empty — the grid earns
   its place if EITHER slots or occasions have something in them. This is the
   kind of bug only a live run finds: every static world has slots.
+
+### 2026-08-18 — INT-9: two currencies of discourse, and exact arithmetic
+
+- **`src/lib/money.ts` exists so no screen ever calls `parseFloat` on money.**
+  The wire sends integer cents (the wallet) and DECIMAL STRINGS (`0.003749600000`
+  from usage, `0.03` from the catalog). Twelve-decimal strings are exactly the
+  values a double cannot hold, so `sumDecimalStrings` aligns and adds them as
+  BigInt integers. `formatUsdString` trims for reading but never rounds a real
+  charge to `$0.0000` — it says `< $0.0001` instead, because a charge displayed
+  as zero is the one output nobody can act on.
+- **The chip shows `availableCents`, not `cents`.** A wallet whose balance is
+  entirely held cannot spend a penny of it, and the larger number is the more
+  comforting lie. `heldCents > 0` adds a "reserved" clause rather than hiding it.
+- **An all-zero wallet is funding pending, not an empty wallet.** Funding is
+  server-side and best-effort at org creation, so zeros mean it has not landed.
+  That is a WAIT, and saying "you have no money" would be wrong.
+- **H3 becomes two different screens.** The static demo's credits ledger answers
+  "why is my balance what it is" from entries the app wrote itself; live mode
+  has no such ledger, so it answers the same question from the wallet plus the
+  metering read-back. Nothing converts between credits and money.
+- **`group_by=tenant` is unreachable from the UI by TYPE, not by convention.**
+  It reports across every org of this app, so the seam takes
+  `ApiUserUsageGrain` and a `tenant` chart is a compile error.
+- **`unit` is displayed as it arrives.** The wire returns `input_tokens`,
+  `output_tokens`, `guardrail_text_units`, `search_queries` and will grow more;
+  inventing friendly names for a vocabulary we do not own goes stale silently.
+- Found by the live run: the dashboard's "Credits balance" tile still said
+  credits over a wallet holding $50.00, and the rail said "Plan and credits".
+  Both now split by mode. The e2e asserts NO credits vocabulary survives into
+  live mode, which is the only way that stays true.
+- Observed and worth knowing: `holidays.lookup` IS metered (it shows in usage
+  with three units) though it did not draw the wallet down — consistent with
+  the upstream collection calling it free. So a fresh org has usage rows before
+  it has generated anything.

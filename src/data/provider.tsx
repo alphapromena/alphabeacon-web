@@ -23,7 +23,7 @@ import {
 import { configureApi } from '@/api/client'
 import { isLiveMode } from '@/api/config'
 import { loadSession, purgeSession } from '@/api/session'
-import type { AuthSession, OrgRole } from '@/api/types'
+import type { ApiWallet, AuthSession, OrgRole } from '@/api/types'
 import { toastError } from '@/components/ab/toast'
 import { clearAuthSession, graftAuthSession } from '@/data/adapters/auth-adapter'
 import type { BrandGraft } from '@/data/adapters/brand-adapter'
@@ -35,6 +35,7 @@ import {
   fetchScheduling,
   fetchTeam,
   fetchOrgRoot,
+  fetchWallet,
   refreshAuthSnapshot,
 } from '@/data/live-sync'
 import { buildDataset, DATASETS, resolveInitialDatasetId } from '@/data/datasets'
@@ -104,6 +105,12 @@ export interface DataState {
   /** The unread-count ENDPOINT's number (INT-5) — the badge's truth. */
   liveUnreadCount?: number
   /**
+   * The org's wallet in CENTS (INT-9). Null until the first read; re-read on
+   * org sync and after every generation or job settles, because that is when
+   * a hold is released and the number changes under the user.
+   */
+  liveWallet?: ApiWallet | null
+  /**
    * The viewer's OWN role in the working org, from the workspace root
    * (`GET /orgs/:orgId` → membership.role). Review item: permissions derive
    * from this, never inferred from the members list.
@@ -126,6 +133,7 @@ export type DataAction =
   // --- live mode (INT-2/3): the sync grafting covered entities onto the world
   | { type: 'live/syncStarted' }
   | { type: 'live/syncFailed' }
+  | { type: 'live/walletRead'; wallet: ApiWallet }
   | { type: 'live/resync' }
   | {
       type: 'live/orgSynced'
@@ -136,6 +144,8 @@ export type DataAction =
       viewerRole: OrgRole | null
       /** The org's country (live only); null when unset or unknown. */
       country?: string | null
+      /** The org's wallet (live only); null when it could not be read. */
+      wallet?: ApiWallet | null
     }
   // --- auth (A1–A4) ---------------------------------------------------------
   | { type: 'auth/signUp'; name: string; email: string; orgName: string }
@@ -238,6 +248,8 @@ export function dataReducer(state: DataState, action: DataAction): DataState {
       }
     case 'live/syncStarted':
       return { ...state, liveSyncPhase: 'syncing' }
+    case 'live/walletRead':
+      return { ...state, liveWallet: action.wallet }
     case 'live/syncFailed':
       return { ...state, liveSyncPhase: 'error' }
     case 'live/resync':
@@ -256,6 +268,7 @@ export function dataReducer(state: DataState, action: DataAction): DataState {
         liveScheduleId: action.scheduling ? action.scheduling.scheduleId : undefined,
         liveUnreadCount: action.inbox?.unread,
         liveViewerRole: action.viewerRole,
+        liveWallet: action.wallet ?? null,
         world: {
           ...state.world,
           users: action.team.users,
@@ -1124,12 +1137,15 @@ export function DataProvider({
         }
         const orgId = refreshed.orgs[0]?.id
         if (orgId) {
-          const [team, brand, scheduling, inbox, root] = await Promise.all([
+          const [team, brand, scheduling, inbox, root, wallet] = await Promise.all([
             fetchTeam(orgId),
             fetchBrand(orgId),
             fetchScheduling(orgId),
             fetchInbox(orgId),
             fetchOrgRoot(orgId),
+            // The balance rides along with the sync: every screen that gates
+            // on it renders in the same pass rather than flashing a zero.
+            fetchWallet(orgId),
           ])
           if (cancelled) return
           dispatch({
@@ -1140,6 +1156,7 @@ export function DataProvider({
             inbox,
             viewerRole: root.role,
             country: root.country,
+            wallet,
           })
         } else {
           dispatch({
@@ -1317,6 +1334,11 @@ export function useLedger() {
 }
 
 /** The credit balance is always computed from the ledger, never stored. */
+/** The live wallet, or null in static mode / before the first read (INT-9). */
+export function useLiveWallet(): ApiWallet | null {
+  return useData().state.liveWallet ?? null
+}
+
 export function useCreditBalance() {
   const ledger = useLedger()
   return ledger.reduce((sum, entry) => sum + entry.amount, 0)
