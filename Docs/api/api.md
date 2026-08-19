@@ -437,6 +437,54 @@ failed`, with `outputs` once terminal. Also the recovery path for a missed callb
 the run record is pullable regardless of delivery. Model steps name the app's own
 aliases; no vendor ref ever appears. Unknown, or another org's → `404`.
 
+#### Proposals (`/api/orgs/:orgId/alphastudio/proposals/...`)
+
+The **generation-feedback ledger**, proxied to the upstream proposals API — any member.
+Every draft a posts run produces becomes a proposal at the run's terminal transition;
+recording the org's decision is what feeds the two-month no-repeat history the next
+`generate` run scores against. Proposal ids (`prop_…`) arrive **stamped on run
+outputs** (`GET .../posts/runs/:runId`), so the normal flow needs no lookup — the list
+below is for the review screen and reconciliation.
+
+##### `GET .../proposals`
+
+→ `200 { proposals: [...], nextCursor? }`, newest first. Query params (all inside the
+signed upstream target — anything malformed → `400` before signing):
+
+| Param    | Rules                                                                  |
+| -------- | ---------------------------------------------------------------------- |
+| `state`  | `pending` \| `approved` \| `declined`; omit for all                    |
+| `runId`  | narrow to one run's proposals                                          |
+| `limit`  | 1–200 (upstream default 50)                                            |
+| `cursor` | the previous page's `nextCursor`, verbatim                             |
+
+```json
+{ "proposalId": "prop_…", "runId": "run_…", "state": "pending",
+  "decidedAt": null, "publishedId": null }
+```
+
+- `decidedAt`/`publishedId` are `null` while pending.
+- Paging is **keyset**: `nextCursor`'s **absence** (not a short page) means the end —
+  new rows appearing mid-page never shift the boundaries.
+
+##### `POST .../proposals/:proposalId/approve`
+
+Body `{ publishedId }` (required — the org's **own** id for the published entry) →
+`200`. Marks the proposal approved **and creates the published-social entry dated
+now** — so call it when the post actually goes live, not when an admin clicks approve.
+Re-approving with the **same** `publishedId` is a safe retry; a different one, or an id
+already used by another entry → `409` and nothing changes. Unknown (or another org's)
+proposal → `404`.
+
+##### `POST .../proposals/:proposalId/decline`
+
+Body `{ reason? }` (≤500 chars; send `{}` for none) → `200`. The row **stays** — the
+next generate run is shown declined proposals and told to write nothing like them, and
+a `reason` sharpens that from "avoid these" to "avoid these, BECAUSE". Re-declining
+without a reason clears a previous one. Decisions are changeable, latest wins: a
+declined proposal approved later publishes then; declining an approved one leaves the
+published entry alone.
+
 #### Media (`/api/orgs/:orgId/alphastudio/media/...`)
 
 Generation jobs and their assets, proxied to the upstream media API — any member may

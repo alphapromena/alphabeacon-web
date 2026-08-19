@@ -3,6 +3,30 @@
 Newest first. One entry per user-visible or structural change; update alongside the
 change itself (see CLAUDE.md — Workflow rules).
 
+## Proposals proxies
+
+- Three new residents of the `/alphastudio/*` namespace under
+  `/orgs/:orgId/alphastudio/proposals/...` (any member) — the generation-feedback
+  ledger that closes the posts loop: `GET .../proposals` (upstream `/v1/proposals`;
+  `state`/`runId`/`limit ≤ 200`/keyset `cursor`, all inside the signed target;
+  `nextCursor`'s absence, not a short page, means the end),
+  `POST .../proposals/:proposalId/approve` (body `{ publishedId }` — the org's own id;
+  approving also CREATES the published-social entry dated now, so call it when the post
+  actually goes live; same-id re-approve is a safe retry, a different or taken id →
+  409), and `POST .../proposals/:proposalId/decline` (optional `{ reason }` ≤ 500
+  chars — the row stays as the no-repeat instruction the next generate run reads;
+  decisions are changeable, latest wins).
+- Proposal ids arrive stamped on run outputs (`GET .../posts/runs/:runId`), so the
+  normal approve/decline flow needs no lookup; the list is for the review screen and
+  reconciliation. Recording decisions is what feeds the two-month no-repeat history —
+  without it the anti-repetition scoring never learns.
+- E2E-tested against the real service, walking the whole loop: a real generate run's
+  output carried a `proposalId`, the ledger listed it `pending` with both nullable
+  fields null, decline-with-reason set `decidedAt`, and a later approve flipped it to
+  `approved` carrying the `publishedId` — plus local validation (bad state, limit 201,
+  id charset, missing publishedId), unknown-proposal 404s, and auth.
+- openapi.json regenerated (65 paths); api.md documents the sub-surface.
+
 ## Posts run proxies
 
 - Three new residents of the `/alphastudio/*` namespace under

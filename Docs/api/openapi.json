@@ -2529,6 +2529,353 @@
         ]
       }
     },
+    "/api/orgs/{orgId}/alphastudio/proposals": {
+      "get": {
+        "operationId": "getApiOrgsByOrgIdAlphastudioProposals",
+        "tags": [
+          "AlphaStudio"
+        ],
+        "summary": "List proposals",
+        "description": "Proxy to `GET /v1/proposals` — the generation-feedback ledger: every draft a posts run produced, newest first, with what the org decided about each. Narrow with `state` (pending | approved | declined) and `runId`; page with `cursor` (pass the previous page's `nextCursor`; its ABSENCE means the end — keyset paging, so new rows appearing while paging never shift the boundaries). Normal flow does not need this — proposal ids arrive stamped on run outputs; this is for the review screen and reconciliation.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A ledger page",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "proposals": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "proposalId": {
+                            "type": "string"
+                          },
+                          "runId": {
+                            "type": "string"
+                          },
+                          "state": {
+                            "type": "string",
+                            "enum": [
+                              "pending",
+                              "approved",
+                              "declined"
+                            ]
+                          },
+                          "decidedAt": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "publishedId": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "proposalId",
+                          "runId",
+                          "state",
+                          "decidedAt",
+                          "publishedId"
+                        ]
+                      }
+                    },
+                    "nextCursor": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "proposals"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "state",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "pending",
+                "approved",
+                "declined"
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "runId",
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]{1,128}$"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200
+            }
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.=-]{1,256}$"
+            }
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "orgId",
+            "required": true
+          }
+        ]
+      }
+    },
+    "/api/orgs/{orgId}/alphastudio/proposals/{proposalId}/approve": {
+      "post": {
+        "operationId": "postApiOrgsByOrgIdAlphastudioProposalsByProposalIdApprove",
+        "tags": [
+          "AlphaStudio"
+        ],
+        "summary": "Approve a proposal",
+        "description": "Proxy to `POST /v1/proposals/:proposalId/approve`. Marks it approved AND creates the published-social entry under `publishedId` (the caller's own id), dated NOW — so send this when the post actually goes live, not when an admin clicks approve. Re-approving with the SAME publishedId is a safe retry; a different one, or an id already used → 409 and nothing changes. Decisions are changeable (latest wins); declining later leaves the published entry alone. Unknown proposal → 404.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The approved proposal",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "proposalId": {
+                      "type": "string"
+                    },
+                    "runId": {
+                      "type": "string"
+                    },
+                    "state": {
+                      "type": "string",
+                      "enum": [
+                        "pending",
+                        "approved",
+                        "declined"
+                      ]
+                    },
+                    "decidedAt": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "publishedId": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "proposalId",
+                    "runId",
+                    "state",
+                    "decidedAt",
+                    "publishedId"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "proposalId",
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]{1,128}$"
+            },
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "orgId",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "publishedId": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200
+                  }
+                },
+                "required": [
+                  "publishedId"
+                ],
+                "additionalProperties": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/orgs/{orgId}/alphastudio/proposals/{proposalId}/decline": {
+      "post": {
+        "operationId": "postApiOrgsByOrgIdAlphastudioProposalsByProposalIdDecline",
+        "tags": [
+          "AlphaStudio"
+        ],
+        "summary": "Decline a proposal",
+        "description": "Proxy to `POST /v1/proposals/:proposalId/decline`. The row stays — the next generation run is shown declined proposals and told to write nothing like them. `reason` (≤500 chars) is optional but worth sending: it turns 'avoid these' into 'avoid these, BECAUSE'. Send `{}` for no reason; re-declining without one clears a previous reason. Decisions are changeable — a declined proposal approved later publishes then. Unknown proposal → 404.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The declined proposal",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "proposalId": {
+                      "type": "string"
+                    },
+                    "runId": {
+                      "type": "string"
+                    },
+                    "state": {
+                      "type": "string",
+                      "enum": [
+                        "pending",
+                        "approved",
+                        "declined"
+                      ]
+                    },
+                    "decidedAt": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "publishedId": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "proposalId",
+                    "runId",
+                    "state",
+                    "decidedAt",
+                    "publishedId"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "proposalId",
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]{1,128}$"
+            },
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "orgId",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "reason": {
+                    "type": "string",
+                    "maxLength": 500
+                  }
+                },
+                "additionalProperties": {}
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/orgs/{orgId}/alphastudio/posts/tones-preview": {
       "post": {
         "operationId": "postApiOrgsByOrgIdAlphastudioPostsTonesPreview",

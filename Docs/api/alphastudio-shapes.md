@@ -3640,7 +3640,14 @@ access-control-max-age: 3600
 }
 ```
 
-## Proposals & published-social — NOT PROXIED (probed 2026-08-18)
+## Proposals & published-social — NOT PROXIED (probed 2026-08-18) — SUPERSEDED
+
+> **Superseded 2026-08-19**: proposals shipped (contract now 65 paths) and are
+> captured in "Proposals — observed" below. This section is kept, not deleted,
+> for two reasons: it is the honest record of what was true the day INT-11
+> closed, and the probe METHOD in it is the reusable part — the
+> auth-before-routing trap catches everyone once. `published-social` is still
+> not proxied, so the negative below still holds for that half.
 
 Probed because every draft a run produces comes back carrying a `proposalId`
 (`prop_…`), so the proposals ledger demonstrably exists upstream — the question
