@@ -566,6 +566,67 @@ export interface ApiRun {
   updatedAt?: string
 }
 
+// --- Proposals: the generation-feedback ledger (INT-12) ----------------------
+
+export type ApiProposalState = 'pending' | 'approved' | 'declined'
+
+/**
+ * One decision row. NOTE WHAT IS NOT HERE: no content, no tone, no rationale.
+ * The draft itself lives on the run output this id is stamped on, which is why
+ * Today is a JOIN (ledger -> runs) rather than a list (decisions.md D-INT-J).
+ */
+export interface ApiProposal {
+  proposalId: string
+  runId: string
+  state: ApiProposalState
+  /** null while pending. */
+  decidedAt: string | null
+  /** The org's OWN id for the published entry; null until approved. */
+  publishedId: string | null
+}
+
+/**
+ * `GET .../proposals` - keyset paging, newest first.
+ *
+ * The END is the ABSENCE of `nextCursor`, never a short page: rows appearing
+ * mid-walk do not shift the boundaries, so a page can be shorter than `limit`
+ * and still have more behind it. Treating a short page as the end would
+ * silently truncate the review queue.
+ */
+export interface ProposalsPage {
+  proposals: ApiProposal[]
+  nextCursor?: string
+}
+
+export interface ProposalsQuery {
+  state?: ApiProposalState
+  runId?: string
+  /** 1-200; upstream default 50. */
+  limit?: number
+  /** The previous page's `nextCursor`, verbatim. */
+  cursor?: string
+}
+
+/**
+ * `POST .../proposals/:id/approve`. `publishedId` is the ORG'S own id, and
+ * approving also creates the published-social entry dated now. Re-approving
+ * with the SAME id is a safe retry; a different or already-taken id is a 409
+ * that changes nothing - which is why the app derives the id deterministically
+ * from the proposal (decisions.md D-INT-K).
+ */
+export interface ApproveProposalRequest {
+  publishedId: string
+}
+
+/**
+ * `POST .../proposals/:id/decline`. The row STAYS: it is the instruction the
+ * next run is scored against, and a `reason` sharpens that from "avoid these"
+ * to "avoid these, because". Re-declining without one clears a previous reason.
+ */
+export interface DeclineProposalRequest {
+  reason?: string
+}
+
 // --- Media jobs + assets (INT-11) --------------------------------------------
 
 /** End-user text the platform quarantines; at most 6 per job. */

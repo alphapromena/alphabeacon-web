@@ -3714,3 +3714,537 @@ already captured above — `outputs[].proposalId`, e.g.
 
 Re-run with `pnpm smoke:alphastudio` once the backend says the surface is up;
 the diff in §1 is the cheap check that tells you whether it is worth probing.
+
+## Proposals — observed (2026-08-19)
+
+Captured by the INT-12 STEP 0 smoke against the deployed API: one fresh QA
+org, one balanced run, then every decision transition the contract describes.
+`src/api/types.ts`’s proposal half is transcribed from THIS (D-INT-H).
+
+- Run: `2026-08-19T05:46:17.827Z`
+- Identity: `qa+1787118377827p@alphapromena.com` (fresh QA org, starter funding only)
+
+### What this run established
+
+- tones-preview produces proposals: NO (list empty)
+- Run outputs: 1; proposalId present on every output: true
+- proposalIds from the run: ["prop_32fb5264f6e70df4c95f8f0b"]
+- Proposals after ONE run: 1; states: ["pending"]
+- nextCursor present on an unfiltered first page: false
+- Re-approve with the same publishedId: 200 (safe retry)
+- Approve with a different publishedId: 409
+- publishedId after the 409: "mlk_prop_32fb5264f6e70df4c95f8f0b" (unchanged)
+- Declining an approved proposal: 200; publishedId kept: "mlk_prop_32fb5264f6e70df4c95f8f0b"
+- Only one proposal exists, so page 1 already ended (no nextCursor).
+
+### Captured exchanges, in order
+
+#### proposals AFTER a tones-preview only
+
+`GET /orgs/611/alphastudio/proposals` → **200**
+> expected empty: a preview is not a proposal
+
+```json
+{
+  "proposals": []
+}
+```
+
+#### posts/generate (balanced, 1 tone, perTone 1)
+
+`POST /orgs/611/alphastudio/posts/generate` → **202**
+
+```json
+{
+  "runId": "run_393115077bd9df42be68e747",
+  "capability": "social-posts.generate",
+  "capabilityVersion": 4,
+  "mode": "batch",
+  "status": "queued",
+  "outputs": [],
+  "modelVersions": [],
+  "promptVersions": [],
+  "createdAt": "2026-08-19T05:46:30.194Z",
+  "updatedAt": "2026-08-19T05:46:30.194Z"
+}
+```
+
+#### posts/runs/:runId - terminal read
+
+`GET /orgs/611/alphastudio/posts/runs/run_393115077bd9df42be68e747` → **200**
+> where proposalId sits on each output
+
+```json
+{
+  "runId": "run_393115077bd9df42be68e747",
+  "capability": "social-posts.generate",
+  "capabilityVersion": 4,
+  "mode": "batch",
+  "status": "completed",
+  "outputs": [
+    {
+      "index": 0,
+      "content": {
+        "toneId": "smoke-tone",
+        "content": "Today, we're excited to announce our latest roast, sourced from the vibrant farms of Ethiopia. The aroma of freshly ground beans fills our roastery floor, promising a rich and flavorful experience. #CoffeeLove #EthiopianRoast",
+        "rationale": "This post aligns with the 'Roastery floor' tone by focusing on the sensory experience of the roast, mentioning the specific origin of the beans, and evoking the warm, inviting atmosphere of the roastery. It avoids repeating any previous posts and adheres to the tone's rules by naming the farm."
+      },
+      "judge": {
+        "score": 0.4,
+        "voice": 0.8,
+        "grounding": 0,
+        "repetition": 1
+      },
+      "flags": [],
+      "attributions": [],
+      "proposalId": "prop_32fb5264f6e70df4c95f8f0b"
+    }
+  ],
+  "modelVersions": [
+    {
+      "step": "write",
+      "alias": "balanced"
+    },
+    {
+      "step": "score",
+      "alias": "judge"
+    }
+  ],
+  "promptVersions": [
+    {
+      "capability": "social-posts.generate",
+      "name": "v7",
+      "version": 7,
+      "contentHash": "734fa9461349ad483988a86689350b7ac3737466500c212b43a0424030d0e6fd"
+    },
+    {
+      "capability": "social-posts.generate",
+      "name": "rubric-v6",
+      "version": 6,
+      "contentHash": "97637001b22eeae55f3995f483e73994500c5306af201fe68c63030677ac59f1"
+    }
+  ],
+  "createdAt": "2026-08-19T05:46:30.194Z",
+  "updatedAt": "2026-08-19T05:46:38.985Z"
+}
+```
+
+#### proposals - all
+
+`GET /orgs/611/alphastudio/proposals` → **200**
+
+```json
+{
+  "proposals": [
+    {
+      "proposalId": "prop_32fb5264f6e70df4c95f8f0b",
+      "runId": "run_393115077bd9df42be68e747",
+      "outputIndex": 0,
+      "content": "Today, we're excited to announce our latest roast, sourced from the vibrant farms of Ethiopia. The aroma of freshly ground beans fills our roastery floor, promising a rich and flavorful experience. #CoffeeLove #EthiopianRoast",
+      "key": "smoke-tone",
+      "state": "pending",
+      "reason": null,
+      "publishedId": null,
+      "createdAt": "2026-08-19T05:46:38.985Z",
+      "decidedAt": null
+    }
+  ]
+}
+```
+
+#### proposals - state=pending
+
+`GET /orgs/611/alphastudio/proposals?state=pending` → **200**
+
+```json
+{
+  "proposals": [
+    {
+      "proposalId": "prop_32fb5264f6e70df4c95f8f0b",
+      "runId": "run_393115077bd9df42be68e747",
+      "outputIndex": 0,
+      "content": "Today, we're excited to announce our latest roast, sourced from the vibrant farms of Ethiopia. The aroma of freshly ground beans fills our roastery floor, promising a rich and flavorful experience. #CoffeeLove #EthiopianRoast",
+      "key": "smoke-tone",
+      "state": "pending",
+      "reason": null,
+      "publishedId": null,
+      "createdAt": "2026-08-19T05:46:38.985Z",
+      "decidedAt": null
+    }
+  ]
+}
+```
+
+#### proposals - runId filter
+
+`GET /orgs/611/alphastudio/proposals?runId=run_393115077bd9df42be68e747` → **200**
+
+```json
+{
+  "proposals": [
+    {
+      "proposalId": "prop_32fb5264f6e70df4c95f8f0b",
+      "runId": "run_393115077bd9df42be68e747",
+      "outputIndex": 0,
+      "content": "Today, we're excited to announce our latest roast, sourced from the vibrant farms of Ethiopia. The aroma of freshly ground beans fills our roastery floor, promising a rich and flavorful experience. #CoffeeLove #EthiopianRoast",
+      "key": "smoke-tone",
+      "state": "pending",
+      "reason": null,
+      "publishedId": null,
+      "createdAt": "2026-08-19T05:46:38.985Z",
+      "decidedAt": null
+    }
+  ]
+}
+```
+
+#### decline WITH a reason
+
+`POST /orgs/611/alphastudio/proposals/prop_32fb5264f6e70df4c95f8f0b/decline` → **200**
+> the row stays - it is the no-repeat instruction
+
+```json
+{
+  "proposalId": "prop_32fb5264f6e70df4c95f8f0b",
+  "runId": "run_393115077bd9df42be68e747",
+  "outputIndex": 0,
+  "content": "Today, we're excited to announce our latest roast, sourced from the vibrant farms of Ethiopia. The aroma of freshly ground beans fills our roastery floor, promising a rich and flavorful experience. #CoffeeLove #EthiopianRoast",
+  "key": "smoke-tone",
+  "state": "declined",
+  "reason": "Too promotional for a Tuesday.",
+  "publishedId": null,
+  "createdAt": "2026-08-19T05:46:38.985Z",
+  "decidedAt": "2026-08-19T05:46:45.570Z"
+}
+```
+
+#### approve with mlk_<proposalId>
+
+`POST /orgs/611/alphastudio/proposals/prop_32fb5264f6e70df4c95f8f0b/approve` → **200**
+> deterministic id, so a retry is safe by construction (D-INT-K)
+
+```json
+{
+  "proposalId": "prop_32fb5264f6e70df4c95f8f0b",
+  "runId": "run_393115077bd9df42be68e747",
+  "outputIndex": 0,
+  "content": "Today, we're excited to announce our latest roast, sourced from the vibrant farms of Ethiopia. The aroma of freshly ground beans fills our roastery floor, promising a rich and flavorful experience. #CoffeeLove #EthiopianRoast",
+  "key": "smoke-tone",
+  "state": "approved",
+  "reason": "Too promotional for a Tuesday.",
+  "publishedId": "mlk_prop_32fb5264f6e70df4c95f8f0b",
+  "createdAt": "2026-08-19T05:46:38.985Z",
+  "decidedAt": "2026-08-19T05:46:46.580Z"
+}
+```
+
+#### approve AGAIN with the SAME id
+
+`POST /orgs/611/alphastudio/proposals/prop_32fb5264f6e70df4c95f8f0b/approve` → **200**
+> expected 200 - a safe retry
+
+```json
+{
+  "proposalId": "prop_32fb5264f6e70df4c95f8f0b",
+  "runId": "run_393115077bd9df42be68e747",
+  "outputIndex": 0,
+  "content": "Today, we're excited to announce our latest roast, sourced from the vibrant farms of Ethiopia. The aroma of freshly ground beans fills our roastery floor, promising a rich and flavorful experience. #CoffeeLove #EthiopianRoast",
+  "key": "smoke-tone",
+  "state": "approved",
+  "reason": "Too promotional for a Tuesday.",
+  "publishedId": "mlk_prop_32fb5264f6e70df4c95f8f0b",
+  "createdAt": "2026-08-19T05:46:38.985Z",
+  "decidedAt": "2026-08-19T05:46:46.580Z"
+}
+```
+
+#### approve with a DIFFERENT id
+
+`POST /orgs/611/alphastudio/proposals/prop_32fb5264f6e70df4c95f8f0b/approve` → **409**
+> expected 409, nothing changes
+
+```json
+{
+  "error": {
+    "code": "conflict",
+    "message": "The publishedId is already used, or this decision was already applied",
+    "requestId": "4a6d737c-32cd-4d5c-a6d4-2cfa36becbe6"
+  }
+}
+```
+
+#### read back after the 409
+
+`GET /orgs/611/alphastudio/proposals?runId=run_393115077bd9df42be68e747` → **200**
+> proves the 409 changed nothing
+
+```json
+{
+  "proposals": [
+    {
+      "proposalId": "prop_32fb5264f6e70df4c95f8f0b",
+      "runId": "run_393115077bd9df42be68e747",
+      "outputIndex": 0,
+      "content": "Today, we're excited to announce our latest roast, sourced from the vibrant farms of Ethiopia. The aroma of freshly ground beans fills our roastery floor, promising a rich and flavorful experience. #CoffeeLove #EthiopianRoast",
+      "key": "smoke-tone",
+      "state": "approved",
+      "reason": "Too promotional for a Tuesday.",
+      "publishedId": "mlk_prop_32fb5264f6e70df4c95f8f0b",
+      "createdAt": "2026-08-19T05:46:38.985Z",
+      "decidedAt": "2026-08-19T05:46:46.580Z"
+    }
+  ]
+}
+```
+
+#### decline the APPROVED one
+
+`POST /orgs/611/alphastudio/proposals/prop_32fb5264f6e70df4c95f8f0b/decline` → **200**
+> allowed - latest wins; the published entry is left alone
+
+```json
+{
+  "proposalId": "prop_32fb5264f6e70df4c95f8f0b",
+  "runId": "run_393115077bd9df42be68e747",
+  "outputIndex": 0,
+  "content": "Today, we're excited to announce our latest roast, sourced from the vibrant farms of Ethiopia. The aroma of freshly ground beans fills our roastery floor, promising a rich and flavorful experience. #CoffeeLove #EthiopianRoast",
+  "key": "smoke-tone",
+  "state": "declined",
+  "reason": "Changed our mind after posting.",
+  "publishedId": "mlk_prop_32fb5264f6e70df4c95f8f0b",
+  "createdAt": "2026-08-19T05:46:38.985Z",
+  "decidedAt": "2026-08-19T05:46:49.622Z"
+}
+```
+
+#### proposals - state=declined
+
+`GET /orgs/611/alphastudio/proposals?state=declined` → **200**
+
+```json
+{
+  "proposals": [
+    {
+      "proposalId": "prop_32fb5264f6e70df4c95f8f0b",
+      "runId": "run_393115077bd9df42be68e747",
+      "outputIndex": 0,
+      "content": "Today, we're excited to announce our latest roast, sourced from the vibrant farms of Ethiopia. The aroma of freshly ground beans fills our roastery floor, promising a rich and flavorful experience. #CoffeeLove #EthiopianRoast",
+      "key": "smoke-tone",
+      "state": "declined",
+      "reason": "Changed our mind after posting.",
+      "publishedId": "mlk_prop_32fb5264f6e70df4c95f8f0b",
+      "createdAt": "2026-08-19T05:46:38.985Z",
+      "decidedAt": "2026-08-19T05:46:49.622Z"
+    }
+  ]
+}
+```
+
+#### proposals - state=approved
+
+`GET /orgs/611/alphastudio/proposals?state=approved` → **200**
+
+```json
+{
+  "proposals": []
+}
+```
+
+#### cursor walk - limit=1, page 1
+
+`GET /orgs/611/alphastudio/proposals?limit=1` → **200**
+
+```json
+{
+  "proposals": [
+    {
+      "proposalId": "prop_32fb5264f6e70df4c95f8f0b",
+      "runId": "run_393115077bd9df42be68e747",
+      "outputIndex": 0,
+      "content": "Today, we're excited to announce our latest roast, sourced from the vibrant farms of Ethiopia. The aroma of freshly ground beans fills our roastery floor, promising a rich and flavorful experience. #CoffeeLove #EthiopianRoast",
+      "key": "smoke-tone",
+      "state": "declined",
+      "reason": "Changed our mind after posting.",
+      "publishedId": "mlk_prop_32fb5264f6e70df4c95f8f0b",
+      "createdAt": "2026-08-19T05:46:38.985Z",
+      "decidedAt": "2026-08-19T05:46:49.622Z"
+    }
+  ]
+}
+```
+
+#### proposals - unknown id decline
+
+`POST /orgs/611/alphastudio/proposals/prop_missing/decline` → **404**
+> expected 404
+
+```json
+{
+  "error": {
+    "code": "not_found",
+    "message": "Proposal not found",
+    "requestId": "0e24c21b-8996-4486-b9d1-b5cfe75a4e04"
+  }
+}
+```
+
+### Keyset paging, walked (follow-up run)
+
+- Page 1 (limit=1): 1 row, nextCursor present: true
+- Page 2: nextCursor present: false
+- Pages do not overlap: true ([["prop_317767a2d99827fb63f5315b"],["prop_32fb5264f6e70df4c95f8f0b"]])
+- Pending after two runs (one decided): 2
+
+#### posts/generate - perTone 2, for a second page
+
+`POST /orgs/611/alphastudio/posts/generate` → **202**
+> two drafts, so the ledger has enough rows to page
+
+```json
+{
+  "runId": "run_cfcc0c83518e88afb49aa47d",
+  "capability": "social-posts.generate",
+  "capabilityVersion": 4,
+  "mode": "batch",
+  "status": "queued",
+  "outputs": [],
+  "modelVersions": [],
+  "promptVersions": [],
+  "createdAt": "2026-08-19T05:47:36.695Z",
+  "updatedAt": "2026-08-19T05:47:36.695Z"
+}
+```
+
+#### cursor walk - limit=1, page 1
+
+`GET /orgs/611/alphastudio/proposals?limit=1` → **200**
+
+```json
+{
+  "proposals": [
+    {
+      "proposalId": "prop_317767a2d99827fb63f5315b",
+      "runId": "run_cfcc0c83518e88afb49aa47d",
+      "outputIndex": 0,
+      "content": "Step into our roastery floor today and discover the latest addition to our collection: a carefully crafted roast from the lush farms of Ethiopia. The air is filled with the enticing aroma of freshly ground beans, inviting you to indulge in a rich and flavorful coffee experience. #CoffeeJourney #EthiopianBlend",
+      "key": "286",
+      "state": "pending",
+      "reason": null,
+      "publishedId": null,
+      "createdAt": "2026-08-19T05:47:43.595Z",
+      "decidedAt": null
+    }
+  ],
+  "nextCursor": "MjAyNi0wOC0xOVQwNTo0Nzo0My41OTVaI3Byb3BfMzE3NzY3YTJkOTk4MjdmYjYzZjUzMTVi"
+}
+```
+
+#### cursor walk - page 2
+
+`GET /orgs/611/alphastudio/proposals?limit=1&cursor=MjAyNi0wOC0xOVQwNTo0Nzo0My41OTVaI3Byb3BfMzE3NzY3YTJkOTk4MjdmYjYzZjUzMTVi` → **200**
+> the cursor is opaque and passed back verbatim
+
+```json
+{
+  "proposals": [
+    {
+      "proposalId": "prop_32fb5264f6e70df4c95f8f0b",
+      "runId": "run_393115077bd9df42be68e747",
+      "outputIndex": 0,
+      "content": "Today, we're excited to announce our latest roast, sourced from the vibrant farms of Ethiopia. The aroma of freshly ground beans fills our roastery floor, promising a rich and flavorful experience. #CoffeeLove #EthiopianRoast",
+      "key": "smoke-tone",
+      "state": "declined",
+      "reason": "Changed our mind after posting.",
+      "publishedId": "mlk_prop_32fb5264f6e70df4c95f8f0b",
+      "createdAt": "2026-08-19T05:46:38.985Z",
+      "decidedAt": "2026-08-19T05:46:49.622Z"
+    }
+  ]
+}
+```
+
+#### proposals - state=pending after the second run
+
+`GET /orgs/611/alphastudio/proposals?state=pending` → **200**
+> the review queue as Today will read it
+
+```json
+{
+  "proposals": [
+    {
+      "proposalId": "prop_317767a2d99827fb63f5315b",
+      "runId": "run_cfcc0c83518e88afb49aa47d",
+      "outputIndex": 0,
+      "content": "Step into our roastery floor today and discover the latest addition to our collection: a carefully crafted roast from the lush farms of Ethiopia. The air is filled with the enticing aroma of freshly ground beans, inviting you to indulge in a rich and flavorful coffee experience. #CoffeeJourney #EthiopianBlend",
+      "key": "286",
+      "state": "pending",
+      "reason": null,
+      "publishedId": null,
+      "createdAt": "2026-08-19T05:47:43.595Z",
+      "decidedAt": null
+    },
+    {
+      "proposalId": "prop_3113054ea601f3fb8feba60b",
+      "runId": "run_cfcc0c83518e88afb49aa47d",
+      "outputIndex": 1,
+      "content": "Step into our roastery and breathe in the aroma of our newest blend, fresh off the roast from the lush Ethiopian highlands. Each cup is a journey through vibrant flavors and rich traditions. #CoffeeJourney #EthiopianBlend",
+      "key": "286",
+      "state": "pending",
+      "reason": null,
+      "publishedId": null,
+      "createdAt": "2026-08-19T05:47:43.595Z",
+      "decidedAt": null
+    }
+  ]
+}
+```
+
+### ⚠ BACKEND BUG — keyset paging loses rows that share a timestamp
+
+Found walking the cursor during INT-12 STEP 0. **Reported, and INT-12 is
+designed around it.**
+
+**Ground truth on the probe org (611): 3 proposals.** Two of them
+(`prop_317767a2…`, `prop_3113054e…`) come from the SAME run
+(`run_cfcc0c83…`, `perTone: 2`) and therefore share a creation instant.
+
+| Walk | Rows returned | Verdict |
+| ---- | ------------- | ------- |
+| `?limit=200` (no paging) | 3 | correct |
+| `?limit=2` walk | 3 (2 + 1) | correct |
+| `?limit=1` walk | **2** — `prop_3113…` never appears | **row lost** |
+| `?state=pending&limit=1` walk | **1 of 2**; page 2 returns `[]` with no cursor | **row lost** |
+
+**The cause is visible in the cursor itself.** It decodes to:
+
+```
+2026-08-19T05:47:43.595Z#prop_317767a2d99827fb63f5315b
+```
+
+— so the tie-breaking id IS carried. But the next page evidently compares on
+the TIMESTAMP alone (strictly `<`), skipping every row sharing that instant
+instead of continuing after `(timestamp, id)`. A page boundary that falls
+inside a group of same-instant rows drops the rest of the group.
+
+**Why this matters more here than it looks.** Proposals from one run are
+created together, so a single `generate` with `perTone: 2`, or with 2–3 tones,
+produces a cluster of same-instant rows. A boundary landing mid-cluster makes
+drafts disappear from the review queue with no error and no gap to notice —
+the exact failure mode a review screen must not have.
+
+**What the frontend does about it (D-INT-J).** Never trust a paged ledger for
+completeness:
+
+1. page with `limit=200` (the max) purely to DISCOVER `runId`s;
+2. then query `?runId=<id>` per run — that returns the run's whole set, is
+   boundary-free at these sizes (≤6 rows), and carries no cursor at all — and
+   treat THAT as the authoritative state.
+
+The per-run query was verified boundary-free here: `run_cfcc0c83…` → 2 rows and
+no `nextCursor`; `run_393115077…` → 1 row and no `nextCursor`.
+
+Residual risk, stated plainly: a run whose *entire* row group is lost by a
+page boundary would never be discovered at all. That needs >200 rows in the
+window AND a boundary landing exactly on one run's whole cluster. It is
+accepted for now, and it disappears the moment the tie-break is fixed
+server-side — no frontend change needed.
