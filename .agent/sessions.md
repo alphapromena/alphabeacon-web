@@ -1684,3 +1684,36 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   something pending to act on).
 - Next: nothing queued. Founder decisions: the "Approve" label (D-INT-K), and
   the backend questions 29–32.
+
+### 2026-08-19 10:05 — INT-6…12 merged to main and pushed (founder-approved)
+
+- Did: on the founder's explicit approval for exactly the named refs,
+  fast-forwarded `main` from `6c598b2` to `c6e3489` — the whole live
+  integration, 14 commits, no merge commit, one history — and pushed it, then
+  pushed the seven phase branches as the per-phase record. `probe/proposals`
+  was deliberately not pushed: it is superseded and its content already lives
+  in `int/12` as the cherry-picked `ee2bc57`.
+- Premise verified before touching anything: `origin/main` was still
+  `6c598b2`, and `origin/main` is an ancestor of `int/12-proposals`, so the
+  fast-forward was legitimate rather than assumed.
+- Pre-push audit, all clean: the secrets grep over the whole stack diff found
+  nothing; no `environment.json` or `.env*` file is tracked; the tip's
+  `.gitignore` carries `alphaprostudio.environment.json`, `*.environment.json`
+  and `.env.*`; the proxy-law grep over the `src` diff (`cloudfront.net`,
+  `x-aps-`, `svcKey`, `edgeSecret`, the upstream v1 prefix) found nothing.
+- The gate was run on the MERGED tip with `.env.local` renamed away, so the
+  build was the exact static artifact production gets: lint, typecheck, 394
+  unit, guard-static (248 files), static e2e 72 passed / 49 skips with the
+  zero-network assert, build, and verify:w02/w03/w04/w05/w06 all PASS.
+  `dist/` is 2.3 MB across 111 files and contains no API base url — the sole
+  mention of `VITE_API_BASE_URL` is the client's own "called in static mode"
+  error string, which is a diagnostic, not a value. `.env.local` restored after.
+- **Production remains static on purpose.** Vercel holds no
+  `VITE_API_BASE_URL`, so this push ships the same zero-network app; live mode
+  for the team is a separate order (env var + CSP `connect-src`, open-items 1).
+- Phase: close-out of INT-6…12 (no code change)
+- Files: `.agent/state.md`, `.agent/sessions.md`
+- Decisions: none new
+- Verify: the full gate above, on the merged tip, before the push
+- Next: founder decisions — the "Approve" label (D-INT-K) — and backend
+  questions 29–32. Nothing else queued.
