@@ -332,6 +332,11 @@ read source, because these failure modes pass behavioural tests:
   render `ToneBadge`.
 - The palette is guarded by `src/styles/tokens.test.ts` — 49 contrast
   assertions, including the `bg-X/10 text-X` badge pattern.
+- **A production build boots into `visitor`, never signed-in** (verify:w02,
+  2026-08-19). Checked on BOTH sides: the source derives the default from
+  `import.meta.env.PROD`, and the emitted `dist/` is read back to confirm it
+  really falls back to `"visitor"`. The artifact half exists because the
+  incident it prevents had correct source and a wrong deployment.
 - The proxy law (INT-6, `guard:static`): `fetch` exists in exactly two files,
   and no code under `src/` may name the upstream origin, its signing headers,
   its route prefix, or either service secret. Comments may name all of them —

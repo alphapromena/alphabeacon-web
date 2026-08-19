@@ -1495,3 +1495,34 @@ Recorded here as the founder set them; each is implemented in its own phase.
   sentence is the truth. Live Today ships Approve · Decline · Copy.
 - Deviation from screens4 D2 logged. The note names the condition rather than
   a date: "editing arrives with scheduling".
+
+### 2026-08-19 — Production defaults to the visitor world; the env var is an override, not a dependency
+
+- **What happened.** Production shipped with ZERO environment variables. The
+  rebrand's deploy fix set `VITE_DEFAULT_DATASET=visitor` in `vercel.json`
+  documentation but the variable was never actually set on Vercel, so the
+  deployed bundle resolved `resolveInitialDatasetId(undefined)` → `active` →
+  a signed-in demo tenant → `RootGate` rendered the DASHBOARD at `/`. Every
+  visitor to the marketing site got someone else's workspace for ten days.
+- **Why the old design allowed it.** The default was a plain constant chosen
+  for local convenience (`active` is the world you want while developing), and
+  the safe production value lived only in configuration. Configuration that is
+  never applied is indistinguishable from configuration that does not exist —
+  and nothing in the build, the tests or the gates could tell the difference.
+- **So the default is derived from the BUILD**:
+  `import.meta.env.PROD ? 'visitor' : 'active'`. Vite folds it at build time,
+  so a production bundle cannot boot signed-in no matter what the deployment
+  does or does not set. `VITE_DEFAULT_DATASET` survives as an explicit
+  override — pinning a preview to a particular world is still useful — but
+  nothing depends on it being present.
+- **The gate is two-sided, and the second half is the one that matters.**
+  `verify:w02` asserts (1) the SOURCE derives the default from the build with
+  `visitor` on the production branch, and (2) the emitted `dist/` really does
+  fall back to `"visitor"` — captured by backreference, since minified names
+  change per build. Only the artifact half could have caught the incident,
+  because the source was fine and the DEPLOYMENT was what defaulted wrong.
+  Both halves were canary-tested: reverting the constant fails the unit tests,
+  and a stale bad `dist/` with correct source fails the artifact half.
+- Instead of: setting the variable and calling it fixed (the same failure is
+  one dashboard edit away), or hardcoding `visitor` everywhere (dev would boot
+  signed-out and every local session would start by switching worlds).

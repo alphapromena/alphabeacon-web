@@ -121,7 +121,10 @@ function marketingLawsHold(): boolean {
   //     engine the reduced-motion gate controls.
   const bannedOutsideOutputs: [RegExp, string][] = [
     [/requestAnimationFrame/, 'runs a rAF loop outside outputs/ -- reveal is CSS-only'],
-    [/addEventListener\(['"]scroll['"]/, 'listens to scroll outside outputs/ -- use IntersectionObserver'],
+    [
+      /addEventListener\(['"]scroll['"]/,
+      'listens to scroll outside outputs/ -- use IntersectionObserver',
+    ],
   ]
   // AMENDED for Phase 2 §26 (decisions.md 2026-08-11): content-asset.tsx is
   // the ONE legal <video> seam on the route — the manifest's approved Reel
@@ -232,7 +235,10 @@ function marketingLawsHold(): boolean {
   const copyBans: [RegExp, string][] = [
     [/co-?pilot/i, 'the co-pilot positioning is retired (brief §2)'],
     [/\bdrafting model/i, 'model terminology is banned on the marketing route (§28)'],
-    [/\b(Balanced|Precise|Creative) drafting/i, 'model names are banned on the marketing route (§28)'],
+    [
+      /\b(Balanced|Precise|Creative) drafting/i,
+      'model names are banned on the marketing route (§28)',
+    ],
     [/\bcredits?\b/i, 'credit terminology is banned on the marketing route (§28)'],
     // AMENDED by the founder's 2026-08-11 production pass (item 12): the
     // launch model is early access until self-service publishing ships, so
@@ -240,7 +246,10 @@ function marketingLawsHold(): boolean {
     // the banned list -- the two launch models must never mix. The
     // pricing-section seam keeps its "Start free" for the flip back; it is
     // unlinked and exempted below.
-    [/Book demo|Request demo|Join waitlist|Try Malaky|Get started|Start free/i, 'a banned CTA variant (launch model: Request early access / See how it works only)'],
+    [
+      /Book demo|Request demo|Join waitlist|Try Malaky|Get started|Start free/i,
+      'a banned CTA variant (launch model: Request early access / See how it works only)',
+    ],
     [/Questions people ask/, 'the FAQ title is "Frequently asked questions" (§29)'],
   ]
   for (const [file, source] of sources) {
@@ -250,7 +259,9 @@ function marketingLawsHold(): boolean {
     }
   }
   if (!home.includes('Request early access') || !home.includes('See how it works')) {
-    failures.push('marketing-home.tsx: the CTA pair is incomplete (Request early access / See how it works)')
+    failures.push(
+      'marketing-home.tsx: the CTA pair is incomplete (Request early access / See how it works)',
+    )
   }
   if (!home.includes('Frequently asked questions')) {
     failures.push('marketing-home.tsx: the FAQ heading is missing (§29)')
@@ -277,6 +288,76 @@ function marketingLawsHold(): boolean {
 }
 
 /** A phase is not done because its tests pass -- it is done when its screens exist. */
+/**
+ * A PRODUCTION BUILD MUST NEVER BOOT SIGNED-IN.
+ *
+ * Not a hypothetical: production shipped with no environment variables,
+ * `VITE_DEFAULT_DATASET` was never set on Vercel, and `/` served the signed-in
+ * demo dashboard to every visitor for ten days. The default is derived from the
+ * BUILD now, so this asserts both halves of that claim:
+ *
+ *  1. SOURCE — the default is chosen by `import.meta.env.PROD`, and the
+ *     production branch is `visitor`. An inverted ternary, or a revert to a
+ *     plain constant, fails here.
+ *  2. ARTIFACT — the emitted bundle really does fall back to `visitor`. Vite
+ *     folds `import.meta.env.PROD` at build time, so `dist/` contains the
+ *     registry, a constant `"visitor"`, and a resolver using that constant as
+ *     its fallback. The constant's NAME is minified and changes per build, so
+ *     it is captured and matched by backreference rather than hard-coded.
+ *
+ * The artifact half is what makes this more than a style rule: it is the only
+ * check that would have caught the incident, because the source was fine and
+ * the DEPLOYMENT was what defaulted wrong.
+ */
+function productionBootsVisitor(): boolean {
+  console.log('\n=== a production build boots into the visitor world ===')
+  const source = readFileSync(join(root, 'src', 'data', 'datasets', 'index.ts'), 'utf8')
+
+  const derivedFromBuild =
+    /export const DEFAULT_DATASET_ID:\s*DatasetId\s*=\s*import\.meta\.env\.PROD\s*\?\s*'visitor'\s*:\s*'active'/.test(
+      source,
+    )
+
+  // The built chunk: `…],NAME="visitor";function r(e){return REG.some(…)?e:NAME}`
+  const distDir = join(root, 'dist', 'assets')
+  let artifactFallsBackToVisitor = false
+  let scanned = 0
+  if (existsSync(distDir)) {
+    for (const file of readdirSync(distDir).filter((name) => name.endsWith('.js'))) {
+      const bundle = readFileSync(join(distDir, file), 'utf8')
+      scanned += 1
+      const declared =
+        /\{id:"active",build:[^}]+\}[\s\S]{0,600}?\],\s*([A-Za-z_$][\w$]*)\s*=\s*"visitor"/.exec(
+          bundle,
+        )
+      if (!declared) continue
+      const constant = declared[1]
+      // String.raw, because a plain template literal eats the backslashes:
+      // an escaped dot would become `.` (any char) and the whitespace class
+      // would become a literal `s`, so the regex would quietly match the
+      // wrong thing instead of failing loudly.
+      const usedAsFallback = new RegExp(
+        String.raw`\.some\(\s*\w+\s*=>\s*\w+\.id\s*===\s*\w+\s*\)\s*\?\s*\w+\s*:\s*` +
+          constant +
+          String.raw`\b`,
+      ).test(bundle)
+      if (usedAsFallback) {
+        artifactFallsBackToVisitor = true
+        break
+      }
+    }
+  }
+
+  const ok = derivedFromBuild && artifactFallsBackToVisitor
+  results.push({ name: 'production boots into visitor', outcome: ok ? 'PASS' : 'FAIL' })
+  console.log(
+    ok
+      ? 'production default: source derives it from the build, and dist falls back to "visitor"'
+      : `production-default check FAILED -- source:${derivedFromBuild} artifact:${artifactFallsBackToVisitor} (scanned ${scanned} chunk(s); run a build first)`,
+  )
+  return ok
+}
+
 function deliverablesExist(): boolean {
   console.log('\n=== W2 deliverables exist ===')
   const required = [
@@ -350,6 +431,7 @@ function main(): void {
 
   if (!failed) {
     if (!capIsDeclaredOnce()) failed = true
+    if (!productionBootsVisitor()) failed = true
     if (!marketingLawsHold()) failed = true
     if (!deliverablesExist()) failed = true
 
