@@ -6,12 +6,13 @@
  * arrive whole. Faking a stream from a finished result would be theatre, and
  * the one thing this screen must not do is perform work it did not do.
  *
- * THE RUN LEDGER exists because the wire has no list-runs endpoint - only
- * `GET posts/runs/:runId`. Without a local record of the ids it minted, a
- * reload loses every result the user just produced. So the ids (and the
- * `proposalId` each draft carries, against the day proposals are proxied) are
- * kept per org in localStorage. It is deliberately not a history: it holds ids,
- * not content, and an id the server answers 404 for is dropped on sight.
+ * THE LOCAL RUN LEDGER IS RETIRED (INT-12, D-INT-G amended). It existed only
+ * because nothing server-side indexed an org's runs, so a reload lost every
+ * result the user had just produced. The proposals ledger now does index them
+ * — every draft becomes a proposal stamped with its `runId` — so "recent runs"
+ * is a real, shared, cross-device fact instead of a per-browser cache, and it
+ * includes runs this frontend never started. `readLedger` and friends are gone
+ * with it; `src/data/proposals.ts` is where run history lives now.
  */
 import { api } from '@/api/client'
 import { isLiveMode } from '@/api/config'
@@ -53,57 +54,6 @@ export interface LiveDraft {
   attributions: unknown[]
   /** Kept for the day proposals are proxied; never rendered. */
   proposalId?: string
-}
-
-export interface RunLedgerEntry {
-  runId: string
-  at: string
-  proposalIds: string[]
-}
-
-const LEDGER_LIMIT = 20
-const ledgerKey = (orgId: string) => `ab-live-runs-${orgId}`
-
-export function readLedger(orgId: string | null): RunLedgerEntry[] {
-  if (!orgId) return []
-  try {
-    const raw = window.localStorage.getItem(ledgerKey(orgId))
-    if (!raw) return []
-    const parsed: unknown = JSON.parse(raw)
-    if (!Array.isArray(parsed)) return []
-    return parsed.filter(
-      (entry): entry is RunLedgerEntry =>
-        typeof entry === 'object' &&
-        entry !== null &&
-        typeof (entry as RunLedgerEntry).runId === 'string',
-    )
-  } catch {
-    // A corrupt ledger is not worth an error state - it is a cache of ids.
-    return []
-  }
-}
-
-export function writeLedger(orgId: string | null, entries: RunLedgerEntry[]): void {
-  if (!orgId) return
-  try {
-    window.localStorage.setItem(ledgerKey(orgId), JSON.stringify(entries.slice(0, LEDGER_LIMIT)))
-  } catch {
-    // Storage full or blocked: the run still works, it just is not re-pullable.
-  }
-}
-
-/** Newest first, and never twice. */
-export function rememberRun(orgId: string | null, runId: string): RunLedgerEntry[] {
-  const existing = readLedger(orgId).filter((entry) => entry.runId !== runId)
-  const next = [{ runId, at: new Date().toISOString(), proposalIds: [] }, ...existing]
-  writeLedger(orgId, next)
-  return next
-}
-
-export function forgetRun(orgId: string | null, runId: string): RunLedgerEntry[] {
-  const next = readLedger(orgId).filter((entry) => entry.runId !== runId)
-  writeLedger(orgId, next)
-  return next
 }
 
 /** The observed output shape to what a card renders (alphastudio-shapes.md). */
@@ -197,7 +147,6 @@ export function useGenerateActions() {
         const receipt = await api<RunReceipt>('POST', `/orgs/${orgId}/alphastudio/posts/generate`, {
           body,
         })
-        rememberRun(orgId, receipt.runId)
         return { ok: true, runId: receipt.runId }
       } catch (error) {
         if (isApiError(error)) {
@@ -214,19 +163,16 @@ export function useGenerateActions() {
     },
 
     /**
-     * Read a run back. `null` means the id is gone (404) and the ledger has
-     * dropped it; `undefined` means this read failed but the id may still be
-     * good, so a poll keeps trying rather than discarding the user's work.
+     * Read a run back. `null` means the id is gone (404); `undefined` means
+     * this read failed but the id may still be good, so a poll keeps trying
+     * rather than discarding the user's work.
      */
     async readRun(runId: string): Promise<ApiRun | null | undefined> {
       if (!live || !orgId) return undefined
       try {
         return await api<ApiRun>('GET', `/orgs/${orgId}/alphastudio/posts/runs/${runId}`)
       } catch (error) {
-        if (isApiError(error) && error.code === 'not_found') {
-          forgetRun(orgId, runId)
-          return null
-        }
+        if (isApiError(error) && error.code === 'not_found') return null
         return undefined
       }
     },

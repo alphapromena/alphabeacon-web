@@ -132,7 +132,15 @@ build, so they are worth asking as a batch.
     Decide: does the app keep asking users to create event sources, or is
     country the single control (which is what D-INT-F assumes)? And if slots
     stay: **when does ingestion fire?**
-22. **STILL OPEN, now with evidence (probed 2026-08-18).** The live
+22. **PARTLY CLOSED 2026-08-19 — proposals shipped.** The ledger is live
+    (contract now 65 paths) and INT-12 builds Today on it: `GET proposals`
+    with state/runId/cursor, approve and decline. What that leaves open is the
+    residue, and it is still real: **no list-runs endpoint** (the ledger
+    indexes runs only because every draft becomes a proposal), **no
+    published-social proxy** (so a record cannot be listed, refreshed or
+    removed), and **no drafts store** (so no editing before approval and no
+    scheduling). See questions 29–31 below. The 2026-08-18 probe record:
+    **(historical)** The live
     `GET /openapi` is byte-identical to the committed contract — 62 paths,
     nothing added — and an AUTHENTICATED route probe answers `404 not_found`
     for every proposals and published-social candidate, matching a deliberate
@@ -201,11 +209,47 @@ build, so they are worth asking as a batch.
     `capabilitySchema`s are captured in `Docs/api/alphastudio-shapes.md`, so
     each is a form and a live spec away.
 
+29. **Do backend-driven scheduled runs land as proposals in the same org
+    ledger?** This is the biggest open question in the product right now:
+    Today is complete if and only if the "morning drafts" a schedule produces
+    arrive as proposals like any other run. INT-12 renders them identically if
+    they do — that is the whole point of deriving from the ledger — but
+    nothing has been observed yet, because nothing has confirmed when (or
+    whether) scheduled generation runs at all. Until it is answered, Today's
+    empty state deliberately promises nothing about mornings: it says
+    "generate posts to start".
+
+30. **Will `published-social` (list / add / delete) be proxied?** Approving
+    creates a published entry, and the frontend can neither list nor remove
+    it. Needed to show what has actually gone out, to refresh engagement, and
+    for the day publishing is real.
+
+31. **Could the proposals list carry the draft content, or could a list-runs
+    endpoint exist?** Today currently costs one run read per distinct run in
+    the queue (cached per session, terminal runs only). Either change would
+    make the review queue a single read. Not urgent, but it is the shape of
+    the screen's cost as the ledger grows.
+
 27. **Is `guardrail_text_units` metering worth surfacing?** The usage read
     returns three units for one generate run (`input_tokens`,
     `output_tokens`, `guardrail_text_units`). H3 will group by capability and
     show them as-is; confirm that is the right granularity for an end user, or
     whether the app should sum to one number per capability.
+
+32. **BUG — keyset paging loses rows that share a timestamp (found INT-12,
+    2026-08-19).** `GET .../proposals` compares the cursor on the timestamp
+    alone, though the cursor itself carries the tie-breaking id
+    (`2026-08-19T05:47:43.595Z#prop_317767a2…`). Any page boundary inside a
+    group of same-instant rows drops the rest of the group — and proposals
+    from one run are created together, so a `perTone: 2` run or a 2–3 tone run
+    is exactly such a group. Measured on the probe org: `?limit=1` walked 2 of
+    3 rows; `?state=pending&limit=1` walked 1 of 2 and its second page came
+    back empty with no cursor. Full evidence and the decode of the cursor are
+    in `Docs/api/alphastudio-shapes.md`.
+    **The frontend is designed around it** (D-INT-J: page only to discover
+    runIds, then re-query `?runId=` for authoritative state), so nothing is
+    blocked — but any other consumer walking that list will silently lose
+    rows, and the fix is a tie-break on `(createdAt, proposalId)`.
 
 ### M1 cinematic items — RETIRED by the rebrand (2026-08-08)
 

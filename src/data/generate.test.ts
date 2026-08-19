@@ -1,19 +1,15 @@
 /**
- * The run shape and the ledger (INT-10). Both are places where a silent wrong
- * answer is the failure mode: a draft whose tone and rationale read
- * `undefined` still renders, and a ledger that never drops a dead id looks
- * like a working history until every entry 404s.
+ * The run shape (INT-10). A silent wrong answer is the failure mode here: a
+ * draft whose tone and rationale read `undefined` still renders perfectly, it
+ * just says nothing.
+ *
+ * The local run-ledger tests that used to live here went with the ledger in
+ * INT-12 — the proposals ledger indexes runs server-side now, so its coverage
+ * is in `proposals.test.ts`.
  */
-import { beforeEach, describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import type { GenerationRun } from './generate'
-import {
-  draftsFromRun,
-  forgetRun,
-  isRunTerminal,
-  readLedger,
-  rememberRun,
-  toRunTone,
-} from './generate'
+import { draftsFromRun, isRunTerminal, toRunTone } from './generate'
 
 /** Verbatim from Docs/api/alphastudio-shapes.md — a real completed run. */
 const OBSERVED: GenerationRun = {
@@ -99,40 +95,5 @@ describe('toRunTone', () => {
       ],
     })
     expect('example' in sent).toBe(false)
-  })
-})
-
-describe('the run ledger', () => {
-  beforeEach(() => window.localStorage.clear())
-
-  it('remembers newest first and never twice', () => {
-    rememberRun('1', 'run_a')
-    rememberRun('1', 'run_b')
-    rememberRun('1', 'run_a')
-    expect(readLedger('1').map((entry) => entry.runId)).toEqual(['run_a', 'run_b'])
-  })
-
-  it('is scoped per org, so one workspace never shows another one runs', () => {
-    rememberRun('1', 'run_a')
-    rememberRun('2', 'run_b')
-    expect(readLedger('1').map((e) => e.runId)).toEqual(['run_a'])
-    expect(readLedger('2').map((e) => e.runId)).toEqual(['run_b'])
-  })
-
-  it('drops an id on request — a 404 must not linger as a dead row', () => {
-    rememberRun('1', 'run_a')
-    rememberRun('1', 'run_b')
-    expect(forgetRun('1', 'run_a').map((e) => e.runId)).toEqual(['run_b'])
-  })
-
-  it('treats a corrupt ledger as empty rather than an error state', () => {
-    window.localStorage.setItem('ab-live-runs-1', '{ not json')
-    expect(readLedger('1')).toEqual([])
-    window.localStorage.setItem('ab-live-runs-1', '{"runId":"nope"}')
-    expect(readLedger('1')).toEqual([])
-  })
-
-  it('answers empty without an org, instead of throwing', () => {
-    expect(readLedger(null)).toEqual([])
   })
 })

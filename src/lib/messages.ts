@@ -82,6 +82,14 @@ export const MESSAGES = {
     runFailed: 'That run did not finish. Nothing was charged for a failed run — try again.',
     runMissing: 'That run is no longer available, so it has been removed from your recent runs.',
 
+    // The proposals ledger (INT-12).
+    /** 409 on approve: the id is taken, so the record is already elsewhere. */
+    approveConflict:
+      'This was already recorded under a different id. Refresh to see where it went — nothing was changed.',
+    /** 404: the proposal is gone from the ledger. */
+    proposalGone: 'That draft is no longer in your queue. Refresh to see what is.',
+    decisionFailed: 'That decision did not go through. Nothing changed — try again.',
+
     // Generation, live mode (INT-6 — the two codes the 2026-08-17 contract
     // added). Both are states a screen renders, not toasts to shrug at.
     /** 402 wallet_insufficient. There is no self-serve top-up on this API. */
@@ -107,6 +115,9 @@ export const MESSAGES = {
     noKnowledge: 'No documents yet — upload your price list, FAQs, or product notes.',
     noCapabilities: 'Nothing in the studio is available to this workspace yet.',
     noJobs: 'Nothing rendered yet — create something and it shows up here.',
+    noReview: 'Nothing waiting for review — generate posts to start.',
+    noApproved: 'Nothing approved yet.',
+    noDeclined: 'Nothing declined yet.',
     noInvites: 'Invite your team to collaborate.',
     noCountry: 'No country set yet — your calendar has no public holidays in it.',
     noHolidays: 'No public holidays left this year for this country.',
@@ -162,8 +173,26 @@ export const MESSAGES = {
       'Still working. It keeps running even if you leave — check Recent runs in a minute.',
     draftsReadOnly:
       'These are read-only for now: approving and scheduling arrive when the drafts backend does.',
-    runLedgerLocal: 'Kept in this browser so you can re-open a result — not a full history yet.',
+    /** INT-12: this is the shared ledger now, not a per-browser cache. */
+    recentRunsFromLedger:
+      'Everything still waiting on your review, including drafts written while you were away.',
     visualComingNext: 'Visuals for a draft arrive with the Studio integration.',
+
+    // Today, live mode (INT-12).
+    /** The whole truth about what Approve does today (D-INT-K). */
+    approveRecordsAsPosted:
+      'Malaky records this as posted and stops suggesting anything like it. Copy the text to publish it yourself — connecting your channels arrives in a later phase.',
+    approveConfirm:
+      'This adds a permanent record that the post went out. You can still decline it later, but the record stays.',
+    declineTeaches:
+      'Why not? Malaky is shown your declines before it writes again, so a reason turns "avoid this" into "avoid this, because".',
+    recordedAsPosted: 'Recorded as posted',
+    /** D-INT-L: editing needs a drafts store that does not exist yet. */
+    editComingWithScheduling:
+      'Editing a draft arrives with scheduling — for now, copy the text and adjust it wherever you post.',
+    /** D5/B1-B3 stay static in live mode. */
+    publishingComingSoon:
+      'Publishing and channel connections are not wired up yet. Approving records the post; copying it is how it goes out.',
     // Studio, live mode (INT-11).
     chargedToBalance: 'charged to your balance',
     capabilityComingSoon: 'Available to your workspace — the form for it arrives in a later phase.',

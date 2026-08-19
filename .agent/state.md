@@ -5,8 +5,9 @@ without reconstructing it from the session log. **Update this file at the end
 of any turn that finishes a phase or changes the plan.** `sessions.md` is the
 chronological record; this is the current picture.
 
-_Last updated: 2026-08-18, after **INT-11** (`int/11-studio-knowledge`) — the
-Studio and Knowledge run against the live platform. INT-10 made F1 real; INT-9
+_Last updated: 2026-08-19, after **INT-12** (`int/12-proposals`) — Today is the
+proposals ledger, so the review queue survives a reload and a change of device.
+INT-11 put the Studio and Knowledge on the live platform; INT-10 made F1 real; INT-9
 put money on screen; INT-6 landed the
 contract and the observed shapes; INT-7 put brand rules on the wire; INT-8 made
 the org country the single holiday control. **Not merged, not pushed.**_
@@ -120,6 +121,7 @@ make a single-shot all-file matrix trip 429s by design. Fresh
 | INT-9 | Wallet + usage (balance chip, the 402 state, H3)        | **Done (`int/09-wallet`)** · live e2e 4/4 |
 | INT-10 | On-demand generate F1 (batch runs + local run ledger)  | **Done (`int/10-generate`)** · live e2e 2/2 |
 | INT-11 | Studio media E1–E4 + I6 knowledge (RAG)               | **Done (`int/11-studio-knowledge`)** · live e2e 4/4 studio (incl. a real render) + 3/3 knowledge |
+| INT-12 | **Today on the proposals ledger** (D1/D2, F1 ledger retired) | **Done (`int/12-proposals`)** · live e2e 4/4 |
 
 **INT-0…5 are MERGED to `main` (`b601622`, fast-forward — the int/NN branches
 stay as the per-phase record, like w/NN).** INT-6 is on its own branch and NOT
@@ -147,10 +149,18 @@ invented or faked: where a spec promised something the wire cannot deliver, the
 honest subset ships and the deviation is logged. The backend questions live in
 open-items 1–13 and 21–27; W7 still waits on the two reopened manual gates.
 
-Current totals after INT-11: **395 unit tests** (37 files), **static e2e
-72 passed / 45 live-spec skips**, guard-static 245 files clean, all green.
-**The integration's second pass is complete: INT-6 … INT-11 all done, all on
-their own branches, none merged and none pushed.**
+Current totals after INT-12: **394 unit tests** (38 files), **static e2e
+72 passed / 49 live-spec skips**, guard-static 248 files clean, all green.
+(The unit count dips by one: INT-10's localStorage run-ledger tests went with
+the ledger it tested — the proposals ledger replaced it server-side.)
+**INT-6 … INT-12 are all done, each on its own branch, none merged and none
+pushed.**
+
+**Still NOT on the wire after INT-12:** a list-runs endpoint, the
+published-social proxy, any drafts store (so no editing before approval and no
+scheduling), publish/schedule (D5), channel connections (B1–B3), analytics
+(G1–G2), plans/checkout (H1/H2/H4), and streaming. Open-items 29–31 carry the
+questions; 32 carries a real paging bug the frontend is designed around.
 **No route is a stub any more** — `PlaceholderScreen` is deleted, and
 `verify:w06` fails if it comes back.
 
@@ -259,6 +269,16 @@ These are learned the hard way; each cost a debugging cycle.
     assertion can pass in the window before the fallback even mounts. Assert
     `expect(locator.first()).toBeVisible()` first; that retries, `count()`
     does not.
+16. **`getByRole(..., { name })` matches by SUBSTRING too, not just
+    `getByText`.** Trap 9 was recorded for `getByText`; INT-12 proved it costs
+    just as much on roles. A click on `{ name: 'Approve' }` silently hit the
+    **'Approved' tab** — which renders first — so the confirm never opened and
+    the failure read as "no dialog". Use `exact: true` and scope to the row.
+17. **A shadcn ConfirmDialog is `role="alertdialog"`, not `role="dialog"`.**
+    And it is modal, so while it is open everything behind it is aria-hidden
+    (trap 10) — a `getByRole('dialog')` query against it finds nothing at all,
+    which reads like "the dialog never opened" rather than "wrong role".
+
 15. **A `verify:wNN` you are not running is a check that has already broken.**
     `keyboard-focus rules hold` (w06) had been failing since 2026-08-11 because
     the code-split moved route elements behind a lazy loader and its regex

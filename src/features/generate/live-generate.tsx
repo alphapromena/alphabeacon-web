@@ -12,11 +12,12 @@
  * - invent a stream (there is nothing to stream from);
  * - hide a guardrail flag or an attribution (both are rendered inline; the
  *   upstream terms require sources to stay visible);
- * - lose the run id (there is no list-runs endpoint, so the local ledger is
- *   the only way back to a result after a reload).
+ * - lose a result (there is no list-runs endpoint, so the PROPOSALS ledger is
+ *   the way back to one — INT-12 retired the localStorage cache that used to
+ *   stand in for it).
  */
 import { Copy, Image as ImageIcon, Sparkles } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { InsufficientBalance } from '@/components/ab/insufficient-balance'
 import { toastError, toastSuccess } from '@/components/ab/toast'
 import { ToneBadge } from '@/components/ab/tone-badge'
@@ -27,13 +28,12 @@ import {
   draftsFromRun,
   isRunTerminal,
   MAX_FANOUT,
-  readLedger,
   useGenerateActions,
   type GenerationPlan,
   type GenerationRun,
   type LiveDraft,
-  type RunLedgerEntry,
 } from '@/data/generate'
+import { useProposalActions, type ReviewItem } from '@/data/proposals'
 import { useCalendarEvents, useTones } from '@/data/provider'
 import { useWallet, useWalletActions } from '@/data/wallet'
 import { shortDate } from '@/lib/format'
@@ -55,6 +55,7 @@ export function LiveGenerate() {
   const tones = useTones()
   const occasions = useCalendarEvents()
   const generate = useGenerateActions()
+  const proposals = useProposalActions()
   const wallet = useWallet()
   const walletActions = useWalletActions()
 
@@ -69,7 +70,7 @@ export function LiveGenerate() {
   const [drafts, setDrafts] = useState<LiveDraft[]>([])
   const [error, setError] = useState<string | null>(null)
   const [shortBalance, setShortBalance] = useState(false)
-  const [ledger, setLedger] = useState<RunLedgerEntry[]>([])
+  const [recent, setRecent] = useState<ReviewItem[]>([])
   const cancelled = useRef(false)
 
   // The unmount guard is its OWN effect, with no dependencies. Sharing it with
@@ -83,9 +84,21 @@ export function LiveGenerate() {
     }
   }, [])
 
-  useEffect(() => {
-    setLedger(readLedger(generate.orgId))
+  /**
+   * "Recent runs" is the PROPOSALS ledger now, not a localStorage cache
+   * (D-INT-J). It survives a reload, follows the user to another device, and
+   * shows runs this browser never started — which the old ledger could not do
+   * by construction.
+   */
+  const loadRecent = useCallback(async () => {
+    const result = await proposals.review('pending', 1)
+    if (!cancelled.current) setRecent(result.items)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- per org
   }, [generate.orgId])
+
+  useEffect(() => {
+    void loadRecent()
+  }, [loadRecent])
 
   // Upstream refuses an over-budget fan-out rather than truncating it, so the
   // client refuses first and says which number to change.
@@ -113,7 +126,7 @@ export function LiveGenerate() {
       const run: GenerationRun | null | undefined = await generate.readRun(runId)
       if (cancelled.current) return
       if (run === null) {
-        // The id is gone; the ledger already dropped it.
+        // The id is gone from the platform entirely.
         setPhase('failed')
         setError(MESSAGES.errors.runMissing)
         return
@@ -131,7 +144,7 @@ export function LiveGenerate() {
       }
       if (Date.now() - startedAt > POLL_CEILING_MS) {
         // Still working is not failed: the run keeps going server-side and the
-        // ledger can pull it later, so say that rather than reporting an error.
+        // queue will carry it once it lands, so say that rather than erroring.
         setPhase('slow')
         return
       }
@@ -150,7 +163,7 @@ export function LiveGenerate() {
       perTone,
       occasion: occasions.find((event) => event.id === occasionId),
     })
-    setLedger(readLedger(generate.orgId))
+    void loadRecent()
     if (!result.ok) {
       setPhase('idle')
       if (result.code === 'wallet_insufficient') {
@@ -178,7 +191,7 @@ export function LiveGenerate() {
     setDrafts([])
     setPhase('running')
     const run = await generate.readRun(runId)
-    setLedger(readLedger(generate.orgId))
+    void loadRecent()
     if (run === null) {
       setPhase('failed')
       setError(MESSAGES.errors.runMissing)
@@ -351,20 +364,21 @@ export function LiveGenerate() {
         </section>
       )}
 
-      {ledger.length > 0 && (
+      {recent.length > 0 && (
         <section className="flex flex-col gap-2">
-          <h2 className="text-sm font-medium">Recent runs</h2>
-          <p className="text-sm text-muted-foreground">{MESSAGES.notices.runLedgerLocal}</p>
+          <h2 className="text-sm font-medium">Waiting for review</h2>
+          <p className="text-sm text-muted-foreground">{MESSAGES.notices.recentRunsFromLedger}</p>
           <ul className="flex flex-col gap-1">
-            {ledger.map((entry) => (
-              <li key={entry.runId}>
+            {[...new Set(recent.map((item) => item.proposal.runId))].map((runId) => (
+              <li key={runId}>
                 <Button
                   variant="ghost"
                   size="sm"
                   disabled={busy}
-                  onClick={() => void reopen(entry.runId)}
+                  onClick={() => void reopen(runId)}
                 >
-                  {shortDate(entry.at)} · {entry.runId.slice(0, 14)}…
+                  {recent.filter((item) => item.proposal.runId === runId).length} draft(s) ·{' '}
+                  {runId.slice(0, 14)}…
                 </Button>
               </li>
             ))}

@@ -20,12 +20,14 @@ import {
   useCalendarEvents,
   useDataDispatch,
   useDrafts,
+  useLiveMode,
   useSchedule,
   useScreenPhase,
   useSlots,
   useTones,
 } from '@/data/provider'
 import type { Draft } from '@/data/types'
+import { LiveToday } from './live-today'
 import { MESSAGES } from '@/lib/messages'
 import { slotInstant } from '@/lib/timezone'
 import { DraftCard } from './draft-card'
@@ -33,6 +35,23 @@ import { DraftDialogs } from './draft-dialogs'
 import { useDraftActions } from './use-draft-actions'
 
 export function TodayScreen() {
+  const live = useLiveMode()
+
+  // LIVE: the queue is the proposals ledger, joined to its runs (D-INT-J).
+  // Not a different data source for the same screen — a different screen, for
+  // the same reason F1 branched: the static half edits and schedules drafts it
+  // owns, and neither of those exists on the wire yet.
+  if (live) {
+    return (
+      <AppShell title="Today" context="What is waiting on you">
+        <LiveToday />
+      </AppShell>
+    )
+  }
+  return <StaticTodayScreen />
+}
+
+function StaticTodayScreen() {
   const drafts = useDrafts()
   const slots = useSlots()
   const tones = useTones()

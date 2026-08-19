@@ -1447,3 +1447,51 @@ Recorded here as the founder set them; each is implemented in its own phase.
 - **The list stays url-less on purpose.** Minting a presigned url per asset
   across a page is a signing call per row for links most people never open, so
   E3 lists without them and E4 mints one per asset actually opened.
+
+### 2026-08-19 — D-INT-J: Today is derived from the ledger, not from local state
+
+- Why: a proposal row carries no content, so the review queue is a JOIN —
+  ledger → unique `runId`s → run reads → outputs matched back by the
+  `proposalId` stamped on them. That is what makes a reload, a second device
+  and a run this frontend never started all show the same queue.
+- **D-INT-G is amended: the INT-10 localStorage run ledger is RETIRED.** It
+  existed only because nothing server-side indexed an org's runs. The
+  proposals ledger does, so "recent runs" became a shared fact instead of a
+  per-browser cache, and F1's list is now proposals grouped by run.
+- Terminal runs are immutable, so run reads are cached in memory and
+  sessionStorage. A non-terminal run is never cached — caching one would
+  freeze a queue mid-flight.
+- **PAGING IS NOT TRUSTED FOR COMPLETENESS**, and that is not caution — the
+  live walk proved the server's keyset skips rows sharing a creation instant,
+  which is exactly what proposals from one run do (see the shapes doc). So the
+  page walk only DISCOVERS runIds; the authoritative read is `?runId=`, which
+  returns a run's whole set and carries no cursor at these sizes. Correctness
+  comes from the per-run read; the walk is just an index.
+
+### 2026-08-19 — D-INT-K: Approve means "approve and record as posted"
+
+- Why: there is no publishing on the wire, and `approve` creates the
+  published-social entry dated now. api.md advises calling it "when the post
+  actually goes live, not when an admin clicks approve" — with no publish path
+  to wait for, the honest move is to do both at once AND SAY SO, rather than
+  hold a record back for an event that cannot happen. The card reads: "Malaky
+  records this as posted and stops suggesting anything like it. Copy the text
+  to publish it yourself."
+- `publishedId` is `mlk_<proposalId>` — DETERMINISTIC, so a double click, a
+  flaky connection and a reload all converge on the documented safe retry
+  instead of racing into a 409. A random id would make the second attempt fail.
+- A confirm precedes Approve because the published record is permanent
+  (declining later leaves it). Decline asks for an optional reason (≤500) and
+  is reversible — latest wins. There is no Undo pretence: no un-decide exists.
+- **Founder flag:** the button stays "Approve" with the explanatory line
+  beneath it. When real publishing lands, Approve becomes two-stage (approve,
+  then publish) and this decision is the thing to revisit.
+
+### 2026-08-19 — D-INT-L: Edit is deferred, and absent rather than disabled
+
+- Why: no drafts store exists, so an edit could not be persisted, could not
+  reach the platform's record, and could not change what the next run learns
+  from. A disabled Edit button would advertise a feature; an absent one with a
+  sentence is the truth. Live Today ships Approve · Decline · Copy.
+- Deviation from screens4 D2 logged. The note names the condition rather than
+  a date: "editing arrives with scheduling".

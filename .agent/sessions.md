@@ -1637,3 +1637,50 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   LIVE_MEDIA=1, E2 → E3 → E4) and **`live-knowledge` 3/3**.
 - Next: nothing — INT-6…INT-11 are complete. Close-out report to the founder;
   nothing merged, nothing pushed.
+
+### 2026-08-19 09:20 — INT-12: Today becomes the proposals ledger
+
+- Did: landed the 65-path contract, then built Today as a JOIN — ledger →
+  unique runIds → run reads → outputs matched by the `proposalId` stamped on
+  them (D-INT-J). Tabs for pending/approved/declined, the header count from
+  the ledger, decisions through approve/decline, and the whole thing derived
+  from the platform rather than from anything this browser remembers.
+- **INT-10's localStorage run ledger is retired** (D-INT-G amended). It only
+  ever existed because nothing server-side indexed an org's runs; the
+  proposals ledger does, so F1's "Recent runs" is now proposals grouped by run
+  — shared, cross-device, and including runs this frontend never started.
+- Approve = "approve and record as posted" (D-INT-K), with a deterministic
+  `publishedId` of `mlk_<proposalId>` so a double click or a reload converges
+  on the documented safe retry instead of racing into a 409. A confirm
+  precedes it because the record is permanent. Decline asks why (≤500) and is
+  reversible. Edit is absent with a reason (D-INT-L) — there is no drafts
+  store to persist one into.
+- **STEP 0 found a real backend bug.** Walking the cursor showed keyset paging
+  compares on the TIMESTAMP alone, though the cursor itself carries the
+  tie-breaking id. Rows sharing a creation instant are skipped — and proposals
+  from one run are created together, so a boundary inside a run's cluster
+  drops drafts from the review queue with no error to notice. Measured:
+  `?limit=1` walked 2 of 3 rows; `?state=pending&limit=1` walked 1 of 2 and
+  returned an empty second page. INT-12 is designed around it — the walk only
+  DISCOVERS runIds, and `?runId=` (boundary-free at these sizes) is the
+  authoritative read — so the queue is correct today and gets simpler the
+  moment the tie-break is fixed. Open-items 32.
+- Two Playwright traps recorded in state.md: `getByRole(name)` is substring
+  matching too (a click on 'Approve' hit the 'Approved' tab), and a shadcn
+  ConfirmDialog is `alertdialog`, not `dialog`.
+- Phase: INT-12 (branch `int/12-proposals`, cut from `int/11-studio-knowledge`,
+  with the `probe/proposals` record cherry-picked in and marked superseded)
+- Files: `Docs/api/{api.md,openapi.json,changelog.md,alphastudio-shapes.md}`,
+  `src/api/types.ts`, `src/data/proposals.ts` + test (new),
+  `src/data/generate.ts` (+ test) with the ledger removed,
+  `src/features/today/{live-today.tsx (new),today-screen.tsx}`,
+  `src/features/generate/live-generate.tsx`, `src/lib/messages.ts`,
+  `e2e/live-proposals.spec.ts` (new), `.agent/*`
+- Decisions: see decisions.md — D-INT-J, D-INT-K, D-INT-L (and D-INT-G amended)
+- Verify: lint + typecheck + **394 unit** (38 files) + guard-static (248 files)
+  + build green; **verify:w02/w03/w04/w05/w06 PASS**; static e2e **72 passed /
+  49 skips**; **live e2e `live-proposals` 4/4** — including the reload that is
+  the whole point of the phase. Two text runs (the second so a decline had
+  something pending to act on).
+- Next: nothing queued. Founder decisions: the "Approve" label (D-INT-K), and
+  the backend questions 29–32.
