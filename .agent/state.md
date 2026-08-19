@@ -39,6 +39,7 @@ below).
 | `main`     | Production line, now at **`c6e3489`** — everything below PLUS the whole live integration (INT-6…12), merged as a fast-forward and **pushed 2026-08-19** on the founder's explicit approval. Before that push it was `6c598b2`. Open-items 16–18 still hold the human gates |
 | `rb/02-v1-brief` | Website V1 per Abdullah's brief + the ambient idle drift + the M1 card-realism passes through 2026-08-12 — tip `6c598b2`, and `origin/main` is at the same commit, so the production line has all of it |
 | Local `main` ref | **STALE at `3f9f3b4`** (noticed 2026-08-17). `origin/main` == `rb/02-v1-brief` == `6c598b2`; the local ref simply was never fast-forwarded, so `git log main..` locally over-reports by 22 commits. Harmless, but `git fetch && git checkout main && git merge --ff-only origin/main` before trusting a local `main` comparison. |
+| `live`     | **Team-only staging**, always a fast-forward of `main` and never carrying commits of its own. Vercel builds its PREVIEW with a branch-scoped `VITE_API_BASE_URL`, so `live` is where the app runs against the real API; PRODUCTION (`main`) has no such variable and stays byte-for-byte static. **After every merge to `main`: `git push origin main:live`.** |
 | Phase branches on `origin` | `int/06-contract` · `int/07-brand-rules` · `int/08-country` · `int/09-wallet` · `int/10-generate` · `int/11-studio-knowledge` · `int/12-proposals` — pushed 2026-08-19 as the per-phase record, exactly as `w/NN` and `int/00…05` are kept. `probe/proposals` was deliberately NOT pushed: it is superseded, and its record lives on in `int/12` as `ee2bc57` |
 | Phase tips | `w/00`…`w/06`, `int/00`…`int/05`, `rb/00-malaky`, `rb/01-motion` |
 | Tags       | none                                                   |
@@ -157,13 +158,15 @@ the ledger it tested — the proposals ledger replaced it server-side.)
 commit, one history) and PUSHED, 2026-08-19.** The seven phase branches stay on
 `origin` as the per-phase record.
 
-**Production is still STATIC, deliberately.** No `VITE_API_BASE_URL` exists in
-the Vercel environment, so the deployed build is the same zero-network artifact
-it has always been — the merged bundle was verified to contain no API base url
-(`lambda-url` absent from `dist/`; the only mention of the variable's NAME is
-the client's own "called in static mode" error string). Opening live mode for
-the team is a separate order: the env var plus a CSP `connect-src` for the API
-origin (open-items 1).
+**Production is STATIC; `live` is where live mode runs.** Production (`main`)
+holds no `VITE_API_BASE_URL`, so the deployed build is the same zero-network
+artifact it has always been. Live mode is exposed to the team on the Vercel
+PREVIEW of the `live` branch, with the variable scoped to that branch — which
+is why the branch had to exist before the variable could be bound to it.
+
+**Open-item 1 (CSP `connect-src`) is MOOT on Vercel:** `vercel.json` ships no
+CSP at all, so there is no policy to widen. It would return only if the app
+moved back behind the CloudFront stack in `infra/`.
 
 **Still NOT on the wire after INT-12:** a list-runs endpoint, the
 published-social proxy, any drafts store (so no editing before approval and no

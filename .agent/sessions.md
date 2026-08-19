@@ -1717,3 +1717,44 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
 - Verify: the full gate above, on the merged tip, before the push
 - Next: founder decisions — the "Approve" label (D-INT-K) — and backend
   questions 29–32. Nothing else queued.
+
+### 2026-08-19 11:55 — live staging branch, and the production front door hardened
+
+- Did: three things, in the order they had to happen.
+  1. **CORS probed from every deploy origin** before writing any code: the API
+     echoes ANY `Origin` back (`allow-methods: *`,
+     `allow-headers: content-type,authorization`), verified from the `live`
+     preview host, a per-deployment preview host, `alphabeacon-web.vercel.app`
+     and `malaky.ai`. No red flag — nothing is needed from Ward for the live
+     preview to work.
+  2. **The production front door hardened.** `DEFAULT_DATASET_ID` is now
+     `import.meta.env.PROD ? 'visitor' : 'active'`. Production had shipped with
+     zero environment variables, so the never-set `VITE_DEFAULT_DATASET` left
+     the bundle resolving to `active` — a signed-in demo tenant — and `/`
+     served the DASHBOARD to every visitor for ten days. The real fault was
+     that the safe value lived only in configuration; it lives in the build
+     now, and the variable is an override rather than a dependency.
+  3. **`live` created and pushed** — always a fast-forward of `main`, no
+     commits of its own — so Vercel can bind `VITE_API_BASE_URL` to its
+     preview. The branch had to exist first; Vercel refuses to scope a
+     variable to a branch that is not in the repo.
+- The `verify:w02` gate for this is two-sided, and the second half is the one
+  that matters: the SOURCE must derive the default from the build, and the
+  emitted `dist/` must be read back and shown to fall back to `"visitor"`
+  (captured by backreference — minified names change per build). Only the
+  artifact half could have caught the incident, because the source was fine and
+  the DEPLOYMENT defaulted wrong. Canary-tested both ways: reverting the
+  constant fails the unit tests, and a stale bad `dist/` with correct source
+  fails the artifact half.
+- Open-item 1 (CSP `connect-src`) is MOOT on Vercel — `vercel.json` ships no
+  CSP — and would return only if the app moved back behind the CloudFront
+  stack. A standing rule was added to open-items: after every merge to `main`,
+  also `git push origin main:live`.
+- Phase: post-INT-12 hardening (branch `fix/visitor-default`, merged to `main`)
+- Files: `src/data/datasets/index.ts`, `src/data/datasets/resolve-initial.test.ts`,
+  `scripts/verify-w02.ts`, `.agent/*`
+- Decisions: see decisions.md — production defaults to the visitor world
+- Verify: lint + typecheck + **398 unit** (+4) + guard-static (248 files) +
+  build + static e2e **72 passed / 49 skips** + verify:w02/w04/w05/w06 PASS
+- Next: the founder sets `VITE_DEFAULT_DATASET` (now belt-and-braces rather
+  than load-bearing) and scopes `VITE_API_BASE_URL` to the `live` preview.

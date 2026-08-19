@@ -9,11 +9,27 @@ item to "Signed off" (with the date) only when a human has actually done it.
 
 ---
 
+## Standing rules (not gates — habits that keep the deploys honest)
+
+- **After every merge to `main`, also `git push origin main:live`.** `live` is
+  the team's staging branch and must never drift from production; it carries no
+  commits of its own. Forgetting leaves the team testing an older app against
+  the real API, which is the confusing kind of stale.
+
 ## Outstanding
 
 ### Integration — questions for the backend dev / infra (2026-07-30, INT-0)
 
-1. **CSP `connect-src` (infra).** The 2026-07-23 CSP decision ships **no
+1. **MOOT ON VERCEL, 2026-08-19 — reopen only if the app moves back to
+   CloudFront.** `vercel.json` ships no CSP at all, so there is no
+   `connect-src` to widen, and live mode reaches the API from the `live`
+   branch's preview with no header work. The CORS side was measured the same
+   day and is fine: the API echoes ANY `Origin` (verified from the `live`
+   preview host, a per-deployment preview host, `alphabeacon-web.vercel.app`
+   and `malaky.ai`), with `allow-methods: *` and
+   `allow-headers: content-type,authorization`. The original item, which
+   applies to the `infra/` CDK stack and not to Vercel:
+   **CSP `connect-src` (infra).** The 2026-07-23 CSP decision ships **no
    `connect-src` entries at all** in the CloudFront response-headers policy —
    correct for the static app, but a DEPLOYED live-mode build cannot reach
    the API through it. When live mode first deploys, the policy needs
