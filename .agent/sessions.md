@@ -1861,3 +1861,55 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
 - Next: founder decides — merge B1–B8 with the scheduling red called out as
   pre-existing, or land the schedule fix first. Either way the A3/B9 addendum
   text has never reached this session and is needed before that branch starts.
+
+### 2026-08-20 17:10 — B9: the stranded schedule draft, and an org that stopped wearing the demo's schedule
+
+- **The approved fix, and the wrong first version of it.** C1's save bar could
+  never go clean on a live org — the picker showed the five real tones while
+  `draft.toneIds` held seven demo ids. Extending the existing guard (adopt if
+  the draft still equals the LAST pristine, else prune ghosts) made it worse:
+  after a reload the just-saved selection pruned to nothing. The brand and
+  scheduling halves of the sync graft INDEPENDENTLY, so the "last pristine"
+  ref can advance on a render where the draft has not adopted, and the next
+  pass reads an untouched draft as an edit. `edited` is now RECORDED by
+  `patch()` and cleared on Cancel and on a good save. Two guards survive from
+  the wrong version because they are about evidence rather than identity:
+  never prune against an empty tone list, never prune when the pristine's own
+  ids do not resolve.
+- **What the new repair spec exposed, and what it cost to see.** An org in the
+  619 shape opened C1 showing five active days, three posts a day and eight
+  tones — none of them its own. `fetchScheduling` answers `schedule: null`
+  when there is none, and the reducer left the seeded DEMO schedule in place.
+  A live org now grafts a BLANK schedule instead; timezone and generate-time
+  survive as editable defaults, everything that constitutes the schedule
+  starts unset. Same law INT-8 applied to `eventSources` two lines above it.
+- **619 is self-repairable.** `live-schedule-repair.spec.ts` builds the shape
+  by direct API calls (the wizard cannot produce it — it always makes a
+  schedule), then drives C1: blank arrival → pick days and two tones → Save →
+  `saveSchedule` falls back from `PATCH` to `POST` → the wire holds exactly
+  the two ids clicked → reload, still selected, still clean.
+- **More INT-8 rot retired.** `live-scheduling`'s "event sources: the
+  countries endpoint feeds the picker" asserted the whole surface INT-8
+  superseded; it is retired with a tombstone naming its four replacements in
+  `live-country.spec.ts`, including the direct stand-in "C2 no longer offers
+  an event source it cannot create".
+- Save failures now carry the reference (B4's law), and a good save can no
+  longer leave the leave-guard armed.
+- Phase: E2E-0820 B9 (branch `fix/e2e-0820`) — **not merged, not pushed**
+- Files: `src/features/calendar/{schedule-config-screen.tsx,reconcile-draft.ts,
+  reconcile-draft.test.ts}`, `src/data/provider.tsx`,
+  `e2e/live-schedule-repair.spec.ts` (new), `e2e/live-scheduling.spec.ts`,
+  `.agent/*`
+- Decisions: see decisions.md — two entries dated 2026-08-20 ("has the user
+  edited?" is recorded, not inferred; a live org with no schedule does not
+  wear the demo's)
+- Verify: lint + typecheck + **423 unit** (+7) + guard-static (255 files) +
+  build + static e2e **72 passed / 51 skips** + **verify:w02–w06 all PASS**.
+  **FULL live suite, `LIVE_MEDIA` off, one file at a time — 45 passed, 2
+  correct skips, 0 failed:** auth 7/7 · brand 5/5 · brand-rules 5/5 ·
+  country 4/4 · generate 2/2 · knowledge 3/3 · notifications 1/1 ·
+  proposals 4/4 · **schedule-repair 3/3 (new)** · scheduling 2/2 (+1 skip:
+  no slot exists, open-items 8) · studio 3/3 (+1 skip: LIVE_MEDIA off) ·
+  team 6/6 · wallet 4/4. Two transient failures re-ran clean (live-auth once,
+  live-proposals' declined-tab lag again — open-items 32).
+- Next: founder approval to merge + `git push origin main:live`.

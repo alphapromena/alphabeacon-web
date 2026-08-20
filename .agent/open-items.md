@@ -107,9 +107,19 @@ item to "Signed off" (with the date) only when a human has actually done it.
    Slot ingestion: creating a `holidays` source produced no slots during the
    run; the skip/un-skip UI is wired and the live test degrades to a skip
    until ingestion runs — backend dev: when does ingestion fire?
-9. **Model alias pairing (INT-4).** THE mapping table pairs Balanced↔balanced
-   and Precise↔quality confidently; Creative took the remaining `fast`.
-   Backend dev: confirm which product model each alias should mean.
+9. **Model alias pairing (INT-4) — NARROWED 2026-08-20 (E2E-0820 B9).**
+   Probed directly against the deployed API on a QA org (653):
+   `POST /orgs/:id/schedules` with **`"modelAlias": "balanced"` is accepted —
+   `201`, and it reads back intact**, as does a `PATCH` carrying the same
+   value. So the alias vocabulary the frontend sends is legal, and the
+   frontend's own ids (`gm_balanced` et al) never reach the wire — the
+   adapter maps them at the seam.
+   The remaining question for Ward shrinks to two parts: **is `gm_*` also
+   legal on this field, and which vocabulary is canonical?** The original
+   pairing question stands underneath it: THE mapping table pairs
+   Balanced↔balanced and Precise↔quality confidently; Creative took the
+   remaining `fast`. Backend dev: confirm which product model each alias
+   should mean.
 10. **PARTLY CLOSED 2026-08-18 — the `toneIds` half.** The wizard now seeds the
    preset tones first and maps their minted ids into the schedule it creates,
    so a live schedule is born with real tone ids (verified on the wire:
@@ -240,6 +250,19 @@ build, so they are worth asking as a batch.
     When Ward does ship server-side seeding, the wizard's seeding step becomes
     a no-op by construction: since 2026-08-20 it reads the org's existing tones
     first and creates only the presets missing by name.
+27a. **Two literals build the same schedule body** (accepted debt,
+    2026-08-20). `useSchedulingActions().saveSchedule` and
+    `finishOnboarding` each construct the eight-field schedule payload
+    (`timezone`, `days`, `generateAt`, `postsPerDay`, `modelAlias`,
+    `toneIds`, `eventAware`, `active`) from their own object literal. Real
+    drift risk — a field added to one is silently missing from the other —
+    but B7 had just rebuilt Finish and churning it again immediately is the
+    worse trade, so it is recorded rather than done. Same class as the
+    FIVE verbatim copies of `failure()` under `src/data/` (account, auth,
+    brand, scheduling, team), which B4 extended one line at a time for the
+    same reason. Unify both when something next touches these files for its
+    own reasons.
+
 27b. **Static demo billing copy still says "credits"** (accepted debt,
     2026-08-20). The E2E-0820 sweep cleared every LIVE-reachable surface and
     left the static demo's own ledger vocabulary intact per D-INT-E — H3's

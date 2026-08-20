@@ -7,8 +7,9 @@ chronological record; this is the current picture.
 
 _Last updated: 2026-08-20, after the **E2E-0820 triage** branch
 (`fix/e2e-0820`) — the founder's live in-app E2E on `1.malaky.ai` against org
-619; eight frontend fixes plus two root-cause probes, **not merged, awaiting
-founder approval**. Before that: 2026-08-19, after **INT-12** (`int/12-proposals`) — Today is the
+619; eight frontend fixes plus two root-cause probes, then **B9** — the
+stranded schedule draft, and a live org no longer wearing the demo's schedule.
+**Not merged, awaiting founder approval.** Before that: 2026-08-19, after **INT-12** (`int/12-proposals`) — Today is the
 proposals ledger, so the review queue survives a reload and a change of device.
 INT-11 put the Studio and Knowledge on the live platform; INT-10 made F1 real; INT-9
 put money on screen; INT-6 landed the
@@ -43,7 +44,7 @@ below).
 | `main`     | Production line, now at **`c6e3489`** — everything below PLUS the whole live integration (INT-6…12), merged as a fast-forward and **pushed 2026-08-19** on the founder's explicit approval. Before that push it was `6c598b2`. Open-items 16–18 still hold the human gates |
 | `rb/02-v1-brief` | Website V1 per Abdullah's brief + the ambient idle drift + the M1 card-realism passes through 2026-08-12 — tip `6c598b2`, and `origin/main` is at the same commit, so the production line has all of it |
 | Local `main` ref | **STALE at `3f9f3b4`** (noticed 2026-08-17). `origin/main` == `rb/02-v1-brief` == `6c598b2`; the local ref simply was never fast-forwarded, so `git log main..` locally over-reports by 22 commits. Harmless, but `git fetch && git checkout main && git merge --ff-only origin/main` before trusting a local `main` comparison. |
-| `fix/e2e-0820` | **The E2E-0820 triage, 2026-08-20 — branched off `main` (`550f54e`), NOT merged and NOT pushed.** F3 Generate reachable from the rail/dashboard/Today, F4 the "credits" vocabulary + `/billing/balance`, F5 the pre-run count, F6 the tone-preview reference, F9 the balance chip's three states, F10 the stale results footer, F11 pluralization, F12 the wizard Finish (failure-tolerant, reported, idempotent). Gate output in the session entry |
+| `fix/e2e-0820` | **The E2E-0820 triage, 2026-08-20 — branched off `main` (`550f54e`), NOT merged and NOT pushed.** F3 Generate reachable from the rail/dashboard/Today, F4 the "credits" vocabulary + `/billing/balance`, F5 the pre-run count, F6 the tone-preview reference, F9 the balance chip's three states, F10 the stale results footer, F11 pluralization, F12 the wizard Finish (failure-tolerant, reported, idempotent), B9 the schedule draft reconciler + a blank schedule for a live org that has none. Gate output in the session entry |
 | `chore/api-sweep` | The 118-operation contract sweep (`89199d9`), one commit ahead of `main`, untouched by the triage |
 | `live`     | **Team-only staging**, always a fast-forward of `main` and never carrying commits of its own. Vercel builds its PREVIEW with a branch-scoped `VITE_API_BASE_URL`, so `live` is where the app runs against the real API; PRODUCTION (`main`) has no such variable and stays byte-for-byte static. **After every merge to `main`: `git push origin main:live`.** |
 | Phase branches on `origin` | `int/06-contract` · `int/07-brand-rules` · `int/08-country` · `int/09-wallet` · `int/10-generate` · `int/11-studio-knowledge` · `int/12-proposals` — pushed 2026-08-19 as the per-phase record, exactly as `w/NN` and `int/00…05` are kept. `probe/proposals` was deliberately NOT pushed: it is superseded, and its record lives on in `int/12` as `ee2bc57` |
@@ -159,9 +160,9 @@ invented or faked: where a spec promised something the wire cannot deliver, the
 honest subset ships and the deviation is logged. The backend questions live in
 open-items 1–13 and 21–27; W7 still waits on the two reopened manual gates.
 
-Current totals on `fix/e2e-0820`: **416 unit tests** (40 files), **static e2e
-72 passed / 49 live-spec skips**, guard-static 253 files clean, verify:w02–w06
-all PASS. (On `main` it is 398 unit tests / 38 files / 248 guarded files — the
+Current totals on `fix/e2e-0820`: **423 unit tests** (41 files), **static e2e
+72 passed / 51 live-spec skips**, guard-static 255 files clean, verify:w02–w06
+all PASS, and the FULL live suite green (45 passed, 2 correct skips). (On `main` it is 398 unit tests / 38 files / 248 guarded files — the
 "394" this line used to claim was already one turn stale.)
 (The unit count dips by one: INT-10's localStorage run-ledger tests went with
 the ledger it tested — the proposals ledger replaced it server-side.)

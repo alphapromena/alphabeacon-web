@@ -298,7 +298,28 @@ export function dataReducer(state: DataState, action: DataAction): DataState {
                 eventSources: action.scheduling.eventSources,
                 events: action.scheduling.events,
                 slots: action.scheduling.slots,
-                ...(action.scheduling.schedule ? { schedule: action.scheduling.schedule } : {}),
+                /**
+                 * A live org with NO schedule must not inherit the demo's
+                 * (E2E-0820 B9). Keeping the seed here is how an org in the
+                 * 619 shape — tones seeded, schedule missing — was shown
+                 * someone else's cadence in someone else's tones and told it
+                 * was theirs; C1 then offered to save eight tone ids the org
+                 * has never had. The same law INT-8 applied to eventSources
+                 * two lines up: an empty answer beats demo data dressed as
+                 * live data.
+                 *
+                 * Timezone and generate-time survive as editable defaults —
+                 * they are the two fields where a guess is more useful than a
+                 * blank, and both are visibly a choice on the form.
+                 */
+                schedule: action.scheduling.schedule ?? {
+                  ...state.world.schedule,
+                  activeDays: [],
+                  postsPerDay: 1,
+                  toneIds: [],
+                  attachToEvents: false,
+                  started: false,
+                },
               }
             : {}),
           ...(action.inbox ? { notifications: action.inbox.notifications } : {}),

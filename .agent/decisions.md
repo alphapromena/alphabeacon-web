@@ -1621,3 +1621,56 @@ Recorded here as the founder set them; each is implemented in its own phase.
 - Instead of: a skeleton (the chip is one line of text; a shimmer there is
   noisier than the word "Loading"), or treating an unread wallet as loading
   forever (a failed read would sit on "Loading balance…" with no end).
+
+### 2026-08-20 — E2E-0820 B9: "has the user edited?" is recorded, not inferred
+
+- **The finding.** C1's save bar could never go clean on a live org: the tone
+  picker rendered the five real tones while `draft.toneIds` held seven demo
+  ids, and Save would have posted them. F5's defect class, on a second screen.
+- **The first fix was wrong in an instructive way.** The screen already had a
+  guard — adopt the new pristine if the draft still equals the LAST pristine,
+  otherwise leave it alone — and extending it to "otherwise prune ghost ids"
+  looked sufficient. It made things worse: after a reload the just-saved
+  selection was pruned to nothing. The brand and scheduling halves of the sync
+  graft INDEPENDENTLY, so the "last pristine" ref can advance to the live
+  schedule on a render where the draft has not adopted yet; the next pass then
+  reads a perfectly untouched draft as an edit and prunes it against whichever
+  tone list happens to be current.
+- **So the flag is recorded.** `edited` is set by `patch()` — the one funnel
+  every field change already went through — and cleared on Cancel and on a
+  successful save. "Did the user change something" is a fact the screen knows;
+  reconstructing it by comparing JSON against a ref that advances on its own
+  schedule was inference dressed as a fact.
+- **Two guards survive from the wrong version, because they are about
+  evidence, not identity:** never prune against an empty tone list ("not
+  loaded" is not "none exist"), and never prune when the pristine's own ids do
+  not resolve (the two halves are out of step — wait for the render where they
+  are not).
+- Instead of: comparing draft to pristine more cleverly (the seam is the
+  problem, not the comparison), or reconciling in the provider (it has no idea
+  which fields a user has touched).
+
+### 2026-08-20 — E2E-0820 B9: a live org with no schedule does not wear the demo's
+
+- **What the repair spec exposed.** An org in the 619 shape — tones seeded,
+  schedule missing — opened C1 showing a full cadence: five active days, three
+  posts a day, eight tones. None of it was theirs. `fetchScheduling` answers
+  `schedule: null` when the org has none, and the reducer's
+  `...(action.scheduling.schedule ? … : {})` left the seeded demo schedule in
+  place, so the demo's data was presented as the org's own settings.
+- **The law it broke** is the one INT-8 applied two lines above it, for
+  `eventSources`: "an empty list is the honest answer rather than demo data
+  dressed as live data". A missing schedule now grafts a BLANK one — no days,
+  no tones, one post, not started — instead of falling through to the seed.
+- **Timezone and generate-time survive as defaults**, because those are the two
+  fields where a guess helps more than a blank and both are visibly a choice on
+  the form. Everything that constitutes the actual schedule starts unset, so
+  C1 asks instead of asserting.
+- **This is what makes 619 self-repairable**, which was the question behind the
+  addendum: the form arrives blank, the user fills it, and `saveSchedule`
+  falls back from `PATCH` to `POST` because there is no `scheduleId` — proven
+  end to end in `live-schedule-repair.spec.ts`, including the exact tone ids
+  surviving the round trip and a reload.
+- Instead of: special-casing the screen (every other reader of
+  `useSchedule()` would still see demo data), or leaving `schedule: null` and
+  making every consumer handle it (the app's model has always had a schedule).

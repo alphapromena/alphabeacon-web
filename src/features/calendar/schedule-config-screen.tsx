@@ -10,7 +10,7 @@
  * and the dirty guard honest: nothing changes under the user while they are
  * still deciding, and leaving with unsaved work has to be refused out loud.
  */
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
 import { AppShell } from '@/components/ab/app-shell'
 import { ErrorState } from '@/components/ab/error-state'
@@ -33,8 +33,10 @@ import {
 import { useBrandActions } from '@/data/brand'
 import { useSchedulingActions } from '@/data/scheduling'
 import type { Schedule, Tone, Weekday } from '@/data/types'
+import { errorReference } from '@/lib/error-reference'
 import { MESSAGES } from '@/lib/messages'
 import { TIMEZONES, zoneAbbreviation } from '@/lib/timezone'
+import { reconcileScheduleDraft } from './reconcile-draft'
 import { ToneEditorSheet } from '@/features/settings/tone-editor'
 import {
   ActiveDaysField,
@@ -58,25 +60,46 @@ export function ScheduleConfigScreen() {
   const [draft, setDraft] = useState<Schedule>(saved)
   const [toneEditorOpen, setToneEditorOpen] = useState(false)
   const [touched, setTouched] = useState(false)
+  /**
+   * Has the USER changed anything since the last adopt or save? Recorded
+   * rather than inferred: comparing the draft to the last pristine looked
+   * equivalent and was not, because the brand and scheduling halves of the
+   * sync graft independently (E2E-0820 B9).
+   */
+  const [edited, setEdited] = useState(false)
 
-  // The world can change under the mounted form (the live sync lands after
-  // mount; the server returns toneIds re-sorted). A PRISTINE draft adopts the
-  // new truth; an edited one is never clobbered (state.md rule 4's async
-  // sibling).
+  /**
+   * The world changes under the mounted form: the live sync lands after mount
+   * and REPLACES both the schedule and the tone list, and the server re-sorts
+   * `toneIds` on every save. `reconcileScheduleDraft` holds the rules — an
+   * unedited draft adopts, an edited one keeps its edits minus ids no tone
+   * answers to (E2E-0820 B9).
+   *
+   * `tones` is a dependency as well as `savedKey`: the two halves of the sync
+   * graft independently, so the tone list can arrive on a render where the
+   * schedule did not change.
+   */
   const savedKey = JSON.stringify(saved)
-  const previousSavedKey = useRef(savedKey)
+  const toneKey = tones.map((tone) => tone.id).join(',')
   useEffect(() => {
     setDraft((current) =>
-      JSON.stringify(current) === previousSavedKey.current ? saved : current,
+      reconcileScheduleDraft({
+        draft: current,
+        pristine: saved,
+        liveToneIds: tones.map((tone) => tone.id),
+        edited,
+      }),
     )
-    previousSavedKey.current = savedKey
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- savedKey is the change signal
-  }, [savedKey])
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- the keys are the change signal
+  }, [savedKey, toneKey])
 
   const dirty = JSON.stringify(draft) !== JSON.stringify(saved)
   const invalid = draft.activeDays.length === 0 || draft.toneIds.length === 0 || !draft.modelId
 
-  const patch = (next: Partial<Schedule>) => setDraft((current) => ({ ...current, ...next }))
+  const patch = (next: Partial<Schedule>) => {
+    setEdited(true)
+    setDraft((current) => ({ ...current, ...next }))
+  }
   const modelName = models.find((m) => m.id === draft.modelId)?.name ?? ''
 
   return (
@@ -216,7 +239,10 @@ export function ScheduleConfigScreen() {
 
       <SaveBar
         dirty={dirty && phase === 'ready'}
-        onCancel={() => setDraft(saved)}
+        onCancel={() => {
+          setDraft(saved)
+          setEdited(false)
+        }}
         onSave={async () => {
           setTouched(true)
           if (invalid) return
@@ -224,10 +250,18 @@ export function ScheduleConfigScreen() {
             const result = await scheduling.saveSchedule(draft)
             if (!result.ok) {
               // The server's per-field refusals (a foreign tone id, a bad
-              // zone) surface as the error toast with its own words.
-              toastError(result.fieldErrors[0]?.message ?? MESSAGES.errors.generic)
+              // zone) surface as the error toast with its own words, and
+              // carry the reference a bug report needs (B4's law).
+              toastError(result.fieldErrors[0]?.message ?? MESSAGES.errors.generic, {
+                description: errorReference(result),
+              })
               return
             }
+            // The write landed, so whatever comes back next IS the truth —
+            // including the server's re-sorted toneIds. Without this the
+            // resync could leave a just-saved form dirty, and the leave-guard
+            // would refuse to let go of work that is already saved.
+            setEdited(false)
           }
           toastSuccess('Schedule saved', {
             description: 'New slots follow it from the next run.',

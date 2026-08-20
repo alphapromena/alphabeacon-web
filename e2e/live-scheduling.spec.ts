@@ -137,36 +137,24 @@ test('C1 saves through PATCH — days, model and tones survive a reload', async 
   await expect(page.getByText('You have unsaved changes.')).toHaveCount(0)
 })
 
-test('event sources: the countries endpoint feeds the picker; one per country', async ({
-  page,
-}) => {
-  await login(page, owner, PASSWORD)
-  await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible()
-  await page.goto('/calendar/sources')
-  await expect(page.getByRole('heading', { name: 'Event sources', level: 1 })).toBeVisible({
-    timeout: 15_000,
-  })
-
-  // Jordan arrived with the wizard.
-  await expect(page.getByText('Jordan public holidays')).toBeVisible()
-
-  // Live mode: Google is absent (no API home), the picker is the countries
-  // endpoint. Adding a duplicate country is the documented 409.
-  await page.getByRole('button', { name: 'Add source' }).first().click()
-  await expect(page.getByText('Google Calendar')).toHaveCount(0)
-  const picker = page.getByLabel('Country', { exact: true })
-  await expect(picker.locator('option').first()).not.toHaveText('')
-  await picker.selectOption('JO')
-  await page.getByRole('button', { name: 'Add source' }).last().click()
-  await expect(page.getByText('That country already feeds your calendar.')).toBeVisible()
-
-  // A fresh country lands, and removal takes it away again.
-  await picker.selectOption('AE')
-  await page.getByRole('button', { name: 'Add source' }).last().click()
-  await expect(page.getByText('Source added')).toBeVisible()
-  await expect(page.getByText(/United Arab Emirates public holidays/)).toBeVisible()
-})
-
+/**
+ * RETIRED 2026-08-20 (E2E-0820 B9): "event sources: the countries endpoint
+ * feeds the picker; one per country".
+ *
+ * It asserted the INT-4 event-source surface — a "Jordan public holidays"
+ * row, an "Add source" button, a duplicate-country 409 — all of which INT-8
+ * superseded when the org's own country became the single holiday control
+ * (D-INT-F; Ward confirmed event-sources are superseded, open-items 21). The
+ * screen it drove now says so in `MESSAGES.notices.eventSourcesSuperseded`
+ * and offers nothing to add, so the test could only ever fail from INT-8 on;
+ * it had simply never been run since INT-4.
+ *
+ * What replaced it, all green in `live-country.spec.ts`: the wizard sets ONE
+ * country and finishing loads its calendar · the calendar carries real
+ * holidays with each day's rules · re-saving the same country is a quiet
+ * no-op rather than a fake reload · and, standing in for this test directly,
+ * "C2 no longer offers an event source it cannot create".
+ */
 test('slots, if ingestion produced any, honour skip/un-skip and never offer approve', async ({
   page,
   request,
