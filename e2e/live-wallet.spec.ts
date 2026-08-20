@@ -92,7 +92,7 @@ test('the balance chip shows money, and it is the AVAILABLE money', async ({ pag
 
 test('H3 is a balance and a real usage read-back, in both allowed grains', async ({ page }) => {
   await login(page)
-  await page.goto('/billing/credits')
+  await page.goto('/billing/balance')
   await expect(page.locator('[aria-busy="true"]')).toHaveCount(0)
 
   await expect(page.getByRole('heading', { name: 'Available' })).toBeVisible()

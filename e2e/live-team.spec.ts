@@ -61,7 +61,11 @@ async function signOut(page: Page) {
 async function openTeam(page: Page) {
   await page.getByRole('link', { name: 'Settings' }).first().click()
   await page.getByRole('tab', { name: 'Team' }).click()
-  await expect(page.getByText(/members/)).toBeVisible()
+  // "1 member" or "3 members" — the noun agrees with the count now, so this
+  // can no longer assume the plural (E2E-0820 F11).
+  await expect(
+    page.getByRole('heading', { level: 2 }).filter({ hasText: /\d+ member/ }),
+  ).toBeVisible()
 }
 
 test('the onboarding wizard creates the org LIVE; the dashboard follows', async ({ page }) => {

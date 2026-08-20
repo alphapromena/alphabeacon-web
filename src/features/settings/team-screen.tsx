@@ -40,7 +40,7 @@ import { Label } from '@/components/ui/label'
 import { useInvites, useSession, useUsers } from '@/data/provider'
 import { ROLE_RANK, useTeamActions, useTeamPermissions, type TeamActionResult } from '@/data/team'
 import type { User } from '@/data/types'
-import { relativeTime, shortDate } from '@/lib/format'
+import { pluralize, relativeTime, shortDate } from '@/lib/format'
 import { MESSAGES } from '@/lib/messages'
 import { toastError } from '@/components/ab/toast'
 
@@ -125,7 +125,7 @@ export function TeamScreen() {
     <>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="font-display text-lg font-semibold">
-          <MonoNumber value={users.length} /> members
+          <MonoNumber value={users.length} /> {pluralize(users.length, 'member')}
           {invites.length > 0 && (
             <span className="font-normal text-muted-foreground">
               {' '}

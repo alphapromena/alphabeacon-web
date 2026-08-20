@@ -75,7 +75,12 @@ test('pasted text becomes a Ready source, and removing it removes it', async ({ 
   // Ingestion is asynchronous: the list settles on its own.
   await expect(page.getByText('Roasting notes')).toBeVisible({ timeout: 30_000 })
   await expect(page.getByText('Ready')).toBeVisible({ timeout: 60_000 })
-  await expect(page.getByText(/passages/)).toBeVisible()
+  // The row REPORTS its passage count, and the noun agrees with it: a short
+  // paste is exactly one passage, which used to render as "1 passages"
+  // (E2E-0820 F11). The row's spans concatenate with no separator, so the
+  // noun is pinned with a lookahead rather than a word boundary.
+  const row = page.getByRole('listitem').filter({ hasText: 'Roasting notes' })
+  await expect(row).toContainText(/1 passage(?!s)/)
 
   await page.getByRole('button', { name: 'Remove' }).first().click()
   await page.getByRole('button', { name: 'Remove', exact: true }).last().click()

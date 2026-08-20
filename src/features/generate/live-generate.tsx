@@ -18,6 +18,7 @@
  */
 import { Copy, Image as ImageIcon, Sparkles } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { Link } from 'react-router'
 import { InsufficientBalance } from '@/components/ab/insufficient-balance'
 import { toastError, toastSuccess } from '@/components/ab/toast'
 import { ToneBadge } from '@/components/ab/tone-badge'
@@ -27,7 +28,6 @@ import { Textarea } from '@/components/ui/textarea'
 import {
   draftsFromRun,
   isRunTerminal,
-  MAX_FANOUT,
   useGenerateActions,
   type GenerationPlan,
   type GenerationRun,
@@ -36,7 +36,8 @@ import {
 import { useProposalActions, type ReviewItem } from '@/data/proposals'
 import { useCalendarEvents, useTones } from '@/data/provider'
 import { useWallet, useWalletActions } from '@/data/wallet'
-import { shortDate } from '@/lib/format'
+import { planRun, reconcileSelection } from './run-plan'
+import { pluralize, shortDate } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import { MESSAGES } from '@/lib/messages'
 
@@ -100,11 +101,20 @@ export function LiveGenerate() {
     void loadRecent()
   }, [loadRecent])
 
+  /**
+   * Tones arrive from the live sync AFTER first paint and REPLACE the seeded
+   * world, so an id picked against the pre-sync world can stop existing while
+   * it is still selected. Pruning keeps the picker, the counter and the
+   * request body describing the same run (E2E-0820 F5).
+   */
+  useEffect(() => {
+    setSelected((current) => reconcileSelection(tones, current))
+  }, [tones])
+
   // Upstream refuses an over-budget fan-out rather than truncating it, so the
   // client refuses first and says which number to change.
-  const fanout = selected.length * perTone
-  const overBudget = fanout > MAX_FANOUT
-  const noTone = selected.length === 0
+  const runPlan = planRun(tones, selected, perTone)
+  const { fanout, overBudget, empty: noTone } = runPlan
   const busy = phase === 'running'
 
   const toggleTone = (id: string) =>
@@ -157,7 +167,7 @@ export function LiveGenerate() {
     setDrafts([])
     setPhase('running')
     const result = await generate.generate({
-      tones: tones.filter((tone) => selected.includes(tone.id)),
+      tones: runPlan.tones,
       plan,
       language,
       perTone,
@@ -337,7 +347,11 @@ export function LiveGenerate() {
 
         <div className="flex flex-wrap items-center justify-between gap-3">
           <p className="text-sm text-muted-foreground" role="status">
-            {busy ? MESSAGES.notices.generateWorking : `${fanout} draft${fanout === 1 ? '' : 's'}`}
+            {busy
+              ? MESSAGES.notices.generateWorking
+              : noTone
+                ? ''
+                : `${fanout} draft${fanout === 1 ? '' : 's'}`}
           </p>
           <Button onClick={submit} disabled={busy || noTone || overBudget}>
             <Sparkles aria-hidden />
@@ -360,7 +374,12 @@ export function LiveGenerate() {
           {drafts.map((draft) => (
             <DraftCard key={`${draft.runId}-${draft.index}`} draft={draft} />
           ))}
-          <p className="text-xs text-muted-foreground">{MESSAGES.notices.draftsReadOnly}</p>
+          <p className="text-xs text-muted-foreground">
+            {MESSAGES.notices.draftsReadOnly}{' '}
+            <Link className="underline underline-offset-4" to="/today">
+              Open Today
+            </Link>
+          </p>
         </section>
       )}
 
@@ -377,7 +396,12 @@ export function LiveGenerate() {
                   disabled={busy}
                   onClick={() => void reopen(runId)}
                 >
-                  {recent.filter((item) => item.proposal.runId === runId).length} draft(s) ·{' '}
+                  {recent.filter((item) => item.proposal.runId === runId).length}{' '}
+                  {pluralize(
+                    recent.filter((item) => item.proposal.runId === runId).length,
+                    'draft',
+                  )}{' '}
+                  ·{' '}
                   {runId.slice(0, 14)}…
                 </Button>
               </li>

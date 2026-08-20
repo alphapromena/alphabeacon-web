@@ -27,6 +27,16 @@ export const MESSAGES = {
     passwordsDoNotMatch: 'Both passwords need to match.',
     orgNameRequired: 'Name your organization — you can change it later.',
 
+    /**
+     * Finishing onboarding (E2E-0820 F12). Two outcomes, and they are not the
+     * same fact: either the workspace could not be created at all, or it was
+     * created and part of what the wizard collected did not save. The second
+     * one used to report success, which is how an org reached the product
+     * with tones but no schedule and no country.
+     */
+    onboardingFailed: 'We could not create your workspace. Nothing was saved — try again.',
+    onboardingIncomplete: 'Your workspace is ready, but part of the setup did not save.',
+
     // Early access (M-series request form).
     requestCompanyRequired: 'Tell us your company so we know who the workspace is for.',
     requestCountryRequired: 'Tell us where you operate — Malaky prepares around your calendar.',
@@ -153,11 +163,27 @@ export const MESSAGES = {
     /**
      * INT-9 — an all-zero wallet is funding that has not landed yet, not an
      * empty one, and not an error. Orgs are funded server-side at creation.
+     *
+     * E2E-0820 F9: this claim is only true of a wallet the API actually
+     * answered with. It may NOT stand in for "not read yet" — the two below
+     * carry those states, because a balance nobody has read is not a balance
+     * that is missing.
      */
     balanceUnavailable: 'Balance unavailable — funding pending',
+    /** The read is in flight. Neutral by design: nothing is known yet. */
+    balanceLoading: 'Loading balance…',
+    /** The sync finished and brought no wallet back — a failure, not a state. */
+    balanceUnread: 'Balance could not be read',
     /** There is no self-serve top-up endpoint on this API, so say so once. */
     noSelfServeTopUp:
       "There's no self-serve top-up yet — contact support and we'll add funds to your workspace.",
+    /**
+     * E2E-0820 F4 — the product says MONEY, never "credits" (D-INT-E). The
+     * plan's grant is a credit count with no honest exchange rate into
+     * currency, so the allowance is named rather than numbered; each plan's
+     * `entitlements.features` is what actually differentiates the cards.
+     */
+    planAllowance: 'Includes a monthly generation allowance',
     /** H1/H2/H4 in live mode: plans are not on the wire. */
     billingStatic:
       'Plans and checkout are not connected yet. Your workspace runs on its balance, and this page is a preview of what is coming.',
@@ -170,9 +196,13 @@ export const MESSAGES = {
       'Steering notes are not on the wire yet — for now drafts follow your tones, brand voice, sources and knowledge.',
     generateWorking: 'Writing your drafts…',
     generateStillWorking:
-      'Still working. It keeps running even if you leave — check Recent runs in a minute.',
-    draftsReadOnly:
-      'These are read-only for now: approving and scheduling arrive when the drafts backend does.',
+      'Still working. It keeps running even if you leave — check Waiting for review in a minute.',
+    /**
+     * E2E-0820 F10 — this used to promise approving "when the drafts backend
+     * does". INT-12 shipped it: approve and decline are live on Today, off the
+     * proposals ledger, so the honest line points there instead of forward.
+     */
+    draftsReadOnly: 'These are read-only here. Approve or decline them in the review queue.',
     /** INT-12: this is the shared ledger now, not a per-browser cache. */
     recentRunsFromLedger:
       'Everything still waiting on your review, including drafts written while you were away.',

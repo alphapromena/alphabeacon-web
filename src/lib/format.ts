@@ -49,3 +49,18 @@ export function shortDate(iso: string, now: Date = new Date()): string {
     ...(sameYear ? {} : { year: 'numeric' }),
   })
 }
+
+/**
+ * The noun for a count — "1 passage", "2 passages" (E2E-0820 F11).
+ *
+ * Returns the WORD, not the phrase, because most call sites render the number
+ * through `MonoNumber` and cannot interpolate it into a string. Irregular
+ * plurals pass their own second form.
+ *
+ * Counts are the one place English grammar is load-bearing in this product: a
+ * screen that says "1 members" reads as a rendering bug, which makes a user
+ * doubt the number next to it.
+ */
+export function pluralize(count: number, one: string, many = `${one}s`): string {
+  return count === 1 ? one : many
+}

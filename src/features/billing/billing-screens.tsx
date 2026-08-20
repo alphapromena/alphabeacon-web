@@ -89,7 +89,7 @@ export function PlansScreen() {
                       <span className="text-sm text-muted-foreground">/month</span>
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      <MonoNumber value={plan.credits} /> credits a month
+                      {MESSAGES.notices.planAllowance}
                     </p>
                   </CardHeader>
 
@@ -125,15 +125,15 @@ export function PlansScreen() {
                         title={`${upgrade ? 'Upgrade' : 'Downgrade'} to ${plan.name}?`}
                         consequence={
                           upgrade
-                            ? `You will be charged the difference for the rest of this period, and ${plan.credits} credits are granted straight away.`
-                            : `You keep your current credits, but your monthly grant drops to ${plan.credits} and any entitlement above the ${plan.name} plan stops at the end of this period.`
+                            ? `You will be charged the difference for the rest of this period, and the ${plan.name} allowance applies straight away.`
+                            : `You keep whatever is already in your balance, but your monthly allowance drops to the ${plan.name} plan's, and any entitlement above it stops at the end of this period.`
                         }
                         confirmLabel={upgrade ? 'Upgrade' : 'Downgrade'}
                         destructive={!upgrade}
                         onConfirm={() => {
                           dispatch({ type: 'billing/changePlan', planId: plan.id })
                           toastSuccess(`You are on the ${plan.name} plan`, {
-                            description: `${plan.credits} credits added.`,
+                            description: 'Your new monthly allowance applies straight away.',
                           })
                         }}
                       />
@@ -159,7 +159,7 @@ function StaticBillingNote() {
   return (
     <p className="mx-auto w-full max-w-[880px] rounded-lg border border-border bg-muted px-3 py-2 text-sm text-muted-foreground">
       {MESSAGES.notices.billingStatic}{' '}
-      <Link className="underline underline-offset-4" to="/billing/credits">
+      <Link className="underline underline-offset-4" to="/billing/balance">
         See your balance
       </Link>
       .
@@ -222,7 +222,7 @@ export function SubscriptionScreen() {
                 <h2 className="font-display text-lg font-semibold">{plan?.name}</h2>
                 <p className="text-sm text-muted-foreground">
                   $<MonoNumber value={plan?.priceMonthly ?? 0} /> a month ·{' '}
-                  <MonoNumber value={plan?.credits ?? 0} /> credits
+                  {MESSAGES.notices.planAllowance}
                 </p>
               </div>
               <Button asChild variant="outline" size="sm">
@@ -292,7 +292,7 @@ export function SubscriptionScreen() {
               </Button>
             }
             title="Cancel your subscription?"
-            consequence="Your pipeline stops generating at the end of the period you have already paid for. Drafts, published posts and analytics stay readable, but nothing new is drafted or published, and unused credits are lost."
+            consequence="Your pipeline stops generating at the end of the period you have already paid for. Drafts, published posts and analytics stay readable, but nothing new is drafted or published, and anything left in your balance is lost."
             confirmLabel="Cancel subscription"
             onConfirm={() =>
               toastSuccess('Subscription canceled', {
@@ -321,7 +321,7 @@ const LEDGER_LABELS: Record<
   refund: { label: 'Refund', tone: 'success' },
 }
 
-export function CreditsScreen() {
+export function BalanceScreen() {
   const ledger = useLedger()
   const balance = useCreditBalance()
   const jobs = useJobs()
@@ -336,12 +336,21 @@ export function CreditsScreen() {
   // Nothing is converted into credits: the balance is money here.
   if (live) {
     const pending = isFundingPending(wallet)
+    // The same three states the header chip distinguishes (E2E-0820 F9): a
+    // read in flight, a read that brought nothing back, and an API-confirmed
+    // all-zero wallet. Only the last one is "funding pending".
+    const unread = wallet === null
+    const loading = unread && phase === 'loading'
     return (
       <AppShell title="Balance" context="What this workspace has, and what it spent">
         <div className="mx-auto flex w-full max-w-[880px] flex-col gap-6">
           <section className="flex flex-col gap-2 rounded-xl border border-border p-4">
             <h2 className="text-sm font-medium">Available</h2>
-            {wallet === null || pending ? (
+            {loading ? (
+              <p className="text-sm text-muted-foreground">{MESSAGES.notices.balanceLoading}</p>
+            ) : unread ? (
+              <p className="text-sm text-muted-foreground">{MESSAGES.notices.balanceUnread}</p>
+            ) : pending ? (
               <p className="text-sm text-muted-foreground">{MESSAGES.notices.balanceUnavailable}</p>
             ) : (
               <>
@@ -509,7 +518,7 @@ export function CheckoutReturnScreen() {
                 You&apos;re on the {plan?.name} plan
               </h2>
               <p className="text-sm text-muted-foreground">
-                <MonoNumber value={plan?.credits ?? 0} /> credits have been added to your balance.
+                Your {plan?.name} allowance has been added to your balance.
               </p>
             </div>
             <Button asChild>

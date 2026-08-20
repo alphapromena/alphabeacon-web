@@ -36,7 +36,7 @@ Every screen that reads data must be mocked in all that apply: **loading** (skel
 
 ### 0.4 Global chrome — present on every _authenticated_ screen (not on Area M)
 
-- **Left rail (256px, collapsing):** logo mark top; nav items with icon + label, in this order — **Dashboard**, **Today** (queue), **Calendar**, **Studio**, **Analytics**, **Connections**, **Billing**, **Settings**; the **beacon live-status** dot near _Today_ (pulses when drafts await review); org switcher at the bottom if the account belongs to multiple orgs; collapse toggle.
+- **Left rail (256px, collapsing):** logo mark top; nav items with icon + label, in this order — **Dashboard**, **Today** (queue), **Generate** (F1), **Calendar**, **Studio**, **Analytics**, **Connections**, **Billing**, **Settings**; the **beacon live-status** dot near _Today_ (pulses when drafts await review); org switcher at the bottom if the account belongs to multiple orgs; collapse toggle. _Generate was added 2026-08-20 (E2E-0820 F3): F1 had no entry point at all and was reachable only by typing `/generate`. It sits next to Today because what it makes lands in that queue._
 - **Top bar:** current screen's `h1`/title + a one-line context (e.g. "5 drafts ready · generated 6:02 AM"); global search (optional, later phase); notification bell (quick-glance dropdown — full history lives on the Dashboard, see D1); theme toggle; account menu (profile, org settings, sign out).
 - **Toast host:** bottom-right, polite live region, used for every async confirmation.
 - **Command surfaces:** dialogs/sheets (Radix-based) for anything that shouldn't leave the current screen — media generation, schedule/publish, tone creation, connection permission edit.
@@ -290,6 +290,7 @@ _Framing: Studio is **the center where the user creates everything the company n
 ### F1 — Generate · `/generate`
 
 **Purpose:** the standalone composer for "I want a post about X right now" — streams tokens live.
+**Reached from:** the left rail (**Generate**, next to Today), the Dashboard's "Go to" row, and Today's empty state — which invites the run that would fill it rather than describing one.
 **Layout:** single centered column, max ~720px.
 **Contains:** `h1` "What should we write about?" · large prompt textarea · optional refinements (tone select — defaults to org tones, **including custom ones**; source URL field to ground the draft in a specific link) · "Generate" primary button · on submit: input collapses upward, result area **streams in live** token-by-token, signal-sweep active on the card's top edge · on completion, the result becomes a normal draft card (same component as D2's) with the full action row, dropping the user straight into the same review flow.
 **States:** idle · streaming (live text, "stop generating" affordance) · guardrail-flagged mid-stream (inline flag indicator, content never hidden) · complete · error (stream dropped, partial text preserved) · rate-limited (clear "You've hit the generation limit for now," never a silent failure).

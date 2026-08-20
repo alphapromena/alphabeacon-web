@@ -85,14 +85,23 @@ test('one balanced run returns a draft with its tone and its rationale', async (
   // The action row is the honest subset: Copy yes, approve/schedule absent.
   await expect(card.getByRole('button', { name: 'Copy' })).toBeVisible()
   await expect(card.getByRole('button', { name: /Approve|Schedule|Decline/ })).toHaveCount(0)
-  await expect(page.getByText(/read-only for now/)).toBeVisible()
+  // These results are read-only, and the footer now POINTS at where they can
+  // be acted on — approve/decline went live on Today with the proposals
+  // ledger (INT-12), so the old "arrives when the drafts backend does" was a
+  // promise about something already shipped (E2E-0820 F10). The link is the
+  // structural half of that claim; the copy is checked loosely.
+  await expect(page.getByText(/read-only here/)).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Open Today' })).toHaveAttribute('href', '/today')
 
   // The ledger is the only route back to a result — there is no list-runs
   // endpoint — so the reload has to happen HERE, in the same browser context
   // that made the run. A separate test would start with empty storage and
   // prove nothing.
   await page.reload()
-  await expect(page.getByRole('heading', { name: 'Recent runs' })).toBeVisible()
+  // INT-12 renamed this section when the ledger replaced the localStorage
+  // cache; this assertion kept the old name and had been failing on `main`
+  // ever since, unnoticed because the live spec was not re-run (E2E-0820).
+  await expect(page.getByRole('heading', { name: 'Waiting for review' })).toBeVisible()
   await page.getByRole('button', { name: /run_/ }).first().click()
   await expect(page.getByRole('heading', { name: /^1 draft$/ })).toBeVisible({ timeout: 60_000 })
   await expect(page.getByRole('article').first()).toContainText('Why it wrote this:')

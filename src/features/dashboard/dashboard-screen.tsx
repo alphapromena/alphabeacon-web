@@ -17,6 +17,7 @@ import {
   Coins,
   CreditCard,
   Inbox,
+  PenLine,
   Plug,
   Settings,
   Sparkles,
@@ -46,13 +47,14 @@ import {
 } from '@/data/provider'
 import { isFundingPending, useWallet } from '@/data/wallet'
 import { formatCents } from '@/lib/money'
-import { relativeTime } from '@/lib/format'
+import { pluralize, relativeTime } from '@/lib/format'
 import { MESSAGES } from '@/lib/messages'
 import { cn } from '@/lib/utils'
 
 /** Mirrors the rail exactly (screens4.md D1). */
 const QUICK_LINKS: { to: string; label: string; description: string; icon: LucideIcon }[] = [
   { to: '/today', label: "Today's queue", description: 'Approve, edit, reject', icon: Inbox },
+  { to: '/generate', label: 'Generate', description: 'A post, on demand', icon: PenLine },
   {
     to: '/calendar',
     label: 'Calendar',
@@ -103,7 +105,7 @@ export function DashboardScreen() {
 
   const context =
     awaiting > 0
-      ? `Good to see you, ${firstName} — ${awaiting} drafts are ready for review`
+      ? `Good to see you, ${firstName} — ${awaiting} ${pluralize(awaiting, 'draft')} ${pluralize(awaiting, 'is', 'are')} ready for review`
       : `Good to see you, ${firstName} — nothing is waiting on you right now`
 
   return (
@@ -154,7 +156,7 @@ export function DashboardScreen() {
                   wallet && !isFundingPending(wallet) ? formatCents(wallet.availableCents) : '—'
                 }
                 icon={Coins}
-                to="/billing/credits"
+                to="/billing/balance"
                 tone={
                   wallet && !isFundingPending(wallet) && wallet.availableCents < 100
                     ? 'warning'

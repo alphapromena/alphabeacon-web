@@ -27,6 +27,7 @@ import type { Tone } from '@/data/types'
 import { MESSAGES } from '@/lib/messages'
 import { useBrandActions } from '@/data/brand'
 import { useLiveMode } from '@/data/provider'
+import { errorReference } from '@/lib/error-reference'
 import type { TonePreview } from '@/lib/tone-preview'
 
 const toneSchema = z
@@ -77,7 +78,10 @@ export function ToneEditorForm({
   const brand = useBrandActions()
   const [preview, setPreview] = useState<TonePreview | null>(null)
   const [previewing, setPreviewing] = useState(false)
-  const [previewError, setPreviewError] = useState<string | null>(null)
+  const [previewError, setPreviewError] = useState<{
+    message: string
+    reference?: string
+  } | null>(null)
 
   const form = useForm<ToneValues>({
     // One schema in both modes now: rules have a wire home, so requiring at
@@ -153,7 +157,19 @@ export function ToneEditorForm({
           In live mode the line above the list is a REAL sample, written by the
           same capability generation uses and grounded on the same context
           bundle - so the card labels which of the two it is showing. */}
-      {previewError && <p className="text-sm text-destructive">{previewError}</p>}
+      {/* Friendly copy says what happened; the reference is what makes a bug
+          report actionable — the envelope's requestId where the server sent
+          one, else the contract code (open-items 3). */}
+      {previewError && (
+        <p className="text-sm text-destructive">
+          {previewError.message}
+          {previewError.reference && (
+            <span className="ml-1 font-mono text-xs text-muted-foreground">
+              ({previewError.reference})
+            </span>
+          )}
+        </p>
+      )}
 
       {preview && (
         <div className="flex flex-col gap-2 rounded-lg border border-border bg-muted p-3">
@@ -202,13 +218,15 @@ export function ToneEditorForm({
             setPreview(null)
             // A 502 here means the org has no pushed context bundle yet, which
             // is a thing the user can actually fix - so say which thing.
-            setPreviewError(
-              result.code === 'bad_gateway'
-                ? MESSAGES.errors.previewNeedsBrandVoice
-                : result.code === 'rate_limited'
-                  ? MESSAGES.errors.previewRateLimited
-                  : MESSAGES.errors.previewFailed,
-            )
+            setPreviewError({
+              message:
+                result.code === 'bad_gateway'
+                  ? MESSAGES.errors.previewNeedsBrandVoice
+                  : result.code === 'rate_limited'
+                    ? MESSAGES.errors.previewRateLimited
+                    : MESSAGES.errors.previewFailed,
+              reference: errorReference(result),
+            })
           }}
         >
           <Eye aria-hidden />

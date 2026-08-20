@@ -1758,3 +1758,56 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   build + static e2e **72 passed / 49 skips** + verify:w02/w04/w05/w06 PASS
 - Next: the founder sets `VITE_DEFAULT_DATASET` (now belt-and-braces rather
   than load-bearing) and scopes `VITE_API_BASE_URL` to the `live` preview.
+
+### 2026-08-20 14:05 — E2E-0820 triage: eight fixes, two probes, and a wizard that stops lying
+
+- **A1 — the seeding probe answered "no".** An org created by DIRECT API calls
+  (signup → verify → `POST /orgs`, the wizard never involved) comes back with
+  **0 tones**, 0 voices, no schedule, `country: null`. Probe org **622**, left
+  in place. So Ward has NOT shipped server-side seeding, the wizard is still
+  the only seeder, its client-side seeding is NOT redundant and was not
+  removed, and open-items 26 stays open with the new measurement.
+- **A2 — the Finish audit, which A1 turned into work.** `finishOnboarding`
+  swallowed everything after `POST /orgs`: tones through `Promise.allSettled`
+  with the rejections discarded, schedule and country through
+  `.catch(() => undefined)`, then `return ok` regardless. Only org creation
+  could fail visibly, and its toast was `MESSAGES.errors.generic` with a "Try
+  again" whose `onClick` was `() => {}`. Not re-runnable either: it always
+  created an org first, so a retry minted a SECOND workspace rather than
+  repairing the first. That is exactly org 619's shape — tones yes, schedule
+  no, country no, and a success screen. **B7 was therefore in scope.**
+- **The eight fixes.** F3 Generate is in the rail (next to Today), the
+  dashboard's "Go to" row and live Today's empty state — it had no entry point
+  at all. F4 "credits" is gone from every live-reachable surface and
+  `/billing/credits` is now `/billing/balance` (old path redirects). F5 the
+  pre-run count resolves against the tones that exist NOW, and renders nothing
+  at zero. F6 the tone-preview error carries the envelope's requestId, or the
+  contract code when CORS exposes none. F9 the balance chip separates "loading"
+  from "unread" from "API-confirmed all-zero". F10 the results footer points at
+  Today instead of promising what INT-12 already shipped. F11 one `pluralize`
+  helper, applied at six count sites. F12 as above.
+- **Two stale-copy bugs the sweep caught on its own:** a catalogue string told
+  users to "check Recent runs", a section INT-12 renamed to "Waiting for
+  review"; and `live-generate.spec.ts` asserted that same dead heading and had
+  been FAILING ON `main` since INT-12, unnoticed because closing INT-12 ran
+  `live-proposals`. Recorded as trap 18.
+- Phase: post-INT-12 triage (branch `fix/e2e-0820`, off `main` `550f54e`) —
+  **not merged, not pushed, awaiting founder approval**
+- Files: `src/features/{generate,onboarding,billing,today,settings,dashboard}/*`,
+  `src/components/ab/app-shell.tsx`, `src/data/{account,auth,brand,scheduling,team}.ts`,
+  `src/lib/{messages,format,error-reference}.ts`, `src/routes.tsx`,
+  5 e2e specs, `screens4.md`, `.agent/*`
+- Decisions: see decisions.md — four entries dated 2026-08-20 (credits scoped
+  to the static demo; the count resolved against live tones; Finish
+  failure-tolerant + reported + idempotent; an unread balance is not an
+  unavailable one)
+- Verify: lint + typecheck + **416 unit** (+18) + guard-static (253 files) +
+  build + static e2e **72 passed / 49 skips** + **verify:w02–w06 all PASS**.
+  Live specs on the changed surfaces, one at a time, LIVE_MEDIA off:
+  live-country 4/4 (the Finish path), live-wallet 4/4, live-generate 2/2,
+  live-knowledge 3/3, live-team 6/6, live-brand 5/5, live-brand-rules 5/5,
+  live-proposals 4/4 — **33 live tests green**. Two transient failures
+  reproduced clean on re-run (a failed org sync on live-brand-rules; the
+  declined-tab lag on live-proposals, consistent with open-items 32).
+- Next: founder approval to merge + `git push origin main:live`. Open
+  questions for Ward unchanged (26 re-measured, 3 now has somewhere to land).

@@ -1526,3 +1526,98 @@ Recorded here as the founder set them; each is implemented in its own phase.
 - Instead of: setting the variable and calling it fixed (the same failure is
   one dashboard edit away), or hardcoding `visitor` everywhere (dev would boot
   signed-out and every local session would start by switching worlds).
+
+### 2026-08-20 — E2E-0820: "credits" is scoped to the static demo, not purged from it
+
+- **The finding (F4).** Billing → Subscription read "Free — $0 a month · 100
+  credits" on the LIVE app, which contradicts D-INT-E: live mode shows money.
+- **The interpretation, because the order and D-INT-E pull opposite ways.**
+  The order says the word "credits" must not appear and asks for a repo-wide
+  sweep; D-INT-E deliberately KEEPS credits as the static demo's own currency
+  and forbids inventing an exchange rate between the two. Both are founder
+  positions, so the reading that preserves the recorded decision wins: **no
+  surface a LIVE user can reach says "credits"; the static demo keeps its
+  ledger vocabulary.** That is the same class of bug the founder reported —
+  a live user reading a credit figure — without renaming the demo's currency,
+  its `low-credits` dataset, `useCreditBalance`, or the H3 ledger screen.
+- **What that meant in practice.** H1/H2/H4 render the SAME static plan data in
+  both modes (plans are not on the wire), so those three were the live-reachable
+  surfaces and are reworded unconditionally rather than forked by mode — copy
+  that changes with the mode is harder to trust than copy that does not.
+  Everything else that still says "credits" was checked to be inside a
+  `!live` branch, a dev route, or a comment.
+- **The wording.** `plan.credits` is a credit count with no honest conversion
+  into currency, so the allowance is NAMED, not numbered: "Includes a monthly
+  generation allowance" (`MESSAGES.notices.planAllowance`). The price stays a
+  real figure ("$0 a month") because that one IS derivable. Plan cards stay
+  comparable because `entitlements.features` already carries what separates
+  them ("1 post a day" vs "Up to 3 posts a day"), so no information is lost.
+- **Route.** `/billing/credits` → `/billing/balance`, with the old path kept as
+  a redirect: it was linked from the shell chip, the dashboard tile and a live
+  spec, and a bookmark should not 404 over a vocabulary change.
+- Instead of: purging credits from the static demo too (a large rename that
+  fights D-INT-E for a surface no live user sees), or mode-forking the plan
+  card (two truths about one plan).
+
+### 2026-08-20 — E2E-0820: a pre-run count is resolved against the tones that exist now
+
+- **The finding (F5).** F1's summary said "3 drafts" over two selected tones,
+  and "1 draft" over none.
+- **The cause.** `LiveGenerate` seeds its selection from `useTones()` on FIRST
+  paint. In live mode that is the pre-sync world; `live/orgSynced` then REPLACES
+  `world.tones` wholesale with the ids the API minted, so an id chosen a moment
+  earlier stops existing while it is still in the selection. The summary counted
+  the raw id list, the request body counted the intersection, and a ghost id sat
+  in the gap between them — invisible in the picker, worth a draft in the count.
+- **The fix.** One resolution (`planRun`) feeds the counter, the guards and the
+  request body, and a reconciliation effect prunes ids no tone answers to any
+  more. With no tone selected the run control is disabled and NO count renders:
+  "0 drafts" is a number nobody asked for, and the tone-required line is what
+  the screen has to say at that point.
+- Instead of: fixing the arithmetic in place (it was never the arithmetic), or
+  re-seeding the selection on every tone change (that would fight a user who
+  deliberately deselected).
+
+### 2026-08-20 — E2E-0820: Finish attempts every step, reports what failed, and repairs on re-run
+
+- **The finding (F12).** Org 619 came out of the wizard with tones but no
+  schedule and no country, and the wizard reported success.
+- **The cause, in three parts.** `finishOnboarding` swallowed everything after
+  `POST /orgs`: tones through `Promise.allSettled` with the rejections
+  discarded, schedule and country through `.catch(() => undefined)`, then
+  `return ok` regardless. Only org creation could fail visibly, and its toast
+  was `MESSAGES.errors.generic` with a "Try again" whose `onClick` was `() => {}`.
+- **The shape of the fix.** The ok/not-ok axis is now the ORG alone, because
+  that is the only part that cannot be repaired from Settings. Everything after
+  it is attempted regardless of what failed before it, and each failure is
+  collected with its code and the envelope's `requestId` and handed back as
+  `incomplete[]`. The wizard still COMPLETES on a partial success — the
+  workspace exists, and holding a user in the wizard behind a step that may
+  never succeed would strand them — but the toast names which parts did not
+  save and where to set them.
+- **Idempotency, so a retry repairs instead of duplicating.** The org is reused
+  when the user already owns one by that name (a lost response to `POST /orgs`
+  used to mint a second workspace on the retry), presets are seeded only where
+  one of that name is missing, and a schedule is created only when the org has
+  none. Country is a `PUT`, so it was already free to repeat.
+- Instead of: blocking completion until every step lands (a permanent upstream
+  failure becomes a permanent dead end), or reporting the first failure only
+  (the founder's org lost two steps, not one).
+
+### 2026-08-20 — E2E-0820: an unread balance is not an unavailable one
+
+- **The finding (F9).** The header chip showed "Balance unavailable — funding
+  pending" for two to five seconds on every route load.
+- **Why it was wrong.** That copy is an API-CONFIRMED claim — an all-zero
+  wallet means server-side funding has not landed (INT-9). The chip reached it
+  through `wallet === null`, which also means "not read yet". A verdict was
+  standing in for a wait, on every screen, because the chip mounts in `AppShell`.
+- **Three states now, because there are three facts:** the read is in flight
+  (`balanceLoading`, neutral), the sync finished and brought no wallet back
+  (`balanceUnread` — a failure, not a state of the wallet), and an
+  API-confirmed all-zero wallet (`balanceUnavailable`, unchanged). The loading
+  signal is `useScreenPhase()`, which already derives from `liveSyncPhase`.
+  The same split is applied to the Balance screen, which the chip links to.
+- Instead of: a skeleton (the chip is one line of text; a shimmer there is
+  noisier than the word "Loading"), or treating an unread wallet as loading
+  forever (a failed read would sit on "Loading balance…" with no end).

@@ -28,6 +28,7 @@ import {
 } from '@/data/provider'
 import type { Draft } from '@/data/types'
 import { LiveToday } from './live-today'
+import { pluralize } from '@/lib/format'
 import { MESSAGES } from '@/lib/messages'
 import { slotInstant } from '@/lib/timezone'
 import { DraftCard } from './draft-card'
@@ -68,7 +69,7 @@ function StaticTodayScreen() {
 
   const context =
     awaiting > 0
-      ? `${awaiting} drafts ready across ${todaySlots.length} slots`
+      ? `${awaiting} ${pluralize(awaiting, 'draft')} ready across ${todaySlots.length} ${pluralize(todaySlots.length, 'slot')}`
       : 'Nothing waiting on you right now'
 
   return (
@@ -89,11 +90,14 @@ function StaticTodayScreen() {
             <div className="flex flex-col gap-1">
               <p className="text-xs tracking-wider text-muted-foreground uppercase">Today</p>
               <h2 className="font-display text-2xl font-semibold tracking-tight">
-                {awaiting > 0 ? `${awaiting} drafts ready for review` : 'Your queue is clear'}
+                {awaiting > 0
+                  ? `${awaiting} ${pluralize(awaiting, 'draft')} ready for review`
+                  : 'Your queue is clear'}
               </h2>
               {todaySlots.length > 0 && (
                 <p className="text-sm text-muted-foreground">
-                  Across {todaySlots.length} slots. Approve what fits, then create the art.
+                  Across {todaySlots.length} {pluralize(todaySlots.length, 'slot')}. Approve what
+                  fits, then create the art.
                 </p>
               )}
             </div>

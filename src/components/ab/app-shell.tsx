@@ -18,6 +18,7 @@ import {
   Inbox,
   LayoutDashboard,
   LogOut,
+  PenLine,
   Plug,
   Settings,
   Sparkles,
@@ -64,6 +65,7 @@ import {
   useDrafts,
   useLiveMode,
   useOrg,
+  useScreenPhase,
   useSession,
 } from '@/data/provider'
 import { isFundingPending, useWallet } from '@/data/wallet'
@@ -75,6 +77,7 @@ import { cn } from '@/lib/utils'
 const NAV = [
   { to: '/', label: 'Dashboard', icon: LayoutDashboard, end: true },
   { to: '/today', label: 'Today', icon: Inbox, end: false },
+  { to: '/generate', label: 'Generate', icon: PenLine, end: false },
   { to: '/calendar', label: 'Calendar', icon: Calendar, end: false },
   { to: '/studio', label: 'Studio', icon: Sparkles, end: false },
   { to: '/analytics', label: 'Analytics', icon: ChartLine, end: false },
@@ -238,22 +241,32 @@ function PlanCreditChip() {
   const credits = useCreditBalance()
   const wallet = useWallet()
   const live = useLiveMode()
+  const phase = useScreenPhase()
 
   if (live) {
     // Funding is server-side and best-effort at org creation, so an all-zero
     // wallet means it has not landed yet — that is a WAIT, not an error, and
     // certainly not "you have no money".
     const pending = isFundingPending(wallet)
+    // ...and a wallet nobody has read yet is not a wallet that is missing.
+    // The chip mounts on every screen, so the two-to-five seconds the org sync
+    // takes were long enough to read as a verdict (E2E-0820 F9).
+    const unread = wallet === null
+    const loading = unread && phase === 'loading'
     const low = wallet !== null && !pending && wallet.availableCents < 100
     return (
       <Link
-        to="/billing/credits"
+        to="/billing/balance"
         className={cn(
           'hidden items-center gap-1.5 rounded-full border border-border px-3 py-1 text-xs font-medium transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none sm:inline-flex',
           low && 'border-warning/60 text-warning',
         )}
       >
-        {wallet === null || pending ? (
+        {loading ? (
+          <span className="text-muted-foreground">{MESSAGES.notices.balanceLoading}</span>
+        ) : unread ? (
+          <span className="text-muted-foreground">{MESSAGES.notices.balanceUnread}</span>
+        ) : pending ? (
           <span className="text-muted-foreground">{MESSAGES.notices.balanceUnavailable}</span>
         ) : (
           <>

@@ -16,6 +16,7 @@
  */
 import { Check, Copy, X } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { Link } from 'react-router'
 import { ConfirmDialog } from '@/components/ab/confirm-dialog'
 import { EmptyState } from '@/components/ab/empty-state'
 import { SkeletonList } from '@/components/ab/skeletons'
@@ -152,7 +153,22 @@ export function LiveToday() {
       {items === null ? (
         <SkeletonList rows={3} label="Loading your queue" />
       ) : items.length === 0 ? (
-        <EmptyState icon={Inbox} title="Nothing here" description={EMPTY[tab]} />
+        <EmptyState
+          icon={Inbox}
+          title="Nothing here"
+          description={EMPTY[tab]}
+          // "generate posts to start" was the only route to F1 for a while, and
+          // it was prose rather than a link (E2E-0820 F3). The invitation is
+          // the whole point of an empty state, so on the tab that copy belongs
+          // to it is a real control.
+          action={
+            tab === 'pending' ? (
+              <Button asChild>
+                <Link to="/generate">Generate posts</Link>
+              </Button>
+            ) : undefined
+          }
+        />
       ) : (
         <ul className="flex flex-col gap-3">
           {items.map((item) => (

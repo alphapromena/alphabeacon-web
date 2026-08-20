@@ -38,6 +38,13 @@ export type AuthActionResult =
       reason?: string
       /** Seconds to wait, present on rate limits. */
       retryAfterSeconds?: number
+      /**
+       * The server's own id for this failure, from the error envelope's
+       * `requestId` — the one handle a bug report can carry (open-items 3:
+       * CORS still exposes no `x-request-id` response header, so the envelope
+       * is the only source). Absent on a client-side network failure.
+       */
+      requestId?: string
     }
 
 const ok = (revoked?: number): AuthActionResult => ({ ok: true, revoked })
@@ -51,6 +58,7 @@ function failure(error: unknown): AuthActionResult {
       fieldErrors: error.fieldDetails,
       reason: error.reason,
       retryAfterSeconds: error.retryAfterSeconds,
+      requestId: error.requestId,
     }
   }
   throw error

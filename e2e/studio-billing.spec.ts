@@ -113,13 +113,16 @@ test('an insufficient balance refuses the run and keeps the work', async ({ page
   await expect(page.getByLabel('Prompt')).toHaveValue('A prompt worth keeping')
 })
 
-test('changing plan grants its credits through the ledger', async ({ page }) => {
+test('changing plan states its consequence and grants through the ledger', async ({ page }) => {
   await open(page, 'Billing')
   await page.getByRole('link', { name: 'Change plan' }).click()
 
   await page.getByRole('button', { name: 'Upgrade' }).first().click()
   const confirm = page.getByRole('alertdialog')
-  await expect(confirm).toContainText('credits are granted straight away')
+  // The design law is that a destructive/paid confirm NAMES what changes; the
+  // vocabulary is money, never "credits" (D-INT-E, E2E-0820 F4).
+  await expect(confirm).toContainText('allowance applies straight away')
+  await expect(confirm).not.toContainText('credits')
   await confirm.getByRole('button', { name: 'Upgrade' }).click()
 
   await expect(page.getByText('Current plan').first()).toBeVisible()

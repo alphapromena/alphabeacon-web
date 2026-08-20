@@ -45,6 +45,7 @@ function failure(error: unknown): AuthActionResult {
       fieldErrors: error.fieldDetails,
       reason: error.reason,
       retryAfterSeconds: error.retryAfterSeconds,
+      requestId: error.requestId,
     }
   }
   throw error

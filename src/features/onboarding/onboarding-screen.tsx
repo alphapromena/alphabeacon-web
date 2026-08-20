@@ -37,7 +37,10 @@ import {
 import { useAccountActions } from '@/data/account'
 import { useBrandActions } from '@/data/brand'
 import type { CalendarSource, Platform, Tone, Weekday } from '@/data/types'
+import { errorReference } from '@/lib/error-reference'
+import { pluralize } from '@/lib/format'
 import { MESSAGES } from '@/lib/messages'
+import { describeIncomplete } from './finish-report'
 import { ToneEditorSheet } from '@/features/settings/tone-editor'
 import {
   ActiveDaysField,
@@ -76,6 +79,49 @@ export function OnboardingScreen() {
 
   const goTo = (next: OnboardingStep) => dispatch({ type: 'onboarding/goToStep', step: next })
 
+  /**
+   * Finishing the wizard is where the workspace becomes real: in live mode
+   * this creates the org AND pushes the tones, schedule and country the steps
+   * collected, because none of them could exist server-side before the org
+   * did. Static completes as before.
+   *
+   * Two outcomes are reported separately, because they are different facts
+   * (E2E-0820 F12). No org at all means nothing was saved and the retry is
+   * worth pressing — `finishOnboarding` is idempotent, so it repairs rather
+   * than duplicating. An org WITH gaps still completes: the workspace exists,
+   * the missing pieces are all editable from Settings, and holding the user
+   * in the wizard would strand them behind a step that may never succeed.
+   * What must never happen again is the silence: the toast names the parts
+   * that did not save and carries the reference a bug report needs.
+   */
+  const finish = async () => {
+    const result = await account.finishOnboarding({
+      orgName: org.name,
+      schedule,
+      holidayCountryCodes: eventSources
+        .filter((source) => source.kind === 'holiday')
+        .map((source) => HOLIDAY_CODES[source.label.replace(' public holidays', '')])
+        .filter(Boolean),
+    })
+
+    if (!result.ok) {
+      toastError(MESSAGES.errors.onboardingFailed, {
+        description: errorReference(result),
+        retry: { label: 'Try again', onClick: () => void finish() },
+      })
+      return
+    }
+
+    if (result.incomplete.length > 0) {
+      toastError(MESSAGES.errors.onboardingIncomplete, {
+        description: describeIncomplete(result.incomplete),
+      })
+    }
+
+    dispatch({ type: 'onboarding/complete' })
+    navigate('/')
+  }
+
   return (
     <>
       {step === 1 && <StepBrand onNext={() => goTo(2)} />}
@@ -90,33 +136,7 @@ export function OnboardingScreen() {
           }}
         />
       )}
-      {step === 5 && (
-        <StepReady
-          onFinish={async () => {
-            // Finishing the wizard is where the workspace becomes real: in
-            // live mode this creates the org AND pushes the schedule and
-            // holiday sources the steps collected, because none of them could
-            // exist server-side before the org did. Static completes as
-            // before.
-            const result = await account.finishOnboarding({
-              orgName: org.name,
-              schedule,
-              holidayCountryCodes: eventSources
-                .filter((source) => source.kind === 'holiday')
-                .map((source) => HOLIDAY_CODES[source.label.replace(' public holidays', '')])
-                .filter(Boolean),
-            })
-            if (!result.ok) {
-              toastError(MESSAGES.errors.generic, {
-                retry: { label: 'Try again', onClick: () => {} },
-              })
-              return
-            }
-            dispatch({ type: 'onboarding/complete' })
-            navigate('/')
-          }}
-        />
-      )}
+      {step === 5 && <StepReady onFinish={finish} />}
     </>
   )
 }
@@ -599,7 +619,7 @@ function StepReady({ onFinish }: { onFinish: () => void }) {
         </div>
 
         <dl className="grid gap-3 sm:grid-cols-2">
-          <SummaryRow label="Generating on" value={`${schedule.activeDays.length} days a week`} />
+          <SummaryRow label="Generating on" value={`${schedule.activeDays.length} ${pluralize(schedule.activeDays.length, 'day')} a week`} />
           <SummaryRow label="Posts per day" value={String(schedule.postsPerDay)} />
           <SummaryRow label="Drafted by" value={modelName} />
           <SummaryRow

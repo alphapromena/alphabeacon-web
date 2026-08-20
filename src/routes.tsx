@@ -71,7 +71,7 @@ const el = {
   studioAsset: () => lazyEl(() => import('@/features/studio/studio-screens'), 'StudioAssetScreen'),
   billingSubscription: () => lazyEl(() => import('@/features/billing/billing-screens'), 'SubscriptionScreen'),
   billingPlans: () => lazyEl(() => import('@/features/billing/billing-screens'), 'PlansScreen'),
-  billingCredits: () => lazyEl(() => import('@/features/billing/billing-screens'), 'CreditsScreen'),
+  billingBalance: () => lazyEl(() => import('@/features/billing/billing-screens'), 'BalanceScreen'),
   billingReturn: () => lazyEl(() => import('@/features/billing/billing-screens'), 'CheckoutReturnScreen'),
   generate: () => lazyEl(() => import('@/features/generate/generate-screen'), 'GenerateScreen'),
   analytics: () => lazyEl(() => import('@/features/analytics/analytics-screens'), 'AnalyticsOverviewScreen'),
@@ -165,7 +165,11 @@ export const router = createBrowserRouter([
     { path: '/billing', element: el.billingSubscription() },
     { path: '/billing/plans', element: el.billingPlans() },
     { path: '/billing/subscription', element: el.billingSubscription() },
-    { path: '/billing/credits', element: el.billingCredits() },
+    { path: '/billing/balance', element: el.billingBalance() },
+    // The old path stays reachable: it was linked from the shell chip, the
+    // dashboard tile and a live e2e spec, and a bookmark should not 404
+    // because the product renamed its vocabulary (E2E-0820 F4).
+    { path: '/billing/credits', element: <Navigate to="/billing/balance" replace /> },
     { path: '/billing/return', element: el.billingReturn() },
 
     // Area F — on-demand generate

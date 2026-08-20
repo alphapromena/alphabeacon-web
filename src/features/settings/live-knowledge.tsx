@@ -26,6 +26,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { EXTRACTABLE_MEDIA_TYPES, useKnowledgeActions, type KnowledgeSource } from '@/data/studio'
+import { pluralize } from '@/lib/format'
 import { MESSAGES } from '@/lib/messages'
 
 const SETTLING = /^(uploading|processing)$/i
@@ -231,7 +232,7 @@ export function LiveKnowledge() {
                   {source.deduped
                     ? 'Already in your knowledge — nothing was added twice.'
                     : source.status === 'Ready'
-                      ? `${source.chunkCount ?? 0} passages`
+                      ? `${source.chunkCount ?? 0} ${pluralize(source.chunkCount ?? 0, 'passage')}`
                       : (source.failureReason ?? '')}
                 </span>
               </div>

@@ -55,6 +55,14 @@ item to "Signed off" (with the date) only when a human has actually done it.
    is unchanged and there is **no `access-control-expose-headers` at all**, so
    the server's own id is not readable from a response either. Only the
    envelope's `requestId` is available to a bug report.
+   **2026-08-20 (E2E-0820 F6/F12):** that envelope id is now actually SHOWN.
+   It is carried on every failed action result (`requestId` on the `ok: false`
+   branch) and rendered by `lib/error-reference.ts`, which falls back to the
+   contract `code` when no id arrived — a client-side network failure has no
+   envelope, and the exposed-header gap above means there is nothing else to
+   quote. Surfaced today on the tone preview and the onboarding-finish toasts.
+   The backend ask is unchanged; the impact of it landing is now larger,
+   because the id has somewhere to go.
 4. **Org roles are three-tier (`owner|admin|member`); the app's model is
    two-tier.** INT-1's session adapter collapses `owner → admin` for display
    (an owner can do everything the admin UI offers). INT-2 must teach the
@@ -211,11 +219,21 @@ build, so they are worth asking as a batch.
     `400`. `embeddingModel` on `rag/collections` is documented optional but a
     body without it is a `400`. Both are now treated as required — please
     correct api.md (or the validation), so the next reader is not misled.
-26. **Server-side preset-tone seeding, now with rules** (extends item 8). A
-    fresh live org still has no preset tones, so `finishOnboarding` seeds the
+26. **Server-side preset-tone seeding, now with rules** (extends item 8).
+    **STILL OPEN — re-measured 2026-08-20 (E2E-0820 A1).** An org created by
+    DIRECT API calls, with the wizard never involved (signup → verify →
+    `POST /orgs`), comes back with **0 tones**, 0 voices and no schedule:
+    probe org **622**, left in place. So the wizard remains the ONLY seeder,
+    and a non-wizard org path — anything that creates an org outside this
+    frontend — still gets an org with no tones at all.
+    A fresh live org still has no preset tones, so `finishOnboarding` seeds the
     five through the API — and as of this contract it must also send each
     preset's `rules`. If the backend seeds server-side instead, a non-wizard
     org path gets them too and the wizard's job shrinks.
+    The client-side seeding is therefore NOT redundant and was not removed.
+    When Ward does ship server-side seeding, the wizard's seeding step becomes
+    a no-op by construction: since 2026-08-20 it reads the org's existing tones
+    first and creates only the presets missing by name.
 28. **INT-12 candidates — the five granted capabilities with no composer yet.**
     `photoshoot.generate`, `brand-assets.generate`, `logos.generate`,
     `logos.redesign` and `video-ads.generate` are all granted to this app and
