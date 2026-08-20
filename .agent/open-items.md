@@ -15,6 +15,12 @@ item to "Signed off" (with the date) only when a human has actually done it.
   the team's staging branch and must never drift from production; it carries no
   commits of its own. Forgetting leaves the team testing an older app against
   the real API, which is the confusing kind of stale.
+- **Any merge to `main` runs the FULL live suite (`LIVE_MEDIA` off), never only
+  the phase's own spec** (added 2026-08-20, from trap 18). `live-generate` had
+  been failing on `main` since INT-12 because closing INT-12 ran
+  `live-proposals` and nothing else — a spec nobody runs is a check that has
+  already broken, and the phase that breaks a spec is rarely the phase that
+  owns it. One file at a time, per the rate limits.
 
 ## Outstanding
 
@@ -234,6 +240,13 @@ build, so they are worth asking as a batch.
     When Ward does ship server-side seeding, the wizard's seeding step becomes
     a no-op by construction: since 2026-08-20 it reads the org's existing tones
     first and creates only the presets missing by name.
+27b. **Static demo billing copy still says "credits"** (accepted debt,
+    2026-08-20). The E2E-0820 sweep cleared every LIVE-reachable surface and
+    left the static demo's own ledger vocabulary intact per D-INT-E — H3's
+    ledger screen, the Studio composer's cost arithmetic, the `low-credits`
+    dataset and the shell chip's static branch. Moot once production serves
+    live; revisit only if the static demo outlives the cutover.
+
 28. **INT-12 candidates — the five granted capabilities with no composer yet.**
     `photoshoot.generate`, `brand-assets.generate`, `logos.generate`,
     `logos.redesign` and `video-ads.generate` are all granted to this app and

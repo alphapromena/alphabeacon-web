@@ -32,6 +32,11 @@ test('the inbox endpoints hold their contract, and the bell tells the truth', as
   page,
   request,
 }) => {
+  // Signup + verify + the whole wizard + Finish + three wire reads does not
+  // fit the suite's 30 s default. Finish also got three round-trips longer
+  // when it became idempotent (E2E-0820 B7): it reads /me/orgs, the org's
+  // tones and its schedules before writing anything.
+  test.setTimeout(150_000)
   // A fresh owner with an org (wizard-created, as ever).
   await page.goto('/signup')
   await page.getByLabel('Full name').fill('QA Inbox Owner')

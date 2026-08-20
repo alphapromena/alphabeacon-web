@@ -42,6 +42,11 @@ test('the wizard finish creates org + schedule + holiday source together', async
   page,
   request,
 }) => {
+  // Signup + verify + the whole wizard + Finish + three wire reads does not
+  // fit the suite's 30 s default, and Finish itself got three round-trips
+  // longer when it became idempotent (it reads /me/orgs, the org's tones and
+  // its schedules before writing anything). Same headroom as live-country.
+  test.setTimeout(150_000)
   await page.goto('/signup')
   await page.getByLabel('Full name').fill('QA Sched Owner')
   await page.getByLabel('Work email').fill(owner)
@@ -65,8 +70,12 @@ test('the wizard finish creates org + schedule + holiday source together', async
   await page.getByRole('button', { name: 'Add' }).click()
   await page.getByRole('button', { name: 'Continue' }).click()
   await page.getByRole('button', { name: 'Skip for now' }).click()
-  // Step 3: add the default holiday feed (Jordan) so Finish has a source.
-  await page.getByRole('button', { name: 'Add', exact: true }).click()
+  // Step 3: commit the default country (Jordan) so Finish has one to send.
+  // INT-8 turned this step from an event-source list into the country picker
+  // and its button reads 'Choose' in live mode ({live ? 'Choose' : 'Add'});
+  // this spec kept clicking INT-4's 'Add' and had been failing on `main` ever
+  // since, unrun. Same rot as trap 18 — hence the full-live-suite merge rule.
+  await page.getByRole('button', { name: 'Choose', exact: true }).click()
   await page.getByRole('button', { name: 'Continue' }).click()
   await page.getByRole('button', { name: 'Start pipeline' }).click()
   await page.getByRole('button', { name: 'Go to your dashboard' }).click()
@@ -76,7 +85,7 @@ test('the wizard finish creates org + schedule + holiday source together', async
     timeout: 25_000,
   })
 
-  // The wire agrees: one schedule, one holidays source for JO.
+  // The wire agrees: one schedule, and the org's country is JO.
   const token = await sessionToken(page)
   const auth = { authorization: `Bearer ${token}` }
   const orgs = (await (await request.get(`${API_BASE}/me/orgs`, { headers: auth })).json()) as {
@@ -87,10 +96,15 @@ test('the wizard finish creates org + schedule + holiday source together', async
     await request.get(`${API_BASE}/orgs/${orgId}/schedules`, { headers: auth })
   ).json()) as { total: number }
   expect(schedules.total).toBe(1)
-  const sources = (await (
-    await request.get(`${API_BASE}/orgs/${orgId}/event-sources`, { headers: auth })
-  ).json()) as { items: { country: string }[] }
-  expect(sources.items.map((source) => source.country)).toContain('JO')
+  // INT-8 replaced the holiday EVENT-SOURCE with the org's own country
+  // (D-INT-F, and Ward confirmed event-sources are superseded — open-items
+  // 21). The wizard sets `PUT /orgs/:id/country`, so that is where the choice
+  // lands now; this assertion still read the retired surface and had been
+  // failing on `main`, unrun, since INT-8.
+  const org = (await (
+    await request.get(`${API_BASE}/orgs/${orgId}`, { headers: auth })
+  ).json()) as { org: { country: string | null } }
+  expect(org.org.country).toBe('JO')
 })
 
 test('C1 saves through PATCH — days, model and tones survive a reload', async ({ page }) => {
@@ -101,6 +115,12 @@ test('C1 saves through PATCH — days, model and tones survive a reload', async 
   await expect(page.getByRole('heading', { name: 'Schedule', level: 1 })).toBeVisible({
     timeout: 15_000,
   })
+  // TRAP 2: that h1 belongs to the shell and renders THROUGH the loading
+  // skeleton, so it is not a readiness signal. Without this wait the form is
+  // dirtied against the pre-sync (static) world and the live sync then
+  // replaces it underneath, leaving the save bar stuck on "unsaved changes"
+  // over seven demo tones the org does not have.
+  await expect(page.locator('[aria-busy="true"]')).toHaveCount(0, { timeout: 20_000 })
 
   // The wizard seeded the five preset tones (product law: always present);
   // pick one so the schedule is valid, then change the cadence.
@@ -113,6 +133,7 @@ test('C1 saves through PATCH — days, model and tones survive a reload', async 
   // The reload reads the server back through the sync.
   await page.goto('/calendar/settings')
   await expect(page.getByRole('heading', { name: 'Schedule', level: 1 })).toBeVisible()
+  await expect(page.locator('[aria-busy="true"]')).toHaveCount(0, { timeout: 20_000 })
   await expect(page.getByText('You have unsaved changes.')).toHaveCount(0)
 })
 

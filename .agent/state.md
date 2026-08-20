@@ -113,6 +113,9 @@ pnpm e2e --grep live-<phase>`), the way each phase was verified — the API's
 documented rate limits (60 s between code sends, 5/hour per email+purpose)
 make a single-shot all-file matrix trip 429s by design. Fresh
 `qa+<timestamp>` addresses every run; every dev code is 000000.
+**Standing rule (2026-08-20, from trap 18): any merge to `main` runs the FULL
+live suite — all twelve files, `LIVE_MEDIA` off — never only the phase's own
+spec.** The phase that breaks a live spec is rarely the phase that owns it.
 
 | Phase | Scope                                                    | State       |
 | ----- | -------------------------------------------------------- | ----------- |

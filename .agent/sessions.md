@@ -1811,3 +1811,53 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   declined-tab lag on live-proposals, consistent with open-items 32).
 - Next: founder approval to merge + `git push origin main:live`. Open
   questions for Ward unchanged (26 re-measured, 3 now has somewhere to land).
+
+### 2026-08-20 15:30 — merge gate: the full live suite found two more rotted specs and one open question
+
+- **Approved items landed first.** open-items gains the accepted-debt line
+  (27b: the static demo's billing copy keeps "credits", moot once production
+  serves live) and the new standing rule from trap 18: **any merge to `main`
+  runs the FULL live suite, `LIVE_MEDIA` off, never only the phase's own
+  spec.** Logged in both `open-items.md` (Standing rules) and `state.md`.
+- **The new rule paid for itself on its first outing.** Of twelve live spec
+  files, the triage had run eight. Of the four unrun, `live-scheduling` was
+  broken on `main` in two INT-8-era ways: it clicked a button called **'Add'**
+  when live mode has read `{live ? 'Choose' : 'Add'}` since the country picker
+  replaced the event-source list, and it asserted a holiday **event-source**
+  row when the wizard now sets `PUT /orgs/:id/country`. Both fixed; the org's
+  country is what the spec reads now.
+- **Two tests also outgrew the 30 s default**, partly on this branch's account:
+  B7's idempotency reads (`/me/orgs`, the org's tones, its schedules) made
+  Finish about three round-trips slower. `live-scheduling` and
+  `live-notifications` now set the 150 s headroom `live-country` already used.
+- **One thing is NOT fixed and blocks the merge under the new rule.**
+  `live-scheduling`'s C1 test leaves the save bar stuck on "You have unsaved
+  changes": the tone picker renders the five LIVE presets, while
+  `draft.toneIds.length` is **7** — the static demo schedule's ids, frozen at
+  mount. It is F5's defect class on a second screen. The screen's
+  pristine-adoption effect is deliberate (an edited draft is never clobbered
+  by a late sync), so a pre-sync edit strands the form permanently. Two more
+  tests in that file remain unrun behind it (serial mode).
+- **Probe for the addendum** (no product code): a DIRECT `POST
+  /orgs/:id/schedules` **succeeds — 201, reads back intact** — on a fresh QA
+  org shaped like 619 (tones present, no schedule). Probe org **653**. So the
+  endpoint is not what failed for 619. And the wizard and the editor do NOT
+  share a schedule client function: the editor calls
+  `useSchedulingActions().saveSchedule` (`PATCH` when a `scheduleId` is known,
+  else `POST`), while `finishOnboarding` builds its own body inline and always
+  `POST`s. Same eight fields, two independent literals.
+- Phase: E2E-0820 merge gate (branch `fix/e2e-0820`) — **still not merged, not
+  pushed**; the live suite is one file red and the founder's own rule 2 makes
+  that a blocker.
+- Files: `.agent/{open-items,state,sessions}.md`, `e2e/live-scheduling.spec.ts`,
+  `e2e/live-notifications.spec.ts`
+- Decisions: none new (the two logged rules are the founder's, recorded verbatim)
+- Verify: lint + typecheck + **416 unit** + guard-static (253 files) + static
+  e2e **72 passed / 49 skips** all green. Live suite, one file at a time,
+  `LIVE_MEDIA` off: auth 7/7 · brand 5/5 · brand-rules 5/5 · country 4/4 ·
+  generate 2/2 · knowledge 3/3 · notifications 1/1 · proposals 4/4 · studio 3/3
+  (+1 correctly skipped) · team 6/6 · wallet 4/4 · **scheduling 1/4 — 1 pass,
+  1 fail, 2 unrun**.
+- Next: founder decides — merge B1–B8 with the scheduling red called out as
+  pre-existing, or land the schedule fix first. Either way the A3/B9 addendum
+  text has never reached this session and is needed before that branch starts.
