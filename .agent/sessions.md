@@ -1913,3 +1913,60 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   team 6/6 · wallet 4/4. Two transient failures re-ran clean (live-auth once,
   live-proposals' declined-tab lag again — open-items 32).
 - Next: founder approval to merge + `git push origin main:live`.
+
+### 2026-08-20 17:45 — E2E-0820 closed: merged to main, pushed, live rebuilding
+
+- **The order end to end.** The founder's live in-app E2E on `1.malaky.ai`
+  (org 619, real API) raised 12 findings; this branch took the frontend items
+  and the root-cause probes, in three commits, and is now `main`.
+- **A1 — is seeding server-side yet? No.** An org created by DIRECT API calls,
+  the wizard never involved, comes back with 0 tones, 0 voices, no schedule,
+  `country: null` (probe org **622**, left in place). The wizard is still the
+  only seeder; its client-side seeding is not redundant and was not removed.
+  open-items 26 stays open with the measurement.
+- **A2 — does Finish hide failures? Yes, all of them.** Tones through
+  `Promise.allSettled` with the rejections discarded, schedule and country
+  through `.catch(() => undefined)`, then `return ok` regardless — and the one
+  visible failure toast had a "Try again" whose `onClick` was `() => {}`. Not
+  re-runnable either: it always created an org first, so a retry minted a
+  second workspace. That is org 619's exact shape.
+- **A3 — is the backend at fault for 619? No.** A direct
+  `POST /orgs/:id/schedules` returns **201** and reads back intact (probe org
+  **653**), as does a `PATCH` of the same body. The failure class was ours.
+  The wizard and the editor do NOT share a schedule client function: the
+  editor calls `saveSchedule` (`PATCH` when a `scheduleId` is known, else
+  `POST`), Finish builds its own literal and always `POST`s — recorded as debt
+  (open-items 27a) rather than unified while B7 was still warm.
+- **B1–B9.** Generate reachable at all · "credits" gone from every
+  live-reachable surface, `/billing/balance` · the pre-run count resolved
+  against tones that exist · the tone-preview reference · the balance chip's
+  three honest states · the results footer pointing at Today · pluralization ·
+  Finish failure-tolerant, reported and idempotent · and the stranded schedule
+  draft, plus the blank schedule that makes an org in the 619 shape repairable
+  from C1 without anyone touching the database.
+- **The two lessons worth keeping** are now traps 19 and 20 in `state.md`:
+  **"has the user edited?" is recorded by `patch()`, never inferred from a
+  JSON diff against a moving ref** — the inference version pruned a just-saved
+  selection to nothing, because the two halves of the sync graft
+  independently; and **a null answer from the wire must never fall through to
+  demo data**, the law INT-8 wrote for `eventSources` and the reducer two
+  lines below it broke for schedules.
+- **The standing rule that earned itself twice.** "Any merge to `main` runs
+  the FULL live suite" was added from trap 18 and immediately found
+  `live-scheduling` broken on `main` in two INT-8-era ways (a button renamed
+  `Choose`, an assertion against the retired event-source surface), plus a
+  whole test asserting a screen that no longer exists — retired with a
+  tombstone naming its four replacements in `live-country`.
+- Phase: E2E-0820 — **closed. Merged to `main` (fast-forward, `83ec448`) and
+  pushed with `main:live` on the founder's explicit approval.**
+- Files: 41 changed, +1538 / −179 across `src/features/*`, `src/data/*`,
+  `src/lib/*`, `src/components/ab/app-shell.tsx`, `src/routes.tsx`, 7 e2e
+  specs (1 new), `screens4.md`, `.agent/*`
+- Decisions: see decisions.md — six entries dated 2026-08-20
+- Verify: lint + typecheck + **423 unit** + guard-static (255 files) + build +
+  static e2e **72 passed / 51 skips** + **verify:w02–w06 all PASS** + the
+  **FULL live suite, `LIVE_MEDIA` off: 45 passed, 2 correct skips, 0 failed**
+- Next: Vercel rebuilds both sides — the `live` preview (`1.malaky.ai`, live
+  mode) and a fresh STATIC production build off `main`. Open questions for
+  Ward: 26 (server-side seeding, re-measured), 9 (is `gm_*` also legal, and
+  which vocabulary is canonical), 29–32.
