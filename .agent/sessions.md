@@ -2045,3 +2045,51 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   needs minutes of real traffic to stabilise, which a 90 s warm-up cannot buy —
   see the new standing note in open-items about running the suite twice.
 
+
+### 2026-08-24 00:58 — the two riders: the last two rung files, and the two-round rule made law
+
+- Did: **R1** — the rung treatment extended to `live-auth` and `live-team`, the
+  two files the 2026-08-23 pass left at the Playwright default. Their waits were
+  the identical class already lifted inside the other three: 41 of them now read
+  a rung from `live-clocks.ts` with a one-line citation, picked by the work each
+  wait covers — `ONE_CALL` for one round-trip (a login, a toast, a PATCH, a
+  DELETE), `SCREEN_SYNC` for a screen's graft (first wait after login, after a
+  reload, after a settings tab), `AFTER_COUNTRY` for the wizard Finish.
+  **Every locator and every matcher argument is byte-identical, and it is
+  machine-proved, not asserted:** stripping the citations and every `timeout:`
+  option from both files reproduces their pre-change content exactly, so no
+  locator, no expected value and no control flow moved. Three waits that cover
+  no request (a heading already on screen, a route rendered from query params,
+  a row that follows its own toast) were deliberately left at the default —
+  a wait picks the rung that matches its work, and these have none.
+  Two pre-existing literals came with them: the `20_000` signup waits are
+  `ONE_CALL` at the same value, and `live-team`'s `25_000` Finish wait is now
+  `AFTER_COUNTRY`, byte-identical to the assertion already lifted in
+  `live-brand` and `live-scheduling` — leaving it at 25 s while its twins sat
+  at 45 s was the incoherence the rider names. `live-clocks.ts`'s own scope
+  note went from three files to five.
+  **R2** — the operating procedure is law now, not a note: against a cold API
+  the full live suite runs TWICE, round 2 is the merge gate, round 1 stabilises
+  the deployment (`open-items.md` standing rules + `state.md`). Written so it
+  cannot be read as licence to re-run until green: both rounds are reported, a
+  red in round 2 is a red, and the FULL-suite rule itself stays mandatory —
+  the two-round rule says WHICH run is the gate, never that there isn't one.
+- Phase: a fix branch (`fix/live-suite-warmup`), the riders on its approval.
+- Files: `e2e/live-auth.spec.ts`, `e2e/live-team.spec.ts`, `e2e/live-clocks.ts`,
+  `.agent/{state,open-items,sessions}.md`
+- Decisions: none new.
+- Verify: lint + typecheck + **423 unit / 41 files** + guard-static (255 files)
+  + build + static e2e **72 passed / 51 skips / 0 failed** with the warm-up
+  silent + **`verify:w00`–`w06` all PASS**. LIVE, all 13 files, `LIVE_MEDIA`
+  off, **one file at a time**, twice: **round 1 13/13 in 796 s**, **round 2
+  13/13 in 794 s** — 45 passed and the 2 correct skips both rounds.
+  **A first live attempt was discarded as an invalid invocation, and it is
+  worth recording why:** `pnpm e2e live-` runs all 13 files at once under
+  `fullyParallel` with 6 workers — 3.2 min, 10 failed — which is not the
+  documented procedure and is trap 14 by construction. One file at a time is
+  the rule for a reason; the run that ignores it measures contention, not the
+  app. Because that invalid run gave the API three minutes of traffic, round 1
+  here was not truly cold — the honest reading is two consecutive warm rounds,
+  and the cold-start evidence stays the 2026-08-23 measurement.
+- Next: merge to `main`, `git push origin main` and `main:live`; then the M2
+  design branch takes `main` and re-runs its own gates under the new rule.

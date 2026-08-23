@@ -25,10 +25,11 @@
  * not answer in a time the measurements say it should — which is still a
  * failure worth having.
  *
- * Scope: used by the three files whose waits were re-derived on
- * `fix/live-suite-warmup` (`live-brand`, `live-brand-rules`, `live-scheduling`).
- * Every other wait in the suite is untouched, and the Playwright default is
- * unchanged. If a fourth file needs a rung, that is a decision to take on
+ * Scope: five files, all re-derived on `fix/live-suite-warmup` — `live-brand`,
+ * `live-brand-rules` and `live-scheduling` first, then `live-auth` and
+ * `live-team`, whose waits were the same class left at the Playwright default
+ * of 5 s. Every other wait in the suite is untouched, and the default itself is
+ * unchanged. If a sixth file needs a rung, that is a decision to take on
  * purpose, not by importing this file.
  */
 

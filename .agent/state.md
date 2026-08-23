@@ -118,6 +118,12 @@ make a single-shot all-file matrix trip 429s by design. Fresh
 **Standing rule (2026-08-20, from trap 18): any merge to `main` runs the FULL
 live suite — all twelve files, `LIVE_MEDIA` off — never only the phase's own
 spec.** The phase that breaks a live spec is rarely the phase that owns it.
+**Amended 2026-08-24 (source `Docs/api/live-red-2026-08-23.md`): against a cold
+API the full suite runs TWICE. Round 2 is the merge gate; round 1 stabilises
+the deployment.** Both rounds are reported; the gate itself is not optional and
+a red in round 2 is a red. This is an operating procedure for an API that is
+cold, not licence to re-run until green — and it retires the day the function
+is kept warm.
 
 | Phase | Scope                                                    | State       |
 | ----- | -------------------------------------------------------- | ----------- |

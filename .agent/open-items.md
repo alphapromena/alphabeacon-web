@@ -19,12 +19,16 @@ item to "Signed off" (with the date) only when a human has actually done it.
   three derived wait values the re-clocked files use. **A warm run is now
   13/13.** A run that starts from hours of idle is not — see below. None of it
   is a fix for the API: `Docs/api/live-red-2026-08-23.md` holds that.
-- **Run the live suite warm.** If the API has been idle for hours, run the
-  suite once and then again: the first pass is what stabilises the deployment,
-  and the second is the one that means something. Measured 2026-08-23: cold
-  9/13 in 757 s, then immediately 13/13 in 833 s. Until Ward keeps the function
-  warm, that is the honest operating procedure, and it is why the standing
-  merge rule should read "the second consecutive run must be green".
+- **Against a cold API the full live suite runs TWICE. Round 2 is the merge
+  gate; round 1 stabilises the deployment** (codified 2026-08-24; source
+  `Docs/api/live-red-2026-08-23.md`). This is not permission to re-run until
+  green: the two rounds are one procedure, both are reported, and it is the
+  SECOND that must be 13/13. A red in round 2 is a red. Measured 2026-08-23:
+  cold 9/13 in 757 s, then immediately 13/13 in 833 s — and again 2026-08-24 on
+  the same branch. The clocks are derived (`e2e/live-clocks.ts`), so a round-1
+  red that traces to an external lookup slower than its measurement is the
+  API's cost to change, not a number to inflate. Retire this rule the day Ward
+  keeps the function warm.
 
 - **After every merge to `main`, also `git push origin main:live`.** `live` is
   the team's staging branch and must never drift from production; it carries no
@@ -35,7 +39,9 @@ item to "Signed off" (with the date) only when a human has actually done it.
   been failing on `main` since INT-12 because closing INT-12 ran
   `live-proposals` and nothing else — a spec nobody runs is a check that has
   already broken, and the phase that breaks a spec is rarely the phase that
-  owns it. One file at a time, per the rate limits.
+  owns it. One file at a time, per the rate limits. **Still mandatory** — the
+  two-round rule above says WHICH run is the gate, never that the gate is
+  optional.
 
 ## Outstanding
 
