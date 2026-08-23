@@ -13,10 +13,18 @@ item to "Signed off" (with the date) only when a human has actually done it.
 
 - **The live suite needs the API warm, and the harness now warms it.**
   `e2e/global-setup.ts` runs on every live invocation (`VITE_API_BASE_URL`
-  set; it makes no request at all without it): it wakes the service, warms a
-  12-way fleet, and keeps a heartbeat for the life of the run. Cold-round
-  greens went from 8/13 to 11/13 with it. It is not a fix for the API — see
-  `Docs/api/live-red-2026-08-23.md` and the item below.
+  set; it makes no request at all without it): it checks the server is in the
+  mode the run expects (trap 22), wakes the service, warms a 12-way fleet, and
+  keeps a heartbeat for the life of the run. `e2e/live-clocks.ts` carries the
+  three derived wait values the re-clocked files use. **A warm run is now
+  13/13.** A run that starts from hours of idle is not — see below. None of it
+  is a fix for the API: `Docs/api/live-red-2026-08-23.md` holds that.
+- **Run the live suite warm.** If the API has been idle for hours, run the
+  suite once and then again: the first pass is what stabilises the deployment,
+  and the second is the one that means something. Measured 2026-08-23: cold
+  9/13 in 757 s, then immediately 13/13 in 833 s. Until Ward keeps the function
+  warm, that is the honest operating procedure, and it is why the standing
+  merge rule should read "the second consecutive run must be green".
 
 - **After every merge to `main`, also `git push origin main:live`.** `live` is
   the team's staging branch and must never drift from production; it carries no

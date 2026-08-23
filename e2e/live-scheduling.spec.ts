@@ -11,6 +11,7 @@
  */
 import type { Page } from '@playwright/test'
 import { expect, test } from './fixtures'
+import { AFTER_COUNTRY, SCREEN_SYNC } from './live-clocks'
 
 const API_BASE = process.env.VITE_API_BASE_URL
 const RUN = Date.now()
@@ -81,8 +82,9 @@ test('the wizard finish creates org + schedule + holiday source together', async
   await page.getByRole('button', { name: 'Go to your dashboard' }).click()
   // Finish is org + preset tones + schedule + sources + the resync — a real
   // burst of wire calls; give it headroom.
+  // Downstream of PUT /orgs/:id/country — live-red-2026-08-23.
   await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible({
-    timeout: 25_000,
+    timeout: AFTER_COUNTRY,
   })
 
   // The wire agrees: one schedule, and the org's country is JO.
@@ -109,7 +111,10 @@ test('the wizard finish creates org + schedule + holiday source together', async
 
 test('C1 saves through PATCH — days, model and tones survive a reload', async ({ page }) => {
   await login(page, owner, PASSWORD)
-  await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible()
+  // First wait after login — the dashboard's whole sync — live-red-2026-08-23.
+  await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible({
+    timeout: SCREEN_SYNC,
+  })
 
   await page.goto('/calendar/settings')
   await expect(page.getByRole('heading', { name: 'Schedule', level: 1 })).toBeVisible({
@@ -120,7 +125,8 @@ test('C1 saves through PATCH — days, model and tones survive a reload', async 
   // dirtied against the pre-sync (static) world and the live sync then
   // replaces it underneath, leaving the save bar stuck on "unsaved changes"
   // over seven demo tones the org does not have.
-  await expect(page.locator('[aria-busy="true"]')).toHaveCount(0, { timeout: 20_000 })
+  // The screen's whole sync — live-red-2026-08-23.
+  await expect(page.locator('[aria-busy="true"]')).toHaveCount(0, { timeout: SCREEN_SYNC })
 
   // The wizard seeded the five preset tones (product law: always present);
   // pick one so the schedule is valid, then change the cadence.
@@ -133,7 +139,8 @@ test('C1 saves through PATCH — days, model and tones survive a reload', async 
   // The reload reads the server back through the sync.
   await page.goto('/calendar/settings')
   await expect(page.getByRole('heading', { name: 'Schedule', level: 1 })).toBeVisible()
-  await expect(page.locator('[aria-busy="true"]')).toHaveCount(0, { timeout: 20_000 })
+  // The same sync, read back after the reload — live-red-2026-08-23.
+  await expect(page.locator('[aria-busy="true"]')).toHaveCount(0, { timeout: SCREEN_SYNC })
   await expect(page.getByText('You have unsaved changes.')).toHaveCount(0)
 })
 
@@ -160,7 +167,10 @@ test('slots, if ingestion produced any, honour skip/un-skip and never offer appr
   request,
 }) => {
   await login(page, owner, PASSWORD)
-  await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible()
+  // First wait after login — the dashboard's whole sync — live-red-2026-08-23.
+  await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible({
+    timeout: SCREEN_SYNC,
+  })
   const token = await sessionToken(page)
   const auth = { authorization: `Bearer ${token}` }
   const orgs = (await (await request.get(`${API_BASE}/me/orgs`, { headers: auth })).json()) as {

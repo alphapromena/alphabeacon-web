@@ -1,3 +1,5 @@
+import type { FullConfig } from '@playwright/test'
+
 /**
  * Warm the API before any test budget starts — LIVE RUNS ONLY.
  *
@@ -46,6 +48,23 @@
  * seconds for the life of the run, torn down when Playwright finishes. It is
  * the cheapest possible request against an endpoint that returns a constant,
  * and it is what turns "warm at the start" into "warm throughout".
+ *
+ * ## It also checks WHICH server it is talking to
+ *
+ * `playwright.config.ts` sets `reuseExistingServer`, so a run silently adopts
+ * whatever is already listening on the base URL. A live-mode dev server left
+ * running from an earlier session therefore turns the STATIC suite into
+ * nonsense: in live mode there is no seeded session, `/` is the marketing site
+ * and `/signup` renders instead of redirecting, so 63 specs failed on
+ * "waiting for heading Dashboard" and every one of them looked like a
+ * regression. That happened twice in one afternoon (state.md trap 22).
+ *
+ * So before anything else this asks the server which mode it is in — by
+ * reading the one module that decides it, `src/api/config.ts`, as Vite serves
+ * it with the env inlined — and refuses to run if it disagrees with the run.
+ * The check is silent when it cannot answer (no dev server, a preview build,
+ * a future Vite that inlines differently): a guard may fail a run for a reason
+ * it is sure of, never for one it guessed.
  *
  * ## What it does NOT do
  *
@@ -157,6 +176,47 @@ async function warmFleet(url: string, startedAt: number): Promise<void> {
 }
 
 /**
+ * Refuse to run against a server in the wrong mode (state.md trap 22).
+ *
+ * Reads `src/api/config.ts` as the dev server transforms it — Vite inlines
+ * `import.meta.env.VITE_API_BASE_URL` there, and that file is documented as
+ * the ONE place the mode is decided (stack.md). Silent whenever it cannot get
+ * a clear answer.
+ */
+async function assertServerMode(baseURL: string | undefined, expectLive: boolean): Promise<void> {
+  if (!baseURL) return
+
+  let served: string
+  try {
+    const response = await fetch(new URL('/src/api/config.ts', baseURL), {
+      signal: AbortSignal.timeout(10_000),
+    })
+    // A preview or production build serves no source modules. Not this guard's
+    // business, and not a reason to fail anyone's run.
+    if (!response.ok) return
+    served = await response.text()
+  } catch {
+    return
+  }
+
+  const inlined = /"VITE_API_BASE_URL"\s*:\s*"([^"]*)"/.exec(served)
+  if (!inlined) return
+  const serverIsLive = inlined[1].length > 0
+  if (serverIsLive === expectLive) return
+
+  const wanted = expectLive ? 'LIVE' : 'STATIC'
+  const found = serverIsLive ? 'LIVE' : 'STATIC'
+  throw new Error(
+    `Wrong server: this is a ${wanted}-mode run, but the server already listening on ` +
+      `${baseURL} is in ${found} mode. Playwright reuses an existing server ` +
+      `(reuseExistingServer), so a dev server left over from another session gets adopted ` +
+      `silently — and a live server under the static suite fails ~63 specs on "waiting for ` +
+      `heading Dashboard", which reads exactly like a regression. Stop whatever is on that ` +
+      `port and run again. (state.md trap 22.)`,
+  )
+}
+
+/**
  * Phase 3: keep it warm for the life of the run.
  *
  * Returns the teardown Playwright calls when the run ends. Failures here are
@@ -183,8 +243,13 @@ function startHeartbeat(url: string): () => void {
   }
 }
 
-export default async function globalSetup(): Promise<(() => void) | void> {
+export default async function globalSetup(config: FullConfig): Promise<(() => void) | void> {
   const base = process.env.VITE_API_BASE_URL?.trim()
+
+  // Before anything: is this the server we think it is? Runs in BOTH modes,
+  // because the expensive mistake is the static suite adopting a live server.
+  await assertServerMode(config.projects[0]?.use?.baseURL, Boolean(base))
+
   if (!base) {
     // The static suite. Nothing to warm, and nothing may be requested.
     return

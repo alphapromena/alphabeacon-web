@@ -311,6 +311,26 @@ These are learned the hard way; each cost a debugging cycle.
     count ("passages", "members") and only passed because the plural was
     unconditional — fixing the grammar broke them, which is the right way round.
 
+22. **A dev server left running in LIVE mode makes the whole STATIC suite fail
+    in confusing ways.** `playwright.config.ts` sets
+    `reuseExistingServer: !CI`, so `pnpm e2e` silently adopts whatever is on
+    5199 — including a server started by hand with `.env.local` loaded. In
+    live mode there is no seeded session, so `/` is the marketing site and
+    `/signup` renders instead of redirecting: **63 specs failed on "waiting
+    for heading Dashboard"** and every one of them looked like a regression in
+    the branch under test. It cost two debugging cycles in one afternoon.
+    The webServer block pins `VITE_API_BASE_URL: ''` for exactly this reason —
+    but only for a server IT starts.
+
+    **This one is now guarded, not just recorded** (`fix/live-suite-warmup`):
+    `e2e/global-setup.ts` asks the server which mode it is in before anything
+    runs — it reads `src/api/config.ts` as Vite serves it, with the env
+    inlined, which is the one file documented as deciding the mode — and
+    refuses the run with a named error if the server disagrees. Proven in both
+    directions. The guard is SILENT when it cannot get a clear answer (no dev
+    server, a preview build, a future Vite that inlines differently): a guard
+    may fail a run for a reason it is sure of, never for one it guessed.
+
 19. **"Has the user edited?" is a fact to RECORD, not to infer from a JSON
     diff against a moving reference.** C1 decided whether to adopt a freshly
     synced schedule by comparing its draft to the last pristine it had seen,

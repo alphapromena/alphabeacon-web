@@ -2010,3 +2010,38 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   20.3–22.3 s against 20 s and 25 s budgets, and `PUT /orgs/:id/country` alone
   is 12–15 s of it), or wait for Ward. The harness half is done either way.
 
+### 2026-08-23 21:15 — the residue waits re-derived, and trap 22 guarded
+
+- Did: on `fix/live-suite-warmup`, with the wait freeze lifted for the three
+  residue files only. `e2e/live-clocks.ts` states three rungs derived from
+  `Docs/api/live-red-2026-08-23.md` — `ONE_CALL` 20 s (one round-trip plus one
+  measured 14 s cold start), `SCREEN_SYNC` 40 s (a screen's graft: several
+  concurrent `Promise.all` groups, each able to be cold), `AFTER_COUNTRY` 45 s
+  (the wizard Finish, of which `PUT /orgs/:id/country` alone is 12–15 s).
+  Fourteen waits in `live-brand`, `live-scheduling` and `live-brand-rules` now
+  read a rung instead of a number, each with a one-line comment citing the
+  doc. **Every locator and every matcher argument is byte-identical** — the
+  removed lines are timeout values and the same assertions re-emitted with a
+  timeout added. No other file changed and the Playwright default is untouched.
+  Trap 22 is recorded in state.md AND guarded: `assertServerMode` in
+  `global-setup.ts` reads `src/api/config.ts` as Vite serves it, with the env
+  inlined, and refuses a run whose server is in the other mode. Proven in both
+  directions; silent when it cannot get a clear answer.
+- Phase: a fix branch. **Branch only: not merged, not pushed.**
+- Files: `e2e/live-clocks.ts` (new), `e2e/global-setup.ts`,
+  `e2e/live-{brand,brand-rules,scheduling}.spec.ts`, `.agent/{state,open-items,
+  sessions}.md`
+- Decisions: none new.
+- Verify: lint + typecheck + 423 unit + guard-static (255 files) + build +
+  static e2e **72 passed / 51 skips / 0 failed**, warm-up silent. LIVE, all 13
+  files, `LIVE_MEDIA` off, twice: **cold 9/13 in 757 s**, then **warm 13/13 in
+  833 s**. The target was 13/13 both rounds; the warm round is it, the cold
+  round is not. Every cold red was in the first four files, and each one
+  correlates with the warm-up's own numbers: `/health` probe 1 at 16.5 s
+  (`live-auth`), 7.0 s (`live-brand-rules`), 5.9 s (`live-brand`), and
+  `live-team` needing six fleet bursts over 24.1 s. The same four files in the
+  warm round warmed in 0.7 s and one burst, and passed. **The exact timing that broke it** (captured from a fresh 26-minute-idle API, full network log, rule 4): from cold `POST /auth/signup` takes **20,281 ms** (rid `f40e630f`), and the Finish burst runs **45.83 s** against the 45 s rung — missed by 830 ms — because `PUT /orgs/:id/country` takes **23,562 ms** (rid `dfd40568`), 57% more than the 12–15 s the rung was derived from, and `GET /orgs/:id/schedules` adds **11,371 ms** (rid `0b3b3d94`) on top. Thirteen calls, sequential sum 52.0 s, every one 2xx: no 429, no Retry-After, no 5xx. Per rule 4 the clocks were NOT raised again — 23.6 s for one external lookup is Ward's number to change, not the suite's.
+- Next: founder call. The measured answer is that a deployment idle for hours
+  needs minutes of real traffic to stabilise, which a 90 s warm-up cannot buy —
+  see the new standing note in open-items about running the suite twice.
+

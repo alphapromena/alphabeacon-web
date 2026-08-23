@@ -8,6 +8,7 @@
  */
 import type { Page } from '@playwright/test'
 import { expect, test } from './fixtures'
+import { AFTER_COUNTRY, ONE_CALL, SCREEN_SYNC } from './live-clocks'
 
 const API_BASE = process.env.VITE_API_BASE_URL
 const RUN = Date.now()
@@ -81,8 +82,9 @@ test('a fresh owner + org, made through the product', async ({ page }) => {
   await page.getByRole('button', { name: 'Go to your dashboard' }).click()
   // Finish is org + preset tones + schedule + sources + the resync — a real
   // burst of wire calls; give it headroom.
+  // Downstream of PUT /orgs/:id/country — live-red-2026-08-23.
   await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible({
-    timeout: 25_000,
+    timeout: AFTER_COUNTRY,
   })
 })
 
@@ -107,7 +109,8 @@ test('a custom tone: created under the adapter, edited, and it survives a reload
 
   // A reload re-reads the server: the tone is real.
   await page.goto('/settings/tones')
-  await expect(page.getByText('Roastery floor')).toBeVisible()
+  // First wait after a reload — the whole brand sync — live-red-2026-08-23.
+  await expect(page.getByText('Roastery floor')).toBeVisible({ timeout: SCREEN_SYNC })
 })
 
 test('voice rules: the flat live list persists through the API', async ({ page }) => {
@@ -135,7 +138,8 @@ test('sources and topics: scheme-less display, real persistence', async ({ page 
 
   await page.getByLabel('Add a source').fill('perfectdailygrind.com/feed')
   await page.getByRole('button', { name: 'Add source' }).click()
-  await expect(page.getByText('Source added')).toBeVisible()
+  // One POST round-trip — live-red-2026-08-23.
+  await expect(page.getByText('Source added')).toBeVisible({ timeout: ONE_CALL })
   await expect(page.getByText('perfectdailygrind.com/feed')).toBeVisible()
 
   await page.getByLabel('Add a topic').fill('single origin')
@@ -160,7 +164,10 @@ test('deleting a tone reflects in the schedules that referenced it', async ({
   request,
 }) => {
   await login(page, owner, PASSWORD)
-  await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible()
+  // First wait after login — the dashboard's whole sync — live-red-2026-08-23.
+  await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible({
+    timeout: SCREEN_SYNC,
+  })
   const token = await sessionToken(page)
   const auth = { authorization: `Bearer ${token}` }
 
