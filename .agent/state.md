@@ -5,7 +5,13 @@ without reconstructing it from the session log. **Update this file at the end
 of any turn that finishes a phase or changes the plan.** `sessions.md` is the
 chronological record; this is the current picture.
 
-_Last updated: 2026-08-20, after the **E2E-0820 triage** branch
+_Last updated: 2026-08-24, after the **live-suite warm-up** branch
+(`fix/live-suite-warmup`) — the live suite stopped measuring Lambda temperature:
+a warm-up + heartbeat in `e2e/global-setup.ts`, the trap-22 mode guard, the
+three derived rungs in `e2e/live-clocks.ts` applied across five spec files, and
+the two-round operating rule written into the standing rules. **Merged to
+`main` as a fast-forward and pushed (with `main:live`), 2026-08-24.** Before
+that: 2026-08-20, after the **E2E-0820 triage** branch
 (`fix/e2e-0820`) — the founder's live in-app E2E on `1.malaky.ai` against org
 619; eight frontend fixes plus two root-cause probes, then **B9** — the
 stranded schedule draft, and a live org no longer wearing the demo's schedule.
@@ -42,10 +48,11 @@ below).
 |            |                                                        |
 | ---------- | ------------------------------------------------------ |
 | Remote     | `github.com/alphapromena/alphabeacon-web` (private)    |
-| `main`     | Production line, now at **`83ec448`** — the E2E-0820 triage (B1–B9, three commits) fast-forwarded and **pushed 2026-08-20** on the founder's explicit approval, `main:live` with it. Before that push it was `550f54e`. Previously at **`c6e3489`** — everything below PLUS the whole live integration (INT-6…12), merged as a fast-forward and **pushed 2026-08-19** on the founder's explicit approval. Before that push it was `6c598b2`. Open-items 16–18 still hold the human gates |
+| `main`     | Production line, now at the **`fix/live-suite-warmup`** tip — `df23176` plus this close-out, three commits fast-forwarded and **pushed 2026-08-24**, `main:live` with it. Before that push it was `5c01c68`. Previously at **`83ec448`** — the E2E-0820 triage (B1–B9, three commits) fast-forwarded and **pushed 2026-08-20** on the founder's explicit approval, `main:live` with it. Before that push it was `550f54e`. Previously at **`c6e3489`** — everything below PLUS the whole live integration (INT-6…12), merged as a fast-forward and **pushed 2026-08-19** on the founder's explicit approval. Before that push it was `6c598b2`. Open-items 16–18 still hold the human gates |
 | `rb/02-v1-brief` | Website V1 per Abdullah's brief + the ambient idle drift + the M1 card-realism passes through 2026-08-12 — tip `6c598b2`, and `origin/main` is at the same commit, so the production line has all of it |
-| Local `main` ref | **STALE at `3f9f3b4`** (noticed 2026-08-17). `origin/main` == `rb/02-v1-brief` == `6c598b2`; the local ref simply was never fast-forwarded, so `git log main..` locally over-reports by 22 commits. Harmless, but `git fetch && git checkout main && git merge --ff-only origin/main` before trusting a local `main` comparison. |
+| Local `main` ref | **No longer stale** (checked 2026-08-24): local `main` == `origin/main`, and this merge fast-forwards both. The 2026-08-17 warning stood because the local ref had never been fast-forwarded and `git log main..` over-reported by 22 commits — worth re-checking with `git rev-parse main origin/main` before trusting any local `main` comparison. |
 | `fix/e2e-0820` | **The E2E-0820 triage, 2026-08-20 — branched off `main` (`550f54e`), MERGED as a fast-forward and pushed; kept on `origin` as the per-fix record.** F3 Generate reachable from the rail/dashboard/Today, F4 the "credits" vocabulary + `/billing/balance`, F5 the pre-run count, F6 the tone-preview reference, F9 the balance chip's three states, F10 the stale results footer, F11 pluralization, F12 the wizard Finish (failure-tolerant, reported, idempotent), B9 the schedule draft reconciler + a blank schedule for a live org that has none. Gate output in the session entry |
+| `fix/live-suite-warmup` | **The live suite warm-up, 2026-08-23/24 — branched off `main` (`5c01c68`), MERGED as a fast-forward and pushed; kept as the per-fix record.** `global-setup.ts` wakes the API, warms a 12-way fleet and holds a heartbeat for the life of a live run, and refuses a run whose dev server is in the wrong mode (trap 22, guarded not just recorded). `live-clocks.ts` states three rungs derived from `Docs/api/live-red-2026-08-23.md`, and five spec files read them instead of literals — `live-brand`, `live-brand-rules`, `live-scheduling`, then `live-auth` and `live-team`. Locators and matchers byte-identical throughout. The two-round rule below came out of it |
 | `chore/api-sweep` | The 118-operation contract sweep (`89199d9`), one commit ahead of `main`, untouched by the triage |
 | `live`     | **Team-only staging**, always a fast-forward of `main` and never carrying commits of its own. Vercel builds its PREVIEW with a branch-scoped `VITE_API_BASE_URL`, so `live` is where the app runs against the real API; PRODUCTION (`main`) has no such variable and stays byte-for-byte static. **After every merge to `main`: `git push origin main:live`.** |
 | Phase branches on `origin` | `int/06-contract` · `int/07-brand-rules` · `int/08-country` · `int/09-wallet` · `int/10-generate` · `int/11-studio-knowledge` · `int/12-proposals` — pushed 2026-08-19 as the per-phase record, exactly as `w/NN` and `int/00…05` are kept. `probe/proposals` was deliberately NOT pushed: it is superseded, and its record lives on in `int/12` as `ee2bc57` |
@@ -167,7 +174,7 @@ invented or faked: where a spec promised something the wire cannot deliver, the
 honest subset ships and the deviation is logged. The backend questions live in
 open-items 1–13 and 21–27; W7 still waits on the two reopened manual gates.
 
-Current totals on `fix/e2e-0820`: **423 unit tests** (41 files), **static e2e
+Current totals on `main`: **423 unit tests** (41 files), **static e2e
 72 passed / 51 live-spec skips**, guard-static 255 files clean, verify:w02–w06
 all PASS, and the FULL live suite green (45 passed, 2 correct skips). (On `main` it is 398 unit tests / 38 files / 248 guarded files — the
 "394" this line used to claim was already one turn stale.)
