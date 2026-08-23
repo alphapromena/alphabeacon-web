@@ -2029,3 +2029,196 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   seam, and the replaced gold wordmark are all in open-items 21. Before DNS
   cutover: `/request-demo` needs a real destination, `hello@malaky.ai` is a
   placeholder, and six legal values are still `null`.
+
+### 2026-08-23 19:00 — the live suite stops measuring Lambda temperature
+
+- Did: `fix/live-suite-warmup`, off `main` (`5c01c68`). Carried
+  `Docs/api/live-red-2026-08-23.md` onto the branch so the finding ships with
+  the fix. Added `e2e/global-setup.ts`, registered as Playwright's
+  `globalSetup`: LIVE RUNS ONLY — without `VITE_API_BASE_URL` it returns before
+  making any request, so static mode stays the zero-network test bed (proved:
+  a full static run logs zero warm-up lines). Three phases, one 90 s cap:
+  wake the service (probe `/health` until two consecutive answers under 1 s),
+  warm a 12-way fleet (the app fans out fourteen requests at once through
+  `live-sync.ts`'s `Promise.all` groups, and concurrent requests do not share a
+  container), then hold a heartbeat — 4 probes every 5 s, torn down when the
+  run ends — because the containers are recycled DURING a file, not only
+  between runs. Never warms → the setup FAILS with "API cold or unreachable"
+  rather than letting twelve specs bleed out one timeout at a time.
+  Also gave the four capless files (`live-auth`, `live-brand`,
+  `live-brand-rules`, `live-team`) `test.setTimeout(150_000)` in a
+  `beforeEach`, matching `live-country`'s B7 precedent, one comment each citing
+  the finding. **No assertion, wait value or locator changed anywhere** — the
+  whole diff is 53 added lines plus the new setup file.
+- Phase: a fix branch, like `fix/e2e-0820`. **Branch only: not merged, not
+  pushed.**
+- Files: `e2e/global-setup.ts` (new), `playwright.config.ts`,
+  `e2e/live-{auth,brand,brand-rules,team}.spec.ts`,
+  `Docs/api/live-red-2026-08-23.md` (carried), `.agent/{open-items,sessions}.md`
+- Decisions: none new — this implements the accepted verdict of
+  `probe/live-red`.
+- Verify: lint + typecheck + 423 unit + guard-static (255 files) + build +
+  static e2e **72 passed / 51 skips / 0 failed**, warm-up silent. LIVE, full
+  13-file suite, `LIVE_MEDIA` off, twice: **cold 11/13 green in 875 s**,
+  **warm 12/13 green in 883 s**. Not the 13/13 the brief asked for, and the
+  residue is honest: three different files failed across the two rounds, each
+  on a `toBeVisible`/`toHaveCount` wait of 5 s or 25 s that is shorter than
+  what the API actually takes. Those are wait values, which the brief ring-
+  fenced. Before the branch the same cold round was 3/13.
+- Next: founder call — either raise the ring-fenced waits (the walk measures
+  20.3–22.3 s against 20 s and 25 s budgets, and `PUT /orgs/:id/country` alone
+  is 12–15 s of it), or wait for Ward. The harness half is done either way.
+
+### 2026-08-23 21:15 — the residue waits re-derived, and trap 22 guarded
+
+- Did: on `fix/live-suite-warmup`, with the wait freeze lifted for the three
+  residue files only. `e2e/live-clocks.ts` states three rungs derived from
+  `Docs/api/live-red-2026-08-23.md` — `ONE_CALL` 20 s (one round-trip plus one
+  measured 14 s cold start), `SCREEN_SYNC` 40 s (a screen's graft: several
+  concurrent `Promise.all` groups, each able to be cold), `AFTER_COUNTRY` 45 s
+  (the wizard Finish, of which `PUT /orgs/:id/country` alone is 12–15 s).
+  Fourteen waits in `live-brand`, `live-scheduling` and `live-brand-rules` now
+  read a rung instead of a number, each with a one-line comment citing the
+  doc. **Every locator and every matcher argument is byte-identical** — the
+  removed lines are timeout values and the same assertions re-emitted with a
+  timeout added. No other file changed and the Playwright default is untouched.
+  Trap 22 is recorded in state.md AND guarded: `assertServerMode` in
+  `global-setup.ts` reads `src/api/config.ts` as Vite serves it, with the env
+  inlined, and refuses a run whose server is in the other mode. Proven in both
+  directions; silent when it cannot get a clear answer.
+- Phase: a fix branch. **Branch only: not merged, not pushed.**
+- Files: `e2e/live-clocks.ts` (new), `e2e/global-setup.ts`,
+  `e2e/live-{brand,brand-rules,scheduling}.spec.ts`, `.agent/{state,open-items,
+  sessions}.md`
+- Decisions: none new.
+- Verify: lint + typecheck + 423 unit + guard-static (255 files) + build +
+  static e2e **72 passed / 51 skips / 0 failed**, warm-up silent. LIVE, all 13
+  files, `LIVE_MEDIA` off, twice: **cold 9/13 in 757 s**, then **warm 13/13 in
+  833 s**. The target was 13/13 both rounds; the warm round is it, the cold
+  round is not. Every cold red was in the first four files, and each one
+  correlates with the warm-up's own numbers: `/health` probe 1 at 16.5 s
+  (`live-auth`), 7.0 s (`live-brand-rules`), 5.9 s (`live-brand`), and
+  `live-team` needing six fleet bursts over 24.1 s. The same four files in the
+  warm round warmed in 0.7 s and one burst, and passed. **The exact timing that broke it** (captured from a fresh 26-minute-idle API, full network log, rule 4): from cold `POST /auth/signup` takes **20,281 ms** (rid `f40e630f`), and the Finish burst runs **45.83 s** against the 45 s rung — missed by 830 ms — because `PUT /orgs/:id/country` takes **23,562 ms** (rid `dfd40568`), 57% more than the 12–15 s the rung was derived from, and `GET /orgs/:id/schedules` adds **11,371 ms** (rid `0b3b3d94`) on top. Thirteen calls, sequential sum 52.0 s, every one 2xx: no 429, no Retry-After, no 5xx. Per rule 4 the clocks were NOT raised again — 23.6 s for one external lookup is Ward's number to change, not the suite's.
+- Next: founder call. The measured answer is that a deployment idle for hours
+  needs minutes of real traffic to stabilise, which a 90 s warm-up cannot buy —
+  see the new standing note in open-items about running the suite twice.
+
+
+### 2026-08-24 00:58 — the two riders: the last two rung files, and the two-round rule made law
+
+- Did: **R1** — the rung treatment extended to `live-auth` and `live-team`, the
+  two files the 2026-08-23 pass left at the Playwright default. Their waits were
+  the identical class already lifted inside the other three: 41 of them now read
+  a rung from `live-clocks.ts` with a one-line citation, picked by the work each
+  wait covers — `ONE_CALL` for one round-trip (a login, a toast, a PATCH, a
+  DELETE), `SCREEN_SYNC` for a screen's graft (first wait after login, after a
+  reload, after a settings tab), `AFTER_COUNTRY` for the wizard Finish.
+  **Every locator and every matcher argument is byte-identical, and it is
+  machine-proved, not asserted:** stripping the citations and every `timeout:`
+  option from both files reproduces their pre-change content exactly, so no
+  locator, no expected value and no control flow moved. Three waits that cover
+  no request (a heading already on screen, a route rendered from query params,
+  a row that follows its own toast) were deliberately left at the default —
+  a wait picks the rung that matches its work, and these have none.
+  Two pre-existing literals came with them: the `20_000` signup waits are
+  `ONE_CALL` at the same value, and `live-team`'s `25_000` Finish wait is now
+  `AFTER_COUNTRY`, byte-identical to the assertion already lifted in
+  `live-brand` and `live-scheduling` — leaving it at 25 s while its twins sat
+  at 45 s was the incoherence the rider names. `live-clocks.ts`'s own scope
+  note went from three files to five.
+  **R2** — the operating procedure is law now, not a note: against a cold API
+  the full live suite runs TWICE, round 2 is the merge gate, round 1 stabilises
+  the deployment (`open-items.md` standing rules + `state.md`). Written so it
+  cannot be read as licence to re-run until green: both rounds are reported, a
+  red in round 2 is a red, and the FULL-suite rule itself stays mandatory —
+  the two-round rule says WHICH run is the gate, never that there isn't one.
+- Phase: a fix branch (`fix/live-suite-warmup`), the riders on its approval.
+- Files: `e2e/live-auth.spec.ts`, `e2e/live-team.spec.ts`, `e2e/live-clocks.ts`,
+  `.agent/{state,open-items,sessions}.md`
+- Decisions: none new.
+- Verify: lint + typecheck + **423 unit / 41 files** + guard-static (255 files)
+  + build + static e2e **72 passed / 51 skips / 0 failed** with the warm-up
+  silent + **`verify:w00`–`w06` all PASS**. LIVE, all 13 files, `LIVE_MEDIA`
+  off, **one file at a time**, twice: **round 1 13/13 in 796 s**, **round 2
+  13/13 in 794 s** — 45 passed and the 2 correct skips both rounds.
+  **A first live attempt was discarded as an invalid invocation, and it is
+  worth recording why:** `pnpm e2e live-` runs all 13 files at once under
+  `fullyParallel` with 6 workers — 3.2 min, 10 failed — which is not the
+  documented procedure and is trap 14 by construction. One file at a time is
+  the rule for a reason; the run that ignores it measures contention, not the
+  app. Because that invalid run gave the API three minutes of traffic, round 1
+  here was not truly cold — the honest reading is two consecutive warm rounds,
+  and the cold-start evidence stays the 2026-08-23 measurement.
+- Next: merge to `main`, `git push origin main` and `main:live`; then the M2
+  design branch takes `main` and re-runs its own gates under the new rule.
+
+### 2026-08-24 03:05 — M2 takes `main`, and the AA pass is reverted for review (D-M2-F-r)
+
+- Did: two things on `design/m2-concept-v2`.
+  **(a) Merged `main`** — which now carries the live-suite warm-up — into the
+  branch. Four conflicts, all resolved by hand: `sessions.md` (both sides
+  appended; kept both, chronologically), `state.md` (five hunks: the "last
+  updated" paragraph, the branch table, the totals line, trap 21 which is this
+  branch's own, and trap 22 where `main`'s newer wording plus the guard
+  paragraph won and this branch's 69-spec count was folded in), and
+  `live-auth` + `live-team`, where M2's signed-out `h1` assertion and the new
+  rungs landed on the same three lines. Those two are machine-checked: with
+  citations and `timeout:` options normalised away, each file is identical to
+  `main`'s except that M2's `toContainText('before you were.')` replaces the
+  retired M1 assertion — 0 stale M1 assertions left, and all 41 timeouts still
+  name a rung. **The branch touches no live code**: `src/api` and `src/data`
+  are byte-identical to `main`.
+  **(b) D-M2-F-r, on the founder's instruction:** the four AA fixes are
+  REVERTED so the preview Abdullah reviews is his design verbatim. `--c-text-4`
+  is `#5d5a57` again, the filled CTA's ink is `#fff`, the approval preview is
+  ghosted at `opacity: 0.3`, the monogram is back on `--c-surface-3`. Asked
+  first whether a fidelity pass had already landed: **it had not** — the branch
+  had only `2aedac8` and `8aa8dcf`, and `D-M2-F-r` appeared nowhere.
+  The gates were made to STATE the cost rather than stop looking: no
+  `disableRules`, an allowlist of exact colour pairs, `marketing-tokens.test.ts`
+  keeping all 26 assertions but PINNING each finding's measured ratio (improve
+  a value and it tells you to delist it; worsen one and it fails), a second
+  e2e test asserting the allowlisted pairs are still really reported, and
+  `verify:w02` naming `BrandMark.module.css` as its one sweep exception and
+  reporting it STALE if that file ever stops needing it.
+- **Two defects found doing it, neither caused by the revert.**
+  1. **The homepage's axe scan had never scanned the homepage.**
+     `AxeBuilder.analyze()` does not auto-wait (trap 14), so it read the
+     still-mounted dev-datasets page — the APP's ivory palette, ~25 text
+     nodes, all passing. M2's "axe clean on all five marketing routes" was
+     true for four. Gated on the hero `h1` now, and run under reduced motion,
+     because the first gated scan then read a MOVING page and reported
+     mid-transition blends as defects (the orbit timeline at 1.02:1 — a frame,
+     not a colour).
+  2. **Three real pre-existing contrast defects in the Memory section**,
+     surfaced by that fix: dimmed text at 1.60 / 2.18 / 3.21:1. The colour
+     maths attributes them to `--c-text-2` at ~0.25 and `--c-text-3` at ~0.53
+     and ~0.76 — none of the four reverted values — so they are on M2 as
+     shipped. Allowlisted in a SEPARATE named group so they cannot be mistaken
+     for the four, and carried to open-items as needing Abdullah's decision:
+     the dimming is saying "this is the superseded draft", so the fix is a
+     different way to say that.
+  Also corrected three comments written earlier in this same turn that claimed
+  axe cannot compute contrast through opacity. It composites: the ghosted card
+  is reported at exactly the 1.43:1 design.md already recorded.
+- Phase: **M2** — a design phase. **Branch only: NOT merged. Pushed for
+  review**, so Abdullah's preview updates.
+- Files: `e2e/{marketing,live-auth,live-team}.spec.ts`, `scripts/verify-w02.ts`,
+  `src/styles/{marketing.css,marketing-tokens.test.ts}`,
+  `src/features/marketing/concept/{BrandMark.module.css,sections/approval.module.css}`,
+  `design.md`, `.agent/{state,decisions,open-items,sessions}.md`, plus
+  everything `main` brought in.
+- Decisions: see decisions.md — **D-M2-F-r** (the AA pass reverted for review;
+  the four failures allowlisted by name and measured ratio, never by disabling
+  the rule).
+- Verify: lint + typecheck + **457 unit / 42 files** + guard-static (321 files)
+  + build + **static e2e 88 passed / 51 live skips / 0 failed** +
+  **`verify:w00`–`w06` all PASS**. LIVE, all 13 files, `LIVE_MEDIA` off, one
+  file at a time, twice under the new two-round rule: **round 1 13/13 in
+  819 s**, **round 2 13/13 in 813 s**. The branch touches no live code, so
+  green was the expected answer and any red would have meant scope leaked.
+- Next: **Abdullah's review of the four**, and the founder's call on the
+  Memory-section dimming. Re-applying D-M2-F is now a **merge gate** in
+  open-items 21 — this branch must not reach `main` carrying four live AA
+  failures.

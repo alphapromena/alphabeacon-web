@@ -187,31 +187,33 @@
   border-radius: var(--r-md);
   border: 1px solid var(--c-line);
   background: var(--c-surface-1);
-  /* AA + HONESTY DEVIATION FROM THE PROTOTYPE (M2). Upstream held the
-     un-revealed card at `opacity: 0.3`, and both of this repo's rules land
-     on that at once:
+  /* KNOWN FAILURE 3 of 4 — ALLOWLISTED ON PURPOSE (D-M2-F-r).
+     The prototype's `opacity: 0.3` on the un-revealed card, restored. Two of
+     this repo's rules land on it at once, and both are knowingly suspended
+     for the review preview:
        - "never dim real text with opacity — it has broken WCAG AA three
          times" (state.md). At 0.3 the body copy measures 1.43:1.
        - the approval-gated surface is ABSENT before approval, never
          disabled-teasing (conventions.md). Ghosted at 0.3 the card still
          READS: "Scheduled — Monday, 11:00" is legible enough to be a claim,
-         made before the visitor has approved anything.
-     So the card is genuinely not there until the sequence reaches it —
-     `visibility` takes it out of the picture and out of the accessibility
-     tree, opacity still carries the fade, and the reserved space keeps the
-     column from jumping. Nothing else about the reveal changed. */
-  opacity: 0;
-  visibility: hidden;
+         made before the visitor has approved anything — and it stays in the
+         accessibility tree, so a screen reader reaches it early.
+     M2 had used `visibility: hidden` to take it out of the picture and out
+     of the tree; D-M2-F-r reverted that. axe COMPOSITES opacity rather than
+     skipping it, so this surfaces as a real violation — the tiers blend to
+     #4e5051 and #2e2f30 over the ground, and 1.43:1 is what it reports — and
+     it is allowlisted by pair in `e2e/marketing.spec.ts` AND held
+     structurally by verify:w02, so removing the ghosting reports both.
+     **Must not reach `main`** — open-items 21. */
+  opacity: 0.3;
   transition:
     opacity 0.5s var(--ease-out),
-    visibility 0.5s var(--ease-out),
     transform 0.5s var(--ease-out),
     border-color 0.5s var(--ease-out);
 }
 
 .detail[data-on] {
   opacity: 1;
-  visibility: visible;
   border-color: var(--c-line-2);
   background: var(--c-surface-2);
 }

@@ -308,21 +308,65 @@ function marketingLawsHold(): boolean {
     failures.push(`${file}: lost its raw-color exemption comment (or moved)`)
   }
 
-  // 11b. THE QUIET TIERS STAY OFF THE LIGHT FILLS. `--c-text-3` on
-  //      `--c-surface-3` is 4.22:1 — under AA, and the one place the port did
-  //      it (the customer monogram) moved up a tier. Scanned per rule block,
-  //      because the pairing is what fails, not either value alone.
+  // 11b. THE QUIET TIERS STAY OFF THE LIGHT FILLS, WITH ONE NAMED EXCEPTION.
+  //      `--c-text-3` on `--c-surface-3` is 4.22:1 — under AA. D-M2-F moved
+  //      the one place the port did it (the customer monogram) up a tier;
+  //      D-M2-F-r put it back, because the review preview has to be
+  //      Abdullah's verbatim design. So the sweep still runs over every
+  //      marketing stylesheet and BrandMark is allowed BY NAME: a second file
+  //      doing the same thing still fails, and if BrandMark ever stops doing
+  //      it the exception is reported as stale rather than sitting there
+  //      forever (state.md traps 15 and 18 — a check nobody can fail is a
+  //      check that has already broken).
+  const QUIET_TIER_EXCEPTION = 'concept/BrandMark.module.css'
   const cssFiles = walk(marketingRoot).filter((file) => file.endsWith('.css'))
+  let exceptionSeen = false
   for (const file of cssFiles) {
     const css = readFileSync(file, 'utf8')
+    const name = rel(file).replace('src/features/marketing/', '')
     for (const block of css.split('}')) {
       const lightFill = /background(?:-color)?:\s*var\(--c-surface-[34]\)/.test(block)
       const quietInk = /color:\s*var\(--c-text-[34]\)/.test(block)
-      if (lightFill && quietInk) {
-        const selector = block.trim().split('{')[0].trim().split(/\r?\n/).pop() ?? '?'
-        failures.push(`${rel(file)}: "${selector}" puts a quiet text tier on a light fill (< AA)`)
+      if (!lightFill || !quietInk) continue
+      if (name === QUIET_TIER_EXCEPTION) {
+        exceptionSeen = true
+        continue
       }
+      const selector = block.trim().split('{')[0].trim().split(/\r?\n/).pop() ?? '?'
+      failures.push(`${rel(file)}: "${selector}" puts a quiet text tier on a light fill (< AA)`)
     }
+  }
+  if (!exceptionSeen) {
+    failures.push(
+      `${QUIET_TIER_EXCEPTION}: no longer puts a quiet tier on a light fill — the D-M2-F-r exception is stale, remove it`,
+    )
+  }
+
+  // 11c. THE APPROVAL PREVIEW IS FINDING 3 OF 4. The prototype's ghosted card
+  //      — `opacity: 0.3`, 1.43:1, and in the accessibility tree before the
+  //      visitor has approved anything — is held HERE as a declaration, and
+  //      separately in `e2e/marketing.spec.ts`, where axe composites the
+  //      opacity and reports the blend. Two checks on one finding is not
+  //      redundancy: the scan proves it is what the visitor gets, this proves
+  //      it is what the stylesheet says. Asserted PRESENT, so restoring
+  //      D-M2-F's `visibility: hidden` before `main` reports this check as
+  //      stale rather than passing silently and leaving the allowlist a lie.
+  // Comment-stripped, or trap 11 bites: the comment at the site of the revert
+  // says the words "visibility: hidden" while explaining that they are gone,
+  // and a check that reads prose fails on the explanation of its own subject.
+  const approvalCss = stripComments(
+    readFileSync(join(marketingRoot, 'concept', 'sections', 'approval.module.css'), 'utf8'),
+  )
+  const detailBlock = approvalCss.split('}').find((block) => /\n\.detail\s*\{/.test(block)) ?? ''
+  if (!/opacity:\s*0\.3/.test(detailBlock)) {
+    failures.push(
+      'concept/sections/approval.module.css: .detail no longer holds the prototype opacity: 0.3 — D-M2-F-r finding 3 is stale, or the AA pass is back (update open-items 21)',
+    )
+  }
+  if (/visibility:\s*hidden/.test(detailBlock)) {
+    failures.push(
+      'concept/sections/approval.module.css: .detail hides with visibility — that is D-M2-F, which D-M2-F-r reverted for the review preview',
+    )
   }
 
   // 12. M1 IS RETIRED (D-M2-A), on both sides: its modules are gone from the
@@ -574,9 +618,13 @@ function main(): void {
   console.log('     and slows on hover, the card stack swipes on the phone, the brand demo')
   console.log('     runs a company and says it is a preview, and with reduced motion on')
   console.log('     every section is complete and still, with no video mounted.')
-  console.log('  5. Review the AA deviations from the prototype (design.md Part 7): the')
-  console.log('     dark ink on the orange CTA, the fourth text tier aliased to the third,')
-  console.log('     and the approval preview that is absent rather than ghosted.')
+  console.log('  5. D-M2-F-r: this branch carries the PROTOTYPE values, so four known')
+  console.log('     WCAG AA failures are live and allowlisted, not fixed -- white ink')
+  console.log('     on the orange CTA (3.29:1, 2.83:1 on hover), the fourth text tier')
+  console.log('     at #5d5a57 (2.64-2.93:1, ~40 elements), the approval preview')
+  console.log('     ghosted at opacity 0.3 (1.43:1, and in the a11y tree early), and')
+  console.log('     the customer monogram at 4.22:1. The preview is Abdullah\'s design')
+  console.log('     verbatim ON PURPOSE. Re-apply D-M2-F before this reaches main.')
 
   process.exit(failed ? 1 : 0)
 }

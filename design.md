@@ -501,6 +501,16 @@ slows.** `marketing.css` collapses every animation and transition inside
 a `<video>` element at all under the preference (the poster carries the whole
 story), and the hero orbit renders a composed, readable still.
 
+**REVERTED 2026-08-24 (D-M2-F-r).** The founder decided otherwise, and the
+"reversible in one line" below was taken up: on `design/m2-concept-v2` all
+four values are Abdullah's again, so the preview he reviews is his design
+verbatim rather than the corrected one. The four are therefore **live WCAG AA
+failures on that branch**, allowlisted by name and by measured ratio in
+`marketing-tokens.test.ts`, `e2e/marketing.spec.ts` and `verify:w02` — never
+by switching the contrast rule off — and re-applying the fixes is a gate on
+the merge to `main` (open-items 21). What follows describes the fixes as
+D-M2-F made them; read each one as the state to RESTORE.
+
 **Four values differ from Abdullah's prototype. All four are accessibility
 fixes, all four are commented at the site of the change, and all four are
 reversible in one line if the founder decides otherwise.**

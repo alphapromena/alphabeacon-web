@@ -20,8 +20,142 @@ import { expect, test } from './fixtures'
 
 const WCAG_TAGS = ['wcag2a', 'wcag2aa']
 
+/**
+ * D-M2-F-r — the four AA failures Abdullah's palette carries, allowed BY EXACT
+ * COLOUR PAIR so the review preview is his verbatim design.
+ *
+ * This is deliberately NOT `disableRules(['color-contrast'])`. Switching the
+ * rule off would blind the scan to every contrast defect on five pages,
+ * including ones nobody has looked at — and a gate that broad is the kind that
+ * rots unnoticed (state.md traps 15 and 18). Each entry names one foreground
+ * on one background, measured; anything else still fails, and so does every
+ * other axe rule.
+ *
+ * Ratios are what axe reports on a settled page, so an entry can be read
+ * without running anything.
+ *
+ * **None of this may reach `main`.** The AA pass is D-M2-F, reverted by
+ * D-M2-F-r for review only; open-items 21 is the gate.
+ */
+const PROTOTYPE_AA_ALLOWLIST = [
+  // Finding 1 of 4 — `--c-text-4` #5d5a57, ~40 elements across the five pages.
+  { fg: '#5d5a57', bg: '#05080b', ratio: 2.93, what: '1/4 --c-text-4 on --c-void' },
+  { fg: '#5d5a57', bg: '#080d11', ratio: 2.84, what: '1/4 --c-text-4 on --c-bg' },
+  { fg: '#5d5a57', bg: '#0c1217', ratio: 2.75, what: '1/4 --c-text-4 on --c-surface-1' },
+  { fg: '#5d5a57', bg: '#10171c', ratio: 2.63, what: '1/4 --c-text-4 on --c-surface-2' },
+  // Finding 2 of 4 — white ink on the filled CTA. The most visible of the four.
+  // Only the resting state appears here; a static scan never hovers, so the
+  // worse hover pairing (2.83:1) is pinned in `marketing-tokens.test.ts`.
+  { fg: '#ffffff', bg: '#ff4e2d', ratio: 3.29, what: '2/4 --c-on-accent on --c-accent' },
+  // Finding 3 of 4 — the approval preview at `opacity: 0.3`. axe COMPOSITES
+  // opacity rather than skipping it, so this does surface as a real violation:
+  // the tiers blend to #4e5051 (`--c-text`) and #2e2f30 (`--c-text-2`) over the
+  // ground, and 1.43:1 is the number design.md Part 7.7 records. verify:w02
+  // holds the same finding structurally, so removing the ghosting reports both.
+  { fg: '#4e5051', bg: '#090f13', ratio: 2.37, what: '3/4 .detailTitle at opacity .3' },
+  { fg: '#2e2f30', bg: '#090f13', ratio: 1.43, what: '3/4 .detailBody at opacity .3' },
+  // Finding 4 of 4 — the customer monogram, `--c-text-3` on `--c-surface-3`,
+  // 4.22:1. It does not surface in a static scan (the initials render large
+  // enough that axe applies the 3:1 large-text bar), so the pairing is pinned
+  // in `marketing-tokens.test.ts` and swept for in verify:w02 instead. Listed
+  // here for completeness of the four, not because a scan reports it.
+] as const
+
+/**
+ * PRE-EXISTING ON M2, AND NOT ONE OF THE FOUR — found 2026-08-24.
+ *
+ * These are NOT D-M2-F-r's doing. Every one of them is a quiet text tier held
+ * at partial opacity in the Memory section, and none involves any of the four
+ * reverted values: `--c-text-2` at ~0.25 (#373738), `--c-text-3` at ~0.53
+ * (#4d4c4a) and at ~0.76 (#666563). They were invisible until the homepage's
+ * axe scan was given a readiness gate — before that it scanned the wrong page
+ * entirely (see `settledHomepage`), so M2's "axe clean on all five routes"
+ * never actually covered this route.
+ *
+ * They are kept SEPARATE from the four on purpose: conflating a newly-found
+ * defect with a deliberate design decision is how an allowlist stops meaning
+ * anything. This one is a real defect against design.md Part 6 rule 1 and
+ * state.md's "never dim real text with opacity" — open-items 21 carries it,
+ * and it needs a decision from the founder and Abdullah, not a quiet fix,
+ * because the dimming is expressing "this is the superseded draft".
+ */
+const PRE_EXISTING_M2_DIMMED_TEXT = [
+  { fg: '#373738', bg: '#0a1014', ratio: 1.6, what: 'memory: the superseded draft, --c-text-2 @.25' },
+  { fg: '#4d4c4a', bg: '#0c1317', ratio: 2.18, what: 'memory: the rule list, --c-text-3 @.53' },
+  { fg: '#666563', bg: '#0c1317', ratio: 3.21, what: 'memory: what it learned, --c-text-3 @.76' },
+] as const
+
+const ALLOWED_PAIRS = [...PROTOTYPE_AA_ALLOWLIST, ...PRE_EXISTING_M2_DIMMED_TEXT]
+
+type AxeResults = Awaited<ReturnType<AxeBuilder['analyze']>>
+
+/**
+ * Everything axe found that the allowlist does NOT cover. A `color-contrast`
+ * violation survives only if every one of its nodes is an allowlisted pair;
+ * one unlisted node and the whole violation is reported.
+ */
+function unexpected(scan: AxeResults) {
+  const allowed = (fg?: string, bg?: string) =>
+    ALLOWED_PAIRS.some(
+      (entry) => entry.fg === fg?.toLowerCase() && entry.bg === bg?.toLowerCase(),
+    )
+  return scan.violations
+    .map((violation) => {
+      if (violation.id !== 'color-contrast') return violation
+      const nodes = violation.nodes.filter(
+        (node) =>
+          !node.any.some(
+            (check) =>
+              check.id === 'color-contrast' &&
+              allowed(
+                (check.data as { fgColor?: string } | undefined)?.fgColor,
+                (check.data as { bgColor?: string } | undefined)?.bgColor,
+              ),
+          ),
+      )
+      return nodes.length ? { ...violation, nodes } : null
+    })
+    .filter((violation) => violation !== null)
+    .map((violation) => ({
+      id: violation.id,
+      targets: violation.nodes.map((node) => node.target.join(' ')),
+    }))
+}
+
 /** A signed-out prospect: '/' is the marketing site. */
 const asVisitor = (page: Page) => activateDataset(page, 'Visitor (signed out)')
+
+/**
+ * The homepage, RENDERED and STILL — the only state a contrast scan can read.
+ *
+ * Two separate problems, both found on 2026-08-24 and both pre-dating M2's
+ * own "axe clean" claim for this route:
+ *
+ * 1. `AxeBuilder.analyze()` does not auto-wait — state.md trap 14, the same
+ *    failure `count()` has. A scan fired straight after `asVisitor()` ran
+ *    against whatever was still mounted: the dev-datasets page, in the APP's
+ *    ivory palette, ~25 text nodes, every one of them passing. It came back
+ *    clean and meant nothing. (Every other route in the @axe loop was already
+ *    gated by its own heading assertion, so only the homepage was affected.)
+ *
+ * 2. Once it DID scan the homepage, it scanned a moving one. axe samples
+ *    computed colour at one instant, so elements mid-transition report their
+ *    blend — the orbit timeline at 1.02:1, an accent label at #c6553f — which
+ *    are frames, not palette defects. Reduced motion is the repo's answer:
+ *    `marketing.css` collapses every animation and transition inside
+ *    `.mk-world` to its end state under the preference (design.md Part 7.7),
+ *    which is a real user configuration and a still target. The Approval test
+ *    already scans this way for the same reason.
+ *
+ * The four other routes keep their existing gate and no motion emulation:
+ * they pass as they are, and the smallest change that fixes the defect is the
+ * one that does not disturb them.
+ */
+async function settledHomepage(page: Page) {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await asVisitor(page)
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('before you were.')
+}
 
 /**
  * The homepage's section order IS the argument (home-screen.tsx): claim →
@@ -295,9 +429,25 @@ test('the control loop is real: Approve schedules the piece and records the pref
   const control = page.locator('#control')
   await control.scrollIntoViewIfNeeded()
 
-  // Before approval, the outcome is genuinely absent — not a dimmed preview
-  // of a decision nobody has made yet.
-  await expect(control.getByText('Monday, 11:00 — the slot this audience reads.')).toBeHidden()
+  /**
+   * D-M2-F-r, finding 3 of 4 — asserted as it SHIPS, not as it ought to be.
+   *
+   * The prototype ghosts the un-revealed outcome at `opacity: 0.3` instead of
+   * removing it, so before anyone approves anything the card is present, in
+   * the accessibility tree, and readable at 1.43:1 — it says "Scheduled —
+   * Monday, 11:00", which is a claim about a decision the visitor has not
+   * made. M2 (D-M2-F) made it genuinely absent and this test asserted that;
+   * D-M2-F-r reverted it so the review preview is Abdullah's verbatim design.
+   *
+   * When D-M2-F is re-applied before `main`, this goes back to `toBeHidden()`
+   * and the opacity assertion goes away. Until then the suite states the cost
+   * out loud rather than quietly not looking.
+   */
+  const outcome = control.getByText('Monday, 11:00 — the slot this audience reads.')
+  await expect(outcome).toBeVisible()
+  await expect(
+    control.locator('[class*="detail"]').filter({ hasText: 'Monday, 11:00' }).first(),
+  ).toHaveCSS('opacity', '0.3')
 
   await control.getByRole('button', { name: 'Approve', exact: true }).click()
 
@@ -310,9 +460,12 @@ test('the control loop is real: Approve schedules the piece and records the pref
     control.getByText("Nothing else to do. You'll see it go out on Monday."),
   ).toBeVisible()
 
-  // And it is a demonstration, so it can be run again.
+  // And it is a demonstration, so it can be run again — back to the ghosted
+  // state, which under D-M2-F-r is present-but-dimmed rather than absent.
   await control.getByRole('button', { name: 'Run it again' }).click()
-  await expect(control.getByText('Monday, 11:00 — the slot this audience reads.')).toBeHidden()
+  await expect(
+    control.locator('[class*="detail"]').filter({ hasText: 'Monday, 11:00' }).first(),
+  ).toHaveCSS('opacity', '0.3')
 })
 
 test('the Arabic section is native RTL, not a mirrored English layout', async ({ page }) => {
@@ -388,19 +541,55 @@ test('page titles follow the route', async ({ page }) => {
   await expect(page).toHaveTitle('Request a private demo — Malaky')
 })
 
-test('every marketing route scans clean', { tag: '@axe' }, async ({ page }) => {
-  await asVisitor(page)
-  expect((await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze()).violations).toEqual([])
+test(
+  'every marketing route scans clean apart from the four allowlisted pairs',
+  { tag: '@axe' },
+  async ({ page }) => {
+    await settledHomepage(page)
+    expect(unexpected(await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze())).toEqual([])
 
-  for (const [route, heading] of [
-    ['/pricing', /Malaky is not another tool/],
-    ['/request-demo', /Let.s see what Malaky could run/],
-    ['/terms', /Website Terms of Use/],
-    ['/privacy', /Privacy Policy/],
-  ] as const) {
-    await page.goto(route)
-    await expect(page.getByRole('heading', { level: 1, name: heading })).toBeVisible()
-    const scan = await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze()
-    expect(scan.violations, `${route} has axe violations`).toEqual([])
+    for (const [route, heading] of [
+      ['/pricing', /Malaky is not another tool/],
+      ['/request-demo', /Let.s see what Malaky could run/],
+      ['/terms', /Website Terms of Use/],
+      ['/privacy', /Privacy Policy/],
+    ] as const) {
+      await page.goto(route)
+      await expect(page.getByRole('heading', { level: 1, name: heading })).toBeVisible()
+      const scan = await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze()
+      expect(unexpected(scan), `${route} has axe violations beyond the allowlist`).toEqual([])
+    }
+  },
+)
+
+/**
+ * The allowlist has to stay honest in the other direction too: if the palette
+ * is fixed (D-M2-F restored before `main`), these pairs stop being reported
+ * and the entries above are dead weight pretending to cover something.
+ */
+test('the allowlisted pairs are really still on the page', { tag: '@axe' }, async ({ page }) => {
+  await settledHomepage(page)
+  const scan = await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze()
+  const reported = new Set(
+    scan.violations
+      .filter((violation) => violation.id === 'color-contrast')
+      .flatMap((violation) =>
+        violation.nodes.flatMap((node) =>
+          node.any
+            .filter((check) => check.id === 'color-contrast')
+            .map((check) => {
+              const data = check.data as { fgColor?: string; bgColor?: string } | undefined
+              return `${data?.fgColor?.toLowerCase()} on ${data?.bgColor?.toLowerCase()}`
+            }),
+        ),
+      ),
+  )
+  // The homepage carries findings 1, 2 and 3 of the four.
+  expect(reported.size, 'the prototype palette should still be failing here').toBeGreaterThan(0)
+  for (const pair of reported) {
+    expect(
+      ALLOWED_PAIRS.some((entry) => `${entry.fg} on ${entry.bg}` === pair),
+      `${pair} is reported but appears in neither allowlist — identify the element before adding it, and put it in the group it actually belongs to`,
+    ).toBe(true)
   }
 })

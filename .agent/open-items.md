@@ -11,6 +11,25 @@ item to "Signed off" (with the date) only when a human has actually done it.
 
 ## Standing rules (not gates — habits that keep the deploys honest)
 
+- **The live suite needs the API warm, and the harness now warms it.**
+  `e2e/global-setup.ts` runs on every live invocation (`VITE_API_BASE_URL`
+  set; it makes no request at all without it): it checks the server is in the
+  mode the run expects (trap 22), wakes the service, warms a 12-way fleet, and
+  keeps a heartbeat for the life of the run. `e2e/live-clocks.ts` carries the
+  three derived wait values the re-clocked files use. **A warm run is now
+  13/13.** A run that starts from hours of idle is not — see below. None of it
+  is a fix for the API: `Docs/api/live-red-2026-08-23.md` holds that.
+- **Against a cold API the full live suite runs TWICE. Round 2 is the merge
+  gate; round 1 stabilises the deployment** (codified 2026-08-24; source
+  `Docs/api/live-red-2026-08-23.md`). This is not permission to re-run until
+  green: the two rounds are one procedure, both are reported, and it is the
+  SECOND that must be 13/13. A red in round 2 is a red. Measured 2026-08-23:
+  cold 9/13 in 757 s, then immediately 13/13 in 833 s — and again 2026-08-24 on
+  the same branch. The clocks are derived (`e2e/live-clocks.ts`), so a round-1
+  red that traces to an external lookup slower than its measurement is the
+  API's cost to change, not a number to inflate. Retire this rule the day Ward
+  keeps the function warm.
+
 - **After every merge to `main`, also `git push origin main:live`.** `live` is
   the team's staging branch and must never drift from production; it carries no
   commits of its own. Forgetting leaves the team testing an older app against
@@ -20,7 +39,9 @@ item to "Signed off" (with the date) only when a human has actually done it.
   been failing on `main` since INT-12 because closing INT-12 ran
   `live-proposals` and nothing else — a spec nobody runs is a check that has
   already broken, and the phase that breaks a spec is rarely the phase that
-  owns it. One file at a time, per the rate limits.
+  owns it. One file at a time, per the rate limits. **Still mandatory** — the
+  two-round rule above says WHICH run is the gate, never that the gate is
+  optional.
 
 ## Outstanding
 
@@ -532,7 +553,56 @@ New for the Malaky M1 (2026-08-08):
 ## 21. M2 — the concept-v2 visitor world (2026-08-23, `design/m2-concept-v2`)
 
 Everything here is a founder or specialist decision. None of it blocks the
-branch; all of it blocks DNS cutover or launch.
+branch; all of it blocks DNS cutover or launch — except the first item, which
+blocks the MERGE.
+
+### Blocking the merge to `main` (2026-08-24, D-M2-F-r)
+
+- [ ] **Re-apply D-M2-F before this branch reaches `main`.** On the founder's
+      instruction the four AA fixes were REVERTED so the preview Abdullah
+      reviews is his design verbatim (D-M2-F-r). The branch therefore ships
+      four known WCAG AA failures, live on every page:
+      `--c-text-4` `#5d5a57` at 2.63–2.93:1 across ~40 elements; the filled
+      CTA's white ink at 3.29:1, and 2.83:1 on hover; the approval preview
+      ghosted at `opacity: 0.3`, 1.43:1 and in the accessibility tree before
+      the visitor has approved anything; the customer monogram at 4.22:1.
+      They are allowlisted BY NAME and BY MEASURED RATIO — never by switching
+      the contrast rule off — in `marketing-tokens.test.ts`,
+      `e2e/marketing.spec.ts` and `verify:w02`, and each site says so in a
+      comment. **This is a review artefact, not a shipping decision.** Undoing
+      it is a revert of the four values plus deleting the allowlists; the
+      guards are written to report themselves as stale the moment the values
+      improve, so they cannot be left behind by accident.
+- [ ] **Decide the four, with Abdullah.** The revert exists so he can see them
+      as drawn. The white-on-orange CTA is the one to look at first — it is
+      the most visible, and it is the site's primary action. Either he accepts
+      the AA-corrected values (D-M2-F), or he supplies his own compliant ones.
+      An engineer picking a third answer is what D-M2-F was criticised for.
+
+### Found by fixing the axe gate — NOT D-M2-F-r's doing (2026-08-24)
+
+- [ ] **The homepage's axe scan had never scanned the homepage.**
+      `AxeBuilder.analyze()` does not auto-wait (state.md trap 14), so the
+      scan fired straight after `asVisitor()` and read the still-mounted
+      dev-datasets page — the APP's ivory palette, ~25 text nodes, all
+      passing. M2's "axe clean on all five marketing routes" was true for four
+      of them. Fixed: the homepage scan now waits for the hero `h1` and runs
+      under reduced motion, which `marketing.css` collapses to the settled end
+      state (a moving page reports mid-transition blends as defects — the
+      orbit timeline came back at 1.02:1, which is a frame, not a colour).
+      No action needed; recorded because the claim it invalidates is in
+      `sessions.md` and in design.md Part 7.
+- [ ] **Three real contrast defects in the Memory section, pre-existing.**
+      Surfaced by the fix above and present on M2 as shipped: the superseded
+      draft at `--c-text-2` ~0.25 opacity (1.60:1), the rule list at
+      `--c-text-3` ~0.53 (2.18:1), and "what it learned" at `--c-text-3` ~0.76
+      (3.21:1). None involves any of the four reverted values. They are
+      allowlisted in their own separate group so they are not mistaken for
+      D-M2-F-r's, and they are a genuine defect against design.md Part 6
+      rule 1 and state.md's "never dim real text with opacity". **This needs a
+      design decision, not a quiet fix**: the dimming is expressing "this is
+      the draft that was superseded", so the fix is a different way to say
+      that, which is Abdullah's call.
 
 ### Blocking cutover
 

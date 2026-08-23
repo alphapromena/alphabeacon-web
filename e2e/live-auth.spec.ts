@@ -17,6 +17,7 @@
  */
 import type { APIRequestContext, Page } from '@playwright/test'
 import { expect, test } from './fixtures'
+import { ONE_CALL, SCREEN_SYNC } from './live-clocks'
 
 const API_BASE = process.env.VITE_API_BASE_URL
 const RUN = Date.now()
@@ -30,6 +31,17 @@ const emailC = `qa+${RUN}c@alphapromena.com`
 
 test.skip(!API_BASE, 'live-mode run only (export VITE_API_BASE_URL)')
 test.describe.configure({ mode: 'serial' })
+
+/**
+ * This file had no cap, so every test in it ran under the suite's 30 s default
+ * — and the signup -> wizard -> Finish walk alone measures 27-29 s door to door
+ * against today's API (Docs/api/live-red-2026-08-23.md). It could not pass at
+ * any wait value. Aligned with the 150 s `live-country` set when Finish became
+ * idempotent (E2E-0820 B7); no wait value and no assertion here changed.
+ */
+test.beforeEach(() => {
+  test.setTimeout(150_000)
+})
 
 async function sessionToken(page: Page): Promise<string> {
   const raw = await page.evaluate(
@@ -50,8 +62,9 @@ async function signUpViaUi(page: Page, name: string, email: string) {
   await page.getByRole('checkbox', { name: /terms of service/ }).click()
   await page.getByRole('button', { name: 'Create account' }).click()
   // The run's first POST can hit a cold Lambda; give first contact headroom.
+  // One POST round-trip — live-red-2026-08-23.
   await expect(page.getByRole('heading', { name: 'Check your inbox' })).toBeVisible({
-    timeout: 20_000,
+    timeout: ONE_CALL,
   })
 }
 
@@ -79,7 +92,10 @@ test('signup â†’ verify with the emailed code â†’ logged in, org-less,
 
   // Verifying LOGS IN (the response is an auth session). No orgs yet, so the
   // workspace-less state owns the landing.
-  await expect(page.getByText('finish setting up your workspace')).toBeVisible()
+  // The verify POST and the auth snapshot behind it — live-red-2026-08-23.
+  await expect(page.getByText('finish setting up your workspace')).toBeVisible({
+    timeout: ONE_CALL,
+  })
   expect(await sessionToken(page)).toBeTruthy()
 })
 
@@ -91,12 +107,16 @@ test('a second signup: resend immediately proves the 429 countdown, wrong passwo
   // One send just happened; an immediate resend is the honest way to hit the
   // documented rate limit and see the mono countdown rather than a refusal.
   await page.getByRole('button', { name: 'Resend code' }).click()
-  await expect(page.getByRole('alert')).toContainText('Too many requests')
+  // One POST round-trip — live-red-2026-08-23.
+  await expect(page.getByRole('alert')).toContainText('Too many requests', { timeout: ONE_CALL })
 
   // Wrong password on an unverified account is still the vague 401 â€” no
   // account enumeration, no verification oracle.
   await loginViaUi(page, emailB, 'Wrong-password-9')
-  await expect(page.getByRole('alert')).toContainText('Incorrect email or password')
+  // One POST round-trip — live-red-2026-08-23.
+  await expect(page.getByRole('alert')).toContainText('Incorrect email or password', {
+    timeout: ONE_CALL,
+  })
 })
 
 test('correct password + unverified email routes to the verify screen, which finishes the job', async ({
@@ -105,11 +125,17 @@ test('correct password + unverified email routes to the verify screen, which fin
   await loginViaUi(page, emailB, PASSWORD)
 
   // 403 email_not_verified â†’ A3, with the address carried along.
-  await expect(page.getByRole('heading', { name: 'Check your inbox' })).toBeVisible()
+  // One POST round-trip — live-red-2026-08-23.
+  await expect(page.getByRole('heading', { name: 'Check your inbox' })).toBeVisible({
+    timeout: ONE_CALL,
+  })
   await expect(page.getByText(`We sent a 6-digit code to ${emailB}`)).toBeVisible()
 
   await enterCode(page, CODE)
-  await expect(page.getByText('finish setting up your workspace')).toBeVisible()
+  // The verify POST and the auth snapshot behind it — live-red-2026-08-23.
+  await expect(page.getByText('finish setting up your workspace')).toBeVisible({
+    timeout: ONE_CALL,
+  })
 })
 
 test('forgot â†’ reset via the documented deep link revokes everything; only the new password works', async ({
@@ -120,7 +146,10 @@ test('forgot â†’ reset via the documented deep link revokes everything; onl
   await page.goto('/reset-password')
   await page.getByLabel('Work email').fill(emailA)
   await page.getByRole('button', { name: 'Send reset link' }).click()
-  await expect(page.getByRole('heading', { name: 'Check your inbox' })).toBeVisible()
+  // One POST round-trip — live-red-2026-08-23.
+  await expect(page.getByRole('heading', { name: 'Check your inbox' })).toBeVisible({
+    timeout: ONE_CALL,
+  })
 
   // The email's deep link: /reset-password?email=â€¦&code=â€¦
   await page.goto(`/reset-password?email=${encodeURIComponent(emailA)}&code=${CODE}`)
@@ -130,11 +159,20 @@ test('forgot â†’ reset via the documented deep link revokes everything; onl
   await page.getByRole('button', { name: 'Reset password' }).click()
 
   // Back to sign in; the old password is dead, the new one works.
-  await expect(page.getByRole('heading', { name: 'Welcome back' })).toBeVisible()
+  // One POST round-trip — live-red-2026-08-23.
+  await expect(page.getByRole('heading', { name: 'Welcome back' })).toBeVisible({
+    timeout: ONE_CALL,
+  })
   await loginViaUi(page, emailA, PASSWORD)
-  await expect(page.getByRole('alert')).toContainText('Incorrect email or password')
+  // One POST round-trip — live-red-2026-08-23.
+  await expect(page.getByRole('alert')).toContainText('Incorrect email or password', {
+    timeout: ONE_CALL,
+  })
   await loginViaUi(page, emailA, NEW_PASSWORD)
-  await expect(page.getByText('finish setting up your workspace')).toBeVisible()
+  // The login POST and the auth snapshot behind it — live-red-2026-08-23.
+  await expect(page.getByText('finish setting up your workspace')).toBeVisible({
+    timeout: ONE_CALL,
+  })
 })
 
 test('with an org (harness-created), the shell appears; sign out and logout-all both really revoke', async ({
@@ -143,7 +181,10 @@ test('with an org (harness-created), the shell appears; sign out and logout-all 
 }) => {
   // Harness setup: the org UI arrives in INT-2; the API is the contract.
   await loginViaUi(page, emailA, NEW_PASSWORD)
-  await expect(page.getByText('finish setting up your workspace')).toBeVisible()
+  // The login POST and the auth snapshot behind it — live-red-2026-08-23.
+  await expect(page.getByText('finish setting up your workspace')).toBeVisible({
+    timeout: ONE_CALL,
+  })
   const token = await sessionToken(page)
   const created = await request.post(`${API_BASE}/orgs`, {
     headers: { authorization: `Bearer ${token}` },
@@ -155,23 +196,35 @@ test('with an org (harness-created), the shell appears; sign out and logout-all 
   // not in it â€” a fresh login returns it (INT-2 makes boot refresh /me/orgs;
   // open-items item 6). With an org, the dashboard owns '/'.
   await loginViaUi(page, emailA, NEW_PASSWORD)
-  await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible()
+  // First wait after login — the dashboard's whole sync — live-red-2026-08-23.
+  await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible({
+    timeout: SCREEN_SYNC,
+  })
 
   // Sign out: session revoked server-side AND locally â€” marketing front door.
   await page.getByRole('button', { name: 'Account menu' }).click()
   await page.getByRole('menuitem', { name: 'Sign out', exact: true }).click()
   // The signed-out front door is the concept-v2 marketing site (M2): its h1
   // is the hero headline, which spans three lines.
-  await expect(page.getByRole('heading', { level: 1 })).toContainText('before you were.')
+  // One POST round-trip — live-red-2026-08-23.
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('before you were.', {
+    timeout: ONE_CALL,
+  })
 
   // Logout-all: sign in again, revoke everything, land back outside.
   await loginViaUi(page, emailA, NEW_PASSWORD)
-  await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible()
+  // First wait after login — the dashboard's whole sync — live-red-2026-08-23.
+  await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible({
+    timeout: SCREEN_SYNC,
+  })
   await page.getByRole('button', { name: 'Account menu' }).click()
   await page.getByRole('menuitem', { name: 'Sign out everywhere' }).click()
   // The signed-out front door is the concept-v2 marketing site (M2): its h1
   // is the hero headline, which spans three lines.
-  await expect(page.getByRole('heading', { level: 1 })).toContainText('before you were.')
+  // One POST round-trip — live-red-2026-08-23.
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('before you were.', {
+    timeout: ONE_CALL,
+  })
 })
 
 async function inviteNewUser(request: APIRequestContext, token: string, orgId: string) {
@@ -189,7 +242,10 @@ test('a new user accepts an invite through the documented deep link and lands in
 }) => {
   // Sign back in (logout-all above really did revoke this account's sessions).
   await loginViaUi(page, emailA, NEW_PASSWORD)
-  await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible()
+  // First wait after login — the dashboard's whole sync — live-red-2026-08-23.
+  await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible({
+    timeout: SCREEN_SYNC,
+  })
   const token = await sessionToken(page)
 
   const orgsResponse = await request.get(`${API_BASE}/me/orgs`, {
@@ -212,14 +268,20 @@ test('a new user accepts an invite through the documented deep link and lands in
   await page.getByRole('button', { name: 'Join the workspace' }).click()
 
   // Logged in, verified, and INSIDE the org that invited them.
-  await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible()
+  // The accept POST and the workspace's whole sync — live-red-2026-08-23.
+  await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible({
+    timeout: SCREEN_SYNC,
+  })
 })
 
 test('a token-carrying 401 purges the session and lands on login with the toast', async ({
   page,
 }) => {
   await loginViaUi(page, emailC, PASSWORD)
-  await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible()
+  // First wait after login — the dashboard's whole sync — live-red-2026-08-23.
+  await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible({
+    timeout: SCREEN_SYNC,
+  })
 
   // Corrupt the stored token, then force an API read (a reload re-grafts the
   // stored session; the next authed call comes back 401).
@@ -238,6 +300,9 @@ test('a token-carrying 401 purges the session and lands on login with the toast'
   // back 401 â€” an ordinary authed read finding a dead session. The ceremony:
   // purge, toast, land on login.
   await page.goto('/')
-  await expect(page.getByRole('heading', { name: 'Welcome back' })).toBeVisible()
+  // First wait after a reload — the boot's sync, which 401s — live-red-2026-08-23.
+  await expect(page.getByRole('heading', { name: 'Welcome back' })).toBeVisible({
+    timeout: SCREEN_SYNC,
+  })
   await expect(page.getByText('Your session ended. Sign in again to continue.')).toBeVisible()
 })

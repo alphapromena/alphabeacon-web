@@ -5,9 +5,15 @@ without reconstructing it from the session log. **Update this file at the end
 of any turn that finishes a phase or changes the plan.** `sessions.md` is the
 chronological record; this is the current picture.
 
-_Last updated: 2026-08-23, after **M2** (`design/m2-concept-v2`) — the
-visitor world replaced with Abdullah's concept-v2 prototype, ported. **Branch
-only: not merged, not pushed.** Before that: 2026-08-20, after the **E2E-0820 triage** branch
+_Last updated: 2026-08-24, when this branch took **`main`** — which now
+carries the **live-suite warm-up** (`fix/live-suite-warmup`): a warm-up +
+heartbeat in `e2e/global-setup.ts`, the trap-22 mode guard, the three derived
+rungs in `e2e/live-clocks.ts` across five spec files, and the two-round
+operating rule. That is why the live reds recorded against M2 on 2026-08-23 are
+gone: they were `main`'s, not this branch's. Before that: 2026-08-23, **M2**
+(`design/m2-concept-v2`) — the visitor world replaced with Abdullah's
+concept-v2 prototype, ported. **Branch only: not merged; pushed for review.**
+Before that: 2026-08-20, after the **E2E-0820 triage** branch
 (`fix/e2e-0820`) — the founder's live in-app E2E on `1.malaky.ai` against org
 619; eight frontend fixes plus two root-cause probes, then **B9** — the
 stranded schedule draft, and a live org no longer wearing the demo's schedule.
@@ -48,11 +54,12 @@ below).
 |            |                                                        |
 | ---------- | ------------------------------------------------------ |
 | Remote     | `github.com/alphapromena/alphabeacon-web` (private)    |
-| `main`     | Production line, now at **`83ec448`** — the E2E-0820 triage (B1–B9, three commits) fast-forwarded and **pushed 2026-08-20** on the founder's explicit approval, `main:live` with it. Before that push it was `550f54e`. Previously at **`c6e3489`** — everything below PLUS the whole live integration (INT-6…12), merged as a fast-forward and **pushed 2026-08-19** on the founder's explicit approval. Before that push it was `6c598b2`. Open-items 16–18 still hold the human gates |
+| `main`     | Production line, now at the **`fix/live-suite-warmup`** tip — `df23176` plus this close-out, three commits fast-forwarded and **pushed 2026-08-24**, `main:live` with it. Before that push it was `5c01c68`. Previously at **`83ec448`** — the E2E-0820 triage (B1–B9, three commits) fast-forwarded and **pushed 2026-08-20** on the founder's explicit approval, `main:live` with it. Before that push it was `550f54e`. Previously at **`c6e3489`** — everything below PLUS the whole live integration (INT-6…12), merged as a fast-forward and **pushed 2026-08-19** on the founder's explicit approval. Before that push it was `6c598b2`. Open-items 16–18 still hold the human gates |
 | `rb/02-v1-brief` | Website V1 per Abdullah's brief + the ambient idle drift + the M1 card-realism passes through 2026-08-12 — tip `6c598b2`, and `origin/main` is at the same commit, so the production line has all of it |
-| Local `main` ref | **STALE at `3f9f3b4`** (noticed 2026-08-17). `origin/main` == `rb/02-v1-brief` == `6c598b2`; the local ref simply was never fast-forwarded, so `git log main..` locally over-reports by 22 commits. Harmless, but `git fetch && git checkout main && git merge --ff-only origin/main` before trusting a local `main` comparison. |
+| Local `main` ref | **No longer stale** (checked 2026-08-24): local `main` == `origin/main`, and this merge fast-forwards both. The 2026-08-17 warning stood because the local ref had never been fast-forwarded and `git log main..` over-reported by 22 commits — worth re-checking with `git rev-parse main origin/main` before trusting any local `main` comparison. |
 | `fix/e2e-0820` | **The E2E-0820 triage, 2026-08-20 — branched off `main` (`550f54e`), MERGED as a fast-forward and pushed; kept on `origin` as the per-fix record.** F3 Generate reachable from the rail/dashboard/Today, F4 the "credits" vocabulary + `/billing/balance`, F5 the pre-run count, F6 the tone-preview reference, F9 the balance chip's three states, F10 the stale results footer, F11 pluralization, F12 the wizard Finish (failure-tolerant, reported, idempotent), B9 the schedule draft reconciler + a blank schedule for a live org that has none. Gate output in the session entry |
-| `design/m2-concept-v2` | **M2 — the visitor world, 2026-08-23. Branched off `main` (`5c01c68`), one commit `2aedac8`. NOT MERGED, NOT PUSHED — awaiting founder review.** Abdullah's `malaky-prototype` `components/concept-v2/**` ported into `src/features/marketing/`: five routes under one layout, 58 marketing files, its own token file and contrast guard. M1 retired with it. Decisions D-M2-A…F; open-items 21 |
+| `design/m2-concept-v2` | **M2 — the visitor world, 2026-08-23. Branched off `main` (`5c01c68`); took `main` again 2026-08-24. NOT MERGED — pushed for Abdullah's preview. Carries D-M2-F-r: four LIVE WCAG AA failures, allowlisted on purpose so the review shows his verbatim design. Re-applying D-M2-F is a MERGE GATE (open-items 21).** Abdullah's `malaky-prototype` `components/concept-v2/**` ported into `src/features/marketing/`: five routes under one layout, 58 marketing files, its own token file and contrast guard. M1 retired with it. Decisions D-M2-A…F; open-items 21 |
+| `fix/live-suite-warmup` | **The live suite warm-up, 2026-08-23/24 — branched off `main` (`5c01c68`), MERGED as a fast-forward and pushed; kept as the per-fix record.** `global-setup.ts` wakes the API, warms a 12-way fleet and holds a heartbeat for the life of a live run, and refuses a run whose dev server is in the wrong mode (trap 22, guarded not just recorded). `live-clocks.ts` states three rungs derived from `Docs/api/live-red-2026-08-23.md`, and five spec files read them instead of literals — `live-brand`, `live-brand-rules`, `live-scheduling`, then `live-auth` and `live-team`. Locators and matchers byte-identical throughout. The two-round rule below came out of it |
 | `chore/api-sweep` | The 118-operation contract sweep (`89199d9`), one commit ahead of `main`, untouched by the triage |
 | `live`     | **Team-only staging**, always a fast-forward of `main` and never carrying commits of its own. Vercel builds its PREVIEW with a branch-scoped `VITE_API_BASE_URL`, so `live` is where the app runs against the real API; PRODUCTION (`main`) has no such variable and stays byte-for-byte static. **After every merge to `main`: `git push origin main:live`.** |
 | Phase branches on `origin` | `int/06-contract` · `int/07-brand-rules` · `int/08-country` · `int/09-wallet` · `int/10-generate` · `int/11-studio-knowledge` · `int/12-proposals` — pushed 2026-08-19 as the per-phase record, exactly as `w/NN` and `int/00…05` are kept. `probe/proposals` was deliberately NOT pushed: it is superseded, and its record lives on in `int/12` as `ee2bc57` |
@@ -126,6 +133,12 @@ make a single-shot all-file matrix trip 429s by design. Fresh
 **Standing rule (2026-08-20, from trap 18): any merge to `main` runs the FULL
 live suite — all twelve files, `LIVE_MEDIA` off — never only the phase's own
 spec.** The phase that breaks a live spec is rarely the phase that owns it.
+**Amended 2026-08-24 (source `Docs/api/live-red-2026-08-23.md`): against a cold
+API the full suite runs TWICE. Round 2 is the merge gate; round 1 stabilises
+the deployment.** Both rounds are reported; the gate itself is not optional and
+a red in round 2 is a red. This is an operating procedure for an API that is
+cold, not licence to re-run until green — and it retires the day the function
+is kept warm.
 
 | Phase | Scope                                                    | State       |
 | ----- | -------------------------------------------------------- | ----------- |
@@ -170,9 +183,13 @@ honest subset ships and the deviation is logged. The backend questions live in
 open-items 1–13 and 21–27; W7 still waits on the two reopened manual gates.
 
 Current totals on `design/m2-concept-v2`: **457 unit tests** (42 files),
-**static e2e 85 passed / 51 live-spec skips**, guard-static 321 files clean,
-verify:w02–w06 all PASS. (On `main` before M2: 423 unit tests / 41 files /
-static e2e 72 passed / 255 guarded files.) (On `main` it is 398 unit tests / 38 files / 248 guarded files — the
+**static e2e 88 passed / 51 live-spec skips**, guard-static 321 files clean,
+verify:w00–w06 all PASS, and the FULL live suite **13/13 twice** under the
+two-round rule (2026-08-24) — the branch touches no live code, so that was the
+expected answer rather than a discovery.
+(On `main`: 423 unit tests / 41 files / static e2e 72 passed / 255 guarded
+files, and the FULL live suite green under the two-round rule — 13/13 twice,
+2026-08-24.) (On `main` it is 398 unit tests / 38 files / 248 guarded files — the
 "394" this line used to claim was already one turn stale.)
 (The unit count dips by one: INT-10's localStorage run-ledger tests went with
 the ledger it tested — the proposals ledger replaced it server-side.)
@@ -368,12 +385,22 @@ These are learned the hard way; each cost a debugging cycle.
     `reuseExistingServer: !CI`, so `pnpm e2e` silently adopts whatever is on
     5199 — including a server started by hand with `.env.local` loaded. In
     live mode there is no seeded session, so `/` is the marketing site and
-    `/signup` renders instead of redirecting: 69 specs failed on
-    "waiting for heading Dashboard" and every one of them looked like a
-    regression in this branch. **Before reading a static-suite failure, check
-    what is listening on 5199.** The webServer block pins
-    `VITE_API_BASE_URL: '' ` for exactly this reason — but only for a server
-    IT starts.
+    `/signup` renders instead of redirecting: **63 specs failed on "waiting
+    for heading Dashboard"** (69 on this branch, which has more static specs)
+    and every one of them looked like a regression in the branch under test.
+    It cost two debugging cycles in one afternoon. **Before reading a
+    static-suite failure, check what is listening on 5199.**
+    The webServer block pins `VITE_API_BASE_URL: ''` for exactly this reason —
+    but only for a server IT starts.
+
+    **This one is now guarded, not just recorded** (`fix/live-suite-warmup`):
+    `e2e/global-setup.ts` asks the server which mode it is in before anything
+    runs — it reads `src/api/config.ts` as Vite serves it, with the env
+    inlined, which is the one file documented as deciding the mode — and
+    refuses the run with a named error if the server disagrees. Proven in both
+    directions. The guard is SILENT when it cannot get a clear answer (no dev
+    server, a preview build, a future Vite that inlines differently): a guard
+    may fail a run for a reason it is sure of, never for one it guessed.
 
 19. **"Has the user edited?" is a fact to RECORD, not to infer from a JSON
     diff against a moving reference.** C1 decided whether to adopt a freshly

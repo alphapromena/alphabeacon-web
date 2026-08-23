@@ -65,16 +65,17 @@ html[data-mk-world] {
   --c-text: #f3ede6;
   --c-text-2: #b3ada6;
   --c-text-3: #857f79;
-  /* AA DEVIATION FROM THE PROTOTYPE (M2). Upstream this was #5d5a57, which
-     lands at 2.63–2.93:1 against the surfaces it is used on — under WCAG AA
-     for normal text, on roughly forty elements across the five pages
-     (footer, eyebrows, section numbers, "Optional", the pricing page's
-     planned-capability list). There is no room for a fourth tier above the
-     AA floor while the third sits where it does, so the fourth ALIASES the
-     third rather than inventing a new value in the designer's palette. Every
-     usage site keeps the `--c-text-4` name, so restoring a distinct
-     compliant tier is a one-line change here. See open-items. */
-  --c-text-4: #857f79;
+  /* KNOWN AA FAILURE 1 of 4 — ALLOWLISTED ON PURPOSE (D-M2-F-r).
+     This is Abdullah's prototype value, restored so the review preview is his
+     verbatim design. It lands at 2.63–2.93:1 against the surfaces it is used
+     on — under the WCAG AA 4.5:1 floor for normal text — on roughly forty
+     elements across the five pages (footer, eyebrows, section numbers,
+     "Optional", the pricing page's planned-capability list).
+     M2 had aliased this to `--c-text-3` (#857f79); D-M2-F-r reverted it.
+     The failure is not hidden: `marketing-tokens.test.ts` pins the measured
+     ratio and `e2e/marketing.spec.ts` allows this exact colour pair and no
+     other. **This must not reach `main`** — see open-items 21. */
+  --c-text-4: #5d5a57;
 
   /* --- Accent: used sparingly ------------------------------------ */
   --c-accent: #ff4e2d;
@@ -83,16 +84,16 @@ html[data-mk-world] {
   --c-accent-wash: rgba(255, 78, 45, 0.1);
   --c-accent-line: rgba(255, 78, 45, 0.32);
   --c-accent-glow: rgba(255, 78, 45, 0.22);
-  /* AA DEVIATION FROM THE PROTOTYPE (M2). The accent itself is UNCHANGED —
-     #ff4e2d is the identity and stays exactly as drawn. What changed is the
-     ink on it: upstream set `color: #fff` on the filled button, which is
-     3.29:1 at 14–15px and fails AA for normal text. Dark ink on the same
-     orange is 5.9:1 (6.8:1 on the hover tint), and the design already uses
-     that idiom — `.gold` sets `#1a1206` on the gold fill. Changing the fill
-     instead would have meant a different orange on every CTA on the site.
-     Icons on accent keep `#fff`: non-text contrast is a 3:1 bar and 3.29
-     clears it. */
-  --c-on-accent: #1a0a05;
+  /* KNOWN AA FAILURE 2 of 4 — ALLOWLISTED ON PURPOSE (D-M2-F-r).
+     The accent itself was never touched: #ff4e2d is the identity and is
+     exactly as drawn. This is the INK on it, restored to the prototype's
+     `#fff` — 3.29:1 on the fill and 2.98:1 on the hover tint, both under AA
+     for normal text at 14–15px. M2 had set #1a0a05 here (5.9:1 / 6.8:1),
+     borrowing the idiom `.gold` uses for the gold fill; D-M2-F-r reverted it.
+     This is the most visible of the four and the one to look at first.
+     Pinned in `marketing-tokens.test.ts`, allowlisted by exact colour pair in
+     `e2e/marketing.spec.ts`. **Must not reach `main`** — open-items 21. */
+  --c-on-accent: #fff;
 
   /* --- Premium tone: pricing tiers only, never for actions -------- */
   --c-gold: #e3c084;

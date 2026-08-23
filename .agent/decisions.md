@@ -1820,3 +1820,50 @@ Recorded here as the founder set them; each is implemented in its own phase.
 - Instead of: shipping the prototype's values and allowlisting the axe
   findings (a real defect plus a weakened gate), or changing `--c-accent`
   (a brand decision that is not an engineer's to make).
+
+### 2026-08-24 — D-M2-F-r: the AA pass is REVERTED for review; the four failures are allowlisted
+
+- **What.** D-M2-F's four accessibility fixes are undone on
+  `design/m2-concept-v2`. `--c-text-4` is Abdullah's `#5d5a57` again
+  (2.63–2.93:1, ~40 elements), the filled CTA's ink is `#fff` again (3.29:1,
+  and 2.83:1 on hover), the approval preview is ghosted at `opacity: 0.3`
+  again (1.43:1, and back in the accessibility tree before the visitor has
+  approved anything), and the customer monogram is back on `--c-surface-3`
+  (4.22:1). `--c-accent` was never touched by either decision.
+- **Why.** The founder's call, 2026-08-24: the preview Abdullah reviews has to
+  be his design verbatim, not the corrected one. A review of a design that was
+  silently changed is a review of something nobody drew. This is a decision
+  about what a REVIEW ARTEFACT shows, not about what ships.
+- **Scope, and it is the whole point of the decision.** This branch is not
+  merged and must not be. Re-applying D-M2-F is a gate on `main`, recorded in
+  open-items 21. The state.md branch table and every one of the four sites
+  says so at the site of the change.
+- **The gates were made to state the cost, not to stop looking.** D-M2-F
+  warned that "an allowlist of known violations is the kind of check that
+  rots", and that warning is honoured rather than ignored:
+  - `marketing-tokens.test.ts` keeps all 26 assertions. The four findings
+    become PINNED entries — each asserts the ratio it actually measures AND
+    that it is still below AA, so improving a value tells you to remove it
+    from the allowlist and worsening one fails. Everything else is still held
+    to AA.
+  - `e2e/marketing.spec.ts` allowlists by EXACT COLOUR PAIR, never
+    `disableRules(['color-contrast'])` — an unlisted pair still fails, and so
+    does every other rule. A second test asserts the allowlisted pairs are
+    still really being reported, so the list cannot quietly cover nothing.
+  - `verify:w02` sweeps every marketing stylesheet for a quiet tier on a light
+    fill with `BrandMark.module.css` named as its one exception, and reports
+    the exception as STALE if that file ever stops doing it. It also asserts
+    the ghosted card is present, so restoring D-M2-F reports the check as
+    stale rather than passing silently.
+- **Two things were found doing this, and neither is D-M2-F-r's doing.** The
+  homepage's axe scan had never run against the homepage (trap 14: `analyze()`
+  does not auto-wait, so it scanned the still-mounted dev-datasets page in the
+  APP's ivory palette), and once gated it scanned a MOVING page, reporting
+  mid-transition blends as defects. The scan now runs on a settled homepage
+  under reduced motion, which `marketing.css` collapses to the end state.
+  Fixing it surfaced three genuine pre-existing contrast defects in the Memory
+  section, dimmed text at 1.6–3.21:1, which are listed in their OWN group and
+  in open-items — never folded in with the four.
+- Instead of: keeping D-M2-F (Abdullah reviews a design he did not draw), or
+  reverting the values and switching the contrast rule off (the same defects,
+  plus a gate that would never speak again).

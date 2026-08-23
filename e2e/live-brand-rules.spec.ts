@@ -17,6 +17,7 @@
  */
 import type { Page } from '@playwright/test'
 import { expect, test } from './fixtures'
+import { AFTER_COUNTRY, SCREEN_SYNC } from './live-clocks'
 
 const API_BASE = process.env.VITE_API_BASE_URL
 const RUN = Date.now()
@@ -28,20 +29,33 @@ const ORG_NAME = `QA Rules Org ${RUN}`
 test.skip(!API_BASE, 'live-mode run only (export VITE_API_BASE_URL)')
 test.describe.configure({ mode: 'serial' })
 
+/**
+ * This file had no cap, so every test in it ran under the suite's 30 s default
+ * — and the signup -> wizard -> Finish walk alone measures 27-29 s door to door
+ * against today's API (Docs/api/live-red-2026-08-23.md). It could not pass at
+ * any wait value. Aligned with the 150 s `live-country` set when Finish became
+ * idempotent (E2E-0820 B7); no wait value and no assertion here changed.
+ */
+test.beforeEach(() => {
+  test.setTimeout(150_000)
+})
+
 async function login(page: Page) {
   await page.goto('/login')
   await page.getByLabel('Work email').fill(owner)
   await page.getByLabel('Password', { exact: true }).fill(PASSWORD)
   await page.getByRole('button', { name: 'Sign in' }).click()
+  // First wait after login — the dashboard's whole sync — live-red-2026-08-23.
   await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible({
-    timeout: 20_000,
+    timeout: SCREEN_SYNC,
   })
 }
 
 async function openSettingsTab(page: Page, tab: string) {
   await page.getByRole('link', { name: 'Settings' }).first().click()
   await page.getByRole('tab', { name: tab }).click()
-  await expect(page.locator('[aria-busy="true"]')).toHaveCount(0)
+  // The tab's whole sync — live-red-2026-08-23.
+  await expect(page.locator('[aria-busy="true"]')).toHaveCount(0, { timeout: SCREEN_SYNC })
 }
 
 /** Custom tones are edited from their card; that link is named "Edit". */
@@ -80,8 +94,9 @@ test('a fresh owner + org, made through the product', async ({ page }) => {
   await page.getByRole('button', { name: 'Start pipeline' }).click()
   await page.getByRole('button', { name: 'Go to your dashboard' }).click()
   // Org + five preset tones WITH their rules + schedule: a burst of writes.
+  // Downstream of PUT /orgs/:id/country — live-red-2026-08-23.
   await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible({
-    timeout: 30_000,
+    timeout: AFTER_COUNTRY,
   })
 })
 
@@ -145,8 +160,10 @@ test('the brand voice writes to one row, and an edit does not reorder it', async
   await expect(page.getByText('Brand voice saved')).toBeVisible({ timeout: 20_000 })
 
   await page.goto('/settings/brand-voice')
+  // First wait after a reload — the whole brand sync — live-red-2026-08-23.
   await expect(page.locator('input[id^="voice-do"]').first()).toHaveValue(
     'Name the farm when it matters',
+    { timeout: SCREEN_SYNC },
   )
   await expect(page.locator('input[id^="voice-dont"]').first()).toHaveValue(
     'Call anything artisanal',
@@ -160,7 +177,10 @@ test('the brand voice writes to one row, and an edit does not reorder it', async
   await expect(page.getByText('Brand voice saved')).toBeVisible({ timeout: 20_000 })
 
   await page.goto('/settings/brand-voice')
-  await expect(page.locator('input[id^="voice-do"]').first()).toHaveValue('Name the farm, always')
+  // First wait after a reload — the whole brand sync — live-red-2026-08-23.
+  await expect(page.locator('input[id^="voice-do"]').first()).toHaveValue('Name the farm, always', {
+    timeout: SCREEN_SYNC,
+  })
   await expect(page.locator('input[id^="voice-do"]').nth(1)).toHaveValue(
     'Say what changed this week',
   )
