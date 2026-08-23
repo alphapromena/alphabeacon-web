@@ -2,6 +2,15 @@ import { defineConfig, devices } from '@playwright/test'
 
 export default defineConfig({
   testDir: './e2e',
+  /**
+   * LIVE RUNS ONLY: wake the API before any test budget starts.
+   *
+   * The gate is the environment variable, not a project — `e2e/global-setup.ts`
+   * returns immediately and makes no request when `VITE_API_BASE_URL` is unset,
+   * so the static suite stays the zero-network test bed it has always been.
+   * Why it exists: Docs/api/live-red-2026-08-23.md.
+   */
+  globalSetup: './e2e/global-setup.ts',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,

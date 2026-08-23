@@ -26,6 +26,17 @@ const ORG_RENAMED = `QA Live Org ${RUN} v2`
 test.skip(!API_BASE, 'live-mode run only (export VITE_API_BASE_URL)')
 test.describe.configure({ mode: 'serial' })
 
+/**
+ * This file had no cap, so every test in it ran under the suite's 30 s default
+ * — and the signup -> wizard -> Finish walk alone measures 27-29 s door to door
+ * against today's API (Docs/api/live-red-2026-08-23.md). It could not pass at
+ * any wait value. Aligned with the 150 s `live-country` set when Finish became
+ * idempotent (E2E-0820 B7); no wait value and no assertion here changed.
+ */
+test.beforeEach(() => {
+  test.setTimeout(150_000)
+})
+
 async function signUpAndVerify(page: Page, name: string, email: string) {
   await page.goto('/signup')
   await page.getByLabel('Full name').fill(name)

@@ -1970,3 +1970,43 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   mode) and a fresh STATIC production build off `main`. Open questions for
   Ward: 26 (server-side seeding, re-measured), 9 (is `gm_*` also legal, and
   which vocabulary is canonical), 29–32.
+
+### 2026-08-23 19:00 — the live suite stops measuring Lambda temperature
+
+- Did: `fix/live-suite-warmup`, off `main` (`5c01c68`). Carried
+  `Docs/api/live-red-2026-08-23.md` onto the branch so the finding ships with
+  the fix. Added `e2e/global-setup.ts`, registered as Playwright's
+  `globalSetup`: LIVE RUNS ONLY — without `VITE_API_BASE_URL` it returns before
+  making any request, so static mode stays the zero-network test bed (proved:
+  a full static run logs zero warm-up lines). Three phases, one 90 s cap:
+  wake the service (probe `/health` until two consecutive answers under 1 s),
+  warm a 12-way fleet (the app fans out fourteen requests at once through
+  `live-sync.ts`'s `Promise.all` groups, and concurrent requests do not share a
+  container), then hold a heartbeat — 4 probes every 5 s, torn down when the
+  run ends — because the containers are recycled DURING a file, not only
+  between runs. Never warms → the setup FAILS with "API cold or unreachable"
+  rather than letting twelve specs bleed out one timeout at a time.
+  Also gave the four capless files (`live-auth`, `live-brand`,
+  `live-brand-rules`, `live-team`) `test.setTimeout(150_000)` in a
+  `beforeEach`, matching `live-country`'s B7 precedent, one comment each citing
+  the finding. **No assertion, wait value or locator changed anywhere** — the
+  whole diff is 53 added lines plus the new setup file.
+- Phase: a fix branch, like `fix/e2e-0820`. **Branch only: not merged, not
+  pushed.**
+- Files: `e2e/global-setup.ts` (new), `playwright.config.ts`,
+  `e2e/live-{auth,brand,brand-rules,team}.spec.ts`,
+  `Docs/api/live-red-2026-08-23.md` (carried), `.agent/{open-items,sessions}.md`
+- Decisions: none new — this implements the accepted verdict of
+  `probe/live-red`.
+- Verify: lint + typecheck + 423 unit + guard-static (255 files) + build +
+  static e2e **72 passed / 51 skips / 0 failed**, warm-up silent. LIVE, full
+  13-file suite, `LIVE_MEDIA` off, twice: **cold 11/13 green in 875 s**,
+  **warm 12/13 green in 883 s**. Not the 13/13 the brief asked for, and the
+  residue is honest: three different files failed across the two rounds, each
+  on a `toBeVisible`/`toHaveCount` wait of 5 s or 25 s that is shorter than
+  what the API actually takes. Those are wait values, which the brief ring-
+  fenced. Before the branch the same cold round was 3/13.
+- Next: founder call — either raise the ring-fenced waits (the walk measures
+  20.3–22.3 s against 20 s and 25 s budgets, and `PUT /orgs/:id/country` alone
+  is 12–15 s of it), or wait for Ward. The harness half is done either way.
+

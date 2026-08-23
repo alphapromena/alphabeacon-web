@@ -11,6 +11,13 @@ item to "Signed off" (with the date) only when a human has actually done it.
 
 ## Standing rules (not gates — habits that keep the deploys honest)
 
+- **The live suite needs the API warm, and the harness now warms it.**
+  `e2e/global-setup.ts` runs on every live invocation (`VITE_API_BASE_URL`
+  set; it makes no request at all without it): it wakes the service, warms a
+  12-way fleet, and keeps a heartbeat for the life of the run. Cold-round
+  greens went from 8/13 to 11/13 with it. It is not a fix for the API — see
+  `Docs/api/live-red-2026-08-23.md` and the item below.
+
 - **After every merge to `main`, also `git push origin main:live`.** `live` is
   the team's staging branch and must never drift from production; it carries no
   commits of its own. Forgetting leaves the team testing an older app against
