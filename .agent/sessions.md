@@ -2000,7 +2000,8 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   change: the CTA's ink, `--c-text-4`, the approval preview, the monogram —
   plus one real a11y bug fixed (`<ul role="group">` orphaned its items).
 - Phase: **M2** — a design phase like `rb/NN`, not a W or INT phase.
-  **Branch only: not merged, not pushed.**
+  **Branch only: one commit `2aedac8` on `design/m2-concept-v2`; not merged, not
+  pushed.**
 - Files: 58 new under `src/features/marketing/concept/`, 6 new marketing
   screens/layout/tests, `src/styles/marketing.css` + `marketing-tokens.test.ts`,
   `src/lib/page-meta.ts`, `src/routes.tsx`, `src/styles/globals.css`,
