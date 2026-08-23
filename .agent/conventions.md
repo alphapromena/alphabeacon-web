@@ -18,6 +18,13 @@
 | commits           | Conventional Commits       | `feat(today): approval-gated media entry` |
 | test tags         | `@golden` · `@axe`         | on Playwright specs                       |
 
+**One exception, and it is deliberate:** `src/features/marketing/concept/**`
+is Abdullah's concept-v2 prototype **vendored file-for-file**, so it keeps
+upstream's names — `Header.tsx`, `cardStack.module.css`, `useConceptHooks.ts`.
+The point is that it can be diffed against the prototype again when the design
+moves (decisions.md D-M2-E). Everything outside `concept/` — the route
+screens, the layout, the styles — is ours and is kebab-case.
+
 ## Formatting & lint
 
 Prettier + ESLint (commands in `stack.md`). Never hand-format against them.
@@ -44,18 +51,39 @@ numbers** — wrap in `MonoNumber`.
 - Prefer composing `ab/` wrappers over sprinkling primitive props across
   features — one opinion, one place.
 
+## Two design systems (since 2026-08-23 / M2)
+
+The signed-in product and the visitor world have different design systems, and
+the boundary is structural, not a habit:
+
+- **The product** — design.md Parts 1–6. Light-first, Inter, shadcn tokens on
+  `:root`, `styles/tokens.css`, guarded by `tokens.test.ts`.
+- **The visitor world** — design.md Part 7. Dark, DM Sans + IBM Plex Sans
+  Arabic, concept-v2 tokens on `html[data-mk-world]`, resets on `.mk-world`,
+  `styles/marketing.css`, guarded by `marketing-tokens.test.ts`.
+
+Neither may reach the other. The marketing layout sets the document attribute
+before paint and removes it on unmount; the app never renders inside
+`.mk-world`. `verify:w02` asserts all of it. Rules below marked "design law"
+are the product's unless they say otherwise — **except contrast, which is
+both worlds' law and is guarded twice.**
+
 ## Design law (design.md is the source; never hardcode)
 
-- Fonts: **Inter** — single family, proposed pending founder confirmation
+- Fonts (product): **Inter** — single family, proposed pending founder confirmation
   (`design.md` Part 2 is the source; numbers via `MonoNumber`,
-  `tabular-nums`). Tokens in `styles/tokens.css` (OKLCH, light+dark). App is
-  light+dark; M1 goes **light-canonical** with the rb/01 cinematic layer
-  (design.md Part 5 amendment).
+  `tabular-nums`). Tokens in `styles/tokens.css` (OKLCH, light+dark). The app
+  is light+dark and honors the selected theme in every signed-in route. The
+  VISITOR world is **dark-canonical** and ignores the app theme entirely
+  (design.md Part 6 rule 8 as amended 2026-08-23, and Part 7); its faces are
+  DM Sans and IBM Plex Sans Arabic, self-hosted.
 - Status is never color-only (`StatusBadge` = icon + text). Destructive dialogs
   name their consequence. Action labels persist through their flow (Approve →
   Approved…). Custom tones render identically to presets.
 - Motion: signal-sweep + beacon-pulse live in `ab/` and are **removed** under
-  `prefers-reduced-motion` (Playwright asserts). Contrast ≥ AA.
+  `prefers-reduced-motion` (Playwright asserts). Contrast ≥ AA. The visitor
+  world inherits the removal law and carries its own motion (design.md 7.7):
+  `BrandVideo` never mounts a `<video>` under the preference at all.
 - Honesty: the approval-gated media entry is **absent** pre-approval (never
   disabled-teasing); guardrail-flagged content shows flagged, not hidden;
   limited analytics get the honesty note, not a broken chart; "Syncing…" never a

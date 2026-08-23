@@ -24,6 +24,7 @@ dependencies are public — no private registry, no token.
 | `react-router`                                         | routing + guards                        | SPA route table in `src/routes.tsx`                                          |
 | `react-hook-form` + `@hookform/resolvers`              | forms                                   | pairs with shadcn `Field`/`FieldGroup`; zod schemas from `src/data/types.ts` |
 | `zod`                                                  | form schemas + entity types             | declared locally; nothing is parsed from a wire                              |
+| `@fontsource-variable/dm-sans` + `@fontsource/ibm-plex-sans-arabic` | the visitor world's type | self-hosted woff2 — the marketing port needs DM Sans (opsz + italic) and IBM Plex Sans Arabic (400/500/600), and the zero-network law forbids Google Fonts (D-M2-E, design.md 7.4) |
 | `sonner`                                               | toasts                                  | shadcn's toast host                                                          |
 | `vitest` + `@playwright/test` + `@axe-core/playwright` | unit/component/e2e + a11y               | fixture-driven state specs; goldens                                          |
 | Lighthouse CI                                          | perf/a11y budgets                       | W7 gate                                                                      |

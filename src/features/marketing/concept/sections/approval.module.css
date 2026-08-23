@@ -1,0 +1,376 @@
+.section {
+  padding-block: var(--section-y);
+  border-top: 1px solid var(--c-line);
+}
+
+.panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.78fr);
+  gap: clamp(1.5rem, 4vw, 4rem);
+  align-items: start;
+}
+
+.postCol {
+  display: grid;
+  gap: 1rem;
+  justify-items: start;
+}
+
+.post {
+  width: min(100%, 440px);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.1rem;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--c-line-2);
+  font-size: 0.875rem;
+  font-weight: var(--w-ui);
+  color: var(--c-text-2);
+  background: var(--c-surface-2);
+  transition:
+    background-color 0.2s var(--ease-out),
+    border-color 0.2s var(--ease-out),
+    color 0.2s var(--ease-out),
+    opacity 0.2s;
+}
+
+.action:hover:not(:disabled) {
+  color: var(--c-text);
+  border-color: var(--c-line-3);
+}
+
+.action:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+/* Same AA deviation as ui.module.css .primary: the fill is untouched, the
+   ink is dark. This is the button the section exists to demonstrate. */
+.approve {
+  background: var(--c-accent);
+  border-color: var(--c-accent);
+  color: var(--c-on-accent);
+  font-weight: var(--w-strong);
+}
+
+.approve:hover:not(:disabled) {
+  background: var(--c-accent-hi);
+  border-color: var(--c-accent-hi);
+  color: var(--c-on-accent);
+}
+
+.approve:disabled {
+  opacity: 1;
+  background: var(--c-ok-wash);
+  border-color: rgba(79, 178, 134, 0.4);
+  color: var(--c-ok);
+}
+
+.note {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--c-text-3);
+  max-width: 46ch;
+}
+
+.reset {
+  font-size: var(--t-small);
+  color: var(--c-text-4);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.reset:hover {
+  color: var(--c-text-2);
+}
+
+/* --- state column -------------------------------------------------- */
+
+.stateCol {
+  display: grid;
+  gap: 0.85rem;
+  align-content: start;
+}
+
+.track {
+  display: grid;
+  gap: 0;
+  padding: 0.4rem 0;
+}
+
+.step {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 0;
+}
+
+/* Connector between steps. */
+.step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 12px;
+  top: 34px;
+  bottom: -4px;
+  width: 1px;
+  background: var(--c-line-2);
+  transition: background 0.4s var(--ease-out);
+}
+
+.step[data-state='done']::after {
+  background: var(--c-accent-line);
+}
+
+.stepMark {
+  width: 25px;
+  height: 25px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--c-line-2);
+  background: var(--c-surface-2);
+  color: var(--c-text-4);
+  transition:
+    border-color 0.35s var(--ease-out),
+    background-color 0.35s var(--ease-out),
+    color 0.35s var(--ease-out);
+}
+
+.stepDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.step[data-state='current'] .stepMark {
+  border-color: var(--c-accent);
+  color: var(--c-accent);
+  background: var(--c-accent-wash);
+}
+
+.step[data-state='done'] .stepMark {
+  border-color: var(--c-accent-line);
+  background: var(--c-accent);
+  color: #fff;
+}
+
+.stepLabel {
+  font-size: 0.9375rem;
+  color: var(--c-text-4);
+  transition: color 0.35s var(--ease-out);
+}
+
+.step[data-state='current'] .stepLabel,
+.step[data-state='done'] .stepLabel {
+  color: var(--c-text);
+}
+
+/* --- reveal cards -------------------------------------------------- */
+
+.detail {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.95rem 1rem;
+  border-radius: var(--r-md);
+  border: 1px solid var(--c-line);
+  background: var(--c-surface-1);
+  /* AA + HONESTY DEVIATION FROM THE PROTOTYPE (M2). Upstream held the
+     un-revealed card at `opacity: 0.3`, and both of this repo's rules land
+     on that at once:
+       - "never dim real text with opacity — it has broken WCAG AA three
+         times" (state.md). At 0.3 the body copy measures 1.43:1.
+       - the approval-gated surface is ABSENT before approval, never
+         disabled-teasing (conventions.md). Ghosted at 0.3 the card still
+         READS: "Scheduled — Monday, 11:00" is legible enough to be a claim,
+         made before the visitor has approved anything.
+     So the card is genuinely not there until the sequence reaches it —
+     `visibility` takes it out of the picture and out of the accessibility
+     tree, opacity still carries the fade, and the reserved space keeps the
+     column from jumping. Nothing else about the reveal changed. */
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.5s var(--ease-out),
+    visibility 0.5s var(--ease-out),
+    transform 0.5s var(--ease-out),
+    border-color 0.5s var(--ease-out);
+}
+
+.detail[data-on] {
+  opacity: 1;
+  visibility: visible;
+  border-color: var(--c-line-2);
+  background: var(--c-surface-2);
+}
+
+.detailIcon {
+  width: 32px;
+  height: 32px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  border: 1px solid var(--c-line-2);
+  background: var(--c-surface-3);
+  color: var(--c-text-2);
+}
+
+.detailTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.9375rem;
+  font-weight: var(--w-strong);
+  color: var(--c-text);
+  margin-bottom: 0.2rem;
+}
+
+.detailCheck {
+  color: var(--c-ok);
+}
+
+.detailBody {
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  color: var(--c-text-3);
+}
+
+.live {
+  font-size: var(--t-micro);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--c-text-4);
+}
+
+@media (max-width: 900px) {
+  .panel {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .post {
+    width: 100%;
+  }
+}
+
+/* --- control guarantees (merged in from the old Trust section) ------ */
+
+/* A record, not an argument. The interactive panel above is the proof; this
+   strip only states which four guarantees exist and which are still planned,
+   so it is deliberately quieter than anything above it. */
+.pillars {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  margin-top: clamp(2rem, 3.5vw, 3rem);
+  border-top: 1px solid var(--c-line);
+}
+
+.pillar {
+  padding: 1.1rem 1.25rem 0 0;
+}
+
+.pillarTitle {
+  font-size: var(--t-body);
+  font-weight: var(--w-strong);
+  color: var(--c-text-2);
+}
+
+.pillarState {
+  margin-top: 0.3rem;
+  font-size: var(--t-micro);
+  font-weight: var(--w-strong);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--c-accent-hi);
+}
+
+.pillar[data-planned] .pillarTitle {
+  color: var(--c-text-3);
+}
+
+.pillar[data-planned] .pillarState {
+  color: var(--c-text-4);
+}
+
+.disclosure {
+  margin-top: 1.4rem;
+  font-size: var(--t-small);
+  line-height: 1.6;
+  color: var(--c-text-4);
+  max-width: 72ch;
+}
+
+@media (max-width: 860px) {
+  .pillars {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .pillars {
+    grid-template-columns: 1fr;
+  }
+
+  .pillar {
+    padding-block: 0.9rem 0;
+    border-top: 1px solid var(--c-line);
+  }
+
+  .pillar:first-child {
+    border-top: none;
+  }
+}
+
+/* --- the review item's own header ---------------------------------- */
+
+.reviewHead {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0 0.15rem 0.85rem;
+}
+
+.reviewMeta {
+  display: grid;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.reviewChannel {
+  font-size: var(--t-small);
+  font-weight: var(--w-ui);
+  color: var(--c-text);
+}
+
+.reviewState {
+  font-size: var(--t-micro);
+  font-weight: var(--w-strong);
+  letter-spacing: var(--track-caps);
+  text-transform: uppercase;
+  color: var(--c-accent-hi);
+}
+
+/* Says whose creative this is. Quiet, but never absent — everything else on
+   the page is prepared by Malaky and this is not. */
+.provenance {
+  margin-top: 0.9rem;
+  font-size: var(--t-small);
+  line-height: 1.55;
+  color: var(--c-text-4);
+  max-width: 46ch;
+}

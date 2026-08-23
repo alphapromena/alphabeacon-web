@@ -3,11 +3,22 @@
  * builds. '/' is dual-purpose per screens4.md: marketing when signed out (M1),
  * the Dashboard when signed in (D1).
  *
+ * THE VISITOR WORLD IS A LAYOUT ROUTE (M2, concept-v2). '/', '/pricing',
+ * '/request-demo', '/terms' and '/privacy' are siblings under one
+ * `MarketingLayout`, so the header and footer mount once and survive
+ * navigation between them — a page rendering its own chrome destroys the
+ * focused nav link on every click (state.md trap 8). The layout gates itself
+ * at '/': signed in, it renders the outlet bare so the product never wears
+ * marketing chrome.
+ *
  * CODE-SPLIT (production pass, 2026-08-11): the public marketing route is
  * the ONLY eagerly-bundled screen. Every authenticated screen, the auth
  * flow, and the dev tools load through React.lazy, so a visitor hitting
  * '/' downloads the marketing experience and nothing else — recharts,
  * Studio, Settings et al. arrive only when a signed-in route renders.
+ * The marketing world's secondary pages (pricing, the demo request, the two
+ * legal documents) are lazy too: they share the eager layout, but their own
+ * bodies arrive only when someone asks for them.
  * Direct navigation still works: Vercel rewrites every path to index.html
  * and the router resolves the lazy chunk on mount.
  *
@@ -19,7 +30,8 @@
 import { Suspense, lazy, type ComponentType, type ReactNode } from 'react'
 import { createBrowserRouter, Navigate } from 'react-router'
 import { useOrg, useSession } from '@/data/provider'
-import { MarketingHome } from '@/features/marketing/marketing-home'
+import { MarketingHome } from '@/features/marketing/home-screen'
+import { MarketingLayout } from '@/features/marketing/marketing-layout'
 
 /** The only visual between route resolution and a lazy chunk's arrival —
  * quiet, centered, and announced to assistive tech. */
@@ -55,41 +67,65 @@ const el = {
   verify: () => lazyEl(() => import('@/features/auth/verify-email-screen'), 'VerifyEmailScreen'),
   reset: () => lazyEl(() => import('@/features/auth/reset-password-screen'), 'ResetPasswordScreen'),
   invite: () => lazyEl(() => import('@/features/auth/accept-invite-screen'), 'AcceptInviteScreen'),
-  onboarding: () => lazyEl(() => import('@/features/onboarding/onboarding-screen'), 'OnboardingScreen'),
+  onboarding: () =>
+    lazyEl(() => import('@/features/onboarding/onboarding-screen'), 'OnboardingScreen'),
   // The signed-in shell
   dashboard: () => lazyEl(() => import('@/features/dashboard/dashboard-screen'), 'DashboardScreen'),
   emptyOrg: () => lazyEl(() => import('@/features/system/empty-org-screen'), 'EmptyOrgScreen'),
   today: () => lazyEl(() => import('@/features/today/today-screen'), 'TodayScreen'),
   draft: () => lazyEl(() => import('@/features/today/draft-detail-screen'), 'DraftDetailScreen'),
   calendar: () => lazyEl(() => import('@/features/calendar/calendar-screen'), 'CalendarScreen'),
-  schedule: () => lazyEl(() => import('@/features/calendar/schedule-config-screen'), 'ScheduleConfigScreen'),
-  eventSources: () => lazyEl(() => import('@/features/calendar/event-sources-screen'), 'EventSourcesScreen'),
-  connections: () => lazyEl(() => import('@/features/connections/connections-screen'), 'ConnectionsScreen'),
-  studioGallery: () => lazyEl(() => import('@/features/studio/studio-screens'), 'StudioGalleryScreen'),
-  studioComposer: () => lazyEl(() => import('@/features/studio/studio-screens'), 'StudioComposerScreen'),
+  schedule: () =>
+    lazyEl(() => import('@/features/calendar/schedule-config-screen'), 'ScheduleConfigScreen'),
+  eventSources: () =>
+    lazyEl(() => import('@/features/calendar/event-sources-screen'), 'EventSourcesScreen'),
+  connections: () =>
+    lazyEl(() => import('@/features/connections/connections-screen'), 'ConnectionsScreen'),
+  studioGallery: () =>
+    lazyEl(() => import('@/features/studio/studio-screens'), 'StudioGalleryScreen'),
+  studioComposer: () =>
+    lazyEl(() => import('@/features/studio/studio-screens'), 'StudioComposerScreen'),
   studioJobs: () => lazyEl(() => import('@/features/studio/studio-screens'), 'StudioJobsScreen'),
   studioAsset: () => lazyEl(() => import('@/features/studio/studio-screens'), 'StudioAssetScreen'),
-  billingSubscription: () => lazyEl(() => import('@/features/billing/billing-screens'), 'SubscriptionScreen'),
+  billingSubscription: () =>
+    lazyEl(() => import('@/features/billing/billing-screens'), 'SubscriptionScreen'),
   billingPlans: () => lazyEl(() => import('@/features/billing/billing-screens'), 'PlansScreen'),
   billingBalance: () => lazyEl(() => import('@/features/billing/billing-screens'), 'BalanceScreen'),
-  billingReturn: () => lazyEl(() => import('@/features/billing/billing-screens'), 'CheckoutReturnScreen'),
+  billingReturn: () =>
+    lazyEl(() => import('@/features/billing/billing-screens'), 'CheckoutReturnScreen'),
   generate: () => lazyEl(() => import('@/features/generate/generate-screen'), 'GenerateScreen'),
-  analytics: () => lazyEl(() => import('@/features/analytics/analytics-screens'), 'AnalyticsOverviewScreen'),
-  analyticsChannel: () => lazyEl(() => import('@/features/analytics/analytics-screens'), 'ChannelDetailScreen'),
-  settingsLayout: () => lazyEl(() => import('@/features/settings/settings-layout'), 'SettingsLayout'),
-  settingsOrg: () => lazyEl(() => import('@/features/settings/organization-screen'), 'OrganizationScreen'),
-  settingsBrandVoice: () => lazyEl(() => import('@/features/settings/brand-voice-screen'), 'BrandVoiceScreen'),
+  analytics: () =>
+    lazyEl(() => import('@/features/analytics/analytics-screens'), 'AnalyticsOverviewScreen'),
+  analyticsChannel: () =>
+    lazyEl(() => import('@/features/analytics/analytics-screens'), 'ChannelDetailScreen'),
+  settingsLayout: () =>
+    lazyEl(() => import('@/features/settings/settings-layout'), 'SettingsLayout'),
+  settingsOrg: () =>
+    lazyEl(() => import('@/features/settings/organization-screen'), 'OrganizationScreen'),
+  settingsBrandVoice: () =>
+    lazyEl(() => import('@/features/settings/brand-voice-screen'), 'BrandVoiceScreen'),
   settingsTones: () => lazyEl(() => import('@/features/settings/tones-screen'), 'TonesScreen'),
-  settingsToneEditor: () => lazyEl(() => import('@/features/settings/tones-screen'), 'ToneEditorScreen'),
-  settingsSources: () => lazyEl(() => import('@/features/settings/sources-screen'), 'SourcesScreen'),
-  settingsKnowledge: () => lazyEl(() => import('@/features/settings/knowledge-screen'), 'KnowledgeScreen'),
+  settingsToneEditor: () =>
+    lazyEl(() => import('@/features/settings/tones-screen'), 'ToneEditorScreen'),
+  settingsSources: () =>
+    lazyEl(() => import('@/features/settings/sources-screen'), 'SourcesScreen'),
+  settingsKnowledge: () =>
+    lazyEl(() => import('@/features/settings/knowledge-screen'), 'KnowledgeScreen'),
   settingsTeam: () => lazyEl(() => import('@/features/settings/team-screen'), 'TeamScreen'),
-  legal: (doc: 'privacy' | 'terms') => lazyEl(() => import('@/features/system/legal-screens'), doc === 'privacy' ? 'PrivacyScreen' : 'TermsScreen'),
-  requestAccess: () => lazyEl(() => import('@/features/marketing/request-access-screen'), 'RequestAccessScreen'),
+  // The visitor world's secondary pages (M2).
+  pricing: () => lazyEl(() => import('@/features/marketing/pricing-screen'), 'PricingScreen'),
+  requestDemo: () =>
+    lazyEl(() => import('@/features/marketing/request-demo-screen'), 'RequestDemoScreen'),
+  legal: (doc: 'privacy' | 'terms') =>
+    lazyEl(
+      () => import('@/features/marketing/legal-screens'),
+      doc === 'privacy' ? 'PrivacyScreen' : 'TermsScreen',
+    ),
   notFound: () => lazyEl(() => import('@/features/system/not-found'), 'NotFoundScreen'),
   devDatasets: () => lazyEl(() => import('@/features/dev/dev-datasets'), 'DevDatasetsScreen'),
   devStates: () => lazyEl(() => import('@/features/dev/dev-states'), 'DevStatesScreen'),
-  devKitchenSink: () => lazyEl(() => import('@/features/dev/dev-kitchen-sink'), 'DevKitchenSinkScreen'),
+  devKitchenSink: () =>
+    lazyEl(() => import('@/features/dev/dev-kitchen-sink'), 'DevKitchenSinkScreen'),
 }
 
 function RootGate() {
@@ -125,7 +161,26 @@ const devRoutes = import.meta.env.PROD
     ]
 
 export const router = createBrowserRouter([
-  { path: '/', element: <RootGate /> },
+  /**
+   * The visitor world. One layout, five routes, one mounted header.
+   *
+   * '/' stays dual-purpose: `RootGate` resolves it to the Dashboard or N3 when
+   * signed in, and `MarketingLayout` drops its own chrome for exactly that
+   * case. The other four are marketing at any session state — /terms and
+   * /privacy are website documents, and the signup consent line links to them.
+   */
+  {
+    element: <MarketingLayout />,
+    children: [
+      { path: '/', element: <RootGate /> },
+      { path: '/pricing', element: el.pricing() },
+      { path: '/request-demo', element: el.requestDemo() },
+      // Public legal documents: real routes, linked from the marketing footer
+      // and the signup consent line.
+      { path: '/privacy', element: el.legal('privacy') },
+      { path: '/terms', element: el.legal('terms') },
+    ],
+  },
 
   // Area A — auth and onboarding
   { path: '/signup', element: <SignedOutOnly>{el.signup()}</SignedOutOnly> },
@@ -136,13 +191,16 @@ export const router = createBrowserRouter([
   { path: '/accept-invite', element: el.invite() },
   { path: '/onboarding', element: el.onboarding() },
 
-  // Public legal documents (production pass): real routes, linked from the
-  // marketing footer and the signup consent line.
-  { path: '/privacy', element: el.legal('privacy') },
-  { path: '/terms', element: el.legal('terms') },
-
-  // The early-access front door (Phase 2 §24) — public, marketing-owned.
-  { path: '/request-access', element: el.requestAccess() },
+  /**
+   * The early-access front door (Phase 2 §24) is RETIRED. M2 replaced the
+   * launch model: "Get started" is real self-serve signup and "Request a
+   * private demo" is the sales route, so there is no third door and the screen
+   * that was it has left the bundle (decisions.md D-M2-A, D-M2-D). The path
+   * stays reachable — a link somebody shared should not 404 — and lands on the
+   * page that now does its job. Founder can veto the whole CTA change at
+   * review, which is why this is a redirect and not a deletion.
+   */
+  { path: '/request-access', element: <Navigate to="/request-demo" replace /> },
 
   // Area D — the review queue
   { path: '/today', element: <Authed>{el.today()}</Authed> },

@@ -1,0 +1,165 @@
+.hero {
+  position: relative;
+  /* Padding that falls as the viewport grows, because the slack above the
+     headline does the opposite: the copy column is centred against the taller
+     orbit, so at 1440 the grid already hands it ~65px and at 1080 it hands it
+     none. This expression cancels that out, landing the headline ~75px under
+     the header across the desktop range instead of 183px at 1440 and 9px at
+     1080. Below 1080px the media query at the foot of this file takes over
+     with the mobile value, which already fits. */
+  padding-top: clamp(0.75rem, 269px - 18vw, 4.5rem);
+  padding-bottom: clamp(3.5rem, 6vw, 5.5rem);
+  overflow: hidden;
+}
+
+/* A single warm light source behind the orbit — no gradient wash. */
+.glow {
+  position: absolute;
+  top: -14%;
+  right: -6%;
+  width: min(1100px, 92vw);
+  height: 900px;
+  pointer-events: none;
+  background: radial-gradient(
+    closest-side,
+    rgba(255, 78, 45, 0.13),
+    rgba(255, 78, 45, 0.035) 55%,
+    transparent 78%
+  );
+}
+
+.grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+  gap: clamp(1.5rem, 3vw, 3rem);
+  align-items: center;
+}
+
+.copy {
+  position: relative;
+  z-index: 2;
+  /* The copy column is shorter than the orbit beside it, so the grid centres
+     it; this padding used to add to that slack and push the headline further
+     down still. */
+  padding-top: 0;
+}
+
+.title {
+  font-family: var(--f-display);
+  font-weight: var(--w-display);
+  /* Sized to the copy column rather than to --t-display-1: at the token size
+     "before you were." overruns the fixed column and the three authored line
+     breaks become four. Below 1080px the column is full width and the size in
+     the media query below already fits. */
+  font-size: min(2.33vw + 32.5px, 66px);
+  /* 1.05 is as close as the three lines come before the descenders start to
+     crowd the line below — and buying it back is what lets the type run
+     larger in the same block. */
+  line-height: 1.05;
+  /* Slightly past the display default: this is the largest type on the site. */
+  letter-spacing: -0.032em;
+  color: var(--c-text);
+}
+
+/* One word inside one sentence: the same face, upright, one step of weight
+   and the accent colour. The italic was tried first and read as a second
+   voice cut into the line — nothing here should look like a separate mark. */
+.accent {
+  color: var(--c-accent);
+  /* Between the headline's 400 and a true Medium: the colour is already doing
+     most of the work, and 500 beside 400 read as a heavier word set into the
+     line rather than the same word said with more certainty. */
+  font-weight: var(--w-display-em);
+  /* <em> is italic by default in the UA stylesheet — say otherwise. */
+  font-style: normal;
+}
+
+.lead {
+  /* Slightly closer to the headline than it was — the two read as one
+     statement, and the space was doing nothing. */
+  margin-top: 1.25rem;
+  max-width: 42ch;
+  font-size: var(--t-lead);
+  line-height: 1.6;
+  color: var(--c-text-2);
+}
+
+.ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.75rem;
+}
+
+.ctas > * {
+  flex: 0 0 auto;
+}
+
+/* The hero's secondary CTA carries the brand colour: gold text on the same
+   dark ground, with the border a fraction of the wordmark's weight. Never
+   filled — the orange primary beside it is a solid block of colour and stays
+   the dominant thing in the viewport. */
+.secondaryCta {
+  color: var(--c-gold);
+  border-color: var(--c-gold-line);
+}
+
+.secondaryCta:hover {
+  color: var(--c-gold-hi);
+  border-color: rgba(227, 192, 132, 0.45);
+  /* 7% — enough to feel the hover, not enough to read as a filled button. */
+  background: var(--c-gold-wash);
+}
+
+.secondaryCta:focus-visible {
+  outline-color: var(--c-gold-hi);
+}
+
+.visual {
+  position: relative;
+  min-width: 0;
+}
+
+.stackOnly {
+  display: none;
+}
+
+@media (max-width: 1079px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+
+  .copy {
+    max-width: 40rem;
+  }
+
+  .orbitOnly {
+    display: none;
+  }
+
+  .stackOnly {
+    display: block;
+  }
+
+  .hero {
+    padding-top: 3rem;
+  }
+
+  /* Tracks the desktop cap, so the headline reads at one weight of voice
+     across the breakpoints. */
+  .title {
+    font-size: clamp(2.42rem, 9.7vw, 3.5rem);
+  }
+
+  .lead {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 520px) {
+  .ctas > * {
+    flex: 1 1 auto;
+  }
+}

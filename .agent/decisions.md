@@ -1674,3 +1674,149 @@ Recorded here as the founder set them; each is implemented in its own phase.
 - Instead of: special-casing the screen (every other reader of
   `useSchedule()` would still see demo data), or leaving `schedule: null` and
   making every consumer handle it (the app's model has always had a schedule).
+
+### 2026-08-23 — D-M2-A: M1 is retired; the visitor world is Abdullah's concept-v2
+
+- **What left.** `features/marketing/marketing-home.tsx`, the whole
+  `features/marketing/outputs/` engine (the scroll story, the 3D card orbit,
+  the post cards, the demo brands, the platform chrome, the approval demo, the
+  workspace section, the motion tokens, the story layout and its test),
+  `reveal.tsx`, the unlinked `pricing-section.tsx` seam, the `[data-mk-reveal]`
+  / `[data-mk-stage]` / `[data-mk-ambient]` / `[data-mk-card3d]` block in
+  `globals.css`, `public/campaigns/` (four webp), and `public/brand/og-malaky.png`.
+  Also `features/system/legal-screens.tsx`, whose job the ported legal pages do
+  now, and `features/marketing/{analytics.ts,request-access-screen.tsx}` — see
+  D-M2-D for why the early-access door went with them.
+- Why: M1 and concept-v2 are two answers to the same question, and keeping both
+  would mean two marketing worlds, two motion laws and two sets of demo
+  content in one bundle. Git history keeps M1; the tree does not.
+- Instead of: leaving M1 behind a flag — a flag nobody flips is dead code with
+  a switch on it, and `verify:w02` would have had to assert two designs.
+- Cost, stated plainly: **the bundle did not shrink.** M1's engine was ~3,000
+  lines; concept-v2's home page eagerly carries the hero orbit, seven sections,
+  the brand-demo analysis engine, the operating calendar and a 450-line SVG
+  creative library. Entry chunk 632 kB → 675 kB, CSS 160 kB → 216 kB. The
+  visitor world is simply a bigger thing now. Route-level splitting of the
+  marketing world is W7's business, not this branch's.
+
+### 2026-08-23 — D-M2-B: pricing is marketing's own data, not `usePlans()`
+
+- **What.** `/pricing` renders from `features/marketing/concept/lib/pricing.ts`,
+  ported verbatim from the prototype: three deployments (Business $599, Scale
+  $899, Enterprise custom), Malaky Managed at +$299, Intelligence Setup,
+  the comparison table and the scoped-items list. It does not read `usePlans()`
+  and imports nothing from `src/data`.
+- Why: the two are different documents with different owners. `src/data`'s
+  plan entities describe **what billing can charge for** and feed H1/H2 inside
+  the product; this page describes **what sales is offering during the Middle
+  East launch** — a commercial position, in Abdullah's words, and the newest
+  brief. Forcing one through the other would have meant either inventing
+  marketing copy in the billing entities or bending the launch offer to fit a
+  billing shape.
+- **This supersedes the W2 verify line "plans stay one source" for the
+  marketing route only.** H1 still reads `usePlans()`, `plans.test.ts` still
+  guards it, and `verify:w02` now asserts the separation from the other side:
+  nothing under `features/marketing/` may import `@/data` (one exception, the
+  layout, which asks whether `/` is the site or the product).
+- Reconciling them is a real task and it is not this branch's: when self-serve
+  checkout is built, the two have to agree, and the honest place for that is
+  the phase that builds it. Logged in open-items.
+- Instead of: mapping the prototype's tiers onto the existing plan entities —
+  it would have made the marketing page lie about what billing supports, or
+  made billing carry launch copy it has no use for.
+
+### 2026-08-23 — D-M2-C: the purchase flow is NOT ported
+
+- **What did not come across.** `components/concept-v2/purchase/**`
+  (GetStarted, Checkout, PaymentSurface, Onboarding, Schedule, Complete,
+  OrderSummary, StepRail, FlowChrome), `lib/concept-v2/adapters/**`,
+  `commerce.ts`, `flow-state.ts`, `onboarding-steps.ts`, the concept login
+  page, and the `scripts/` QA harness.
+- Why, for the purchase flow: in the prototype it is an honest inert fiction —
+  nothing is charged, and the pages say so. **Here it would sit next to a real
+  signup and a real onboarding wizard**, so a visitor would meet two "get
+  started" journeys, one of which creates an account and one of which does
+  not. That is not a fiction any more, it is a trap.
+- Why, for the login page: we have a real `/login`.
+- Why, for `scripts/`: our gate culture stays ours. The laws that harness
+  enforced (the frozen section rhythm, the spacing steps) are asserted by
+  `verify:w02` instead, in the place this repo already looks.
+- `verify:w02` names all nine purchase modules and fails if one reappears.
+- Instead of: porting it behind a "concept" banner — the banner is exactly the
+  thing a visitor in a hurry does not read.
+
+### 2026-08-23 — D-M2-D: "Get started" is the real signup; early access is retired
+
+- **What.** Every "Get started" on the site — header, mobile panel, hero,
+  brand demo, the closing CTA, and the Business and Scale pricing cards —
+  resolves to `/signup`, the app's own account creation. "Request a private
+  demo" (header, mobile panel, brand demo, the Enterprise card, the pricing
+  page's closing CTA, the footer's Contact) resolves to `/request-demo`.
+  Login resolves to `/login`. All of it through one map,
+  `features/marketing/concept/site.ts`, asserted by `site.test.ts` (which also
+  reads the source to prove no component types a route by hand) and by
+  `verify:w02`.
+- **This resolves the open question the production pass left.** The 2026-08-11
+  launch model was "Request early access" as THE acquisition CTA, with
+  "Start free" banned so the two models could never mix. Abdullah's brief is
+  the newer instruction and it is a self-serve one, so the early-access model
+  is retired rather than held alongside: `/request-access` now redirects to
+  `/request-demo` and its screen has left the bundle. **The founder can veto
+  this at review** — which is why it is a redirect and not a deletion of the
+  path.
+- The `?plan=` query the prototype's pricing CTAs carried is dropped: `/signup`
+  does not read it, and a parameter nothing reads is a promise nothing keeps.
+- Instead of: keeping "Request early access" as a third door — three doors on
+  one page is how a visitor learns to press none of them.
+
+### 2026-08-23 — D-M2-E: the port is VENDORED, and keeps upstream's file names
+
+- **What.** `src/features/marketing/concept/**` is Abdullah's source, file for
+  file, directory for directory, PascalCase names and `cardStack.module.css`
+  and all — against this repo's kebab-case convention.
+- Why: so it can be diffed against the prototype again. The port is 58 files
+  and ~12,000 lines; the next time Abdullah changes a section, a rename map is
+  the difference between a five-minute merge and a re-port. The brief asked
+  for the CSS modules "rename-free" for exactly this reason, and splitting the
+  convention down the middle — renamed components beside un-renamed
+  stylesheets — would be the worst of both.
+- What it costs, and how it is contained: two of the vendored files export a
+  JSX-carrying constant beside their components, which the fast-refresh lint
+  rule forbids. Rather than restructure upstream's files, `concept/**/*.tsx`
+  joins the existing exception list in `eslint.config.js` beside `src/data/**`
+  and `routes.tsx`. Four more carry a scoped `eslint-disable ab/no-raw-color`
+  because they draw artwork or depict someone else's platform chrome;
+  `verify:w02` asserts that list is exactly those four and no others.
+- Everything OUTSIDE `concept/` — the route screens, the layout, the styles —
+  is ours and follows the repo's conventions.
+- Instead of: renaming everything on the way in (cheap once, expensive every
+  time after), or vendoring under `node_modules`-style isolation (it is source
+  we will edit).
+
+### 2026-08-23 — D-M2-F: the port meets AA, and the four changes are named
+
+- **What.** Abdullah's palette arrived failing WCAG AA in four places, on every
+  page. Fixed in the token file and at the four sites, each commented where it
+  changed, each listed in design.md Part 7.7, each reversible in one line:
+  `--c-text-4` (2.63–2.93:1, ~40 elements) aliases `--c-text-3`; the filled
+  CTA's ink is `--c-on-accent` `#1a0a05` instead of `#fff` on `#ff4e2d`
+  (3.29:1); the approval preview is absent rather than held at `opacity: 0.3`
+  (1.43:1); the customer monogram moved up a tier off `--c-surface-3`
+  (4.22:1). `--c-accent` `#ff4e2d` itself is **untouched** — it is the
+  identity, and darkening it would have changed every CTA on the site.
+- Why this was not left as debt: "contrast ≥ AA everywhere" is design.md
+  Part 6 rule 1, `tokens.test.ts` has enforced it for the app palette since
+  W1, and CLAUDE.md rule 5 makes an axe-clean screen part of the definition of
+  done. A marketing site whose primary CTA fails AA is an accessibility
+  exposure at launch, not a matter of taste — and an allowlist of "known
+  violations" is the kind of check that rots (state.md traps 15 and 18).
+- **`src/styles/marketing-tokens.test.ts` is the new guard**, mirroring
+  `tokens.test.ts`: it parses the real stylesheet, resolves the contrast the
+  way a browser does, and asserts the whole text-tier × surface matrix plus
+  the CTA in both its states. 26 assertions.
+- Flagged for review rather than assumed correct: the founder and Abdullah
+  should look at the dark ink on the orange CTA in particular, since it is the
+  most visible of the four. Logged in open-items.
+- Instead of: shipping the prototype's values and allowlisting the axe
+  findings (a real defect plus a weakened gate), or changing `--c-accent`
+  (a brand decision that is not an engineer's to make).

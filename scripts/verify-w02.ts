@@ -7,7 +7,10 @@
 //   "Playwright golden: signup -> verify -> onboard -> dashboard"
 //        -> the @golden test, run below and asserted to exist
 //   "plans stay one source" -> src/data/entities/plans.test.ts (H1 reads
-//        usePlans(); marketing renders no plans since D3, 2026-08-10)
+//        usePlans()). SUPERSEDED FOR MARKETING by D-M2-B, 2026-08-23: the
+//        pricing page is marketing's own data module and no longer touches
+//        the app's plan entities at all -- the two documents have different
+//        owners. The structural check below asserts the separation.
 //   "posts_per_day=4 blocked with the named message"
 //        -> the cap canary below, plus the e2e cap test
 //   "axe + reduced-motion clean" -> the Playwright @axe / @reduced-motion specs
@@ -71,14 +74,17 @@ function capIsDeclaredOnce(): boolean {
 }
 
 /**
- * The marketing layer's structural laws (design.md Part 5 -- "Marketing
- * layer", post-rebrand). Behavioural tests cannot tell a calm page from one
- * that merely looks calm in the default viewport -- these read the source.
- * Per state.md rule 11, every check matches STRUCTURE (a call, a prop, an
- * import), never prose.
+ * The visitor world's structural laws (M2 — the concept-v2 port; design.md
+ * Part 7). Behavioural tests cannot tell a faithful port from one that has
+ * quietly grown a second opinion — these read the source.
+ *
+ * Per state.md rule 11 every check below matches STRUCTURE (an import, a
+ * declaration, a token, a file's existence), never prose. The one place copy
+ * is asserted is the pair of strings `index.html` and `site.ts` must agree on,
+ * and there the point IS that two files say the same thing.
  */
 function marketingLawsHold(): boolean {
-  console.log('\n=== M1 marketing laws hold (structural) ===')
+  console.log('\n=== the visitor world holds its laws (structural) ===')
   const marketingRoot = join(root, 'src', 'features', 'marketing')
 
   const walk = (dir: string): string[] =>
@@ -88,202 +94,281 @@ function marketingLawsHold(): boolean {
     })
 
   const files = walk(marketingRoot).filter((file) => /\.(ts|tsx)$/.test(file))
+  const codeFiles = files.filter((file) => !/\.test\.tsx?$/.test(file))
 
-  // Comments may QUOTE the laws they uphold, so every textual check below
-  // runs against comment-stripped source. Same lesson as W6's "times are
-  // honest about zones" check.
+  // Comments may QUOTE the laws they uphold — and the port's comments cite
+  // upstream files by their real `app/concept-v2/...` paths, which is exactly
+  // the string one of these checks bans in code. So every textual check runs
+  // against comment-stripped source.
   const stripComments = (source: string) =>
     source.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '')
 
-  const sources = new Map(files.map((file) => [file, stripComments(readFileSync(file, 'utf8'))]))
+  const sources = new Map(
+    codeFiles.map((file) => [file, stripComments(readFileSync(file, 'utf8'))]),
+  )
   const named = (name: string) => {
-    const hit = files.find((file) => file.endsWith(name))
+    const hit = codeFiles.find((file) => file.endsWith(name))
     return hit ? (sources.get(hit) ?? '') : ''
   }
+  const rel = (file: string) => file.slice(root.length).replace(/\\/g, '/')
 
   const failures: string[] = []
-  const isOutputs = (file: string) => file.includes(join('marketing', 'outputs'))
 
-  // 1a. Laws that bind the WHOLE route (design.md Part 5 v2, D8). Scroll
-  //     stays native, no animation library enters, nothing scrubs footage --
-  //     and the film ban is now an assertion: no canvas, no video, anywhere
-  //     on the marketing route.
+  // 1. THE PORT IS A PORT. Nothing Next-shaped survived the translation, and
+  //    no prototype route is left typed into code (D-M2-A..D).
   const bannedEverywhere: [RegExp, string][] = [
-    [/from ['"]lenis['"]|new Lenis/, 'imports Lenis -- scroll stays native'],
-    [/from ['"](gsap|motion|framer-motion)/, 'imports an animation library'],
-    [/\.currentTime/, 'touches currentTime -- footage scrubbing is retired'],
-    [/<video/, 'renders a <video> -- the film is retired from this route (D1)'],
-    [/<canvas|getContext\(/, 'draws to a canvas -- the film is retired from this route (D1)'],
-    [/['"`]\/film\//, 'references /film/ -- that asset directory was retired (D1)'],
-    [/['"`]\/marketing\//, 'references /marketing/ -- that asset directory was retired'],
+    [/from ['"]next\//, 'imports from next/ — this is a Vite SPA'],
+    [/^\s*['"]use client['"]/m, 'still carries a "use client" directive'],
+    [/concept-v2/, 'names a /concept-v2 route — the prototype segment is gone'],
+    [/from ['"](gsap|motion|framer-motion|lenis)/, 'imports an animation library'],
+    [/fonts\.(googleapis|gstatic)\.com/, 'reaches for Google Fonts — the faces are self-hosted'],
   ]
-  // 1b. Cinematic primitives are legal only inside outputs/ -- the card
-  //     engine the reduced-motion gate controls.
-  const bannedOutsideOutputs: [RegExp, string][] = [
-    [/requestAnimationFrame/, 'runs a rAF loop outside outputs/ -- reveal is CSS-only'],
-    [
-      /addEventListener\(['"]scroll['"]/,
-      'listens to scroll outside outputs/ -- use IntersectionObserver',
-    ],
-  ]
-  // AMENDED for Phase 2 §26 (decisions.md 2026-08-11): content-asset.tsx is
-  // the ONE legal <video> seam on the route — the manifest's approved Reel
-  // will render there poster-first, muted, in-view only, reduced-motion →
-  // poster. The scrubbed-film ban (D1) otherwise stands: currentTime and
-  // canvas stay banned everywhere, video stays banned everywhere else, and
-  // the seam's own constraints are asserted in 1f below.
-  const isVideoSeam = (file: string) => file.endsWith('content-asset.tsx')
   for (const [file, source] of sources) {
     for (const [pattern, why] of bannedEverywhere) {
-      if (pattern.source === '<video' && isVideoSeam(file)) continue
-      if (pattern.test(source)) failures.push(`${file}: ${why}`)
-    }
-    if (isOutputs(file)) continue
-    for (const [pattern, why] of bannedOutsideOutputs) {
-      if (pattern.test(source)) failures.push(`${file}: ${why}`)
+      if (pattern.test(source)) failures.push(`${rel(file)}: ${why}`)
     }
   }
 
-  // 1f. The video seam's license is conditional: poster-first, muted, no
-  //     eager download, and gated on the cinematic layer.
-  const assetSeam = named('content-asset.tsx')
-  if (assetSeam) {
-    for (const requirement of ['preload="none"', 'muted', 'poster', 'useCinematicLayer']) {
-      if (!assetSeam.includes(requirement)) {
-        failures.push(`content-asset.tsx: the video seam lost its ${requirement} constraint`)
-      }
-    }
-  }
-
-  // 1c. The engine animates transform/opacity only (D8) -- every style
-  //     assignment in outputs/ is on the compositor allow-list.
-  const styleProp = /\.style\.(\w+)\s*=/g
-  for (const [file, source] of sources) {
-    if (!isOutputs(file)) continue
-    for (const match of source.matchAll(styleProp)) {
-      if (!['transform', 'opacity', 'zIndex'].includes(match[1])) {
-        failures.push(`${file}: engine sets style.${match[1]} -- transform/opacity only`)
-      }
-    }
-  }
-
-  // 1d. The reduced-motion gate is the tier's whole license: the hook must
-  //     affirm no-preference positively, and the story must mount the engine
-  //     behind it.
-  const gate = named('use-media.ts')
-  if (!/matchMedia/.test(gate) || !gate.includes('prefers-reduced-motion: no-preference')) {
-    failures.push('use-media.ts: the layer gate must affirm no-preference via matchMedia')
-  }
-  const story = named('scroll-story.tsx')
-  if (!/useCinematicLayer\(\)/.test(story)) {
-    failures.push('scroll-story.tsx: the engine lost its useCinematicLayer() gate')
-  }
-  if (!/data-mk-engine/.test(story)) {
-    failures.push('scroll-story.tsx: the engine root lost data-mk-engine (the e2e hook)')
-  }
-  if (!/cinematic\s*&&\s*wide\s*\?/.test(story)) {
-    failures.push('scroll-story.tsx: the engine must render behind the gate AND the width check')
-  }
-
-  // 1d2. The D5 palette exemption is scoped: raw customer colors live in
-  //      demo-brands.ts alone. This check reads RAW source (the disable is
-  //      a comment), so it runs against `files`, not `sources`.
-  for (const file of files) {
-    if (file.endsWith('demo-brands.ts')) continue
-    if (readFileSync(file, 'utf8').includes('ab/no-raw-color')) {
-      failures.push(`${file}: borrows the D5 raw-color exemption -- demo-brands.ts only`)
-    }
-  }
-
-  // 1e. Native RTL is structural, not styling: the Arabic card declares its
-  //     direction and language.
-  const cards = named('post-cards.tsx')
-  if (!/dir="rtl"/.test(cards) || !/lang="ar"/.test(cards)) {
-    failures.push('post-cards.tsx: the Arabic card must declare dir="rtl" and lang="ar"')
-  }
-
-  // 2. The reveal's and the stages' animated state exists only under
-  //    no-preference, so reduced motion renders every section finished
-  //    (removed, not slowed).
-  const globals = readFileSync(join(root, 'src', 'styles', 'globals.css'), 'utf8')
-  const noPref = globals.indexOf('prefers-reduced-motion: no-preference')
-  for (const attribute of ['[data-mk-reveal]', '[data-mk-stage]']) {
-    const at = globals.indexOf(attribute)
-    if (noPref === -1 || at === -1 || at < noPref) {
-      failures.push(`globals.css: ${attribute} styles are not inside the no-preference query`)
-    }
-  }
-
-  // 3. The wordmark law (design.md Part 3): the Arabic artwork enters only as
-  //    an <img> of one of the three supplied files -- never redrawn as SVG or
-  //    text.
-  const home = named('marketing-home.tsx')
-  if (!/\/brand\/malaky-logo-(charcoal|gold|white)\.png/.test(home)) {
-    failures.push('marketing-home.tsx: the supplied wordmark files are not used')
-  }
-
-  // 3c. Light-canonical (design.md Part 6 rule 8): the route ignores the app
-  //     theme.
-  if (!/classList\.remove\(['"]dark['"]\)/.test(home)) {
-    failures.push('marketing-home.tsx: the light-canonical effect is missing')
-  }
-
-  // 4. Copy laws (brief §2/§14/§19/§28/§29 via D2/D7; comment-stripped, the
-  //    whole marketing route). The site sells outcomes -- never the old
-  //    positioning, model names, or credit terminology -- and exactly one
-  //    CTA pair exists.
-  const copyBans: [RegExp, string][] = [
-    [/co-?pilot/i, 'the co-pilot positioning is retired (brief §2)'],
-    [/\bdrafting model/i, 'model terminology is banned on the marketing route (§28)'],
-    [
-      /\b(Balanced|Precise|Creative) drafting/i,
-      'model names are banned on the marketing route (§28)',
-    ],
-    [/\bcredits?\b/i, 'credit terminology is banned on the marketing route (§28)'],
-    // AMENDED by the founder's 2026-08-11 production pass (item 12): the
-    // launch model is early access until self-service publishing ships, so
-    // "Request early access" is THE acquisition CTA and "Start free" joins
-    // the banned list -- the two launch models must never mix. The
-    // pricing-section seam keeps its "Start free" for the flip back; it is
-    // unlinked and exempted below.
-    [
-      /Book demo|Request demo|Join waitlist|Try Malaky|Get started|Start free/i,
-      'a banned CTA variant (launch model: Request early access / See how it works only)',
-    ],
-    [/Questions people ask/, 'the FAQ title is "Frequently asked questions" (§29)'],
+  // 2. THE PURCHASE FICTION DID NOT COME ACROSS (D-M2-C). Next to a real
+  //    signup it would be a second, fake "get started" journey. Its modules
+  //    are named here so re-adding one fails loudly rather than quietly.
+  const notPorted = [
+    'purchase',
+    'PaymentSurface',
+    'Checkout',
+    'GetStarted',
+    'StepRail',
+    'flow-state',
+    'commerce',
+    'onboarding-steps',
+    'adapters',
   ]
-  for (const [file, source] of sources) {
-    if (file.endsWith('pricing-section.tsx')) continue // the unlinked seam
-    for (const [pattern, why] of copyBans) {
-      if (pattern.test(source)) failures.push(`${file}: ${why}`)
+  for (const name of notPorted) {
+    const hit = codeFiles.find(
+      (file) => file.replace(/\\/g, '/').includes(`/concept/`) && file.includes(name),
+    )
+    if (hit) failures.push(`${rel(hit)}: the purchase flow is deliberately NOT ported (D-M2-C)`)
+  }
+
+  // 3. MARKETING OWNS ITS OWN DATA (D-M2-B). The pricing page reads
+  //    concept/lib/pricing.ts, and nothing in the visitor world reaches into
+  //    the app's data layer — with ONE exception, the layout, which asks the
+  //    provider whether '/' is the site or the product.
+  const dataReaders = [...sources]
+    .filter(([, source]) => /from ['"]@\/data/.test(source))
+    .map(([file]) => rel(file))
+  const legalDataReader = 'src/features/marketing/marketing-layout.tsx'
+  for (const file of dataReaders) {
+    if (file !== legalDataReader) {
+      failures.push(`${file}: reads @/data — marketing data is its own (D-M2-B)`)
     }
   }
-  if (!home.includes('Request early access') || !home.includes('See how it works')) {
+  const pricing = named(join('lib', 'pricing.ts'))
+  if (!/export const PLANS/.test(pricing) || !/export const MANAGED/.test(pricing)) {
+    failures.push('concept/lib/pricing.ts: the ported pricing data is missing (D-M2-B)')
+  }
+  const pricingScreen = named('pricing-screen.tsx')
+  if (/usePlans\(/.test(pricingScreen)) {
+    failures.push('pricing-screen.tsx: marketing must not read usePlans() (D-M2-B)')
+  }
+
+  // 4. ONE WIRING MAP (D-M2-D). Every CTA resolves through concept/site.ts,
+  //    and the two decisions the founder can veto are declared there in one
+  //    place. `site.test.ts` proves no component types a route by hand; this
+  //    proves the map says what the decision says.
+  const site = named(join('concept', 'site.ts'))
+  for (const [declaration, why] of [
+    [/export const START_HREF = '\/signup'/, '"Get started" must be the REAL signup'],
+    [/export const LOGIN_HREF = '\/login'/, 'Login must be the REAL sign-in'],
+    [/export const MARKETING_ROUTES = \{/, 'the wiring map itself'],
+  ] as [RegExp, string][]) {
+    if (!declaration.test(site)) failures.push(`concept/site.ts: ${why}`)
+  }
+
+  // 5. THE HEAD FOLLOWS THE ROUTE. Every marketing screen sets its own title
+  //    and description; a page that forgets leaves the tab lying.
+  for (const screen of [
+    'home-screen.tsx',
+    'pricing-screen.tsx',
+    'request-demo-screen.tsx',
+    'legal-screens.tsx',
+  ]) {
+    if (!/usePageMeta\(/.test(named(screen))) {
+      failures.push(`${screen}: does not set its page meta`)
+    }
+  }
+
+  // 6. THE HOMEPAGE'S ORDER IS THE ARGUMENT. Claim -> demonstration -> proof
+  //    -> control -> memory -> Arabic -> the visitor's own company -> the way
+  //    in. Read as the order of the JSX tags, not as copy.
+  const home = named('home-screen.tsx')
+  const ORDER = [
+    'Hero',
+    'Prompts',
+    'OneEvent',
+    'RealBrands',
+    'Approval',
+    'Memory',
+    'Arabic',
+    'BrandDemo',
+    'ClosingCta',
+  ]
+  const rendered = [...home.matchAll(/<([A-Z]\w+)/g)].map((m) => m[1])
+  if (JSON.stringify(rendered) !== JSON.stringify(ORDER)) {
     failures.push(
-      'marketing-home.tsx: the CTA pair is incomplete (Request early access / See how it works)',
+      `home-screen.tsx: section order is ${rendered.join(' → ')}, expected ${ORDER.join(' → ')}`,
     )
   }
-  if (!home.includes('Frequently asked questions')) {
-    failures.push('marketing-home.tsx: the FAQ heading is missing (§29)')
+
+  // 7. THE VISITOR WORLD CANNOT REACH AN APP SCREEN. Its tokens hang off the
+  //    document attribute the layout owns, its resets off the layout's own
+  //    class, and the attribute is removed on unmount. If any of the three
+  //    goes, the concept's dark palette leaks into the signed-in product.
+  const marketingCss = readFileSync(join(root, 'src', 'styles', 'marketing.css'), 'utf8')
+  if (!/^html\[data-mk-world\] \{/m.test(marketingCss)) {
+    failures.push('styles/marketing.css: the token block is not scoped to html[data-mk-world]')
   }
-  if (!home.includes('Your marketing, already done.')) {
-    failures.push('marketing-home.tsx: the §2 hero headline is missing')
+  if (/^:root\s*\{/m.test(marketingCss)) {
+    failures.push('styles/marketing.css: declares tokens on :root — they would leak into the app')
+  }
+  const layout = named('marketing-layout.tsx')
+  if (
+    !/setAttribute\('data-mk-world'/.test(layout) ||
+    !/removeAttribute\('data-mk-world'/.test(layout)
+  ) {
+    failures.push('marketing-layout.tsx: the world attribute must be set AND removed')
+  }
+  if (!/useLayoutEffect/.test(layout)) {
+    failures.push('marketing-layout.tsx: the world attribute must be applied before paint')
   }
 
-  // 5. Retired laws, recorded so their absence is conscious (decisions.md
-  //    2026-08-10): "pricing keeps usePlans()" retired with D3 (no plans on
-  //    the page; the seam re-links the same source if it flips), and the kit
-  //    §5 real-product-content laws (useTones/ToneBadge/useConnections)
-  //    retired with the §33 flow — demo-brand content replaces them, and no
-  //    local plan data may return:
-  if (/priceMonthly\s*:/.test(home)) {
-    failures.push('marketing-home.tsx: declares plan data locally (D3 keeps plans off this page)')
+  // 8. THE FROZEN RHYTHM. The hero is the approved reference and these are its
+  //    own paddings; the prototype froze them and said so. Changing one is a
+  //    design decision, and it fails here first.
+  for (const frozen of [
+    '--section-y: clamp(3.5rem, 6vw, 6.5rem);',
+    '--section-y-dense: clamp(2.5rem, 4vw, 4.25rem);',
+  ]) {
+    if (!marketingCss.includes(frozen)) {
+      failures.push(`styles/marketing.css: the FROZEN rhythm changed — expected "${frozen}"`)
+    }
+  }
+  // The third value the prototype froze with them: the section head's step
+  // down to its content, taken from the hero's own CTA-row-to-strip gap.
+  const uiCss = readFileSync(join(marketingRoot, 'concept', 'ui.module.css'), 'utf8')
+  if (!uiCss.includes('margin-bottom: clamp(2rem, 3.1vw, 2.75rem);')) {
+    failures.push('concept/ui.module.css: the FROZEN section-head gap changed')
+  }
+
+  // 9. THE FACES ARE SELF-HOSTED. Two packages, five imports, zero network —
+  //    the static e2e asserts no request leaves, and this asserts the reason.
+  for (const face of [
+    "@import '@fontsource-variable/dm-sans/opsz.css';",
+    "@import '@fontsource-variable/dm-sans/opsz-italic.css';",
+    "@import '@fontsource/ibm-plex-sans-arabic/arabic-400.css';",
+  ]) {
+    if (!marketingCss.includes(face)) failures.push(`styles/marketing.css: missing ${face}`)
+  }
+
+  // 10. REDUCED MOTION REMOVES, IT DOES NOT SLOW. BrandVideo never mounts a
+  //     <video> at all under the preference — the poster carries the story —
+  //     and the hook that decides affirms the query positively.
+  const hooks = named('useConceptHooks.ts')
+  if (!/matchMedia/.test(hooks) || !hooks.includes('prefers-reduced-motion: reduce')) {
+    failures.push('useConceptHooks.ts: the reduced-motion gate must read matchMedia')
+  }
+  const video = named('BrandVideo.tsx')
+  const guardAt = video.indexOf('if (reducedMotion)')
+  const videoAt = video.indexOf('<video')
+  if (guardAt === -1 || videoAt === -1 || guardAt > videoAt) {
+    failures.push('BrandVideo.tsx: the <video> must sit behind the reduced-motion return')
+  }
+  if (!marketingCss.includes('prefers-reduced-motion: reduce')) {
+    failures.push('styles/marketing.css: lost its reduced-motion block')
+  }
+
+  // 11. THE RAW-COLOR EXEMPTION IS SCOPED. Four files draw artwork or depict
+  //     someone else's platform chrome; nowhere else in the visitor world may
+  //     borrow their licence. Reads RAW source — the disable IS a comment.
+  const EXEMPT = [
+    'concept/BrandMedia.tsx',
+    'concept/posts/shared.tsx',
+    'concept/posts/NewsletterPreview.tsx',
+    'concept/lib/campaign-creative.ts',
+  ]
+  const borrowing = files
+    .filter((file) => readFileSync(file, 'utf8').includes('eslint-disable ab/no-raw-color'))
+    .map((file) => rel(file).replace('src/features/marketing/', ''))
+  const unexpected = borrowing.filter((file) => !EXEMPT.includes(file))
+  const missing = EXEMPT.filter((file) => !borrowing.includes(file))
+  for (const file of unexpected) {
+    failures.push(`${file}: borrows the artwork raw-color exemption — the four listed files only`)
+  }
+  for (const file of missing) {
+    failures.push(`${file}: lost its raw-color exemption comment (or moved)`)
+  }
+
+  // 11b. THE QUIET TIERS STAY OFF THE LIGHT FILLS. `--c-text-3` on
+  //      `--c-surface-3` is 4.22:1 — under AA, and the one place the port did
+  //      it (the customer monogram) moved up a tier. Scanned per rule block,
+  //      because the pairing is what fails, not either value alone.
+  const cssFiles = walk(marketingRoot).filter((file) => file.endsWith('.css'))
+  for (const file of cssFiles) {
+    const css = readFileSync(file, 'utf8')
+    for (const block of css.split('}')) {
+      const lightFill = /background(?:-color)?:\s*var\(--c-surface-[34]\)/.test(block)
+      const quietInk = /color:\s*var\(--c-text-[34]\)/.test(block)
+      if (lightFill && quietInk) {
+        const selector = block.trim().split('{')[0].trim().split(/\r?\n/).pop() ?? '?'
+        failures.push(`${rel(file)}: "${selector}" puts a quiet text tier on a light fill (< AA)`)
+      }
+    }
+  }
+
+  // 12. M1 IS RETIRED (D-M2-A), on both sides: its modules are gone from the
+  //     tree, and its motion layer is gone from the global stylesheet.
+  for (const gone of [
+    'src/features/marketing/marketing-home.tsx',
+    'src/features/marketing/reveal.tsx',
+    'src/features/marketing/pricing-section.tsx',
+    'src/features/marketing/outputs',
+    'src/features/system/legal-screens.tsx',
+    'public/campaigns',
+    'public/brand/og-malaky.png',
+  ]) {
+    if (existsSync(join(root, gone)))
+      failures.push(`${gone}: M1 artefact still in the tree (D-M2-A)`)
+  }
+  const globals = readFileSync(join(root, 'src', 'styles', 'globals.css'), 'utf8')
+  const globalsCode = stripComments(globals)
+  for (const attribute of [
+    '[data-mk-reveal]',
+    '[data-mk-stage]',
+    '[data-mk-ambient]',
+    '[data-mk-card3d]',
+  ]) {
+    if (globalsCode.includes(attribute)) {
+      failures.push(`globals.css: ${attribute} is M1's motion layer and should be gone (D-M2-A)`)
+    }
+  }
+
+  // 13. THE HEAD AND THE MODULE SAY THE SAME THING. index.html is what a
+  //     crawler reads; site.ts is what a client-side navigation sets. Two
+  //     sources for one homepage title is how they drift.
+  const html = readFileSync(join(root, 'index.html'), 'utf8')
+  const title = /export const HOME_TITLE = '([^']+)'/.exec(site)?.[1]
+  const ogPath = /url: '([^']+)'/.exec(site)?.[1]
+  if (!title || !html.includes(`<title>${title}</title>`)) {
+    failures.push('index.html: its <title> is not site.ts’s HOME_TITLE')
+  }
+  if (!ogPath || !html.includes(ogPath)) {
+    failures.push('index.html: its og:image is not site.ts’s OG_IMAGE')
   }
 
   for (const failure of failures) console.log(`  FAIL ${failure}`)
   const ok = failures.length === 0
-  if (ok) console.log(`marketing laws: ${files.length} marketing files clean`)
-  results.push({ name: 'M1 marketing laws hold', outcome: ok ? 'PASS' : 'FAIL' })
+  if (ok) console.log(`visitor-world laws: ${codeFiles.length} marketing files clean`)
+  results.push({ name: 'visitor-world laws hold', outcome: ok ? 'PASS' : 'FAIL' })
   return ok
 }
 
@@ -361,18 +446,32 @@ function productionBootsVisitor(): boolean {
 function deliverablesExist(): boolean {
   console.log('\n=== W2 deliverables exist ===')
   const required = [
-    // M1 (+ the output story, rb/02-v1-brief)
-    'src/features/marketing/marketing-home.tsx',
-    'src/features/marketing/reveal.tsx',
-    'src/features/marketing/pricing-section.tsx', // the D3 seam, unlinked
-    'src/features/marketing/outputs/demo-brands.ts',
-    'src/features/marketing/outputs/post-cards.tsx',
-    'src/features/marketing/outputs/approval-demo.tsx',
-    'src/features/marketing/outputs/story-layout.ts',
-    'src/features/marketing/outputs/scroll-story.tsx',
-    'src/features/marketing/outputs/story-sections.tsx',
-    'src/features/marketing/outputs/workspace-section.tsx',
-    'src/features/marketing/outputs/use-media.ts',
+    // M1 (the visitor world — concept-v2, M2)
+    'src/features/marketing/marketing-layout.tsx',
+    'src/features/marketing/home-screen.tsx',
+    'src/features/marketing/pricing-screen.tsx',
+    'src/features/marketing/request-demo-screen.tsx',
+    'src/features/marketing/legal-screens.tsx',
+    'src/features/marketing/concept/site.ts',
+    'src/features/marketing/concept/site.test.ts',
+    'src/features/marketing/concept/Header.tsx',
+    'src/features/marketing/concept/Footer.tsx',
+    'src/features/marketing/concept/BrandMedia.tsx',
+    'src/features/marketing/concept/hero/Hero.tsx',
+    'src/features/marketing/concept/sections/ClosingCta.tsx',
+    'src/features/marketing/concept/branddemo/BrandDemo.tsx',
+    'src/features/marketing/concept/pricing/PricingPage.tsx',
+    'src/features/marketing/concept/requestdemo/RequestDemo.tsx',
+    'src/features/marketing/concept/legal/LegalPage.tsx',
+    'src/features/marketing/concept/lib/pricing.ts',
+    'src/features/marketing/concept/lib/demo-request.ts',
+    'src/features/marketing/concept/lib/legal.ts',
+    'src/styles/marketing.css',
+    'src/styles/marketing-tokens.test.ts',
+    'src/lib/page-meta.ts',
+    // the assets the port renders from
+    'public/og/malaky-social.png',
+    'public/brand/malaky-logo-gold.png',
     // A1-A4
     'src/features/auth/auth-layout.tsx',
     'src/features/auth/signup-screen.tsx',
@@ -392,6 +491,7 @@ function deliverablesExist(): boolean {
     'src/data/datasets/visitor.ts',
     // the specs that sign the phase off
     'e2e/onboarding.spec.ts',
+    'e2e/marketing.spec.ts',
   ]
   const missing = required.filter((path) => !existsSync(join(root, path)))
   if (missing.length) {
@@ -445,7 +545,7 @@ function main(): void {
   } else {
     for (const name of [
       'posts-per-day cap declared once',
-      'M1 marketing laws hold',
+      'visitor-world laws hold',
       'W2 deliverables exist',
       'e2e (@golden walk, marketing + auth axe)',
     ]) {
@@ -461,18 +561,22 @@ function main(): void {
   console.log(failed ? 'RESULT: FAIL' : 'RESULT: PASS (automated steps)')
 
   console.log('\nMANUAL -- human judgement; verify by hand (web-plan.md W2 Verify):')
-  console.log('  1. Read the marketing copy as a prospect would: does the hero say what')
-  console.log('     Malaky makes, and does every section answer one of the five brief')
-  console.log('     questions (what / why different / why trust / built for me / next)?')
+  console.log('  1. Read the visitor world as a prospect would, end to end: does the hero')
+  console.log('     say what Malaky makes, and does each section answer one question')
+  console.log('     (what / how / proof / control / memory / Arabic / your company / next)?')
   console.log('  2. Walk the wizard on a phone-width viewport -- the day pills, the')
   console.log('     stepper, and the tone sheet are the three places touch targets and')
   console.log('     overlay behaviour are hardest to get right.')
-  console.log('  3. M1 is light-canonical (Part 6 rule 8): confirm it renders light even')
-  console.log('     with the app in dark, and that the app itself still honors dark.')
-  console.log('  4. Scroll M1 end to end by hand -- the card story should separate, focus')
-  console.log('     and reorganize slowly with no bounce or pop; approve the S5 card and')
-  console.log('     watch it schedule; on a phone the cards swipe; with reduced motion on,')
-  console.log('     the static layout is complete and readable, no engine.')
+  console.log('  3. Cross the seam at "Get started": /signup still wears the APP design.')
+  console.log('     That is deliberate this pass and logged as an open item -- confirm it')
+  console.log('     reads as a change of place, not as a broken page.')
+  console.log('  4. Scroll the homepage by hand at 1440 and at 390: the hero orbit turns')
+  console.log('     and slows on hover, the card stack swipes on the phone, the brand demo')
+  console.log('     runs a company and says it is a preview, and with reduced motion on')
+  console.log('     every section is complete and still, with no video mounted.')
+  console.log('  5. Review the AA deviations from the prototype (design.md Part 7): the')
+  console.log('     dark ink on the orange CTA, the fourth text tier aliased to the third,')
+  console.log('     and the approval preview that is absent rather than ghosted.')
 
   process.exit(failed ? 1 : 0)
 }

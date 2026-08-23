@@ -1970,3 +1970,61 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   mode) and a fresh STATIC production build off `main`. Open questions for
   Ward: 26 (server-side seeding, re-measured), 9 (is `gm_*` also legal, and
   which vocabulary is canonical), 29–32.
+
+### 2026-08-23 14:00 — M2: the visitor world is Abdullah's concept-v2, ported
+
+- Did: replaced the entire marketing world with a port of
+  `aboodbasal/malaky-prototype`'s `components/concept-v2/**`. Five routes —
+  `/`, `/pricing`, `/request-demo`, `/terms`, `/privacy` — under ONE layout
+  route, so `Header`/`Footer`/`MediaDefs` mount once and survive navigation
+  between them (trap 8). Upstream's source is VENDORED file-for-file under
+  `src/features/marketing/concept/` (58 files) so it can be diffed against the
+  prototype again; the route screens, the layout and the styles are ours.
+  Next → Vite: 22 `"use client"` directives stripped, `next/link` and
+  `usePathname` → react-router, fragment navigation reimplemented as
+  `useHashScroll` (Next did it for free), page titles via a new
+  `src/lib/page-meta.ts`, and `next/font` → **self-hosted** DM Sans (opsz +
+  italic) and IBM Plex Sans Arabic (400/500/600) — the two new deps, and the
+  zero-network law still holds. concept-v2's tokens live in
+  `src/styles/marketing.css` scoped to `html[data-mk-world]` with the resets on
+  `.mk-world`, written `:where(.mk-world) …` so each rule keeps the exact
+  specificity it had upstream (trap 21 — a plain class scoping silently
+  outranked the port's own `.primary` and cost the CTA its label colour).
+  Every CTA resolves through one map in `concept/site.ts`: "Get started" is the
+  REAL `/signup`, Login the real `/login`. The prototype's purchase fiction did
+  not come across. M1 retired: `marketing-home.tsx`, `outputs/`, `reveal.tsx`,
+  the `pricing-section.tsx` seam, the `[data-mk-*]` motion layer,
+  `public/campaigns/`, `og-malaky.png`, `system/legal-screens.tsx`, and the
+  now-orphaned early-access screen (its path redirects to `/request-demo`).
+  Four AA deviations from the prototype, each commented at the site of the
+  change: the CTA's ink, `--c-text-4`, the approval preview, the monogram —
+  plus one real a11y bug fixed (`<ul role="group">` orphaned its items).
+- Phase: **M2** — a design phase like `rb/NN`, not a W or INT phase.
+  **Branch only: not merged, not pushed.**
+- Files: 58 new under `src/features/marketing/concept/`, 6 new marketing
+  screens/layout/tests, `src/styles/marketing.css` + `marketing-tokens.test.ts`,
+  `src/lib/page-meta.ts`, `src/routes.tsx`, `src/styles/globals.css`,
+  `eslint.config.js`, `index.html`, `public/{og,brand}/**`,
+  `public/sitemap.xml`, `scripts/verify-w02.ts` (marketing laws rewritten),
+  `e2e/marketing.spec.ts` (new, 19 tests) + `onboarding.spec.ts` +
+  `live-auth`/`live-team`, `design.md` (new Part 7), `web-plan.md`, and
+  `.agent/{state,decisions,open-items,conventions,stack}.md` + `CLAUDE.md`.
+  21 M1 files deleted.
+- Decisions: see decisions.md — **D-M2-A** (M1 retired; the bundle grew and
+  that is recorded, not explained away), **D-M2-B** (pricing is marketing's
+  own data, superseding "plans stay one source" for the marketing route),
+  **D-M2-C** (the purchase flow is NOT ported), **D-M2-D** ("Get started" is
+  the real signup; early access retired — founder-vetoable), **D-M2-E** (the
+  port is vendored and keeps upstream's names), **D-M2-F** (the port meets AA,
+  and the four changes are named).
+- Verify: lint + typecheck + **457 unit tests / 42 files** + guard-static
+  (321 files) + build + **static e2e 85 passed / 51 live skips** +
+  **verify:w02–w06 all PASS**. Production build smoke-tested from `dist/`:
+  `/` boots the visitor world, `/signup` and `/login` carry no
+  `data-mk-world`, zero offsite requests, no console errors.
+  axe clean on all five marketing routes at 1440 AND 390 AND under reduced
+  motion. LIVE SUITE: **NOT GREEN, and not green on `main` either.** The full 13-file suite ran twice, one file at a time, `LIVE_MEDIA` off. Three files were green both times (`live-country` 4/4, `live-schedule-repair` 3/3, `live-wallet` 4/4) and `live-generate` went green on the second; every other file stopped somewhere in the signup → wizard-finish → Dashboard walk, on a TIMEOUT rather than a wrong assertion, and a different test each run. So the four worst were re-run against a STASHED tree — plain `main`, `5c01c68`, same server, same API — and **all four failed identically**: `live-notifications`, `live-scheduling`, `live-team` and `live-auth`, each on the same locator with the same timeout. The wizard-finish burst is slower than the specs' budgets against this API today; that is a pre-existing problem on `main`, not a regression from this branch, and it is worth a look before the next merge (open-items)
+- Next: founder review — the CTA change, the four AA deviations, the auth
+  seam, and the replaced gold wordmark are all in open-items 21. Before DNS
+  cutover: `/request-demo` needs a real destination, `hello@malaky.ai` is a
+  placeholder, and six legal values are still `null`.

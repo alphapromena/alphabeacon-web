@@ -1,0 +1,122 @@
+.viewport {
+  position: relative;
+  width: 100%;
+  height: clamp(560px, 47vw, 700px);
+  perspective: 1900px;
+  perspective-origin: 50% 46%;
+  --orbit-scale: 1;
+  /* The one shared centre. Cards, both trails and the core glow all read from
+     here, so the ring can never drift out of register with what orbits it.
+
+     Measured over a full revolution (scripts/orbit-bounds.mjs), the cards
+     clear the right edge of the page by 8px at 1280 and 9px at 1080, and sit
+     92/67px off the top/bottom of their own viewport at 1440. So there is no
+     room to move the centre right, and moving it up trades a 25px vertical
+     imbalance for a 75px one while cutting the top gap to under 20px on
+     smaller desktops. It stays where it is. */
+  --orbit-x: 50%;
+  --orbit-y: 45%;
+}
+
+.stage {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+
+.cards {
+  position: absolute;
+  left: var(--orbit-x);
+  top: var(--orbit-y);
+  width: 0;
+  height: 0;
+  transform-style: preserve-3d;
+  transform: scale(var(--orbit-scale));
+}
+
+.card {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+  /* Set by the animation loop before first paint. */
+  opacity: 0;
+}
+
+.cardInner {
+  transform-style: preserve-3d;
+  transition: transform 0.55s var(--ease-out);
+}
+
+.card:hover .cardInner {
+  transform: translateZ(70px) scale(1.04);
+}
+
+/* --- orbit trails ------------------------------------------------- */
+
+.ring {
+  position: absolute;
+  left: var(--orbit-x);
+  top: var(--orbit-y);
+  border-radius: 50%;
+  pointer-events: none;
+  transform-style: preserve-3d;
+}
+
+.ringOuter {
+  width: 700px;
+  height: 700px;
+  margin: -350px 0 0 -350px;
+  border: 1px solid rgba(255, 118, 78, 0.38);
+  box-shadow:
+    0 0 60px -10px rgba(255, 78, 45, 0.55),
+    inset 0 0 70px -30px rgba(255, 78, 45, 0.5);
+  transform: scale(var(--orbit-scale)) rotateX(74deg);
+}
+
+.ringInner {
+  width: 530px;
+  height: 530px;
+  margin: -265px 0 0 -265px;
+  border: 1px solid rgba(255, 118, 78, 0.2);
+  transform: scale(var(--orbit-scale)) rotateX(74deg) rotateZ(16deg);
+}
+
+.core {
+  position: absolute;
+  left: var(--orbit-x);
+  top: var(--orbit-y);
+  width: 260px;
+  height: 260px;
+  margin: -130px 0 0 -130px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 78, 45, 0.2), transparent 68%);
+  filter: blur(12px);
+  pointer-events: none;
+}
+
+.plinth {
+  position: absolute;
+  left: 50%;
+  bottom: 2%;
+  width: 60%;
+  height: 70px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 78, 45, 0.3),
+    rgba(255, 78, 45, 0.05) 55%,
+    transparent 72%
+  );
+  filter: blur(14px);
+  pointer-events: none;
+}
+
+@media (max-width: 1279px) {
+  .viewport {
+    --orbit-scale: 0.82;
+    height: clamp(520px, 46vw, 620px);
+  }
+}

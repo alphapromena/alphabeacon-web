@@ -19,7 +19,11 @@ scripts — the rules below ARE the workflow.
 | `.agent/open-items.md`   | Manual gates awaiting a human sign-off            |
 
 `screens4.md` is screen truth and `design.md` is the visual system — both live
-in the product docs; never contradict them silently.
+in the product docs; never contradict them silently. **`design.md` describes
+TWO systems since M2:** Parts 1–6 are the signed-in product, Part 7 is the
+visitor world (Abdullah's concept-v2, vendored under
+`src/features/marketing/concept/`). They are scoped so they cannot reach each
+other; don't blur them.
 
 ## Hard rules — follow every time, no exceptions
 

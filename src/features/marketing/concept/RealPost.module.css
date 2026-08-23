@@ -1,0 +1,23 @@
+/* A real screenshot gets a frame and a shadow and nothing else — no bar, no
+   account row, no engagement strip. Whatever chrome the piece needs is
+   already inside the image. */
+
+.card {
+  position: relative;
+  width: 100%;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  background: #f2f2f2;
+  box-shadow: var(--shadow-card);
+  /* The screenshots carry their own pale surround; nothing is layered on it. */
+  line-height: 0;
+}
+
+/* Width-driven, ratio-preserving. `height: auto` against the intrinsic
+   width/height attributes is what guarantees no screenshot is ever stretched. */
+.shot {
+  display: block;
+  width: 100%;
+  height: auto;
+}

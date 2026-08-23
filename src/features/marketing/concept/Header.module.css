@@ -1,0 +1,224 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  transition:
+    background-color 0.3s var(--ease-out),
+    border-color 0.3s var(--ease-out);
+  border-bottom: 1px solid transparent;
+}
+
+.header[data-scrolled] {
+  background: rgba(8, 13, 17, 0.82);
+  backdrop-filter: blur(14px) saturate(1.2);
+  border-bottom-color: var(--c-line);
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  height: 72px;
+}
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+}
+
+.nav {
+  margin-inline: auto;
+}
+
+.navList {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.9rem, 2vw, 1.9rem);
+}
+
+.navLink {
+  font-size: 0.875rem;
+  color: var(--c-text-2);
+  transition: color 0.2s var(--ease-out);
+}
+
+.navLink:hover {
+  color: var(--c-text);
+}
+
+/* Only on the request page, in place of the whole nav and CTA. */
+.back {
+  margin-inline-start: auto;
+  font-size: var(--t-body);
+  color: var(--c-text-3);
+  transition: color 0.2s var(--ease-out);
+}
+
+.back:hover {
+  color: var(--c-text);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: none;
+}
+
+/* The quiet tier: everything in the header that is not the one filled button.
+   Login and the sales-led route share it, so neither can drift into looking
+   like a second call to action. */
+.quietLink {
+  font-size: 0.875rem;
+  color: var(--c-text-2);
+  white-space: nowrap;
+  transition: color 0.2s var(--ease-out);
+}
+
+.quietLink:hover {
+  color: var(--c-text);
+}
+
+/* --- mobile ------------------------------------------------------- */
+
+.burger {
+  display: none;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border: 1px solid var(--c-line-2);
+  border-radius: var(--r-sm);
+}
+
+.burger span,
+.burger span::before,
+.burger span::after {
+  content: '';
+  display: block;
+  width: 16px;
+  height: 1.5px;
+  background: var(--c-text);
+  transition:
+    transform 0.25s var(--ease-out),
+    opacity 0.2s;
+}
+
+.burger span::before {
+  transform: translateY(-5px);
+}
+
+.burger span::after {
+  transform: translateY(3.5px);
+}
+
+.burger span[data-open] {
+  background: transparent;
+}
+
+.burger span[data-open]::before {
+  transform: rotate(45deg);
+}
+
+.burger span[data-open]::after {
+  transform: rotate(-45deg) translateY(0);
+}
+
+.panel {
+  display: none;
+  padding: 0.5rem var(--gutter) 1.5rem;
+  background: rgba(8, 13, 17, 0.97);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--c-line);
+}
+
+.panel ul {
+  display: grid;
+  gap: 0.25rem;
+  margin-bottom: 1rem;
+}
+
+.panel ul a {
+  display: block;
+  padding: 0.7rem 0;
+  font-size: 1rem;
+  color: var(--c-text-2);
+  border-bottom: 1px solid var(--c-line);
+}
+
+.panelActions {
+  display: grid;
+  gap: 0.6rem;
+}
+
+@media (max-width: 1080px) {
+  .nav {
+    display: none;
+  }
+
+  /* Below the nav breakpoint the demo route lives in the menu, so the bar
+     keeps one action and nothing competing with it. */
+  /* Both quiet links move into the panel together. */
+  .quietLink {
+    display: none;
+  }
+
+  .burger {
+    display: grid;
+  }
+
+  .panel[data-open] {
+    display: block;
+  }
+
+  .bar {
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 520px) {
+  /* The primary CTA stays on screen rather than moving into the menu. An
+     executive opening this from a message should never have to find the
+     hamburger to convert. Compact, not hidden — and not a sticky buy-bar. */
+  /* Only on the request page, in place of the whole nav and CTA. */
+  .back {
+    margin-inline-start: auto;
+    font-size: var(--t-body);
+    color: var(--c-text-3);
+    transition: color 0.2s var(--ease-out);
+  }
+
+  .back:hover {
+    color: var(--c-text);
+  }
+
+  .actions {
+    gap: 0.45rem;
+  }
+
+  .actions .cta {
+    font-size: 0.75rem;
+    padding: 0.55rem 0.7rem;
+    white-space: nowrap;
+  }
+
+  /* The arrow is the first thing to go when space is tight. */
+  .actions .cta svg {
+    display: none;
+  }
+}
+
+/* Login in the mobile panel. A text link under the two buttons, so the panel
+   keeps the same order of priority the bar has. */
+.panelLogin {
+  display: block;
+  padding: 0.55rem 0;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--c-text-2);
+  transition: color 0.2s var(--ease-out);
+}
+
+.panelLogin:hover {
+  color: var(--c-text);
+}

@@ -1,0 +1,48 @@
+.mark {
+  display: inline-grid;
+  place-items: center;
+  border-radius: 6px;
+  overflow: hidden;
+  flex: none;
+}
+
+/* For artwork supplied with its own light background. The plate is the
+   container's job — the file is never altered to suit our page. Small inset
+   so the mark is not flush to the corner radius. */
+/* The inset is set inline from the box's own size — a percentage here would
+   resolve against the containing block's width, which on a wide row balloons
+   the plate and squeezes the artwork to nothing. */
+.plate {
+  background: #fff;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.portrait {
+  display: inline-block;
+  border-radius: 50%;
+  overflow: hidden;
+  flex: none;
+}
+
+/* A reserved slot, not a mark. Quiet enough that it reads as "pending"
+   rather than as a company that chose a dashed square for a logo. */
+.pending {
+  color: var(--c-text-4);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* No photograph. Initials on a neutral surface — a convention, not a
+   likeness invented for a real person. */
+.monogram {
+  display: inline-grid;
+  place-items: center;
+  background: var(--c-surface-3);
+  /* AA DEVIATION FROM THE PROTOTYPE (M2): --c-text-3 on --c-surface-3 is
+     4.22:1, and these are a customer's initials — real text, at small size,
+     on the lightest surface in the palette. One tier up clears AA.
+     styles/marketing-tokens.test.ts asserts the pairing. */
+  color: var(--c-text-2);
+  font-weight: var(--w-strong);
+  letter-spacing: 0.02em;
+  line-height: 1;
+}

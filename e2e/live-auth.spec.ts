@@ -160,14 +160,18 @@ test('with an org (harness-created), the shell appears; sign out and logout-all 
   // Sign out: session revoked server-side AND locally â€” marketing front door.
   await page.getByRole('button', { name: 'Account menu' }).click()
   await page.getByRole('menuitem', { name: 'Sign out', exact: true }).click()
-  await expect(page.getByRole('heading', { level: 1, name: 'Your marketing, already done.' })).toBeVisible()
+  // The signed-out front door is the concept-v2 marketing site (M2): its h1
+  // is the hero headline, which spans three lines.
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('before you were.')
 
   // Logout-all: sign in again, revoke everything, land back outside.
   await loginViaUi(page, emailA, NEW_PASSWORD)
   await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible()
   await page.getByRole('button', { name: 'Account menu' }).click()
   await page.getByRole('menuitem', { name: 'Sign out everywhere' }).click()
-  await expect(page.getByRole('heading', { level: 1, name: 'Your marketing, already done.' })).toBeVisible()
+  // The signed-out front door is the concept-v2 marketing site (M2): its h1
+  // is the hero headline, which spans three lines.
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('before you were.')
 })
 
 async function inviteNewUser(request: APIRequestContext, token: string, orgId: string) {

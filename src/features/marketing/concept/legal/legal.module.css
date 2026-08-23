@@ -1,0 +1,278 @@
+/* Legal pages are quieter than the rest of the site on purpose: one column of
+   readable prose, no glow, no gradient panels, no display type competing with
+   the text. Everything here optimises for someone actually reading it.
+
+   The measures below are in rem rather than ch: DM Sans's "0" is wide enough
+   that 68ch renders about 91 average characters, well past the comfortable
+   range. 35rem lands at roughly 72. */
+
+.page {
+  --measure-body: 35rem;
+  --measure-head: 40rem;
+  padding-top: var(--section-y-dense);
+  /* One section's rhythm of air before the footer, so a long document does
+     not end abruptly. */
+  padding-bottom: var(--section-y);
+}
+
+.head {
+  padding-bottom: clamp(1.5rem, 2.5vw, 2.25rem);
+  border-bottom: 1px solid var(--c-line);
+}
+
+.eyebrow {
+  font-size: var(--t-micro);
+  font-weight: var(--w-strong);
+  letter-spacing: var(--track-caps);
+  text-transform: uppercase;
+  color: var(--c-text-4);
+}
+
+.title {
+  margin-top: 0.7rem;
+  font-family: var(--f-display);
+  font-weight: var(--w-display);
+  font-size: clamp(1.875rem, 3.4vw, 2.75rem);
+  line-height: 1.1;
+  letter-spacing: var(--track-display-sm);
+  color: var(--c-text);
+  max-width: 20ch;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1.5rem;
+  margin-top: 1rem;
+  font-size: var(--t-small);
+  color: var(--c-text-3);
+}
+
+.summary {
+  margin-top: 1.1rem;
+  max-width: var(--measure-head);
+  font-size: var(--t-lead);
+  line-height: 1.7;
+  color: var(--c-text-2);
+}
+
+/* Said once, quietly, where a reader meets the first placeholder. Not a
+   banner — the page is a draft, not an announcement. */
+.pending {
+  margin-top: 1.1rem;
+  padding: 0.75rem 0.95rem;
+  border-inline-start: 2px solid var(--c-accent-line);
+  background: rgba(255, 255, 255, 0.014);
+  max-width: var(--measure-head);
+  font-size: var(--t-small);
+  line-height: 1.6;
+  color: var(--c-text-3);
+}
+
+.pending code {
+  font-family: inherit;
+  color: var(--c-text-2);
+}
+
+/* --- body ------------------------------------------------------------ */
+
+.body {
+  display: grid;
+  grid-template-columns: minmax(0, 15rem) minmax(0, 1fr);
+  gap: clamp(1.5rem, 4vw, 4rem);
+  align-items: start;
+  margin-top: clamp(1.75rem, 3vw, 2.75rem);
+}
+
+.toc {
+  position: sticky;
+  top: 6rem;
+}
+
+.tocHead {
+  font-size: var(--t-micro);
+  font-weight: var(--w-strong);
+  letter-spacing: var(--track-caps);
+  text-transform: uppercase;
+  color: var(--c-text-4);
+  margin-bottom: 0.7rem;
+}
+
+.tocList {
+  display: grid;
+  gap: 0.3rem;
+  counter-reset: toc;
+}
+
+.tocList a {
+  display: grid;
+  grid-template-columns: 1.6rem minmax(0, 1fr);
+  gap: 0.25rem;
+  font-size: var(--t-small);
+  line-height: 1.45;
+  color: var(--c-text-3);
+  text-decoration: none;
+  padding-block: 0.15rem;
+}
+
+.tocList a::before {
+  counter-increment: toc;
+  content: counter(toc, decimal-leading-zero);
+  color: var(--c-text-4);
+  font-variant-numeric: tabular-nums;
+}
+
+.tocList a:hover {
+  color: var(--c-text);
+}
+
+.tocList a:focus-visible {
+  outline: 2px solid var(--c-accent-line);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+/* --- prose ------------------------------------------------------------ */
+
+.sections {
+  display: grid;
+  gap: clamp(1.75rem, 2.6vw, 2.5rem);
+  /* The single most important number on the page: line length. */
+  max-width: var(--measure-body);
+}
+
+.section {
+  scroll-margin-top: 6rem;
+}
+
+.sectionNum {
+  font-size: var(--t-micro);
+  font-weight: var(--w-strong);
+  letter-spacing: var(--track-caps);
+  color: var(--c-text-4);
+  font-variant-numeric: tabular-nums;
+}
+
+.sectionTitle {
+  margin-top: 0.4rem;
+  font-family: var(--f-display);
+  font-weight: var(--w-display);
+  font-size: clamp(1.125rem, 1.6vw, 1.375rem);
+  line-height: 1.3;
+  letter-spacing: var(--track-display-sm);
+  color: var(--c-text);
+}
+
+.prose {
+  margin-top: 0.75rem;
+  display: grid;
+  gap: 0.85rem;
+  font-size: 0.9375rem;
+  line-height: 1.75;
+  color: var(--c-text-2);
+}
+
+.prose ul {
+  display: grid;
+  gap: 0.4rem;
+  padding-inline-start: 1.1rem;
+  list-style: none;
+}
+
+.prose li {
+  position: relative;
+}
+
+.prose li::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: -0.95rem;
+  top: 0.7em;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--c-text-4);
+}
+
+.prose strong {
+  font-weight: var(--w-ui);
+  color: var(--c-text);
+}
+
+.prose a {
+  color: var(--c-accent-hi);
+  text-decoration: none;
+  border-bottom: 1px solid var(--c-accent-line);
+}
+
+.prose a:hover {
+  border-bottom-color: var(--c-accent-hi);
+}
+
+.prose a:focus-visible {
+  outline: 2px solid var(--c-accent-line);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* An outstanding value, visible as outstanding. */
+.tbc {
+  color: var(--c-text-3);
+  border-bottom: 1px dashed var(--c-line-3);
+  white-space: nowrap;
+}
+
+/* --- foot ------------------------------------------------------------- */
+
+.foot {
+  margin-top: clamp(2.5rem, 4vw, 3.5rem);
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--c-line);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.75rem;
+  font-size: var(--t-small);
+  color: var(--c-text-4);
+  max-width: var(--measure-body);
+}
+
+.foot a {
+  color: var(--c-text-3);
+  text-decoration: none;
+  border-bottom: 1px solid var(--c-line-2);
+}
+
+.foot a:hover {
+  color: var(--c-text);
+}
+
+.foot a:focus-visible {
+  outline: 2px solid var(--c-accent-line);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* --- responsive -------------------------------------------------------- */
+
+@media (max-width: 900px) {
+  .body {
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
+  }
+
+  .toc {
+    position: static;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--c-line);
+  }
+
+  .tocList {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .tocList {
+    grid-template-columns: 1fr;
+  }
+}

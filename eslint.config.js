@@ -70,8 +70,7 @@ const noNetwork = {
       },
     ],
     messages: {
-      network:
-        'Network code is legal only in src/api/ (guard-static enforces the same law).',
+      network: 'Network code is legal only in src/api/ (guard-static enforces the same law).',
       httpLiteral:
         'No absolute http(s) URLs in source — the API base URL comes from VITE_API_BASE_URL.',
     },
@@ -237,7 +236,19 @@ export default tseslint.config(
   },
   // These files legitimately export hooks/values beside components
   {
-    files: ['src/data/**/*.{ts,tsx}', 'src/routes.tsx', 'src/lib/theme.tsx'],
+    files: [
+      'src/data/**/*.{ts,tsx}',
+      'src/routes.tsx',
+      'src/lib/theme.tsx',
+      // The concept-v2 port (M2, decisions.md D-M2-E) is VENDORED source, kept
+      // file-for-file as Abdullah wrote it so it can be diffed against the
+      // prototype again. Two of its files export a JSX-carrying constant beside
+      // their components — platform metadata and a wordmark predicate — which
+      // cannot move to a sibling `.ts` because they hold elements. Fast refresh
+      // is a dev-ergonomics rule; splitting upstream's files to satisfy it
+      // would cost the one thing the verbatim port is for.
+      'src/features/marketing/concept/**/*.tsx',
+    ],
     rules: {
       'react-refresh/only-export-components': 'off',
     },

@@ -1,0 +1,200 @@
+/* The customer's campaign design language, at any size.
+
+   Type is set in container-query units so one composition serves a ~270px
+   card in the fan-out and a much larger frame elsewhere without a second
+   layout. */
+
+.creative {
+  container-type: inline-size;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--ground);
+  color: #fff;
+  overflow: hidden;
+}
+
+/* ------------------------------------------------------------------ *
+ * Photo-led — the only layout here
+ *
+ * The customer's own image across the top, their mark on it, and the type set
+ * on the ground it resolves into. Nothing in this file draws a stand-in for a
+ * brand's artwork: where we hold the artwork it is used, and where we do not,
+ * the card carries no campaign creative at all.
+ * ------------------------------------------------------------------ */
+
+.photoLed {
+  /* Padding is deliberately NOT set here. `cqw` on the container itself has no
+     ancestor container to resolve against and falls back to the viewport, so a
+     5.5cqw pad became 79px inside a 264px frame — and because an inline-size
+     container is measured on its *content* box, that shrank every child's cqw
+     with it. The inset lives on the children instead, which leaves 1cqw equal
+     to 1% of the frame, where the type sizes below assume it is. */
+  padding: 0;
+  gap: 0;
+  justify-content: flex-start;
+}
+
+/* Their image, cropped from their published creative and reframed.
+
+   It runs as a band across the top rather than full bleed. Both images we
+   hold are wider than they are tall, and covering a portrait frame with one
+   crops its subject off at both edges — the product, or the render, stops
+   being the hero of its own campaign. A band shows the whole thing. */
+.photo {
+  position: absolute;
+  inset: 0 0 auto 0;
+  width: 100%;
+  height: 56%;
+  object-fit: cover;
+}
+
+/* The image resolving into the brand ground, so the band has no seam, plus a
+   light top vignette so a white badge never has to fight the artwork. */
+.scrim {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 58%;
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.5) 0%,
+      rgba(0, 0, 0, 0.16) 14%,
+      rgba(0, 0, 0, 0) 30%
+    ),
+    linear-gradient(
+      to top,
+      var(--ground) 0%,
+      color-mix(in srgb, var(--ground) 92%, transparent) 6%,
+      color-mix(in srgb, var(--ground) 34%, transparent) 18%,
+      transparent 34%
+    );
+}
+
+/* Everything that is not the image or its scrim stacks above them, and
+   carries the frame's inset itself. */
+.photoLed > *:not(.photo):not(.scrim) {
+  position: relative;
+  margin-inline: 6cqw;
+}
+
+/* Their mark arrives on a white plate, so it is placed as a badge — the way a
+   brand puts its own logo on its own creative. Never cut out, never
+   recoloured, and large enough here to actually be read. */
+.logo {
+  order: 0;
+  height: auto;
+  width: 22cqw;
+  margin-top: 4.5cqw;
+  align-self: flex-start;
+  background: #fff;
+  border-radius: 1.6cqw;
+  padding: 1.4cqw 1.8cqw;
+  object-fit: contain;
+  box-shadow: 0 1.4cqw 4cqw rgba(0, 0, 0, 0.5);
+}
+
+/* One auto margin, and it is here: the logo sits where the column starts and
+   everything from the kicker down is pushed onto the ground band. A second
+   auto margin would split the free space and leave both floating. */
+.kicker {
+  order: 1;
+  margin-top: auto;
+  margin-bottom: 1.4cqw;
+  font-size: 3.4cqw;
+  font-weight: var(--w-strong);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.kicker.ar {
+  letter-spacing: 0;
+  text-transform: none;
+  font-size: 3.6cqw;
+}
+
+.headline {
+  order: 2;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--f-display);
+  font-weight: var(--w-strong);
+  font-size: 10.5cqw;
+  line-height: 1;
+  letter-spacing: -0.035em;
+  text-transform: uppercase;
+}
+
+.headlineAr {
+  font-family: var(--f-arabic);
+  font-size: 8.6cqw;
+  line-height: 1.28;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.accent {
+  color: var(--accent);
+}
+
+.rule {
+  order: 3;
+  width: 10cqw;
+  height: 0.8cqw;
+  background: var(--accent);
+  margin: 2.2cqw 0 0;
+}
+
+.ar {
+  font-family: var(--f-arabic);
+  line-height: 1.7;
+}
+
+.orderRow {
+  order: 4;
+  display: flex;
+  align-items: center;
+  gap: 2.4cqw;
+  flex-wrap: wrap;
+  margin-top: 3cqw;
+  margin-bottom: 6cqw;
+}
+
+.cta {
+  padding: 2.4cqw 4.4cqw;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #120704;
+  font-size: 3.5cqw;
+  font-weight: var(--w-strong);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.productName {
+  font-size: 3cqw;
+  line-height: 1.35;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+/* No call to action beside it: the supporting line stands on its own. */
+.standalone {
+  order: 4;
+  margin-top: 2.6cqw;
+  font-size: 3.4cqw;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+/* The markets the customer names on their own creative. */
+.markets {
+  order: 5;
+  margin-top: 2.2cqw;
+  margin-bottom: 6cqw;
+  padding-top: 2.2cqw;
+  border-top: 1px solid rgba(255, 255, 255, 0.16);
+  font-size: 3.1cqw;
+  line-height: 1.4;
+  color: var(--accent);
+}

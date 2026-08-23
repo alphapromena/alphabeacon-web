@@ -2,6 +2,12 @@
  * W2's verify: the marketing → signup → verify → onboarding → dashboard walk,
  * plus the states screens4.md calls out for Area A.
  *
+ * SCOPE (M2): the visitor world's own coverage — sections, CTA wiring, pricing,
+ * the demo request, the legal pages, reduced motion, the approval loop — lives
+ * in `marketing.spec.ts` now. What stays here is the SEAM: that the front door
+ * is the marketing site when signed out, and that "Get started" opens the real
+ * account-creation journey this file walks end to end.
+ *
  * NAVIGATION RULE for this file: after switching datasets, move only through
  * in-app links. `page.goto` reloads the SPA, and a reload rebuilds the default
  * dataset — which is the app behaving correctly (nothing persists), but it
@@ -38,73 +44,25 @@ async function walkToPipelineStep(page: Page) {
 test('marketing is the front door when signed out', async ({ page }) => {
   await asVisitor(page)
 
-  // The V1 hero (brief §2): the headline is the h1; the wordmark lives in
-  // the navigation, which carries the brand alone.
+  // The concept-v2 hero (M2): the headline is the h1, the wordmark lives in
+  // the navigation, and the way into the product is one click from here.
+  // What the page SAYS is marketing.spec.ts's business; this is the seam.
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('before you were.')
   await expect(
-    page.getByRole('heading', { level: 1, name: 'Your marketing, already done.' }),
-  ).toBeVisible()
-  await expect(page.getByText('Malaky learns your business and prepares')).toBeVisible()
-  await expect(page.getByRole('heading', { name: "Today's workspace" })).toBeVisible()
-  await expect(page.getByRole('heading', { name: 'Frequently asked questions' })).toBeVisible()
-  // Pricing is out of the V1 flow (D3): no nav item, no section.
-  await expect(page.getByRole('link', { name: 'Pricing' })).toHaveCount(0)
-  await expect(page.getByRole('heading', { name: 'Simple, predictable pricing' })).toHaveCount(0)
+    page.getByRole('banner').getByRole('link', { name: 'Get started' }).first(),
+  ).toHaveAttribute('href', '/signup')
+  await expect(page.getByRole('banner').getByRole('link', { name: 'Login' })).toHaveAttribute(
+    'href',
+    '/login',
+  )
 })
 
-test('@reduced-motion the scroll engine never mounts', async ({ page }) => {
-  // The tier-2 license (design.md Part 5 v2): under prefers-reduced-motion
-  // the static layout renders — complete and readable, engine-free. The
-  // structural check proves the gate exists; this proves it closes.
-  await page.emulateMedia({ reducedMotion: 'reduce' })
+test('@axe the auth screens reached from marketing scan clean', async ({ page }) => {
+  // The marketing routes are scanned in marketing.spec.ts; this walks the
+  // seam and scans what is on the other side of it.
   await asVisitor(page)
-  await expect(
-    page.getByRole('heading', { level: 1, name: 'Your marketing, already done.' }),
-  ).toBeVisible()
-  await expect(page.locator('[data-mk-engine]')).toHaveCount(0)
-  await expect(page.locator('canvas')).toHaveCount(0)
-  await expect(page.locator('video')).toHaveCount(0)
-  // The story's content is all still there, in document flow.
-  await expect(page.getByText('Built overnight.')).toBeVisible()
-  await expect(page.getByText('You approve what goes out.')).toBeVisible()
-})
 
-test('the Arabic demo content is native RTL', async ({ page }) => {
-  await asVisitor(page)
-  // The §24 split screen: the Arabic panel declares direction and language,
-  // and renders the campaign as Arabic — not a mirrored English layout.
-  const arabicPanel = page.locator('[dir="rtl"][lang="ar"]', {
-    hasText: 'العيد على طاولة واحدة.',
-  })
-  await expect(arabicPanel).toBeVisible()
-  await expect(arabicPanel).toHaveCSS('direction', 'rtl')
-})
-
-test('S5: approving the demo post schedules it and updates memory', async ({ page }) => {
-  // The control-loop moment (brief §23): Approve · Edit · Decline are real
-  // affordances, and Approve animates the card into its Scheduled state.
-  // The static tier renders the same ApprovalDemo, so the interaction is
-  // asserted on the layout every visitor can reach. Since the production
-  // pass, Today's Workspace carries a second, independent approval loop —
-  // the hero demo is the FIRST Approve in document order, the workspace's
-  // is the LAST, and both are walked here.
-  await page.emulateMedia({ reducedMotion: 'reduce' })
-  await asVisitor(page)
-  await page.getByRole('button', { name: 'Approve', exact: true }).first().click()
-  await expect(page.getByText('Scheduled · Mon 09:00')).toBeVisible()
-  await expect(page.getByText('Memory updated from your approval.')).toBeVisible()
-
-  // The workspace loop (production pass item 4): Ready for review →
-  // Approved → Scheduled · 18:00 → the memory touch.
-  await page.getByRole('button', { name: 'Approve', exact: true }).last().click()
-  await expect(page.getByText('Scheduled · 18:00').first()).toBeVisible()
-  await expect(page.getByText('Memory updated ✓').first()).toBeVisible()
-})
-
-test('@axe marketing and auth screens scan clean', async ({ page }) => {
-  await asVisitor(page)
-  expect((await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze()).violations).toEqual([])
-
-  await page.getByRole('link', { name: 'Sign in' }).click()
+  await page.getByRole('banner').getByRole('link', { name: 'Login' }).click()
   await expect(page.getByRole('heading', { name: 'Welcome back' })).toBeVisible()
   expect((await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze()).violations).toEqual([])
 
@@ -113,39 +71,13 @@ test('@axe marketing and auth screens scan clean', async ({ page }) => {
   expect((await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze()).violations).toEqual([])
 })
 
-test('the request-access flow takes real details and confirms', async ({ page }) => {
-  // Phase 2 §24: the marketing CTAs land on the early-access request, not
-  // the app's signup. Empty submit speaks in designed messages; a complete
-  // request earns the "You're on the list." confirmation.
-  await asVisitor(page)
-  await page.getByRole('link', { name: 'Request early access' }).first().click()
-  await expect(page.getByRole('heading', { name: 'Request early access' })).toBeVisible()
-
-  await page.getByRole('button', { name: 'Request access' }).click()
-  await expect(
-    page.getByText('Tell us your name so drafts can be attributed to you.'),
-  ).toBeVisible()
-
-  await page.getByLabel('Full name').fill('Maya Haddad')
-  await page.getByLabel('Work email').fill('maya@falak.example')
-  await page.getByLabel('Company').fill('Falak Logistics')
-  await page.getByLabel('Country').fill('Saudi Arabia')
-  await page.getByLabel('Your role').click()
-  await page.getByRole('option', { name: 'Founder / CEO' }).click()
-  await page.getByRole('button', { name: 'Request access' }).click()
-
-  await expect(page.getByRole('heading', { name: "You're on the list." })).toBeVisible()
-  await expect(page.getByText('maya@falak.example')).toBeVisible()
-})
-
 test('@golden signup → verify → onboarding → dashboard', async ({ page }) => {
   await asVisitor(page)
 
-  // Early-access model: the marketing CTA opens the request form, so the
-  // app's own signup is reached the way a returning prospect would —
-  // Sign in, then "Create an account".
-  await page.getByRole('link', { name: 'Sign in' }).click()
-  await page.getByRole('link', { name: 'Create an account' }).click()
+  // M2's launch model (D-M2-D): "Get started" IS the app's own signup, so the
+  // golden walk starts where a real visitor starts — one click, no detour
+  // through a second door.
+  await page.getByRole('banner').getByRole('link', { name: 'Get started' }).first().click()
   await expect(page.getByRole('heading', { name: 'Create your account' })).toBeVisible()
 
   await page.getByLabel('Full name').fill('Lena Park')
@@ -244,7 +176,7 @@ test('a tone created mid-wizard comes back selected, without losing the step', a
 
 test('sign-in locks out after repeated failures and counts down', async ({ page }) => {
   await asVisitor(page)
-  await page.getByRole('link', { name: 'Sign in' }).click()
+  await page.getByRole('banner').getByRole('link', { name: 'Login' }).click()
 
   for (let attempt = 0; attempt < 3; attempt += 1) {
     await page.getByLabel('Work email').fill('nobody@example.com')

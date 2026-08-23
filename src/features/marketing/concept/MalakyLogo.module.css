@@ -1,0 +1,34 @@
+/* Sizing only. The artwork is never recoloured, filtered or reproportioned —
+   no filter, no background, no forced width. */
+
+.logo {
+  display: block;
+  width: auto;
+  object-fit: contain;
+  user-select: none;
+}
+
+.nav {
+  height: 52px;
+}
+
+.footer {
+  height: 56px;
+}
+
+@media (max-width: 1080px) {
+  .nav {
+    height: 40px;
+  }
+}
+
+@media (max-width: 520px) {
+  /* Still clearly legible on a small header, never shrunk to an afterthought. */
+  .nav {
+    height: 36px;
+  }
+
+  .footer {
+    height: 46px;
+  }
+}

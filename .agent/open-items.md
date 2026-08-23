@@ -466,7 +466,12 @@ New for the Malaky M1 (2026-08-08):
 
 ## 17. Production pass artifacts needing a human (2026-08-11)
 
-- [ ] **Legal review**: `/privacy` and `/terms` (src/features/system/
+- [ ] **Legal review** — RE-SCOPED 2026-08-23 (M2). The pass's plain-language
+      drafts are gone: `/privacy` and `/terms` now render Abdullah's ported
+      website documents (`features/marketing/concept/legal/`), whose undecided
+      values print as visible `[To be confirmed: …]` placeholders rather than
+      as prose. See item 21 for what a lawyer now has to supply. The original
+      item, for the record: `/privacy` and `/terms` (src/features/system/
       legal-screens.tsx) were drafted plain-language by the pass and are
       live. Counsel must review before paid acquisition.
 - [ ] **support@malaky.ai** is the contact address on both documents —
@@ -523,3 +528,121 @@ New for the Malaky M1 (2026-08-08):
       most of the signal. To enable: get sign-off, amend D6 in
       decisions.md, add the marks to `platform-chrome.tsx`, and relax the
       verify-w02 logo assertion.
+
+## 21. M2 — the concept-v2 visitor world (2026-08-23, `design/m2-concept-v2`)
+
+Everything here is a founder or specialist decision. None of it blocks the
+branch; all of it blocks DNS cutover or launch.
+
+### Blocking cutover
+
+- [ ] **`/request-demo` has no destination.** `submitDemoRequest` resolves
+      locally after 900 ms and transmits nothing — the module says so in its
+      own header, and the network law forbids anything else from `src/`
+      outside `src/api/`. The form promises a reply and the success state says
+      "You're on the list", so **this must reach a real mailbox or CRM before
+      the site is live on malaky.ai.** Wiring it is a data-layer job (a new
+      `src/api/` seam, or a form vendor), not a marketing one — the component
+      awaits one promise and renders a result, exactly as it would against a
+      real service.
+- [ ] **`hello@malaky.ai` is a PLACEHOLDER.** It is the ONE invented value in
+      the whole port. The prototype carried no contact address anywhere — no
+      `mailto:`, nothing in the footer, and every value in `lib/legal.ts` is
+      still `null` — but a form that transmits nothing has to offer some way
+      to reach a person, so the demo page shows this address in the form
+      footer and again in the success state. Point it at whatever mailbox
+      sales actually reads, or supply a different one. `CONTACT_EMAIL` in
+      `features/marketing/concept/site.ts` is the single place it lives.
+- [ ] **Legal values.** `features/marketing/concept/lib/legal.ts` holds six
+      `null`s that render as `[To be confirmed: …]` on both public documents:
+      registered entity name, registered address, privacy mailbox, legal
+      mailbox, governing law + forum, and effective date. `isProductionReady()`
+      reports what is outstanding. **None of them may be guessed** — a privacy
+      policy naming an entity that does not exist is worse than one that says
+      the name is still to come. Counsel supplies them; filling them in here
+      is the whole change.
+
+### Needs a founder decision
+
+- [ ] **The CTA change (D-M2-D) is vetoable.** M2 retired the "Request early
+      access" launch model in favour of self-serve: every "Get started" is now
+      the real `/signup`, and `/request-access` redirects to `/request-demo`.
+      That follows Abdullah's brief, which is the newer instruction, but it
+      reverses the founder's own 2026-08-11 production-pass decision. Confirm
+      it, or say the word and it reverts — the path still exists, which is why
+      it is a redirect and not a deletion.
+- [ ] **Four AA deviations from Abdullah's design (D-M2-F, design.md 7.7).**
+      Review these against the prototype side by side, and send them back to
+      Abdullah:
+      1. the filled CTA's label is dark ink (`#1a0a05`) on the unchanged
+         orange, not white — white was 3.29:1 and this is the most visible of
+         the four;
+      2. `--c-text-4` aliases `--c-text-3` (the prototype's `#5d5a57` was
+         2.63–2.93:1 on ~40 elements);
+      3. the approval section's outcome cards are absent before you approve
+         rather than ghosted at 30% opacity;
+      4. the customer monogram moved up one text tier.
+      All four are one-line reversals if the founder accepts the risk instead.
+- [ ] **The auth seam.** `/signup`, `/login`, `/reset-password` and
+      `/accept-invite` still wear the APP design system — light, Inter, shadcn
+      — so a visitor crosses a visible seam at "Get started". Deliberate this
+      pass; restyling auth to concept-v2 is a separate order. Decide whether
+      it ships that way or waits.
+- [ ] **`public/brand/malaky-logo-gold.png` was replaced** with the
+      prototype's export (750×370 vs the repo's 610×352). The concept's
+      `MalakyLogo` declares the new file's intrinsic size, so the two are a
+      pair. Confirm the new export is the one to keep — nothing else in the
+      app references the gold colorway.
+- [ ] **`/request-access` is a redirect, not a route.** If early access is
+      genuinely over, this can be deleted outright at the next tidy. Left in
+      because a link somebody shared should not 404.
+
+### Found here, but NOT this branch's — flagged for whoever merges next
+
+- [ ] **The live suite is red on `main` right now, on latency.** Running all
+      thirteen files (`LIVE_MEDIA` off, one at a time) during M2's gates, nine
+      stopped somewhere in the signup → wizard-finish → Dashboard walk — always
+      a TIMEOUT, never a wrong assertion, and a different test each run. The
+      four worst were then re-run against a STASHED tree (plain `main`,
+      `5c01c68`, same dev server, same API) and **all four failed identically**:
+      `live-notifications`, `live-scheduling`, `live-team`, `live-auth`. So it
+      predates M2. The E2E-0820 close-out on 2026-08-20 recorded the same suite
+      as 45 passed / 2 skips / 0 failed, so either the API got slower or the
+      finish burst got longer. Someone should measure the wizard-Finish
+      round-trips against the live API before the next merge — the standing
+      rule says a merge to `main` runs the full live suite, and today that rule
+      cannot be satisfied by anyone, on any branch.
+
+### Needs a specialist, or a later phase
+
+- [ ] **Screen-reader walk of the visitor world.** axe is clean on all five
+      routes at 1440 and 390 and under reduced motion — but axe reads markup
+      and does not tab through anything (see the 2026-07-29 lesson above). The
+      hero orbit, the brand-demo sequence, the approval loop and the pricing
+      comparison table each have live regions or focus behaviour a scanner
+      cannot judge.
+- [ ] **The two pricing documents have to be reconciled eventually (D-M2-B).**
+      `features/marketing/concept/lib/pricing.ts` is the launch offer;
+      `src/data/entities/plans.ts` is what billing can charge for. They are
+      deliberately separate now and they will disagree the moment self-serve
+      checkout is real. That reconciliation belongs to the phase that builds
+      it, not to this one.
+- [ ] **Bundle.** The visitor world grew the entry chunk from 632 kB to
+      675 kB and the main stylesheet from 160 kB to 216 kB (D-M2-A). The
+      marketing route is deliberately the only eagerly-bundled screen, so
+      splitting it is a W7 decision with a real cost — a visitor at `/` would
+      pay a round trip for the page they came for.
+- [ ] **The customers' artwork is unoptimised, and it dominates the page.**
+      A first load of `/` off the production build transfers **3.83 MB**, of
+      which **2.79 MB is imagery** (JS 675 kB, CSS 216 kB, fonts 151 kB).
+      Adding the missing `loading="lazy"` hints took it down from 4.90 MB, but
+      four files are in the hero and legitimately eager:
+      `assessment-creative-square.png` **1.13 MB**,
+      `alpha-pro-logo.jpg` **512 kB** (a logo),
+      `assessment-render.png` **320 kB**, `crispy-fish-hero.png` **1.04 MB**
+      (now deferred). They are the customers' own files at source resolution,
+      rendered at a few hundred pixels. Re-encoding them (WebP/AVIF at the
+      sizes actually used) would cut roughly 2 MB — but they are supplied
+      artwork, so it is a decision for the founder and Abdullah, not a port.
+      This also blocks the W7 Lighthouse budget for marketing (≥ 95 perf).
+

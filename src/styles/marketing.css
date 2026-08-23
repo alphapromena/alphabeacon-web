@@ -1,0 +1,317 @@
+/* ------------------------------------------------------------------
+   Malaky — the visitor world (concept-v2)
+
+   A verbatim port of the prototype's `app/globals.css`, with exactly one
+   structural change: nothing here is global.
+
+   The prototype was a site. This is a site AND a signed-in product, and the
+   product keeps its own design system (design.md Parts 1–4, Tailwind + shadcn
+   tokens on `:root`). So the concept's tokens hang off `html[data-mk-world]`,
+   an attribute the marketing layout sets while it is mounted and removes when
+   it unmounts, and the concept's element resets hang off `.mk-world`, the
+   layout's own root element. Neither can reach an app screen: the app never
+   renders inside `.mk-world`, and the attribute is gone before it mounts.
+
+   Everything below is otherwise the prototype's, values unchanged EXCEPT the
+   four accessibility fixes marked "AA DEVIATION" — these tokens are the
+   single source of truth for the visitor world, and design.md Part 7
+   documents the system they make.
+
+   PORT NOTES
+   - The two type tokens are the one place values differ. Upstream read
+     `var(--font-sans)` / `var(--font-arabic)`, which next/font generated;
+     here the families are named directly from the self-hosted @font-face
+     imports at the top of this file. Same faces, one less indirection — and
+     `--font-sans` is already Tailwind's app-side token, which this must not
+     touch (D-M2-B is the pricing seam; this is the type seam).
+   - `box-sizing`, margin and list resets are repeated rather than assumed
+     from Tailwind's preflight, because a port that depends on someone else's
+     reset is a port that changes when that reset does.
+   - Those resets are written `:where(.mk-world) button`, not `.mk-world
+     button`, and that matters. Upstream they were bare element selectors, so
+     a component class like `.primary { color: #fff }` outranked them.
+     Scoping with a plain class would have flipped that — `.mk-world button {
+     color: inherit }` beats `.primary`, and the port's filled CTA silently
+     lost its white label. `:where()` contributes no specificity, so each rule
+     lands at exactly the weight it had in the prototype.
+------------------------------------------------------------------ */
+
+/* Self-hosted, zero network. DM Sans as the whole variable font — the weight
+   range is what the hierarchy is built from, and the optical-size axis is what
+   stops one face from looking like enlarged small type at 66px or shrunk
+   display type at 11px. Italic because the hero headline sets one word in it.
+   IBM Plex Sans Arabic in the three weights the Arabic content uses. */
+@import '@fontsource-variable/dm-sans/opsz.css';
+@import '@fontsource-variable/dm-sans/opsz-italic.css';
+@import '@fontsource/ibm-plex-sans-arabic/arabic-400.css';
+@import '@fontsource/ibm-plex-sans-arabic/arabic-500.css';
+@import '@fontsource/ibm-plex-sans-arabic/arabic-600.css';
+
+html[data-mk-world] {
+  /* --- Surfaces: very dark graphite, warm-leaning ------------------ */
+  --c-void: #05080b;
+  --c-bg: #080d11;
+  --c-surface-1: #0c1217;
+  --c-surface-2: #10171c;
+  --c-surface-3: #161f26;
+  --c-surface-4: #1d272f;
+
+  /* --- Lines ------------------------------------------------------ */
+  --c-line: rgba(255, 255, 255, 0.07);
+  --c-line-2: rgba(255, 255, 255, 0.12);
+  --c-line-3: rgba(255, 255, 255, 0.2);
+
+  /* --- Text: warm off-white, never stark ------------------------- */
+  --c-text: #f3ede6;
+  --c-text-2: #b3ada6;
+  --c-text-3: #857f79;
+  /* AA DEVIATION FROM THE PROTOTYPE (M2). Upstream this was #5d5a57, which
+     lands at 2.63–2.93:1 against the surfaces it is used on — under WCAG AA
+     for normal text, on roughly forty elements across the five pages
+     (footer, eyebrows, section numbers, "Optional", the pricing page's
+     planned-capability list). There is no room for a fourth tier above the
+     AA floor while the third sits where it does, so the fourth ALIASES the
+     third rather than inventing a new value in the designer's palette. Every
+     usage site keeps the `--c-text-4` name, so restoring a distinct
+     compliant tier is a one-line change here. See open-items. */
+  --c-text-4: #857f79;
+
+  /* --- Accent: used sparingly ------------------------------------ */
+  --c-accent: #ff4e2d;
+  --c-accent-hi: #ff6a4d;
+  --c-accent-lo: #e13d1e;
+  --c-accent-wash: rgba(255, 78, 45, 0.1);
+  --c-accent-line: rgba(255, 78, 45, 0.32);
+  --c-accent-glow: rgba(255, 78, 45, 0.22);
+  /* AA DEVIATION FROM THE PROTOTYPE (M2). The accent itself is UNCHANGED —
+     #ff4e2d is the identity and stays exactly as drawn. What changed is the
+     ink on it: upstream set `color: #fff` on the filled button, which is
+     3.29:1 at 14–15px and fails AA for normal text. Dark ink on the same
+     orange is 5.9:1 (6.8:1 on the hover tint), and the design already uses
+     that idiom — `.gold` sets `#1a1206` on the gold fill. Changing the fill
+     instead would have meant a different orange on every CTA on the site.
+     Icons on accent keep `#fff`: non-text contrast is a 3:1 bar and 3.29
+     clears it. */
+  --c-on-accent: #1a0a05;
+
+  /* --- Premium tone: pricing tiers only, never for actions -------- */
+  --c-gold: #e3c084;
+  --c-gold-hi: #f0d19c;
+  --c-gold-line: rgba(227, 192, 132, 0.28);
+  --c-gold-wash: rgba(227, 192, 132, 0.07);
+
+  /* --- Semantic state -------------------------------------------- */
+  --c-ok: #4fb286;
+  --c-ok-wash: rgba(79, 178, 134, 0.12);
+
+  /* --- Type ------------------------------------------------------- */
+  /* One Latin family, two roles.
+     --f-display is the same font as --f-sans; the separate name marks the
+     places that are set as display type, because those need their own
+     tracking and leading (see --track-display below), not their own face.
+     Hierarchy here is made of size, weight, spacing and opacity. */
+  --f-sans:
+    'DM Sans Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial,
+    sans-serif;
+  --f-display: var(--f-sans);
+  --f-arabic: 'IBM Plex Sans Arabic', var(--f-sans), 'Segoe UI', Tahoma, sans-serif;
+
+  /* --- Weights ----------------------------------------------------
+     Four steps, used everywhere. Display type sits at 400 and leans on size
+     rather than weight; 450 is the single-step lift inside a headline; 500
+     carries UI — buttons, labels, table headers; 600 is the top of the scale
+     and is reserved for small type that has to hold at 11–13px. */
+  --w-display: 400;
+  --w-display-em: 450;
+  --w-ui: 500;
+  --w-strong: 600;
+
+  /* --- Tracking ---------------------------------------------------
+     A single face across 11px to 66px needs the optical correction the size
+     axis alone does not make: negative at display sizes so words hold
+     together, positive on small uppercase so they do not clot. */
+  --track-display: -0.03em;
+  --track-display-sm: -0.022em;
+  --track-caps: 0.1em;
+
+  --t-display-1: clamp(2.75rem, 6.1vw, 5.25rem);
+  --t-display-2: clamp(2.25rem, 4.4vw, 3.75rem);
+  --t-display-3: clamp(1.75rem, 2.9vw, 2.5rem);
+  --t-lead: clamp(1rem, 1.15vw, 1.1875rem);
+  --t-body: 0.9375rem;
+  --t-small: 0.8125rem;
+  --t-micro: 0.6875rem;
+
+  /* --- Rhythm ----------------------------------------------------- */
+  --shell: 1240px;
+  --gutter: clamp(1.25rem, 4vw, 3rem);
+  /* FROZEN. The hero is the approved reference, and this is its own bottom
+     padding: 86px at 1440, 56px at 390. Sections were carrying 130/80, half
+     again as much air as the section everyone likes.
+
+     Both tokens and the section-head gap in ui.module.css are asserted by
+     verify:w02. Change one and that run fails — which is the point.
+     (Upstream asserted the same law from scripts/spacing-qa.mjs, which did
+     not come across — our gate culture stays ours, D-M2-C.) */
+  --section-y: clamp(3.5rem, 6vw, 6.5rem);
+  /* Functional pages — pricing, forms — run about two thirds of the hero's
+     rhythm. Dense because the reader is comparing and filling in, not
+     being introduced to anything. */
+  --section-y-dense: clamp(2.5rem, 4vw, 4.25rem);
+
+  /* --- Radii & shadow -------------------------------------------- */
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 18px;
+  --r-xl: 26px;
+  --shadow-card: 0 18px 40px -18px rgba(0, 0, 0, 0.85), 0 2px 8px -2px rgba(0, 0, 0, 0.6);
+  --shadow-float: 0 40px 80px -30px rgba(0, 0, 0, 0.95), 0 8px 24px -8px rgba(0, 0, 0, 0.7);
+
+  /* --- Motion ----------------------------------------------------- */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
+
+  color-scheme: dark;
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* The visitor world is dark whatever the app's theme is set to, and the page
+   behind the layout has to match it or over-scroll shows the app's surface.
+   Guards against any 3D/absolute child forcing a horizontal scrollbar —
+   `clip` rather than upstream's `hidden` only because this is not the body:
+   `overflow-x: hidden` on an element makes it a scroll container and would
+   break the sticky header inside it. */
+html[data-mk-world] body {
+  background: var(--c-bg);
+  overflow-x: clip;
+}
+
+.mk-world {
+  background: var(--c-bg);
+  color: var(--c-text);
+  font-family: var(--f-sans);
+  font-size: var(--t-body);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100svh;
+}
+
+:where(.mk-world) *,
+:where(.mk-world) *::before,
+:where(.mk-world) *::after {
+  box-sizing: border-box;
+}
+
+:where(.mk-world) h1,
+:where(.mk-world) h2,
+:where(.mk-world) h3,
+:where(.mk-world) h4,
+:where(.mk-world) p,
+:where(.mk-world) figure,
+:where(.mk-world) blockquote {
+  margin: 0;
+}
+
+:where(.mk-world) ul,
+:where(.mk-world) ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+:where(.mk-world) a {
+  color: inherit;
+  text-decoration: none;
+}
+
+:where(.mk-world) button,
+:where(.mk-world) input,
+:where(.mk-world) select,
+:where(.mk-world) textarea {
+  font: inherit;
+  color: inherit;
+}
+
+:where(.mk-world) button {
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+:where(.mk-world) img,
+:where(.mk-world) svg,
+:where(.mk-world) video {
+  display: block;
+  max-width: 100%;
+}
+
+:where(.mk-world) ::selection {
+  background: var(--c-accent);
+  color: var(--c-on-accent);
+}
+
+/* --- Focus: visible, never suppressed ---------------------------- */
+:where(.mk-world) :focus-visible {
+  outline: 2px solid var(--c-accent-hi);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* --- Shared primitives ------------------------------------------- */
+:where(.mk-world) .shell {
+  width: 100%;
+  max-width: var(--shell);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+:where(.mk-world) .visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+:where(.mk-world) .skip-link {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translate(-50%, -120%);
+  z-index: 200;
+  background: var(--c-accent);
+  color: var(--c-on-accent);
+  padding: 0.7rem 1.25rem;
+  border-radius: 0 0 var(--r-md) var(--r-md);
+  font-size: var(--t-small);
+  font-weight: 600;
+  transition: transform 0.2s var(--ease-out);
+}
+
+:where(.mk-world) .skip-link:focus-visible {
+  transform: translate(-50%, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-mk-world] {
+    scroll-behavior: auto;
+  }
+
+  :where(.mk-world),
+  :where(.mk-world) *,
+  :where(.mk-world) *::before,
+  :where(.mk-world) *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

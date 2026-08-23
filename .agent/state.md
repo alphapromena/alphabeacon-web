@@ -5,7 +5,9 @@ without reconstructing it from the session log. **Update this file at the end
 of any turn that finishes a phase or changes the plan.** `sessions.md` is the
 chronological record; this is the current picture.
 
-_Last updated: 2026-08-20, after the **E2E-0820 triage** branch
+_Last updated: 2026-08-23, after **M2** (`design/m2-concept-v2`) — the
+visitor world replaced with Abdullah's concept-v2 prototype, ported. **Branch
+only: not merged, not pushed.** Before that: 2026-08-20, after the **E2E-0820 triage** branch
 (`fix/e2e-0820`) — the founder's live in-app E2E on `1.malaky.ai` against org
 619; eight frontend fixes plus two root-cause probes, then **B9** — the
 stranded schedule draft, and a live org no longer wearing the demo's schedule.
@@ -28,8 +30,12 @@ integrating with the **live AlphaStudio API** (contract: `Docs/api/api.md`,
 refreshed 2026-08-17 to 62 paths; `Docs/api/changelog.md` is the per-change
 record and `Docs/api/alphastudio-shapes.md` is the observed proxy truth).
 **The product is now branded Malaky** (Arabic wordmark ملاكي, kit under
-`Docs/brand/`): new palette, Inter (proposed), calm motion law, and a
-rebuilt kit-flow marketing page (2026-08-08). `package.json`, internal `ab-`
+`Docs/brand/`): new palette, Inter (proposed), calm motion law. **Since M2
+(2026-08-23) there are TWO design systems in the repo:** the signed-in product
+(design.md Parts 1–6 — light-first, Inter, shadcn tokens) and the VISITOR
+WORLD (design.md Part 7 — Abdullah's concept-v2, dark, DM Sans + IBM Plex Sans
+Arabic, vendored under `src/features/marketing/concept/`). They are scoped so
+neither can reach the other. `package.json`, internal `ab-`
 identifiers, and the repo name deliberately keep the old name this phase.
 Network code is legal only in `src/api/`, only when `VITE_API_BASE_URL` is set;
 without it the app is byte-for-byte the static build and the e2e suite asserts
@@ -46,6 +52,7 @@ below).
 | `rb/02-v1-brief` | Website V1 per Abdullah's brief + the ambient idle drift + the M1 card-realism passes through 2026-08-12 — tip `6c598b2`, and `origin/main` is at the same commit, so the production line has all of it |
 | Local `main` ref | **STALE at `3f9f3b4`** (noticed 2026-08-17). `origin/main` == `rb/02-v1-brief` == `6c598b2`; the local ref simply was never fast-forwarded, so `git log main..` locally over-reports by 22 commits. Harmless, but `git fetch && git checkout main && git merge --ff-only origin/main` before trusting a local `main` comparison. |
 | `fix/e2e-0820` | **The E2E-0820 triage, 2026-08-20 — branched off `main` (`550f54e`), MERGED as a fast-forward and pushed; kept on `origin` as the per-fix record.** F3 Generate reachable from the rail/dashboard/Today, F4 the "credits" vocabulary + `/billing/balance`, F5 the pre-run count, F6 the tone-preview reference, F9 the balance chip's three states, F10 the stale results footer, F11 pluralization, F12 the wizard Finish (failure-tolerant, reported, idempotent), B9 the schedule draft reconciler + a blank schedule for a live org that has none. Gate output in the session entry |
+| `design/m2-concept-v2` | **M2 — the visitor world, 2026-08-23. Branched off `main` (`5c01c68`). NOT MERGED, NOT PUSHED — awaiting founder review.** Abdullah's `malaky-prototype` `components/concept-v2/**` ported into `src/features/marketing/`: five routes under one layout, 58 marketing files, its own token file and contrast guard. M1 retired with it. Decisions D-M2-A…F; open-items 21 |
 | `chore/api-sweep` | The 118-operation contract sweep (`89199d9`), one commit ahead of `main`, untouched by the triage |
 | `live`     | **Team-only staging**, always a fast-forward of `main` and never carrying commits of its own. Vercel builds its PREVIEW with a branch-scoped `VITE_API_BASE_URL`, so `live` is where the app runs against the real API; PRODUCTION (`main`) has no such variable and stays byte-for-byte static. **After every merge to `main`: `git push origin main:live`.** |
 | Phase branches on `origin` | `int/06-contract` · `int/07-brand-rules` · `int/08-country` · `int/09-wallet` · `int/10-generate` · `int/11-studio-knowledge` · `int/12-proposals` — pushed 2026-08-19 as the per-phase record, exactly as `w/NN` and `int/00…05` are kept. `probe/proposals` was deliberately NOT pushed: it is superseded, and its record lives on in `int/12` as `ee2bc57` |
@@ -78,14 +85,15 @@ aspirational, not a rule this repo follows.
 | W0 Foundation                        | —                            | Done · `verify:w00` green                                    |
 | W1 Design layer                      | —                            | Done · `verify:w01` green                                    |
 | — Brand pass                         | —                            | Superseded 2026-08-08 by the Malaky rebrand (below)          |
-| W2 Marketing/auth/onboarding         | M1, A1–A5, N3                | Done · `verify:w02` green                                    |
+| W2 Marketing/auth/onboarding         | M1, A1–A5, N3                | Done · `verify:w02` green (rewritten for concept-v2 in M2)   |
 | W3 Review queue                      | D1–D5                        | Done · `verify:w03` green                                    |
 | W4 Calendar + connections            | C1–C4, B1–B3                 | Done · `verify:w04` green                                    |
 | W5 Studio + billing                  | E1–E4, H1–H4                 | Done · `verify:w05` green                                    |
 | W6 Compose/analytics/settings/system | F1, G1–G2, I1–I7, N1, N2, N4 | Done · `verify:w06` green                                    |
 | — **Malaky rebrand** (`rb/00-malaky`) | M1 + every user-facing surface | Done 2026-08-08 — kit palette/typography/motion in `design.md`, name sweep, new M1, deploy fix (`VITE_DEFAULT_DATASET` + `vercel.json`) |
 | — **M1 cinematic layer** (`rb/01-motion`) | M1 | Done 2026-08-09, merged — then superseded by the V1 brief (film retired, D1) |
-| — **Website V1** (`rb/02-v1-brief`) | M1 | Built + verified 2026-08-10 — **branch only, awaiting founder sign-off (open-items 16)** |
+| — **Website V1** (`rb/02-v1-brief`) | M1 | Built + verified 2026-08-10 — **SUPERSEDED by M2, 2026-08-23** |
+| — **M2: concept-v2** (`design/m2-concept-v2`) | the whole visitor world | Built + verified 2026-08-23 — **branch only, awaiting founder review (open-items 21)** |
 | **W7 Hardening + ship**              | —                            | **Parked behind the two manual gates**                        |
 
 ## Integration phases (AlphaStudio API — contract at `docs/api/api.md`)
@@ -161,9 +169,10 @@ invented or faked: where a spec promised something the wire cannot deliver, the
 honest subset ships and the deviation is logged. The backend questions live in
 open-items 1–13 and 21–27; W7 still waits on the two reopened manual gates.
 
-Current totals on `fix/e2e-0820`: **423 unit tests** (41 files), **static e2e
-72 passed / 51 live-spec skips**, guard-static 255 files clean, verify:w02–w06
-all PASS, and the FULL live suite green (45 passed, 2 correct skips). (On `main` it is 398 unit tests / 38 files / 248 guarded files — the
+Current totals on `design/m2-concept-v2`: **457 unit tests** (42 files),
+**static e2e 85 passed / 51 live-spec skips**, guard-static 321 files clean,
+verify:w02–w06 all PASS. (On `main` before M2: 423 unit tests / 41 files /
+static e2e 72 passed / 255 guarded files.) (On `main` it is 398 unit tests / 38 files / 248 guarded files — the
 "394" this line used to claim was already one turn stale.)
 (The unit count dips by one: INT-10's localStorage run-ledger tests went with
 the ledger it tested — the proposals ledger replaced it server-side.)
@@ -189,23 +198,54 @@ questions; 32 carries a real paging bug the frontend is designed around.
 **No route is a stub any more** — `PlaceholderScreen` is deleted, and
 `verify:w06` fails if it comes back.
 
-**M1 is Abdullah's Website V1 on `rb/02-v1-brief` (2026-08-10, branch
-only):** the hero is the marketing Malaky produces — a scroll-choreographed
-3D story of publication-ready posts for four persistent demo brands
-(`features/marketing/outputs/`), with the S5 Approve·Edit·Decline control
-loop, the §5 workspace showcase, the §20–§27 proof sections (5-step
-workflow, channel adaptation, two voices, Built here + EN/AR split screen,
-proactive calendar, sources), the §29 eleven-question FAQ, and the dark CTA.
-Hero H1: "Your marketing, already done." Pricing is OUT per D3 (seam in
-`pricing-section.tsx`, unlinked). The rb/01 dashboard-as-glass-object film
-is retired (D1) and `public/film/` deleted — masters archived; the earlier
-2026-07 ink concept remains deleted too. The engine mounts only when
-no-preference is AFFIRMED and the viewport is wide; the static layout is the
-complete fallback and the mobile swipe story. M1 stays light-canonical.
-Claims discipline lives in `Docs/brief/claims-map.md`; founder items in
-open-items 16. Payload ~0.62 MB transferred vs the 3.0 MB D4 budget.
-(History: the 2026-08-08 kit-flow rebuild and the 2026-08-09 film layer —
-both superseded by the V1 brief; decisions.md D1–D8.)
+**M1 is Abdullah's concept-v2, ported (M2, 2026-08-23, branch only).** The
+visitor world is five routes under one layout route — `/` (Hero → Prompts →
+OneEvent → RealBrands → Approval → Memory → Arabic → BrandDemo → ClosingCta),
+`/pricing`, `/request-demo`, `/terms`, `/privacy` — with `Header`, `Footer` and
+`MediaDefs` mounted once above the `Outlet`. Dark, DM Sans + IBM Plex Sans
+Arabic **self-hosted** (two new deps, zero network), tokens on
+`html[data-mk-world]` and resets on `.mk-world` so nothing reaches an app
+screen. Upstream's source is VENDORED file-for-file under
+`src/features/marketing/concept/` (58 files) so it can be diffed against the
+prototype again; everything outside `concept/` is ours.
+
+**The CTA law (D-M2-D):** every "Get started" is the REAL `/signup`, Login is
+the real `/login`, "Request a private demo" is `/request-demo` — one map in
+`concept/site.ts`, unit-tested, and `site.test.ts` reads the source to prove no
+component types a route by hand. The prototype's purchase flow is deliberately
+NOT ported (D-M2-C): next to a real signup it would be a second, fake journey.
+The early-access model is retired and `/request-access` redirects to
+`/request-demo` — **the founder can veto that at review**, which is why the
+path still exists.
+
+**Pricing is marketing's own data (D-M2-B):** `concept/lib/pricing.ts`,
+verbatim from Abdullah. `usePlans()` and everything under `src/data` are
+untouched and no longer imported by marketing. The W2 verify line "marketing
+pricing and H1 pricing assert equal from one module" is superseded; the check
+now asserts the SEPARATION.
+
+**Four AA deviations from the prototype (D-M2-F, design.md 7.7),** all
+commented at the site of the change and all one-line reversible: the filled
+CTA's ink is dark on the unchanged `#ff4e2d` (white was 3.29:1); `--c-text-4`
+aliases `--c-text-3` (the prototype's `#5d5a57` was 2.63–2.93:1 on ~40
+elements); the approval preview is absent rather than held at `opacity: 0.3`
+(1.43:1); the customer monogram moved up a tier. `styles/marketing-tokens.test.ts`
+is the new guard, 26 assertions, mirroring `tokens.test.ts`.
+
+**What M1 took with it (D-M2-A):** `marketing-home.tsx`, the whole
+`outputs/` engine, `reveal.tsx`, the `pricing-section.tsx` seam, the
+`[data-mk-*]` motion layer in `globals.css`, `public/campaigns/`,
+`public/brand/og-malaky.png`, `features/system/legal-screens.tsx`, and the
+early-access screen + its analytics module. **The bundle did NOT shrink** —
+entry chunk 632 kB → 675 kB, main CSS 160 kB → 216 kB — because concept-v2's
+home page is a bigger thing than M1 was. Recorded in D-M2-A rather than
+explained away.
+
+**Not done, and logged:** `/request-demo` transmits nothing (the module says
+so), `hello@malaky.ai` is the ONE invented value in the port, the six legal
+values are still `null` and render as `[To be confirmed: …]`, and `/signup`
+still wears the app's design so the visitor crosses a visual seam at "Get
+started". All of it is open-items 21.
 
 ## What W7 needs (from `web-plan.md` §9)
 
@@ -311,6 +351,30 @@ These are learned the hard way; each cost a debugging cycle.
     count ("passages", "members") and only passed because the plural was
     unconditional — fixing the grammar broke them, which is the right way round.
 
+21. **Scoping a vendored stylesheet with a CLASS silently outranks the
+    vendor's own rules.** The concept-v2 port's resets were bare element
+    selectors upstream (`button { color: inherit }`), so a component class
+    like `.primary { color: #fff }` beat them. Scoping them as
+    `.mk-world button` flips that — (0,1,1) over (0,1,0) — and the filled CTA
+    lost its label colour on every page, silently, because "inherit" from a
+    dark page still renders text. `:where(.mk-world) button` contributes no
+    specificity, so each rule lands at exactly the weight it had upstream.
+    **When you scope someone else's stylesheet, scope it with `:where()` or
+    you are also re-ranking it.** Found by axe reporting the wrong foreground
+    colour on the button, not by looking at it.
+
+22. **A dev server left running in LIVE mode makes the whole STATIC suite fail
+    in confusing ways.** `playwright.config.ts` sets
+    `reuseExistingServer: !CI`, so `pnpm e2e` silently adopts whatever is on
+    5199 — including a server started by hand with `.env.local` loaded. In
+    live mode there is no seeded session, so `/` is the marketing site and
+    `/signup` renders instead of redirecting: 69 specs failed on
+    "waiting for heading Dashboard" and every one of them looked like a
+    regression in this branch. **Before reading a static-suite failure, check
+    what is listening on 5199.** The webServer block pins
+    `VITE_API_BASE_URL: '' ` for exactly this reason — but only for a server
+    IT starts.
+
 19. **"Has the user edited?" is a fact to RECORD, not to infer from a JSON
     diff against a moving reference.** C1 decided whether to adopt a freshly
     synced schedule by comparing its draft to the last pristine it had seen,
@@ -375,14 +439,31 @@ read source, because these failure modes pass behavioural tests:
   (post-W6 remediation).
 - Every posting time renders through `PostingTime`, labelled by GMT offset, and
   no screen claims to know the audience's local time (post-W6 remediation).
-- The M1 cinematic laws (verify:w02): the scrub never touches `currentTime`;
-  the reduced-motion still path exists; Lenis sits behind the motion guard;
-  pricing keeps `usePlans()` with no local plan data; every marketing `<video>`
-  is muted+`playsInline` and either `aria-hidden` ambience or a `controls`
-  player; media paths live in `media.ts`; tone chips read `useTones()` and
-  render `ToneBadge`.
+- **The visitor-world laws (verify:w02, rewritten for M2).** Thirteen checks
+  over `src/features/marketing/`: nothing Next-shaped survived the port (no
+  `next/` import, no `"use client"`, no `/concept-v2` path in code); the
+  purchase flow's nine modules stay absent; nothing imports `@/data` except
+  the layout; the CTA map declares `/signup` and `/login`; every screen sets
+  its page meta; the homepage's nine sections render in order; the tokens hang
+  off `html[data-mk-world]` and never `:root`, and the layout sets AND removes
+  that attribute before paint; the FROZEN section rhythm (both tokens and the
+  section-head gap) is byte-exact; the five self-hosted font imports are
+  present; `<video>` sits behind the reduced-motion return; the raw-color
+  exemption is exactly four artwork files; a quiet text tier never sits on a
+  light fill; M1's seven artefacts are gone from the tree and its motion layer
+  from `globals.css`; and `index.html` and `site.ts` agree on the homepage
+  title and the OG card.
+- The M1 cinematic laws are RETIRED with M1 (D-M2-A). They were: the scrub
+  never touches `currentTime`; the reduced-motion still path exists; Lenis
+  sits behind the motion guard; pricing keeps `usePlans()` with no local plan
+  data; every marketing `<video>` is muted+`playsInline`; media paths live in
+  `media.ts`; tone chips read `useTones()` and render `ToneBadge`.
 - The palette is guarded by `src/styles/tokens.test.ts` — 49 contrast
-  assertions, including the `bg-X/10 text-X` badge pattern.
+  assertions, including the `bg-X/10 text-X` badge pattern. **The visitor
+  world's palette is guarded the same way** by
+  `src/styles/marketing-tokens.test.ts` — 26 assertions over the text-tier ×
+  surface matrix, the CTA in both states, the focus ring, and the shape of
+  both ramps (M2).
 - **A production build boots into `visitor`, never signed-in** (verify:w02,
   2026-08-19). Checked on BOTH sides: the source derives the default from
   `import.meta.env.PROD`, and the emitted `dist/` is read back to confirm it

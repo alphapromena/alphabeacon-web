@@ -1,0 +1,203 @@
+.section {
+  padding-block: var(--section-y);
+  border-top: 1px solid var(--c-line);
+}
+
+.pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(1rem, 2vw, 1.75rem);
+}
+
+.panel {
+  margin: 0;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  border: 1px solid var(--c-line-2);
+  background:
+    linear-gradient(180deg, rgba(var(--tint), 0.34), rgba(var(--tint), 0.12)), var(--c-surface-1);
+}
+
+.panelHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+  background: rgba(0, 0, 0, 0.22);
+}
+
+.label,
+.labelAr {
+  font-size: var(--t-micro);
+  font-weight: var(--w-strong);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--c-text-2);
+}
+
+.labelAr {
+  font-family: var(--f-arabic);
+  letter-spacing: 0;
+  text-transform: none;
+  font-size: 0.75rem;
+  /* The one place on the page where Arabic names itself, set in the colour the
+     Arabic wordmark is drawn in. The English label opposite stays cream, so
+     the pairing is the point rather than decoration. */
+  color: var(--c-gold);
+}
+
+.badge {
+  font-size: 0.625rem;
+  font-weight: var(--w-strong);
+  letter-spacing: 0.1em;
+  padding: 0.2rem 0.45rem;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--c-text);
+}
+
+.body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  align-items: stretch;
+}
+
+.copy {
+  padding: clamp(1.25rem, 2.2vw, 1.9rem);
+  display: grid;
+  align-content: start;
+  gap: 0.65rem;
+}
+
+.headline {
+  font-family: var(--f-display);
+  font-weight: var(--w-display);
+  font-size: clamp(1.5rem, 2.2vw, 2rem);
+  line-height: 1.14;
+  letter-spacing: var(--track-display-sm);
+  color: var(--c-text);
+  margin-top: 0.35rem;
+}
+
+.headlineAr {
+  font-family: var(--f-arabic);
+  font-weight: var(--w-strong);
+  font-size: clamp(1.35rem, 2vw, 1.8rem);
+  line-height: 1.55;
+  color: var(--c-text);
+  margin-top: 0.35rem;
+}
+
+.sub,
+.subAr {
+  font-size: 0.9375rem;
+  color: rgba(243, 237, 230, 0.78);
+}
+
+.subAr {
+  font-family: var(--f-arabic);
+  line-height: 1.9;
+}
+
+.text,
+.textAr {
+  font-size: 0.875rem;
+  line-height: 1.65;
+  color: rgba(243, 237, 230, 0.6);
+}
+
+.textAr {
+  font-family: var(--f-arabic);
+  line-height: 2;
+}
+
+.cta,
+.ctaAr {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+  padding: 0.5rem 0.9rem;
+  border-radius: var(--r-sm);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  font-size: 0.8125rem;
+  font-weight: var(--w-strong);
+  color: var(--c-text);
+}
+
+.ctaAr {
+  font-family: var(--f-arabic);
+}
+
+.media {
+  position: relative;
+  min-height: 100%;
+}
+
+.media > div {
+  height: 100%;
+}
+
+.note {
+  margin-top: clamp(1.5rem, 2.5vw, 2rem);
+  text-align: center;
+  font-family: var(--f-display);
+  font-size: clamp(1.125rem, 1.8vw, 1.5rem);
+  color: var(--c-text-2);
+  letter-spacing: -0.01em;
+}
+
+@media (max-width: 1000px) {
+  .pair {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .body {
+    grid-template-columns: 1fr;
+  }
+
+  /* The frame stays portrait here. It used to flatten to 16:9, which suited a
+     drawn scene but not this one: what sits in it is a social post, and a
+     social post cropped to a letterbox stops looking like one. */
+}
+
+/* --- the customer, at the head of each panel ----------------------- */
+
+.brandLockup {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-width: 0;
+}
+
+.brandText {
+  display: grid;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.brandName {
+  font-family: var(--f-display);
+  font-weight: var(--w-display);
+  font-size: 1.0625rem;
+  line-height: 1.2;
+  letter-spacing: var(--track-display-sm);
+  color: var(--c-text);
+}
+
+.brandContext {
+  font-size: var(--t-small);
+  color: var(--c-text-3);
+}
+
+/* The language label moves out of the header and under it, so the customer
+   leads and the language is the supporting fact. */
+.panel > .label,
+.panel > .labelAr {
+  padding: 0.75rem clamp(1rem, 1.6vw, 1.35rem) 0;
+}

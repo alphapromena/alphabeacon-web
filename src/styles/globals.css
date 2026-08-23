@@ -8,6 +8,10 @@
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
 @import './tokens.css';
+/* The visitor world (concept-v2), scoped so it cannot reach an app screen:
+   its tokens hang off html[data-mk-world] and its resets off .mk-world.
+   Unlayered on purpose — it must outrank the @layer base rules below. */
+@import './marketing.css';
 
 /* Inter Variable is Malaky's single family (design.md Part 2 — PROPOSED,
    pending founder confirmation; the kit names no typeface). Vendored under
@@ -19,9 +23,9 @@
   font-display: swap;
   font-weight: 100 900;
   src: url('./fonts/inter-latin-wght-normal.woff2') format('woff2-variations');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
-    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
-    U+2212, U+2215, U+FEFF, U+FFFD;
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 @font-face {
   font-family: 'Inter Variable';
@@ -29,9 +33,10 @@
   font-display: swap;
   font-weight: 100 900;
   src: url('./fonts/inter-latin-ext-wght-normal.woff2') format('woff2-variations');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF,
-    U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020,
-    U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F,
+    U+A720-A7FF;
 }
 
 @custom-variant dark (&:is(.dark *));
@@ -168,98 +173,8 @@
 }
 
 /**
- * Marketing layer (design.md Part 5 — "Marketing layer"). M1's whole motion
- * budget under the brand law: a gentle fade-and-rise when a section first
- * enters the viewport (marketing-home.tsx flips the attribute). The animated
- * state exists ONLY inside the no-preference query, so under reduced motion
- * every section renders finished — removed, not slowed, the same law as the
- * two signature animations above.
+ * The M1 marketing layer (reveal, pinned stages, ambient card drift and the
+ * 3D card shadow) lived here and was retired with M1 itself — the visitor
+ * world is concept-v2 now, and it carries its own motion in
+ * `styles/marketing.css` and its CSS modules (decisions.md D-M2-A).
  */
-@media (prefers-reduced-motion: no-preference) {
-  [data-mk-reveal] {
-    opacity: 0;
-    translate: 0 16px;
-    transition:
-      opacity 0.7s cubic-bezier(0, 0, 0.2, 1),
-      translate 0.7s cubic-bezier(0, 0, 0.2, 1);
-  }
-
-  [data-mk-reveal='in'] {
-    opacity: 1;
-    translate: 0 0;
-  }
-
-  /* The cinematic tier's pinned copy (scrub-hero.tsx): stages cross-fade as
-     scroll progress crosses its bands. Inside the same no-preference query as
-     the reveal because the layer itself only mounts under no-preference —
-     this is defense in depth, not the gate. */
-  [data-mk-stage] {
-    opacity: 0;
-    translate: 0 12px;
-    transition:
-      opacity 0.6s cubic-bezier(0, 0, 0.2, 1),
-      translate 0.6s cubic-bezier(0, 0, 0.2, 1);
-  }
-
-  [data-mk-stage]:not([data-mk-stage='in']) {
-    pointer-events: none;
-  }
-
-  [data-mk-stage='in'] {
-    opacity: 1;
-    translate: 0 0;
-  }
-
-  /* The hero cards' ambient idle drift: continuous, so the composition
-     never freezes when scrolling stops. Animates a NESTED wrapper — the
-     scroll engine owns `transform` on the outer card slot, so the two
-     systems write to different elements and cannot cancel each other. One
-     keyframe track, parameterized per card by the custom properties
-     motion-tokens.ts emits (each card gets its own duration, phase,
-     distance and rotation). Hovering pauses the drift so the work is easy
-     to inspect; 'paused' does the same while an interaction owns the card.
-     Inside the same no-preference query as everything else: reduced motion
-     removes the drift, it never slows it. */
-  @keyframes mk-ambient-drift {
-    0%,
-    100% {
-      transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
-    }
-    25% {
-      transform: translate3d(calc(var(--mk-amb-x) * 0.6), calc(var(--mk-amb-y) * -1), 0)
-        rotate(var(--mk-amb-r)) scale(calc(1 + var(--mk-amb-b)));
-    }
-    50% {
-      transform: translate3d(var(--mk-amb-x), calc(var(--mk-amb-y) * 0.35), 0)
-        rotate(calc(var(--mk-amb-r) * -0.5)) scale(1);
-    }
-    75% {
-      transform: translate3d(calc(var(--mk-amb-x) * -0.55), var(--mk-amb-y), 0)
-        rotate(calc(var(--mk-amb-r) * 0.65)) scale(calc(1 - var(--mk-amb-b)));
-    }
-  }
-
-  [data-mk-ambient] {
-    animation: mk-ambient-drift var(--mk-amb-dur, 12s) ease-in-out infinite;
-    animation-delay: var(--mk-amb-phase, 0s);
-    will-change: transform;
-  }
-
-  [data-mk-ambient]:hover,
-  [data-mk-ambient='paused'] {
-    animation-play-state: paused;
-  }
-
-  /* The engine's 3D cards ([data-mk-card3d] — the rAF-posed inner wrapper):
-     hovering deepens the shadow softly while the loop eases the card
-     forward and calm; leaving eases it back. Radius matches the card so
-     the shadow hugs its silhouette. */
-  [data-mk-card3d] {
-    border-radius: 1.25rem;
-    transition: box-shadow 0.45s cubic-bezier(0, 0, 0.2, 1);
-  }
-
-  [data-mk-card3d]:hover {
-    box-shadow: 0 28px 56px -28px rgb(28 25 20 / 0.28);
-  }
-}

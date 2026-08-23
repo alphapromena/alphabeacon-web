@@ -1,0 +1,184 @@
+.section {
+  padding-block: var(--section-y);
+  border-top: 1px solid var(--c-line);
+}
+
+/* --- source event -------------------------------------------------- */
+
+.event {
+  margin-top: 1.5rem;
+  padding: 1.1rem 1.2rem 1.2rem;
+  border-radius: var(--r-md);
+  border: 1px solid var(--c-line-2);
+  background: var(--c-surface-2);
+  max-width: 420px;
+}
+
+.eventTop {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.85rem;
+}
+
+.eventBrand {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: var(--w-strong);
+  color: var(--c-text);
+}
+
+.eventKind {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: var(--t-micro);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--c-text-4);
+}
+
+.eventTitle {
+  font-family: var(--f-display);
+  font-weight: var(--w-display);
+  font-size: 1.375rem;
+  line-height: 1.22;
+  letter-spacing: var(--track-display-sm);
+  color: var(--c-text);
+  margin-bottom: 0.5rem;
+}
+
+.eventDetail {
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: var(--c-text-3);
+}
+
+/* --- fan-out ------------------------------------------------------- */
+
+.fan {
+  position: relative;
+  padding-top: 2.5rem;
+}
+
+/* Vertical stem out of the event, into the row of outputs. */
+.stem {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 2.5rem;
+  background: linear-gradient(var(--c-accent-line), var(--c-line-2));
+}
+
+/* Four channels on one row. They sit side by side rather than wrapping, so
+   the four expressions of one event are read together instead of as two
+   stacked rows of three. */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(1.25rem, 2.4vw, 2rem) clamp(0.9rem, 1.5vw, 1.4rem);
+}
+
+.col {
+  position: relative;
+  display: grid;
+  gap: 0.6rem;
+  align-content: start;
+  /* Keeps the tallest card off the closing rule. */
+  padding-bottom: 1rem;
+  transition:
+    opacity 0.7s var(--ease-out),
+    transform 0.7s var(--ease-out);
+  transition-delay: calc(var(--i) * 0.09s);
+}
+
+.fan[data-reveal='armed'] .col {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+/* Connector running along the top of the first row. */
+.tick {
+  position: absolute;
+  top: -1.25rem;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--c-line);
+}
+
+/* Closes the lane the tick opens. The four posts are genuinely different
+   lengths — an executive's text post is shorter than an Instagram card, and
+   flattening them would be a lie about the output — so instead of matching
+   the cards, each column is given equal length and the cards hang inside it.
+   The rag then reads as four different messages in four equal lanes. */
+.col::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--c-line);
+}
+
+.tick::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: -2px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--c-accent);
+  opacity: 0.65;
+}
+
+/* The connector runs along the top row only; with four columns that is
+   every column, so nothing is hidden at full width. */
+
+.channel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: var(--t-micro);
+  font-weight: var(--w-strong);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--c-text-3);
+}
+
+@media (max-width: 1000px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .col:nth-child(n + 3) .tick {
+    display: none;
+  }
+}
+
+@media (max-width: 620px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
+  }
+
+  .col:nth-child(n + 2) .tick {
+    display: none;
+  }
+
+  .event {
+    max-width: none;
+  }
+}
+
+/* The disclosure line under the fan-out. Quiet by design: the minimum needed
+   for a reader to know the four cards are ours and the moment above is not. */
+.prepared {
+  margin-top: clamp(1.25rem, 2vw, 1.75rem);
+  font-size: var(--t-small);
+  line-height: 1.6;
+  color: var(--c-text-4);
+}

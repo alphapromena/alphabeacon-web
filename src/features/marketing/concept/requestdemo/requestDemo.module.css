@@ -1,0 +1,524 @@
+/* Quieter than the homepage on purpose: one job, no orbit, no motion. */
+
+/* --- opening ------------------------------------------------------- */
+
+.top {
+  position: relative;
+  padding-top: clamp(3rem, 5.5vw, 5rem);
+  padding-bottom: clamp(2rem, 3vw, 2.75rem);
+  overflow: hidden;
+}
+
+.topGlow {
+  position: absolute;
+  top: -60%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(900px, 96%);
+  height: 520px;
+  pointer-events: none;
+  background: radial-gradient(closest-side, rgba(255, 78, 45, 0.11), transparent 76%);
+}
+
+.topInner {
+  position: relative;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  font-size: var(--t-micro);
+  font-weight: var(--w-strong);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--c-accent-hi);
+  margin-bottom: 1rem;
+}
+
+.title {
+  font-family: var(--f-display);
+  font-weight: var(--w-display);
+  font-size: var(--t-display-2);
+  line-height: 1.06;
+  letter-spacing: var(--track-display);
+  color: var(--c-text);
+  max-width: 20ch;
+}
+
+.lead {
+  margin-top: 1.25rem;
+  max-width: 58ch;
+  font-size: var(--t-lead);
+  line-height: 1.65;
+  color: var(--c-text-2);
+}
+
+/* --- layout -------------------------------------------------------- */
+
+.body {
+  /* Denser than the hero: the reader is filling this in, not being
+     introduced to anything. */
+  padding-bottom: var(--section-y-dense);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 660px) minmax(0, 1fr);
+  gap: clamp(2rem, 5vw, 5rem);
+  align-items: start;
+}
+
+/* --- fields -------------------------------------------------------- */
+
+.form {
+  display: grid;
+  gap: clamp(1.75rem, 3vw, 2.5rem);
+}
+
+.fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem clamp(1rem, 2vw, 1.5rem);
+}
+
+.field {
+  display: grid;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.labelRow {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.label {
+  font-size: var(--t-body);
+  font-weight: var(--w-ui);
+  color: var(--c-text-2);
+}
+
+.optional {
+  font-size: var(--t-micro);
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--c-text-4);
+}
+
+.input {
+  width: 100%;
+  padding: 0.8rem 0.95rem;
+  border-radius: var(--r-md);
+  border: 1px solid var(--c-line-2);
+  background: var(--c-surface-2);
+  color: var(--c-text);
+  font: inherit;
+  font-size: 1rem;
+  line-height: 1.4;
+  transition:
+    border-color 0.2s var(--ease-out),
+    box-shadow 0.2s var(--ease-out),
+    background 0.2s var(--ease-out);
+}
+
+.input::placeholder {
+  color: var(--c-text-4);
+}
+
+.input:hover:not(:disabled) {
+  border-color: var(--c-line-3);
+}
+
+/* Unmistakable, and the same shape as the accent used everywhere else. */
+.input:focus-visible {
+  outline: none;
+  border-color: var(--c-accent-line);
+  background: var(--c-surface-3);
+  box-shadow: 0 0 0 3px var(--c-accent-wash);
+}
+
+.input:disabled {
+  opacity: 0.6;
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 5.5rem;
+}
+
+.field[data-invalid] .input {
+  border-color: var(--c-accent);
+}
+
+.fieldError {
+  font-size: var(--t-small);
+  line-height: 1.5;
+  color: var(--c-accent-hi);
+}
+
+.fieldHint {
+  font-size: var(--t-small);
+  line-height: 1.5;
+  color: var(--c-text-4);
+}
+
+/* --- interests ------------------------------------------------------ */
+
+.interests {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+
+.legend {
+  padding: 0;
+  font-size: var(--t-body);
+  font-weight: var(--w-ui);
+  color: var(--c-text-2);
+}
+
+.legendHint {
+  margin-top: 0.35rem;
+  margin-bottom: 0.9rem;
+  font-size: var(--t-small);
+  color: var(--c-text-4);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* A real checkbox, visually hidden, so keyboard and screen readers get the
+   native control and the chip is only its appearance. */
+.chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.6rem 0.95rem;
+  border-radius: 999px;
+  border: 1px solid var(--c-line-2);
+  background: var(--c-surface-2);
+  color: var(--c-text-2);
+  font-size: 0.9375rem;
+  line-height: 1.2;
+  cursor: pointer;
+  transition:
+    border-color 0.2s var(--ease-out),
+    background 0.2s var(--ease-out),
+    color 0.2s var(--ease-out);
+}
+
+.chipInput {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.chip:hover {
+  border-color: var(--c-line-3);
+}
+
+.chip:has(.chipInput:focus-visible) {
+  outline: 2px solid var(--c-accent-line);
+  outline-offset: 2px;
+}
+
+.chip[data-on] {
+  border-color: var(--c-accent-line);
+  background: var(--c-accent-wash);
+  color: var(--c-text);
+}
+
+.chipCheck {
+  flex: none;
+  opacity: 0;
+  color: var(--c-accent-hi);
+  transition: opacity 0.18s var(--ease-out);
+}
+
+.chip[data-on] .chipCheck {
+  opacity: 1;
+}
+
+.chip:has(.chipInput:disabled) {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.chipAll {
+  border-style: dashed;
+}
+
+/* --- submit --------------------------------------------------------- */
+
+.submitError {
+  padding: 0.75rem 0.95rem;
+  border-radius: var(--r-md);
+  border: 1px solid var(--c-accent-line);
+  background: var(--c-accent-wash);
+  font-size: var(--t-body);
+  color: var(--c-accent-hi);
+}
+
+.submitError:focus-visible {
+  outline: 2px solid var(--c-accent-line);
+  outline-offset: 2px;
+}
+
+.submitRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.85rem 1.5rem;
+  padding-top: 0.25rem;
+}
+
+.privacy {
+  flex: 1 1 20rem;
+  font-size: var(--t-small);
+  line-height: 1.55;
+  color: var(--c-text-4);
+}
+
+/* --- supporting panels ---------------------------------------------- */
+
+.aside {
+  display: grid;
+  gap: clamp(1rem, 1.6vw, 1.4rem);
+  position: sticky;
+  top: calc(var(--header-h, 76px) + 1.5rem);
+}
+
+.panel {
+  padding: clamp(1.25rem, 2vw, 1.6rem);
+  border-radius: var(--r-lg);
+  border: 1px solid var(--c-line);
+  background: linear-gradient(180deg, var(--c-surface-2), var(--c-surface-1));
+}
+
+.panelTitle {
+  font-family: var(--f-display);
+  font-weight: var(--w-display);
+  font-size: 1.25rem;
+  line-height: 1.25;
+  letter-spacing: var(--track-display-sm);
+  color: var(--c-text);
+  margin-bottom: 1rem;
+}
+
+.next {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.next li {
+  display: grid;
+  grid-template-columns: 1.9rem 1fr;
+  gap: 0.25rem;
+  font-size: var(--t-small);
+  line-height: 1.55;
+  color: var(--c-text-2);
+}
+
+.nextNum {
+  font-size: var(--t-micro);
+  font-weight: var(--w-strong);
+  letter-spacing: 0.1em;
+  color: var(--c-accent-hi);
+  padding-top: 0.15rem;
+}
+
+.phases {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.phases li {
+  display: grid;
+  gap: 0.15rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--c-line);
+}
+
+.phases li:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.phaseTitle {
+  font-size: var(--t-micro);
+  font-weight: var(--w-strong);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--c-accent-hi);
+}
+
+.phaseBody {
+  font-size: var(--t-small);
+  line-height: 1.55;
+  color: var(--c-text-2);
+}
+
+.phaseClose {
+  margin-top: 1rem;
+  font-family: var(--f-display);
+  font-size: 1.0625rem;
+  line-height: 1.35;
+  color: var(--c-text-3);
+}
+
+/* --- success --------------------------------------------------------- */
+
+.successWrap {
+  display: grid;
+  place-items: center;
+  min-height: min(66vh, 580px);
+  /* The header is sticky and 73px tall; centring inside the viewport alone
+     put the check mark underneath it. */
+  padding-block: clamp(5.5rem, 12vw, 9rem) clamp(3rem, 8vw, 6rem);
+}
+
+.success {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  max-width: 46rem;
+}
+
+.success:focus-visible {
+  outline: none;
+}
+
+.successMark {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  border: 1px solid var(--c-accent-line);
+  background: var(--c-accent-wash);
+  color: var(--c-accent-hi);
+  margin-bottom: 1.5rem;
+}
+
+.successTitle {
+  font-family: var(--f-display);
+  font-weight: var(--w-display);
+  font-size: var(--t-display-2);
+  line-height: 1.06;
+  letter-spacing: var(--track-display);
+  color: var(--c-text);
+}
+
+.successBody {
+  margin-top: 1.1rem;
+  max-width: 46ch;
+  font-size: var(--t-lead);
+  line-height: 1.65;
+  color: var(--c-text-2);
+}
+
+/* PORT ADDITION (M2): the direct-contact line in the success state. Quiet,
+   under the body copy, above the two ways onward. */
+.contact {
+  margin-top: 1.25rem;
+  font-size: var(--t-small);
+  line-height: 1.6;
+  color: var(--c-text-3);
+}
+
+.contactLink {
+  color: var(--c-text);
+  border-bottom: 1px solid var(--c-line-2);
+}
+
+.contactLink:hover {
+  border-bottom-color: var(--c-accent-line);
+}
+
+.contactLink:focus-visible {
+  outline: 2px solid var(--c-accent-line);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.successActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+
+/* --- responsive ------------------------------------------------------- */
+
+@media (max-width: 1040px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .aside {
+    position: static;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .fields {
+    grid-template-columns: 1fr;
+  }
+
+  .aside {
+    grid-template-columns: 1fr;
+  }
+
+  /* Comfortable thumb targets, and nothing narrower than the text in it. */
+  .chip {
+    padding: 0.7rem 1rem;
+  }
+
+  .successActions {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .input,
+  .chip,
+  .chipCheck {
+    transition: none;
+  }
+}
+
+/* Sits inside the privacy sentence beside the submit button. Quiet — it is a
+   reference, not a call to action, and requesting a demo requires no
+   acceptance of anything. */
+.privacyLink {
+  color: var(--c-text-3);
+  text-decoration: none;
+  border-bottom: 1px solid var(--c-line-2);
+}
+
+.privacyLink:hover {
+  color: var(--c-text);
+}
+
+.privacyLink:focus-visible {
+  outline: 2px solid var(--c-accent-line);
+  outline-offset: 3px;
+  border-radius: 2px;
+}

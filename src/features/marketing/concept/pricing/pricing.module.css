@@ -1,0 +1,871 @@
+/* --- opening ------------------------------------------------------- */
+
+.top {
+  position: relative;
+  padding-top: clamp(3.5rem, 6vw, 5.5rem);
+  padding-bottom: clamp(2.25rem, 3.5vw, 3.25rem);
+  overflow: hidden;
+}
+
+.topGlow {
+  position: absolute;
+  top: -40%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(1100px, 96%);
+  height: 700px;
+  pointer-events: none;
+  background: radial-gradient(
+    closest-side,
+    rgba(255, 78, 45, 0.13),
+    rgba(255, 78, 45, 0.05) 55%,
+    transparent 78%
+  );
+}
+
+.topInner {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  text-align: center;
+}
+
+.title {
+  font-family: var(--f-display);
+  font-weight: var(--w-display);
+  font-size: clamp(2.25rem, 4.6vw, 4rem);
+  line-height: 1.05;
+  letter-spacing: var(--track-display);
+  color: var(--c-text);
+  max-width: 28ch;
+}
+
+/* The homepage's emphasis colour, on the homepage's cream headline. */
+.titleAccent {
+  color: var(--c-accent);
+}
+
+.lead {
+  margin-top: 1.35rem;
+  max-width: 56ch;
+  font-size: var(--t-lead);
+  line-height: 1.65;
+  color: var(--c-text-2);
+}
+
+/* The first number on the page: a floor, said quietly. It used to be a gold
+   pill, which made pricing look like a different product to the homepage. */
+.priceFrom {
+  margin-top: 1.4rem;
+  font-size: var(--t-small);
+  color: var(--c-text-3);
+}
+
+/* --- section heads -------------------------------------------------- */
+
+.sectionTitle {
+  font-family: var(--f-display);
+  font-weight: var(--w-display);
+  font-size: var(--t-display-3);
+  line-height: 1.12;
+  letter-spacing: var(--track-display-sm);
+  color: var(--c-text);
+  max-width: 16ch;
+}
+
+/* --- the platform, stated once -------------------------------------- */
+
+.platformSection {
+  padding-block: var(--section-y-dense);
+  border-top: 1px solid var(--c-line);
+}
+
+.platformGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.4fr) minmax(0, 1fr);
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  align-items: start;
+}
+
+.platform {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(1rem, 1.8vw, 1.5rem) clamp(1.1rem, 2vw, 1.75rem);
+}
+
+.capability {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+}
+
+.capabilityCheck {
+  flex: none;
+  margin-top: 0.15rem;
+  padding: 3px;
+  width: 19px;
+  height: 19px;
+  border-radius: 50%;
+  background: var(--c-accent-wash);
+  border: 1px solid var(--c-accent-line);
+  color: var(--c-accent-hi);
+}
+
+.capabilityTitle {
+  font-size: var(--t-body);
+  font-weight: var(--w-strong);
+  color: var(--c-text);
+}
+
+.capabilityBody {
+  margin-top: 0.25rem;
+  font-size: var(--t-small);
+  line-height: 1.55;
+  color: var(--c-text-3);
+}
+
+/* Quieter than the list above it, and unmistakably separate from it. */
+/* Sits under the section title, in the column the title would otherwise
+   leave empty. Quieter than the capability grid beside it, and unmistakably
+   separate from it. */
+.planned {
+  margin-top: 1.5rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--c-line);
+}
+
+.plannedHead {
+  font-size: var(--t-micro);
+  font-weight: var(--w-strong);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--c-text-4);
+  margin-bottom: 0.7rem;
+}
+
+.plannedList {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.plannedList li {
+  font-size: var(--t-small);
+  line-height: 1.55;
+  color: var(--c-text-4);
+}
+
+.plannedList li span {
+  font-weight: var(--w-strong);
+  color: var(--c-text-3);
+}
+
+/* --- plans ---------------------------------------------------------- */
+
+.plansSection {
+  padding-block: var(--section-y-dense);
+  border-top: 1px solid var(--c-line);
+}
+
+.plans {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(1rem, 1.6vw, 1.4rem);
+  /* Each card takes its own height. Stretching them to match the tallest left
+     the shorter two with a block of empty space above the button. */
+  align-items: start;
+}
+
+.plan {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(1.5rem, 2.2vw, 2rem) clamp(1.25rem, 1.9vw, 1.75rem) clamp(1.5rem, 2vw, 1.75rem);
+  border-radius: var(--r-lg);
+  border: 1px solid var(--c-line);
+  background: linear-gradient(180deg, var(--c-surface-2), var(--c-surface-1));
+}
+
+/* No "most popular". The scoped tier is distinguished because it is
+   genuinely a different kind of engagement, not because it sells better. */
+.plan[data-scoped] {
+  border-color: var(--c-line-2);
+  background: linear-gradient(180deg, var(--c-surface-3), var(--c-surface-1));
+}
+
+.planName {
+  font-family: var(--f-display);
+  font-weight: var(--w-display);
+  font-size: clamp(1.5rem, 2vw, 1.875rem);
+  letter-spacing: var(--track-display-sm);
+  color: var(--c-text);
+}
+
+.planTagline {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: var(--c-text-3);
+  min-height: 3.6em;
+}
+
+.priceBlock {
+  padding-block: 1.2rem;
+  margin-block: 1.1rem;
+  border-block: 1px solid var(--c-line);
+}
+
+.price {
+  display: flex;
+  align-items: baseline;
+  gap: 0.3rem;
+  flex-wrap: wrap;
+}
+
+.priceNum {
+  font-family: var(--f-display);
+  font-size: clamp(1.75rem, 2.9vw, 2.625rem);
+  line-height: 1.08;
+  letter-spacing: var(--track-display-sm);
+  color: var(--c-text);
+}
+
+.plan[data-scoped] .priceNum {
+  font-size: clamp(1.375rem, 1.9vw, 1.6875rem);
+}
+
+.pricePer {
+  font-size: 0.9375rem;
+  color: var(--c-text-3);
+}
+
+.priceMeta {
+  display: grid;
+  gap: 0.35rem;
+  margin-top: 1rem;
+}
+
+.priceMeta > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: var(--t-small);
+}
+
+.priceMeta dt {
+  color: var(--c-text-4);
+}
+
+.priceMeta dd {
+  margin: 0;
+  text-align: end;
+  color: var(--c-text-2);
+}
+
+/* One line inside the card, pointing at the section that explains the layer.
+   The arithmetic lives there; a card is not a cart. */
+.managedAdd {
+  margin-top: 0.9rem;
+  font-size: var(--t-small);
+}
+
+.managedAdd a {
+  color: var(--c-accent-hi);
+  text-decoration: none;
+  border-bottom: 1px solid var(--c-accent-line);
+  padding-bottom: 1px;
+}
+
+.managedAdd a:hover {
+  border-bottom-color: var(--c-accent-hi);
+}
+
+.managedAdd a:focus-visible {
+  outline: 2px solid var(--c-accent-line);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* --- coverage: the offer -------------------------------------------- */
+
+.coverage {
+  display: grid;
+  gap: 0;
+  margin: 0 0 1.1rem;
+}
+
+.coverageRow:last-child {
+  border-bottom: 0;
+}
+
+.coverageRow {
+  display: grid;
+  grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+  gap: 0.75rem;
+  padding-block: 0.5rem;
+  border-bottom: 1px solid var(--c-line);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+.coverageRow dt {
+  color: var(--c-text-4);
+}
+
+.coverageRow dd {
+  margin: 0;
+  color: var(--c-text);
+}
+
+/* A sentence, not a number. The numbers live below the grid. */
+.capacity {
+  font-size: var(--t-small);
+  line-height: 1.55;
+  color: var(--c-text-3);
+  margin-bottom: 1.25rem;
+}
+
+.scopedList {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.35rem 1.5rem;
+  margin-top: 1rem;
+}
+
+.scopedList li {
+  position: relative;
+  padding-inline-start: 1.05rem;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--c-text-3);
+}
+
+.scopedList li::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: 0.3rem;
+  top: 0.55em;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--c-text-4);
+}
+
+.planFootnote {
+  font-size: var(--t-small);
+  line-height: 1.5;
+  color: var(--c-text-4);
+  margin-bottom: 1.25rem;
+}
+
+.planCta {
+  margin-top: auto;
+}
+
+/* --- below the plans: terms, said once ------------------------------ */
+
+.belowPlans {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem 2rem;
+  margin-top: clamp(1.25rem, 2vw, 1.75rem);
+}
+
+.capacityDetails {
+  flex: 1 1 30rem;
+  border-radius: var(--r-md);
+  border: 1px solid var(--c-line);
+  background: var(--c-surface-1);
+}
+
+.capacityDetails summary {
+  padding: 0.75rem 1rem;
+  font-size: var(--t-small);
+  color: var(--c-text-3);
+  cursor: pointer;
+  list-style: none;
+}
+
+.capacityDetails summary::-webkit-details-marker {
+  display: none;
+}
+
+.capacityDetails summary::before {
+  content: '+';
+  margin-inline-end: 0.5rem;
+  color: var(--c-text-3);
+}
+
+.capacityDetails[open] summary::before {
+  content: '–';
+}
+
+.capacityDetails summary:focus-visible {
+  outline: 2px solid var(--c-accent-line);
+  outline-offset: 2px;
+  border-radius: var(--r-md);
+}
+
+.capacityBody {
+  padding: 0 1rem 1rem;
+}
+
+.capacityTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+}
+
+.capacityTable th,
+.capacityTable td {
+  padding: 0.45rem 0.6rem 0.45rem 0;
+  text-align: start;
+  border-top: 1px solid var(--c-line);
+  font-weight: 400;
+  color: var(--c-text-3);
+}
+
+.capacityTable thead th {
+  border-top: 0;
+  font-size: var(--t-micro);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--c-text-4);
+}
+
+.capacityTable tbody td {
+  color: var(--c-text-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.capacityNote {
+  margin-top: 0.85rem;
+  font-size: var(--t-small);
+  line-height: 1.55;
+  color: var(--c-text-4);
+}
+
+.annual {
+  flex: 0 1 auto;
+  padding-top: 0.8rem;
+  font-size: var(--t-small);
+  color: var(--c-text-4);
+}
+
+/* --- Malaky Managed ---------------------------------------------------- */
+
+.managedSection {
+  padding-block: var(--section-y-dense);
+  border-top: 1px solid var(--c-line);
+}
+
+/* One panel, not a fourth pricing card — it is a layer on top of two of the
+   plans above, and it should not read as a choice beside them. */
+.managed {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  gap: clamp(1.5rem, 3vw, 3rem);
+  padding: clamp(1.5rem, 2.4vw, 2.25rem);
+  border-radius: var(--r-lg);
+  border: 1px solid var(--c-line-2);
+  background:
+    radial-gradient(110% 70% at 0% 0%, rgba(255, 78, 45, 0.05), transparent 60%),
+    linear-gradient(180deg, var(--c-surface-2), var(--c-surface-1));
+}
+
+.managedEyebrow {
+  font-size: var(--t-micro);
+  font-weight: var(--w-strong);
+  letter-spacing: var(--track-caps);
+  text-transform: uppercase;
+  color: var(--c-text-4);
+}
+
+.managedTitle {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  margin-top: 0.6rem;
+  font-family: var(--f-display);
+  font-weight: var(--w-display);
+  font-size: clamp(1.5rem, 2.2vw, 2rem);
+  line-height: 1.14;
+  letter-spacing: var(--track-display-sm);
+  color: var(--c-text);
+}
+
+.managedPrice {
+  font-size: clamp(1.125rem, 1.5vw, 1.375rem);
+  color: var(--c-accent-hi);
+}
+
+.managedPrice span {
+  font-family: var(--f-sans);
+  font-size: var(--t-small);
+  color: var(--c-text-3);
+}
+
+.managedQuestion {
+  margin-top: 0.9rem;
+  font-size: var(--t-lead);
+  line-height: 1.6;
+  color: var(--c-text-2);
+}
+
+/* The idea, before the mechanics. */
+.managedCouplet {
+  margin-top: 1.1rem;
+  font-family: var(--f-display);
+  font-weight: var(--w-display);
+  font-size: clamp(1.125rem, 1.6vw, 1.375rem);
+  line-height: 1.4;
+  letter-spacing: var(--track-display-sm);
+  color: var(--c-text);
+}
+
+.managedCouplet span {
+  color: var(--c-text-3);
+}
+
+.managedBody {
+  margin-top: 1.1rem;
+  font-size: var(--t-body);
+  line-height: 1.65;
+  color: var(--c-text-3);
+  max-width: 60ch;
+}
+
+.managedListHead {
+  font-size: var(--t-micro);
+  font-weight: var(--w-strong);
+  letter-spacing: var(--track-caps);
+  text-transform: uppercase;
+  color: var(--c-text-4);
+}
+
+.managedList {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 0.85rem;
+}
+
+.managedList li {
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr);
+  gap: 0.55rem;
+  align-items: start;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--c-text-2);
+}
+
+.managedCheck {
+  margin-top: 0.2rem;
+  color: var(--c-accent-hi);
+}
+
+/* Arithmetic, not a checkout: three static rows, nothing selectable. */
+.combined {
+  display: grid;
+  gap: 0.4rem;
+  margin-top: 1.4rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--c-line);
+}
+
+.combinedRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: baseline;
+  gap: 0.75rem;
+  font-size: var(--t-small);
+}
+
+.combinedPlan {
+  color: var(--c-text-2);
+}
+
+.combinedSum {
+  color: var(--c-text-4);
+  font-variant-numeric: tabular-nums;
+}
+
+.combinedTotal {
+  min-width: 7.5ch;
+  text-align: end;
+  font-size: var(--t-body);
+  color: var(--c-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.combinedTotal span {
+  font-size: var(--t-small);
+  color: var(--c-text-4);
+}
+
+.managedNote {
+  margin-top: 1.1rem;
+  font-size: var(--t-small);
+  line-height: 1.55;
+  color: var(--c-text-4);
+}
+
+/* --- intelligence setup ---------------------------------------------- */
+
+.setupSection {
+  padding-block: var(--section-y-dense);
+  border-top: 1px solid var(--c-line);
+  background: var(--c-void);
+}
+
+.setupInner {
+  display: grid;
+  gap: clamp(1.75rem, 3vw, 2.5rem);
+}
+
+.setupHead {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(1.5rem, 4vw, 4rem);
+  align-items: start;
+}
+
+.setupTitle {
+  font-family: var(--f-display);
+  font-weight: var(--w-display);
+  font-size: var(--t-display-3);
+  line-height: 1.12;
+  letter-spacing: var(--track-display-sm);
+  color: var(--c-text);
+  max-width: 20ch;
+}
+
+.setupLead {
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--c-text-2);
+  max-width: 52ch;
+  padding-top: 0.3rem;
+}
+
+/* The launch position on setup pricing, under the paragraph that explains
+   what setup is. */
+.setupPrice {
+  margin-top: 0.85rem;
+  font-size: var(--t-small);
+  color: var(--c-text-3);
+}
+
+.setupSteps {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.setupStep {
+  display: grid;
+  gap: 0.45rem;
+  padding: 0.9rem 0.95rem 1rem;
+  border-radius: var(--r-md);
+  border: 1px solid var(--c-line);
+  background: var(--c-surface-1);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: var(--c-text-2);
+}
+
+.setupNum {
+  font-size: var(--t-micro);
+  font-weight: var(--w-strong);
+  letter-spacing: 0.12em;
+  color: var(--c-accent-hi);
+}
+
+.setupClose {
+  font-family: var(--f-display);
+  font-weight: var(--w-display);
+  font-size: clamp(1.25rem, 2vw, 1.625rem);
+  line-height: 1.3;
+  letter-spacing: var(--track-display-sm);
+  color: var(--c-text);
+  max-width: 42ch;
+}
+
+/* --- what changes between deployments --------------------------------- */
+
+.compareSection {
+  padding-block: var(--section-y-dense);
+  border-top: 1px solid var(--c-line);
+}
+
+.compareSection .sectionTitle {
+  max-width: 24ch;
+  margin-bottom: clamp(1.5rem, 2.5vw, 2rem);
+}
+
+.tableWrap {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  border-radius: var(--r-md);
+  border: 1px solid var(--c-line);
+}
+
+.tableWrap:focus-visible {
+  outline: 2px solid var(--c-accent-line);
+  outline-offset: 3px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  min-width: 620px;
+}
+
+.table th,
+.table td {
+  padding: 0.75rem 1rem;
+  text-align: start;
+  border-bottom: 1px solid var(--c-line);
+}
+
+.table thead th {
+  font-size: var(--t-micro);
+  font-weight: var(--w-strong);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--c-text-3);
+  background: var(--c-surface-2);
+  white-space: nowrap;
+}
+
+.table tbody th {
+  font-weight: 400;
+  color: var(--c-text-3);
+}
+
+.table tbody td {
+  color: var(--c-text);
+}
+
+.table tbody tr:last-child th,
+.table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.table tbody tr:nth-child(odd) {
+  background: rgba(255, 255, 255, 0.015);
+}
+
+/* --- additional scope --------------------------------------------------- */
+
+/* What used to be a nine-item monthly menu. No prices — at this size the
+   additions are agreed in the proposal, and the page already has one CTA. */
+.additional {
+  margin-top: clamp(1.5rem, 2.5vw, 2rem);
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--c-line);
+  display: grid;
+  grid-template-columns: minmax(0, 0.4fr) minmax(0, 1fr);
+  gap: 1rem clamp(1.5rem, 3vw, 3rem);
+  align-items: start;
+}
+
+.additionalHead {
+  font-size: var(--t-micro);
+  font-weight: var(--w-strong);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--c-text-4);
+  padding-top: 0.2rem;
+}
+
+.additionalBody {
+  font-size: var(--t-body);
+  line-height: 1.65;
+  color: var(--c-text-3);
+  max-width: 70ch;
+}
+
+.additionalNote {
+  margin-top: 1rem;
+  font-size: var(--t-small);
+  line-height: 1.55;
+  color: var(--c-text-4);
+}
+
+/* --- responsive --------------------------------------------------------- */
+
+@media (max-width: 1040px) {
+  .platformGrid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .platform {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .plans {
+    grid-template-columns: 1fr;
+    max-width: 560px;
+    margin-inline: auto;
+  }
+
+  .planTagline {
+    min-height: 0;
+  }
+
+  .setupSteps {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 960px) {
+  .managed {
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
+  }
+}
+
+@media (max-width: 860px) {
+  .setupHead {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .additional {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .scopedList {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 680px) {
+  .platform {
+    grid-template-columns: 1fr;
+  }
+
+  .scopedList {
+    grid-template-columns: 1fr;
+  }
+
+  .setupSteps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .belowPlans {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .annual {
+    padding-top: 0;
+  }
+}

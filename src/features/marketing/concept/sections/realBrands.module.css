@@ -1,0 +1,140 @@
+.section {
+  padding-block: var(--section-y);
+  border-top: 1px solid var(--c-line);
+  overflow: hidden;
+}
+
+/* --- controls ----------------------------------------------------- */
+
+.controls {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+}
+
+.arrow {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--c-line-2);
+  background: var(--c-surface-2);
+  color: var(--c-text-2);
+  cursor: pointer;
+  transition:
+    border-color 0.25s var(--ease-out),
+    color 0.25s var(--ease-out),
+    opacity 0.25s var(--ease-out);
+}
+
+.arrow:hover:not(:disabled) {
+  border-color: var(--c-accent-line);
+  color: var(--c-accent-hi);
+}
+
+.arrow:disabled {
+  opacity: 0.32;
+  cursor: default;
+}
+
+/* --- rail --------------------------------------------------------- */
+
+.railWrap {
+  position: relative;
+  margin-top: clamp(2rem, 3.5vw, 3rem);
+  /* Aligns the first card with the shell's text column, then lets the rest
+     of the rail run off the edge of the page. */
+  --rail-inset: max(var(--gutter), calc((100% - var(--shell)) / 2 + var(--gutter)));
+  --rail-h: clamp(19rem, 30vw, 27.5rem);
+}
+
+.rail {
+  display: flex;
+  align-items: flex-start;
+  gap: clamp(1rem, 1.8vw, 1.75rem);
+  padding-inline: var(--rail-inset);
+  /* Room for the card shadow and the focus ring. */
+  padding-block: 0.5rem 0.75rem;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline-start: var(--rail-inset);
+  scrollbar-width: none;
+}
+
+.rail::-webkit-scrollbar {
+  display: none;
+}
+
+.rail:focus-visible {
+  outline: 2px solid var(--c-accent-line);
+  outline-offset: 4px;
+  border-radius: var(--r-md);
+}
+
+.item {
+  /* Width follows the screenshot's own ratio against one shared height, so
+     the cards line up top and bottom without any of them being distorted. */
+  flex: 0 0 calc(var(--rail-h) * var(--ratio));
+  scroll-snap-align: start;
+  transition:
+    opacity 0.75s var(--ease-out),
+    transform 0.75s var(--ease-out);
+  transition-delay: calc(var(--i) * 0.08s);
+}
+
+.railWrap[data-reveal='armed'] .item {
+  opacity: 0;
+  transform: translateY(22px);
+}
+
+/* --- caption ------------------------------------------------------ */
+
+.meta {
+  padding-top: 0.95rem;
+}
+
+.company {
+  font-family: var(--f-display);
+  font-weight: var(--w-display);
+  font-size: 1.1875rem;
+  line-height: 1.25;
+  letter-spacing: var(--track-display-sm);
+  color: var(--c-text);
+}
+
+.channel {
+  margin-top: 0.3rem;
+  font-size: var(--t-micro);
+  font-weight: var(--w-strong);
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  /* Gold, not orange: these name a brand and its channel, they are not a
+     control. It also returns orange to meaning only action on this page. */
+  color: var(--c-gold);
+}
+
+.note {
+  margin-top: clamp(1.75rem, 3vw, 2.5rem);
+  font-size: var(--t-small);
+  line-height: 1.6;
+  color: var(--c-text-4);
+  max-width: 78ch;
+}
+
+@media (max-width: 700px) {
+  .railWrap {
+    --rail-h: clamp(17rem, 62vw, 22rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rail {
+    scroll-behavior: auto;
+  }
+
+  .item {
+    transition: none;
+  }
+}

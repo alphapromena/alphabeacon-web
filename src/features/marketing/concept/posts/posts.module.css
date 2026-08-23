@@ -1,0 +1,483 @@
+/* Shared chrome for every marketing piece. Cards are authored at ~300px wide
+   and scaled by their container, so type sizes are deliberately small. */
+
+.shell {
+  position: relative;
+  width: 100%;
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-card);
+}
+
+.shellDark {
+  background: linear-gradient(178deg, #161d24, #0d1318 70%);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  color: #ded8d1;
+}
+
+.shellPaper {
+  background: linear-gradient(180deg, #fbf7f1, #eee6db);
+  border: 1px solid rgba(0, 0, 0, 0.14);
+  color: #2c2620;
+}
+
+/* --- platform bar ------------------------------------------------- */
+
+.platformBar {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 0.7rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.platformBarLight {
+  border-bottom-color: rgba(0, 0, 0, 0.1);
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.platformIcon {
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+
+.platformLabel {
+  font-size: 0.625rem;
+  font-weight: var(--w-strong);
+  letter-spacing: 0.04em;
+  color: inherit;
+  opacity: 0.85;
+}
+
+.more {
+  margin-inline-start: auto;
+  opacity: 0.4;
+  flex: none;
+}
+
+/* --- account row -------------------------------------------------- */
+
+.account {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0.7rem 0.5rem;
+}
+
+.accountText {
+  min-width: 0;
+  display: grid;
+}
+
+.accountName {
+  font-size: 0.75rem;
+  font-weight: var(--w-strong);
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.accountMeta {
+  font-size: 0.625rem;
+  opacity: 0.6;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* --- body --------------------------------------------------------- */
+
+.body {
+  padding: 0.55rem 0.75rem 0.7rem;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: inherit;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
+  overflow: hidden;
+}
+
+.bodyStrong {
+  font-size: 0.8125rem;
+  line-height: 1.45;
+}
+
+.caption {
+  padding: 0.55rem 0.75rem 0.2rem;
+  font-size: 0.72rem;
+  line-height: 1.45;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+}
+
+.captionName {
+  font-weight: var(--w-strong);
+  margin-inline-end: 0.35em;
+}
+
+/* --- engagement --------------------------------------------------- */
+
+.engagement {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.5rem 0.75rem 0.7rem;
+  font-size: 0.6875rem;
+  opacity: 0.72;
+}
+
+.engItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.engagementLinkedIn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.75rem 0.65rem;
+  margin-top: auto;
+  font-size: 0.625rem;
+  opacity: 0.66;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.engSpacer {
+  flex: 1;
+}
+
+.reactionDots {
+  display: inline-flex;
+  align-items: center;
+}
+
+.reactionDots i {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  display: block;
+  border: 1.5px solid #131a20;
+  margin-inline-end: -4px;
+}
+
+/* --- instagram ---------------------------------------------------- */
+
+.igActions {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.55rem 0.75rem 0.15rem;
+  opacity: 0.85;
+}
+
+.igActionsEnd {
+  margin-inline-start: auto;
+}
+
+.igLikes {
+  padding: 0.15rem 0.75rem 0;
+  font-size: 0.6875rem;
+  font-weight: var(--w-strong);
+}
+
+.igComments {
+  padding: 0.3rem 0.75rem 0;
+  font-size: 0.6875rem;
+  opacity: 0.5;
+}
+
+.igTime {
+  padding: 0.35rem 0.75rem 0.75rem;
+  font-size: 0.5625rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.42;
+}
+
+/* --- arabic ------------------------------------------------------- */
+
+.arabic {
+  font-family: var(--f-arabic);
+  line-height: 1.7;
+}
+
+/* --- short-form (X) ----------------------------------------------- */
+
+/* Wide and short, which is the whole difference. Every other card here is
+   portrait because its channel is image-first; on X the sentence is the post,
+   so the card takes a feed post's proportions and the type does the work.
+   The width is set by the orbit slot — this only stops the card padding and
+   type from staying at narrow-card scale inside it. */
+.xCard {
+  gap: 0.55rem;
+  padding: 0.95rem 1.05rem 0.8rem;
+}
+
+.xHead {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+}
+
+/* The supplied lockup on its own plate, contained. Not cropped to a circle:
+   these are wordmarks, and a circular mask would cut one in half. */
+.xAvatar {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  padding: 5px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid var(--c-line);
+  overflow: hidden;
+}
+
+/* Only for artwork that arrived with a light ground of its own. */
+.xAvatarLight {
+  background: #fff;
+  border-color: transparent;
+}
+
+.xAvatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.xIdentity {
+  display: grid;
+  gap: 0.1rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.xName {
+  font-size: 0.82rem;
+  font-weight: var(--w-strong);
+  color: var(--c-text);
+  line-height: 1.25;
+}
+
+/* Where a handle would sit if one had been published to us. */
+.xHandleRow {
+  font-size: 0.7rem;
+  color: var(--c-text-3);
+  line-height: 1.3;
+}
+
+.xMark {
+  flex: none;
+  margin-top: 2px;
+  color: var(--c-text-3);
+}
+
+.xBody {
+  font-size: 0.87rem;
+  line-height: 1.45;
+  color: var(--c-text);
+  letter-spacing: -0.005em;
+}
+
+.xPrepared {
+  font-size: 0.66rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--c-text-3);
+}
+
+/* Reply, repost, like, bookmark, share — spread the way X spreads them. */
+.xActions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 0.15rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--c-line);
+}
+
+.xAction {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.32rem;
+  font-size: 0.7rem;
+  color: var(--c-text-3);
+}
+
+/* --- newsletter --------------------------------------------------- */
+
+.mailHead {
+  padding: 0.6rem 0.8rem 0.5rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.09);
+  display: grid;
+  gap: 0.15rem;
+}
+
+.mailFrom {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.625rem;
+  color: #6d635a;
+}
+
+.mailSubject {
+  font-family: var(--f-display);
+  font-size: 1.0625rem;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: #241f1a;
+}
+
+.mailPreheader {
+  font-size: 0.625rem;
+  color: #7a6f65;
+}
+
+.mailBody {
+  padding: 0.6rem 0.8rem 0.75rem;
+  font-size: 0.7rem;
+  line-height: 1.6;
+  color: #4a423a;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+}
+
+/* Neutral by default: we hold no customer's brand colour, so a prepared
+   newsletter uses the card's own ink rather than one invented for them. */
+.mailCta {
+  background: #2b2723;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0 0.8rem 0.85rem;
+  align-self: flex-start;
+  font-size: 0.6875rem;
+  font-weight: var(--w-strong);
+  padding: 0.4rem 0.75rem;
+  border-radius: 6px;
+  color: #fbf7f1;
+}
+
+/* --- reel --------------------------------------------------------- */
+
+.reelWrap {
+  position: relative;
+}
+
+.reelOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 0.65rem;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.reelTop {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.625rem;
+  font-weight: var(--w-strong);
+  color: #fff;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.55);
+}
+
+.reelDuration {
+  margin-inline-start: auto;
+  font-variant-numeric: tabular-nums;
+  background: rgba(0, 0, 0, 0.45);
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+  backdrop-filter: blur(3px);
+}
+
+.reelPlay {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.9);
+  color: #14181c;
+  padding-left: 3px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+}
+
+.reelFoot {
+  color: #fff;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.7);
+}
+
+.reelTitle {
+  font-family: var(--f-display);
+  font-size: 1rem;
+  line-height: 1.2;
+}
+
+.reelSub {
+  font-size: 0.6875rem;
+  opacity: 0.85;
+  margin-top: 0.15rem;
+}
+
+/* --- status pill -------------------------------------------------- */
+
+.status {
+  position: absolute;
+  top: 0.55rem;
+  inset-inline-end: 0.55rem;
+  z-index: 3;
+  font-size: 0.5625rem;
+  font-weight: var(--w-strong);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.45rem;
+  border-radius: 999px;
+  background: rgba(255, 78, 45, 0.16);
+  border: 1px solid var(--c-accent-line);
+  color: var(--c-accent-hi);
+  backdrop-filter: blur(4px);
+}
+
+/* A draft with no executive attached yet. Reads as a reserved slot, not as a
+   person — the alternative is putting a real name on copy they have not seen. */
+.pendingAvatar {
+  width: 32px;
+  height: 32px;
+  flex: none;
+  border-radius: 50%;
+  border: 1px dashed var(--c-line-2);
+}
+
+/* Arabic set inside the LinkedIn card. Same card, same size — Arabic simply
+   needs the leading its script asks for. */
+.bodyAr {
+  font-family: var(--f-arabic);
+  line-height: 1.85;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+}

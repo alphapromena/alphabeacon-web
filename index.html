@@ -5,28 +5,41 @@
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--
+      The homepage's wording, and the one card the whole site shares. Kept in
+      sync by hand with src/features/marketing/concept/site.ts (HOME_TITLE,
+      HOME_DESCRIPTION, OG_IMAGE) — that module is what client-side navigation
+      sets, this is what a crawler that never runs JavaScript reads, and they
+      must say the same thing. verify:w02 asserts they do.
+
+      The origin stays malaky.ai: the prototype left its hostname undecided and
+      this app does not.
+    -->
     <meta
       name="description"
-      content="Malaky learns your business and prepares your marketing before you ask. Native Arabic, brand memory, proactive campaigns and human approval."
+      content="Malaky learns your business, watches what’s coming, and prepares your marketing across every channel before you ask."
     />
-    <title>Malaky — Your marketing, already done.</title>
+    <title>Malaky — Your marketing was working before you were</title>
     <link rel="canonical" href="https://malaky.ai/" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Malaky" />
-    <meta property="og:title" content="Malaky — Your marketing, already done." />
+    <meta property="og:title" content="Malaky — Your marketing was working before you were" />
     <meta
       property="og:description"
-      content="Malaky learns your business and prepares your marketing before you ask. Native Arabic, brand memory, proactive campaigns and human approval."
+      content="Malaky learns your business, watches what’s coming, and prepares your marketing across every channel before you ask."
     />
     <meta property="og:url" content="https://malaky.ai/" />
-    <meta property="og:image" content="https://malaky.ai/brand/og-malaky.png" />
+    <meta property="og:image" content="https://malaky.ai/og/malaky-social.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Malaky — your marketing was working before you were." />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Malaky — Your marketing, already done." />
+    <meta name="twitter:title" content="Malaky — Your marketing was working before you were" />
     <meta
       name="twitter:description"
-      content="Malaky learns your business and prepares your marketing before you ask. Native Arabic, brand memory, proactive campaigns and human approval."
+      content="Malaky learns your business, watches what’s coming, and prepares your marketing across every channel before you ask."
     />
-    <meta name="twitter:image" content="https://malaky.ai/brand/og-malaky.png" />
+    <meta name="twitter:image" content="https://malaky.ai/og/malaky-social.png" />
   </head>
   <body>
     <div id="root"></div>

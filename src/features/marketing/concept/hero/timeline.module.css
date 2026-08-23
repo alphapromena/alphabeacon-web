@@ -1,0 +1,142 @@
+.wrap {
+  margin-top: clamp(2rem, 3.4vw, 2.75rem);
+  padding-top: 1.4rem;
+  border-top: 1px solid var(--c-line);
+  max-width: 620px;
+}
+
+.label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: var(--t-micro);
+  font-weight: var(--w-strong);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--c-text-2);
+  margin-bottom: 1.1rem;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--c-accent);
+  animation: breathe 2.6s var(--ease-inout) infinite;
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 78, 45, 0.55);
+    opacity: 1;
+  }
+  60% {
+    box-shadow: 0 0 0 7px rgba(255, 78, 45, 0);
+    opacity: 0.75;
+  }
+}
+
+.track {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+
+.step {
+  position: relative;
+  display: grid;
+  gap: 0.45rem;
+  align-content: start;
+  opacity: 0;
+  animation: rise 0.65s var(--ease-out) forwards;
+  animation-delay: calc(0.28s + var(--i) * 0.16s);
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(7px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Connector between steps. */
+.step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 12px;
+  left: calc(24px + 2.9rem);
+  right: 0.35rem;
+  height: 1px;
+  background: linear-gradient(90deg, var(--c-line-2), transparent);
+}
+
+.node {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.badge {
+  width: 25px;
+  height: 25px;
+  flex: none;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--c-line-2);
+  background: var(--c-surface-2);
+  color: var(--c-text-2);
+}
+
+.step[data-kind='trigger'] .badge {
+  border-color: var(--c-accent-line);
+  background: var(--c-accent-wash);
+  color: var(--c-accent-hi);
+}
+
+.time {
+  font-size: 0.6875rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  color: var(--c-text-2);
+}
+
+.step[data-kind='trigger'] .time {
+  color: var(--c-accent-hi);
+}
+
+.text {
+  font-size: 0.6875rem;
+  line-height: 1.35;
+  color: var(--c-text-3);
+  padding-inline-end: 0.5rem;
+}
+
+@media (max-width: 1100px) {
+  .track {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.9rem 1.5rem;
+  }
+
+  .step:not(:last-child)::after {
+    display: none;
+  }
+}
+
+@media (max-width: 420px) {
+  .track {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .step {
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 0.75rem;
+  }
+}
