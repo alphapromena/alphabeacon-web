@@ -37,15 +37,11 @@
   display: inline-grid;
   place-items: center;
   background: var(--c-surface-3);
-  /* KNOWN AA FAILURE 4 of 4 — ALLOWLISTED ON PURPOSE (D-M2-F-r).
-     The prototype's pairing, restored: --c-text-3 on --c-surface-3 is 4.22:1,
-     under the 4.5:1 floor, and these are a customer's initials — real text,
-     at small size, on the lightest surface in the palette. M2 had moved it
-     one tier up to --c-text-2; D-M2-F-r reverted it. verify:w02's quiet-tier
-     sweep names this file as its one allowed exception, and
-     styles/marketing-tokens.test.ts pins the ratio.
-     **Must not reach `main`** — open-items 21. */
-  color: var(--c-text-3);
+  /* CORRECTED (D-M2-F-r2, Abdullah delegated): --c-text-3 on --c-surface-3
+     is 4.22:1, and these are a customer's initials — real text, at small
+     size, on the lightest surface in the palette. One tier up clears AA.
+     styles/marketing-tokens.test.ts asserts the pairing. */
+  color: var(--c-text-2);
   font-weight: var(--w-strong);
   letter-spacing: 0.02em;
   line-height: 1;

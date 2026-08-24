@@ -5,7 +5,13 @@ without reconstructing it from the session log. **Update this file at the end
 of any turn that finishes a phase or changes the plan.** `sessions.md` is the
 chronological record; this is the current picture.
 
-_Last updated: 2026-08-24, when this branch took **`main`** — which now
+_Last updated: 2026-08-24, after **D-M2-F-r2** — Abdullah delegated the call
+on the four AA deviations, the founder ruled that accessibility wins with the
+design spirit preserved, and the corrected palette shipped: the four fixes
+re-applied, the Memory reveal changed to slide without fading, a `Superseded`
+badge carrying what `--c-text-4` used to say by colour alone, and **every
+allowlist deleted**. The branch is merge-ready and waits only on the founder's
+word. Before that: 2026-08-24, when this branch took **`main`** — which now
 carries the **live-suite warm-up** (`fix/live-suite-warmup`): a warm-up +
 heartbeat in `e2e/global-setup.ts`, the trap-22 mode guard, the three derived
 rungs in `e2e/live-clocks.ts` across five spec files, and the two-round
@@ -58,7 +64,7 @@ below).
 | `rb/02-v1-brief` | Website V1 per Abdullah's brief + the ambient idle drift + the M1 card-realism passes through 2026-08-12 — tip `6c598b2`, and `origin/main` is at the same commit, so the production line has all of it |
 | Local `main` ref | **No longer stale** (checked 2026-08-24): local `main` == `origin/main`, and this merge fast-forwards both. The 2026-08-17 warning stood because the local ref had never been fast-forwarded and `git log main..` over-reported by 22 commits — worth re-checking with `git rev-parse main origin/main` before trusting any local `main` comparison. |
 | `fix/e2e-0820` | **The E2E-0820 triage, 2026-08-20 — branched off `main` (`550f54e`), MERGED as a fast-forward and pushed; kept on `origin` as the per-fix record.** F3 Generate reachable from the rail/dashboard/Today, F4 the "credits" vocabulary + `/billing/balance`, F5 the pre-run count, F6 the tone-preview reference, F9 the balance chip's three states, F10 the stale results footer, F11 pluralization, F12 the wizard Finish (failure-tolerant, reported, idempotent), B9 the schedule draft reconciler + a blank schedule for a live org that has none. Gate output in the session entry |
-| `design/m2-concept-v2` | **M2 — the visitor world, 2026-08-23. Branched off `main` (`5c01c68`); took `main` again 2026-08-24. NOT MERGED — pushed for Abdullah's preview. Carries D-M2-F-r: four LIVE WCAG AA failures, allowlisted on purpose so the review shows his verbatim design. Re-applying D-M2-F is a MERGE GATE (open-items 21).** Abdullah's `malaky-prototype` `components/concept-v2/**` ported into `src/features/marketing/`: five routes under one layout, 58 marketing files, its own token file and contrast guard. M1 retired with it. Decisions D-M2-A…F; open-items 21 |
+| `design/m2-concept-v2` | **M2 — the visitor world, 2026-08-23. Branched off `main` (`5c01c68`); took `main` again 2026-08-24. NOT MERGED — pushed for Abdullah's preview; the merge and `main:live` wait on the founder's explicit word. MERGE-READY as of D-M2-F-r2: the four AA corrections are in, every allowlist is gone, and axe enforces contrast on the real homepage with zero exceptions. The accessibility gate in open-items 21 is CLOSED.** Abdullah's `malaky-prototype` `components/concept-v2/**` ported into `src/features/marketing/`: five routes under one layout, 58 marketing files, its own token file and contrast guard. M1 retired with it. Decisions D-M2-A…F; open-items 21 |
 | `fix/live-suite-warmup` | **The live suite warm-up, 2026-08-23/24 — branched off `main` (`5c01c68`), MERGED as a fast-forward and pushed; kept as the per-fix record.** `global-setup.ts` wakes the API, warms a 12-way fleet and holds a heartbeat for the life of a live run, and refuses a run whose dev server is in the wrong mode (trap 22, guarded not just recorded). `live-clocks.ts` states three rungs derived from `Docs/api/live-red-2026-08-23.md`, and five spec files read them instead of literals — `live-brand`, `live-brand-rules`, `live-scheduling`, then `live-auth` and `live-team`. Locators and matchers byte-identical throughout. The two-round rule below came out of it |
 | `chore/api-sweep` | The 118-operation contract sweep (`89199d9`), one commit ahead of `main`, untouched by the triage |
 | `live`     | **Team-only staging**, always a fast-forward of `main` and never carrying commits of its own. Vercel builds its PREVIEW with a branch-scoped `VITE_API_BASE_URL`, so `live` is where the app runs against the real API; PRODUCTION (`main`) has no such variable and stays byte-for-byte static. **After every merge to `main`: `git push origin main:live`.** |
@@ -183,10 +189,12 @@ honest subset ships and the deviation is logged. The backend questions live in
 open-items 1–13 and 21–27; W7 still waits on the two reopened manual gates.
 
 Current totals on `design/m2-concept-v2`: **457 unit tests** (42 files),
-**static e2e 88 passed / 51 live-spec skips**, guard-static 321 files clean,
+**static e2e 87 passed / 51 live-spec skips**, guard-static 321 files clean,
 verify:w00–w06 all PASS, and the FULL live suite **13/13 twice** under the
-two-round rule (2026-08-24) — the branch touches no live code, so that was the
-expected answer rather than a discovery.
+two-round rule (D-M2-F-r2, 2026-08-24) — the branch touches no live code, so
+that was the expected answer rather than a discovery. (The static count moved
+88 → 87 when D-M2-F-r2 deleted the allowlist and the test that existed only to
+keep it honest.)
 (On `main`: 423 unit tests / 41 files / static e2e 72 passed / 255 guarded
 files, and the FULL live suite green under the two-round rule — 13/13 twice,
 2026-08-24.) (On `main` it is 398 unit tests / 38 files / 248 guarded files — the

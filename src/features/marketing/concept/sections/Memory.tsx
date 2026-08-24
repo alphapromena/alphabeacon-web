@@ -69,7 +69,10 @@ export function Memory() {
 
           <div className={styles.lane}>
             <article className={styles.draft} data-on={step >= 1 || undefined}>
-              <p className={styles.draftLabel}>Original draft</p>
+              <p className={styles.draftLabel}>
+                Original draft
+                <span className={styles.supersededBadge}>Superseded</span>
+              </p>
               <p className={`${styles.draftBody} ${styles.draftOld}`}>{MEMORY_EXAMPLE.original}</p>
             </article>
 

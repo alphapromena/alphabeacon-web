@@ -3,24 +3,21 @@
  *
  * `tokens.test.ts` does this job for the app's OKLCH palette; the marketing
  * world arrived with its own, in hex, from the prototype — and it arrived
- * failing in four places.
+ * failing. Four findings, all fixed and all recorded here so they cannot come
+ * back (D-M2-F, briefly reverted for Abdullah's review as D-M2-F-r, and
+ * restored by his delegation as D-M2-F-r2):
  *
- * **D-M2-F-r: those four failures are now ALLOWLISTED, not fixed.** The
- * review preview has to be Abdullah's verbatim design, so the prototype's
- * values are restored and the four findings are named, measured and PINNED
- * below. That is the whole point of the allowlist: an allowlist that only
- * says "ignore contrast here" rots (state.md traps 15 and 18), so each entry
- * asserts the ratio it actually measures. Improve a value and this test tells
- * you to move it out of the allowlist; worsen one and it fails.
+ *  1. `--c-text-4` was `#5d5a57`: 2.63–2.93:1 against the surfaces it is used
+ *     on, across roughly forty elements on five pages.
+ *  2. The filled CTA set `color: #fff` on `--c-accent`: 3.29:1 at 14–15px,
+ *     2.83:1 on hover. The accent is unchanged; the ink is `--c-on-accent`.
+ *  3. The approval preview was held at `opacity: 0.3` — 1.43:1. Not a token
+ *     pair, so it is held by verify:w02 and by the axe scan, which composites
+ *     opacity and reports the blend.
+ *  4. The customer monogram set `--c-text-3` on `--c-surface-3`: 4.22:1.
  *
- * Everything NOT in `ALLOWED` is still held to AA. Findings 1, 2 and 4 are
- * pairs of declared tokens and live here. Finding 3 — the approval preview at
- * `opacity: 0.3` — is not a token pair, so it is held in the two places that
- * can see it: `e2e/marketing.spec.ts`, where axe composites the opacity and
- * reports 1.43:1, and verify:w02, which reads the declaration itself.
- *
- * **None of this may reach `main`.** The AA pass is D-M2-F, reverted by
- * D-M2-F-r for review only; open-items 21 carries the gate.
+ * **There is no allowlist.** axe enforces contrast on the real homepage with
+ * zero exceptions, and everything below is held to AA outright.
  *
  * Like its app-side sibling this parses the REAL stylesheet rather than a copy
  * of the values, so editing a token without editing this file fails here.
@@ -116,35 +113,6 @@ const TEXT = {
   '--c-text-4': token('--c-text-4'),
 }
 
-/**
- * D-M2-F-r — the known AA failures Abdullah's palette carries, allowed BY
- * NAME and PINNED to the ratio each one actually measures (±0.05).
- *
- * Three of the four deviations are colour pairs and appear here. Finding 3,
- * the approval preview at `opacity: 0.3`, cannot be expressed as a pair —
- * verify:w02 holds it structurally instead.
- */
-const ALLOWED: Record<string, number> = {
-  // 1 of 4 — the fourth text tier, ~40 elements across the five pages.
-  '--c-text-4 on --c-void': 2.93,
-  '--c-text-4 on --c-bg': 2.85,
-  '--c-text-4 on --c-surface-1': 2.75,
-  '--c-text-4 on --c-surface-2': 2.64,
-  // 2 of 4 — white ink on the filled CTA, in both its states.
-  '--c-on-accent on --c-accent': 3.29,
-  '--c-on-accent on --c-accent-hi': 2.83,
-  // 4 of 4 — the customer monogram's initials on the lightest surface.
-  '--c-text-3 on --c-surface-3': 4.22,
-}
-
-/** Pinned, so a regression cannot hide inside an allowlisted pair. */
-function expectPinned(key: string, ratio: number) {
-  expect(ratio, `${key} is allowlisted at ${ALLOWED[key]}:1`).toBeCloseTo(ALLOWED[key], 1)
-  expect(ratio, `${key} is allowlisted as a FAILURE — if it now passes, remove it`).toBeLessThan(
-    AA_TEXT,
-  )
-}
-
 describe('the visitor world meets WCAG AA', () => {
   /**
    * Every text tier on every surface. The prototype used `--c-text-4` on the
@@ -154,11 +122,8 @@ describe('the visitor world meets WCAG AA', () => {
    */
   for (const [textName, fg] of Object.entries(TEXT)) {
     for (const [surfaceName, bg] of Object.entries(PAGE_SURFACES)) {
-      const key = `${textName} on ${surfaceName}`
-      const allowed = key in ALLOWED
-      it(allowed ? `${key} is an ALLOWLISTED failure (D-M2-F-r)` : `${key} clears AA`, () => {
-        if (allowed) expectPinned(key, contrast(fg, bg))
-        else expect(contrast(fg, bg)).toBeGreaterThanOrEqual(AA_TEXT)
+      it(`${textName} on ${surfaceName} clears AA for normal text`, () => {
+        expect(contrast(fg, bg)).toBeGreaterThanOrEqual(AA_TEXT)
       })
     }
   }
@@ -172,29 +137,23 @@ describe('the visitor world meets WCAG AA', () => {
     }
   }
 
-  it('the customer monogram is an ALLOWLISTED failure on the light fill (D-M2-F-r)', () => {
-    // `BrandMark.module.css` is the one place the port puts a quiet tier on a
-    // component fill, and D-M2-F-r restored it. verify:w02's source sweep
-    // names that file as its single exception; this pins the ratio.
-    expectPinned(
-      '--c-text-3 on --c-surface-3',
-      contrast(TEXT['--c-text-3'], COMPONENT_SURFACES['--c-surface-3']),
-    )
+  it('the quiet tiers are kept OFF the component fills, because they cannot clear AA there', () => {
+    // Stated as a fact about the palette rather than left implicit: if a
+    // future edit puts --c-text-3 back on --c-surface-3, verify:w02's source
+    // sweep is what catches it, and this records why it must.
+    expect(contrast(TEXT['--c-text-3'], COMPONENT_SURFACES['--c-surface-3'])).toBeLessThan(AA_TEXT)
   })
 
-  it('the filled CTA is an ALLOWLISTED failure, and the accent itself is untouched', () => {
-    // The accent is the identity and was never changed by either decision.
-    // The INK is what D-M2-F darkened and D-M2-F-r put back to the
-    // prototype's #fff. This is the most visible of the four.
+  it('the filled CTA is legible on the accent it is filled with', () => {
+    // The accent is the identity and is untouched; the ink is what changed.
     expect(token('--c-accent')).toEqual(hexToRgb('#ff4e2d'))
-    expectPinned('--c-on-accent on --c-accent', contrast(token('--c-on-accent'), token('--c-accent')))
+    expect(contrast(token('--c-on-accent'), token('--c-accent'))).toBeGreaterThanOrEqual(AA_TEXT)
   })
 
-  it('the CTA hover state is allowlisted too, and is the worse of the two', () => {
-    // Hover brightens the fill, so white ink gets HARDER to read, not easier.
-    const hover = contrast(token('--c-on-accent'), token('--c-accent-hi'))
-    expectPinned('--c-on-accent on --c-accent-hi', hover)
-    expect(hover).toBeLessThan(contrast(token('--c-on-accent'), token('--c-accent')))
+  it('the CTA stays legible in its hover state', () => {
+    // Hover brightens the fill, so the dark ink only gets easier to read —
+    // but a future hover that darkened instead would fail here first.
+    expect(contrast(token('--c-on-accent'), token('--c-accent-hi'))).toBeGreaterThanOrEqual(AA_TEXT)
   })
 
   it('the gold tier is legible on its own fill', () => {
@@ -231,11 +190,11 @@ describe('the palette keeps its shape', () => {
   })
 
   it('reads lighter from the quietest text tier up to the loudest', () => {
-    // Under D-M2-F-r `--c-text-4` is the prototype's own #5d5a57, so the ramp
-    // is strictly decreasing again. It is asserted as non-increasing anyway,
-    // because D-M2-F's fix aliased the fourth tier to the third and that is
-    // the shape to restore before this branch can reach `main`: a compliant
-    // fourth tier — distinct or aliased — is welcome, an inverted ramp is not.
+    // `--c-text-4` currently ALIASES `--c-text-3` — the fourth tier cannot
+    // exist above the AA floor while the third sits where it does, and
+    // inventing a new third would change text that already passes. So this
+    // asserts non-increasing rather than strictly decreasing: a future
+    // compliant fourth tier is welcome, an inverted ramp is not.
     const [t1, t2, t3, t4] = [
       luminance(TEXT['--c-text']),
       luminance(TEXT['--c-text-2']),

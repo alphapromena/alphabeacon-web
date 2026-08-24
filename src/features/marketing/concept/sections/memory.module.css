@@ -23,13 +23,24 @@
    it — but a visitor who scrolls straight past sees the whole flow rather
    than a headline over a blank panel. Nothing here is required to understand
    the section. */
+/* D-M2-F-r2 — THE REVEAL SLIDES, IT DOES NOT FADE.
+   `opacity: 0.55` here was the single cause of all three of this section's
+   contrast findings. It multiplied every text tier inside all three cards:
+   1.60:1 on the original draft's label and body, 2.18:1 on the rule list,
+   3.21:1 on "what it learned". It was never a "superseded" signal — it
+   applied equally to the learned rule and the future draft, which are the two
+   things the section exists to prove.
+   No dim value fixes it. `--c-text-3` is 4.76:1 on `--c-surface-1` and
+   4.57:1 on `--c-surface-2` at FULL strength, so any opacity below ~0.97 puts
+   the quiet tiers under AA. The reveal therefore keeps its movement and drops
+   the fade — which is also the rule this repo has now learned four times:
+   never dim real text with opacity (state.md). The card's border still
+   transitions, so the reveal keeps its edge-lighting. */
 .draft,
 .learned,
 .future {
-  opacity: 0.55;
   transform: translateY(10px);
   transition:
-    opacity 0.55s var(--ease-out),
     transform 0.55s var(--ease-out),
     border-color 0.55s var(--ease-out);
 }
@@ -37,7 +48,6 @@
 .draft[data-on],
 .learned[data-on],
 .future[data-on] {
-  opacity: 1;
   transform: none;
 }
 
@@ -68,8 +78,27 @@
   color: var(--c-text);
 }
 
+/* The original draft stays the quiet tier — but that tier is no longer a
+   DISTINCTION. Abdullah said "superseded" with `--c-text-4` alone, and the AA
+   fix (D-M2-F) aliases it to `--c-text-3`, which is the same colour as the
+   rule list beside it. So the meaning moves to a channel that does not
+   require perceiving colour at all, in the label row the section already had:
+   see `.supersededBadge`. The colour still reads as secondary; it just is no
+   longer the only thing saying so. */
 .draftOld {
   color: var(--c-text-4);
+}
+
+.supersededBadge {
+  font-size: 0.625rem;
+  font-weight: var(--w-strong);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--c-text-3);
+  border: 1px solid var(--c-line-3);
+  border-radius: 999px;
+  padding: 0.16rem 0.5rem;
+  line-height: 1;
 }
 
 .draftEdited {

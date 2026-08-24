@@ -553,56 +553,37 @@ New for the Malaky M1 (2026-08-08):
 ## 21. M2 — the concept-v2 visitor world (2026-08-23, `design/m2-concept-v2`)
 
 Everything here is a founder or specialist decision. None of it blocks the
-branch; all of it blocks DNS cutover or launch — except the first item, which
-blocks the MERGE.
+branch; all of it blocks DNS cutover or launch.
 
-### Blocking the merge to `main` (2026-08-24, D-M2-F-r)
+### Closed 2026-08-24 — the accessibility gate (D-M2-F-r2)
 
-- [ ] **Re-apply D-M2-F before this branch reaches `main`.** On the founder's
-      instruction the four AA fixes were REVERTED so the preview Abdullah
-      reviews is his design verbatim (D-M2-F-r). The branch therefore ships
-      four known WCAG AA failures, live on every page:
-      `--c-text-4` `#5d5a57` at 2.63–2.93:1 across ~40 elements; the filled
-      CTA's white ink at 3.29:1, and 2.83:1 on hover; the approval preview
-      ghosted at `opacity: 0.3`, 1.43:1 and in the accessibility tree before
-      the visitor has approved anything; the customer monogram at 4.22:1.
-      They are allowlisted BY NAME and BY MEASURED RATIO — never by switching
-      the contrast rule off — in `marketing-tokens.test.ts`,
-      `e2e/marketing.spec.ts` and `verify:w02`, and each site says so in a
-      comment. **This is a review artefact, not a shipping decision.** Undoing
-      it is a revert of the four values plus deleting the allowlists; the
-      guards are written to report themselves as stale the moment the values
-      improve, so they cannot be left behind by accident.
-- [ ] **Decide the four, with Abdullah.** The revert exists so he can see them
-      as drawn. The white-on-orange CTA is the one to look at first — it is
-      the most visible, and it is the site's primary action. Either he accepts
-      the AA-corrected values (D-M2-F), or he supplies his own compliant ones.
-      An engineer picking a third answer is what D-M2-F was criticised for.
-
-### Found by fixing the axe gate — NOT D-M2-F-r's doing (2026-08-24)
-
-- [ ] **The homepage's axe scan had never scanned the homepage.**
-      `AxeBuilder.analyze()` does not auto-wait (state.md trap 14), so the
-      scan fired straight after `asVisitor()` and read the still-mounted
-      dev-datasets page — the APP's ivory palette, ~25 text nodes, all
-      passing. M2's "axe clean on all five marketing routes" was true for four
-      of them. Fixed: the homepage scan now waits for the hero `h1` and runs
-      under reduced motion, which `marketing.css` collapses to the settled end
-      state (a moving page reports mid-transition blends as defects — the
-      orbit timeline came back at 1.02:1, which is a frame, not a colour).
-      No action needed; recorded because the claim it invalidates is in
-      `sessions.md` and in design.md Part 7.
-- [ ] **Three real contrast defects in the Memory section, pre-existing.**
-      Surfaced by the fix above and present on M2 as shipped: the superseded
-      draft at `--c-text-2` ~0.25 opacity (1.60:1), the rule list at
-      `--c-text-3` ~0.53 (2.18:1), and "what it learned" at `--c-text-3` ~0.76
-      (3.21:1). None involves any of the four reverted values. They are
-      allowlisted in their own separate group so they are not mistaken for
-      D-M2-F-r's, and they are a genuine defect against design.md Part 6
-      rule 1 and state.md's "never dim real text with opacity". **This needs a
-      design decision, not a quiet fix**: the dimming is expressing "this is
-      the draft that was superseded", so the fix is a different way to say
-      that, which is Abdullah's call.
+- [x] **The four AA corrections are in, and the merge gate is satisfied.**
+      D-M2-F-r reverted them so Abdullah could review his palette verbatim; he
+      delegated the call and the founder ruled that accessibility wins with the
+      design spirit preserved. `--c-text-4` aliases `--c-text-3`, the filled
+      CTA's ink is `#1a0a05`, the approval preview is absent rather than
+      ghosted, the monogram is one tier up. `--c-accent` and every other token
+      are byte-identical to Abdullah's. **Every allowlist is removed** — axe
+      enforces contrast on the real homepage with zero exceptions.
+      The stale-guards written into D-M2-F-r did their job: each one reported
+      itself the moment its finding stopped being true, which is how the
+      cleanup was driven rather than remembered.
+- [x] **The Memory section's three contrast defects are fixed**, and the
+      diagnosis in the previous entry was wrong in a way worth keeping. They
+      were reported as "the dimming means superseded draft"; all three actually
+      traced to one rule — the scroll-reveal resting at `opacity: 0.55`, which
+      multiplied every text tier inside all three cards and applied equally to
+      the learned rule and the future draft. The reveal slides without fading
+      now. Separately, a `Superseded` badge carries what `--c-text-4` used to
+      say alone, because aliasing that tier removed the distinction.
+      verify:w02 11d and 11e fail if either is undone.
+- [x] **The homepage's axe scan had never scanned the homepage.**
+      `analyze()` does not auto-wait (state.md trap 14), so it read the
+      still-mounted dev-datasets page — the APP's ivory palette, ~25 text
+      nodes, all passing. M2's "axe clean on all five marketing routes" was
+      true for four of them. It now waits for the hero `h1` and scans under
+      reduced motion. Kept through the D-M2-F-r2 cleanup because it was a
+      broken check, never an allowlist.
 
 ### Blocking cutover
 

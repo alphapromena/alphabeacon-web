@@ -501,15 +501,13 @@ slows.** `marketing.css` collapses every animation and transition inside
 a `<video>` element at all under the preference (the poster carries the whole
 story), and the hero orbit renders a composed, readable still.
 
-**REVERTED 2026-08-24 (D-M2-F-r).** The founder decided otherwise, and the
-"reversible in one line" below was taken up: on `design/m2-concept-v2` all
-four values are Abdullah's again, so the preview he reviews is his design
-verbatim rather than the corrected one. The four are therefore **live WCAG AA
-failures on that branch**, allowlisted by name and by measured ratio in
-`marketing-tokens.test.ts`, `e2e/marketing.spec.ts` and `verify:w02` — never
-by switching the contrast rule off — and re-applying the fixes is a gate on
-the merge to `main` (open-items 21). What follows describes the fixes as
-D-M2-F made them; read each one as the state to RESTORE.
+**Settled 2026-08-24 (D-M2-F-r2).** These four were briefly reverted so
+Abdullah could review his palette verbatim (D-M2-F-r); he delegated the call
+and the founder ruled that accessibility wins with the design spirit preserved.
+All four corrections below are in place, and **no allowlist survives anywhere
+in the branch** — axe enforces contrast on the real homepage with zero
+exceptions. A fifth correction came out of the same pass and is recorded after
+the four.
 
 **Four values differ from Abdullah's prototype. All four are accessibility
 fixes, all four are commented at the site of the change, and all four are
@@ -538,9 +536,32 @@ reversible in one line if the founder decides otherwise.**
 4. **The customer monogram set `--c-text-3` on `--c-surface-3`.** 4.22:1, and
    those are a customer's initials — real text. One tier up clears AA.
 
+5. **The Memory section's reveal faded as well as moved** (found 2026-08-24,
+   D-M2-F-r2). `.draft, .learned, .future` rested at `opacity: 0.55`, which
+   multiplied every text tier inside all three cards — 1.60:1 on the original
+   draft, 2.18:1 on the rule list, 3.21:1 on "what it learned". It was never a
+   "superseded" signal: it applied equally to the learned rule and the future
+   draft. No dim value fixes it, because `--c-text-3` is 4.76:1 on
+   `--c-surface-1` and 4.57:1 on `--c-surface-2` at full strength. **The reveal
+   now slides without fading** — the movement and the border transition are
+   kept, and Part 5's rule against dimming real text holds.
+   One consequence of deviation 1 is paid for here: `--c-text-4` was the ONLY
+   thing saying "this draft was superseded", and aliasing it to `--c-text-3`
+   makes it the same colour as the rule list beside it. A small `Superseded`
+   badge in the label row carries the meaning in a channel that does not
+   require perceiving colour. The alternative considered was a strikethrough
+   on the draft body; the badge won because the label row is structure the
+   design already had.
+
 One more change is not a deviation but a bug fix: `RealBrands` carried
 `role="group"` on a `<ul>`, which strips the list role from every child. The
 scroll container keeps its focus and its label without claiming to be a group.
+
+And one was a broken check rather than a broken design: the homepage's axe
+scan had never actually scanned the homepage — `analyze()` does not auto-wait,
+so it read whatever was still mounted. It now waits for the hero `h1` and
+scans under reduced motion, which this stylesheet collapses to the settled end
+state. A moving page reports mid-transition blends as defects.
 
 ### 7.8 — What did NOT come across
 

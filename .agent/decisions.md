@@ -1867,3 +1867,57 @@ Recorded here as the founder set them; each is implemented in its own phase.
 - Instead of: keeping D-M2-F (Abdullah reviews a design he did not draw), or
   reverting the values and switching the contrast rule off (the same defects,
   plus a gate that would never speak again).
+
+### 2026-08-24 — D-M2-F-r2: the corrected palette ships; no allowlist anywhere
+
+- **What.** D-M2-F's four accessibility fixes are back, and D-M2-F-r is
+  superseded. `--c-text-4` aliases `--c-text-3` again, the filled CTA's ink is
+  `--c-on-accent` `#1a0a05`, the approval preview is absent rather than ghosted,
+  and the customer monogram sits one tier up. `--c-accent` `#ff4e2d` and every
+  other token are byte-identical to Abdullah's. **Every allowlist is gone** —
+  axe enforces contrast on the real homepage with zero exceptions, the tokens
+  test holds the whole matrix to AA outright, and verify:w02's quiet-tier sweep
+  has no named exception.
+- **Why.** Abdullah delegated the call ("do what's appropriate") and the founder
+  ruled: accessibility wins, design spirit preserved. D-M2-F-r had done its job
+  — it existed so he could see the four as drawn before deciding.
+- **The Memory section, and a correction worth recording.** The three contrast
+  defects there were reported as "the dimming means superseded draft". They did
+  not. All three traced to ONE rule — `.draft, .learned, .future { opacity:
+  0.55 }`, the scroll-reveal resting state — which multiplied every text tier
+  inside all three cards: 1.60:1 on the original draft, 2.18:1 on the rule list,
+  3.21:1 on "what it learned". It applied equally to the learned rule and the
+  future draft, which are the two things the section exists to prove. There was
+  also no strikethrough to keep.
+  **The fix is that the reveal slides without fading.** No dim value would have
+  worked: `--c-text-3` is 4.76:1 on `--c-surface-1` and 4.57:1 on
+  `--c-surface-2` at FULL strength, so any opacity below ~0.97 puts the quiet
+  tiers under AA. Movement is kept, the border still transitions, and the rule
+  this repo has now learned four times is honoured: never dim real text with
+  opacity.
+- **"Superseded" moved off colour, and that IS needed — for a different reason
+  than assumed.** Abdullah said it with `--c-text-4` alone, and the AA fix
+  aliases that tier to `--c-text-3`, which is the colour of the rule list beside
+  it. So the one channel the meaning travelled on stopped being a distinction.
+  A `Superseded` badge now sits in the label row the section already had.
+  **Shipped over the alternative** (a strikethrough on the original draft body)
+  because the label row is structure Abdullah already drew, while a line through
+  a 1.375rem display paragraph is a heavier visual edit than the AA fix itself.
+  The draft stays obviously secondary at a glance without it: quieter tier, no
+  accent border, no tinted background, against an edited card that has all
+  three.
+- **What is enforced, now that nothing is allowlisted.** verify:w02 gained two
+  checks that fail if either fix is quietly undone: 11d (the Memory reveal may
+  move, it may not fade) and 11e (the superseded signal may not be colour-only
+  again). 11c flipped from "assert the ghosting is present" to "assert it is
+  absent, and that the card leaves the accessibility tree".
+- **Kept from D-M2-F-r's turn, because it was never an allowlist:**
+  `settledHomepage` in `e2e/marketing.spec.ts`. The homepage's axe scan had
+  never scanned the homepage (trap 14 — `analyze()` does not auto-wait, so it
+  read the still-mounted dev-datasets page), and once gated it scanned a moving
+  page. It now waits for the hero `h1` and scans under reduced motion, which
+  `marketing.css` collapses to the settled end state.
+- Instead of: keeping the prototype's values (Abdullah delegated the decision,
+  and the founder took it), or keeping a "documented" allowlist alongside the
+  fixes (nothing left to allow — an allowlist covering nothing is the rot it was
+  written to prevent).

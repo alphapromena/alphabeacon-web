@@ -2222,3 +2222,77 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   Memory-section dimming. Re-applying D-M2-F is now a **merge gate** in
   open-items 21 — this branch must not reach `main` carrying four live AA
   failures.
+
+### 2026-08-24 04:40 — D-M2-F-r2: the corrected palette ships, and no allowlist survives
+
+- Did: Abdullah delegated the call on the four AA deviations ("do what's
+  appropriate") and the founder ruled — accessibility wins, design spirit
+  preserved. So D-M2-F-r is superseded and the four corrections are back:
+  `--c-text-4` aliases `--c-text-3`, the filled CTA's ink is `--c-on-accent`
+  `#1a0a05`, the approval preview is absent rather than ghosted, the customer
+  monogram sits one tier up. `--c-accent` `#ff4e2d` and every other token are
+  byte-identical to Abdullah's. **Every allowlist is deleted** — the axe scan,
+  the tokens test and verify:w02's quiet-tier sweep all run with zero
+  exceptions again.
+- **The Memory section, and a correction to the previous entry.** Its three
+  contrast defects were reported here as "the dimming means superseded draft".
+  That was wrong, and the wrong diagnosis would have produced the wrong fix.
+  All three traced to ONE rule — `.draft, .learned, .future { opacity: 0.55 }`,
+  the scroll-reveal resting state — which multiplied every text tier inside all
+  three cards: 1.60:1 on the original draft, 2.18:1 on the rule list, 3.21:1 on
+  "what it learned". It applied equally to the learned rule and the future
+  draft, which are the two things the section exists to prove, so it was never
+  a "superseded" signal. There was also no strikethrough to keep.
+  **The reveal slides without fading now.** No dim value would have worked:
+  `--c-text-3` is 4.76:1 on `--c-surface-1` and 4.57:1 on `--c-surface-2` at
+  FULL strength, so any opacity below ~0.97 puts the quiet tiers under AA. The
+  movement and the border transition are kept.
+  **"Superseded" moved off colour, and that IS needed — for a different reason
+  than assumed.** `--c-text-4` was the only channel carrying it, and the AA fix
+  aliases that tier to `--c-text-3`, the colour of the rule list beside it. A
+  `Superseded` badge now sits in the label row the section already had. Shipped
+  over the alternative (a strikethrough on the draft body) because the label
+  row is structure Abdullah already drew, while a line through a 1.375rem
+  display paragraph is a heavier visual edit than the AA fix itself. The draft
+  stays obviously secondary without it: quieter tier, no accent border, no
+  tinted background, against an edited card that has all three.
+- **Enforcement, now that nothing is allowlisted:** verify:w02 gained 11d (the
+  Memory reveal may move, it may not fade) and 11e (the superseded signal may
+  not be colour-only again), and 11c flipped from asserting the ghosting is
+  PRESENT to asserting it is ABSENT and out of the accessibility tree. The
+  behavioural approval test went back to `toBeHidden()`.
+  `settledHomepage` was KEPT through the cleanup: it was never an allowlist,
+  it is the fix for a scan that had been reading the wrong page.
+- Evidence: before/after screenshots of all seven spots plus the Memory
+  treatment, captured at 1440 under reduced motion.
+- Phase: **M2**. **Branch only: NOT merged, pushed for review.** The merge to
+  `main` and `main:live` wait on the founder's explicit word.
+- Files: `src/styles/{marketing.css,marketing-tokens.test.ts}`,
+  `src/features/marketing/concept/{BrandMark.module.css,sections/Memory.tsx,
+  sections/memory.module.css,sections/approval.module.css}`,
+  `e2e/marketing.spec.ts`, `scripts/verify-w02.ts`, `design.md`,
+  `.agent/{state,decisions,open-items,sessions}.md`
+- Decisions: see decisions.md — **D-M2-F-r2** (the corrected palette ships;
+  Abdullah's delegation noted; no allowlist anywhere).
+- Verify: lint + typecheck + **457 unit / 42 files** + guard-static (321 files)
+  + build + **static e2e 87 passed / 51 live skips / 0 failed** +
+  **`verify:w00`–`w06` all PASS**. LIVE, all 13 files, `LIVE_MEDIA` off, one
+  file at a time, twice: **round 1 12/13 in 999 s**, **round 2 13/13 in 829 s**.
+  **Round 1's single red was `live-auth`, and it is not this change's.** The
+  test timed out at its full 150 s budget on `page.goto('/login')` →
+  `fill('Work email')` — the login form never rendered, which is a stalled boot
+  (`GET /me` + `/me/orgs`), not a wrong assertion. The diff touches only
+  marketing CSS/TSX, the marketing spec, verify-w02 and docs: `src/api`,
+  `src/data`, auth and routing are untouched, so it cannot reach `/login`. In
+  round 2 the same file ran 7/7 in 59 s against 195 s. This is exactly the case
+  the two-round law was written for.
+  One more transient to record rather than hide: in the first sweep `verify:w02`
+  came back FAIL while its own structural laws passed and the full static e2e
+  passed alongside it. It passed standalone and passed again in a clean
+  sequential sweep — back-to-back Playwright webServers on port 5199, which is
+  trap 22's neighbourhood. Reported because a green that needed a second look
+  is worth naming.
+- Next: **the founder's word on the merge.** open-items 21's accessibility gate
+  is closed; what remains there blocks DNS cutover, not the merge —
+  `/request-demo` still has no destination, `hello@malaky.ai` is a placeholder,
+  and six legal values are `null`.
