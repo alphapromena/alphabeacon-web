@@ -5,7 +5,11 @@ without reconstructing it from the session log. **Update this file at the end
 of any turn that finishes a phase or changes the plan.** `sessions.md` is the
 chronological record; this is the current picture.
 
-_Last updated: 2026-08-24, after **D-M2-F-r2** — Abdullah delegated the call
+_Last updated: 2026-08-24, after the **M2 design cycle was MERGED to `main`**
+on the founder's explicit approval — the visitor world is now Abdullah's
+concept-v2 port with the corrected palette, fast-forwarded to `039adfb` and
+pushed with `main:live`. Before that, the same day: **D-M2-F-r2** — Abdullah
+delegated the call
 on the four AA deviations, the founder ruled that accessibility wins with the
 design spirit preserved, and the corrected palette shipped: the four fixes
 re-applied, the Memory reveal changed to slide without fading, a `Superseded`
@@ -60,11 +64,11 @@ below).
 |            |                                                        |
 | ---------- | ------------------------------------------------------ |
 | Remote     | `github.com/alphapromena/alphabeacon-web` (private)    |
-| `main`     | Production line, now at the **`fix/live-suite-warmup`** tip — `df23176` plus this close-out, three commits fast-forwarded and **pushed 2026-08-24**, `main:live` with it. Before that push it was `5c01c68`. Previously at **`83ec448`** — the E2E-0820 triage (B1–B9, three commits) fast-forwarded and **pushed 2026-08-20** on the founder's explicit approval, `main:live` with it. Before that push it was `550f54e`. Previously at **`c6e3489`** — everything below PLUS the whole live integration (INT-6…12), merged as a fast-forward and **pushed 2026-08-19** on the founder's explicit approval. Before that push it was `6c598b2`. Open-items 16–18 still hold the human gates |
+| `main`     | Production line, now at **`039adfb`** — the whole **M2 design cycle** (`design/m2-concept-v2`, four commits) fast-forwarded and **pushed 2026-08-24** on the founder's explicit approval, `main:live` with it. Before that push it was `b8becc1`. Previously at **`b8becc1`** — the live-suite warm-up (`df23176` plus its close-out, three commits) fast-forwarded and pushed 2026-08-24, `main:live` with it. Before that push it was `5c01c68`. Previously at **`83ec448`** — the E2E-0820 triage (B1–B9, three commits) fast-forwarded and **pushed 2026-08-20** on the founder's explicit approval, `main:live` with it. Before that push it was `550f54e`. Previously at **`c6e3489`** — everything below PLUS the whole live integration (INT-6…12), merged as a fast-forward and **pushed 2026-08-19** on the founder's explicit approval. Before that push it was `6c598b2`. Open-items 16–18 still hold the human gates |
 | `rb/02-v1-brief` | Website V1 per Abdullah's brief + the ambient idle drift + the M1 card-realism passes through 2026-08-12 — tip `6c598b2`, and `origin/main` is at the same commit, so the production line has all of it |
 | Local `main` ref | **No longer stale** (checked 2026-08-24): local `main` == `origin/main`, and this merge fast-forwards both. The 2026-08-17 warning stood because the local ref had never been fast-forwarded and `git log main..` over-reported by 22 commits — worth re-checking with `git rev-parse main origin/main` before trusting any local `main` comparison. |
 | `fix/e2e-0820` | **The E2E-0820 triage, 2026-08-20 — branched off `main` (`550f54e`), MERGED as a fast-forward and pushed; kept on `origin` as the per-fix record.** F3 Generate reachable from the rail/dashboard/Today, F4 the "credits" vocabulary + `/billing/balance`, F5 the pre-run count, F6 the tone-preview reference, F9 the balance chip's three states, F10 the stale results footer, F11 pluralization, F12 the wizard Finish (failure-tolerant, reported, idempotent), B9 the schedule draft reconciler + a blank schedule for a live org that has none. Gate output in the session entry |
-| `design/m2-concept-v2` | **M2 — the visitor world, 2026-08-23. Branched off `main` (`5c01c68`); took `main` again 2026-08-24. NOT MERGED — pushed for Abdullah's preview; the merge and `main:live` wait on the founder's explicit word. MERGE-READY as of D-M2-F-r2: the four AA corrections are in, every allowlist is gone, and axe enforces contrast on the real homepage with zero exceptions. The accessibility gate in open-items 21 is CLOSED.** Abdullah's `malaky-prototype` `components/concept-v2/**` ported into `src/features/marketing/`: five routes under one layout, 58 marketing files, its own token file and contrast guard. M1 retired with it. Decisions D-M2-A…F; open-items 21 |
+| `design/m2-concept-v2` | **M2 — the visitor world. Branched off `main` (`5c01c68`) 2026-08-23; took `main` again and MERGED as a fast-forward 2026-08-24 on the founder's explicit approval; kept on `origin` as the per-cycle record.** The decision chain is D-M2-A…F, then D-M2-F-r (the AA pass reverted so Abdullah could review his palette verbatim), then **D-M2-F-r2** (he delegated, the founder ruled accessibility wins with the design spirit preserved — the four corrections re-applied, the Memory reveal changed to slide without fading, a `Superseded` badge added, and every allowlist deleted). Abdullah's `malaky-prototype` `components/concept-v2/**` ported into `src/features/marketing/`: five routes under one layout, 58 marketing files, its own token file and contrast guard. M1 retired with it. Decisions D-M2-A…F; open-items 21 |
 | `fix/live-suite-warmup` | **The live suite warm-up, 2026-08-23/24 — branched off `main` (`5c01c68`), MERGED as a fast-forward and pushed; kept as the per-fix record.** `global-setup.ts` wakes the API, warms a 12-way fleet and holds a heartbeat for the life of a live run, and refuses a run whose dev server is in the wrong mode (trap 22, guarded not just recorded). `live-clocks.ts` states three rungs derived from `Docs/api/live-red-2026-08-23.md`, and five spec files read them instead of literals — `live-brand`, `live-brand-rules`, `live-scheduling`, then `live-auth` and `live-team`. Locators and matchers byte-identical throughout. The two-round rule below came out of it |
 | `chore/api-sweep` | The 118-operation contract sweep (`89199d9`), one commit ahead of `main`, untouched by the triage |
 | `live`     | **Team-only staging**, always a fast-forward of `main` and never carrying commits of its own. Vercel builds its PREVIEW with a branch-scoped `VITE_API_BASE_URL`, so `live` is where the app runs against the real API; PRODUCTION (`main`) has no such variable and stays byte-for-byte static. **After every merge to `main`: `git push origin main:live`.** |
@@ -106,7 +110,7 @@ aspirational, not a rule this repo follows.
 | — **Malaky rebrand** (`rb/00-malaky`) | M1 + every user-facing surface | Done 2026-08-08 — kit palette/typography/motion in `design.md`, name sweep, new M1, deploy fix (`VITE_DEFAULT_DATASET` + `vercel.json`) |
 | — **M1 cinematic layer** (`rb/01-motion`) | M1 | Done 2026-08-09, merged — then superseded by the V1 brief (film retired, D1) |
 | — **Website V1** (`rb/02-v1-brief`) | M1 | Built + verified 2026-08-10 — **SUPERSEDED by M2, 2026-08-23** |
-| — **M2: concept-v2** (`design/m2-concept-v2`) | the whole visitor world | Built + verified 2026-08-23 — **branch only, awaiting founder review (open-items 21)** |
+| — **M2: concept-v2** (`design/m2-concept-v2`) | the whole visitor world | Built 2026-08-23, corrected and **MERGED 2026-08-24** (D-M2-F-r2) — the accessibility gate in open-items 21 is closed; what remains there blocks DNS cutover, not the merge |
 | **W7 Hardening + ship**              | —                            | **Parked behind the two manual gates**                        |
 
 ## Integration phases (AlphaStudio API — contract at `docs/api/api.md`)
@@ -188,13 +192,13 @@ invented or faked: where a spec promised something the wire cannot deliver, the
 honest subset ships and the deviation is logged. The backend questions live in
 open-items 1–13 and 21–27; W7 still waits on the two reopened manual gates.
 
-Current totals on `design/m2-concept-v2`: **457 unit tests** (42 files),
-**static e2e 87 passed / 51 live-spec skips**, guard-static 321 files clean,
-verify:w00–w06 all PASS, and the FULL live suite **13/13 twice** under the
-two-round rule (D-M2-F-r2, 2026-08-24) — the branch touches no live code, so
-that was the expected answer rather than a discovery. (The static count moved
-88 → 87 when D-M2-F-r2 deleted the allowlist and the test that existed only to
-keep it honest.)
+Current totals on `main`: **457 unit tests** (42 files), **static e2e 87
+passed / 51 live-spec skips**, guard-static 321 files clean, verify:w00–w06 all
+PASS, and the FULL live suite **13/13** on the merged tree (D-M2-F-r2 round 2,
+2026-08-24). M2 touches no live code — `src/api` and `src/data` were
+byte-identical to `main` throughout — so green there was the expected answer
+rather than a discovery. (The static count moved 88 → 87 when D-M2-F-r2 deleted
+the allowlist and the test that existed only to keep it honest.)
 (On `main`: 423 unit tests / 41 files / static e2e 72 passed / 255 guarded
 files, and the FULL live suite green under the two-round rule — 13/13 twice,
 2026-08-24.) (On `main` it is 398 unit tests / 38 files / 248 guarded files — the
@@ -409,6 +413,22 @@ These are learned the hard way; each cost a debugging cycle.
     directions. The guard is SILENT when it cannot get a clear answer (no dev
     server, a preview build, a future Vite that inlines differently): a guard
     may fail a run for a reason it is sure of, never for one it guessed.
+
+    **Second sighting, 2026-08-24 (M2 close-out), and a different shape.**
+    `verify:w02` came back FAIL inside a sweep that ran `pnpm e2e` and then
+    `pnpm verify:w00…w06` back to back — while its OWN structural laws passed
+    and the full static e2e passed beside it, seconds earlier. It then passed
+    standalone, and passed again in a clean sequential sweep. Nothing in the
+    tree changed between the red and the greens. The cause is the same
+    `reuseExistingServer: !CI` seam as trap 22 proper: consecutive Playwright
+    runs each start and tear down their own server on 5199, and a run that
+    begins while the previous one is still releasing the port adopts or races
+    it. **The lesson is not "re-run until green" — it is that back-to-back
+    Playwright invocations are not independent.** Give a suspicious gate one
+    clean solo run before believing it, and if a sweep matters, do not chain
+    it directly behind another `pnpm e2e`. A red that cannot be reproduced
+    solo AND is contradicted by a neighbouring run of the same specs is
+    environmental; a red that survives a solo run is yours.
 
 19. **"Has the user edited?" is a fact to RECORD, not to infer from a JSON
     diff against a moving reference.** C1 decided whether to adopt a freshly

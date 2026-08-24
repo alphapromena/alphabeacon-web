@@ -2296,3 +2296,73 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   is closed; what remains there blocks DNS cutover, not the merge —
   `/request-demo` still has no destination, `hello@malaky.ai` is a placeholder,
   and six legal values are `null`.
+
+### 2026-08-24 04:55 — M2 merged: the visitor world is concept-v2, with the corrected palette
+
+- Did: on the founder's explicit approval, fast-forwarded `main` through the
+  whole **M2 design cycle** (`design/m2-concept-v2`, four commits) to
+  **`039adfb`**, pushed `main` and `main:live`. The branch stays on `origin` as
+  the per-cycle record. Nothing else changed — no settings, no other branches.
+- **The cycle, end to end.** Abdullah's `malaky-prototype`
+  `components/concept-v2/**` ported into `src/features/marketing/`: five routes
+  under one layout, 58 marketing files, its own token file and contrast guard,
+  M1 retired with it. Decisions **D-M2-A…F** (M1 retired; marketing owns its
+  pricing data; the purchase fiction not ported; "Get started" is the real
+  signup; the port is vendored under upstream's names; the port meets AA and
+  the four changes are named), then **D-M2-F-r** (those four AA fixes REVERTED
+  so Abdullah reviewed his palette verbatim, the failures allowlisted by name
+  and measured ratio rather than by disabling the rule), then **D-M2-F-r2**
+  (he delegated — "do what's appropriate" — the founder ruled accessibility
+  wins with the design spirit preserved: the four re-applied and every
+  allowlist deleted).
+- **The seven AA resolutions.** 1 the filled CTA's ink `#fff` → `--c-on-accent`
+  `#1a0a05` (3.29:1 → 5.9:1, and 2.83 → 6.8 on hover); 2 `--c-text-4` `#5d5a57`
+  → aliases `--c-text-3` (2.63–2.93:1 → 4.57–5.08:1, ~40 elements); 3 the
+  approval preview ghosted at `opacity: 0.3` → absent until approved (1.43:1,
+  and out of the accessibility tree); 4 the customer monogram off
+  `--c-surface-3` (4.22:1 → clear); 5–7 the Memory section's three defects,
+  which all traced to ONE rule — `.draft, .learned, .future { opacity: 0.55 }`,
+  the scroll-reveal resting state, multiplying every tier inside all three
+  cards (1.60 / 2.18 / 3.21:1). The reveal slides without fading now; no dim
+  value could work, since `--c-text-3` is 4.76:1 and 4.57:1 on those surfaces
+  at full strength. A `Superseded` badge carries what `--c-text-4` used to say
+  by colour alone, because aliasing that tier removed the distinction.
+- Phase: **M2**, closed. Not a W or INT phase.
+- Files: none beyond the merge — `.agent/{state,sessions}.md` for this entry.
+- Decisions: none new; the chain is D-M2-A…F-r2 in decisions.md.
+- Verify: nothing re-run for the merge itself — it is a fast-forward to a tree
+  whose gates were run in full on the branch minutes earlier: lint, typecheck,
+  457 unit / 42 files, guard-static (321 files), build, static e2e 87 passed /
+  51 live skips / 0 failed, verify:w00–w06 all PASS, LIVE 13/13 (round 2).
+  **Deployments confirmed at the tip:** production
+  (`dpl_97frXsaXiyNRxdZgXHFAjJ51PTDE`, target production, ref `main`,
+  sha `039adfb`, READY) serving the M2 markup, and the `live` branch preview
+  (`dpl_AYVSdWR9kYtTei9n1oqmgBKmvMiu`, ref `live`, same sha, READY).
+  `1.malaky.ai` was fetched directly and serves this commit in LIVE mode: the
+  API host is in the bundle, `--c-on-accent:#1a0a05` and `--c-text-4:#857f79`
+  are in the CSS, and the `Superseded` badge exists only at `039adfb`.
+  **One verification could not be completed from this machine and is recorded
+  rather than claimed:** production's deployed bundle was not fetched byte-for-
+  byte. `*.vercel.app` does not connect from here at all (HTTP 000, with and
+  without the sandbox; DNS resolves), and the apex still serves GoDaddy — see
+  below. What IS evidenced: a production-equivalent local build, run with
+  `.env.local` moved aside so no `VITE_API_BASE_URL` exists at all exactly as
+  on Vercel, carries no API host anywhere in `dist/`; and production's entry
+  hash (`index-1pT4_4RA.js`) differs from live's (`index-Cel1CcpM.js`) on the
+  same commit and builder, which is only explicable by different build env.
+  Closing it properly needs a fetch from a network that can reach
+  `*.vercel.app`, or the DNS cutover.
+- **Trap 22 gained a second sighting** and it is written into state.md: a
+  `verify:w02` FAIL inside a sweep chained directly behind `pnpm e2e`, while
+  its own structural laws passed and the full static e2e passed seconds
+  earlier; green standalone and green again in a clean sequential sweep, with
+  no tree change between. Consecutive Playwright invocations are not
+  independent — each starts and tears down its own server on 5199. The lesson
+  recorded is NOT "re-run until green": a red contradicted by a neighbouring
+  run of the same specs and unreproducible solo is environmental, a red that
+  survives a solo run is yours.
+- Next: **open-item 18, the malaky.ai DNS cutover** — re-confirmed today, the
+  apex still resolves to GoDaddy Website Builder and serves its placeholder, so
+  production is not publicly reachable there. Also still open before cutover:
+  `/request-demo` has no destination, `hello@malaky.ai` is a placeholder, and
+  six legal values in `concept/lib/legal.ts` are `null`.
