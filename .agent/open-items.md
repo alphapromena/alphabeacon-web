@@ -341,6 +341,50 @@ build, so they are worth asking as a batch.
     runIds, then re-query `?runId=` for authoritative state), so nothing is
     blocked — but any other consumer walking that list will silently lose
     rows, and the fix is a tie-break on `(createdAt, proposalId)`.
+33. **Ward's new assets endpoint is deployed but 502s, and the media upload
+    presign broke with it (PROBE-0826, 2026-08-26).** Full evidence, every
+    request-id and the verbatim envelopes are in
+    `Docs/api/probe-alphastudio-assets-2026-08-26.md`. Read-only probe on
+    branch `probe/assets-0826`; no product code was changed, and **nothing
+    should be wired into the app until Ward answers.** Three parts:
+    **(a) The route exists and is broken.** `GET
+    /api/orgs/:orgId/alphastudio/media/assets` is registered (`GET` and `HEAD`
+    dispatch; `POST` 404s) and returns **502 `bad_gateway` — "The media service
+    returned an unexpected response"** on all eighteen calls made to it, across
+    seven fresh QA orgs, six query shapes, and both an empty org and one
+    holding a real asset. Ward's literal path `/api/alphastudio/media/assets`
+    is a plain 404 — the canonical path is org-scoped. There is **no
+    `GET /media/assets/:assetId`** (a real asset id returns the bare unrouted
+    404 while `POST …/:assetId/presign` resolves the same id to 200), and
+    **nothing on the surface serves bytes** — the "never proxies bytes" law in
+    `src/data/studio.ts` still holds. **No response body has ever been
+    observed, so the contract is uncaptured**: item shape, envelope,
+    pagination and url stability are all unanswered. Backend dev: is this the
+    canonical path, is it half-deployed, and when it works — uploads, render
+    outputs, or both; urls embedded or not; which pagination vocabulary?
+    **(b) LIVE REGRESSION — `POST /media/assets/presign` rejects the documented
+    body.** `{"mediaType":"image/png"}` — what `uploadReferenceImage` sends and
+    what `openapi.json` requires — now returns **400 upstream** ("The media
+    service rejected the request — check the body against the capability's
+    schema", e.g. `d7d9c7da-d652-4b26-a007-aea9c8d0bf24`), where
+    `alphastudio-shapes.md` recorded **201** for the same body on an equally
+    fresh org on 2026-08-17. Our own validator passes it (a malformed body
+    gets `validation_failed` with `details[]` instead), so the refusal is
+    upstream. 24 body shapes were tried; all failed identically. **Reference-
+    image upload is broken in live mode** — the user gets an error toast, not a
+    crash. No live spec exercises this path, which is why the 13/13 suite on
+    2026-08-24 did not catch it. Backend dev: intentional schema change, or
+    fallout from the assets deployment?
+    **(c) The media service itself is fine** — `POST /media/jobs` → 202, the
+    job succeeded and produced a real asset with the usual 1-hour presigned
+    url, and `PUT /orgs/:id/country` (our own DB, same org and token) → 200. So
+    this is the asset surface specifically, not an outage.
+    _Also recorded there, not blocking:_ `POST /rag/collections` now **requires
+    `scope`** (isolated: same name, 400 without it, 201 with it) — the app
+    already sends `scope: 'tenant'`, so this is a correction owed to `api.md`
+    and the shapes note, not a break. And item 3 is sharper than it read:
+    naming `x-request-id` in a preflight makes the Function URL withhold the
+    **entire** CORS grant, not merely that one header.
 
 ### M1 cinematic items — RETIRED by the rebrand (2026-08-08)
 

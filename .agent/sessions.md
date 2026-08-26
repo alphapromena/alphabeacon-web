@@ -2366,3 +2366,66 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   production is not publicly reachable there. Also still open before cutover:
   `/request-demo` has no destination, `hello@malaky.ai` is a placeholder, and
   six legal values in `concept/lib/legal.ts` are `null`.
+
+### 2026-08-26 10:15 — PROBE-0826: Ward's assets endpoint is deployed but 502s; the media presign broke with it
+
+- Did: read-only contract discovery against the deployed API for Ward's new
+  `GET /alphastudio/media/assets`, on scratch branch `probe/assets-0826`. **No
+  product code touched, nothing merged, nothing pushed.** Nine fresh QA orgs
+  (939–947); org 619 and production untouched. API warmed to two consecutive
+  sub-second `/health` answers before each pass, with a 4-wide heartbeat for
+  the life of every pass, so no latency recorded is a cold start. Probe scripts
+  stayed in the session scratchpad, deliberately out of the repo.
+- **The endpoint is real and broken.** `GET
+  /api/orgs/:orgId/alphastudio/media/assets` is REGISTERED — `GET` and `HEAD`
+  dispatch, `POST` 404s — and returns **502 `bad_gateway`** on all eighteen
+  calls: seven orgs, three back-to-back repeats, six query shapes, empty org
+  AND an org holding a real asset, always in 580–870 ms (a real upstream round
+  trip, not a timeout). **Ward's literal path `/api/alphastudio/media/assets`
+  is a plain 404** — the canonical path is org-scoped.
+- **Routed vs unrouted was decided by evidence, not assumption.** Our API
+  answers an unrouted path with a bare `{"code":"not_found","message":"Not
+  found"}` carrying NO body `requestId`, and a routed-but-missing path with a
+  specific message AND a body `requestId`. On that test **`GET
+  /media/assets/:assetId` does not exist** — proven with a REAL asset id that
+  `POST …/:assetId/presign` resolves to 200 while the GET returns the bare
+  unrouted envelope. No byte proxy anywhere: every response is
+  `application/json`, no `cache-control`, no `content-disposition`. The
+  `studio.ts` "never proxies bytes" law still holds; Ward's change adds a JSON
+  list, not a byte door.
+- **The contract could NOT be captured, and nothing was invented to fill the
+  gap.** No response body has ever been observed, so item shape, envelope,
+  pagination and url stability are all unanswered and are put to Ward as
+  questions instead.
+- **Found on the way, and more urgent: `POST /media/assets/presign` is a live
+  regression.** `{"mediaType":"image/png"}` — what `uploadReferenceImage` sends
+  and what `openapi.json` requires — now returns **400 upstream**, where
+  `alphastudio-shapes.md` recorded 201 for the same body on an equally fresh
+  org on 2026-08-17. Our validator passes it (a malformed body gets
+  `validation_failed` + `details[]` instead), so the refusal is upstream. 24
+  body shapes tried, all identical. **Reference-image upload is broken in live
+  mode**; no live spec covers it, which is why 13/13 on 2026-08-24 missed it.
+- **The media service itself is healthy** — established by spending 3 cents:
+  `POST /media/jobs` → 202, the job succeeded and produced a real asset with
+  the usual 1-hour presigned url, and `PUT /orgs/:id/country` (our own DB, same
+  org and token) → 200. So this is the asset surface specifically, not an
+  outage. That distinction is the report's main finding and is why the render
+  was worth its cents.
+- **Two corrections to existing docs.** `POST /rag/collections` now REQUIRES
+  `scope` (isolated: same name, 400 without, 201 with) — the app already sends
+  `scope: 'tenant'`, so it is a doc correction owed to `api.md`, not a break.
+  And open-item 3 is sharper than it read: naming `x-request-id` in a preflight
+  makes the Function URL withhold the ENTIRE CORS grant, not just that header —
+  isolated by varying only the requested headers on one path. CORS has NOT
+  regressed; an earlier reading that it had was an artefact of the probe asking
+  for `x-request-id`, and was corrected rather than reported.
+- Phase: none — read-only discovery between phases
+- Files: `Docs/api/probe-alphastudio-assets-2026-08-26.md` (new),
+  `.agent/open-items.md` (item 33), `.agent/sessions.md`
+- Decisions: none — nothing was decided, and wiring the endpoint into the app
+  is deliberately a separate order after founder review
+- Verify: not run — no product code changed, so no gate applies
+- Next: **Ward answers item 33** — canonical path, is the 502 half-deployment,
+  what the list contains, url stability, pagination vocabulary, and whether the
+  presign schema change is intentional. Until then nothing is wired in. The
+  presign regression (b) is the part that is hurting the live app today.
