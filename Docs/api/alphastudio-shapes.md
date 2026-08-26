@@ -4248,3 +4248,98 @@ page boundary would never be discovered at all. That needs >200 rows in the
 window AND a boundary landing exactly on one run's whole cluster. It is
 accepted for now, and it disappears the moment the tie-break is fixed
 server-side — no frontend change needed.
+
+---
+
+# PROBE-INT13 — `social-posts.media`, the post-media fan-out (2026-08-26)
+
+> **This section is APPENDED, and `pnpm smoke:alphastudio` overwrites this whole
+> file.** The durable copy — every capture, every request id, verbatim — is
+> `Docs/api/probe-int13-social-posts-media-2026-08-26.md`. Re-append from there
+> after any smoke run, or read that file instead.
+
+Observed against the deployed API on a fresh QA org (**948**), warmed, 7 cents
+spent. Hasan's fan-out body was sent twice, byte-identical.
+
+## The one shape that is still MISSING
+
+`POST /orgs/:orgId/alphastudio/media/jobs` with a `posts[]` body answers **502
+`bad_gateway` — "The media service returned an unexpected response"**, both
+sends, ~3.2 s each. Request ids `b14c4cf6-3e3d-4021-9f7a-f549ace8f7c1` and
+`0bb130e0-03fe-467c-b586-79ce8760064b`.
+
+**The job is created anyway.** Both sends produced real jobs that reached
+`succeeded` with real assets, and both were billed. So the intake works and only
+the receipt is lost — which means the fan-out receipt shape (single job, or
+`{ jobs: [...] }` as `MediaJobFanOutReceipt` claims) is **still unobserved and
+must not be typed from prose**. `src/data/studio.ts` has no `createPostMediaJob`
+for exactly this reason.
+
+**There is no idempotency**: two identical sends → two distinct jobs, both
+charged. A client that retries a 502 here doubles the bill silently.
+
+## The fan-out job, terminal — `GET .../media/jobs/:jobId`
+
+```json
+{
+  "jobId": "mjob_dc240533e90d361bddc09985",
+  "status": "succeeded",
+  "capability": "social-posts.media",
+  "plan": "balanced",
+  "modelAlias": "image-balanced",
+  "origin": { "kind": "linked", "ref": "prop_b0a3be5896d27e3e569c101b" },
+  "assets": [
+    {
+      "assetId": "masset_00d12b79863ade33a58a00e3",
+      "kind": "image",
+      "url": "<presigned, 1544 chars>",
+      "expiresAt": "2026-08-26T13:18:33.909Z",
+      "meta": { "width": 1024, "height": 1024, "synthetic": true }
+    }
+  ],
+  "createdAt": "2026-08-26T11:02:54.509Z",
+  "updatedAt": "2026-08-26T11:03:12.093Z"
+}
+```
+
+`origin` is the association key, and **we never sent one**: the platform mints
+`{kind: "linked", ref: <posts[i].ref>}` from the fan-out item. A Studio render
+carries `{kind: "standalone"}`, so `kind` separates post-linked jobs from Studio
+ones. The ref is echoed on the job read **and on `GET .../media/jobs`**, so a
+reload re-associates job → proposal with no client-side persistence. **No asset
+field carries the ref** — the tag lives on the job only, and one ref can own many
+jobs.
+
+`POST .../media/assets/:assetId/presign` resolves a fan-out output normally
+(200, `{assetId, url, expiresAt}`, req `8d54c5b7-d3d7-4f6c-8f4d-2034bdc8dc29`) —
+the download presign is healthy even though PROBE-0826 found the **upload**
+presign broken.
+
+## Catalog — `GET .../catalog/capabilities/social-posts.media`
+
+`selectable: true`, `field: "plan"`, 12 model rows: six image, six video, across
+`balanced` / `creative` / `precise`. `balanced` resolved to `image-balanced`
+($0.03/image); `precise` rows are $0.211. **The capability grants video models**,
+so a plan chip alone can select `video_seconds` billing. Every image row's
+`capabilitySchema` is identical and `additionalProperties: false` — `params` may
+carry only `seed`, `count` (1–20), `aspectRatio` (7 enums), `outputFormat`
+(png|jpeg|webp), `negativePrompt` (≤1000).
+
+## Cost, measured
+
+`5000` → in flight `{cents: 5000, heldCents: 6, availableCents: 4994}` → settled
+`{cents: 4993, heldCents: 0, availableCents: 4993}`. **A render holds before it
+settles.** Usage attributes the fan-out to `social-posts.media`: `images` 2
+($0.06), `input_tokens` 1546, `output_tokens` 196, `guardrail_text_units` 2 — so
+the job spends tokens writing an image prompt from the post text before it
+renders.
+
+## CORRECTION to the proposals section above
+
+`GET .../proposals` now returns **five fields this document and
+`ApiProposal` do not model**: `outputIndex`, `content`, `key`, `reason`,
+`createdAt`. `content` is the draft text itself, and `key` appears to be the tone
+id. The "no content, no tone" note above — and the run-join it justifies
+(D-INT-J) — describe the wire as it was, not as it is. Nothing is broken; the
+join still works and extra fields are ignored. Full row in
+`Docs/api/probe-int13-social-posts-media-2026-08-26.md`.

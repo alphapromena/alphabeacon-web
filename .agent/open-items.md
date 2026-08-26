@@ -342,6 +342,74 @@ build, so they are worth asking as a batch.
     blocked — but any other consumer walking that list will silently lose
     rows, and the fix is a tie-break on `(createdAt, proposalId)`.
 
+
+_(Item 33 is claimed by the unmerged `probe/assets-0826` branch — PROBE-0826.
+These start at 34 so the two probe branches do not collide on merge.)_
+
+34. **Hasan's `social-posts.media` fan-out creates the job, bills for it, and
+    then 502s instead of returning a receipt (PROBE-INT13, 2026-08-26).** Full
+    evidence, every request-id and the verbatim envelopes are in
+    `Docs/api/probe-int13-social-posts-media-2026-08-26.md`; the shapes are
+    appended to `Docs/api/alphastudio-shapes.md`. Read-only probe on branch
+    `probe/int13`; no product code was changed, and **INT-13 Phase B is stopped
+    until Ward answers (a)**. Fresh QA org 948, 7 cents spent.
+    **(a) BLOCKING — the receipt is unobserved.** `POST
+    /orgs/:orgId/alphastudio/media/jobs` with Hasan's `posts[]` body answered
+    **502 `bad_gateway` — "The media service returned an unexpected response"**
+    on both sends (req `b14c4cf6-3e3d-4021-9f7a-f549ace8f7c1`,
+    `0bb130e0-03fe-467c-b586-79ce8760064b`), ~3.2 s each. But the jobs were
+    **really created and really billed**: `mjob_dc240533e90d361bddc09985` and
+    `mjob_3c1a8d8a99741665cf590dca` both reached `succeeded` with a real
+    1024×1024 PNG each. So intake works and only the response is lost, which
+    means the fan-out receipt shape — a single job, or `{ jobs: [...] }` as
+    `MediaJobFanOutReceipt` claims — has **still never been seen**. Phase B step
+    1 requires typing `createPostMediaJob` on the observed receipt, and there is
+    nothing to type it on. **Ask Ward: what is the intended success body, and is
+    the proxy validating the upstream's fan-out list against the single-job
+    schema?** (That would explain the envelope, the 3.2 s timing and the
+    surviving job exactly.) Hours earlier the same day PROBE-0826 sent a
+    `media.generate` body to this same route and got a 202 with a real asset, so
+    the break looks specific to the `posts[]` shape — one `media.generate`
+    control call on org 948 would confirm it and was not spent, because the
+    order capped the probe at two media calls.
+    **(b) There is no idempotency, and with (a) that costs money.** Two
+    byte-identical sends produced two distinct jobs, both charged. A client that
+    retries the 502 — the obvious reading of a 5xx — doubles the bill while
+    showing the user nothing. **Ask Ward for an idempotency key.** Until there
+    is one, no INT-13 code may retry this call.
+    **(c) NOT blocking, and good news: re-association is confirmed.** Each job
+    echoes `origin.ref` = exactly the `posts[].ref` we sent (the proposal id),
+    with `origin.kind: "linked"` — a value we never sent, so the platform derives
+    it from the fan-out item. The ref is on the job read **and** the list, so a
+    reload maps job → proposal with no client-side persistence, which is what
+    Phase B step 4 hoped for. Assets carry no ref (the tag is on the job only)
+    and one ref can own many jobs.
+    **(d) `social-posts.media` grants six VIDEO models** alongside six image ones
+    (plans `balanced`/`creative`/`precise`). A plan chip alone can therefore
+    select `video_seconds` billing. **Ask Ward whether that grant is intended**;
+    INT-13's dialog must pin images deliberately either way.
+    **(e) A render HOLDS before it settles** — the wallet read
+    `{cents: 5000, heldCents: 6, availableCents: 4994}` in flight and
+    `{cents: 4993, heldCents: 0}` after. Worth surfacing on the balance chip
+    mid-job; nothing in the app reads `heldCents` today.
+
+35. **The proposals row now carries `content`, and our type says it does not
+    (found by PROBE-INT13, 2026-08-26).** `GET .../proposals` returns five
+    fields `ApiProposal` does not model — `outputIndex`, **`content`**, `key`,
+    `reason`, `createdAt` — where the type's comment says in capitals "NOTE WHAT
+    IS NOT HERE: no content, no tone, no rationale". `content` is the draft text
+    itself and `key` appears to be the tone id. **This answers item 31 in the
+    affirmative**: Today's ledger → runs JOIN (D-INT-J, the whole shape of
+    INT-12) could collapse to a single read, and the tone could resolve without a
+    run read at all. Nothing is broken — extra fields are ignored and the join
+    still works — but the type's documentation is now false, and a design
+    rationale that is no longer true will mislead the next person to touch D1.
+    **Two decisions for the founder:** does INT-12 get simplified onto the fatter
+    row, and is that row contractual (ask Ward when it landed — `api.md` still
+    describes the content-free version)? Deliberately NOT acted on in INT-13:
+    re-architecting Today on the way past a media probe is how unrelated
+    regressions get shipped.
+
 ### M1 cinematic items — RETIRED by the rebrand (2026-08-08)
 
 The two items that sat here (clip-1 take approval → 4K re-render; the
