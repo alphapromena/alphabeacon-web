@@ -366,12 +366,22 @@ These start at 34 so the two probe branches do not collide on merge.)_
     1 requires typing `createPostMediaJob` on the observed receipt, and there is
     nothing to type it on. **Ask Ward: what is the intended success body, and is
     the proxy validating the upstream's fan-out list against the single-job
-    schema?** (That would explain the envelope, the 3.2 s timing and the
-    surviving job exactly.) Hours earlier the same day PROBE-0826 sent a
-    `media.generate` body to this same route and got a 202 with a real asset, so
-    the break looks specific to the `posts[]` shape — one `media.generate`
-    control call on org 948 would confirm it and was not spent, because the
-    order capped the probe at two media calls.
+    schema?** (That would explain the envelope, the 3.2 s timing, the surviving
+    job, and why a single-job body is unaffected.) **The break is confirmed
+    specific to the `posts[]` shape:** on the founder's separate authorization, a
+    control call sent a single-job `media.generate` body to the same route, same
+    org, same plan and same params, and got **202 with a full receipt**
+    (`ea5b1dc5-24bb-4909-aa49-1fdc65dd5acd`, 2026-08-27T04:39:41Z, job
+    `mjob_881107b9b261e689486e9da0` → `succeeded`, 3 cents). So the route, the
+    capability resolution, the renderer and the wallet are all healthy. Caveat
+    stated rather than hidden: the control ran ~17.6 h after the fan-out sends,
+    because the fan-out must not be re-sent — it bills on every attempt.
+    That control also pins two things Phase B needs: the **single-job** receipt
+    is the full job object (`status: "queued"`, `assets: []`, `modelAlias`
+    resolved), as `MediaJobReceipt = ApiMediaJob` already records; and `origin`
+    is **echoed as sent** there (`{"kind":"standalone"}`) where the fan-out
+    **derives** `{"kind":"linked","ref":…}`, which confirms `kind` as the
+    Studio-vs-post-linked discriminator.
     **(b) There is no idempotency, and with (a) that costs money.** Two
     byte-identical sends produced two distinct jobs, both charged. A client that
     retries the 502 — the obvious reading of a 5xx — doubles the bill while

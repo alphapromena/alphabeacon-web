@@ -19,8 +19,9 @@ first call (probes `1296ms, 221ms, 92ms`; 12-way fleet slowest 1051 ms) and a
 4-wide heartbeat ran for the life of the pass, so no latency below is a cold
 start.
 
-**Cost: 7 cents.** Two renders at 3 cents (both sends) and 1 cent of text for the
-run that minted the proposal. Within the 2-media-call cap the order set.
+**Cost: 10 cents.** Two renders at 3 cents (both fan-out sends) and 1 cent of
+text for the run that minted the proposal — within the 2-media-call cap the order
+set — plus 3 cents for the separately authorized control call below.
 
 ## Verdict
 
@@ -49,22 +50,28 @@ run that minted the proposal. Within the 2-media-call cap the order set.
    charged. Combined with (1), the naive client behaviour — "502, so retry" —
    silently multiplies spend while showing the user nothing. Any client of this
    endpoint must treat a 502 as **possibly succeeded**, never as "nothing ran".
-5. **It is almost certainly the fan-out body, not the whole endpoint.** Hours
-   earlier the same day, on the same deployment, PROBE-0826 sent a
-   `media.generate` body to this exact route and got a **202** with a real job
-   and a real asset. That is strong evidence the break is specific to the
-   `posts[]` shape — and it is the same half-landed media deployment PROBE-0826
-   characterised. It is not conclusive: a `media.generate` control call on org
-   948 would settle it, and it was not spent because the order capped this probe
-   at two media calls.
+5. **It is the fan-out body, not the whole endpoint — now CONFIRMED by a control
+   call.** A single-job `media.generate` body, sent to the same route on the same
+   org with the same `plan` and the same `params`, answered **202 with a full
+   receipt** and rendered normally (`ea5b1dc5-24bb-4909-aa49-1fdc65dd5acd`; see
+   [the control call](#control-call--mediagenerate-single-job-body-authorized-run-2026-08-27)
+   for the verbatim shapes). So the route, the capability resolution, the
+   renderer and the wallet are all healthy; **only the `posts[]` path fails to
+   return.** This was an inference in the first pass — PROBE-0826 had sent a
+   `media.generate` body hours earlier and got a 202 — and it is an observation
+   now. The one caveat worth stating: the control ran **~17.6 h after** the
+   fan-out sends, because the fan-out must not be re-sent (it bills on every
+   attempt). Same route, same org, same deployment — but not the same minute.
 
 The shape of (1) and (5) together: **the upstream service is fine and our proxy
 cannot render its fan-out answer.** `MediaJobFanOutReceipt` in `src/api/types.ts`
 already says a `posts[]` request answers a LIST while `studio.createJob` types
 the receipt as a single `ApiMediaJob` — a proxy validating the upstream's list
 against a single-job schema would produce precisely this envelope, at precisely
-this point, after the job was already created. That is a hypothesis with good
-evidence, not an observation, and Ward can confirm or kill it in a minute.
+this point, after the job was already created — and it would leave a single-job
+body untouched, which is exactly what the control call observed. The narrowing is
+now observed; the mechanism behind it is still a hypothesis, and Ward can confirm
+or kill it in a minute.
 
 ## The body that was sent
 
@@ -110,6 +117,7 @@ that proposal's own text, `tone` joined from the org's live tones list.
 | `POST …/proposals/:id/approve` | 200 | `514ea553-7bf8-4109-b28b-8893ed313aec` |
 | `GET …/wallet` — before / after | 200 | `2aa67901-802f-46c8-a88d-ea5fa03b1991` / `cc515064-1330-4d73-a2c0-ad7b4ef60996` |
 | `GET …/usage?group_by=capability` | 200 | `b513b0e6-7439-416f-8988-d021ecba1c65` |
+| `POST …/media/jobs` — **control**, single-job `media.generate` body (2026-08-27) | **202** | `ea5b1dc5-24bb-4909-aa49-1fdc65dd5acd` |
 
 ### The 502, verbatim (both sends, same envelope)
 
@@ -278,11 +286,111 @@ re-architect INT-12 on the way past.
    (`mjob_dc240533e90d361bddc09985`, `mjob_3c1a8d8a99741665cf590dca`) both
    succeeded and both billed. **What is the intended success body — one job, or
    `{ jobs: [...] }`?** We cannot type the call until it comes back once.
+   **A control call has narrowed this for you:** the same route, same org, same
+   plan and same params with a **single-job `media.generate` body** answered
+   **202** with a full receipt and rendered normally
+   (`ea5b1dc5-24bb-4909-aa49-1fdc65dd5acd`, 2026-08-27). Only the `posts[]` path
+   fails to return.
 2. **Is the proxy validating the fan-out answer against the single-job schema?**
-   That would explain the envelope, the timing and the fact that the job exists.
+   That would explain the envelope, the timing, the fact that the job exists, and
+   why the single-job body is unaffected.
 3. **Is there any idempotency key?** Two identical sends billed twice. With a
    502 on the success path, a retrying client burns money invisibly.
 4. **`social-posts.media` grants video models.** Intended for this capability, or
    an over-broad grant? It changes what a plan chip is allowed to mean.
 5. **When did `content` land on the proposals row** (see above), and is it
    contractual now? `api.md` still describes the content-free row.
+
+## Control call — `media.generate`, single-job body (authorized, run 2026-08-27)
+
+Verdict 5 above was the one inference in this report rather than an observation,
+so the founder authorized one control call to settle it. **Same route, same org,
+same plan, same `params` — the only difference is the body shape.** The fan-out
+path was not touched and nothing was retried, under any status.
+
+Run at `2026-08-27T04:39:41Z`, **~17.6 h after** the two fan-out sends. That gap
+is not ideal for a control and it is not hidden here: the fan-out cannot be
+re-sent to close it, because every attempt bills whether or not it answers.
+
+**Result: 202, with a receipt.** The route, the capability resolution, the
+renderer and the wallet are all healthy — the `posts[]` path is what fails to
+return. Two further things this pins down, both of which matter to Phase B:
+
+- **The receipt for a SINGLE-job body is the full job object** — `status:
+  "queued"`, `assets: []`, `modelAlias` already resolved — exactly as
+  `MediaJobReceipt = ApiMediaJob` records from INT-11. So a caller can render
+  immediately. What the *fan-out* returns is still unobserved.
+- **`origin` is echoed as sent** here (`{"kind":"standalone"}`), where the
+  fan-out *derived* `{"kind":"linked","ref":…}` from `posts[0].ref`. That
+  confirms `kind` as the discriminator between a Studio render and a
+  post-linked one.
+
+`POST /orgs/948/alphastudio/media/jobs` → **202** · 4333 ms · requestId `ea5b1dc5-24bb-4909-aa49-1fdc65dd5acd`
+
+Body sent:
+
+```json
+{
+  "capability": "media.generate",
+  "plan": "balanced",
+  "kind": "image",
+  "prompt": "a minimal flat-vector graphic of three overlapping paper sheets on a warm ivory field, generous negative space, crisp geometry, no text",
+  "params": {
+    "aspectRatio": "1:1",
+    "outputFormat": "png"
+  },
+  "origin": {
+    "kind": "standalone"
+  }
+}
+```
+
+Receipt, verbatim:
+
+```json
+{
+  "jobId": "mjob_881107b9b261e689486e9da0",
+  "status": "queued",
+  "capability": "media.generate",
+  "plan": "balanced",
+  "modelAlias": "image-balanced",
+  "origin": {
+    "kind": "standalone"
+  },
+  "assets": [],
+  "createdAt": "2026-08-27T04:39:41.343Z",
+  "updatedAt": "2026-08-27T04:39:41.343Z"
+}
+```
+
+It then reached **`succeeded`**:
+
+```json
+{
+  "jobId": "mjob_881107b9b261e689486e9da0",
+  "status": "succeeded",
+  "capability": "media.generate",
+  "plan": "balanced",
+  "modelAlias": "image-balanced",
+  "origin": {
+    "kind": "standalone"
+  },
+  "assets": [
+    {
+      "assetId": "masset_eefa75c59bab1f1243cea785",
+      "kind": "image",
+      "url": "<presigned, 1556 chars>",
+      "expiresAt": "2026-08-27T05:40:02.889Z",
+      "meta": {
+        "width": 1024,
+        "height": 1024,
+        "synthetic": true
+      }
+    }
+  ],
+  "createdAt": "2026-08-27T04:39:41.343Z",
+  "updatedAt": "2026-08-27T04:40:01.044Z"
+}
+```
+
+Wallet after: `{"cents":4990,"heldCents":0,"availableCents":4990}`.
