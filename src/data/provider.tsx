@@ -1223,6 +1223,23 @@ export function useLiveWorkingOrgId(): string | null {
   return useData().state.liveSession?.orgs[0]?.id ?? null
 }
 
+/**
+ * Whether the live graft has actually landed (ORDER ONB-0827, trap 20).
+ *
+ * `useScreenPhase` answers a presentation question and folds in /dev/states
+ * and the artificial first-paint delay; this answers a DATA question: is
+ * `world` still the seeded demo, or is it this org's own? The readiness
+ * selector needs the second one, because reporting a workspace ready off
+ * somebody else's tones is precisely the failure trap 20 records.
+ *
+ * Static mode is always settled — there is nothing to wait for.
+ */
+export function useLiveSyncSettled(): boolean {
+  const { state } = useData()
+  if (!state.liveSession) return true
+  return state.liveSyncPhase === 'ready'
+}
+
 export function useLiveMemberIds(): Record<string, string> | undefined {
   return useData().state.liveMemberIds
 }

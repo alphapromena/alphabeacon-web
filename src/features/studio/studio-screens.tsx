@@ -11,6 +11,7 @@ import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
 import { AppShell } from '@/components/ab/app-shell'
 import { ConfirmDialog } from '@/components/ab/confirm-dialog'
+import { GenerationBlocked } from '@/components/ab/setup-checklist'
 import { EmptyState } from '@/components/ab/empty-state'
 import { ErrorState } from '@/components/ab/error-state'
 import { MonoNumber } from '@/components/ab/mono-number'
@@ -41,6 +42,7 @@ import {
   useScreenPhase,
   useStudioModels,
 } from '@/data/provider'
+import { useReadiness } from '@/data/readiness'
 import { LiveComposer } from './live-composer'
 import { LiveGallery } from './live-gallery'
 import { LiveJobs } from './live-jobs'
@@ -217,6 +219,22 @@ function StaticStudioGalleryScreen() {
 
 export function StudioComposerScreen() {
   const live = useLiveMode()
+  const readiness = useReadiness()
+
+  // The gate reaches the Studio composers too (ORDER ONB-0827, D-ONB-D):
+  // Hasan's ruling is that NO generation job runs before brand setup is
+  // complete, and a media job is a generation job. Same shell, same title —
+  // the checklist replaces the form, it does not replace the screen.
+  if (!readiness.canGenerate) {
+    return (
+      <AppShell title="Create" context="A visual, on demand">
+        <div className="mx-auto w-full max-w-[720px]">
+          <GenerationBlocked />
+        </div>
+      </AppShell>
+    )
+  }
+
   if (live) {
     return (
       <AppShell title="Create" context="A visual, on demand">

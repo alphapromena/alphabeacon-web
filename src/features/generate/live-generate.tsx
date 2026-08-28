@@ -37,6 +37,7 @@ import { useProposalActions, type ReviewItem } from '@/data/proposals'
 import { useCalendarEvents, useTones } from '@/data/provider'
 import { useWallet, useWalletActions } from '@/data/wallet'
 import { planRun, reconcileSelection } from './run-plan'
+import { errorReference } from '@/lib/error-reference'
 import { pluralize, shortDate } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import { MESSAGES } from '@/lib/messages'
@@ -184,13 +185,25 @@ export function LiveGenerate() {
         void walletActions.refresh()
         return
       }
-      setError(
+      /**
+       * The server has the last word (ORDER ONB-0827, D-ONB-D). The readiness
+       * gate means a user should never reach this screen's form without the
+       * four brand entities — but the gate is UX, and a run can still be
+       * refused for a reason only the platform knows. A refusal is quoted with
+       * its reference so the report is actionable: `bad_request` is the shape
+       * the Phase-0 probe measured for a body the capability's schema rejects,
+       * and on its own it tells the user nothing.
+       */
+      const reference = errorReference(result)
+      const base =
         result.code === 'rate_limited'
           ? `${MESSAGES.errors.rateLimited} ${result.retryAfterSeconds ?? 60}s.`
           : result.code === 'bad_gateway'
             ? MESSAGES.errors.upstreamUnavailable
-            : MESSAGES.errors.generic,
-      )
+            : result.code === 'bad_request' || result.code === 'validation_failed'
+              ? MESSAGES.errors.generationRefused
+              : MESSAGES.errors.generic
+      setError(reference ? `${base} (${reference})` : base)
       return
     }
     await poll(result.runId)

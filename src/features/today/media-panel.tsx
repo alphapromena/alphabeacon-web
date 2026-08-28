@@ -18,6 +18,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import { GenerationBlocked } from '@/components/ab/setup-checklist'
+import { useReadiness } from '@/data/readiness'
 import type { Draft, PlanTier } from '@/data/types'
 
 export function MediaPanel({
@@ -31,6 +33,7 @@ export function MediaPanel({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
+  const readiness = useReadiness()
   const composer = useComposer({
     planTier,
     draftId: draft?.id,
@@ -55,14 +58,34 @@ export function MediaPanel({
           <DialogDescription>Creative Studio, attached to this draft.</DialogDescription>
         </DialogHeader>
 
-        <ComposerBody composer={composer} idPrefix="d4" contextSnippet={draft.copy} />
-
-        <DialogFooter>
-          <Button variant="ghost" onClick={() => onOpenChange(false)}>
-            Cancel
-          </Button>
-          <ComposerSubmit composer={composer} />
-        </DialogFooter>
+        {/*
+         * The readiness gate reaches media too (ORDER ONB-0827, D-ONB-D). It
+         * sits INSIDE the dialog on purpose: the media entry point itself is
+         * rendered from `canTransition` and may never be hidden or disabled by
+         * anything else (the W3 structural law), so the button still opens —
+         * onto the checklist that says what is missing, rather than onto a
+         * form whose only outcome would be a refusal.
+         */}
+        {readiness.canGenerate ? (
+          <>
+            <ComposerBody composer={composer} idPrefix="d4" contextSnippet={draft.copy} />
+            <DialogFooter>
+              <Button variant="ghost" onClick={() => onOpenChange(false)}>
+                Cancel
+              </Button>
+              <ComposerSubmit composer={composer} />
+            </DialogFooter>
+          </>
+        ) : (
+          <>
+            <GenerationBlocked />
+            <DialogFooter>
+              <Button variant="ghost" onClick={() => onOpenChange(false)}>
+                Close
+              </Button>
+            </DialogFooter>
+          </>
+        )}
       </DialogContent>
     </Dialog>
   )

@@ -21,6 +21,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { useDataDispatch, useLiveMode, useOrg, useSchedule } from '@/data/provider'
+import { SetupChecklist } from '@/components/ab/setup-checklist'
 import { useAccountActions } from '@/data/account'
 import { MESSAGES } from '@/lib/messages'
 import { TIMEZONES, zoneAbbreviation } from '@/lib/timezone'
@@ -72,6 +73,16 @@ export function OrganizationScreen() {
 
   return (
     <>
+      {/*
+       * THE SETTINGS ENTRY for the setup checklist (ORDER ONB-0827, D-ONB-D).
+       * It lives here because /settings redirects to this screen, so this is
+       * the door every route into Settings comes through — the checklist is
+       * seen without having to be looked for. It renders in both states: a
+       * finished workspace gets one calm line saying so, which is what makes
+       * it a reference list rather than a nag.
+       */}
+      <SetupChecklist heading="Brand setup" />
+
       <section className="flex flex-col gap-5">
         <div className="flex flex-wrap items-center gap-4">
           <Avatar className="size-16 rounded-xl">

@@ -34,6 +34,7 @@ import {
 import { Textarea } from '@/components/ui/textarea'
 import { useProposalActions, type ProposalState, type ReviewItem } from '@/data/proposals'
 import { useTones } from '@/data/provider'
+import { useReadiness } from '@/data/readiness'
 import { shortDate } from '@/lib/format'
 import { MESSAGES } from '@/lib/messages'
 import { Inbox } from 'lucide-react'
@@ -51,6 +52,7 @@ const EMPTY: Record<ProposalState, string> = {
 }
 
 export function LiveToday() {
+  const readiness = useReadiness()
   const proposals = useProposalActions()
   const [tab, setTab] = useState<ProposalState>('pending')
   const [items, setItems] = useState<ReviewItem[] | null>(null)
@@ -164,7 +166,9 @@ export function LiveToday() {
           action={
             tab === 'pending' ? (
               <Button asChild>
-                <Link to="/generate">Generate posts</Link>
+                <Link to="/generate">
+                  {readiness.canGenerate ? 'Generate posts' : 'Finish setup to generate'}
+                </Link>
               </Button>
             ) : undefined
           }

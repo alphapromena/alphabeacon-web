@@ -76,6 +76,61 @@ function toneEditorIsShared(): boolean {
 }
 
 /**
+ * The readiness gate is ONE selector, read by every generation entry point
+ * (ORDER ONB-0827, D-ONB-D).
+ *
+ * Behavioural tests cannot tell "this screen asks the shared selector" from
+ * "this screen happens to agree with it today" — and a fifth surface added
+ * later with its own idea of `tones.length > 0` would pass every e2e in the
+ * suite while quietly disagreeing with the checklist the user was just shown.
+ * Per state.md rule 11 these match STRUCTURE (an import, a call), never prose.
+ *
+ * The tone PREVIEW is deliberately NOT in this list and must never join it:
+ * previewing is part of CREATING the first tone, so gating it would lock the
+ * user out of the very item the gate is asking them to complete.
+ */
+function readinessGateIsOneSelector(): boolean {
+  console.log('\n=== every generation entry reads the one readiness selector ===')
+
+  const surfaces: [string, string][] = [
+    ['F1 /generate', 'src/features/generate/generate-screen.tsx'],
+    ['E2 Studio composer', 'src/features/studio/studio-screens.tsx'],
+    ['D4 media panel', 'src/features/today/media-panel.tsx'],
+  ]
+  let ok = true
+  for (const [label, path] of surfaces) {
+    const source = read(path)
+    const readsSelector = /useReadiness\(\)/.test(source)
+    const rendersShared = /<GenerationBlocked/.test(source)
+    if (!readsSelector || !rendersShared) ok = false
+    console.log(
+      `  ${label}: useReadiness ${readsSelector ? 'yes' : 'NO'}, GenerationBlocked ${
+        rendersShared ? 'yes' : 'NO'
+      }`,
+    )
+  }
+
+  // The selector itself is the only place the rule is written down.
+  const selector = read('src/data/readiness.ts')
+  const declaresRule = /blocking: true/.test(selector) && /blocking: false/.test(selector)
+  if (!declaresRule) ok = false
+  console.log(`  the ruling lives in readiness.ts: ${declaresRule ? 'yes' : 'NO'}`)
+
+  // Tone preview stays open: creating the first tone must not need a tone.
+  const editor = read('src/features/settings/tone-editor.tsx')
+  const previewUngated = !/useReadiness/.test(editor)
+  if (!previewUngated) ok = false
+  console.log(`  tone preview is NOT gated: ${previewUngated ? 'yes' : 'NO'}`)
+
+  return record(
+    'readiness gate is one selector',
+    ok,
+    'gate: F1, the Studio composer and D4 all read useReadiness and render GenerationBlocked',
+    'readiness gate check failed -- see the per-surface list above',
+  )
+}
+
+/**
  * The tone-badge law reaches the four screens that show a tone: each must read
  * the record through the provider and render `ToneBadge`, never print
  * `tone.name` itself with its own styling.
@@ -450,6 +505,7 @@ function deliverablesExist(): boolean {
 }
 
 const STRUCTURAL = [
+  'readiness gate is one selector',
   'one tone editor, three entry points',
   'custom tone renders identically everywhere',
   'analytics never invents a number',
@@ -481,6 +537,7 @@ function main(): void {
   }
 
   if (!failed) {
+    if (!readinessGateIsOneSelector()) failed = true
     if (!toneEditorIsShared()) failed = true
     if (!customToneRendersTheSameEverywhere()) failed = true
     if (!analyticsNeverInventsANumber()) failed = true

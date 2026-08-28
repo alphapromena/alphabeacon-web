@@ -156,6 +156,13 @@ export function useGenerateActions() {
             message: error.message,
             fieldErrors: error.fieldDetails,
             retryAfterSeconds: error.retryAfterSeconds,
+            // THE GATE IS UX, NOT SECURITY (ORDER ONB-0827, D-ONB-D). The
+            // server is still the authority, so a refusal that slipped past
+            // the client's readiness check has to arrive with the handle a
+            // bug report needs — the Phase-0 probe's zero-tone 400 carried a
+            // requestId and no field details, which is exactly the shape that
+            // is unactionable without it.
+            requestId: error.requestId,
           }
         }
         throw error

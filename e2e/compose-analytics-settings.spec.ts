@@ -28,6 +28,83 @@ async function generate(page: Page, prompt: string) {
 }
 
 // ---------------------------------------------------------------------------
+// The brand-readiness gate (ORDER ONB-0827, D-ONB-D)
+//
+// The `fresh` world is a real workspace with its brand setup unfinished — no
+// voice rules, no sources, no topics — which is exactly the state the gate
+// exists for, and the reason these can be proven without spending a live run.
+// ---------------------------------------------------------------------------
+
+test('a workspace with unfinished setup cannot generate, and the screen says why', async ({
+  page,
+}) => {
+  await open(page, 'Today', 'Fresh org')
+
+  // The affordance tells the truth BEFORE it is pressed — it is a real link,
+  // not a dead or disabled button.
+  const cta = page.getByRole('link', { name: 'Finish setup to generate' }).first()
+  await expect(cta).toBeVisible()
+  await cta.click()
+
+  // The route renders the checklist state, not a form that could only fail.
+  await expect(page.getByRole('heading', { name: 'Finish your brand setup first' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Generate' })).toHaveCount(0)
+  await expect(page.getByLabel('Prompt')).toHaveCount(0)
+
+  // It names each missing item and offers the screen that completes it.
+  const checklist = page.getByRole('region', { name: 'Brand setup' })
+  for (const label of ['Brand voice', 'Sources', 'Topics']) {
+    await expect(checklist.getByRole('link', { name: `Set up ${label}` })).toBeVisible()
+  }
+  // And the two the Phase-0 probe proved are NOT blockers are still listed,
+  // marked for what they buy rather than as things standing in the way.
+  await expect(checklist.getByText(/optional for generating/).first()).toBeVisible()
+})
+
+test('the checklist links reach the screens that complete each item', async ({ page }) => {
+  await open(page, 'Today', 'Fresh org')
+  await page.getByRole('link', { name: 'Finish setup to generate' }).first().click()
+
+  await page
+    .getByRole('region', { name: 'Brand setup' })
+    .getByRole('link', { name: 'Set up Brand voice' })
+    .click()
+
+  // A real destination, not a dead row.
+  await expect(page.getByRole('tab', { name: 'Brand voice', selected: true })).toBeVisible()
+})
+
+test('the Studio composer is gated too — no media job before setup', async ({ page }) => {
+  await open(page, 'Studio', 'Fresh org')
+  // Every model card offers the composer; the gate meets the user there.
+  await page.getByRole('link', { name: 'Use this model' }).first().click()
+
+  await expect(page.getByRole('heading', { name: 'Finish your brand setup first' })).toBeVisible()
+})
+
+test('a finished workspace shows no checklist card and generates normally', async ({ page }) => {
+  // The `active` world is fully set up, so the gate is invisible there — a
+  // checklist that never goes away would be a nag rather than a step.
+  await open(page, 'Dashboard', 'Active org')
+  await expect(page.getByRole('region', { name: 'Brand setup' })).toHaveCount(0)
+
+  await rail(page, 'Generate').click()
+  await expect(
+    page.getByRole('heading', { name: 'What should we write about?', level: 1 }),
+  ).toBeVisible()
+})
+
+test('@axe the checklist card and the blocked generate state scan clean', async ({ page }) => {
+  await open(page, 'Dashboard', 'Fresh org')
+  await expect(page.getByRole('region', { name: 'Brand setup' })).toBeVisible()
+  expect((await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze()).violations).toEqual([])
+
+  await rail(page, 'Generate').click()
+  await expect(page.getByRole('heading', { name: 'Finish your brand setup first' })).toBeVisible()
+  expect((await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze()).violations).toEqual([])
+})
+
+// ---------------------------------------------------------------------------
 // F1 — the five runs
 // ---------------------------------------------------------------------------
 

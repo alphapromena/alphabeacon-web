@@ -29,6 +29,7 @@ import { EmptyState } from '@/components/ab/empty-state'
 import { ErrorState } from '@/components/ab/error-state'
 import { MonoNumber } from '@/components/ab/mono-number'
 import { SkeletonList, SkeletonStatRow } from '@/components/ab/skeletons'
+import { SetupChecklist } from '@/components/ab/setup-checklist'
 import { StatCard } from '@/components/ab/stat-card'
 import { Button } from '@/components/ui/button'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
@@ -43,6 +44,7 @@ import {
   useScreenPhase,
   useSession,
 } from '@/data/provider'
+import { useReadiness } from '@/data/readiness'
 import { isFundingPending, useWallet } from '@/data/wallet'
 import { formatCents } from '@/lib/money'
 import { pluralize, relativeTime } from '@/lib/format'
@@ -69,6 +71,7 @@ const QUICK_LINKS: { to: string; label: string; description: string; icon: Lucid
 type FeedFilter = 'all' | 'notifications' | 'activity'
 
 export function DashboardScreen() {
+  const readiness = useReadiness()
   const [filter, setFilter] = useState<FeedFilter>('all')
   const session = useSession()
   const drafts = useDrafts()
@@ -119,6 +122,15 @@ export function DashboardScreen() {
         />
       ) : (
         <div className="flex flex-col gap-6">
+          {/*
+           * The setup checklist card (ORDER ONB-0827, D-ONB-D). It replaces
+           * the "resume setup" banner that pointed at the deleted wizard, and
+           * it earns its place only while something is outstanding — a
+           * finished workspace gets its dashboard back rather than a
+           * permanent congratulation.
+           */}
+          {!readiness.canGenerate && <SetupChecklist heading="Finish setting up" />}
+
           <section
             aria-label="Key stats"
             className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4"

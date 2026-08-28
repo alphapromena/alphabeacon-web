@@ -20,6 +20,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
 import { ClaimChip } from '@/components/ab/claim-chip'
 import { AppShell } from '@/components/ab/app-shell'
+import { GenerationBlocked } from '@/components/ab/setup-checklist'
 import { ErrorState } from '@/components/ab/error-state'
 import { MonoNumber } from '@/components/ab/mono-number'
 import { SignalSweep } from '@/components/ab/motion'
@@ -39,6 +40,7 @@ import {
   useScreenPhase,
   useTones,
 } from '@/data/provider'
+import { useReadiness } from '@/data/readiness'
 import { LiveGenerate } from './live-generate'
 import type { Claim } from '@/data/types'
 import { useComposePlayer } from '@/lib/compose-player'
@@ -59,6 +61,28 @@ const STATUS_LINE = {
 
 export function GenerateScreen() {
   const live = useLiveMode()
+  const readiness = useReadiness()
+
+  /**
+   * THE GATE, at the route itself (ORDER ONB-0827, D-ONB-D). Visiting
+   * `/generate` on a workspace that cannot generate shows the checklist, not
+   * a form whose only possible outcome is the 400 the Phase-0 probe recorded.
+   * The screen keeps its own title and shell: this is a state of F1, not a
+   * different screen the user was redirected to without being told.
+   *
+   * `known` false is the live sync still in flight — the shell renders and
+   * the checklist shows its own loading, rather than the form flashing on and
+   * off as the answer arrives (trap 20).
+   */
+  if (!readiness.canGenerate) {
+    return (
+      <AppShell title="Generate" context="A post, on demand">
+        <div className="mx-auto w-full max-w-[760px]">
+          <GenerationBlocked />
+        </div>
+      </AppShell>
+    )
+  }
 
   // LIVE MODE IS A DIFFERENT INTERACTION, not a different data source: the
   // proxy has no stream endpoint and no drafts store, so F1 becomes a queued

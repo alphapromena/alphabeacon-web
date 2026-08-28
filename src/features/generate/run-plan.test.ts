@@ -41,6 +41,23 @@ describe('planRun', () => {
     expect(plan.fanout).toBe(0)
   })
 
+  /**
+   * A workspace with NO tones at all is a real state since ONB-0827 (D-ONB-B):
+   * nothing is seeded, so a fresh live org has an empty library until its
+   * owner writes the first tone. The plan must report that as empty rather
+   * than as a run of nothing — the readiness gate stops it reaching the wire,
+   * and the Phase-0 probe recorded what the wire says if it does (400
+   * bad_request, request ae30783f-f28d-4d5a-9ac6-88c92da1a2a9).
+   */
+  it('is empty for an org with no tones at all, not a run of zero drafts', () => {
+    const plan = planRun([], [], 1)
+
+    expect(plan.empty).toBe(true)
+    expect(plan.fanout).toBe(0)
+    expect(plan.tones).toEqual([])
+    expect(plan.overBudget).toBe(false)
+  })
+
   it('flags a fan-out the platform would refuse — and only that', () => {
     // The contract refuses tones x perTone GREATER than 6, so the picker's own
     // ceiling (3 tones, 2 each) sits exactly on the limit and is allowed.

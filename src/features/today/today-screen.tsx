@@ -9,6 +9,7 @@
 import { Inbox, Plus } from 'lucide-react'
 import { Link } from 'react-router'
 import { EmptyState } from '@/components/ab/empty-state'
+import { useReadiness } from '@/data/readiness'
 import { ErrorState } from '@/components/ab/error-state'
 import { PostingTime } from '@/components/ab/posting-time'
 import { BeaconDot } from '@/components/ab/motion'
@@ -53,6 +54,7 @@ export function TodayScreen() {
 }
 
 function StaticTodayScreen() {
+  const readiness = useReadiness()
   const drafts = useDrafts()
   const slots = useSlots()
   const tones = useTones()
@@ -106,10 +108,17 @@ function StaticTodayScreen() {
                 live={awaiting > 0}
                 label={awaiting > 0 ? 'Drafts need review' : undefined}
               />
+              {/*
+               * The affordance never lies about what pressing it will do
+               * (ORDER ONB-0827, D-ONB-D). It stays a real link — `/generate`
+               * renders the checklist honestly, so this is never a dead
+               * button — but a workspace that cannot generate is told so
+               * here rather than one click later.
+               */}
               <Button asChild variant="outline" size="sm">
                 <Link to="/generate">
                   <Plus aria-hidden />
-                  Generate one now
+                  {readiness.canGenerate ? 'Generate one now' : 'Finish setup to generate'}
                 </Link>
               </Button>
             </div>
@@ -140,11 +149,24 @@ function StaticTodayScreen() {
               }
               action={
                 <Button asChild>
-                  {/* The wizard is gone (ORDER ONB-0827): a pipeline that has
-                      not started is fixed on the Calendar's schedule editor,
-                      which is now the only surface that owns the rhythm. */}
-                  <Link to={schedule.started ? '/generate' : '/calendar/settings'}>
-                    {schedule.started ? 'Generate one now' : 'Set your posting rhythm'}
+                  {/* Three honest destinations, in the order they block:
+                      brand setup first (nothing runs without it), then the
+                      posting rhythm on C1 — the wizard is gone and the
+                      Calendar editor owns the rhythm now — then the run. */}
+                  <Link
+                    to={
+                      !readiness.canGenerate
+                        ? '/generate'
+                        : schedule.started
+                          ? '/generate'
+                          : '/calendar/settings'
+                    }
+                  >
+                    {!readiness.canGenerate
+                      ? 'Finish setup to generate'
+                      : schedule.started
+                        ? 'Generate one now'
+                        : 'Set your posting rhythm'}
                   </Link>
                 </Button>
               }

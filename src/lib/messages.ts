@@ -75,6 +75,14 @@ export const MESSAGES = {
     generateRateLimited:
       "You've hit the generation limit for now. Your scheduled slots keep running — on-demand runs open up again tomorrow.",
     generatePaused: 'Generation is paused while your payment is unresolved.',
+    /**
+     * The server refused a run the client thought was ready (ORDER
+     * ONB-0827). The gate is UX, not security: this is what honesty
+     * looks like when the two disagree, and it is always shown with the
+     * request reference beside it.
+     */
+    generationRefused:
+      'The platform refused this run. Check your brand setup is complete, then try again.',
 
     // Settings (I1–I7)
     sourceUrlRequired: 'Paste the address of a feed, blog, or news page.',
@@ -166,6 +174,17 @@ export const MESSAGES = {
     xComingSoon: 'X support is coming soon. Everything else is ready to connect now.',
     /** G1/G2 — an absent number is never drawn as a zero. */
     syncPending: 'Sync pending — this channel has not reported numbers for this range yet.',
+    /**
+     * The readiness gate (ORDER ONB-0827, D-ONB-D). Three strings, three
+     * different jobs: the checklist's own subtitle, what a BLOCKED generation
+     * entry point says, and the reassurance that the checklist is not a
+     * wizard — nothing here has to be done in order or in one sitting.
+     */
+    setupChecklist:
+      'Finish these and this workspace can write. Each one has its own screen — do them in any order.',
+    generationBlocked:
+      'Generation is off until your brand setup is complete — drafts would have nothing to sound like.',
+    setupComplete: 'Setup is complete. Everything below is optional polish.',
     limitedAnalytics:
       'This platform only reports follower counts for accounts like yours, so reach and engagement are not available here. That is a limit of the platform, not a gap in your posting.',
     /** I2 — the cross-note tones and brand voice both carry. */
