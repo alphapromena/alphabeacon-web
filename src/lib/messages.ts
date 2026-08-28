@@ -171,6 +171,13 @@ export const MESSAGES = {
       'Your account is ready, but your workspace was never created. One press finishes it.',
     /** The same surface when the name it needs could not be recovered. */
     workspaceNeedsName: 'Name your workspace and we will finish setting it up.',
+    /**
+     * The remembered workspace could not be honoured — deleted, or membership
+     * revoked (ORDER ONB-0827-B, part 3). Said out loud exactly once, because
+     * silently landing somewhere else is the failure this rule exists to stop.
+     */
+    activeOrgFellBack:
+      'You are no longer a member of the workspace you were last in, so we opened another one.',
     xComingSoon: 'X support is coming soon. Everything else is ready to connect now.',
     /** G1/G2 — an absent number is never drawn as a zero. */
     syncPending: 'Sync pending — this channel has not reported numbers for this range yet.',

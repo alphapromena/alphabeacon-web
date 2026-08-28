@@ -391,8 +391,26 @@ build, so they are worth asking as a batch.
     confirm naming the schedules it will empty. Recorded so the next person to
     touch tone deletion does not discover it the expensive way.
 
-38. **BLOCKING QUESTION FOR THE FOUNDER — an existing user invited to another
-    workspace CANNOT REACH IT** (consequence of D-ONB-A, measured 2026-08-28).
+38. **CLOSED 2026-08-28 (ORDER ONB-0827-B, decisions.md D-ONB-F).** Fixed on
+    `feat/onb-04-invite-org` and verified live in `e2e/live-invite-org.spec.ts`,
+    3/3: an invited existing user reaches the inviting workspace through the
+    rail's switcher, a reload keeps that choice, and revoking the membership
+    falls back to their remaining workspace with the sentence *"You are no
+    longer a member of the workspace you were last in, so we opened another
+    one."* — never a dead screen, never demo data.
+    **One correction to the founder's brief, measured not assumed:** an
+    existing user cannot ACCEPT an invite. `POST /orgs/:id/members/invite`
+    answers `invitedNewUser: false` and sends no code, and
+    `POST /auth/accept-invite` for that address answers **400 `bad_request`
+    "Invalid or expired code"** (request
+    `4b0959ba-b8d1-409a-9816-b93aaa83ef13`). Membership is simply added. So
+    part 1 of the rule governs the NEW-user accept path — asserted in
+    `live-auth`, which now checks the rail names the inviting org — and the
+    existing-user case is carried by parts 2 and 3 plus the switcher
+    screens4.md §0.4 has always specified.
+    _The original item, for the record:_
+    **An existing user invited to another workspace CANNOT REACH IT**
+    (consequence of D-ONB-A, measured 2026-08-28).
     **Measured, not inferred.** Two fresh accounts, each with its own org
     (owner 1003, member 1004). The owner invites the member: `201
     invitedNewUser: false`. The member logs in again and both the session
@@ -412,13 +430,20 @@ build, so they are worth asking as a batch.
     decisions rather than bugs: a live org switcher, or a rule about which org
     a session opens in. The founder should rule.
 
-38b. **Also worth the founder's eye:** the same ruling means a person invited
-    to a colleague's workspace who happens to sign up first ends up owning an
-    empty workspace they never wanted, funded with 5000 cents by the platform
-    (`POST /orgs` funds the tenant). Harmless today; it is a per-account cost
-    once real money is involved.
+38b. **STILL OPEN — the founder's eye, not a bug.** The same ruling means a
+    person invited to a colleague's workspace who happens to sign up first ends
+    up owning an empty workspace they never wanted, funded with 5000 cents by
+    the platform (`POST /orgs` funds the tenant). D-ONB-F makes that workspace
+    harmless — they can switch away from it and the app remembers — but it does
+    not stop it being created. Harmless today; it is a per-account cost once
+    real money is involved, and a backend question (should signup fund a tenant
+    that may never be used?) rather than a frontend one.
 
-39. **The readiness gate derives honestly in static mode, where the order said
+39. **CLOSED 2026-08-28 — deviation ACCEPTED by the founder** (ORDER
+    ONB-0827-B), recorded as decisions.md **D-ONB-E**. The one-line revert
+    stays documented there and is deliberately not exercised.
+    _The original item, for the record:_
+    **The readiness gate derives honestly in static mode, where the order said
     "reports ready"** (deviation, flagged for the founder — 2026-08-28,
     D-ONB-D). No demo DATA changed, but the `fresh` world is genuinely half set
     up — no voice rules, no sources, no topics — so it renders the checklist
@@ -429,6 +454,17 @@ build, so they are worth asking as a batch.
     states". The `active` world and the four derived from it are fully set up
     and see no gate at all. **Reversible in one line** (`known: !live` →
     `canGenerate: true` in static) if the founder wants the literal reading.
+
+40. **The remembered workspace dies with the session** (deliberate, for the
+    founder's eye — 2026-08-28, D-ONB-F). `purgeSession` clears it, so signing
+    out leaves nothing behind and a reload is what the choice survives. That is
+    the narrower of two readings of "a session opens in the last active org it
+    remembers": the wider one — come back tomorrow, sign in, land where you
+    were — needs a record that OUTLIVES its session, which would be a second
+    durable thing against architecture.md's persistence law and would say, on a
+    shared machine, which workspace the last person worked in. Say the word and
+    it is a small change (drop the key from `purgeSession`); it was not taken
+    unilaterally.
 
 ### M1 cinematic items — RETIRED by the rebrand (2026-08-08)
 

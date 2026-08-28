@@ -21,6 +21,7 @@ import { isLiveMode } from '@/api/config'
 import { isApiError, type ApiErrorCode, type ApiFieldDetail } from '@/api/errors'
 import { purgeSession, saveSession } from '@/api/session'
 import type { AuthSession, SignupReceipt } from '@/api/types'
+import { mostRecentlyJoined } from '@/data/adapters/org-selection'
 import { useDataDispatch, useUsers } from '@/data/provider'
 
 /** The one address the static demo treats as already registered. */
@@ -100,12 +101,19 @@ export function useAuthActions(): AuthActions {
   const users = useUsers()
   const live = isLiveMode()
 
-  /** A fresh session enters the world and the storage together. */
+  /**
+   * A fresh session enters the world and the storage together.
+   *
+   * `activeOrgId` is how a caller says which workspace this session should
+   * open in (ORDER ONB-0827-B, part 1). Only accepting an invite passes one:
+   * every other entry point lets `selectActiveOrg` decide from what the
+   * session remembers.
+   */
   const establish = useCallback(
-    (session: AuthSession, rememberMe: boolean) => {
+    (session: AuthSession, rememberMe: boolean, activeOrgId?: string) => {
       saveSession(session, rememberMe)
       resetUnauthorizedGuard()
-      dispatch({ type: 'live/sessionEstablished', session })
+      dispatch({ type: 'live/sessionEstablished', session, activeOrgId })
     },
     [dispatch],
   )
@@ -276,7 +284,21 @@ export function useAuthActions(): AuthActions {
           body: { email, code, password, ...(name ? { name } : {}), rememberMe },
           anonymous: true,
         })
-        establish(session, rememberMe)
+        /**
+         * LAND IN THE ORG THAT INVITED YOU (ORDER ONB-0827-B, part 1).
+         *
+         * `saveSession` deliberately clears any remembered org, so without
+         * this the selection would fall to the first org — which for anyone
+         * who already had one is their OWN, and the invitation would be
+         * unreachable. That is open-item 38, measured.
+         *
+         * The org just joined is the most recently joined one. For a new user
+         * accepting a code that is the only org in the response; taking the
+         * newest rather than `[0]` costs nothing and stays right if the
+         * platform ever lets an existing user accept one too.
+         */
+        const joined = mostRecentlyJoined(session.orgs)
+        establish(session, rememberMe, joined?.id)
         return ok()
       } catch (error) {
         return failure(error)

@@ -5,7 +5,16 @@ without reconstructing it from the session log. **Update this file at the end
 of any turn that finishes a phase or changes the plan.** `sessions.md` is the
 chronological record; this is the current picture.
 
-_Last updated: 2026-08-28, after **ORDER ONB-0827 — Hasan's onboarding
+_Last updated: 2026-08-28, after **ORDER ONB-0827-B**: the founder accepted the
+static-readiness deviation (**D-ONB-E**), ruled that open-item 38 be fixed
+before any merge, and **approved PUSHING the branches** — which is done, five
+of them, `main` and `live` untouched. `feat/onb-04-invite-org` stacks on the
+ONB-0827 tip and closes 38 (**D-ONB-F**): a session opens in the org it
+REMEMBERS rather than blindly `orgs[0]`, accepting an invite lands in the org
+that invited you, a lost membership falls back with a sentence rather than a
+dead screen, and the rail's workspace footer becomes the switcher screens4.md
+§0.4 has always specified. **Still not merged — the merge waits on the
+founder's eye-pass.** Before that: **ORDER ONB-0827 — Hasan's onboarding
 ruling** was BUILT on a three-branch stack off `main` (`fd84173`):
 `feat/onb-01-tones` -> `feat/onb-02-entry` -> `feat/onb-03-gate`. **Branch
 only: not merged, not pushed — it waits on founder review.** The wizard is
@@ -82,10 +91,12 @@ below).
 | `fix/e2e-0820` | **The E2E-0820 triage, 2026-08-20 — branched off `main` (`550f54e`), MERGED as a fast-forward and pushed; kept on `origin` as the per-fix record.** F3 Generate reachable from the rail/dashboard/Today, F4 the "credits" vocabulary + `/billing/balance`, F5 the pre-run count, F6 the tone-preview reference, F9 the balance chip's three states, F10 the stale results footer, F11 pluralization, F12 the wizard Finish (failure-tolerant, reported, idempotent), B9 the schedule draft reconciler + a blank schedule for a live org that has none. Gate output in the session entry |
 | `design/m2-concept-v2` | **M2 — the visitor world. Branched off `main` (`5c01c68`) 2026-08-23; took `main` again and MERGED as a fast-forward 2026-08-24 on the founder's explicit approval; kept on `origin` as the per-cycle record.** The decision chain is D-M2-A…F, then D-M2-F-r (the AA pass reverted so Abdullah could review his palette verbatim), then **D-M2-F-r2** (he delegated, the founder ruled accessibility wins with the design spirit preserved — the four corrections re-applied, the Memory reveal changed to slide without fading, a `Superseded` badge added, and every allowlist deleted). Abdullah's `malaky-prototype` `components/concept-v2/**` ported into `src/features/marketing/`: five routes under one layout, 58 marketing files, its own token file and contrast guard. M1 retired with it. Decisions D-M2-A…F; open-items 21 |
 | `fix/live-suite-warmup` | **The live suite warm-up, 2026-08-23/24 — branched off `main` (`5c01c68`), MERGED as a fast-forward and pushed; kept as the per-fix record.** `global-setup.ts` wakes the API, warms a 12-way fleet and holds a heartbeat for the life of a live run, and refuses a run whose dev server is in the wrong mode (trap 22, guarded not just recorded). `live-clocks.ts` states three rungs derived from `Docs/api/live-red-2026-08-23.md`, and five spec files read them instead of literals — `live-brand`, `live-brand-rules`, `live-scheduling`, then `live-auth` and `live-team`. Locators and matchers byte-identical throughout. The two-round rule below came out of it |
-| `feat/onb-01-tones` | **ONB-0827 Phase 1, 2026-08-28 — branched off `main` (`fd84173`). NOT merged, NOT pushed.** No seeded tones: the `PRESET_TONES` seeding leaves the org-creation path, I3 gains an honest empty state, and the now-impossible `tones` failure step goes with it. `PRESET_TONES` still composes the demo datasets — the demo world is untouched by order. D-ONB-B |
-| `feat/onb-02-entry` | **ONB-0827 Phase 2 — stacked on Phase 1. NOT merged, NOT pushed.** `src/features/onboarding/*` DELETED; `/onboarding` is a redirect into the app; `org.onboarding {completed,resumeStep}` becomes `org.exists`; `finishOnboarding` becomes a lean `createWorkspace` (org only, idempotent) called at verify; N3 is reframed as the workspace-creation retry. `e2e/onboarding.spec.ts` is `e2e/entry-flow.spec.ts`. Closes open-item 27a. D-ONB-C |
-| `feat/onb-03-gate` | **ONB-0827 Phase 3 — the tip of the stack. NOT merged, NOT pushed.** `src/data/readiness.ts` is the one selector; `ab/setup-checklist.tsx` is the one surface; the gate is enforced at `/generate`, the Studio composer, D4's dialog and Today's affordances, and `verify:w06` has a structural check that keeps it that way. D-ONB-D (PENDING) |
-| `probe/int13` | The PROBE-INT13 media probe (2026-08-26/27), branched off `main` (`fd84173`) — **not merged**, so its open-items 34/35 do NOT exist on this stack. Phase B is still blocked on Ward |
+| `feat/onb-01-tones` | **ONB-0827 Phase 1, 2026-08-28 — branched off `main` (`fd84173`); PUSHED 2026-08-28, NOT merged.** No seeded tones: the `PRESET_TONES` seeding leaves the org-creation path, I3 gains an honest empty state, and the now-impossible `tones` failure step goes with it. `PRESET_TONES` still composes the demo datasets — the demo world is untouched by order. D-ONB-B |
+| `feat/onb-02-entry` | **ONB-0827 Phase 2 — stacked on Phase 1; PUSHED 2026-08-28, NOT merged.** `src/features/onboarding/*` DELETED; `/onboarding` is a redirect into the app; `org.onboarding {completed,resumeStep}` becomes `org.exists`; `finishOnboarding` becomes a lean `createWorkspace` (org only, idempotent) called at verify; N3 is reframed as the workspace-creation retry. `e2e/onboarding.spec.ts` is `e2e/entry-flow.spec.ts`. Closes open-item 27a. D-ONB-C |
+| `feat/onb-03-gate` | **ONB-0827 Phase 3 — the tip of the ONB-0827 stack; PUSHED 2026-08-28, NOT merged.** `src/data/readiness.ts` is the one selector; `ab/setup-checklist.tsx` is the one surface; the gate is enforced at `/generate`, the Studio composer, D4's dialog and Today's affordances, and `verify:w06` has a structural check that keeps it that way. D-ONB-D (PENDING) |
+| `feat/onb-04-invite-org` | **ONB-0827-B, 2026-08-28 — stacked on `feat/onb-03-gate`. PUSHED, NOT merged.** Closes open-item 38: `src/data/adapters/org-selection.ts` is the one selector (`selectActiveOrg`, `mostRecentlyJoined`), the active org is persisted beside the session and stamped with the user id, `graftAuthSession` takes the chosen org instead of reaching for `orgs[0]`, accepting an invite switches immediately, a revoked membership falls back with a latched toast, and the rail's footer becomes a switcher at two orgs. D-ONB-F |
+| `probe/int13` | The PROBE-INT13 media probe (2026-08-26/27), branched off `main` (`fd84173`) — **PUSHED 2026-08-28**, not merged, so its open-items 34/35 do NOT exist on the ONB stack. Phase B is still blocked on Ward |
+| `probe/assets-0826` | The assets-endpoint probe (2026-08-26), docs-only — **PUSHED 2026-08-28** so the Ward message's file pointers resolve on GitHub |
 | `chore/api-sweep` | The 118-operation contract sweep (`89199d9`), one commit ahead of `main`, untouched by the triage |
 | `live`     | **Team-only staging**, always a fast-forward of `main` and never carrying commits of its own. Vercel builds its PREVIEW with a branch-scoped `VITE_API_BASE_URL`, so `live` is where the app runs against the real API; PRODUCTION (`main`) has no such variable and stays byte-for-byte static. **After every merge to `main`: `git push origin main:live`.** |
 | Phase branches on `origin` | `int/06-contract` · `int/07-brand-rules` · `int/08-country` · `int/09-wallet` · `int/10-generate` · `int/11-studio-knowledge` · `int/12-proposals` — pushed 2026-08-19 as the per-phase record, exactly as `w/NN` and `int/00…05` are kept. `probe/proposals` was deliberately NOT pushed: it is superseded, and its record lives on in `int/12` as `ee2bc57` |
@@ -583,6 +594,13 @@ read source, because these failure modes pass behavioural tests:
   `import.meta.env.PROD`, and the emitted `dist/` is read back to confirm it
   really falls back to `"visitor"`. The artifact half exists because the
   incident it prevents had correct source and a wrong deployment.
+- **Which org a session works in is ONE selector** (ONB-0827-B). Every
+  `orgs[0]` is gone: `selectActiveOrg` answers, the choice is persisted beside
+  the session and stamped with the user id, and a remembered org that has
+  vanished falls back to a real one and SAYS so. Switching re-grafts rather
+  than only re-syncing, because the viewer's ROLE is per-org — a member of one
+  workspace can own the next, and a stale role would offer owner controls in a
+  workspace where they have none.
 - **The readiness gate is ONE selector** (verify:w06, ONB-0827). F1's route,
   the Studio composer and D4's media dialog each read `useReadiness()` and
   render the shared `GenerationBlocked`; the ruling itself lives only in

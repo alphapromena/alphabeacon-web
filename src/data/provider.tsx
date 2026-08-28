@@ -22,10 +22,11 @@ import {
 } from 'react'
 import { configureApi } from '@/api/client'
 import { isLiveMode } from '@/api/config'
-import { loadSession, purgeSession } from '@/api/session'
+import { loadActiveOrgId, loadSession, purgeSession, saveActiveOrgId } from '@/api/session'
 import type { ApiWallet, AuthSession, OrgRole } from '@/api/types'
 import { toastError } from '@/components/ab/toast'
 import { clearAuthSession, graftAuthSession } from '@/data/adapters/auth-adapter'
+import { selectActiveOrg } from '@/data/adapters/org-selection'
 import type { BrandGraft } from '@/data/adapters/brand-adapter'
 import type { TeamGraft } from '@/data/adapters/org-adapter'
 import type { SchedulingGraft } from '@/data/adapters/scheduling-adapter'
@@ -89,6 +90,18 @@ export interface DataState {
   liveSyncPhase?: 'idle' | 'syncing' | 'error' | 'ready'
   /** Bumped to re-run the sync (the error state's Try again path). */
   liveResyncNonce?: number
+  /**
+   * The org this session is working in (ORDER ONB-0827-B, D-ONB-F). Held in
+   * state AND persisted beside the session, so a reload opens where the user
+   * left off instead of blindly in `orgs[0]` — which is what made an invited
+   * org unreachable (open-item 38).
+   */
+  activeOrgId?: string | null
+  /**
+   * Set when a remembered org could not be honoured — deleted, or membership
+   * revoked. The shell says so once and clears it; it is never a dead screen.
+   */
+  activeOrgFellBack?: boolean
   /** userId → membership id, for the member/invite management endpoints. */
   liveMemberIds?: Record<string, string>
   /** Brand mutation plumbing: the canonical voice row, topic text → row id. */
@@ -124,7 +137,7 @@ export type DataAction =
   | { type: 'session/signOut' }
   | { type: 'session/signIn' }
   // --- live mode (INT-1): the AlphaStudio session entering/leaving the world -
-  | { type: 'live/sessionEstablished'; session: AuthSession }
+  | { type: 'live/sessionEstablished'; session: AuthSession; activeOrgId?: string }
   | { type: 'live/sessionCleared' }
   | { type: 'live/pendingVerification'; email: string; orgName?: string }
   // --- live mode (INT-2/3): the sync grafting covered entities onto the world
@@ -159,6 +172,14 @@ export type DataAction =
    * `live/resync` re-reads the truth; this is the static path.
    */
   | { type: 'workspace/created'; name: string }
+  /**
+   * Work in a different org (ORDER ONB-0827-B). Dispatched by the rail's
+   * switcher and by accepting an invite, which must land in the org that
+   * invited you rather than wherever `orgs[0]` happens to point.
+   */
+  | { type: 'org/setActive'; orgId: string }
+  /** The shell has said the fallback out loud; stop saying it. */
+  | { type: 'org/fallbackAcknowledged' }
   | { type: 'schedule/update'; patch: Partial<Schedule> }
   | { type: 'schedule/start' }
   | { type: 'tones/create'; tone: Tone }
@@ -228,24 +249,48 @@ export function dataReducer(state: DataState, action: DataAction): DataState {
       // entities stay real while the dataset supplies everything else.
       const world = buildDataset(action.id)
       const withSession = state.liveSession
-        ? graftAuthSession(world, state.liveSession)
+        ? graftAuthSession(
+            world,
+            state.liveSession,
+            // The same org the session is already working in — a dataset
+            // switch changes the demo world, never which workspace you are in.
+            selectActiveOrg(state.liveSession.orgs, state.activeOrgId).org,
+          )
         : isLiveMode()
           ? clearAuthSession(world)
           : world
       return { ...state, datasetId: action.id, world: withSession }
     }
-    case 'live/sessionEstablished':
+    case 'live/sessionEstablished': {
+      /**
+       * THE SELECTION, in one place (D-ONB-F). `orgs[0]` is no longer the
+       * answer: the remembered org wins when it is still real, and a
+       * remembered org that has gone falls back to the first available one
+       * and SAYS so. Nothing here can select an org the session does not
+       * list, so a stale id cannot smuggle in a workspace the user has left.
+       */
+      const userId = action.session.user.id
+      const remembered = action.activeOrgId ?? state.activeOrgId ?? loadActiveOrgId(userId)
+      const choice = selectActiveOrg(action.session.orgs, remembered)
+      if (choice.org) saveActiveOrgId(userId, choice.org.id)
       return {
         ...state,
         liveSession: action.session,
-        world: graftAuthSession(state.world, action.session),
+        activeOrgId: choice.org?.id ?? null,
+        // Sticky until the shell reports it; a fallback the user never saw is
+        // the silent failure this rule exists to prevent.
+        activeOrgFellBack: choice.fellBack || state.activeOrgFellBack === true,
+        world: graftAuthSession(state.world, action.session, choice.org),
       }
+    }
     case 'live/sessionCleared':
       return {
         ...state,
         liveSession: null,
         liveSyncPhase: 'idle',
         liveMemberIds: undefined,
+        activeOrgId: null,
+        activeOrgFellBack: false,
         world: clearAuthSession(state.world),
       }
     case 'live/syncStarted':
@@ -461,6 +506,34 @@ export function dataReducer(state: DataState, action: DataAction): DataState {
         },
       }
 
+    case 'org/setActive': {
+      // Only an org this session actually belongs to. A dispatch naming
+      // anything else is programmer error, and silently switching to it would
+      // point the sync at a 404.
+      const target = state.liveSession?.orgs.find((org) => org.id === action.orgId)
+      if (!target) return state
+
+      // Persist beside the session (same rememberMe storage), so the choice
+      // survives a reload.
+      saveActiveOrgId(state.liveSession!.user.id, target.id)
+      return {
+        ...state,
+        activeOrgId: target.id,
+        activeOrgFellBack: false,
+        /**
+         * RE-GRAFT, not just re-sync. The org's name and — more importantly —
+         * the VIEWER'S ROLE are per-org: someone can own one workspace and be
+         * a member of the next. Bumping the sync alone would leave the rail
+         * showing the old name and the team screen offering owner controls in
+         * a workspace where they are a member.
+         */
+        world: graftAuthSession(state.world, state.liveSession!, target),
+        // …and the sync then re-reads the new org's covered entities.
+        liveResyncNonce: (state.liveResyncNonce ?? 0) + 1,
+      }
+    }
+    case 'org/fallbackAcknowledged':
+      return { ...state, activeOrgFellBack: false }
     case 'workspace/created':
       return {
         ...state,
@@ -1082,9 +1155,25 @@ export function DataProvider({
       // Live boot: a persisted session signs the world in as the real user; no
       // session means genuinely signed out — never the dataset's fake sign-in.
       const saved = loadSession()
-      return saved
-        ? { ...base, liveSession: saved, world: graftAuthSession(base.world, saved) }
-        : { ...base, liveSession: null, world: clearAuthSession(base.world) }
+      if (!saved) {
+        return { ...base, liveSession: null, world: clearAuthSession(base.world) }
+      }
+      /**
+       * BOOT: open in the org this session last worked in (D-ONB-F, part 2).
+       * `loadActiveOrgId` is the persisted answer; resolving it against the
+       * stored org list is what makes a revoked membership fall back rather
+       * than paint a workspace the user has left. The fallback flag is carried
+       * into state so the shell can say it out loud once the app is up.
+       */
+      const choice = selectActiveOrg(saved.orgs, loadActiveOrgId(saved.user.id))
+      if (choice.org) saveActiveOrgId(saved.user.id, choice.org.id)
+      return {
+        ...base,
+        liveSession: saved,
+        activeOrgId: choice.org?.id ?? null,
+        activeOrgFellBack: choice.fellBack,
+        world: graftAuthSession(base.world, saved, choice.org),
+      }
     },
   )
 
@@ -1095,6 +1184,11 @@ export function DataProvider({
   // same pattern the OAuth-return deep links use.
   const liveSessionRef = useRef<AuthSession | null>(state.liveSession ?? null)
   liveSessionRef.current = state.liveSession ?? null
+  // Trap 19 says a fact should be RECORDED, not inferred — this ref records
+  // nothing of its own, it just carries the CURRENT selection into an async
+  // closure that would otherwise capture a stale one. Written every render.
+  const liveActiveOrgRef = useRef<string | null>(state.activeOrgId ?? null)
+  liveActiveOrgRef.current = state.activeOrgId ?? null
   useEffect(() => {
     if (!isLiveMode()) return
     configureApi({
@@ -1118,7 +1212,8 @@ export function DataProvider({
   // working org, or an explicit live/resync (the error state's Try again).
   const syncedForRef = useRef<string | null>(null)
   const sessionToken = state.liveSession?.token ?? null
-  const workingOrgId = state.liveSession?.orgs[0]?.id ?? null
+  // The org the sync targets — the SELECTED one, not `orgs[0]` (D-ONB-F).
+  const workingOrgId = state.activeOrgId ?? null
   const resyncNonce = state.liveResyncNonce ?? 0
   useEffect(() => {
     if (!isLiveMode() || !sessionToken) return
@@ -1140,7 +1235,10 @@ export function DataProvider({
         if (JSON.stringify(refreshed) !== JSON.stringify(current)) {
           dispatch({ type: 'live/sessionEstablished', session: refreshed })
         }
-        const orgId = refreshed.orgs[0]?.id
+        // Re-resolve against the refreshed list: a membership revoked since
+        // the snapshot must not leave the sync pointed at an org this account
+        // has left (it would 404, and 404 is where trap 20 starts).
+        const orgId = selectActiveOrg(refreshed.orgs, liveActiveOrgRef.current).org?.id
         if (orgId) {
           const [team, brand, scheduling, inbox, root, wallet] = await Promise.all([
             fetchTeam(orgId),
@@ -1220,7 +1318,17 @@ export function useLiveMode(): boolean {
 /** Data-layer plumbing for the mutation seams (team.ts, account.ts) — the
  * working org and the userId → membership-id map. Not for features. */
 export function useLiveWorkingOrgId(): string | null {
-  return useData().state.liveSession?.orgs[0]?.id ?? null
+  return useData().state.activeOrgId ?? null
+}
+
+/** The orgs this account belongs to — the rail's switcher reads them. */
+export function useLiveOrgs() {
+  const { state } = useData()
+  return {
+    orgs: state.liveSession?.orgs ?? [],
+    activeOrgId: state.activeOrgId ?? null,
+    fellBack: state.activeOrgFellBack === true,
+  }
 }
 
 /**

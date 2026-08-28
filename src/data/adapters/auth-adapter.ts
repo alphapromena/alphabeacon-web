@@ -31,18 +31,24 @@ export function apiUserToUser(apiUser: ApiUser, orgRole: OrgRole | undefined): U
   }
 }
 
-/** The org this session works in: first org, matching the API's own ordering. */
-export function primaryOrg(orgs: ApiOrgSummary[]): ApiOrgSummary | undefined {
-  return orgs[0]
-}
-
 /**
  * Graft a live auth session onto the active world. Covered entities (session,
  * the signed-in user, the org's name) become real; everything else stays the
  * dataset's — that is the hybrid, by design.
+ *
+ * WHICH ORG IS NOT DECIDED HERE any more (ORDER ONB-0827-B, D-ONB-F). This
+ * used to call a `primaryOrg` helper that returned `orgs[0]`, which is exactly
+ * how an invited org became unreachable (open-item 38). The choice belongs to
+ * `selectActiveOrg`, which knows what this session last worked in; the caller
+ * passes the answer in. `undefined` means "no org", and the workspace-creation
+ * surface owns that landing.
  */
-export function graftAuthSession(world: Dataset, auth: AuthSession): Dataset {
-  const org = primaryOrg(auth.orgs)
+export function graftAuthSession(
+  world: Dataset,
+  auth: AuthSession,
+  activeOrg: ApiOrgSummary | null | undefined,
+): Dataset {
+  const org = activeOrg ?? undefined
   const user = apiUserToUser(auth.user, org?.role)
 
   const users = world.users.some((existing) => existing.id === user.id)

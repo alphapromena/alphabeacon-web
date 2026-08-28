@@ -2088,3 +2088,91 @@ the shape below is this cycle's reading of it and has not been confirmed.
   chances to disagree with the checklist the user was just shown), or blocking
   at the API seam (the seam cannot render an explanation, and a silent refusal
   is the thing being fixed).
+
+### 2026-08-28 — D-ONB-E: static readiness derives honestly (the ONB-0827 deviation, ACCEPTED)
+
+- **The founder ruled on open-item 39.** ORDER ONB-0827 said static mode
+  reports ready; the build derived readiness honestly instead, flagged it, and
+  the deviation is now **accepted**. This entry exists so the next reader finds
+  the ruling beside the code rather than in a report.
+- Why it was taken: no demo DATA changed, but the `fresh` world genuinely has
+  no voice rules, no sources and no topics — so it renders the checklist. That
+  is what makes the gate exercisable from `/dev/datasets` and gives the blocked
+  states real axe coverage. Hardcoding static to ready would have made the
+  whole feature untestable outside a paid live run, against the same order's
+  own "axe on the checklist and blocked states". The `active` world and the
+  four derived from it are fully set up and never see the gate.
+- **The one-line revert stays documented, not exercised:** making
+  `useReadiness` return `canGenerate: true` whenever `!isLiveMode()` restores
+  the literal reading. It is written down here so the option keeps existing
+  without anybody having to rediscover it.
+- Instead of: quietly conforming (the gate would have had no static coverage at
+  all), or arguing it in a report and leaving the code ambiguous.
+
+### 2026-08-28 — D-ONB-F: a session opens in the org it remembers, and an invite switches to the inviting one
+
+Closes open-item 38, which ONB-0827 created and the live suite caught.
+
+- **The problem, measured twice.** ONB-0827 made every signup mint a workspace
+  (D-ONB-A). The app worked in `orgs[0]`, and `/me/orgs` orders by `joinedAt`
+  **ascending** — so for anyone who signed up before being invited, `orgs[0]`
+  is always the org they made first and **the inviting workspace was
+  unreachable**. Measured on fresh orgs 1003/1004, then again on 1064/1065:
+  `[{own, owner}, {inviting, member}]` both times.
+- **A correction to the order's own brief, measured rather than assumed.**
+  ONB-0827-B describes the fix as "accepting an invite switches the active
+  org". **An existing user cannot accept an invite:**
+  `POST /orgs/:id/members/invite` answers `invitedNewUser: false` and sends no
+  code, and `POST /auth/accept-invite` for that address answers **400
+  `bad_request` "Invalid or expired code"** (request
+  `4b0959ba-b8d1-409a-9816-b93aaa83ef13`). Their membership is simply added.
+  So part 1 of the rule governs the NEW-user accept path, and the existing-user
+  case — the one open-item 38 actually measured — is fixed by parts 2 and 3
+  plus the switcher below.
+- **The rule, and where each part lives.**
+  1. `acceptInvite` passes the just-joined org into `establish`, so a new user
+     lands in the org that invited them rather than wherever the selection
+     would otherwise fall. `mostRecentlyJoined` identifies it by sorting on
+     `joinedAt` rather than trusting a position — an ordering the rule depends
+     on should be asserted by the code that depends on it.
+  2. `selectActiveOrg(orgs, remembered)` replaces every `orgs[0]`. The
+     remembered id is persisted beside the session (`src/api/session.ts`),
+     under the same `rememberMe` convention, and **stamped with the user id**
+     so the same person gets their workspace back while a different person on
+     the same machine reads `null`.
+  3. A remembered org that is not in the session's list — deleted, or
+     membership revoked — falls back to the first available org and sets a
+     flag the shell says out loud, once. Measured: after
+     `DELETE .../members/:id` the org leaves `/me/orgs` and a direct read
+     answers `404 not_found`, so "absent from the list" IS "revoked", with no
+     extra call.
+- **The switcher is what actually closes 38, and it was already screen truth.**
+  screens4.md §0.4 has always said "org switcher at the bottom if the account
+  belongs to multiple orgs", and the shell's own comment said the block would
+  become one "the moment an account belongs to more than one org". ONB-0827 is
+  what made that moment arrive. With ONE org it stays identity — a menu
+  offering a single choice is the disabled-and-teasing pattern wearing a
+  chevron — so STATIC mode is unchanged.
+- **Switching RE-GRAFTS, it does not merely re-sync.** The org's name and, more
+  importantly, the viewer's ROLE are per-org: someone can own one workspace and
+  be a member of the next. Bumping the sync alone left the rail showing the old
+  name and would have offered owner controls in a workspace where the user is a
+  member.
+- **The memory dies with the session, deliberately.** `purgeSession` clears it,
+  so signing out leaves nothing behind. The rule says a SESSION opens in the
+  org it remembers, and reload is what it has to survive; making it outlive
+  sign-out would add a second durable record — against architecture.md's
+  persistence law — and on a shared machine it would say which workspace the
+  last person was in. If the founder wants "come back tomorrow and land where I
+  was", that is a deliberate widening, not an oversight.
+- **The fallback toast is latched.** The flag is sticky because the fallback is
+  decided by the live sync, which lands after first paint — a flag that cleared
+  itself would be a message nobody saw. Sticky plus a dispatch can still fire
+  twice (a later sync re-sets it; StrictMode runs effects twice in dev), and it
+  did: the live spec caught two identical toasts. A ref latch makes "say it
+  once" true.
+- Instead of: choosing the most-recently-joined org at login (it would yank a
+  user out of their own workspace the moment anyone invited them), or shipping
+  the persistence without the switcher (parts 2 and 3 would have been real and
+  open-item 38 would still have been open, because nothing could ever change
+  what was remembered for an existing user).

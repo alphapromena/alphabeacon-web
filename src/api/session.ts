@@ -12,10 +12,24 @@
  * there and the client reacts to 401. The one client-side check is on load:
  * a record whose `expiresAt` is already past is discarded rather than
  * offered, so the app never paints a signed-in frame it knows is dead.
+ *
+ * SECOND RECORD (ORDER ONB-0827-B, D-ONB-F): the ACTIVE ORG ID, so a session
+ * opens where it left off instead of blindly in `orgs[0]`. It is kept beside
+ * the session under the same `rememberMe` convention and purged with it.
+ *
+ * It is STAMPED WITH THE USER ID, and that is not decoration. The choice has
+ * to survive signing out and back in — "the last active org it remembers" is
+ * worth nothing if a fresh login forgets it — while never leaking across
+ * accounts on a shared machine. Keying it to the user does both: the same
+ * person gets their workspace back, a different person reads `null` and
+ * chooses their own. It is deliberately NOT validated here beyond that:
+ * `selectActiveOrg` resolves the id against the session's own org list, which
+ * is the only place that can know whether the membership still exists.
  */
 import type { AuthSession } from './types'
 
 const KEY = 'ab-live-session'
+const ACTIVE_ORG_KEY = 'ab-live-active-org'
 
 function storages(): Storage[] {
   // sessionStorage first: a tab-scoped session outranks a remembered one,
@@ -28,6 +42,49 @@ export function saveSession(session: AuthSession, rememberMe: boolean): void {
   const other = rememberMe ? window.sessionStorage : window.localStorage
   target.setItem(KEY, JSON.stringify(session))
   other.removeItem(KEY)
+  // The active-org record follows the session to its new home, so signing in
+  // again does not strand it in the storage the previous session used.
+  const carried = other.getItem(ACTIVE_ORG_KEY)
+  if (carried && !target.getItem(ACTIVE_ORG_KEY)) target.setItem(ACTIVE_ORG_KEY, carried)
+  other.removeItem(ACTIVE_ORG_KEY)
+}
+
+interface ActiveOrgRecord {
+  userId: string
+  orgId: string
+}
+
+/**
+ * The org this user last worked in, or `null` when there is none for THEM.
+ * A record belonging to a different account reads as null rather than being
+ * offered — one slot, guarded by identity.
+ */
+export function loadActiveOrgId(userId: string): string | null {
+  for (const storage of storages()) {
+    const raw = storage.getItem(ACTIVE_ORG_KEY)
+    if (!raw) continue
+    try {
+      const record = JSON.parse(raw) as ActiveOrgRecord
+      if (record.userId === userId && record.orgId) return record.orgId
+    } catch {
+      storage.removeItem(ACTIVE_ORG_KEY)
+    }
+  }
+  return null
+}
+
+/**
+ * Remember the org this user is working in. Written to whichever storage
+ * already holds the session, so `rememberMe` is honoured without being passed
+ * around; a no-op when signed out, since there is no session to qualify.
+ */
+export function saveActiveOrgId(userId: string, orgId: string): void {
+  for (const storage of storages()) {
+    if (storage.getItem(KEY)) {
+      storage.setItem(ACTIVE_ORG_KEY, JSON.stringify({ userId, orgId }))
+      return
+    }
+  }
 }
 
 export function loadSession(): AuthSession | null {
@@ -54,7 +111,10 @@ export function loadSession(): AuthSession | null {
 }
 
 export function purgeSession(): void {
-  for (const storage of storages()) storage.removeItem(KEY)
+  for (const storage of storages()) {
+    storage.removeItem(KEY)
+    storage.removeItem(ACTIVE_ORG_KEY)
+  }
 }
 
 /**

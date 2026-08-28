@@ -57,7 +57,10 @@ describe('apiUserToUser', () => {
 describe('graftAuthSession', () => {
   it('signs the world in as the API user, org name and all', () => {
     const world = buildDataset('active')
-    const next = graftAuthSession(world, auth())
+    const record = auth()
+    // The org is CHOSEN by the caller now (D-ONB-F); the adapter no longer
+    // reaches for orgs[0] on its own.
+    const next = graftAuthSession(world, record, record.orgs[0])
 
     expect(next.session.signedIn).toBe(true)
     expect(next.session.userId).toBe('901')
@@ -73,24 +76,26 @@ describe('graftAuthSession', () => {
   it('a user with no orgs has no workspace, and the demo one does not stand in', () => {
     // Trap 20: the graft must SAY "no workspace" rather than leaving the
     // dataset's org looking like the user's own (ORDER ONB-0827).
-    const next = graftAuthSession(buildDataset('active'), auth({ orgs: [] }))
+    const next = graftAuthSession(buildDataset('active'), auth({ orgs: [] }), null)
     expect(next.org.exists).toBe(false)
     expect(next.session.signedIn).toBe(true)
   })
 
   it('an unverified email stays visibly unverified', () => {
     const record = auth()
-    const next = graftAuthSession(buildDataset('active'), {
-      ...record,
-      user: { ...record.user, emailVerifiedAt: null },
-    })
+    const next = graftAuthSession(
+      buildDataset('active'),
+      { ...record, user: { ...record.user, emailVerifiedAt: null } },
+      record.orgs[0],
+    )
     expect(next.session.emailVerified).toBe(false)
   })
 })
 
 describe('clearAuthSession', () => {
   it('returns to a signed-out world without touching the dataset entities', () => {
-    const world = graftAuthSession(buildDataset('active'), auth())
+    const record = auth()
+    const world = graftAuthSession(buildDataset('active'), record, record.orgs[0])
     const next = clearAuthSession(world)
     expect(next.session.signedIn).toBe(false)
     expect(next.drafts).toBe(world.drafts)

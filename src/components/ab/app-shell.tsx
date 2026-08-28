@@ -14,6 +14,8 @@
 import {
   Calendar,
   ChartLine,
+  Check,
+  ChevronsUpDown,
   CreditCard,
   Inbox,
   LayoutDashboard,
@@ -24,14 +26,14 @@ import {
   Sparkles,
   UserRound,
 } from 'lucide-react'
-import type { CSSProperties, ReactNode } from 'react'
+import { useEffect, useRef, type CSSProperties, type ReactNode } from 'react'
 import { Link, useLocation } from 'react-router'
 import { MonoNumber } from '@/components/ab/mono-number'
 import { BeaconDot } from '@/components/ab/motion'
 import { NotificationBell } from '@/components/ab/notification-bell'
 import { OfflineBanner } from '@/components/ab/offline-banner'
 import { ThemeToggle } from '@/components/ab/theme-toggle'
-import { toastSuccess } from '@/components/ab/toast'
+import { toastError, toastSuccess } from '@/components/ab/toast'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
@@ -62,8 +64,10 @@ import { useAuthActions } from '@/data/auth'
 import {
   useBilling,
   useCreditBalance,
+  useDataDispatch,
   useDrafts,
   useLiveMode,
+  useLiveOrgs,
   useOrg,
   useScreenPhase,
   useSession,
@@ -186,20 +190,108 @@ function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        {/* Organization identity. This becomes a switcher menu the moment an
-            account belongs to more than one org (screens4.md §0.4); with a
-            single org a menu would be a tease, so it renders as identity. */}
-        <div className="flex items-center gap-2 rounded-md px-1 py-1.5 text-sm">
-          <Avatar className="size-6 shrink-0 rounded-md">
-            <AvatarFallback className="rounded-md text-xs">{org.name.charAt(0)}</AvatarFallback>
-          </Avatar>
-          <span className="truncate font-medium group-data-[collapsible=icon]:hidden">
-            {org.name}
-          </span>
-        </div>
+        <OrgIdentity name={org.name} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
+  )
+}
+
+/**
+ * Organization identity — and a SWITCHER once the account has more than one
+ * (screens4.md §0.4, built ONB-0827-B).
+ *
+ * This block always intended to grow a menu; the comment that stood here said
+ * so. What made it necessary rather than nice was open-item 38: since every
+ * signup mints a workspace, an invited user belongs to two orgs and the app
+ * worked in whichever `orgs[0]` happened to be — measured as their own, always,
+ * because `/me/orgs` orders by `joinedAt` ascending. Without a way to choose,
+ * the org that invited them was unreachable.
+ *
+ * With ONE org it stays identity: a menu offering a single choice is the
+ * disabled-and-teasing pattern wearing a chevron. STATIC mode has one org by
+ * construction, so the demo is unchanged.
+ */
+function OrgIdentity({ name }: { name: string }) {
+  const { orgs, activeOrgId, fellBack } = useLiveOrgs()
+  const dispatch = useDataDispatch()
+
+  /**
+   * Say the fallback out loud, once (part 3). A remembered workspace that
+   * quietly became a different one is precisely the silent failure this rule
+   * exists to prevent — so it is a toast, not a log line, and it is
+   * acknowledged so a resync cannot repeat it.
+   */
+  const announced = useRef(false)
+  useEffect(() => {
+    if (!fellBack) {
+      // A new episode may announce itself later; arm for it.
+      announced.current = false
+      return
+    }
+    // ONCE per episode. The flag is sticky on purpose — the fallback is
+    // decided by the live sync, which lands after first paint, and a flag that
+    // cleared itself would be a message nobody saw. Sticky plus a dispatch,
+    // though, can be re-set by the next sync before the dispatch is read, and
+    // StrictMode runs effects twice in dev: either way the user gets the same
+    // sentence twice. The latch is what makes "say it once" true.
+    if (announced.current) return
+    announced.current = true
+    toastError(MESSAGES.notices.activeOrgFellBack)
+    dispatch({ type: 'org/fallbackAcknowledged' })
+  }, [fellBack, dispatch])
+
+  const identity = (
+    <>
+      <Avatar className="size-6 shrink-0 rounded-md">
+        <AvatarFallback className="rounded-md text-xs">{name.charAt(0)}</AvatarFallback>
+      </Avatar>
+      <span className="truncate font-medium group-data-[collapsible=icon]:hidden">{name}</span>
+    </>
+  )
+
+  if (orgs.length < 2) {
+    return <div className="flex items-center gap-2 rounded-md px-1 py-1.5 text-sm">{identity}</div>
+  }
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          type="button"
+          className="flex w-full items-center gap-2 rounded-md px-1 py-1.5 text-left text-sm hover:bg-sidebar-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+        >
+          {identity}
+          <ChevronsUpDown
+            aria-hidden
+            className="ml-auto size-4 shrink-0 text-muted-foreground group-data-[collapsible=icon]:hidden"
+          />
+          <span className="sr-only">Switch workspace</span>
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start" className="w-56">
+        <DropdownMenuLabel>Workspaces</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        {orgs.map((entry) => (
+          <DropdownMenuItem
+            key={entry.id}
+            // The current one is not a no-op waiting to happen: selecting it
+            // changes nothing, and the check says which one you are in.
+            onSelect={() => {
+              if (entry.id === activeOrgId) return
+              dispatch({ type: 'org/setActive', orgId: entry.id })
+            }}
+          >
+            <Check
+              aria-hidden
+              className={cn('size-4', entry.id === activeOrgId ? 'opacity-100' : 'opacity-0')}
+            />
+            <span className="truncate">{entry.name}</span>
+            {entry.id === activeOrgId && <span className="sr-only">(current)</span>}
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }
 

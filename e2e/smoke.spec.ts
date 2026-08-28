@@ -53,6 +53,28 @@ test('the retired wizard route redirects into the app', async ({ page }) => {
   await expectDashboardStats(page)
 })
 
+/**
+ * The workspace footer is IDENTITY, not a menu, when there is one org
+ * (screens4.md §0.4; ONB-0827-B). Static mode has exactly one org per world by
+ * construction, so this is the half of the switcher rule static can prove —
+ * and it is the half most likely to regress, because the easy implementation
+ * of a switcher is one that always renders.
+ *
+ * The other half — a session opening in its REMEMBERED org, and falling back
+ * honestly when that membership is revoked — needs two orgs and a live
+ * session, so it lives in `live-invite-org.spec.ts` and in the unit tests over
+ * `selectActiveOrg`. Faking a multi-org live session in static mode would mean
+ * inventing live state the mode boundary exists to keep out.
+ */
+test('one workspace renders as identity, never as a menu that offers nothing', async ({ page }) => {
+  await page.goto('/')
+  await expectDashboardStats(page)
+
+  const sidebar = page.locator('[data-sidebar="sidebar"]')
+  await expect(sidebar.getByText('Atlas Roasters')).toBeVisible()
+  await expect(sidebar.getByRole('button', { name: /Switch workspace/ })).toHaveCount(0)
+})
+
 test('dataset switcher swaps the world in-session', async ({ page }) => {
   await page.goto('/dev/datasets')
 

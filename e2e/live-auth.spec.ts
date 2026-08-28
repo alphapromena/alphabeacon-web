@@ -265,7 +265,13 @@ test('a new user accepts an invite through the documented deep link and lands in
   await page.getByLabel('Confirm password').fill(PASSWORD)
   await page.getByRole('button', { name: 'Join the workspace' }).click()
 
-  // Logged in, verified, and INSIDE the org that invited them.
+  // Logged in, verified, and INSIDE the org that invited them — and it is the
+  // org they are WORKING in, not merely one they belong to (ORDER ONB-0827-B
+  // part 1: accepting an invite switches the active org immediately). The
+  // rail names it, which is the user-visible form of that claim.
+  await expect(page.locator('[data-sidebar="sidebar"]').getByText('QA Roasters')).toBeVisible({
+    timeout: SCREEN_SYNC,
+  })
   // The accept POST and the workspace's whole sync — live-red-2026-08-23.
   await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible({
     timeout: SCREEN_SYNC,

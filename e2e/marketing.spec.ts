@@ -391,21 +391,45 @@ test('the marketing world self-hosts its type — no font request leaves', async
   // which is how a "zero network" font setup passes while looking wrong.
   await asVisitor(page)
   await expect(page.locator('.mk-world')).toBeVisible()
-  const families = await page.evaluate(() => ({
-    world: getComputedStyle(document.querySelector('.mk-world')!).fontFamily,
-    // FontFaceSet is a Set-like, not an ArrayLike, and this file compiles
-    // under a lib target without downlevel iteration — forEach is the portable
-    // way to walk it.
-    loaded: (() => {
-      const families: string[] = []
-      document.fonts.forEach((f) => {
-        if (f.status === 'loaded') families.push(f.family)
-      })
-      return families
-    })(),
-  }))
-  expect(families.world).toContain('DM Sans')
-  expect(families.loaded).toContain('DM Sans Variable')
+
+  const world = await page.evaluate(
+    () => getComputedStyle(document.querySelector('.mk-world')!).fontFamily,
+  )
+  expect(world).toContain('DM Sans')
+
+  /**
+   * WAIT for the face, do not SAMPLE for it.
+   *
+   * This assertion used to read `document.fonts` once, immediately. Font
+   * loading is asynchronous and a `@font-face` is only fetched when something
+   * uses it, so under load the set could still say `loading` — and it did,
+   * FOUR times during the ONB-0827 cycle, always inside a `verify:wNN` sweep,
+   * never standalone, on branches that had not touched marketing. A check that
+   * keeps reporting the harness instead of the branch is a check that has
+   * stopped working (state.md rule 15's cousin).
+   *
+   * `document.fonts.ready` settles when loading finishes, and `expect.poll`
+   * bounds the wait rather than trusting a single moment. What is asserted is
+   * unchanged: the face really arrived, and did not silently fall back to
+   * system-ui.
+   */
+  await expect
+    .poll(
+      async () =>
+        page.evaluate(async () => {
+          await document.fonts.ready
+          const families: string[] = []
+          // FontFaceSet is a Set-like, not an ArrayLike, and this file compiles
+          // under a lib target without downlevel iteration — forEach is the
+          // portable way to walk it.
+          document.fonts.forEach((face) => {
+            if (face.status === 'loaded') families.push(face.family)
+          })
+          return families
+        }),
+      { message: 'DM Sans Variable must really load, not fall back to system-ui' },
+    )
+    .toContain('DM Sans Variable')
 })
 
 test('page titles follow the route', async ({ page }) => {
