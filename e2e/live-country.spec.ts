@@ -154,7 +154,11 @@ test('re-saving the same country is a quiet no-op, not a fake reload', async ({ 
   test.setTimeout(120_000)
   await login(page)
   await page.getByRole('link', { name: 'Settings' }).first().click()
-  await expect(page.locator('[aria-busy="true"]')).toHaveCount(0)
+  // The Settings landing has TWO busy regions since ONB-0827-B: the screen's
+  // own sync and the setup checklist's, which does not claim anything about
+  // this workspace until the live answer lands (trap 20). Both settle inside
+  // one screen-sync; the suite's 5 s default was never enough for one of them.
+  await expect(page.locator('[aria-busy="true"]')).toHaveCount(0, { timeout: SCREEN_SYNC })
 
   // I1 carries the control; the first test in this file set JO through it.
   const picker = page.locator('#i1-country')
@@ -178,7 +182,8 @@ test('re-saving the same country is a quiet no-op, not a fake reload', async ({ 
 test('C2 no longer offers an event source it cannot create', async ({ page }) => {
   await login(page)
   await page.goto('/calendar/sources')
-  await expect(page.locator('[aria-busy="true"]')).toHaveCount(0)
+  // A reload plus the screen's whole sync — the same rung its siblings use.
+  await expect(page.locator('[aria-busy="true"]')).toHaveCount(0, { timeout: SCREEN_SYNC })
 
   // The country picker IS the surface now.
   await expect(page.locator('#c2-country')).toBeVisible()
