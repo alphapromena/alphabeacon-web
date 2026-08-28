@@ -466,6 +466,23 @@ build, so they are worth asking as a batch.
     it is a small change (drop the key from `purgeSession`); it was not taken
     unilaterally.
 
+41. **A recorded DECISION can take tens of seconds to read back** (measured
+    2026-08-28, ONB-0827-B). `live-proposals`' decline test covers a decline
+    POST, a tab switch and a keyset-paged re-read of the proposals ledger.
+    Across eleven observations it passed eight times — the whole test taking
+    **20.6 s and 28.6 s** in two of them — and failed three: twice at the
+    suite's 5 s default and **once at 40 s**. The spec now budgets 80 s for
+    that one assertion, with the numbers written beside it.
+    **The wait is not the finding.** A user who declines a draft and switches
+    to the Declined tab can wait half a minute to see their own decision. That
+    is a product fact worth a founder's eye and possibly Ward's: it may be the
+    API's latency tail (p90 9.8 s per `live-red-2026-08-23`, and this is a
+    chain of three calls), or it may be **open-item 32** — the keyset paging
+    bug that loses rows sharing a timestamp — showing up as a row that arrives
+    late rather than never. Not investigated here: ONB-0827-B did not touch
+    proposals, and choosing between those two without measuring would have been
+    a guess.
+
 ### M1 cinematic items — RETIRED by the rebrand (2026-08-08)
 
 The two items that sat here (clip-1 take approval → 4K re-render; the

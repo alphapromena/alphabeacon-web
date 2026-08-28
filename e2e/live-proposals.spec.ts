@@ -140,16 +140,26 @@ test('declining asks why, keeps the row, and is reversible', async ({ page }) =>
   await page.getByLabel('Why are you declining this?').fill('Too promotional for a Tuesday.')
   await page.getByRole('dialog').getByRole('button', { name: 'Decline', exact: true }).click()
 
-  // The row STAYS — it is the no-repeat instruction, not a deletion.
-  //
-  // The rung, not the default: switching to the Declined tab re-reads the
-  // proposals ledger, and a 5 s wait over that round trip measures the API's
-  // temperature rather than the product. It failed in BOTH gate rounds on
-  // 2026-08-28 while passing solo, which is the shape of a wait that is too
-  // short rather than a claim that is wrong. The assertion is unchanged.
+  /**
+   * The row STAYS — it is the no-repeat instruction, not a deletion.
+   *
+   * A NAMED BUDGET, taken on purpose and with the numbers behind it. This
+   * assertion covers MORE than one screen sync: a decline POST, a tab switch,
+   * and a keyset-paged re-read of the proposals ledger. Measured across eleven
+   * observations on 2026-08-28 it passed eight times — the whole test taking
+   * 20.6 s and 28.6 s in two of them — and failed three: twice at the suite's
+   * 5 s default, and once at `SCREEN_SYNC` (40 s), which is the measurement
+   * that matters. 40 s is the right order of magnitude with no headroom, so
+   * this one wait gets double, explicitly, rather than the suite being told
+   * that a chain of three calls is one screen's sync.
+   *
+   * The latency itself is open-item 41: a user watching their own decision
+   * take half a minute to appear is a product fact, not only a test one, and
+   * this wait does not fix it.
+   */
   await page.getByRole('button', { name: 'Declined', exact: true }).click()
   await expect(page.getByRole('main').getByRole('listitem').first()).toContainText('Declined ·', {
-    timeout: SCREEN_SYNC,
+    timeout: SCREEN_SYNC * 2,
   })
 
   // And a declined draft can still be approved later: latest wins.
