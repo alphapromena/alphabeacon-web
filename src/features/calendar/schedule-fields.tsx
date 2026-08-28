@@ -1,8 +1,13 @@
 /**
- * The pipeline configuration controls, extracted because onboarding step 4 and
- * the durable schedule screen (C1) must render the *same* fields — screens4.md
- * describes C1 as "the durable, editable home for everything set up in
- * onboarding Step 4", so two copies would drift the moment either changed.
+ * The pipeline configuration controls for C1, the schedule editor.
+ *
+ * They were extracted so the onboarding wizard's step 4 and C1 could render
+ * the SAME fields rather than two copies that drift. **The wizard is gone**
+ * (ORDER ONB-0827, D-ONB-C): setup happens in Settings and the posting rhythm
+ * happens here, so C1 is now the only surface these fields serve and they live
+ * beside it. The extraction stays because the shape is still worth naming, and
+ * because `verify:w06` reads it to prove C1 has not grown a tone picker of its
+ * own.
  *
  * The summary sentence is the honesty check: it restates the whole
  * configuration in one line with mono figures, so nobody starts a pipeline

@@ -1,10 +1,11 @@
-// W2 verify orchestrator -- the marketing + auth + onboarding checklist from web-plan.md.
+// W2 verify orchestrator -- the marketing + auth + entry checklist from web-plan.md.
 // Usage: pnpm verify:w02 [--skip-e2e]
 //
 // W2 Verify coverage, and where each item is actually proven:
 //   "every A/M state renders per screens4 across the dataset + state switchers"
-//        -> the `visitor` dataset plus e2e/onboarding.spec.ts
-//   "Playwright golden: signup -> verify -> onboard -> dashboard"
+//        -> the `visitor` dataset plus e2e/entry-flow.spec.ts
+//   "Playwright golden: signup -> verify -> the app" (ONB-0827: the wizard
+//        step is deleted, so the walk is one shorter)
 //        -> the @golden test, run below and asserted to exist
 //   "plans stay one source" -> src/data/entities/plans.test.ts (H1 reads
 //        usePlans()). SUPERSEDED FOR MARKETING by D-M2-B, 2026-08-23: the
@@ -533,18 +534,32 @@ function deliverablesExist(): boolean {
     'src/features/auth/password-rules.ts',
     'src/features/auth/password-strength.tsx',
     'src/features/auth/use-countdown.ts',
-    // A5
-    'src/features/onboarding/onboarding-screen.tsx',
-    'src/features/onboarding/wizard-shell.tsx',
-    'src/features/onboarding/pipeline-fields.tsx',
+    // A5 is RETIRED (ORDER ONB-0827, D-ONB-C): the wizard's three modules are
+    // deleted, its shared fields live beside C1, and what it used to collect
+    // has durable homes in Settings and the Calendar. The deliverable that
+    // replaced it is the entry flow itself.
     'src/features/settings/tone-editor.tsx',
-    // N3 + the signed-out world every A/M state needs
+    'src/features/calendar/schedule-fields.tsx',
+    // N3 — now the workspace-creation retry — and the signed-out world every
+    // A/M state needs
     'src/features/system/empty-org-screen.tsx',
     'src/data/datasets/visitor.ts',
     // the specs that sign the phase off
-    'e2e/onboarding.spec.ts',
+    'e2e/entry-flow.spec.ts',
     'e2e/marketing.spec.ts',
   ]
+
+  // The wizard must be GONE, not merely unrouted: a deleted feature that is
+  // still on disk is a feature somebody re-imports by accident.
+  const wizardGone = [
+    'src/features/onboarding/onboarding-screen.tsx',
+    'src/features/onboarding/wizard-shell.tsx',
+    'src/features/onboarding/pipeline-fields.tsx',
+  ].filter((path) => existsSync(join(root, path)))
+  if (wizardGone.length) {
+    console.log('the deleted wizard is still on disk:')
+    for (const path of wizardGone) console.log(`  - ${path}`)
+  }
   const missing = required.filter((path) => !existsSync(join(root, path)))
   if (missing.length) {
     console.log('missing:')
@@ -554,12 +569,13 @@ function deliverablesExist(): boolean {
   }
 
   // The golden walk is named in the plan, so its absence has to fail loudly
-  // rather than leaving the phase green with no journey covered.
-  const spec = readFileSync(join(root, 'e2e', 'onboarding.spec.ts'), 'utf8')
+  // rather than leaving the phase green with no journey covered. It is one
+  // step shorter than it was: signup -> verify -> the app (D-ONB-C).
+  const spec = readFileSync(join(root, 'e2e', 'entry-flow.spec.ts'), 'utf8')
   const hasGolden = /@golden/.test(spec) && /signup/.test(spec) && /dashboard/i.test(spec)
-  if (!hasGolden) console.log('missing: the @golden signup -> verify -> onboard -> dashboard walk')
+  if (!hasGolden) console.log('missing: the @golden signup -> verify -> the app walk')
 
-  const ok = missing.length === 0 && hasGolden
+  const ok = missing.length === 0 && hasGolden && wizardGone.length === 0
   results.push({ name: 'W2 deliverables exist', outcome: ok ? 'PASS' : 'FAIL' })
   return ok
 }

@@ -1,7 +1,7 @@
 /**
  * I3 — Tones library · `/settings/tones`, and I4's routed page.
  *
- * The durable home for what onboarding step 4 and C1 create inline. Presets are
+ * The durable home for what C1 creates inline. Presets are
  * view-only — an org that could edit "Educational" into something else would
  * break every other org's mental model of it. Custom tones sit in the SAME card
  * shape with the same badge treatment, because `ToneBadge`'s law (a tone you

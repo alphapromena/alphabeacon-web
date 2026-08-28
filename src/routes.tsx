@@ -24,8 +24,11 @@
  *
  * Two guards, both reading the fake session in `DataProvider`:
  *   Authed — signed out goes to the marketing front door.
- *   Onboarded — signed in but unfinished lands on N3, which resumes the wizard
- *   at the right step instead of dumping people into an empty product.
+ *   A workspace — signed in with no org lands on N3. **That gate used to mean
+ *   "the wizard is unfinished"** and it does not any more (ORDER ONB-0827,
+ *   D-ONB-C): the wizard is deleted, verifying creates the org, and the only
+ *   way to arrive here without one is a create that failed or was interrupted.
+ *   N3 is the retry surface for exactly that, not a journey to resume.
  */
 import { Suspense, lazy, type ComponentType, type ReactNode } from 'react'
 import { createBrowserRouter, Navigate } from 'react-router'
@@ -61,14 +64,12 @@ function lazyEl(loader: () => Promise<Record<string, unknown>>, name: string): R
 }
 
 const el = {
-  // Area A — auth and onboarding
+  // Area A — auth
   signup: () => lazyEl(() => import('@/features/auth/signup-screen'), 'SignUpScreen'),
   signin: () => lazyEl(() => import('@/features/auth/signin-screen'), 'SignInScreen'),
   verify: () => lazyEl(() => import('@/features/auth/verify-email-screen'), 'VerifyEmailScreen'),
   reset: () => lazyEl(() => import('@/features/auth/reset-password-screen'), 'ResetPasswordScreen'),
   invite: () => lazyEl(() => import('@/features/auth/accept-invite-screen'), 'AcceptInviteScreen'),
-  onboarding: () =>
-    lazyEl(() => import('@/features/onboarding/onboarding-screen'), 'OnboardingScreen'),
   // The signed-in shell
   dashboard: () => lazyEl(() => import('@/features/dashboard/dashboard-screen'), 'DashboardScreen'),
   emptyOrg: () => lazyEl(() => import('@/features/system/empty-org-screen'), 'EmptyOrgScreen'),
@@ -132,7 +133,7 @@ function RootGate() {
   const session = useSession()
   const org = useOrg()
   if (!session.signedIn) return <MarketingHome />
-  if (!org.onboarding.completed) return <>{el.emptyOrg()}</>
+  if (!org.exists) return <>{el.emptyOrg()}</>
   return <>{el.dashboard()}</>
 }
 
@@ -140,7 +141,7 @@ function Authed({ children }: { children: ReactNode }) {
   const session = useSession()
   const org = useOrg()
   if (!session.signedIn) return <Navigate to="/" replace />
-  if (!org.onboarding.completed) return <>{el.emptyOrg()}</>
+  if (!org.exists) return <>{el.emptyOrg()}</>
   return children
 }
 
@@ -148,7 +149,7 @@ function Authed({ children }: { children: ReactNode }) {
 function SignedOutOnly({ children }: { children: ReactNode }) {
   const session = useSession()
   const org = useOrg()
-  if (session.signedIn && org.onboarding.completed) return <Navigate to="/" replace />
+  if (session.signedIn && org.exists) return <Navigate to="/" replace />
   return children
 }
 
@@ -182,14 +183,23 @@ export const router = createBrowserRouter([
     ],
   },
 
-  // Area A — auth and onboarding
+  // Area A — auth
   { path: '/signup', element: <SignedOutOnly>{el.signup()}</SignedOutOnly> },
   { path: '/login', element: <SignedOutOnly>{el.signin()}</SignedOutOnly> },
   { path: '/verify-email', element: el.verify() },
   { path: '/reset-password', element: el.reset() },
   // The invite deep link (docs/api/api.md): /accept-invite?email=…&code=…
   { path: '/accept-invite', element: el.invite() },
-  { path: '/onboarding', element: el.onboarding() },
+
+  /**
+   * The wizard's route (ORDER ONB-0827, D-ONB-C). The screen is DELETED, not
+   * disabled — setup lives in Settings and the Calendar now. The path stays
+   * reachable because it was linked from N3, the dashboard banner, Today's
+   * empty state and a shelf of bookmarks, and a link somebody saved should
+   * land in the product rather than on a 404. `RootGate` then routes by the
+   * one fact that still matters: does this account have a workspace.
+   */
+  { path: '/onboarding', element: <Navigate to="/" replace /> },
 
   /**
    * The early-access front door (Phase 2 §24) is RETIRED. M2 replaced the

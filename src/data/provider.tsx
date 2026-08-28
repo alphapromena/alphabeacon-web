@@ -62,9 +62,6 @@ import { MAX_SIGN_IN_ATTEMPTS, SIGN_IN_LOCKOUT_MS } from '@/data/types'
 import { canTransition, type DraftStatus } from '@/lib/draft-status'
 import { MESSAGES } from '@/lib/messages'
 
-/** A5 runs five steps; N3 resumes at whichever one is unfinished. */
-export type OnboardingStep = Org['onboarding']['resumeStep']
-
 /** /dev/states override: force the loading or error presentation anywhere. */
 export type DevForce = 'none' | 'loading' | 'error'
 
@@ -129,7 +126,7 @@ export type DataAction =
   // --- live mode (INT-1): the AlphaStudio session entering/leaving the world -
   | { type: 'live/sessionEstablished'; session: AuthSession }
   | { type: 'live/sessionCleared' }
-  | { type: 'live/pendingVerification'; email: string }
+  | { type: 'live/pendingVerification'; email: string; orgName?: string }
   // --- live mode (INT-2/3): the sync grafting covered entities onto the world
   | { type: 'live/syncStarted' }
   | { type: 'live/syncFailed' }
@@ -153,10 +150,15 @@ export type DataAction =
   | { type: 'auth/signInSucceeded' }
   | { type: 'auth/signInFailed' }
   | { type: 'auth/clearLockout' }
-  // --- onboarding (A5) ------------------------------------------------------
-  | { type: 'onboarding/goToStep'; step: OnboardingStep }
-  | { type: 'onboarding/saveBrand'; offer: string; differentiators: string[]; name: string }
-  | { type: 'onboarding/complete' }
+  /**
+   * The workspace exists (ORDER ONB-0827, D-ONB-C). It replaced the three
+   * `onboarding/*` actions the wizard needed: there is no step to move to, no
+   * brand half-save on the way through (Settings owns those fields via
+   * `org/update`), and no journey to declare complete — only the one fact a
+   * route guard reads. In LIVE mode the create goes to the API and
+   * `live/resync` re-reads the truth; this is the static path.
+   */
+  | { type: 'workspace/created'; name: string }
   | { type: 'schedule/update'; patch: Partial<Schedule> }
   | { type: 'schedule/start' }
   | { type: 'tones/create'; tone: Tone }
@@ -327,11 +329,14 @@ export function dataReducer(state: DataState, action: DataAction): DataState {
       }
     case 'live/pendingVerification':
       // Signed up, not yet verified: the verify screen needs the address, and
-      // nothing may pretend to be signed in yet.
+      // nothing may pretend to be signed in yet. The org NAME is held too —
+      // the API takes no org at signup, and verifying is what creates the
+      // workspace from it (ORDER ONB-0827, D-ONB-C).
       return {
         ...state,
         world: {
           ...state.world,
+          ...(action.orgName ? { org: { ...state.world.org, name: action.orgName } } : {}),
           session: {
             ...state.world.session,
             signedIn: false,
@@ -456,33 +461,12 @@ export function dataReducer(state: DataState, action: DataAction): DataState {
         },
       }
 
-    case 'onboarding/goToStep':
+    case 'workspace/created':
       return {
         ...state,
         world: {
           ...state.world,
-          org: { ...state.world.org, onboarding: { completed: false, resumeStep: action.step } },
-        },
-      }
-    case 'onboarding/saveBrand':
-      return {
-        ...state,
-        world: {
-          ...state.world,
-          org: {
-            ...state.world.org,
-            name: action.name,
-            offer: action.offer,
-            differentiators: action.differentiators,
-          },
-        },
-      }
-    case 'onboarding/complete':
-      return {
-        ...state,
-        world: {
-          ...state.world,
-          org: { ...state.world.org, onboarding: { completed: true, resumeStep: 5 } },
+          org: { ...state.world.org, name: action.name, exists: true },
         },
       }
 

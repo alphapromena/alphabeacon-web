@@ -7,14 +7,15 @@ import { STUDIO_MODELS } from '@/data/entities/studio-models'
 import { PRESET_TONES } from '@/data/entities/tones'
 import type { Dataset } from '@/data/types'
 
-/** A brand-new tenant: signed up minutes ago, nothing configured. This is
- *  the world every empty state and the setup-incomplete banner render from. */
+/** A brand-new tenant: signed up minutes ago, nothing configured. This is the
+ *  world every empty state renders from. Its workspace EXISTS (`org.exists`) —
+ *  what is unfinished is the brand setup, which is a different fact and the one
+ *  the readiness gate reads (ORDER ONB-0827). */
 export function buildFreshDataset(): Dataset {
   return {
     id: 'fresh',
     label: 'Fresh org',
-    description:
-      'Nova Skincare — just signed up, onboarding not started, no connections, no drafts.',
+    description: 'Nova Skincare — just signed up, nothing set up yet, no connections, no drafts.',
     org: structuredClone(NOVA_ORG),
     users: structuredClone(NOVA_USERS),
     invites: [],

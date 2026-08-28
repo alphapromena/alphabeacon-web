@@ -73,7 +73,7 @@ function approvalGateIsStructural(): boolean {
  */
 function e2eNavigationRuleHolds(): boolean {
   console.log('\n=== e2e specs navigate in-app after switching datasets ===')
-  const specs = ['onboarding.spec.ts', 'today-queue.spec.ts']
+  const specs = ['entry-flow.spec.ts', 'today-queue.spec.ts']
   let ok = true
 
   for (const name of specs) {

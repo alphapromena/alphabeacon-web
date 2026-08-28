@@ -20,7 +20,7 @@ export const ATLAS_ORG: Org = {
   differentiators: ['Roasted to order', 'Direct-trade sourcing', 'Carbon-neutral shipping'],
   ctaText: 'Order this week’s roast',
   brandVoice: ATLAS_BRAND_VOICE,
-  onboarding: { completed: true, resumeStep: 5 },
+  exists: true,
 }
 
 export const ATLAS_USERS: User[] = [
@@ -49,7 +49,7 @@ export const NOVA_ORG: Org = {
   ctaText: '',
   // Empty on purpose: I2's empty state invites the first rule.
   brandVoice: { do: [], dont: [], examples: [] },
-  onboarding: { completed: false, resumeStep: 1 },
+  exists: true,
 }
 
 export const NOVA_USERS: User[] = [

@@ -182,7 +182,7 @@ export function useTeamActions() {
       try {
         await api<void>('POST', `/orgs/${orgId}/leave`)
         // No org to stand in any more: resync re-reads /me/orgs and the world
-        // follows (no orgs → back to onboarding).
+        // follows (no orgs → the workspace-creation surface, N3).
         resync()
         return ok()
       } catch (error) {

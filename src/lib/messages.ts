@@ -34,8 +34,14 @@ export const MESSAGES = {
      * one used to report success, which is how an org reached the product
      * with tones but no schedule and no country.
      */
-    onboardingFailed: 'We could not create your workspace. Nothing was saved — try again.',
-    onboardingIncomplete: 'Your workspace is ready, but part of the setup did not save.',
+    /**
+     * Creating the workspace (ORDER ONB-0827, D-ONB-C). One outcome now, not
+     * two: the org either exists or it does not. `onboardingIncomplete` — "the
+     * workspace is ready but part of the setup did not save" — described a
+     * Finish that pushed four things at once and could half-land. It pushes
+     * one thing, so there is no half.
+     */
+    workspaceCreateFailed: 'We could not create your workspace. Nothing was saved — try again.',
 
     // Early access (M-series request form).
     requestCompanyRequired: 'Tell us your company so we know who the workspace is for.',
@@ -54,9 +60,12 @@ export const MESSAGES = {
     codeInvalid: 'That code is not right or has expired. Request a fresh one.',
     rateLimited: 'Too many requests. You can try again in',
 
-    // Onboarding (A5)
+    // What the onboarding wizard used to validate. A5 is deleted (ORDER
+    // ONB-0827) and these moved with their fields: the offer line to I1, the
+    // model to C1. `differentiatorsRequired` went with the wizard — no screen
+    // renders it, and an unreachable catalogue entry is what the W7
+    // completeness test exists to catch.
     offerRequired: 'Describe what you offer in one line — drafts start from this.',
-    differentiatorsRequired: 'Add at least one thing that sets you apart.',
     modelRequired: 'Pick which model drafts your copy.',
     toneNameRequired: 'Name this tone so you can pick it later.',
     toneRuleRequired: 'Add at least one do or one dont so the tone means something.',
@@ -144,7 +153,16 @@ export const MESSAGES = {
   notices: {
     resetLinkSent:
       'If that email has an account, a reset link is on its way. Check your inbox — and your spam folder.',
-    setupIncomplete: "Let's finish setting up your workspace — your pipeline hasn't started yet.",
+    /**
+     * N3 (ORDER ONB-0827, D-ONB-C). This used to say "let's finish setting up
+     * your workspace" and pointed at the wizard. There is no wizard and
+     * nothing to finish: the account is verified and the ONE thing missing is
+     * the workspace record itself, which the screen offers to create again.
+     */
+    workspaceMissing:
+      'Your account is ready, but your workspace was never created. One press finishes it.',
+    /** The same surface when the name it needs could not be recovered. */
+    workspaceNeedsName: 'Name your workspace and we will finish setting it up.',
     xComingSoon: 'X support is coming soon. Everything else is ready to connect now.',
     /** G1/G2 — an absent number is never drawn as a zero. */
     syncPending: 'Sync pending — this channel has not reported numbers for this range yet.',

@@ -137,7 +137,7 @@ function pastDueGatesProductWide(): boolean {
 function e2eNavigationRuleHolds(): boolean {
   console.log('\n=== e2e specs navigate in-app after switching datasets ===')
   const specs = [
-    'onboarding.spec.ts',
+    'entry-flow.spec.ts',
     'today-queue.spec.ts',
     'calendar-connections.spec.ts',
     'studio-billing.spec.ts',

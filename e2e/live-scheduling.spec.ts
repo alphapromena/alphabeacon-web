@@ -2,21 +2,22 @@
  * INT-4's verify: schedules, event sources (+ the countries reference) and
  * slot decisions against the DEPLOYED API through the real UI.
  *
- * The wizard's Finish now carries its collected schedule + holiday sources
- * into the org creation (they could not exist server-side before the org
- * did); C1's save PATCHes with toneIds replace-semantics; the countries
- * endpoint feeds the picker; one source per country (409, told honestly);
+ * **The wizard is deleted** (ORDER ONB-0827, D-ONB-C), so nothing creates a
+ * schedule on the way in: a fresh workspace has none, C1 is the only surface
+ * that makes one, and its first save POSTs while later saves PATCH with
+ * toneIds replace-semantics; the countries endpoint feeds the picker; one
+ * source per country (409, told honestly);
  * slots — written by ingestion, never created here — are exercised only if
  * ingestion produced any, and `approved` stays unreachable by construction.
  */
 import type { Page } from '@playwright/test'
 import { expect, test } from './fixtures'
-import { AFTER_COUNTRY, SCREEN_SYNC } from './live-clocks'
+import { signUpAndEnter } from './live-setup'
+import { SCREEN_SYNC } from './live-clocks'
 
 const API_BASE = process.env.VITE_API_BASE_URL
 const RUN = Date.now()
 const PASSWORD = 'Roasted2Order!'
-const CODE = '000000'
 const owner = `qa+${RUN}s@alphapromena.com`
 const ORG_NAME = `QA Sched Org ${RUN}`
 /** The org's ONE tone. Nothing is seeded since ONB-0827, so C1 needs a tone
@@ -42,77 +43,53 @@ async function sessionToken(page: Page): Promise<string> {
   return (JSON.parse(raw!) as { token: string }).token
 }
 
-test('the wizard finish creates org + schedule + holiday source together', async ({
-  page,
-  request,
-}) => {
-  // Signup + verify + the whole wizard + Finish + three wire reads does not
-  // fit the suite's 30 s default, and Finish itself got three round-trips
-  // longer when it became idempotent (it reads /me/orgs, the org's tones and
-  // its schedules before writing anything). Same headroom as live-country.
+/**
+ * The INVERSE of the test that used to open this file (ORDER ONB-0827).
+ *
+ * It asserted that the wizard's Finish created the org, a schedule and the
+ * holiday country in one burst. Finish is deleted and so is the burst: the org
+ * is the ONLY thing created for the user, on purpose, because it is the only
+ * one that cannot be set from a durable screen afterwards. Proving that
+ * nothing else was quietly created is what stops a half-built workspace
+ * looking configured — which is the shape org 619 arrived in.
+ */
+test('signup creates the workspace and NOTHING else', async ({ page, request }) => {
   test.setTimeout(150_000)
-  await page.goto('/signup')
-  await page.getByLabel('Full name').fill('QA Sched Owner')
-  await page.getByLabel('Work email').fill(owner)
-  await page.getByLabel('Password', { exact: true }).fill(PASSWORD)
-  await page.getByLabel('Organization name').fill(ORG_NAME)
-  await page.getByRole('checkbox', { name: /terms of service/ }).click()
-  await page.getByRole('button', { name: 'Create account' }).click()
-  await expect(page.getByRole('heading', { name: 'Check your inbox' })).toBeVisible({
-    timeout: 20_000,
-  })
-  await page.locator('[data-input-otp]').click()
-  await page.keyboard.type(CODE)
-  await expect(page.getByText('finish setting up your workspace')).toBeVisible({
-    timeout: 20_000,
+  await signUpAndEnter(page, {
+    name: 'QA Sched Owner',
+    email: owner,
+    password: PASSWORD,
+    orgName: ORG_NAME,
   })
 
-  await page.getByRole('link', { name: /Resume setup/ }).click()
-  await page.getByLabel('Company name').fill(ORG_NAME)
-  await page.getByLabel('What you offer, in one line').fill('Coffee, roasted to order.')
-  await page.getByLabel('What sets you apart').fill('Small batch')
-  await page.getByRole('button', { name: 'Add' }).click()
-  await page.getByRole('button', { name: 'Continue' }).click()
-  await page.getByRole('button', { name: 'Skip for now' }).click()
-  // Step 3: commit the default country (Jordan) so Finish has one to send.
-  // INT-8 turned this step from an event-source list into the country picker
-  // and its button reads 'Choose' in live mode ({live ? 'Choose' : 'Add'});
-  // this spec kept clicking INT-4's 'Add' and had been failing on `main` ever
-  // since, unrun. Same rot as trap 18 — hence the full-live-suite merge rule.
-  await page.getByRole('button', { name: 'Choose', exact: true }).click()
-  await page.getByRole('button', { name: 'Continue' }).click()
-  await page.getByRole('button', { name: 'Start pipeline' }).click()
-  await page.getByRole('button', { name: 'Go to your dashboard' }).click()
-  // Finish is org + schedule + sources + the resync — a real
-  // burst of wire calls; give it headroom.
-  // Downstream of PUT /orgs/:id/country — live-red-2026-08-23.
-  await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible({
-    timeout: AFTER_COUNTRY,
-  })
-
-  // The wire agrees: one schedule, and the org's country is JO.
   const token = await sessionToken(page)
   const auth = { authorization: `Bearer ${token}` }
   const orgs = (await (await request.get(`${API_BASE}/me/orgs`, { headers: auth })).json()) as {
-    items: { id: string }[]
+    items: { id: string; name: string }[]
   }
+  // Exactly one workspace, wearing the name typed at signup — the idempotency
+  // law: a retry must never mint a second one (E2E-0820 F12).
+  expect(orgs.items).toHaveLength(1)
+  expect(orgs.items[0].name).toBe(ORG_NAME)
+
   const orgId = orgs.items[0].id
   const schedules = (await (
     await request.get(`${API_BASE}/orgs/${orgId}/schedules`, { headers: auth })
   ).json()) as { total: number }
-  expect(schedules.total).toBe(1)
-  // INT-8 replaced the holiday EVENT-SOURCE with the org's own country
-  // (D-INT-F, and Ward confirmed event-sources are superseded — open-items
-  // 21). The wizard sets `PUT /orgs/:id/country`, so that is where the choice
-  // lands now; this assertion still read the retired surface and had been
-  // failing on `main`, unrun, since INT-8.
+  expect(schedules.total).toBe(0)
+
+  const tones = (await (
+    await request.get(`${API_BASE}/orgs/${orgId}/brand/tones`, { headers: auth })
+  ).json()) as { total: number }
+  expect(tones.total).toBe(0)
+
   const org = (await (
     await request.get(`${API_BASE}/orgs/${orgId}`, { headers: auth })
   ).json()) as { org: { country: string | null } }
-  expect(org.org.country).toBe('JO')
+  expect(org.org.country).toBeNull()
 })
 
-test('C1 saves through PATCH — days, model and tones survive a reload', async ({
+test('C1 creates the schedule on first save, then PATCHes it — and it survives a reload', async ({
   page,
   request,
 }) => {
@@ -148,20 +125,32 @@ test('C1 saves through PATCH — days, model and tones survive a reload', async 
   await expect(page.locator('[aria-busy="true"]')).toHaveCount(0, { timeout: SCREEN_SYNC })
 
   // Nothing is seeded any more (ORDER ONB-0827, D-ONB-B), so the org's one
-  // tone is the one this file wrote for itself above; pick it so the schedule
-  // is valid, then change the cadence.
+  // tone is the one this test wrote for itself above; pick it so the schedule
+  // is valid, then set the cadence.
   await page.getByRole('group', { name: 'Tones' }).getByRole('button', { name: TONE_NAME }).click()
-  await page.getByRole('button', { name: 'One fewer post per day' }).click()
+  await page.getByRole('button', { name: 'Monday' }).click()
   await expect(page.getByText('You have unsaved changes.')).toBeVisible()
+  // FIRST save: the org has no schedule, so this is the POST fallback C1 grew
+  // in B9 — the wizard used to create the row and no longer does.
   await page.getByRole('button', { name: 'Save changes' }).click()
-  await expect(page.getByText('You have unsaved changes.')).toHaveCount(0)
+  await expect(page.getByText('You have unsaved changes.')).toHaveCount(0, { timeout: SCREEN_SYNC })
 
-  // The reload reads the server back through the sync.
+  // The reload reads the server back through the sync: the row is really there.
   await page.goto('/calendar/settings')
   await expect(page.getByRole('heading', { name: 'Schedule', level: 1 })).toBeVisible()
   // The same sync, read back after the reload — live-red-2026-08-23.
   await expect(page.locator('[aria-busy="true"]')).toHaveCount(0, { timeout: SCREEN_SYNC })
   await expect(page.getByText('You have unsaved changes.')).toHaveCount(0)
+  await expect(
+    page.getByRole('group', { name: 'Tones' }).getByRole('button', { name: TONE_NAME }),
+  ).toHaveAttribute('aria-pressed', 'true')
+
+  // SECOND save: a schedule exists now, so this is the PATCH path, with the
+  // toneIds replace-semantics this file was written to prove.
+  await page.getByRole('button', { name: 'One fewer post per day' }).click()
+  await expect(page.getByText('You have unsaved changes.')).toBeVisible()
+  await page.getByRole('button', { name: 'Save changes' }).click()
+  await expect(page.getByText('You have unsaved changes.')).toHaveCount(0, { timeout: SCREEN_SYNC })
 })
 
 /**

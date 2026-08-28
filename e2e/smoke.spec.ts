@@ -39,6 +39,20 @@ test('boots on the seeded dashboard in both themes', async ({ page }) => {
   await expect(page.getByRole('button', { name: 'Switch to light theme' })).toBeVisible()
 })
 
+/**
+ * The onboarding wizard's route (ORDER ONB-0827, D-ONB-C). The screen is
+ * deleted; the path stays reachable because it was linked from N3, the
+ * dashboard, Today's empty state and a shelf of bookmarks. It lives here
+ * rather than in `entry-flow.spec.ts` because proving a redirect needs a real
+ * `page.goto`, and that spec switches worlds — where a goto would silently
+ * rebuild the default dataset (trap 1, enforced by verify:w03).
+ */
+test('the retired wizard route redirects into the app', async ({ page }) => {
+  await page.goto('/onboarding')
+  await expect(page).toHaveURL(/\/$/)
+  await expectDashboardStats(page)
+})
+
 test('dataset switcher swaps the world in-session', async ({ page }) => {
   await page.goto('/dev/datasets')
 
@@ -52,7 +66,11 @@ test('dataset switcher swaps the world in-session', async ({ page }) => {
   await freshCard.getByRole('button', { name: 'Activate' }).click()
 
   await appLink(page).click()
-  await expect(page.getByText('finish setting up your workspace')).toBeVisible()
+  // The fresh world is a real workspace with nothing set up in it, not a
+  // half-finished wizard (ORDER ONB-0827): the dashboard renders, wearing
+  // this tenant's own name.
+  await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible()
+  await expect(page.getByText('Nova Skincare').first()).toBeVisible()
 })
 
 test('state switcher forces loading and error presentations', async ({ page }) => {

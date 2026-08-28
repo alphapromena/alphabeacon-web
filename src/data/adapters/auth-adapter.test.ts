@@ -64,15 +64,17 @@ describe('graftAuthSession', () => {
     expect(next.session.emailVerified).toBe(true)
     expect(next.users.find((user) => user.id === '901')?.email).toBe('qa@alphapromena.com')
     expect(next.org.name).toBe('QA Org')
-    expect(next.org.onboarding.completed).toBe(true)
+    expect(next.org.exists).toBe(true)
     // The hybrid: uncovered entities remain the dataset's.
     expect(next.drafts).toBe(world.drafts)
     expect(next.plans).toBe(world.plans)
   })
 
-  it('a user with no orgs lands in onboarding at step 1', () => {
+  it('a user with no orgs has no workspace, and the demo one does not stand in', () => {
+    // Trap 20: the graft must SAY "no workspace" rather than leaving the
+    // dataset's org looking like the user's own (ORDER ONB-0827).
     const next = graftAuthSession(buildDataset('active'), auth({ orgs: [] }))
-    expect(next.org.onboarding).toEqual({ completed: false, resumeStep: 1 })
+    expect(next.org.exists).toBe(false)
     expect(next.session.signedIn).toBe(true)
   })
 

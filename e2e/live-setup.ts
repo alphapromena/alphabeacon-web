@@ -18,6 +18,47 @@
 import { expect, type Page } from '@playwright/test'
 import { SCREEN_SYNC } from './live-clocks'
 
+/** Every dev verification code is `000000` (api.md, Auth). */
+const CODE = '000000'
+
+/**
+ * Signup → verify → THE APP, which since ONB-0827 (D-ONB-C) is the whole
+ * journey: verifying creates the workspace from the org name typed at signup
+ * and lands on the dashboard. Every live file used to inline this walk plus
+ * five wizard steps; the wizard is deleted and the walk is one call.
+ *
+ * `WORKSPACE_READY` is the wait it needs: signup, verify, `POST /orgs` and the
+ * resync that follows, back to back. It is the same class of burst the old
+ * Finish was, minus the country lookup that made that one the slowest thing in
+ * the suite.
+ */
+export async function signUpAndEnter(
+  page: Page,
+  account: { name: string; email: string; password: string; orgName: string },
+) {
+  await page.goto('/signup')
+  await page.getByLabel('Full name').fill(account.name)
+  await page.getByLabel('Work email').fill(account.email)
+  await page.getByLabel('Password', { exact: true }).fill(account.password)
+  await page.getByLabel('Organization name').fill(account.orgName)
+  await page.getByRole('checkbox', { name: /terms of service/ }).click()
+  await page.getByRole('button', { name: 'Create account' }).click()
+  await expect(page.getByRole('heading', { name: 'Check your inbox' })).toBeVisible({
+    timeout: 20_000,
+  })
+
+  await page.locator('[data-input-otp]').click()
+  await page.keyboard.type(CODE)
+
+  // No wizard in between: the next thing on screen is the product.
+  await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible({
+    timeout: WORKSPACE_READY,
+  })
+}
+
+/** Signup + verify + `POST /orgs` + the resync, back to back. */
+export const WORKSPACE_READY = 60_000
+
 /** Settings is a tablist above one outlet; every section is reached this way. */
 export async function openSettingsTab(page: Page, tab: string) {
   await page.getByRole('link', { name: 'Settings' }).first().click()

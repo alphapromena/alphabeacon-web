@@ -17,12 +17,12 @@
  */
 import type { Page } from '@playwright/test'
 import { expect, test } from './fixtures'
-import { AFTER_COUNTRY, SCREEN_SYNC } from './live-clocks'
+import { signUpAndEnter } from './live-setup'
+import { SCREEN_SYNC } from './live-clocks'
 
 const API_BASE = process.env.VITE_API_BASE_URL
 const RUN = Date.now()
 const PASSWORD = 'Roasted2Order!'
-const CODE = '000000'
 const owner = `qa+${RUN}r@alphapromena.com`
 const ORG_NAME = `QA Rules Org ${RUN}`
 
@@ -69,35 +69,11 @@ async function editTone(page: Page, name: string) {
 }
 
 test('a fresh owner + org, made through the product', async ({ page }) => {
-  await page.goto('/signup')
-  await page.getByLabel('Full name').fill('QA Rules Owner')
-  await page.getByLabel('Work email').fill(owner)
-  await page.getByLabel('Password', { exact: true }).fill(PASSWORD)
-  await page.getByLabel('Organization name').fill(ORG_NAME)
-  await page.getByRole('checkbox', { name: /terms of service/ }).click()
-  await page.getByRole('button', { name: 'Create account' }).click()
-  await expect(page.getByRole('heading', { name: 'Check your inbox' })).toBeVisible({
-    timeout: 20_000,
-  })
-  await page.locator('[data-input-otp]').click()
-  await page.keyboard.type(CODE)
-  await expect(page.getByText('finish setting up your workspace')).toBeVisible({ timeout: 20_000 })
-
-  await page.getByRole('link', { name: /Resume setup/ }).click()
-  await page.getByLabel('Company name').fill(ORG_NAME)
-  await page.getByLabel('What you offer, in one line').fill('Coffee, roasted to order.')
-  await page.getByLabel('What sets you apart').fill('Small batch')
-  await page.getByRole('button', { name: 'Add' }).click()
-  await page.getByRole('button', { name: 'Continue' }).click()
-  await page.getByRole('button', { name: 'Skip for now' }).click()
-  await page.getByRole('button', { name: 'Skip for now' }).click()
-  await page.getByRole('button', { name: 'Start pipeline' }).click()
-  await page.getByRole('button', { name: 'Go to your dashboard' }).click()
-  // Org + schedule: a burst of writes. No tones are planted any more
-  // (ORDER ONB-0827, D-ONB-B) — the next test is what proves that.
-  // Downstream of PUT /orgs/:id/country — live-red-2026-08-23.
-  await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible({
-    timeout: AFTER_COUNTRY,
+  await signUpAndEnter(page, {
+    name: 'QA Rules Owner',
+    email: owner,
+    password: PASSWORD,
+    orgName: ORG_NAME,
   })
 })
 

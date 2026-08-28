@@ -1,6 +1,6 @@
 /**
  * I4 — Create / edit a custom tone. ONE implementation, three entry points
- * (onboarding step 4, C1's schedule config, and I3's tones library), because
+ * (C1's schedule config, I3's tones library, and I4's routed page), because
  * screens4.md is explicit that these must be the same component rather than
  * three forms that drift.
  *

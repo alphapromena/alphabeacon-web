@@ -140,8 +140,11 @@ function StaticTodayScreen() {
               }
               action={
                 <Button asChild>
-                  <Link to={schedule.started ? '/generate' : '/onboarding'}>
-                    {schedule.started ? 'Generate one now' : 'Finish setup'}
+                  {/* The wizard is gone (ORDER ONB-0827): a pipeline that has
+                      not started is fixed on the Calendar's schedule editor,
+                      which is now the only surface that owns the rhythm. */}
+                  <Link to={schedule.started ? '/generate' : '/calendar/settings'}>
+                    {schedule.started ? 'Generate one now' : 'Set your posting rhythm'}
                   </Link>
                 </Button>
               }

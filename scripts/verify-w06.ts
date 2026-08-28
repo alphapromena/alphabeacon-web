@@ -59,9 +59,11 @@ function toneEditorIsShared(): boolean {
   const sheetUsesForm = /ToneEditorSheet[\s\S]*<ToneEditorForm/.test(editor)
   const pageUsesForm = /<ToneEditorForm/.test(page)
   // A second "Tone name" field anywhere outside the editor means it forked.
+  // The wizard was the third caller until ONB-0827 deleted it; the fields it
+  // shared with C1 now live beside C1 (`schedule-fields.tsx`).
   const callers = [
     'src/features/calendar/schedule-config-screen.tsx',
-    'src/features/onboarding/pipeline-fields.tsx',
+    'src/features/calendar/schedule-fields.tsx',
   ]
   const noForkedFields = callers.every((path) => !/label="Tone name"/.test(read(path)))
 
@@ -93,8 +95,8 @@ function customToneRendersTheSameEverywhere(): boolean {
     if (!usesBadge) ok = false
     console.log(`  ${label}: ToneBadge ${usesBadge ? 'yes' : 'NO'}`)
   }
-  // C1 and onboarding pick tones rather than badge them; they must still read
-  // the same records, which the shared field component guarantees.
+  // C1 picks tones rather than badging them; it must still read the same
+  // records, which the shared field component guarantees.
   const c1 = read('src/features/calendar/schedule-config-screen.tsx')
   const sharedPicker = /TonesField/.test(c1) && /useTones\(\)/.test(c1)
   if (!sharedPicker) ok = false
@@ -384,7 +386,7 @@ function e2eNavigationRuleHolds(): boolean {
   // screens, and reaching one is itself the act of changing the world.
   const switchers = ['/dev/datasets', '/dev/states']
   const specs = [
-    'onboarding.spec.ts',
+    'entry-flow.spec.ts',
     'today-queue.spec.ts',
     'calendar-connections.spec.ts',
     'studio-billing.spec.ts',

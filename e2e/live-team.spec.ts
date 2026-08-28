@@ -11,13 +11,13 @@
  */
 import type { Page } from '@playwright/test'
 import { expect, test } from './fixtures'
-import { AFTER_COUNTRY, ONE_CALL, SCREEN_SYNC } from './live-clocks'
+import { signUpAndEnter } from './live-setup'
+import { ONE_CALL, SCREEN_SYNC } from './live-clocks'
 
 const API_BASE = process.env.VITE_API_BASE_URL
 const RUN = Date.now()
 const PASSWORD = 'Roasted2Order!'
 const NEW_PASSWORD = 'FreshlyGround3!'
-const CODE = '000000'
 
 const owner = `qa+${RUN}o@alphapromena.com`
 const invitee = `qa+${RUN}m@alphapromena.com`
@@ -37,27 +37,6 @@ test.describe.configure({ mode: 'serial' })
 test.beforeEach(() => {
   test.setTimeout(150_000)
 })
-
-async function signUpAndVerify(page: Page, name: string, email: string) {
-  await page.goto('/signup')
-  await page.getByLabel('Full name').fill(name)
-  await page.getByLabel('Work email').fill(email)
-  await page.getByLabel('Password', { exact: true }).fill(PASSWORD)
-  await page.getByLabel('Organization name').fill(ORG_NAME)
-  await page.getByRole('checkbox', { name: /terms of service/ }).click()
-  await page.getByRole('button', { name: 'Create account' }).click()
-  // The run's first POST can hit a cold Lambda; give first contact headroom.
-  // One POST round-trip — live-red-2026-08-23.
-  await expect(page.getByRole('heading', { name: 'Check your inbox' })).toBeVisible({
-    timeout: ONE_CALL,
-  })
-  await page.locator('[data-input-otp]').click()
-  await page.keyboard.type(CODE)
-  // The verify POST and the auth snapshot behind it — live-red-2026-08-23.
-  await expect(page.getByText('finish setting up your workspace')).toBeVisible({
-    timeout: ONE_CALL,
-  })
-}
 
 async function login(page: Page, email: string, password: string) {
   await page.goto('/login')
@@ -88,28 +67,15 @@ async function openTeam(page: Page) {
   ).toBeVisible({ timeout: SCREEN_SYNC })
 }
 
-test('the onboarding wizard creates the org LIVE; the dashboard follows', async ({ page }) => {
-  await signUpAndVerify(page, 'QA Owner', owner)
-
-  await page.getByRole('link', { name: /Resume setup/ }).click()
-  await expect(page.getByRole('heading', { name: 'Tell us about your brand' })).toBeVisible()
-  await page.getByLabel('Company name').fill(ORG_NAME)
-  await page.getByLabel('What you offer, in one line').fill('Coffee, roasted to order.')
-  await page.getByLabel('What sets you apart').fill('Small batch')
-  await page.getByRole('button', { name: 'Add' }).click()
-  await page.getByRole('button', { name: 'Continue' }).click()
-  await page.getByRole('button', { name: 'Skip for now' }).click()
-  await page.getByRole('button', { name: 'Skip for now' }).click()
-  await expect(page.getByRole('heading', { name: 'Start your pipeline' })).toBeVisible()
-  await page.getByRole('button', { name: 'Start pipeline' }).click()
-  await expect(page.getByRole('heading', { name: 'Your pipeline is running' })).toBeVisible()
-  await page.getByRole('button', { name: 'Go to your dashboard' }).click()
-
-  // The org now EXISTS server-side; the resync flipped the world onto it.
-  // Finish is org + schedule + sources â€” give the burst room.
-  // Downstream of PUT /orgs/:id/country — live-red-2026-08-23.
-  await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible({
-    timeout: AFTER_COUNTRY,
+test('verifying creates the org LIVE; the dashboard follows immediately', async ({ page }) => {
+  // ORDER ONB-0827, D-ONB-C: there is no wizard between verifying and the
+  // product. The org is created from the name typed at signup, the resync
+  // flips the world onto it, and the dashboard is the next thing on screen.
+  await signUpAndEnter(page, {
+    name: 'QA Owner',
+    email: owner,
+    password: PASSWORD,
+    orgName: ORG_NAME,
   })
 })
 
@@ -191,8 +157,15 @@ test('inviting a NEW user: coded email, resend rate-limits honestly, cancel remo
 test('inviting an EXISTING user adds them immediately, and the role ladder holds', async ({
   page,
 }) => {
-  // The invitee gets a real account first (no org).
-  await signUpAndVerify(page, 'QA Member', invitee)
+  // The invitee gets a real account first. Since ONB-0827 that account also
+  // gets a workspace of its own — every signup does — which is exactly what
+  // makes them an EXISTING user for the invite below rather than a new one.
+  await signUpAndEnter(page, {
+    name: 'QA Member',
+    email: invitee,
+    password: PASSWORD,
+    orgName: `QA Member Org ${RUN}`,
+  })
   await page.goto('/login')
 
   await login(page, owner, NEW_PASSWORD)

@@ -9,12 +9,13 @@
  */
 import type { Page } from '@playwright/test'
 import { expect, test } from './fixtures'
+import { signUpAndEnter } from './live-setup'
 
 const API_BASE = process.env.VITE_API_BASE_URL
 const RUN = Date.now()
 const PASSWORD = 'Roasted2Order!'
-const CODE = '000000'
 const owner = `qa+${RUN}n@alphapromena.com`
+const ORG_NAME = `QA Inbox Org ${RUN}`
 
 test.skip(!API_BASE, 'live-mode run only (export VITE_API_BASE_URL)')
 test.describe.configure({ mode: 'serial' })
@@ -37,35 +38,12 @@ test('the inbox endpoints hold their contract, and the bell tells the truth', as
   // when it became idempotent (E2E-0820 B7): it reads /me/orgs, the org's
   // tones and its schedules before writing anything.
   test.setTimeout(150_000)
-  // A fresh owner with an org (wizard-created, as ever).
-  await page.goto('/signup')
-  await page.getByLabel('Full name').fill('QA Inbox Owner')
-  await page.getByLabel('Work email').fill(owner)
-  await page.getByLabel('Password', { exact: true }).fill(PASSWORD)
-  await page.getByLabel('Organization name').fill(`QA Inbox Org ${RUN}`)
-  await page.getByRole('checkbox', { name: /terms of service/ }).click()
-  await page.getByRole('button', { name: 'Create account' }).click()
-  await expect(page.getByRole('heading', { name: 'Check your inbox' })).toBeVisible({
-    timeout: 20_000,
-  })
-  await page.locator('[data-input-otp]').click()
-  await page.keyboard.type(CODE)
-  await expect(page.getByText('finish setting up your workspace')).toBeVisible({
-    timeout: 20_000,
-  })
-  await page.getByRole('link', { name: /Resume setup/ }).click()
-  await page.getByLabel('What you offer, in one line').fill('Coffee.')
-  await page.getByLabel('What sets you apart').fill('Batch')
-  await page.getByRole('button', { name: 'Add' }).click()
-  await page.getByRole('button', { name: 'Continue' }).click()
-  await page.getByRole('button', { name: 'Skip for now' }).click()
-  await page.getByRole('button', { name: 'Skip for now' }).click()
-  await page.getByRole('button', { name: 'Start pipeline' }).click()
-  await page.getByRole('button', { name: 'Go to your dashboard' }).click()
-  // Finish is org + schedule + sources + the resync — a real
-  // burst of wire calls; give it headroom.
-  await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible({
-    timeout: 25_000,
+  // A fresh owner with a workspace, made the way the product makes one.
+  await signUpAndEnter(page, {
+    name: 'QA Inbox Owner',
+    email: owner,
+    password: PASSWORD,
+    orgName: ORG_NAME,
   })
 
   const token = await sessionToken(page)

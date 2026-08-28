@@ -18,8 +18,9 @@ import { toastSuccess } from '@/components/ab/toast'
 import { Button } from '@/components/ui/button'
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp'
 import { Label } from '@/components/ui/label'
+import { useAccountActions } from '@/data/account'
 import { useAuthActions } from '@/data/auth'
-import { useLiveMode, useSession } from '@/data/provider'
+import { useLiveMode, useOrg, useSession } from '@/data/provider'
 import { VERIFY_RESEND_COOLDOWN_MS } from '@/data/types'
 import { MESSAGES } from '@/lib/messages'
 import { AuthErrorAlert, type AuthFailure } from './auth-error'
@@ -31,8 +32,10 @@ const LIVE_RESEND_COOLDOWN_MS = 60_000
 
 export function VerifyEmailScreen() {
   const auth = useAuthActions()
+  const account = useAccountActions()
   const live = useLiveMode()
   const session = useSession()
+  const org = useOrg()
   const navigate = useNavigate()
   const [params] = useSearchParams()
   const expired = params.get('state') === 'expired'
@@ -60,17 +63,32 @@ export function VerifyEmailScreen() {
     })
   }
 
+  /**
+   * Verify, then CREATE THE WORKSPACE, then land in the app (ORDER ONB-0827,
+   * D-ONB-C). There is no wizard between these two things any more, so this is
+   * the moment the org has to come into existence — it is the first point where
+   * there is a session to create it with.
+   *
+   * A failed create is NOT an error on this screen. The account is verified and
+   * signed in either way, and `RootGate` sends a session with no workspace to
+   * N3, which is the surface built to retry exactly this. Reporting it twice —
+   * once here, once there — would make one problem look like two.
+   */
   const verify = async () => {
     setVerifying(true)
     setFailure(null)
     const result = await auth.verifyEmail({ email, code })
-    setVerifying(false)
     if (!result.ok) {
+      setVerifying(false)
       setFailure(result)
       setCode('')
       return
     }
-    // Verified AND signed in — RootGate routes by org state from here.
+    const workspaceName = org.name.trim()
+    if (workspaceName) await account.createWorkspace(workspaceName)
+    setVerifying(false)
+    // Verified, signed in, and — if that landed — with a workspace. RootGate
+    // routes from here: the product, or N3 to finish the create.
     navigate('/')
   }
 
@@ -163,13 +181,7 @@ export function VerifyEmailScreen() {
              * static world has no mail, so the same transition is offered
              * directly rather than leaving the rest of the journey unreachable.
              */
-            <Button
-              size="lg"
-              onClick={() => {
-                void auth.verifyEmail({ email, code: '' })
-                navigate('/onboarding')
-              }}
-            >
+            <Button size="lg" onClick={() => void verify()}>
               I&apos;ve verified my email
             </Button>
           )}

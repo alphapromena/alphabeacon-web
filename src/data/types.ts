@@ -30,7 +30,7 @@ export interface BrandVoice {
 export interface Org {
   id: string
   name: string
-  /** One-line offer shown across onboarding and settings. */
+  /** One-line offer, edited in I1 (Settings -> Organization). */
   offer: string
   differentiators: string[]
   /** The standard closing ask drafts fall back to (I1). */
@@ -46,8 +46,24 @@ export interface Org {
    * keeps its own event sources.
    */
   country?: string | null
-  /** Onboarding progress; N3 resumes at `resumeStep` when incomplete. */
-  onboarding: { completed: boolean; resumeStep: 1 | 2 | 3 | 4 | 5 }
+  /**
+   * Whether this workspace REALLY EXISTS on the platform.
+   *
+   * Replaces the wizard's `onboarding: {completed, resumeStep}` (ORDER
+   * ONB-0827, D-ONB-C). There is no wizard and no progress to resume any
+   * more: after verifying, the org is created automatically from the name
+   * given at signup, and the only question a route guard still has to ask is
+   * whether that create landed.
+   *
+   * LIVE: true when the session's user belongs to at least one org — the same
+   * fact `auth-adapter` used to infer `completed` from, now named for what it
+   * is. STATIC: every demo world has a workspace; only `visitor` (signed out,
+   * where the signup walk starts) does not.
+   *
+   * `false` with a signed-in session is the rare, honest failure state, and
+   * `EmptyOrgScreen` is the surface that repairs it.
+   */
+  exists: boolean
 }
 // NOTE: the org's timezone lives on `Schedule`, not here. screens4.md I1 asks
 // for "timezone (mirrors C1, single source)" — two fields would be two sources.
@@ -87,7 +103,7 @@ export interface TeamInvite {
 export interface Session {
   signedIn: boolean
   userId: string
-  /** Set by signup; A3 verifies it before onboarding starts. */
+  /** Set by signup; A3 verifies it before the workspace is created. */
   pendingEmail?: string
   emailVerified: boolean
   /** Consecutive failed sign-ins — A2 locks out after MAX_SIGN_IN_ATTEMPTS. */
@@ -121,7 +137,7 @@ export interface Connection {
 }
 
 // ---------------------------------------------------------------------------
-// Tones & generation models (Areas I3/I4, C1, onboarding step 4)
+// Tones & generation models (Areas I3/I4, C1)
 // ---------------------------------------------------------------------------
 
 export interface Tone {
@@ -189,7 +205,7 @@ export interface Schedule {
   modelId: string
   toneIds: string[]
   attachToEvents: boolean
-  /** True once "Start pipeline" ran (onboarding step 4 or C1). */
+  /** True once the schedule was activated from C1. */
   started: boolean
 }
 

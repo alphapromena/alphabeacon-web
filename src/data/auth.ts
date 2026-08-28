@@ -120,13 +120,17 @@ export function useAuthActions(): AuthActions {
         return ok()
       }
       try {
-        // The API has no org-at-signup; the org is created in onboarding
-        // (INT-2). `orgName` rides along untouched for that step.
+        // The API has no org-at-signup, so `orgName` cannot go on this call.
+        // It is HELD in the world instead: verifying is what creates the org
+        // (ORDER ONB-0827, D-ONB-C), and this is the only place the name is
+        // ever typed. It is in-memory, like every other static-mode fact — if
+        // the tab is closed between here and verifying, the name is gone and
+        // N3 asks for it again rather than guessing.
         await api<SignupReceipt>('POST', '/auth/signup', {
           body: { name, email, password },
           anonymous: true,
         })
-        dispatch({ type: 'live/pendingVerification', email })
+        dispatch({ type: 'live/pendingVerification', email, orgName })
         return ok()
       } catch (error) {
         return failure(error)

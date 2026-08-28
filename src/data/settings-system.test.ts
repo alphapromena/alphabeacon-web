@@ -85,7 +85,7 @@ describe('one tone record, read by every screen', () => {
     expect(custom).toHaveLength(1)
     const tone = custom[0]
 
-    // C1 and onboarding read it through the schedule; D2/D3/F1 through a
+    // C1 reads it through the schedule; D2/D3/F1 through a
     // draft; G2 through a published post. All four are the SAME record —
     // nothing copies a tone's name into another entity.
     expect(world.schedule.toneIds).toContain(tone.id)

@@ -8,10 +8,11 @@
  *   `admin | member`. `owner` collapses to `admin` here — an owner can do
  *   everything the app's admin UI offers — until INT-2 teaches the team
  *   screen the three-tier model. Logged as a known collapse, not hidden.
- * - Onboarding: the API has no onboarding state. A user with at least one
- *   org has, by definition, an org to work in — the wizard's job is done —
- *   so `onboarding.completed` is inferred from org membership. A user with
- *   no orgs lands in onboarding, whose org-creation step goes live in INT-2.
+ * - Workspace: the API has no onboarding state and, since ONB-0827, neither
+ *   does this app. A user with at least one org has an org to work in; a user
+ *   with none does not. `org.exists` records exactly that and nothing more —
+ *   it replaced an inferred `onboarding.completed` whose name promised a
+ *   journey the product no longer has (D-ONB-C).
  */
 import type { ApiOrgSummary, ApiUser, AuthSession, OrgRole } from '@/api/types'
 import type { Dataset, User } from '@/data/types'
@@ -63,10 +64,10 @@ export function graftAuthSession(world: Dataset, auth: AuthSession): Dataset {
     org: {
       ...world.org,
       ...(org ? { id: org.id, name: org.name } : {}),
-      onboarding: org
-        ? { completed: true, resumeStep: 5 }
-        : // No org yet: the wizard owns the journey, starting at step 1.
-          { completed: false, resumeStep: 1 },
+      // Trap 20: a wire answer of "no orgs" must NOT leave the demo world's
+      // workspace standing. `false` is the honest answer, and it is what
+      // routes the user to the org-creation retry surface.
+      exists: Boolean(org),
     },
   }
 }

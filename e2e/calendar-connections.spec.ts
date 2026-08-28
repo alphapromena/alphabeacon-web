@@ -121,6 +121,24 @@ test('schedule config refuses to lose unsaved changes', async ({ page }) => {
   await expect(page.getByText('You have unsaved changes.')).toHaveCount(0)
 })
 
+/**
+ * The cap used to be proved on the onboarding wizard's step 4. The wizard is
+ * deleted (ORDER ONB-0827, D-ONB-C) and C1 is the only surface that renders
+ * this control now, so the test moved with it rather than being dropped:
+ * `verify:w02` checks the cap is DECLARED once, and this checks the control
+ * actually stops there.
+ */
+test('posts per day is capped at 3, and the cap is visible', async ({ page }) => {
+  await open(page, 'Calendar')
+  await page.getByRole('link', { name: 'Schedule settings' }).click()
+  await expect(page.getByRole('heading', { name: 'Schedule', level: 1 })).toBeVisible()
+
+  await expect(page.getByText(/At most/)).toBeVisible()
+  // This world is already at the cap, so the increase is the control that
+  // must refuse; it stops rather than wrapping or accepting a fourth.
+  await expect(page.getByRole('button', { name: 'One more post per day' })).toBeDisabled()
+})
+
 test('the schedule reaches its event sources', async ({ page }) => {
   await open(page, 'Calendar')
   await page.getByRole('link', { name: 'Schedule settings' }).click()

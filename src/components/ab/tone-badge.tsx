@@ -1,5 +1,5 @@
 /**
- * A tone's name, wherever a tone is shown (D2, D3, C1, F1, onboarding).
+ * A tone's name, wherever a tone is shown (D2, D3, C1, F1, I3).
  *
  * THE LAW: a custom tone renders IDENTICALLY to a preset. No accent dot, no
  * "Custom" suffix, no muted variant, no smaller size — a tone the user wrote

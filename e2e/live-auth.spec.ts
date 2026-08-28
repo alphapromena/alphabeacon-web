@@ -12,8 +12,10 @@
  * (an immediate resend) exists precisely to prove the 429 countdown UI.
  * Dev convenience per the contract: every emailed code is 000000.
  *
- * The org used by the shell + invite tests is created by the HARNESS via the
- * API (org creation is INT-2's UI work); the flows under test stay UI-driven.
+ * The org is created BY THE PRODUCT now (ORDER ONB-0827, D-ONB-C): verifying
+ * the email creates the workspace from the name typed at signup, so the
+ * harness no longer has to mint one before the shell can be reached. What
+ * the harness still does is invite — that is INT-2's surface, not auth's.
  */
 import type { APIRequestContext, Page } from '@playwright/test'
 import { expect, test } from './fixtures'
@@ -34,10 +36,10 @@ test.describe.configure({ mode: 'serial' })
 
 /**
  * This file had no cap, so every test in it ran under the suite's 30 s default
- * — and the signup -> wizard -> Finish walk alone measures 27-29 s door to door
- * against today's API (Docs/api/live-red-2026-08-23.md). It could not pass at
- * any wait value. Aligned with the 150 s `live-country` set when Finish became
- * idempotent (E2E-0820 B7); no wait value and no assertion here changed.
+ * — and the signup walk alone measures 27-29 s door to door against today's
+ * API (Docs/api/live-red-2026-08-23.md). It could not pass at any wait value.
+ * The cap stays where E2E-0820 B7 put it; ONB-0827 made the walk SHORTER (the
+ * five wizard steps are gone), never longer.
  */
 test.beforeEach(() => {
   test.setTimeout(150_000)
@@ -81,7 +83,7 @@ async function loginViaUi(page: Page, email: string, password: string) {
   await page.getByRole('button', { name: 'Sign in' }).click()
 }
 
-test('signup â†’ verify with the emailed code â†’ logged in, org-less, at onboarding', async ({
+test('signup -> verify with the emailed code -> logged in, WITH a workspace, in the app', async ({
   page,
 }) => {
   await signUpViaUi(page, 'QA Person A', emailA)
@@ -90,11 +92,12 @@ test('signup â†’ verify with the emailed code â†’ logged in, org-less,
   await expect(page.getByText(`We sent a 6-digit code to ${emailA}`)).toBeVisible()
   await enterCode(page, CODE)
 
-  // Verifying LOGS IN (the response is an auth session). No orgs yet, so the
-  // workspace-less state owns the landing.
-  // The verify POST and the auth snapshot behind it — live-red-2026-08-23.
-  await expect(page.getByText('finish setting up your workspace')).toBeVisible({
-    timeout: ONE_CALL,
+  // Verifying LOGS IN (the response is an auth session) and then creates the
+  // workspace from the org name typed at signup, so the product is the next
+  // thing on screen — no wizard, no workspace-less landing (ONB-0827).
+  // The verify POST, the org create and the resync behind them.
+  await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible({
+    timeout: SCREEN_SYNC,
   })
   expect(await sessionToken(page)).toBeTruthy()
 })
@@ -132,9 +135,9 @@ test('correct password + unverified email routes to the verify screen, which fin
   await expect(page.getByText(`We sent a 6-digit code to ${emailB}`)).toBeVisible()
 
   await enterCode(page, CODE)
-  // The verify POST and the auth snapshot behind it — live-red-2026-08-23.
-  await expect(page.getByText('finish setting up your workspace')).toBeVisible({
-    timeout: ONE_CALL,
+  // Same as above: verifying creates the workspace and lands in the app.
+  await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible({
+    timeout: SCREEN_SYNC,
   })
 })
 
@@ -169,37 +172,32 @@ test('forgot â†’ reset via the documented deep link revokes everything; onl
     timeout: ONE_CALL,
   })
   await loginViaUi(page, emailA, NEW_PASSWORD)
-  // The login POST and the auth snapshot behind it — live-red-2026-08-23.
-  await expect(page.getByText('finish setting up your workspace')).toBeVisible({
-    timeout: ONE_CALL,
+  // This account already has its workspace (test 1 created it), so a good
+  // login lands in the product.
+  await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible({
+    timeout: SCREEN_SYNC,
   })
 })
 
-test('with an org (harness-created), the shell appears; sign out and logout-all both really revoke', async ({
+test('the shell appears; sign out and logout-all both really revoke', async ({
   page,
   request,
 }) => {
-  // Harness setup: the org UI arrives in INT-2; the API is the contract.
-  await loginViaUi(page, emailA, NEW_PASSWORD)
-  // The login POST and the auth snapshot behind it — live-red-2026-08-23.
-  await expect(page.getByText('finish setting up your workspace')).toBeVisible({
-    timeout: ONE_CALL,
-  })
-  const token = await sessionToken(page)
-  const created = await request.post(`${API_BASE}/orgs`, {
-    headers: { authorization: `Bearer ${token}` },
-    data: { name: `QA Org ${RUN}` },
-  })
-  expect(created.status(), await created.text()).toBe(201)
-
-  // The stored session's `orgs` is a login-time snapshot, so the new org is
-  // not in it â€” a fresh login returns it (INT-2 makes boot refresh /me/orgs;
-  // open-items item 6). With an org, the dashboard owns '/'.
+  // No harness org any more: this account got its workspace from verifying
+  // (ONB-0827, D-ONB-C), which is what the product does for every account.
   await loginViaUi(page, emailA, NEW_PASSWORD)
   // First wait after login — the dashboard's whole sync — live-red-2026-08-23.
   await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible({
     timeout: SCREEN_SYNC,
   })
+
+  // Exactly one workspace — signing up, verifying and logging in three times
+  // over must not have stacked a second (the idempotency law, E2E-0820 F12).
+  const token = await sessionToken(page)
+  const mine = (await (
+    await request.get(`${API_BASE}/me/orgs`, { headers: { authorization: `Bearer ${token}` } })
+  ).json()) as { total: number }
+  expect(mine.total).toBe(1)
 
   // Sign out: session revoked server-side AND locally â€” marketing front door.
   await page.getByRole('button', { name: 'Account menu' }).click()

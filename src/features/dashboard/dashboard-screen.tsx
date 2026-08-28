@@ -9,7 +9,6 @@
  */
 import {
   AlertTriangle,
-  ArrowRight,
   BarChart3,
   Bell,
   Calendar,
@@ -41,7 +40,6 @@ import {
   useDrafts,
   useLiveMode,
   useNotifications,
-  useOrg,
   useScreenPhase,
   useSession,
 } from '@/data/provider'
@@ -72,7 +70,6 @@ type FeedFilter = 'all' | 'notifications' | 'activity'
 
 export function DashboardScreen() {
   const [filter, setFilter] = useState<FeedFilter>('all')
-  const org = useOrg()
   const session = useSession()
   const drafts = useDrafts()
   const connections = useConnections()
@@ -122,19 +119,6 @@ export function DashboardScreen() {
         />
       ) : (
         <div className="flex flex-col gap-6">
-          {!org.onboarding.completed && (
-            <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-primary/40 bg-primary/5 px-4 py-3">
-              <p className="text-sm font-medium">
-                Let&apos;s finish setting up your workspace — your pipeline hasn&apos;t started yet.
-              </p>
-              <Button asChild size="sm">
-                <Link to="/onboarding">
-                  Resume setup <ArrowRight aria-hidden />
-                </Link>
-              </Button>
-            </div>
-          )}
-
           <section
             aria-label="Key stats"
             className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4"

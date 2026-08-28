@@ -11,12 +11,11 @@
  */
 import type { Page } from '@playwright/test'
 import { expect, test } from './fixtures'
-import { createFirstTone } from './live-setup'
+import { createFirstTone, signUpAndEnter } from './live-setup'
 
 const API_BASE = process.env.VITE_API_BASE_URL
 const RUN = Date.now()
 const PASSWORD = 'Roasted2Order!'
-const CODE = '000000'
 const owner = `qa+${RUN}pr@alphapromena.com`
 const ORG_NAME = `QA Proposals Org ${RUN}`
 
@@ -35,32 +34,11 @@ async function login(page: Page) {
 
 test('a fresh owner + org, then one balanced run', async ({ page }) => {
   test.setTimeout(240_000)
-  await page.goto('/signup')
-  await page.getByLabel('Full name').fill('QA Proposals Owner')
-  await page.getByLabel('Work email').fill(owner)
-  await page.getByLabel('Password', { exact: true }).fill(PASSWORD)
-  await page.getByLabel('Organization name').fill(ORG_NAME)
-  await page.getByRole('checkbox', { name: /terms of service/ }).click()
-  await page.getByRole('button', { name: 'Create account' }).click()
-  await expect(page.getByRole('heading', { name: 'Check your inbox' })).toBeVisible({
-    timeout: 20_000,
-  })
-  await page.locator('[data-input-otp]').click()
-  await page.keyboard.type(CODE)
-  await expect(page.getByText('finish setting up your workspace')).toBeVisible({ timeout: 20_000 })
-
-  await page.getByRole('link', { name: /Resume setup/ }).click()
-  await page.getByLabel('Company name').fill(ORG_NAME)
-  await page.getByLabel('What you offer, in one line').fill('Coffee, roasted to order.')
-  await page.getByLabel('What sets you apart').fill('Small batch')
-  await page.getByRole('button', { name: 'Add' }).click()
-  await page.getByRole('button', { name: 'Continue' }).click()
-  await page.getByRole('button', { name: 'Skip for now' }).click()
-  await page.getByRole('button', { name: 'Skip for now' }).click()
-  await page.getByRole('button', { name: 'Start pipeline' }).click()
-  await page.getByRole('button', { name: 'Go to your dashboard' }).click()
-  await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible({
-    timeout: 60_000,
+  await signUpAndEnter(page, {
+    name: 'QA Proposals Owner',
+    email: owner,
+    password: PASSWORD,
+    orgName: ORG_NAME,
   })
 
   // Nothing is seeded any more (ORDER ONB-0827, D-ONB-B): the run below needs

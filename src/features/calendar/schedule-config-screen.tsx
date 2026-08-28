@@ -1,10 +1,11 @@
 /**
  * C1 — Schedule configuration · `/calendar/settings`.
  *
- * The durable home for everything onboarding step 4 set up, so it renders the
- * SAME field components (`pipeline-fields.tsx`) rather than a second copy —
- * screens4.md calls C1 "the durable, editable home for" step 4, and two
- * implementations of one form is how they drift.
+ * The durable home for everything the onboarding wizard's step 4 used to set
+ * up — and since ONB-0827 (D-ONB-C) the ONLY schedule surface there is: the
+ * wizard is deleted and its private schedule client with it, which closes the
+ * two-writers question in open-items 27a. The fields live in
+ * `schedule-fields.tsx` beside this screen.
  *
  * Edits are held locally until saved, which is what makes the sticky save bar
  * and the dirty guard honest: nothing changes under the user while they are
@@ -44,7 +45,7 @@ import {
   PipelineSummary,
   PostsPerDayField,
   TonesField,
-} from '@/features/onboarding/pipeline-fields'
+} from './schedule-fields'
 
 export function ScheduleConfigScreen() {
   const saved = useSchedule()

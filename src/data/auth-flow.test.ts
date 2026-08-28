@@ -1,5 +1,5 @@
 /**
- * The auth and onboarding transitions, tested on the reducer rather than
+ * The auth and first-run transitions, tested on the reducer rather than
  * through screens — these are the rules the guards depend on, and they should
  * hold regardless of which control happens to dispatch them.
  */
@@ -68,11 +68,14 @@ describe('sign-in lockout (A2)', () => {
   })
 })
 
-describe('onboarding (A5)', () => {
-  it('remembers the step so N3 can resume rather than restart', () => {
-    const next = dataReducer(visitor(), { type: 'onboarding/goToStep', step: 3 })
-    expect(next.world.org.onboarding.resumeStep).toBe(3)
-    expect(next.world.org.onboarding.completed).toBe(false)
+describe('first run (A5 retired — ORDER ONB-0827)', () => {
+  it('creating the workspace is what opens the product', () => {
+    const before = visitor()
+    expect(before.world.org.exists).toBe(false)
+
+    const done = dataReducer(before, { type: 'workspace/created', name: 'Nova Skincare' })
+    expect(done.world.org.exists).toBe(true)
+    expect(done.world.org.name).toBe('Nova Skincare')
   })
 
   it('"Start pipeline" activates scheduling rather than soft-saving', () => {
@@ -111,10 +114,5 @@ describe('onboarding (A5)', () => {
     expect(off.world.connections.find((c) => c.platform === 'instagram')?.status).toBe(
       'not_connected',
     )
-  })
-
-  it('completing onboarding is what opens the product', () => {
-    const done = dataReducer(visitor(), { type: 'onboarding/complete' })
-    expect(done.world.org.onboarding.completed).toBe(true)
   })
 })
