@@ -2366,3 +2366,141 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   production is not publicly reachable there. Also still open before cutover:
   `/request-demo` has no destination, `hello@malaky.ai` is a placeholder, and
   six legal values in `concept/lib/legal.ts` are `null`.
+
+### 2026-08-28 17:30 — ORDER ONB-0827: the wizard is deleted, tones are not seeded, and nothing generates before brand setup
+
+- Did: built Hasan's onboarding ruling on a three-branch stack off `main`
+  (`fd84173`) — `feat/onb-01-tones` → `feat/onb-02-entry` → `feat/onb-03-gate`.
+  **Branch only: nothing pushed, nothing merged.** Signup stays minimal, the
+  five-step wizard is DELETED, verifying the email creates the workspace and
+  lands the user in the app, a fresh live org starts with ZERO tones, and no
+  generation — post or Studio media — runs until the org's brand setup is
+  complete.
+- **Phase 0 settled the gate on the wire before it was designed.** Two fresh QA
+  orgs, warmed first. **(a)** Org **954** holding only the four brand entities,
+  with `schedules total: 0` and `country: null`, ran the exact body the app
+  sends: **202 in 1158 ms**, req **`60c06fd5-acb7-4060-81d5-4a7b8113ebeb`**,
+  run completed with real copy. **(b)** Org **955** with voice + source + topic
+  and zero tones: **400 `bad_request` in 804 ms**, req
+  **`ae30783f-f28d-4d5a-9ac6-88c92da1a2a9`** — _"The generation service
+  rejected the request — check the body against the capability's schema"_, no
+  `details`. **Ruling: the hard gate is the four brand entities; country and
+  posting rhythm are checklist items, not blockers.** Cost under one cent
+  (usage for the day totals $0.00476; the wallet read 5000/0/5000 throughout).
+  It also re-confirmed open-item 26 for the third time: a fresh org has 0 tones.
+- **Phase 1** — the `PRESET_TONES` seeding left the org-creation path. What the
+  wizard collected is resolved against the tones the org really has, so a
+  dangling static id is dropped rather than written into a schedule; the now
+  impossible `tones` failure step went with it. I3 gained an honest empty state
+  naming the consequence, and stopped rendering "Presets — always available, in
+  every workspace" over an empty grid. **The demo world is untouched by order**:
+  `PRESET_TONES` still composes three datasets and `settings-system.test.ts`'s
+  preset test was left exactly as it was.
+- **Phase 2** — `src/features/onboarding/*` deleted; `/onboarding` is a
+  redirect into the app; `org.onboarding {completed, resumeStep}` became
+  `org.exists`; the three `onboarding/*` actions collapsed into
+  `workspace/created`; `finishOnboarding` became a lean idempotent
+  `createWorkspace` called at verify. N3 is reframed as the workspace-creation
+  RETRY surface — one button, or ONE field when no name is recoverable. The
+  wizard's private schedule client died with it, **closing open-item 27a**, and
+  the shared fields moved to `features/calendar/schedule-fields.tsx`.
+  `e2e/onboarding.spec.ts` became `e2e/entry-flow.spec.ts`; the posts-per-day
+  cap test moved to C1, its only remaining control.
+- **Phase 3** — `src/data/readiness.ts` is the ONE selector, with a pure
+  `deriveReadiness` so the ruling is assertable as a function. `known` is false
+  while the live sync is in flight, because reading readiness off the seeded
+  world would report a workspace ready on Atlas Roasters' tones (trap 20);
+  nothing is stored, so nothing can go stale (trap 19). Enforced at `/generate`,
+  the Studio composer, D4's dialog (inside it, so `canTransition` still owns the
+  entry point) and Today's affordances, which say "Finish setup to generate"
+  before they are pressed. Tone preview is deliberately ungated and `verify:w06`
+  asserts it stays that way.
+- Phase: **ONB-0827** — not a W or INT phase. A5 is RETIRED.
+- Files: deleted `src/features/onboarding/*`; new `src/data/readiness.ts` +
+  `.test.ts`, `src/components/ab/setup-checklist.tsx`, `e2e/live-setup.ts`,
+  `e2e/live-onboarding.spec.ts`; moved `pipeline-fields.tsx` →
+  `features/calendar/schedule-fields.tsx` and `e2e/onboarding.spec.ts` →
+  `e2e/entry-flow.spec.ts`; changed `src/data/{account,auth,provider,types,
+  readiness}.ts`, `src/data/adapters/auth-adapter.ts`, `src/data/entities/orgs.ts`,
+  `src/data/datasets/{visitor,fresh}.ts`, `src/routes.tsx`, `src/lib/messages.ts`,
+  `src/features/{auth,dashboard,today,generate,studio,settings,system}/…`,
+  `scripts/verify-w0{2,3,4,5,6}.ts`, eleven live specs, `web-plan.md`,
+  `.agent/{state,decisions,open-items,sessions}.md`.
+- Decisions: see decisions.md — **the Phase-0 ruling** (with both request ids),
+  **D-ONB-A** (signup minimal, verify lands in the app), **D-ONB-B** (no seeded
+  tones), **D-ONB-C** (the wizard deleted, N3 reframed), and **D-ONB-D recorded
+  as PENDING** (the readiness gate — built, awaiting the Hasan sync).
+- Verify: lint · typecheck · **459 unit / 42 files** · guard-static **320 files
+  clean** · **static e2e 92 passed / 51 live skips / 0 failed** ·
+  **`verify:w00`–`w06` all PASS**. LIVE, all **14** files, `LIVE_MEDIA` off, one
+  file at a time, under the two-round law: **round 1 14/14**, **round 2 13/14**.
+  Round 2's single red was `live-auth`'s 401-purge test. It is recorded, not
+  re-run away: `src/api/` is **byte-identical to `main`** on this branch
+  (`git diff main -- src/api/` is empty), so the entire 401 path is untouched,
+  and six solo runs of that file put the test at **5 passed / 1 failed** — the
+  one other failure in that series was a different test timing out on a cold
+  signup POST. API latency on code this cycle did not change, in the same
+  family as the `live-auth` round-1 red recorded on 2026-08-24. **Not claimed
+  as green.**
+- **The live suite found four real breaks, and they were fixed rather than
+  waited out.** (1) The gate refuses a run until all four brand entities exist,
+  and the two specs that generate had only been given a tone —
+  `completeBrandSetup` now writes all four through the real screens, and
+  deliberately not the country or rhythm, because a helper that set them would
+  assert a stricter gate than the product has. (2) `live-scheduling`'s second
+  save clicked "One fewer post per day" on a schedule at the floor: the wizard
+  used to create the row above it, C1 creates it from the blank graft at one a
+  day, so that control is correctly disabled. (3) `live-team`'s invitee
+  navigated to `/login` while signed in — which used to render the form only
+  because an invitee had no org. (4) `live-wallet`'s H3 usage table: its own
+  comment said the rows came from "the wizard's country lookup", which is
+  metered; the org sets its country from I1 now.
+- **And one red that was OLDER than this cycle.** `live-country` expected an
+  occasion on the calendar's current month. Measured on a fresh JO org: `PUT
+  .../country` answers `holidaysCount: 1` and the single row is **2026-12-25**,
+  four months out of view. The country was set and the calendar was right to
+  show nothing — the test could only ever pass when a holiday happened to fall
+  in the visible grid. It asks the wire which month to look in now.
+- **A PRODUCT GAP THE SUITE UNCOVERED, reported rather than worked around
+  (open-item 38, raised to a blocking question).** Because every signup now
+  mints a workspace, an EXISTING user invited to another org **cannot reach
+  it**: the app works in `liveSession.orgs[0]`, there is no live org switcher,
+  and `/me/orgs` returns their own org first. Measured on fresh orgs 1003/1004:
+  `[{1004, owner}, {1003, member}]`. Before this cycle such a user had no org
+  of their own, so `orgs[0]` WAS the inviting org. Both plausible fixes — a
+  switcher, or a rule about which org a session opens in — are product
+  decisions, so this cycle takes neither. `live-team`'s admin test now uses the
+  accept-invite path, which creates no org, and says why.
+- **Trap 22 gained a third and fourth sighting, and then a SHARPENING that is
+  worth more than either.** Third: `verify:w03` FAILED on a marketing FONT
+  assertion inside a sweep chained behind `pnpm e2e`, on a branch that had not
+  touched marketing; it passed solo immediately after, 87/87. Fourth: at
+  close-out `verify:w06` failed twice running on TWO DIFFERENT tests — the same
+  font assertion, then the keyboard walk — while a bare `pnpm e2e` passed 92/92
+  either side of both. **The "solo" run was not solo enough:** `verify:wNN`
+  runs the whole `pnpm e2e` inside itself, and it had started seconds after the
+  previous verify released port 5199. Waiting for TIME_WAIT to DRAIN made it
+  deterministic — `until [ -z "$(netstat -ano | grep -w 5199 | grep -i -e listen
+  -e time_wait)" ]; do sleep 5; done` then `pnpm verify:w06` → **PASS, 459 unit
+  / 92 e2e**. The rule is no longer "give it a solo run" but "wait for the port
+  to drain, THEN give it a solo run" — a precondition you can check instead of
+  a re-run you hope about. The tell: when consecutive reds do not agree on WHAT
+  broke, suspect the harness.
+- **One deviation from the order, flagged not buried** (open-item 39): the
+  order said static mode reports ready; readiness derives honestly instead. No
+  demo DATA changed, but the `fresh` world is genuinely half set up, so it
+  renders the checklist — which is what makes the gate exercisable from
+  `/dev/datasets` and gives its axe scans real coverage. Reporting static ready
+  would have made the whole feature untestable outside a paid live run, against
+  the same order's "axe on the checklist and blocked states". Reversible in one
+  line.
+- Open-items: **26 marked PENDING WITHDRAWAL** (nothing was sent to Ward this
+  cycle), **27a CLOSED**, **36** records the withdrawal of item 7 of the
+  2026-08-27 Ward message BY REFERENCE — that message is not in this repo, so
+  there was no in-place item to annotate and saying so beat inventing one —
+  **37** the pre-existing stranded-schedule risk (observation only, no build,
+  per the order), **38/38b** the invited-user gap, **39** the static deviation.
+- Next: **the founder's review.** Nothing is pushed and nothing is merged. The
+  two questions that need a ruling before merge are open-item 38 (an invited
+  existing user cannot reach the org that invited them) and open-item 39 (the
+  static-readiness deviation); D-ONB-D stays PENDING until the Hasan sync.

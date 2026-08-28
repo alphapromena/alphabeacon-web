@@ -71,6 +71,15 @@ test('a fresh live org has no tones, and the screen says what that costs', async
   await expect(
     page.getByText(/Nothing generates until this workspace has at least one tone/),
   ).toBeVisible()
+
+  // A review artefact, inert unless asked for: this state exists only in live
+  // mode, because every demo world carries the five presets.
+  if (process.env.ONB_SHOTS) {
+    await page.screenshot({
+      path: 'test-results/onb-0827-shots/5-tones-empty-live.png',
+      fullPage: true,
+    })
+  }
 })
 
 test('generation is locked, and the checklist names all four', async ({ page }) => {
@@ -91,6 +100,13 @@ test('generation is locked, and the checklist names all four', async ({ page }) 
   // The Phase-0 ruling, on screen: the country and the posting rhythm are
   // listed as setup but never as blockers (probe 60c06fd5-… ran without both).
   await expect(checklist.getByText(/optional for generating/).first()).toBeVisible()
+
+  if (process.env.ONB_SHOTS) {
+    await page.screenshot({
+      path: 'test-results/onb-0827-shots/6-generate-blocked-live.png',
+      fullPage: true,
+    })
+  }
 })
 
 test('the Studio composer is locked by the same gate', async ({ page }) => {

@@ -71,13 +71,15 @@ export function SetupChecklist({
 
 function ChecklistRow({ item }: { item: ReadinessItem }) {
   return (
-    <li className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border/60 px-3 py-2">
-      <span className="flex items-center gap-2 text-sm">
+    <li className="flex items-center justify-between gap-3 rounded-lg border border-border/60 px-3 py-2">
+      {/* `min-w-0` so a long detail line wraps inside its own column instead of
+          pushing the action below it — the rows read as a list, not a stack. */}
+      <span className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-0.5 text-sm">
         {/* Icon + word: the status never rests on colour alone. */}
         {item.done ? (
-          <Check aria-hidden className="size-4 text-success" />
+          <Check aria-hidden className="size-4 shrink-0 translate-y-0.5 text-success" />
         ) : (
-          <Circle aria-hidden className="size-4 text-muted-foreground" />
+          <Circle aria-hidden className="size-4 shrink-0 translate-y-0.5 text-muted-foreground" />
         )}
         <span className="font-medium">{item.label}</span>
         <span className="text-muted-foreground">
@@ -87,7 +89,7 @@ function ChecklistRow({ item }: { item: ReadinessItem }) {
       </span>
 
       {/* Never a dead row: even a finished item stays reachable to change. */}
-      <Button asChild variant={item.done ? 'ghost' : 'outline'} size="sm">
+      <Button asChild variant={item.done ? 'ghost' : 'outline'} size="sm" className="shrink-0">
         <Link to={item.to}>
           {item.done ? 'Change' : 'Set up'}
           <span className="sr-only"> {item.label}</span>

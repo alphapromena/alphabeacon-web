@@ -140,7 +140,7 @@ export const MESSAGES = {
      * brand entity whose absence stops generation dead.
      */
     noTones:
-      'No tones yet — create your first one. Nothing generates until this workspace has at least one tone.',
+      'Create your first one — nothing generates until this workspace has at least one tone.',
     noAnalytics:
       'No analytics yet — connect a channel and turn its analytics permission on to see reach here.',
     noPublishedPosts: 'No published posts yet in this range.',

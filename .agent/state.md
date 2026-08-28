@@ -209,7 +209,20 @@ invented or faked: where a spec promised something the wire cannot deliver, the
 honest subset ships and the deviation is logged. The backend questions live in
 open-items 1–13 and 21–27; W7 still waits on the two reopened manual gates.
 
-Current totals on `main`: **457 unit tests** (42 files), **static e2e 87
+**Current totals on the ONB-0827 stack (`feat/onb-03-gate`, branch only):
+459 unit tests** (42 files), **static e2e 92 passed / 51 live-spec skips**,
+guard-static **320 files clean**, `verify:w00`–`w06` all PASS, and the FULL
+live suite — now **14 files**, `live-onboarding` added — under the two-round
+law: **round 1 14/14**, **round 2 13/14**. Round 2's single red was
+`live-auth`'s 401-purge test, and it is recorded rather than re-run away:
+`src/api/` is **byte-identical to `main`** on this branch (`git diff main --
+src/api/` is empty), so the whole 401 path is untouched, and six solo runs of
+that file put the test at **5 passed / 1 failed** — the one other failure in
+that series was a different test timing out on a cold signup POST. It is API
+latency on a file this cycle did not change, in the same family as the
+`live-auth` round-1 red recorded on 2026-08-24. **Not claimed as green.**
+
+Before that, on `main`: **457 unit tests** (42 files), **static e2e 87
 passed / 51 live-spec skips**, guard-static 321 files clean, verify:w00–w06 all
 PASS, and the FULL live suite **13/13** on the merged tree (D-M2-F-r2 round 2,
 2026-08-24). M2 touches no live code — `src/api` and `src/data` were
@@ -455,6 +468,26 @@ These are learned the hard way; each cost a debugging cycle.
     still showing TIME_WAIT sockets from the previous run. Recorded because
     the failing assertion looked plausible (a font really can fail to load),
     and that is exactly when this trap is most expensive.
+
+    **AND A SHARPENING, same day, worth more than the sighting.** Later in the
+    same cycle `verify:w06` failed twice in a row on TWO DIFFERENT tests — the
+    marketing font assertion in a chained sweep, then the keyboard walk in what
+    looked like a solo run — while a bare `pnpm e2e` passed 92/92 either side of
+    both. The "solo" run was not solo enough: `verify:wNN` runs the whole
+    `pnpm e2e` inside itself, and it had started seconds after the previous
+    verify released port 5199.
+    **Waiting for the port to be FULLY released makes it deterministic:**
+
+    ```bash
+    until [ -z "$(netstat -ano | grep -w 5199 | grep -i -e listen -e time_wait)" ]; do sleep 5; done
+    pnpm verify:w06
+    ```
+
+    That run passed — 459 unit, 92 e2e, RESULT PASS. So the rule is not "give it
+    a solo run", it is **"wait for TIME_WAIT to drain, then give it a solo
+    run"** — a precondition you can check rather than a re-run you hope about.
+    Two different tests failing in the same seam is the tell: when consecutive
+    reds do not agree on WHAT broke, suspect the harness, not the branch.
 
 19. **"Has the user edited?" is a fact to RECORD, not to infer from a JSON
     diff against a moving reference.** C1 decided whether to adopt a freshly
