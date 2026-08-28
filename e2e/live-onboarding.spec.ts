@@ -69,7 +69,10 @@ test('a fresh live org has no tones, and the screen says what that costs', async
   await expect(page.getByRole('heading', { name: 'Presets' })).toHaveCount(0)
   await expect(page.getByText('No tones yet', { exact: true })).toBeVisible()
   await expect(
-    page.getByText(/Nothing generates until this workspace has at least one tone/),
+    // Case-insensitive on the first word: the sentence was reworded during
+    // ONB-0827's close-out (the empty state used to repeat its own title),
+    // and a capital N is not the part worth asserting. The CLAIM is.
+    page.getByText(/nothing generates until this workspace has at least one tone/i),
   ).toBeVisible()
 
   // A review artefact, inert unless asked for: this state exists only in live

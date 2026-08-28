@@ -2504,3 +2504,79 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   two questions that need a ruling before merge are open-item 38 (an invited
   existing user cannot reach the org that invited them) and open-item 39 (the
   static-readiness deviation); D-ONB-D stays PENDING until the Hasan sync.
+
+### 2026-08-28 19:45 — ONB-0827-B: the branches are pushed, and a session opens in the org it remembers
+
+- Did: acted on the founder's three rulings. **(1)** The static-readiness
+  deviation is ACCEPTED and recorded as **D-ONB-E**, with the one-line revert
+  documented rather than exercised; open-item 39 is CLOSED. **(2)** Pushed the
+  record first, before building anything: `feat/onb-01-tones`,
+  `feat/onb-02-entry`, `feat/onb-03-gate` and the two docs-only probe branches
+  `probe/assets-0826` and `probe/int13` — five branches, every origin tip
+  verified equal to its local tip, **`main` and `live` untouched**. **(3)**
+  Built `feat/onb-04-invite-org` on top of the ONB-0827 tip and closed
+  open-item 38.
+- **Phase 0 again, and it changed the design.** The order describes the fix as
+  "an existing user accepts an invite". **An existing user cannot accept an
+  invite:** `POST /orgs/:id/members/invite` answers `invitedNewUser: false` and
+  sends no code, and `POST /auth/accept-invite` for that address answers
+  **400 `bad_request` "Invalid or expired code"** (request
+  `4b0959ba-b8d1-409a-9816-b93aaa83ef13`). Membership is simply added. So part
+  1 governs the NEW-user accept path, and the case open-item 38 measured is
+  carried by parts 2 and 3 — plus the switcher, without which "the last active
+  org it remembers" can never change for someone who has no accept step to
+  trigger it. The same probe re-confirmed the ordering (`/me/orgs` by
+  `joinedAt` ASCENDING, own org first) and pinned the revocation signal: after
+  `DELETE .../members/:id` the org leaves `/me/orgs` and a direct read 404s.
+- **The rule.** `src/data/adapters/org-selection.ts` is the one selector;
+  every `orgs[0]` is gone. The active org is persisted beside the session under
+  the same `rememberMe` convention and **stamped with the user id**, so the
+  same person gets their workspace back while a different person on the same
+  machine reads `null`. `graftAuthSession` takes the chosen org instead of
+  reaching for the first. Switching **re-grafts**, not merely re-syncs, because
+  the viewer's ROLE is per-org — a stale role would offer owner controls in a
+  workspace where the user is a member.
+- **The switcher was already screen truth** (screens4.md §0.4, and the shell's
+  own comment said this block would become one "the moment an account belongs
+  to more than one org"). ONB-0827 made that moment arrive. At one org it stays
+  identity, so static mode is unchanged.
+- Phase: **ONB-0827-B** — not a W or INT phase.
+- Files: new `src/data/adapters/org-selection.ts` + `.test.ts`,
+  `e2e/live-invite-org.spec.ts`; changed `src/api/session.ts` + `.test.ts`,
+  `src/data/{provider.tsx,auth.ts}`, `src/data/adapters/auth-adapter.ts` +
+  `.test.ts`, `src/components/ab/app-shell.tsx`, `src/lib/messages.ts`,
+  `e2e/{smoke,live-auth,marketing}.spec.ts`,
+  `.agent/{state,decisions,open-items,sessions}.md`.
+- Decisions: see decisions.md — **D-ONB-E** (the accepted deviation) and
+  **D-ONB-F** (the org-selection rule).
+- Verify: lint · typecheck · **471 unit / 43 files** · guard-static **322
+  clean** · **static e2e 93 passed / 61 skips / 0 failed** · **`verify:w00`–
+  `w06` all PASS**. LIVE: `live-invite-org` **3/3** including axe on the
+  switcher; full suite under the two-round law in the report.
+- **Two things the tests caught, both worth naming.** The fallback toast fired
+  TWICE: the flag is sticky on purpose — the live sync decides it after first
+  paint, so a self-clearing flag would be a message nobody saw — and sticky
+  plus StrictMode means only a ref latch makes "say it once" true. And scanning
+  the OPEN switcher with axe reported **142 `aria-hidden-focus` violations**: an
+  open Radix menu is modal, everything behind it is `aria-hidden`, and axe
+  flags every focusable element back there. That is trap 10 in its axe form,
+  not a defect in this menu; it is scanned closed, like the repo's others.
+- **A four-cycle flake finally fixed rather than re-run.**
+  `marketing.spec.ts`'s font check sampled `document.fonts` once, immediately.
+  Font loading is asynchronous and a `@font-face` is fetched only when used, so
+  under sweep load it read "loading" — it failed FOUR times this cycle, always
+  inside a `verify:wNN` sweep, never standalone, on branches that had not
+  touched marketing. It awaits `document.fonts.ready` and polls now; what it
+  asserts is unchanged. `verify:w06` went green immediately after.
+- **And a second harness seam, recorded not fixed:** `verify:w00` failed on
+  four `entry-flow` tests that then passed 6/6 solo. w00 is the phase that runs
+  `pnpm build` immediately before `pnpm e2e`, and w01–w05 ran the identical
+  suite green in the same sweep. Draining the port is necessary but not
+  sufficient when a heavy build precedes the run.
+- Open-items: **38 CLOSED** with the live evidence, **39 CLOSED** (deviation
+  accepted), **38b** left open as a founder/backend question (signup funds a
+  tenant that may never be used), **40** new — the remembered workspace dies
+  with the session, deliberately, and widening it to survive sign-out is a
+  small change nobody has asked for yet.
+- Next: **the founder's eye-pass.** Five branches pushed; `feat/onb-04` pushes
+  when its live rounds finish. No merge, and `main`/`live` remain untouched.

@@ -98,7 +98,10 @@ test('a fresh org has no tones at all, and the screen says what that costs', asy
   // The honest empty state, naming the consequence rather than just the gap.
   await expect(page.getByText('No tones yet', { exact: true })).toBeVisible()
   await expect(
-    page.getByText(/Nothing generates until this workspace has at least one tone/),
+    // Case-insensitive on the first word: the sentence was reworded during
+    // ONB-0827's close-out (the empty state used to repeat its own title),
+    // and a capital N is not the part worth asserting. The CLAIM is.
+    page.getByText(/nothing generates until this workspace has at least one tone/i),
   ).toBeVisible()
   await expect(page.getByRole('link', { name: 'Create your first tone' })).toBeVisible()
 })
