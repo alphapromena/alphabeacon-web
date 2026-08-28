@@ -61,7 +61,13 @@ test('one balanced run returns a draft with its tone and its rationale', async (
   await expect(page.getByRole('heading', { name: 'Generate', level: 1 })).toBeVisible()
 
   // One tone, one draft per tone, balanced — the cheapest run that proves it.
-  await expect(page.getByText('1 draft')).toBeVisible()
+  //
+  // The rung, and the reason is ONB-0827's gate: `/generate` renders the
+  // CHECKLIST until readiness is known, and readiness is not known until the
+  // live sync lands (trap 20). So the form — and this count with it — arrives
+  // a screen-sync after the heading does, where before the gate it was there
+  // on first paint.
+  await expect(page.getByText('1 draft')).toBeVisible({ timeout: SCREEN_SYNC })
   await page.getByRole('button', { name: 'Generate' }).click()
 
   await expect(page.getByRole('heading', { name: /^1 draft$/ })).toBeVisible({ timeout: 120_000 })

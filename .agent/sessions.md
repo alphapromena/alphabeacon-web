@@ -2551,8 +2551,19 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   **D-ONB-F** (the org-selection rule).
 - Verify: lint · typecheck · **471 unit / 43 files** · guard-static **322
   clean** · **static e2e 93 passed / 61 skips / 0 failed** · **`verify:w00`–
-  `w06` all PASS**. LIVE: `live-invite-org` **3/3** including axe on the
-  switcher; full suite under the two-round law in the report.
+  `w06` all PASS**. LIVE, all **15** files, `LIVE_MEDIA` off, one file at a
+  time, under the two-round law — round results in the report.
+- **What the live rounds found, and it was worth running them.** Three real
+  breaks, none of them in the org-selection code itself:
+  **(1)** `MESSAGES.empty.noTones` was reworded during ONB-0827's close-out
+  (the empty state used to repeat its own heading) and TWO live specs still
+  quoted the old capital — trap 18 exactly, caught by the suite it exists for.
+  **(2)** The Settings landing now has **two** `aria-busy` regions, because the
+  checklist refuses to claim anything about a workspace it has not seen yet;
+  `live-country` had a 5 s default over one of them. **(3)** `live-proposals`'
+  decline assertion waited 5 s over a ledger re-read and failed in BOTH gate
+  rounds while passing solo every time. All three took the SCREEN_SYNC rung or
+  a corrected regex; no assertion and no locator changed meaning.
 - **Two things the tests caught, both worth naming.** The fallback toast fired
   TWICE: the flag is sticky on purpose — the live sync decides it after first
   paint, so a self-clearing flag would be a message nobody saw — and sticky

@@ -126,8 +126,12 @@ test('sources and topics: scheme-less display, real persistence', async ({ page 
   await page.waitForTimeout(1500)
 
   // Reload: both live on the server; the source renders scheme-less by law.
+  // A reload plus the whole brand sync — the rung this file already uses for
+  // its other post-reload reads.
   await page.goto('/settings/sources')
-  await expect(page.getByText('perfectdailygrind.com/feed')).toBeVisible()
+  await expect(page.getByText('perfectdailygrind.com/feed')).toBeVisible({
+    timeout: SCREEN_SYNC,
+  })
   await expect(page.getByText('single origin')).toBeVisible()
 
   await page.getByRole('button', { name: /Remove Perfectdailygrind/ }).click()
