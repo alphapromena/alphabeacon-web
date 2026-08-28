@@ -36,7 +36,7 @@ async function login(page: Page) {
   })
 }
 
-// Finishing now runs org -> preset tones -> schedule -> the ~10 s country
+// Finishing now runs org -> schedule -> the ~10 s country
 // lookup, in that order, so it needs more than the suite's 30 s default.
 test('the wizard sets ONE country, and finishing loads its calendar', async ({ page }) => {
   test.setTimeout(150_000)
@@ -71,7 +71,8 @@ test('the wizard sets ONE country, and finishing loads its calendar', async ({ p
 
   await page.getByRole('button', { name: 'Start pipeline' }).click()
   await page.getByRole('button', { name: 'Go to your dashboard' }).click()
-  // Org + preset tones + schedule + the ~10 s country lookup, in that order.
+  // Org + schedule + the ~10 s country lookup, in that order. No tones are
+  // planted since ONB-0827 (D-ONB-B).
   await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible({
     timeout: 60_000,
   })

@@ -19,6 +19,9 @@ const PASSWORD = 'Roasted2Order!'
 const CODE = '000000'
 const owner = `qa+${RUN}s@alphapromena.com`
 const ORG_NAME = `QA Sched Org ${RUN}`
+/** The org's ONE tone. Nothing is seeded since ONB-0827, so C1 needs a tone
+ *  to exist before it can prove that picking one survives a reload. */
+const TONE_NAME = 'Roastery floor'
 
 test.skip(!API_BASE, 'live-mode run only (export VITE_API_BASE_URL)')
 test.describe.configure({ mode: 'serial' })
@@ -80,7 +83,7 @@ test('the wizard finish creates org + schedule + holiday source together', async
   await page.getByRole('button', { name: 'Continue' }).click()
   await page.getByRole('button', { name: 'Start pipeline' }).click()
   await page.getByRole('button', { name: 'Go to your dashboard' }).click()
-  // Finish is org + preset tones + schedule + sources + the resync — a real
+  // Finish is org + schedule + sources + the resync — a real
   // burst of wire calls; give it headroom.
   // Downstream of PUT /orgs/:id/country — live-red-2026-08-23.
   await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible({
@@ -109,11 +112,27 @@ test('the wizard finish creates org + schedule + holiday source together', async
   expect(org.org.country).toBe('JO')
 })
 
-test('C1 saves through PATCH — days, model and tones survive a reload', async ({ page }) => {
+test('C1 saves through PATCH — days, model and tones survive a reload', async ({
+  page,
+  request,
+}) => {
   await login(page, owner, PASSWORD)
   // First wait after login — the dashboard's whole sync — live-red-2026-08-23.
   await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible({
     timeout: SCREEN_SYNC,
+  })
+
+  // PRECONDITION, not the thing under test: this org has zero tones (ONB-0827,
+  // D-ONB-B) and a schedule needs one. Written through the API the way this
+  // suite already sets up preconditions it does not assert on.
+  const token = await sessionToken(page)
+  const auth = { authorization: `Bearer ${token}` }
+  const orgs = (await (await request.get(`${API_BASE}/me/orgs`, { headers: auth })).json()) as {
+    items: { id: string }[]
+  }
+  await request.post(`${API_BASE}/orgs/${orgs.items[0].id}/brand/tones`, {
+    headers: auth,
+    data: { name: TONE_NAME, description: 'Warm, specific, smells of coffee.', rules: [] },
   })
 
   await page.goto('/calendar/settings')
@@ -128,9 +147,10 @@ test('C1 saves through PATCH — days, model and tones survive a reload', async 
   // The screen's whole sync — live-red-2026-08-23.
   await expect(page.locator('[aria-busy="true"]')).toHaveCount(0, { timeout: SCREEN_SYNC })
 
-  // The wizard seeded the five preset tones (product law: always present);
-  // pick one so the schedule is valid, then change the cadence.
-  await page.getByRole('group', { name: 'Tones' }).getByRole('button', { name: 'Provocative' }).click()
+  // Nothing is seeded any more (ORDER ONB-0827, D-ONB-B), so the org's one
+  // tone is the one this file wrote for itself above; pick it so the schedule
+  // is valid, then change the cadence.
+  await page.getByRole('group', { name: 'Tones' }).getByRole('button', { name: TONE_NAME }).click()
   await page.getByRole('button', { name: 'One fewer post per day' }).click()
   await expect(page.getByText('You have unsaved changes.')).toBeVisible()
   await page.getByRole('button', { name: 'Save changes' }).click()

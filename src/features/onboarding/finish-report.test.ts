@@ -14,16 +14,15 @@ describe('describeIncomplete', () => {
 
   it('lists several steps in the order Finish attempts them', () => {
     // Reported out of order; read back in the order they were tried.
-    expect(describeIncomplete([{ step: 'country' }, { step: 'tones' }])).toBe(
-      'Your tones and your country did not save — set them in Settings.',
+    expect(describeIncomplete([{ step: 'country' }, { step: 'schedule' }])).toBe(
+      'Your posting schedule and your country did not save — set them in Settings.',
     )
   })
 
   it('deduplicates a step that failed more than once', () => {
-    // Tones fail one preset at a time; five failures are still one gap.
-    const failures = Array.from({ length: 5 }, () => ({ step: 'tones' as const }))
+    const failures = Array.from({ length: 3 }, () => ({ step: 'country' as const }))
 
-    expect(describeIncomplete(failures)).toBe('Your tones did not save — set it in Settings.')
+    expect(describeIncomplete(failures)).toBe('Your country did not save — set it in Settings.')
   })
 
   it("carries the server's request id when the envelope had one", () => {

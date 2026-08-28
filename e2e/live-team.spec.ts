@@ -106,7 +106,7 @@ test('the onboarding wizard creates the org LIVE; the dashboard follows', async 
   await page.getByRole('button', { name: 'Go to your dashboard' }).click()
 
   // The org now EXISTS server-side; the resync flipped the world onto it.
-  // Finish is org + preset tones + schedule + sources â€” give the burst room.
+  // Finish is org + schedule + sources â€” give the burst room.
   // Downstream of PUT /orgs/:id/country — live-red-2026-08-23.
   await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible({
     timeout: AFTER_COUNTRY,

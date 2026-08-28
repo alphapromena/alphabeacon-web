@@ -62,7 +62,7 @@ test('the inbox endpoints hold their contract, and the bell tells the truth', as
   await page.getByRole('button', { name: 'Skip for now' }).click()
   await page.getByRole('button', { name: 'Start pipeline' }).click()
   await page.getByRole('button', { name: 'Go to your dashboard' }).click()
-  // Finish is org + preset tones + schedule + sources + the resync — a real
+  // Finish is org + schedule + sources + the resync — a real
   // burst of wire calls; give it headroom.
   await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible({
     timeout: 25_000,

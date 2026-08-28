@@ -2,11 +2,17 @@
  * I3 — Tones library · `/settings/tones`, and I4's routed page.
  *
  * The durable home for what onboarding step 4 and C1 create inline. Presets are
- * view-only — they are the floor everyone starts from, and an org that could
- * edit "Educational" into something else would break every other org's mental
- * model of it. Custom tones sit in the SAME card shape with the same badge
- * treatment, because `ToneBadge`'s law (a tone you wrote is not a second-class
- * tone) has to hold on the screen that manages them too.
+ * view-only — an org that could edit "Educational" into something else would
+ * break every other org's mental model of it. Custom tones sit in the SAME card
+ * shape with the same badge treatment, because `ToneBadge`'s law (a tone you
+ * wrote is not a second-class tone) has to hold on the screen that manages them
+ * too.
+ *
+ * PRESETS ARE NO LONGER A FLOOR (ORDER ONB-0827, D-ONB-B). A live workspace
+ * created since that ruling starts with ZERO tones and its owner writes the
+ * first one here, so this screen has three shapes rather than two: no tones at
+ * all, custom-only, and the demo world's preset + custom mix. Nothing about
+ * managing an existing tone changed.
  */
 import { Palette, Pencil, Plus, Trash2 } from 'lucide-react'
 import { Link, useNavigate, useParams } from 'react-router'
@@ -28,6 +34,34 @@ export function TonesScreen() {
 
   const presets = tones.filter((tone) => tone.kind === 'preset')
   const custom = tones.filter((tone) => tone.kind === 'custom')
+
+  /**
+   * A workspace with nothing to speak in (ORDER ONB-0827). Live orgs are no
+   * longer seeded with presets, so this is a real state now and it gets ONE
+   * honest empty state rather than an empty "Your tones" list above a
+   * "Presets — always available, in every workspace" heading with nothing
+   * under it. The demo world still owns five presets, so it never lands here.
+   */
+  if (tones.length === 0) {
+    return (
+      <section className="flex flex-col gap-3">
+        <h2 className="font-display text-lg font-semibold">Your tones</h2>
+        <EmptyState
+          icon={Palette}
+          title="No tones yet"
+          description={MESSAGES.empty.noTones}
+          action={
+            <Button asChild>
+              <Link to="/settings/tones/new">
+                <Plus aria-hidden />
+                Create your first tone
+              </Link>
+            </Button>
+          }
+        />
+      </section>
+    )
+  }
 
   return (
     <>
@@ -75,17 +109,24 @@ export function TonesScreen() {
         )}
       </section>
 
-      <section className="flex flex-col gap-3">
-        <h2 className="font-display text-lg font-semibold">Presets</h2>
-        <p className="text-sm text-muted-foreground">
-          Always available, in every workspace. Write a custom tone to say something these do not.
-        </p>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {presets.map((tone) => (
-            <ToneCard key={tone.id} tone={tone} />
-          ))}
-        </div>
-      </section>
+      {/* Presets exist where a world has them — the demo world, and orgs that
+          were seeded before ONB-0827. A live workspace created since then has
+          none, and a heading claiming they are "always available" above an
+          empty grid would be the screen telling the user something untrue. */}
+      {presets.length > 0 && (
+        <section className="flex flex-col gap-3">
+          <h2 className="font-display text-lg font-semibold">Presets</h2>
+          <p className="text-sm text-muted-foreground">
+            Starting points you did not have to write. Add a custom tone to say something these do
+            not.
+          </p>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {presets.map((tone) => (
+              <ToneCard key={tone.id} tone={tone} />
+            ))}
+          </div>
+        </section>
+      )}
     </>
   )
 }

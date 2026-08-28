@@ -116,6 +116,14 @@ export const MESSAGES = {
     noConnections: 'Nothing connected yet — connect your first account to start posting.',
     noEventSources: "No event sources yet — add your country's holidays or connect a calendar.",
     noCustomTones: 'No custom tones yet — create one to match a campaign or product line.',
+    /**
+     * A workspace with NO tones at all (ORDER ONB-0827): live orgs are no
+     * longer seeded with presets, so this is the first thing a new owner
+     * sees on I3. It names the consequence, because a tone is the one
+     * brand entity whose absence stops generation dead.
+     */
+    noTones:
+      'No tones yet — create your first one. Nothing generates until this workspace has at least one tone.',
     noAnalytics:
       'No analytics yet — connect a channel and turn its analytics permission on to see reach here.',
     noPublishedPosts: 'No published posts yet in this range.',

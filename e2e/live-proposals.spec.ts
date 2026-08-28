@@ -11,6 +11,7 @@
  */
 import type { Page } from '@playwright/test'
 import { expect, test } from './fixtures'
+import { createFirstTone } from './live-setup'
 
 const API_BASE = process.env.VITE_API_BASE_URL
 const RUN = Date.now()
@@ -60,6 +61,13 @@ test('a fresh owner + org, then one balanced run', async ({ page }) => {
   await page.getByRole('button', { name: 'Go to your dashboard' }).click()
   await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible({
     timeout: 60_000,
+  })
+
+  // Nothing is seeded any more (ORDER ONB-0827, D-ONB-B): the run below needs
+  // a tone, so the org writes its first one first.
+  await createFirstTone(page, {
+    name: 'Roastery floor',
+    description: 'Warm, specific, smells of coffee.',
   })
 
   // One run — the drafts it produces become the proposals under test.

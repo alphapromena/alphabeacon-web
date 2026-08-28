@@ -93,29 +93,45 @@ test('a fresh owner + org, made through the product', async ({ page }) => {
   await page.getByRole('button', { name: 'Skip for now' }).click()
   await page.getByRole('button', { name: 'Start pipeline' }).click()
   await page.getByRole('button', { name: 'Go to your dashboard' }).click()
-  // Org + five preset tones WITH their rules + schedule: a burst of writes.
+  // Org + schedule: a burst of writes. No tones are planted any more
+  // (ORDER ONB-0827, D-ONB-B) — the next test is what proves that.
   // Downstream of PUT /orgs/:id/country — live-red-2026-08-23.
   await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible({
     timeout: AFTER_COUNTRY,
   })
 })
 
-test('the seeded presets arrive with their rules, not just a name', async ({ page }) => {
+/**
+ * The INVERSE of the test that used to stand here (ORDER ONB-0827, D-ONB-B).
+ *
+ * Until this cycle, Finish planted five preset tones and this file asserted
+ * they arrived carrying their rules. Presets are no longer planted: a fresh
+ * live org starts with ZERO tones and its owner writes the first one. So the
+ * thing worth proving flipped — not "the five are here with their rules" but
+ * "there are none, the screen says so honestly, and it says why it matters".
+ */
+test('a fresh org has no tones at all, and the screen says what that costs', async ({ page }) => {
   await login(page)
   await openSettingsTab(page, 'Tones')
-  // Product law says the five presets are always present; INT-7 says they are
-  // whole tones. Presets are view-only, so the proof is on the card itself:
-  // its rules render, which under INT-3 they never could.
-  const preset = page.locator('[data-slot="card"]').filter({ hasText: 'Data-driven' }).first()
-  await expect(preset).toBeVisible()
-  await expect(preset).toContainText('Open with the strongest figure')
-  await expect(preset).toContainText('Round beyond recognition')
+
+  // Nothing was planted: no preset card, and no "Presets" section claiming a
+  // floor that is not there.
+  await expect(page.locator('[data-slot="card"]')).toHaveCount(0)
+  await expect(page.getByRole('heading', { name: 'Presets' })).toHaveCount(0)
+
+  // The honest empty state, naming the consequence rather than just the gap.
+  await expect(page.getByText('No tones yet', { exact: true })).toBeVisible()
+  await expect(
+    page.getByText(/Nothing generates until this workspace has at least one tone/),
+  ).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Create your first tone' })).toBeVisible()
 })
 
 test('a tone keeps its rules, and a PATCH replaces the whole list', async ({ page }) => {
   await login(page)
   await openSettingsTab(page, 'Tones')
-  await page.getByRole('link', { name: 'Create custom tone' }).first().click()
+  // The org has no tones yet, so the entry point is the empty state's CTA.
+  await page.getByRole('link', { name: 'Create your first tone' }).click()
 
   await page.getByLabel('Tone name').fill('Roastery floor')
   await page.getByLabel('What this tone sounds like').fill('Warm, specific, smells of coffee.')

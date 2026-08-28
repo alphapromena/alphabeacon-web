@@ -80,8 +80,8 @@ test('a fresh owner + org, made through the product', async ({ page }) => {
   await page.getByRole('button', { name: 'Skip for now' }).click()
   await page.getByRole('button', { name: 'Start pipeline' }).click()
   await page.getByRole('button', { name: 'Go to your dashboard' }).click()
-  // Finish is org + preset tones + schedule + sources + the resync — a real
-  // burst of wire calls; give it headroom.
+  // Finish is org + schedule + sources + the resync — a real burst of wire
+  // calls; give it headroom. No tones are planted (ONB-0827, D-ONB-B).
   // Downstream of PUT /orgs/:id/country — live-red-2026-08-23.
   await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible({
     timeout: AFTER_COUNTRY,
@@ -93,7 +93,9 @@ test('a custom tone: created under the adapter, edited, and it survives a reload
 }) => {
   await login(page, owner, PASSWORD)
   await openSettingsTab(page, 'Tones')
-  await page.getByRole('link', { name: 'Create custom tone' }).first().click()
+  // A fresh org has no tones since ONB-0827 (D-ONB-B), so the way in is the
+  // empty state's CTA rather than the header button.
+  await page.getByRole('link', { name: 'Create your first tone' }).click()
 
   // INT-7: rules landed on the wire, so both editors are real now; only the
   // example line is still absent, and the note says so by name.

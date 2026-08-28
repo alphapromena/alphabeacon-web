@@ -24,8 +24,6 @@ import type {
 } from '@/api/types'
 import { MODEL_ALIAS_BY_ID } from '@/data/adapters/scheduling-adapter'
 import type { AuthActionResult } from '@/data/auth'
-import { joinRules } from '@/data/adapters/brand-adapter'
-import { PRESET_TONES } from '@/data/entities/tones'
 import { useDataDispatch, useLiveWorkingOrgId } from '@/data/provider'
 import type { Schedule } from '@/data/types'
 
@@ -38,7 +36,7 @@ import type { Schedule } from '@/data/types'
  * of the workspace is missing instead of "something went wrong".
  */
 export interface FinishStepFailure {
-  step: 'tones' | 'schedule' | 'country'
+  step: 'schedule' | 'country'
   code?: ApiErrorCode
   /** The envelope's requestId, for a bug report (open-items 3). */
   requestId?: string
@@ -117,13 +115,13 @@ export function useAccountActions() {
      * steps collected has to be written HERE, in this order, because none of
      * it can exist before the org does:
      *
-     *   org -> preset tones (with their rules) -> schedule (with the REAL tone
-     *   ids the seeding just minted) -> country (which loads the holidays)
+     *   org -> schedule (with the tone ids the org really has) -> country
+     *   (which loads the holidays)
      *
-     * The tone step is what closes open-items 10's empty-`toneIds` note: the
-     * wizard picks tones by their STATIC ids, which mean nothing server-side,
-     * so the seeding's own answers are mapped back by name and the schedule
-     * gets ids that actually resolve.
+     * THE TONE-SEEDING STEP IS GONE (ORDER ONB-0827, D-ONB-B). It used to sit
+     * between the org and the schedule, planting five presets so the schedule
+     * had ids to point at; a fresh live org now starts with zero tones on
+     * purpose, and the schedule carries only ids that resolve.
      *
      * THREE RULES, all of them learned from org 619 (E2E-0820 F12), whose
      * workspace came out of this function with tones but no schedule and no
@@ -138,9 +136,8 @@ export function useAccountActions() {
      *    half-built org into a mystery.
      * 3. **Re-running repairs rather than duplicates.** The org is reused when
      *    the user already owns one by this name (a lost response to `POST
-     *    /orgs` used to mint a second workspace on the retry), presets are
-     *    seeded only where one of that name is missing, and a schedule is
-     *    created only when the org has none.
+     *    /orgs` used to mint a second workspace on the retry), and a schedule
+     *    is created only when the org has none.
      *
      * Country stays last: it takes ~10 s, and the steps before it should not
      * be waiting on the holiday calendar to load.
@@ -173,56 +170,32 @@ export function useAccountActions() {
 
         const incomplete: FinishStepFailure[] = []
 
-        // The five preset tones are product law ("always present", tones.ts);
-        // the API has no seeding, so the org's first owner plants them here,
-        // marked with the wire's own `preset` flag and carrying their rules
-        // (D-INT-C). Backend still asked to seed server-side (open-items 26 —
-        // re-measured 2026-08-20 against a fresh org: still 0 tones).
+        // NO SEEDED TONES, EVER (ORDER ONB-0827, D-ONB-B). A fresh live org
+        // starts with ZERO tones and the user writes their first one from
+        // Settings. The five presets were only ever a client-side product law
+        // ("always present", tones.ts) that this function planted because the
+        // API has no seeding — planting them made every workspace claim five
+        // voices its owner never chose. `PRESET_TONES` stays what it always
+        // was for the DEMO world; nothing plants it live.
         //
-        // IDEMPOTENCY, step 2: only presets this org is missing are created,
-        // matched on name, so a second Finish tops the set up instead of
-        // planting a duplicate five.
-        const liveToneIdByStaticId: Record<string, string> = {}
-        let present: ApiTone[] = []
+        // What the wizard collected is therefore resolved against the tones
+        // the org REALLY has: a tone created mid-wizard is a real live row and
+        // passes through, while a static preset id names nothing server-side
+        // and is dropped rather than written as a dangling reference. An
+        // unreadable list resolves to none — a schedule with no tones is the
+        // honest answer, and Settings repairs it.
+        let liveToneIds = new Set<string>()
         try {
-          present = (
-            await api<Paginated<ApiTone>>('GET', `/orgs/${orgId}/brand/tones`)
-          ).items
+          liveToneIds = new Set(
+            (await api<Paginated<ApiTone>>('GET', `/orgs/${orgId}/brand/tones`)).items.map(
+              (tone) => tone.id,
+            ),
+          )
         } catch {
-          // An unreadable list is treated as an empty one: the create below
-          // is what actually reports a problem, and refusing to seed because
-          // a read failed would leave the org with no tones at all.
-          present = []
-        }
-        for (const tone of present) {
-          const preset = PRESET_TONES.find((candidate) => candidate.name === tone.name)
-          if (preset) liveToneIdByStaticId[preset.id] = tone.id
+          liveToneIds = new Set()
         }
 
-        const missing = PRESET_TONES.filter((tone) => !(tone.id in liveToneIdByStaticId))
-        const seeded = await Promise.allSettled(
-          missing.map((tone) =>
-            api<ApiTone>('POST', `/orgs/${orgId}/brand/tones`, {
-              body: {
-                name: tone.name,
-                description: tone.description,
-                preset: true,
-                rules: joinRules(tone.rules),
-              },
-            }),
-          ),
-        )
-        seeded.forEach((result, index) => {
-          if (result.status === 'fulfilled') {
-            liveToneIdByStaticId[missing[index].id] = result.value.id
-          } else {
-            incomplete.push(stepFailure('tones', result.reason))
-          }
-        })
-
-        const toneIds = input.schedule.toneIds
-          .map((staticId) => liveToneIdByStaticId[staticId])
-          .filter(Boolean)
+        const toneIds = input.schedule.toneIds.filter((id) => liveToneIds.has(id))
 
         // IDEMPOTENCY, step 3: one schedule per org. A second Finish leaves
         // the existing one alone rather than stacking another beside it.
