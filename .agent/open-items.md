@@ -391,16 +391,32 @@ build, so they are worth asking as a batch.
     confirm naming the schedules it will empty. Recorded so the next person to
     touch tone deletion does not discover it the expensive way.
 
-38. **Every signup now mints a workspace, including one that only wanted an
-    invite** (consequence of D-ONB-A, for the founder — 2026-08-28). Verifying
-    creates the org from the name typed at signup, so a person who signs up
-    normally and is LATER invited to a colleague's workspace ends up belonging
-    to two: their own, and the one they joined. The accept-invite deep link is
-    untouched and still creates nothing, so an invitee who arrives through the
-    email never gets a spare org — this only affects someone who signed up
-    first. It is visible in `live-team.spec.ts`, which now says so out loud.
-    Not obviously wrong (a user can always belong to many orgs, and the org
-    switcher exists), but it is a NEW shape and the founder should see it.
+38. **BLOCKING QUESTION FOR THE FOUNDER — an existing user invited to another
+    workspace CANNOT REACH IT** (consequence of D-ONB-A, measured 2026-08-28).
+    **Measured, not inferred.** Two fresh accounts, each with its own org
+    (owner 1003, member 1004). The owner invites the member: `201
+    invitedNewUser: false`. The member logs in again and both the session
+    snapshot and `GET /me/orgs` come back
+    `[{1004, owner}, {1003, member}]` — **their own org first**. The app works
+    in `liveSession.orgs[0]` (`provider.tsx`, `useLiveWorkingOrgId`) and there
+    is no org switcher in live mode, so they land in their own workspace and
+    the one that invited them is unreachable through the UI.
+    **Why it is new:** before this cycle a person who signed up but never
+    finished the wizard had NO org, so `orgs[0]` was the inviting org and the
+    flow worked. Auto-creating a workspace at verification is what changed it.
+    **Not affected:** someone who arrives through the accept-invite deep link
+    without ever signing up — that path still creates no org, so `orgs[0]` is
+    the org that invited them. `live-team.spec.ts`'s admin test now uses that
+    path deliberately, and says why.
+    **This cycle did not fix it**, because both plausible fixes are product
+    decisions rather than bugs: a live org switcher, or a rule about which org
+    a session opens in. The founder should rule.
+
+38b. **Also worth the founder's eye:** the same ruling means a person invited
+    to a colleague's workspace who happens to sign up first ends up owning an
+    empty workspace they never wanted, funded with 5000 cents by the platform
+    (`POST /orgs` funds the tenant). Harmless today; it is a per-account cost
+    once real money is involved.
 
 39. **The readiness gate derives honestly in static mode, where the order said
     "reports ready"** (deviation, flagged for the founder — 2026-08-28,

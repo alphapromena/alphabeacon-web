@@ -5,7 +5,19 @@ without reconstructing it from the session log. **Update this file at the end
 of any turn that finishes a phase or changes the plan.** `sessions.md` is the
 chronological record; this is the current picture.
 
-_Last updated: 2026-08-24, after the **M2 design cycle was MERGED to `main`**
+_Last updated: 2026-08-28, after **ORDER ONB-0827 — Hasan's onboarding
+ruling** was BUILT on a three-branch stack off `main` (`fd84173`):
+`feat/onb-01-tones` -> `feat/onb-02-entry` -> `feat/onb-03-gate`. **Branch
+only: not merged, not pushed — it waits on founder review.** The wizard is
+DELETED, a fresh live org starts with ZERO tones, and nothing generates until
+the org's brand setup is complete. A Phase-0 probe settled the gate's shape on
+the wire before it was designed (decisions.md, 2026-08-28): an org holding only
+the four brand entities generated fine with no country and no schedule
+(request `60c06fd5-...`), and an org with no tones was refused with an
+unusable 400 (`ae30783f-...`) — so the hard gate is the four, and the country
+and the posting rhythm are checklist items rather than blockers. Decisions
+D-ONB-A..C, with **D-ONB-D recorded as PENDING**. Before that: 2026-08-24,
+after the **M2 design cycle was MERGED to `main`**
 on the founder's explicit approval — the visitor world is now Abdullah's
 concept-v2 port with the corrected palette, fast-forwarded to `039adfb` and
 pushed with `main:live`. Before that, the same day: **D-M2-F-r2** — Abdullah
@@ -70,6 +82,10 @@ below).
 | `fix/e2e-0820` | **The E2E-0820 triage, 2026-08-20 — branched off `main` (`550f54e`), MERGED as a fast-forward and pushed; kept on `origin` as the per-fix record.** F3 Generate reachable from the rail/dashboard/Today, F4 the "credits" vocabulary + `/billing/balance`, F5 the pre-run count, F6 the tone-preview reference, F9 the balance chip's three states, F10 the stale results footer, F11 pluralization, F12 the wizard Finish (failure-tolerant, reported, idempotent), B9 the schedule draft reconciler + a blank schedule for a live org that has none. Gate output in the session entry |
 | `design/m2-concept-v2` | **M2 — the visitor world. Branched off `main` (`5c01c68`) 2026-08-23; took `main` again and MERGED as a fast-forward 2026-08-24 on the founder's explicit approval; kept on `origin` as the per-cycle record.** The decision chain is D-M2-A…F, then D-M2-F-r (the AA pass reverted so Abdullah could review his palette verbatim), then **D-M2-F-r2** (he delegated, the founder ruled accessibility wins with the design spirit preserved — the four corrections re-applied, the Memory reveal changed to slide without fading, a `Superseded` badge added, and every allowlist deleted). Abdullah's `malaky-prototype` `components/concept-v2/**` ported into `src/features/marketing/`: five routes under one layout, 58 marketing files, its own token file and contrast guard. M1 retired with it. Decisions D-M2-A…F; open-items 21 |
 | `fix/live-suite-warmup` | **The live suite warm-up, 2026-08-23/24 — branched off `main` (`5c01c68`), MERGED as a fast-forward and pushed; kept as the per-fix record.** `global-setup.ts` wakes the API, warms a 12-way fleet and holds a heartbeat for the life of a live run, and refuses a run whose dev server is in the wrong mode (trap 22, guarded not just recorded). `live-clocks.ts` states three rungs derived from `Docs/api/live-red-2026-08-23.md`, and five spec files read them instead of literals — `live-brand`, `live-brand-rules`, `live-scheduling`, then `live-auth` and `live-team`. Locators and matchers byte-identical throughout. The two-round rule below came out of it |
+| `feat/onb-01-tones` | **ONB-0827 Phase 1, 2026-08-28 — branched off `main` (`fd84173`). NOT merged, NOT pushed.** No seeded tones: the `PRESET_TONES` seeding leaves the org-creation path, I3 gains an honest empty state, and the now-impossible `tones` failure step goes with it. `PRESET_TONES` still composes the demo datasets — the demo world is untouched by order. D-ONB-B |
+| `feat/onb-02-entry` | **ONB-0827 Phase 2 — stacked on Phase 1. NOT merged, NOT pushed.** `src/features/onboarding/*` DELETED; `/onboarding` is a redirect into the app; `org.onboarding {completed,resumeStep}` becomes `org.exists`; `finishOnboarding` becomes a lean `createWorkspace` (org only, idempotent) called at verify; N3 is reframed as the workspace-creation retry. `e2e/onboarding.spec.ts` is `e2e/entry-flow.spec.ts`. Closes open-item 27a. D-ONB-C |
+| `feat/onb-03-gate` | **ONB-0827 Phase 3 — the tip of the stack. NOT merged, NOT pushed.** `src/data/readiness.ts` is the one selector; `ab/setup-checklist.tsx` is the one surface; the gate is enforced at `/generate`, the Studio composer, D4's dialog and Today's affordances, and `verify:w06` has a structural check that keeps it that way. D-ONB-D (PENDING) |
+| `probe/int13` | The PROBE-INT13 media probe (2026-08-26/27), branched off `main` (`fd84173`) — **not merged**, so its open-items 34/35 do NOT exist on this stack. Phase B is still blocked on Ward |
 | `chore/api-sweep` | The 118-operation contract sweep (`89199d9`), one commit ahead of `main`, untouched by the triage |
 | `live`     | **Team-only staging**, always a fast-forward of `main` and never carrying commits of its own. Vercel builds its PREVIEW with a branch-scoped `VITE_API_BASE_URL`, so `live` is where the app runs against the real API; PRODUCTION (`main`) has no such variable and stays byte-for-byte static. **After every merge to `main`: `git push origin main:live`.** |
 | Phase branches on `origin` | `int/06-contract` · `int/07-brand-rules` · `int/08-country` · `int/09-wallet` · `int/10-generate` · `int/11-studio-knowledge` · `int/12-proposals` — pushed 2026-08-19 as the per-phase record, exactly as `w/NN` and `int/00…05` are kept. `probe/proposals` was deliberately NOT pushed: it is superseded, and its record lives on in `int/12` as `ee2bc57` |
@@ -111,6 +127,7 @@ aspirational, not a rule this repo follows.
 | — **M1 cinematic layer** (`rb/01-motion`) | M1 | Done 2026-08-09, merged — then superseded by the V1 brief (film retired, D1) |
 | — **Website V1** (`rb/02-v1-brief`) | M1 | Built + verified 2026-08-10 — **SUPERSEDED by M2, 2026-08-23** |
 | — **M2: concept-v2** (`design/m2-concept-v2`) | the whole visitor world | Built 2026-08-23, corrected and **MERGED 2026-08-24** (D-M2-F-r2) — the accessibility gate in open-items 21 is closed; what remains there blocks DNS cutover, not the merge |
+| — **ONB-0827: the onboarding ruling** (`feat/onb-01…03`) | A5 (deleted), N3, I3, F1, E2, D4, D1 | Built 2026-08-28, **branch only — awaiting founder review**. A5 is RETIRED |
 | **W7 Hardening + ship**              | —                            | **Parked behind the two manual gates**                        |
 
 ## Integration phases (AlphaStudio API — contract at `docs/api/api.md`)
@@ -430,6 +447,15 @@ These are learned the hard way; each cost a debugging cycle.
     solo AND is contradicted by a neighbouring run of the same specs is
     environmental; a red that survives a solo run is yours.
 
+    **Third sighting, 2026-08-28 (ONB-0827 Phase 2), same shape again.**
+    `verify:w03` came back FAIL on a MARKETING font assertion — "expected DM
+    Sans Variable, received Inter Variable" — inside a sweep chained behind
+    `pnpm e2e` and `verify:w00…w02`. The branch under test had not touched
+    marketing at all. It passed solo immediately after, 87/87, with port 5199
+    still showing TIME_WAIT sockets from the previous run. Recorded because
+    the failing assertion looked plausible (a font really can fail to load),
+    and that is exactly when this trap is most expensive.
+
 19. **"Has the user edited?" is a fact to RECORD, not to infer from a JSON
     diff against a moving reference.** C1 decided whether to adopt a freshly
     synced schedule by comparing its draft to the last pristine it had seen,
@@ -524,6 +550,13 @@ read source, because these failure modes pass behavioural tests:
   `import.meta.env.PROD`, and the emitted `dist/` is read back to confirm it
   really falls back to `"visitor"`. The artifact half exists because the
   incident it prevents had correct source and a wrong deployment.
+- **The readiness gate is ONE selector** (verify:w06, ONB-0827). F1's route,
+  the Studio composer and D4's media dialog each read `useReadiness()` and
+  render the shared `GenerationBlocked`; the ruling itself lives only in
+  `src/data/readiness.ts`; and the tone PREVIEW is asserted to stay UNGATED,
+  because previewing is part of creating the first tone. A fifth surface with
+  its own idea of "ready" would pass every behavioural test in the suite while
+  disagreeing with the checklist the user was just shown.
 - The proxy law (INT-6, `guard:static`): `fetch` exists in exactly two files,
   and no code under `src/` may name the upstream origin, its signing headers,
   its route prefix, or either service secret. Comments may name all of them —

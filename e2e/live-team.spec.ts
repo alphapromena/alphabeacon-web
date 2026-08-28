@@ -21,6 +21,10 @@ const NEW_PASSWORD = 'FreshlyGround3!'
 
 const owner = `qa+${RUN}o@alphapromena.com`
 const invitee = `qa+${RUN}m@alphapromena.com`
+/** An admin who arrives through the INVITE, not through signup — so this
+ *  account owns no workspace of its own. See the test below for why that
+ *  distinction became load-bearing under ONB-0827. */
+const adminInvitee = `qa+${RUN}a@alphapromena.com`
 const ORG_NAME = `QA Live Org ${RUN}`
 const ORG_RENAMED = `QA Live Org ${RUN} v2`
 
@@ -166,7 +170,11 @@ test('inviting an EXISTING user adds them immediately, and the role ladder holds
     password: PASSWORD,
     orgName: `QA Member Org ${RUN}`,
   })
-  await page.goto('/login')
+  // SIGN OUT, do not just navigate. Since ONB-0827 this account has a
+  // workspace, so `SignedOutOnly` redirects a signed-in user away from /login
+  // and the form never renders — a bare `goto('/login')` used to work only
+  // because an invitee had no org to be redirected into (D-ONB-C).
+  await signOut(page)
 
   await login(page, owner, NEW_PASSWORD)
   await openTeam(page)
@@ -214,18 +222,55 @@ test('inviting an EXISTING user adds them immediately, and the role ladder holds
   await expect(page.locator('tr').filter({ hasText: invitee })).toHaveCount(0)
 })
 
+/**
+ * THE ADMIN HERE ARRIVES THROUGH THE INVITE, and that is now load-bearing.
+ *
+ * The test used to promote `invitee` — an account made by signing up. Since
+ * ONB-0827 every signup mints a workspace (D-ONB-A), the app works in
+ * `liveSession.orgs[0]`, and `/me/orgs` returns the user's OWN org first.
+ * Measured 2026-08-28 on fresh orgs 1003/1004: an existing user invited to
+ * another workspace comes back `[{1004, owner}, {1003, member}]`, so the app
+ * lands them in their own org and the invited one is unreachable — there is no
+ * org switcher in live mode. That is a real product gap, recorded as
+ * open-item 38, and NOT something this test should paper over.
+ *
+ * So the admin under test is a user created BY the invite, who therefore owns
+ * no workspace of their own and whose `orgs[0]` is the org that invited them.
+ * The law being asserted — an admin sees no role selects and cannot remove the
+ * owner — is unchanged.
+ */
 test('an ADMIN viewing a team with an owner: no remove on the owner, no role selects at all', async ({
   page,
 }) => {
-  // The owner re-adds the (existing) invitee and makes them an admin.
+  // A NEW user, invited into the workspace and promoted to admin.
   await login(page, owner, NEW_PASSWORD)
   await openTeam(page)
   await page.getByRole('button', { name: 'Invite member' }).click()
-  await page.getByLabel('Work email').fill(invitee)
+  await page.getByLabel('Work email').fill(adminInvitee)
   await page.getByRole('button', { name: 'Send invite' }).click()
   // One POST round-trip — live-red-2026-08-23.
-  await expect(page.getByText('Added to the workspace')).toBeVisible({ timeout: ONE_CALL })
-  const memberRow = page.locator('tr').filter({ hasText: invitee })
+  await expect(page.getByText(/Invite sent|Added to the workspace/)).toBeVisible({
+    timeout: ONE_CALL,
+  })
+  await signOut(page)
+
+  // They set their password through the emailed deep link; every dev code is
+  // 000000 (api.md). This path creates NO org of its own.
+  await page.goto(`/accept-invite?email=${encodeURIComponent(adminInvitee)}&code=000000`)
+  await expect(page.getByRole('heading', { name: 'Join your team' })).toBeVisible()
+  await page.getByLabel('Your name').fill('QA Admin')
+  await page.getByLabel('Password', { exact: true }).fill(PASSWORD)
+  await page.getByLabel('Confirm password').fill(PASSWORD)
+  await page.getByRole('button', { name: 'Join the workspace' }).click()
+  await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible({
+    timeout: SCREEN_SYNC,
+  })
+  await signOut(page)
+
+  // The owner promotes them.
+  await login(page, owner, NEW_PASSWORD)
+  await openTeam(page)
+  const memberRow = page.locator('tr').filter({ hasText: adminInvitee })
   await memberRow.getByLabel(/Role for/).selectOption('admin')
   // One PATCH round-trip — live-red-2026-08-23.
   await expect(page.getByText(/is now an admin/)).toBeVisible({ timeout: ONE_CALL })
@@ -233,7 +278,7 @@ test('an ADMIN viewing a team with an owner: no remove on the owner, no role sel
 
   // The ADMIN's view. Their power comes from their OWN membership role (the
   // workspace root), so the owner's presence in the list grants them nothing:
-  await login(page, invitee, PASSWORD)
+  await login(page, adminInvitee, PASSWORD)
   await openTeam(page)
 
   // â€¦they can manage members (invite is offered),
@@ -247,6 +292,6 @@ test('an ADMIN viewing a team with an owner: no remove on the owner, no role sel
   await expect(ownerRow.getByRole('button', { name: 'Remove' })).toHaveCount(0)
   // Their own row can Leave (they are not the protected tier).
   await expect(
-    page.locator('tr').filter({ hasText: invitee }).getByRole('button', { name: 'Leave' }),
+    page.locator('tr').filter({ hasText: adminInvitee }).getByRole('button', { name: 'Leave' }),
   ).toBeVisible()
 })

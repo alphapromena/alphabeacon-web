@@ -64,9 +64,11 @@ test('a fresh workspace has NO country, and I1 is where one is set', async ({ pa
   // the ruling is that a missing country is a checklist item, not a blocker.
   const token = await sessionToken(page)
   const auth = { authorization: `Bearer ${token}` }
-  const orgs = (await (await request.get(`${API_BASE}/me/orgs`, { headers: auth })).json()) as {
-    items: { id: string }[]
-  }
+  const orgsResponse = await request.get(`${API_BASE}/me/orgs`, { headers: auth })
+  // Assert the read before indexing it: a failed read used to surface as
+  // "cannot read properties of undefined", which says nothing about why.
+  expect(orgsResponse.status(), await orgsResponse.text()).toBe(200)
+  const orgs = (await orgsResponse.json()) as { items: { id: string }[] }
   const before = (await (
     await request.get(`${API_BASE}/orgs/${orgs.items[0].id}`, { headers: auth })
   ).json()) as { org: { country: string | null } }
@@ -82,10 +84,58 @@ test('a fresh workspace has NO country, and I1 is where one is set', async ({ pa
   })
 })
 
-test('the calendar carries real holidays, each with the rules for that day', async ({ page }) => {
+/**
+ * NAVIGATE TO THE MONTH THAT HOLDS ONE, rather than assuming today's grid does.
+ *
+ * This test used to open the Calendar and expect an occasion immediately. That
+ * only ever worked when a holiday happened to fall inside the current month's
+ * grid, which is a fact about the calendar date rather than about the product
+ * — the latent kind of test that passes for months and then does not. Measured
+ * on 2026-08-28 against a fresh JO org: `PUT /orgs/:id/country` answered
+ * `holidaysCount: 1, reloaded: true` and `GET .../holidays` returned exactly
+ * one row, **2026-12-25**, four months out of view. The country was set
+ * correctly and the calendar was right to show nothing in August.
+ *
+ * So the test asks the wire which month to look in, then drives the product's
+ * own month control to get there. The assertions about what an occasion
+ * renders are unchanged.
+ */
+test('the calendar carries real holidays, each with the rules for that day', async ({
+  page,
+  request,
+}) => {
   await login(page)
+
+  const token = await sessionToken(page)
+  const auth = { authorization: `Bearer ${token}` }
+  const orgs = (await (await request.get(`${API_BASE}/me/orgs`, { headers: auth })).json()) as {
+    items: { id: string }[]
+  }
+  const holidays = (await (
+    await request.get(`${API_BASE}/orgs/${orgs.items[0].id}/holidays`, { headers: auth })
+  ).json()) as { items: { date: string; event: string }[] }
+  // The country really did load a calendar — that is this file's first claim,
+  // and it is asserted on the wire before anything is looked for on screen.
+  expect(holidays.items.length).toBeGreaterThan(0)
+  const target = holidays.items[0]
+  const targetTitle = new Intl.DateTimeFormat('en-US', {
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'UTC',
+  }).format(new Date(`${target.date}T00:00:00Z`))
+
   await page.getByRole('link', { name: 'Calendar', exact: true }).first().click()
-  await expect(page.locator('[aria-busy="true"]')).toHaveCount(0)
+  await expect(page.locator('[aria-busy="true"]')).toHaveCount(0, { timeout: SCREEN_SYNC })
+
+  // Walk forward to the month that holds it. `exact` because getByRole name
+  // matching is SUBSTRING (state.md trap 16). Capped at twelve presses: the
+  // lookup covers the year, so a holiday further out than that is a fact worth
+  // failing on rather than scrolling past.
+  for (let step = 0; step < 12; step += 1) {
+    if (await page.getByRole('heading', { name: targetTitle }).count()) break
+    await page.getByRole('button', { name: 'Next', exact: true }).click()
+  }
+  await expect(page.getByRole('heading', { name: targetTitle })).toBeVisible()
 
   // The occasion is a real button because it has guidance behind it.
   const occasion = page.getByRole('button', { name: /Christmas|Mawlid|Eid|Independence|New Year/ })

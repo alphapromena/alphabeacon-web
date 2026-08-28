@@ -11,6 +11,7 @@
  */
 import type { Page } from '@playwright/test'
 import { expect, test } from './fixtures'
+import { SCREEN_SYNC } from './live-clocks'
 import { completeBrandSetup, signUpAndEnter } from './live-setup'
 
 const API_BASE = process.env.VITE_API_BASE_URL
@@ -63,7 +64,7 @@ test('after a RELOAD, Today shows the draft from the ledger', async ({ page }) =
   // A different browser context from the run: nothing local survives, so
   // anything on screen came from the platform.
   await page.goto('/today')
-  await expect(page.locator('[aria-busy="true"]')).toHaveCount(0)
+  await expect(page.locator('[aria-busy="true"]')).toHaveCount(0, { timeout: SCREEN_SYNC })
 
   await expect(page.getByText(/1 needs review/)).toBeVisible({ timeout: 60_000 })
   // Scoped to main: the sidebar is a list of listitems too.
@@ -78,7 +79,7 @@ test('approving records it as posted, and the decision survives a reload', async
   test.setTimeout(120_000)
   await login(page)
   await page.goto('/today')
-  await expect(page.locator('[aria-busy="true"]')).toHaveCount(0)
+  await expect(page.locator('[aria-busy="true"]')).toHaveCount(0, { timeout: SCREEN_SYNC })
   await expect(page.getByRole('main').getByRole('listitem').first()).toBeVisible({
     timeout: 60_000,
   })
@@ -109,7 +110,7 @@ test('approving records it as posted, and the decision survives a reload', async
 
   // The decision is the LEDGER's, not this page's: prove it across a reload.
   await page.reload()
-  await expect(page.locator('[aria-busy="true"]')).toHaveCount(0)
+  await expect(page.locator('[aria-busy="true"]')).toHaveCount(0, { timeout: SCREEN_SYNC })
   await page.getByRole('button', { name: 'Approved', exact: true }).click()
   await expect(page.getByRole('main').getByRole('listitem').first()).toContainText(
     'Recorded as posted',

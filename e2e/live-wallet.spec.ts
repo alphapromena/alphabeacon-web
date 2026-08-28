@@ -15,6 +15,7 @@
  */
 import type { Page } from '@playwright/test'
 import { expect, test } from './fixtures'
+import { AFTER_COUNTRY, SCREEN_SYNC } from './live-clocks'
 import { signUpAndEnter } from './live-setup'
 
 const API_BASE = process.env.VITE_API_BASE_URL
@@ -46,12 +47,27 @@ async function sessionToken(page: Page): Promise<string> {
 }
 
 test('a fresh owner + org, made through the product', async ({ page }) => {
-  test.setTimeout(150_000)
+  test.setTimeout(180_000)
   await signUpAndEnter(page, {
     name: 'QA Wallet Owner',
     email: owner,
     password: PASSWORD,
     orgName: ORG_NAME,
+  })
+
+  // METERED USAGE, deliberately produced. H3 below reads real metering back,
+  // and its rows used to come from the country lookup the WIZARD performed on
+  // the way in. The wizard is gone (ONB-0827, D-ONB-C), so a fresh org now has
+  // no usage at all and the table is honestly absent. Setting the country from
+  // I1 — the surface that owns it now — restores exactly the precondition the
+  // test was written around: `holidays.lookup` is metered, and it spends
+  // nothing from the wallet, so the balance assertions above stay true.
+  await page.getByRole('link', { name: 'Settings' }).first().click()
+  await expect(page.locator('[aria-busy="true"]')).toHaveCount(0, { timeout: SCREEN_SYNC })
+  await page.locator('#i1-country').selectOption('JO')
+  await page.getByRole('button', { name: 'Save country' }).click()
+  await expect(page.getByText(/public holidays loaded for the year/)).toBeVisible({
+    timeout: AFTER_COUNTRY,
   })
 })
 
