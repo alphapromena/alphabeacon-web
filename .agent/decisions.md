@@ -1921,3 +1921,170 @@ Recorded here as the founder set them; each is implemented in its own phase.
   and the founder took it), or keeping a "documented" allowlist alongside the
   fixes (nothing left to allow — an allowlist covering nothing is the rot it was
   written to prevent).
+
+### 2026-08-28 — PHASE-0 RULING: the hard gate is the four brand entities, measured not argued (ONB-0827)
+
+- **What was asked.** ORDER ONB-0827 said: before designing the readiness
+  gate, find out on the wire whether the country and the posting schedule
+  block generation. If a fresh org holding only the four brand entities can
+  run, they are checklist items; if it cannot, they join the hard gate.
+- **What was done.** Two fresh QA orgs, through the deployed API, warmed first
+  (probes `200 1657ms, 200 359ms, 200 130ms`; 12-way fleet slowest 499 ms), so
+  no latency recorded is a cold start. Org **619 and every production org were
+  untouched.**
+- **(a) The four alone are enough.** Org **954**
+  (`qa+1787915648395onba@alphapromena.com`): one voice with two rules, one
+  tone with one rule, one source, one topic — `GET /orgs/954/schedules`
+  `total: 0`, `org.country: null`. The exact body `src/data/generate.ts`
+  builds today (`slot` synthesized client-side, `plan: balanced`,
+  `options.perTone: 1`) answered **202 in 1158 ms**, request
+  **`60c06fd5-acb7-4060-81d5-4a7b8113ebeb`**, run
+  `run_f47e61d75ea07f9c406dc4d8` → `completed` with one real draft ("New
+  sustainable packaging options now available for small retailers…").
+- **(b) Zero tones is refused, and the refusal is unusable.** Org **955**
+  (`qa+1787915648395onbb@alphapromena.com`): voice + source + topic, and
+  `GET .../brand/tones` `total: 0` — which independently re-confirms
+  open-item 26 (the API seeds nothing). The same body with `tones: []` came
+  back **400 `bad_request` in 804 ms**, request
+  **`ae30783f-f28d-4d5a-9ac6-88c92da1a2a9`**: _"The generation service
+  rejected the request — check the body against the capability's schema"_ —
+  no `details`, nothing a user could act on. **That is the message the gate
+  exists to make sure nobody ever sees.**
+- **The ruling.** The HARD gate is the four brand entities and nothing else.
+  The country and the posting rhythm appear in the checklist, marked as what
+  they buy — holidays, and scheduled posting — and never as blockers.
+  `src/data/readiness.test.ts` fails if anyone promotes them without new
+  evidence.
+- **Cost: under one cent.** The wallet read `5000/0/5000` before and after;
+  usage for the day totals `$0.00476` across guardrail units, input and
+  output tokens. Two orgs, each auto-funded 5000 cents by the platform.
+- Instead of: reasoning from `api.md`. State.md trap 13 is exactly this —
+  "api.md is not the wire", and `slot` is the field that taught it.
+
+### 2026-08-28 — D-ONB-A: signup stays minimal, and verifying lands the user IN THE APP
+
+- Why: Hasan's product ruling via the founder (2026-08-27), superseding prior
+  product law. A five-step wizard between "I verified my email" and "I can see
+  the product" is a toll gate on a person who has already paid twice. Signup
+  already collects the minimum (name, work email, password, org name, terms);
+  after verifying, the next thing on screen is the dashboard.
+- What follows structurally: the org has to be created at verification, since
+  that is the first moment there is a session to create it with and the last
+  moment before the product needs one. It is created from the org name typed
+  at signup, idempotently — the E2E-0820 F12 law, that a lost response must
+  never mint a second workspace, survives the rewrite intact.
+- Instead of: bypassing the wizard behind a flag (a screen nobody reaches is a
+  screen nobody maintains, and it would still have owned the schedule), or
+  moving setup into a modal on first load (the same interruption, wearing a
+  different frame).
+
+### 2026-08-28 — D-ONB-B: no seeded tones, ever — a fresh live org starts empty
+
+- Why: Hasan's ruling. The five presets were never product truth on the wire:
+  the API has no seeding (open-item 26, re-measured again in the Phase-0 probe
+  — a fresh org reads `tones total: 0`), so `finishOnboarding` planted them
+  client-side. Every new workspace therefore claimed five voices its owner had
+  never chosen, and the tone picker opened on somebody else's idea of how the
+  brand sounds.
+- What changed: the seeding step is gone from the org-creation path. What the
+  wizard collected is resolved against the tones the org REALLY has, so a
+  dangling static id is dropped rather than written into a schedule. The
+  `tones` variant of `FinishStepFailure` went with it — it could no longer
+  occur, and an unreachable failure mode is dead code that reads as coverage.
+- **This is a SEEDING change, not a deletion feature.** No new delete
+  mechanics, rules or UX were built around tones; existing tone management is
+  byte-identical. I3 gained one honest empty state — "No tones yet", naming
+  the consequence — and stopped rendering a "Presets — always available, in
+  every workspace" heading over an empty grid.
+- The DEMO world is untouched, per the order: `PRESET_TONES` still composes
+  the `visitor`, `fresh` and `active` datasets, `entities/tones.ts` is
+  unchanged, and `settings-system.test.ts`'s preset test — which is about the
+  demo reducer — was left exactly as it was.
+- Instead of: keeping the seeding until the backend ships its own (that is
+  open-item 26, and it would have kept shipping the same untruth in the
+  meantime), or seeding one tone instead of five (a tone the user did not
+  write is the thing being removed, and one is not less of one).
+
+### 2026-08-28 — D-ONB-C: the wizard is DELETED, and N3 becomes the workspace-creation retry
+
+- Why: D-ONB-A leaves the wizard with nothing to collect that does not already
+  have a durable home — brand voice, tones and sources in Settings, the country
+  on I1, the posting rhythm on C1. A screen kept "just in case" would be a
+  second, unmaintained editor for five things the product already edits.
+- What went: `src/features/onboarding/*` — the screen, the wizard shell, the
+  finish report and its test. `/onboarding` stays reachable as a REDIRECT into
+  the app, because N3, the dashboard banner, Today's empty state and an unknown
+  number of bookmarks pointed at it, and a saved link should land in the product
+  rather than on a 404.
+- **The model lost a journey it no longer has.** `org.onboarding {completed,
+  resumeStep}` became `org.exists`: one honest fact, set by the adapter from
+  org membership — which is all `completed` was ever inferred from — and read
+  by the three route guards. The three `onboarding/*` reducer actions collapsed
+  into `workspace/created`; `org/update` already did everything `saveBrand` did.
+- **`finishOnboarding` became `createWorkspace`:** the org and nothing else.
+  The tone, schedule and country pushes died. Pushing four things from one
+  screen is exactly what left org 619 half-built while reporting success
+  (E2E-0820 F12); each of the three now has a screen that owns it.
+- **The wizard's private schedule client died with it, which closes open-item
+  27a** — the two literals that both built the eight-field schedule body are
+  one again, because only `saveSchedule` is left. The fields the wizard shared
+  with C1 moved to `features/calendar/schedule-fields.tsx`, beside their one
+  remaining owner. **The Calendar editor is now the ONLY schedule surface.**
+- **N3 is reframed, not retired.** It used to say "you stopped at step 3 of 5".
+  It now handles the one narrow state that can still arrive: a verified account
+  whose workspace was never created — a failed create, a tab closed mid-flight,
+  or an account from before this change that never finished the old wizard.
+  With a recoverable name it is one button; without one it asks for that ONE
+  field, because an org cannot be created without a name and inventing a
+  company's name would be worse than asking. **A single recovery input is not a
+  wizard**, and `createWorkspace` is idempotent so pressing again repairs.
+- **The accept-invite path is untouched** — it joins an existing org and never
+  creates one.
+- Instead of: keeping the wizard for the org-creation step alone (a five-step
+  shell around one field), or auto-generating an org name (a workspace called
+  "My Workspace" is a thing the user has to fix later, at a worse moment).
+
+### 2026-08-28 — D-ONB-D (**PENDING** — built, awaiting the Hasan sync): the brand-readiness gate
+
+Recorded as PENDING per ORDER ONB-0827: the ruling behind it is Hasan's, but
+the shape below is this cycle's reading of it and has not been confirmed.
+
+- Why: with the wizard gone there is no longer a moment that guarantees setup
+  happened, so the guarantee has to live where the data does. Hasan's ruling is
+  that NOTHING generates — posts or any Studio media job — until brand setup is
+  complete.
+- **One selector, in the data layer.** `src/data/readiness.ts` derives every
+  item from provider hooks and hands back `{known, canGenerate, items,
+  missing}`. Every gate reads it; no screen decides for itself what ready
+  means. `deriveReadiness` is the pure half, so the ruling is assertable as a
+  function rather than only through a rendered screen.
+- **What blocks is the Phase-0 ruling above,** not a preference.
+- **Trap 20 is why `known` exists.** In live mode the world is the seeded demo
+  until `live/orgSynced` lands, so reading readiness in that window would
+  report a workspace ready on Atlas Roasters' tones. Unknown is neither ready
+  nor blocked: the surfaces render loading. **Trap 19:** nothing is stored, so
+  nothing can go stale — the answer is derived on the render that reads it.
+- **Enforced at every generation entry:** the `/generate` route (the checklist
+  state, not a dead form), the Studio composer, D4's media dialog, and Today's
+  affordances, which say "Finish setup to generate" BEFORE they are pressed.
+  D4's gate sits INSIDE the dialog on purpose: the media entry point itself is
+  rendered from `canTransition` and may never be hidden or disabled by anything
+  else (the W3 structural law), so the button still opens — onto the checklist.
+- **Tone preview is deliberately NOT gated**, and `verify:w06` asserts that it
+  stays that way: previewing is part of CREATING the first tone, so gating it
+  would lock the user out of the very item the gate is asking for.
+- **The gate is UX, not security.** The server keeps the last word: a refusal
+  that slips through is surfaced with its request id, which is what makes the
+  Phase-0 400 — a message with no `details` — reportable at all.
+- **One deviation from the order, flagged rather than buried.** The order said
+  static mode reports ready. It derives honestly instead. No demo DATA changed,
+  but the `fresh` world is genuinely half set up (no voice rules, no sources,
+  no topics), so it renders the checklist — which is what makes the gate
+  exercisable from `/dev/datasets` and gives the blocked states real axe
+  coverage. Hardcoding static to ready would have made the whole feature
+  untestable outside a paid live run, against the same order's "axe on the
+  checklist and blocked states".
+- Instead of: a per-screen check in each entry point (five screens, five
+  chances to disagree with the checklist the user was just shown), or blocking
+  at the API seam (the seam cannot render an explanation, and a silent refusal
+  is the thing being fixed).

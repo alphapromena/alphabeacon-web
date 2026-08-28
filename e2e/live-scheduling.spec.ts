@@ -147,7 +147,12 @@ test('C1 creates the schedule on first save, then PATCHes it — and it survives
 
   // SECOND save: a schedule exists now, so this is the PATCH path, with the
   // toneIds replace-semantics this file was written to prove.
-  await page.getByRole('button', { name: 'One fewer post per day' }).click()
+  //
+  // INCREASE, not decrease. The wizard used to create the schedule with a
+  // cadence already above the floor; C1 creates it from the BLANK graft, which
+  // starts at one post a day — so "One fewer" is correctly disabled and
+  // clicking it waits forever. The control that moves is the other one.
+  await page.getByRole('button', { name: 'One more post per day' }).click()
   await expect(page.getByText('You have unsaved changes.')).toBeVisible()
   await page.getByRole('button', { name: 'Save changes' }).click()
   await expect(page.getByText('You have unsaved changes.')).toHaveCount(0, { timeout: SCREEN_SYNC })

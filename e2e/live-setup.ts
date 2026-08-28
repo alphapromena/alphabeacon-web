@@ -74,13 +74,55 @@ export async function openSettingsTab(page: Page, tab: string) {
  */
 export async function createFirstTone(
   page: Page,
-  tone: { name: string; description: string; doRule?: string },
+  tone: { name: string; description: string; doRule: string },
 ) {
   await openSettingsTab(page, 'Tones')
   await page.getByRole('link', { name: 'Create your first tone' }).click()
   await page.getByLabel('Tone name').fill(tone.name)
   await page.getByLabel('What this tone sounds like').fill(tone.description)
-  if (tone.doRule) await page.getByLabel('Do', { exact: true }).fill(tone.doRule)
+  // NOT optional: the editor refuses a tone with no do and no dont
+  // (`toneSchema`'s refine, MESSAGES.errors.toneRuleRequired). A helper that
+  // let a caller omit it would build an invalid tone and fail forty seconds
+  // later on a missing toast, which is how it first went wrong.
+  await page.getByLabel('Do', { exact: true }).fill(tone.doRule)
   await page.getByRole('button', { name: 'Create tone' }).click()
   await expect(page.getByText('Tone created')).toBeVisible({ timeout: SCREEN_SYNC })
+}
+
+/**
+ * The four brand entities, through the real screens — everything the readiness
+ * gate asks for (D-ONB-D), and nothing it does not.
+ *
+ * A tone alone stopped being enough the moment the gate landed: any spec that
+ * reaches a generation now needs a voice, a tone, a source and a topic first.
+ * The country and the posting rhythm are deliberately NOT here — the Phase-0
+ * probe proved a run does not need them (request
+ * `60c06fd5-acb7-4060-81d5-4a7b8113ebeb`), so a helper that set them would be
+ * quietly asserting a stricter gate than the product has.
+ */
+export async function completeBrandSetup(
+  page: Page,
+  brand: { toneName: string; toneDescription: string; doRule: string },
+) {
+  await openSettingsTab(page, 'Brand voice')
+  await page.getByRole('button', { name: 'Add do', exact: true }).click()
+  await page.locator('input[id^="voice-do"]').last().fill(brand.doRule)
+  await page.getByRole('button', { name: 'Save changes' }).click()
+  await expect(page.getByText('Brand voice saved')).toBeVisible({ timeout: SCREEN_SYNC })
+
+  await createFirstTone(page, {
+    name: brand.toneName,
+    description: brand.toneDescription,
+    doRule: brand.doRule,
+  })
+
+  await openSettingsTab(page, 'Sources & topics')
+  await page.getByLabel('Add a source').fill('perfectdailygrind.com/feed')
+  await page.getByRole('button', { name: 'Add source' }).click()
+  await expect(page.getByText('Source added')).toBeVisible({ timeout: SCREEN_SYNC })
+  await page.getByLabel('Add a topic').fill('single origin')
+  await page.keyboard.press('Enter')
+  await expect(page.getByText('single origin')).toBeVisible()
+  // The topic chip is optimistic; let its POST land before navigating away.
+  await page.waitForTimeout(2000)
 }

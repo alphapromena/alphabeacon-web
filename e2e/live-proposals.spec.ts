@@ -11,7 +11,7 @@
  */
 import type { Page } from '@playwright/test'
 import { expect, test } from './fixtures'
-import { createFirstTone, signUpAndEnter } from './live-setup'
+import { completeBrandSetup, signUpAndEnter } from './live-setup'
 
 const API_BASE = process.env.VITE_API_BASE_URL
 const RUN = Date.now()
@@ -41,11 +41,13 @@ test('a fresh owner + org, then one balanced run', async ({ page }) => {
     orgName: ORG_NAME,
   })
 
-  // Nothing is seeded any more (ORDER ONB-0827, D-ONB-B): the run below needs
-  // a tone, so the org writes its first one first.
-  await createFirstTone(page, {
-    name: 'Roastery floor',
-    description: 'Warm, specific, smells of coffee.',
+  // Nothing is seeded any more (D-ONB-B) and the readiness gate refuses a run
+  // until the four brand entities exist (D-ONB-D), so the org sets itself up
+  // before the run below can produce the proposals under test.
+  await completeBrandSetup(page, {
+    toneName: 'Roastery floor',
+    toneDescription: 'Warm, specific, smells of coffee.',
+    doRule: 'Name the roast date',
   })
 
   // One run — the drafts it produces become the proposals under test.

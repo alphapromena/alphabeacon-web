@@ -124,6 +124,8 @@ test('completing the four brand entities unlocks generation', async ({ page }) =
   await page.getByRole('link', { name: 'Create your first tone' }).click()
   await page.getByLabel('Tone name').fill(TONE_NAME)
   await page.getByLabel('What this tone sounds like').fill('Warm, specific, smells of coffee.')
+  // A tone needs at least one do or dont, or the editor refuses it.
+  await page.getByLabel('Do', { exact: true }).fill('Name the roast date')
   await page.getByRole('button', { name: 'Create tone' }).click()
   await expect(page.getByText('Tone created')).toBeVisible({ timeout: SCREEN_SYNC })
 

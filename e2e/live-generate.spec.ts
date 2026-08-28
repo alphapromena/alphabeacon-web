@@ -12,7 +12,8 @@
  */
 import type { Page } from '@playwright/test'
 import { expect, test } from './fixtures'
-import { createFirstTone, signUpAndEnter } from './live-setup'
+import { SCREEN_SYNC } from './live-clocks'
+import { completeBrandSetup, signUpAndEnter } from './live-setup'
 
 const API_BASE = process.env.VITE_API_BASE_URL
 const RUN = Date.now()
@@ -42,11 +43,12 @@ test('a fresh owner + org, made through the product', async ({ page }) => {
     orgName: ORG_NAME,
   })
 
-  // Nothing is seeded any more (ORDER ONB-0827, D-ONB-B): a run needs a tone,
-  // so the org writes its first one before there is anything to generate with.
-  await createFirstTone(page, {
-    name: 'Roastery floor',
-    description: 'Warm, specific, smells of coffee.',
+  // Nothing is seeded any more (D-ONB-B) and the readiness gate refuses a run
+  // until the four brand entities exist (D-ONB-D), so the org sets itself up
+  // the way a real one does before there is anything to generate with.
+  await completeBrandSetup(page, {
+    toneName: 'Roastery floor',
+    toneDescription: 'Warm, specific, smells of coffee.',
     doRule: 'Name the roast date',
   })
 })
@@ -88,7 +90,13 @@ test('one balanced run returns a draft with its tone and its rationale', async (
   // INT-12 renamed this section when the ledger replaced the localStorage
   // cache; this assertion kept the old name and had been failing on `main`
   // ever since, unnoticed because the live spec was not re-run (E2E-0820).
-  await expect(page.getByRole('heading', { name: 'Waiting for review' })).toBeVisible()
+  // A rung, taken on purpose (live-clocks.ts says a sixth file is a decision,
+  // not an import). This heading renders only after the PROPOSALS read that
+  // follows a reload resolves — a screen-sync's worth of work behind the
+  // suite's 5 s default. The assertion and the locator are byte-identical.
+  await expect(page.getByRole('heading', { name: 'Waiting for review' })).toBeVisible({
+    timeout: SCREEN_SYNC,
+  })
   await page.getByRole('button', { name: /run_/ }).first().click()
   await expect(page.getByRole('heading', { name: /^1 draft$/ })).toBeVisible({ timeout: 60_000 })
   await expect(page.getByRole('article').first()).toContainText('Why it wrote this:')

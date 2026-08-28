@@ -256,7 +256,21 @@ build, so they are worth asking as a batch.
     `400`. `embeddingModel` on `rag/collections` is documented optional but a
     body without it is a `400`. Both are now treated as required — please
     correct api.md (or the validation), so the next reader is not misled.
-26. **Server-side preset-tone seeding, now with rules** (extends item 8).
+26. **PENDING WITHDRAWAL (2026-08-28, ORDER ONB-0827) — do NOT send to Ward.**
+    Hasan ruled that a fresh live org must start with ZERO tones and its owner
+    must write the first one (decisions.md D-ONB-B). If that holds, this ask —
+    "please seed the five presets server-side" — asks the backend to build the
+    exact behaviour the product just removed, and the client-side seeding it
+    was written about no longer exists. **The founder is confirming with Hasan
+    before anything is withdrawn**, so the item is marked rather than deleted:
+    if the ruling is narrowed to the frontend only, the ask is still live for
+    non-frontend org paths.
+    Re-measured AGAIN on 2026-08-28 during the ONB-0827 Phase-0 probe and
+    unchanged: fresh org **955** reads `brand/tones` `total: 0`. So the fact
+    the item rests on is still true; what is in question is whether anyone
+    still wants it fixed.
+    **Nothing was sent to Ward from this cycle.**
+    _The original item, for the record:_
     **STILL OPEN — re-measured 2026-08-20 (E2E-0820 A1).** An org created by
     DIRECT API calls, with the wizard never involved (signup → verify →
     `POST /orgs`), comes back with **0 tones**, 0 voices and no schedule:
@@ -271,7 +285,18 @@ build, so they are worth asking as a batch.
     When Ward does ship server-side seeding, the wizard's seeding step becomes
     a no-op by construction: since 2026-08-20 it reads the org's existing tones
     first and creates only the presets missing by name.
-27a. **Two literals build the same schedule body** (accepted debt,
+27a. **CLOSED 2026-08-28 (ORDER ONB-0827, D-ONB-C).** There is only one
+    literal now. The wizard was deleted and `finishOnboarding` collapsed into
+    `createWorkspace`, which pushes the org and nothing else — so the schedule
+    body is built in exactly one place, `useSchedulingActions().saveSchedule`,
+    and the Calendar editor is the only schedule surface there is. It closed as
+    a side effect of the onboarding ruling rather than as its own piece of
+    work, which is the trade the item asked for ("unify both when something
+    next touches these files for its own reasons").
+    The FIVE verbatim copies of `failure()` under `src/data/` are unaffected
+    and still stand as the same class of accepted debt.
+    _The original item, for the record:_
+    **Two literals build the same schedule body** (accepted debt,
     2026-08-20). `useSchedulingActions().saveSchedule` and
     `finishOnboarding` each construct the eight-field schedule payload
     (`timezone`, `days`, `generateAt`, `postsPerDay`, `modelAlias`,
@@ -341,6 +366,53 @@ build, so they are worth asking as a batch.
     runIds, then re-query `?runId=` for authoritative state), so nothing is
     blocked — but any other consumer walking that list will silently lose
     rows, and the fix is a tie-break on `(createdAt, proposalId)`.
+
+### ONB-0827 — the onboarding ruling (2026-08-28)
+
+36. **PENDING WITHDRAWAL — item 7 of the 2026-08-27 Ward message.** Recorded
+    BY REFERENCE, because that message is not in this repo: nothing under
+    `.agent/` or `Docs/` carries it, so there is no in-place item to annotate
+    and inventing one would be worse than saying so. The founder holds the
+    message and is confirming the withdrawal with Hasan alongside item 26.
+    **Nothing was sent to Ward from this cycle.** Whoever reconciles the two
+    lists should paste that item in here so the next reader can see what was
+    withdrawn and why.
+
+37. **A schedule can be stranded by deleting the tone it points at**
+    (observation only, no build — 2026-08-28). Schedules store tone IDs, and
+    tone deletion is a hard delete: the API cascades (proved in
+    `live-brand.spec.ts` — deleting a tone empties `toneIds` on the schedules
+    that referenced it), so a schedule can end up ACTIVE with an empty tone
+    list and nothing on screen says the cadence just lost its voice.
+    **This is pre-existing and UNCHANGED by this cycle** — ONB-0827 touched
+    seeding, not deletion, and the order explicitly forbade building new delete
+    mechanics around tones. It is worth a future guard: either C1 warning when
+    a save would leave an active schedule with no tones, or the tone-delete
+    confirm naming the schedules it will empty. Recorded so the next person to
+    touch tone deletion does not discover it the expensive way.
+
+38. **Every signup now mints a workspace, including one that only wanted an
+    invite** (consequence of D-ONB-A, for the founder — 2026-08-28). Verifying
+    creates the org from the name typed at signup, so a person who signs up
+    normally and is LATER invited to a colleague's workspace ends up belonging
+    to two: their own, and the one they joined. The accept-invite deep link is
+    untouched and still creates nothing, so an invitee who arrives through the
+    email never gets a spare org — this only affects someone who signed up
+    first. It is visible in `live-team.spec.ts`, which now says so out loud.
+    Not obviously wrong (a user can always belong to many orgs, and the org
+    switcher exists), but it is a NEW shape and the founder should see it.
+
+39. **The readiness gate derives honestly in static mode, where the order said
+    "reports ready"** (deviation, flagged for the founder — 2026-08-28,
+    D-ONB-D). No demo DATA changed, but the `fresh` world is genuinely half set
+    up — no voice rules, no sources, no topics — so it renders the checklist
+    and the blocked generate state. That is what makes the gate exercisable
+    from `/dev/datasets` and gives its axe scans real coverage; hardcoding
+    static to ready would have made the whole feature untestable outside a paid
+    live run, against the same order's "axe on the checklist and blocked
+    states". The `active` world and the four derived from it are fully set up
+    and see no gate at all. **Reversible in one line** (`known: !live` →
+    `canGenerate: true` in static) if the founder wants the literal reading.
 
 ### M1 cinematic items — RETIRED by the rebrand (2026-08-08)
 
