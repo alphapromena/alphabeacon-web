@@ -220,8 +220,16 @@ invented or faked: where a spec promised something the wire cannot deliver, the
 honest subset ships and the deviation is logged. The backend questions live in
 open-items 1–13 and 21–27; W7 still waits on the two reopened manual gates.
 
-**Current totals on the ONB-0827 stack (`feat/onb-03-gate`, branch only):
-459 unit tests** (42 files), **static e2e 92 passed / 51 live-spec skips**,
+**Current totals on the ONB-0827-B tip (`feat/onb-04-invite-org`, pushed, not
+merged): 471 unit tests** (43 files), **static e2e 93 passed / 61 live-spec
+skips**, guard-static **322 files clean**, `verify:w00`–`w06` all PASS, and the
+FULL live suite — now **15 files**, `live-invite-org` added — under the
+two-round law. Round results are in the session entry; the standing shape is
+that a red which passes solo on the same tree is the API's latency, and a red
+that survives one is ours.
+
+Before that, on `feat/onb-03-gate`: **459 unit tests** (42 files), **static
+e2e 92 passed / 51 live-spec skips**,
 guard-static **320 files clean**, `verify:w00`–`w06` all PASS, and the FULL
 live suite — now **14 files**, `live-onboarding` added — under the two-round
 law: **round 1 14/14**, **round 2 13/14**. Round 2's single red was
@@ -479,6 +487,24 @@ These are learned the hard way; each cost a debugging cycle.
     still showing TIME_WAIT sockets from the previous run. Recorded because
     the failing assertion looked plausible (a font really can fail to load),
     and that is exactly when this trap is most expensive.
+
+    **A FOURTH sighting, and then the FIX (2026-08-28, ONB-0827-B).** The same
+    marketing FONT assertion failed a fourth time inside a sweep. Four
+    identical, sweep-only failures on branches that never touched marketing is
+    not weather, it is a bad test: `marketing.spec.ts` sampled `document.fonts`
+    ONCE, immediately, and font loading is asynchronous — a `@font-face` is
+    only fetched when something uses it. It awaits `document.fonts.ready` and
+    polls now, asserting exactly what it asserted before. `verify:w06` went
+    green immediately. **A check that keeps reporting the harness instead of
+    the branch has stopped working** — fix it rather than learning to read past
+    it.
+
+    **A SECOND SEAM, still open and worth knowing.** `verify:w00` failed on
+    four `entry-flow` tests that then passed 6/6 solo, while w01–w05 ran the
+    identical suite green in the same sweep. w00 is the one phase that runs
+    `pnpm build` immediately before `pnpm e2e`. So the port precondition below
+    is necessary but not sufficient: a heavy build right before a Playwright
+    run is its own kind of load.
 
     **AND A SHARPENING, same day, worth more than the sighting.** Later in the
     same cycle `verify:w06` failed twice in a row on TWO DIFFERENT tests — the

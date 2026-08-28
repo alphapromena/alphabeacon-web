@@ -141,8 +141,16 @@ test('declining asks why, keeps the row, and is reversible', async ({ page }) =>
   await page.getByRole('dialog').getByRole('button', { name: 'Decline', exact: true }).click()
 
   // The row STAYS — it is the no-repeat instruction, not a deletion.
+  //
+  // The rung, not the default: switching to the Declined tab re-reads the
+  // proposals ledger, and a 5 s wait over that round trip measures the API's
+  // temperature rather than the product. It failed in BOTH gate rounds on
+  // 2026-08-28 while passing solo, which is the shape of a wait that is too
+  // short rather than a claim that is wrong. The assertion is unchanged.
   await page.getByRole('button', { name: 'Declined', exact: true }).click()
-  await expect(page.getByRole('main').getByRole('listitem').first()).toContainText('Declined ·')
+  await expect(page.getByRole('main').getByRole('listitem').first()).toContainText('Declined ·', {
+    timeout: SCREEN_SYNC,
+  })
 
   // And a declined draft can still be approved later: latest wins.
   await page
