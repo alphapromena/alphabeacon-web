@@ -322,7 +322,9 @@ function focusRulesHold(): boolean {
   // A visually hidden file input may never hold a tab stop. Sliced rather than
   // regexed: a length-capped pattern breaks the moment someone adds a comment
   // inside the tag, and a check that fails for formatting reasons gets deleted.
-  const uploads = ['organization-screen', 'knowledge-screen'].every((name) => {
+  // HSN-04 moved the Knowledge input into the shared upload form; the law
+  // (a hidden file input never holds a tab stop) is checked where it lives.
+  const uploads = ['organization-screen', 'knowledge-upload-form'].every((name) => {
     const source = read('src', 'features', 'settings', `${name}.tsx`)
     const tags = source
       .split('<input')
