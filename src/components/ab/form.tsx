@@ -210,6 +210,54 @@ export function TextAreaField({
 }
 
 /**
+ * A closed set of options, as a NATIVE select (HSN-03). Native on purpose: it
+ * accepts an empty value for "not chosen yet" — a required choice with no
+ * default is a real state here — the keyboard behaviour is the platform's own,
+ * and it is what the product's other pickers already are.
+ */
+export function SelectField({
+  name,
+  label,
+  description,
+  placeholder,
+  options,
+}: {
+  name: string
+  label: string
+  description?: string
+  /** Shown while nothing is chosen; it cannot be re-chosen once a value is. */
+  placeholder?: string
+  options: { value: string; label: string }[]
+}) {
+  return (
+    <FormField name={name} label={label} description={description}>
+      {({ invalid, ...field }) => (
+        <select
+          {...field}
+          value={field.value ?? ''}
+          className={cn(
+            'h-9 w-full rounded-lg border border-input bg-background px-3 text-sm outline-none',
+            'focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50',
+            invalid && 'border-destructive ring-3 ring-destructive/20',
+          )}
+        >
+          {placeholder !== undefined && (
+            <option value="" disabled>
+              {placeholder}
+            </option>
+          )}
+          {options.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      )}
+    </FormField>
+  )
+}
+
+/**
  * A boolean setting. Horizontal by design: the words explain the switch, and a
  * switch with its label on the line above reads as a heading instead.
  */

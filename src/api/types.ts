@@ -198,6 +198,14 @@ export interface ApiTone extends BrandRow {
    * the whole list (`[]` clears it); omitting it leaves them untouched.
    */
   rules: ApiRule[]
+  /**
+   * NOT persisted upstream as of 2026-08-30 (HSN-03): the tones API stores
+   * only `{name, description, preset, rules}`, and Hasan adds these later.
+   * Typed optional so the day the server echoes them the adapter reads them —
+   * server value wins, and the client sidecar entry retires.
+   */
+  language?: string
+  length?: string
 }
 
 export interface ApiVoice extends BrandRow {
@@ -441,6 +449,12 @@ export interface ApiRunTone {
   rules?: ApiRuleInput[]
   example?: string
   language?: string
+  /**
+   * `short` | `medium` | `long` — per Hasan's 2026-08-28 reference envelope
+   * (HSN-03). Sourced from the tone model and OMITTED when the tone has none;
+   * never invented.
+   */
+  length?: string
 }
 
 /** `POST .../posts/tones-preview` — sync; the finished run comes back inline. */

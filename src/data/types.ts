@@ -140,6 +140,17 @@ export interface Connection {
 // Tones & generation models (Areas I3/I4, C1)
 // ---------------------------------------------------------------------------
 
+/**
+ * The two fields every tone gains in HSN-03 (2026-08-30). The VALUES are wire
+ * vocabulary: `ar`/`en` is exactly what the generate body already sent per
+ * tone, and `short`/`long` are Hasan's 2026-08-28 reference with `medium`
+ * added by the founder. Both are OPTIONAL on the model because tones created
+ * before this order have neither, and an absent value is shown as "not set"
+ * rather than defaulted (decisions.md HSN-03).
+ */
+export type ToneLanguage = 'ar' | 'en'
+export type ToneLength = 'short' | 'medium' | 'long'
+
 export interface Tone {
   id: string
   name: string
@@ -149,6 +160,10 @@ export interface Tone {
   rules: { do: string[]; dont: string[] }
   /** Optional sample sentence used to steer generation. */
   example?: string
+  /** Drives the generation language upstream. Required in the editor, absent on old tones. */
+  language?: ToneLanguage
+  /** Drives generated post length upstream. Defaults to `medium` in the editor only. */
+  length?: ToneLength
 }
 
 // ---------------------------------------------------------------------------

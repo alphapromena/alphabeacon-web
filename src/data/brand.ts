@@ -30,6 +30,7 @@ import type {
   TonesPreviewRequest,
 } from '@/api/types'
 import { CANONICAL_VOICE_NAME, joinRules } from '@/data/adapters/brand-adapter'
+import { retireToneFields, writeToneFields } from '@/data/adapters/tone-fields'
 import type { AuthActionResult } from '@/data/auth'
 import {
   useDataDispatch,
@@ -44,6 +45,27 @@ import { composeTonePreview, type TonePreview } from '@/lib/tone-preview'
 
 const SECURE_SCHEME = ['ht', 'tps://'].join('')
 
+/**
+ * THE ONE SWITCH (ORDER HSN-03, decisions.md 2026-08-30). A tone's `language`
+ * and `length` are sent on the tones wire body ONLY when this is true. It is
+ * false because the tones API persists `{name, description, preset, rules}`
+ * and nothing else today — Hasan adds the two fields later. Flip condition:
+ * Hasan confirms persistence → set this to `true` → optionally re-save
+ * existing tones to backfill. Until then the fields live in the client
+ * sidecar (`adapters/tone-fields.ts`), which retires itself once the server
+ * echoes them. Nothing else changes when this flips.
+ */
+const TONE_FIELDS_ON_WIRE: boolean = false
+
+/** The two fields for a wire body — only when the switch is on, only when set. */
+function toneFieldsForWire(tone: Tone): { language?: string; length?: string } {
+  if (!TONE_FIELDS_ON_WIRE) return {}
+  return {
+    ...(tone.language ? { language: tone.language } : {}),
+    ...(tone.length ? { length: tone.length } : {}),
+  }
+}
+
 const ok: AuthActionResult = { ok: true }
 
 /**
@@ -51,8 +73,7 @@ const ok: AuthActionResult = { ok: true }
  * fails, so callers can branch on `ok` exactly as they already do elsewhere.
  */
 export type TonePreviewResult =
-  | { ok: true; preview: TonePreview }
-  | Extract<AuthActionResult, { ok: false }>
+  { ok: true; preview: TonePreview } | Extract<AuthActionResult, { ok: false }>
 
 function failure(error: unknown): AuthActionResult {
   if (isApiError(error)) {
@@ -88,14 +109,17 @@ export function useBrandActions() {
         return ok
       }
       try {
-        await api<ApiTone>('POST', path('tones'), {
+        const created = await api<ApiTone>('POST', path('tones'), {
           body: {
             name: tone.name,
             description: tone.description,
             preset: false,
             rules: joinRules(tone.rules),
+            ...toneFieldsForWire(tone),
           },
         })
+        // The sidecar is keyed by the SERVER's id, which only exists now.
+        writeToneFields(orgId, created.id, { language: tone.language, length: tone.length })
         resync()
         return ok
       } catch (error) {
@@ -116,8 +140,10 @@ export function useBrandActions() {
             name: tone.name,
             description: tone.description,
             rules: joinRules(tone.rules),
+            ...toneFieldsForWire(tone),
           },
         })
+        writeToneFields(orgId, tone.id, { language: tone.language, length: tone.length })
         resync()
         return ok
       } catch (error) {
@@ -133,6 +159,7 @@ export function useBrandActions() {
       }
       try {
         await api<void>('DELETE', path('tones', toneId))
+        retireToneFields(orgId, toneId)
         // Mirror the cascade locally so the schedule never shows a ghost id
         // even before the resync lands.
         dispatch({ type: 'tones/delete', toneId })

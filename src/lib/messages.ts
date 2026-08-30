@@ -69,6 +69,8 @@ export const MESSAGES = {
     modelRequired: 'Pick which model drafts your copy.',
     toneNameRequired: 'Name this tone so you can pick it later.',
     toneRuleRequired: 'Add at least one do or one dont so the tone means something.',
+    /** HSN-03: required with no default — the language is the user's explicit choice. */
+    toneLanguageRequired: 'Pick the language this tone writes in — Arabic or English.',
 
     // On-demand generate (F1)
     promptRequired: 'Tell us what to write about.',
@@ -137,7 +139,7 @@ export const MESSAGES = {
       "This draft's tone is no longer in your workspace, so a visual can't be requested for it.",
     /** 502, or a 2xx with no job to follow: accepted, maybe billed, unconfirmed. */
     visualUnconfirmed:
-      'The platform did not confirm this visual. It may still have been created and charged — check your Studio renders before trying again, because a retry can bill again.',
+      'The platform did not confirm this visual. The job may already exist and may already have billed — check your Studio renders before trying again, because a retry can bill again.',
     /** Any other refusal. */
     visualFailed:
       'That visual did not go through. Check your Studio renders before trying again — a retry can bill again.',
@@ -225,6 +227,14 @@ export const MESSAGES = {
      */
     brandExamplesPending:
       'Example lines arrive with a later backend phase — everything else on this screen is saved exactly as you write it.',
+    /**
+     * HSN-03 — the interim, said out loud. The tones API does not store
+     * language and length yet, so they are kept in this browser until it
+     * does; a second device shows them as not set, and that is the truth
+     * rather than a bug to paper over.
+     */
+    toneFieldsLocal:
+      'Language and length are kept in this browser for now — the backend stores them in a later phase, so another device will show them as not set until then.',
     /** I2/I5 — why a save here matters, said where the saving happens. */
     reachesNextGeneration: 'Saved changes reach the next generation automatically.',
     // Org country (INT-8) — the single holiday control in live mode.

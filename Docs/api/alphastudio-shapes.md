@@ -4262,6 +4262,20 @@ removing `options.perTone` (the emptied `options` wrapper with it); later HSN
 orders converge the rest of the body on this envelope step by step — do not
 rewrite the sections above to match it.
 
+> **Tones — `language` + `length` (2026-08-30, ORDER HSN-03).** App-side
+> AHEAD of the backend as of this order: `POST`/`PATCH /orgs/:id/brand/tones`
+> still persist only `{name, description, preset, rules}` (api.md §Brand), so
+> the two fields live in a client sidecar (`ab-tone-fields:<orgId>` →
+> `{ [toneId]: { language, length } }`, `src/data/adapters/tone-fields.ts`)
+> and the wire send is implemented but DISABLED behind `TONE_FIELDS_ON_WIRE`
+> in `src/data/brand.ts` — one line to flip when Hasan confirms persistence;
+> a server-echoed value then wins and the sidecar entry retires. The generate
+> body below carries `length` (`short` | `medium` | `long` — `medium` is
+> founder-stated) per this reference, OMITTED for a tone that has none, and
+> keeps sending per-tone `language` (`"ar"` | `"en"`, the vocabulary it
+> always sent) which the reference does not show. The `social-posts.media`
+> tone object is untouched — no `length`, no `language` there.
+
 ```json
 {
   "slot": {

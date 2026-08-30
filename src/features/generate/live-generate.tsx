@@ -293,6 +293,11 @@ export function LiveGenerate() {
                 <option value="en">English</option>
                 <option value="ar">العربية</option>
               </select>
+              {/* HSN-03: a tone's own language (Settings) drives its draft; this
+                  picker only covers a tone that has none set yet. */}
+              <p className="text-xs text-muted-foreground">
+                For tones with no language of their own — a tone&apos;s own setting wins.
+              </p>
             </div>
 
             {occasions.length > 0 && (

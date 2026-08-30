@@ -14,7 +14,7 @@ import { Eye, X } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { Form, FormActions, TextAreaField, TextField } from '@/components/ab/form'
+import { Form, FormActions, SelectField, TextAreaField, TextField } from '@/components/ab/form'
 import { Button } from '@/components/ui/button'
 import {
   Sheet,
@@ -23,17 +23,30 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet'
-import type { Tone } from '@/data/types'
+import type { Tone, ToneLanguage } from '@/data/types'
 import { MESSAGES } from '@/lib/messages'
 import { useBrandActions } from '@/data/brand'
 import { useLiveMode } from '@/data/provider'
 import { errorReference } from '@/lib/error-reference'
 import type { TonePreview } from '@/lib/tone-preview'
+import { TONE_LANGUAGE_OPTIONS, TONE_LENGTH_OPTIONS } from './tone-fields'
 
 const toneSchema = z
   .object({
     name: z.string().min(1, MESSAGES.errors.toneNameRequired),
     description: z.string().min(1, MESSAGES.errors.toneRuleRequired),
+    // HSN-03: REQUIRED with NO default. An old tone opens with nothing chosen
+    // and cannot be saved until its owner says which language it writes in.
+    // A boolean predicate, NOT a type guard (TS 5.5 infers one from a bare
+    // `===` comparison): the form's value type must stay `string` so `''` is
+    // a legal starting value, and the save narrows it after the check.
+    language: z
+      .string()
+      .refine((value) => TONE_LANGUAGE_OPTIONS.some((option) => option.value === value), {
+        message: MESSAGES.errors.toneLanguageRequired,
+      }),
+    // HSN-03: `medium` is a FORM default only — the model never assumes it.
+    length: z.enum(['short', 'medium', 'long']),
     dos: z.string(),
     donts: z.string(),
     example: z.string(),
@@ -90,6 +103,8 @@ export function ToneEditorForm({
     defaultValues: {
       name: initial?.name ?? '',
       description: initial?.description ?? '',
+      language: initial?.language ?? '',
+      length: initial?.length ?? 'medium',
       dos: toText(initial?.rules.do ?? []),
       donts: toText(initial?.rules.dont ?? []),
       example: initial?.example ?? '',
@@ -107,6 +122,10 @@ export function ToneEditorForm({
           description: values.description,
           rules: { do: toLines(values.dos), dont: toLines(values.donts) },
           example: values.example.trim() || undefined,
+          // The schema proved `language` is one of the two; the cast only
+          // narrows the string the resolver already checked.
+          language: values.language as ToneLanguage,
+          length: values.length,
         })
       }
     >
@@ -122,6 +141,23 @@ export function ToneEditorForm({
         placeholder="First-person, workshop-floor honesty from the founder."
         rows={2}
       />
+      <div className="grid gap-6 sm:grid-cols-2">
+        <SelectField
+          name="language"
+          label="Language"
+          description="What this tone writes in. Drafts in this tone are generated in it."
+          placeholder="Choose a language"
+          options={TONE_LANGUAGE_OPTIONS}
+        />
+        <SelectField
+          name="length"
+          label="Length"
+          description="How long a post in this tone runs."
+          options={TONE_LENGTH_OPTIONS}
+        />
+      </div>
+      {/* HSN-03: the interim, stated where the fields are (decisions.md). */}
+      {live && <p className="text-sm text-muted-foreground">{MESSAGES.notices.toneFieldsLocal}</p>}
       <TextAreaField
         name="dos"
         label="Do"

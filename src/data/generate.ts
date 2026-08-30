@@ -77,7 +77,13 @@ export function isRunTerminal(run: ApiRun | null): boolean {
   return run?.status === 'completed' || run?.status === 'failed'
 }
 
-/** Our tone to the inline object a run carries (used, never stored upstream). */
+/**
+ * Our tone to the inline object a run carries (used, never stored upstream).
+ *
+ * HSN-03: `length` travels per Hasan's 2026-08-28 reference envelope, sourced
+ * from the tone and OMITTED when the tone has none — a pre-HSN-03 tone never
+ * gets a value invented for it. (That closes HSN-01's divergence #1.)
+ */
 export function toRunTone(tone: Tone): ApiRunTone {
   return {
     id: tone.id,
@@ -85,6 +91,7 @@ export function toRunTone(tone: Tone): ApiRunTone {
     description: tone.description,
     rules: joinRules(tone.rules),
     ...(tone.example ? { example: tone.example } : {}),
+    ...(tone.length ? { length: tone.length } : {}),
   }
 }
 
@@ -119,7 +126,11 @@ export function useGenerateActions() {
       const body: PostsGenerateRequest = {
         tones: input.tones.map((tone) => ({
           ...toRunTone(tone),
-          language: input.language,
+          // HSN-03: the tone's own language (set in Settings) is what drives
+          // generation; the page's picker only covers a tone that has none yet.
+          // The reference envelope shows no `language` — HSN-01 divergence #2
+          // stays recorded, and Hasan consumes the field later.
+          language: tone.language ?? input.language,
         })),
         plan: input.plan,
         slot: {

@@ -27,6 +27,7 @@ import { useBrandActions } from '@/data/brand'
 import type { Tone } from '@/data/types'
 import { MESSAGES } from '@/lib/messages'
 import { ToneEditorForm } from './tone-editor'
+import { toneLanguageLabel, toneLengthLabel } from './tone-fields'
 
 export function TonesScreen() {
   const tones = useTones()
@@ -142,6 +143,19 @@ function ToneCard({ tone, onDelete }: { tone: Tone; onDelete?: () => void }) {
           </Badge>
         </div>
         <p className="text-sm text-muted-foreground">{tone.description}</p>
+
+        {/* HSN-03: an absent value reads "Not set" — a tone created before the
+            fields existed is never shown with a default it was not given. */}
+        <dl className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground">
+          <div className="flex gap-1">
+            <dt className="font-medium text-foreground">Language</dt>
+            <dd>{toneLanguageLabel(tone.language) ?? 'Not set'}</dd>
+          </div>
+          <div className="flex gap-1">
+            <dt className="font-medium text-foreground">Length</dt>
+            <dd>{toneLengthLabel(tone.length) ?? 'Not set'}</dd>
+          </div>
+        </dl>
 
         <dl className="flex flex-col gap-1 text-xs text-muted-foreground">
           {tone.rules.do.length > 0 && (

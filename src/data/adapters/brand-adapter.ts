@@ -27,8 +27,13 @@
  * (open-items 12) from the voice surface entirely.
  */
 import type { ApiRule, ApiSource, ApiTone, ApiTopic, ApiVoice } from '@/api/types'
-import type { BrandVoice, FollowedSource, Tone } from '@/data/types'
+import type { BrandVoice, FollowedSource, Tone, ToneLanguage, ToneLength } from '@/data/types'
 import { normalizeSourceUrl } from '@/lib/source-url'
+
+/** The wire may one day echo these; only the app's own vocabulary is read. */
+const isToneLanguage = (value: unknown): value is ToneLanguage => value === 'ar' || value === 'en'
+const isToneLength = (value: unknown): value is ToneLength =>
+  value === 'short' || value === 'medium' || value === 'long'
 
 /** The one voice row the app writes to (D-INT-B). Matched case-insensitively
  *  so a row typed by hand in another client still resolves. */
@@ -92,6 +97,11 @@ export function adaptBrand(
       kind: tone.preset ? 'preset' : 'custom',
       description: tone.description,
       rules: splitRules(tone.rules),
+      // HSN-03: read ONLY when the server echoes them — it does not yet. The
+      // interim client sidecar fills the gap one layer up (`tone-fields.ts`),
+      // and a server value always wins over it.
+      ...(isToneLanguage(tone.language) ? { language: tone.language } : {}),
+      ...(isToneLength(tone.length) ? { length: tone.length } : {}),
     })),
     brandVoice: {
       ...flattened,

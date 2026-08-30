@@ -33,6 +33,7 @@ import type {
   Paginated,
 } from '@/api/types'
 import { adaptBrand, type BrandGraft } from '@/data/adapters/brand-adapter'
+import { hydrateToneFields } from '@/data/adapters/tone-fields'
 import { adaptTeam, type TeamGraft } from '@/data/adapters/org-adapter'
 import { adaptNotifications } from '@/data/adapters/notification-adapter'
 import {
@@ -165,7 +166,11 @@ export async function fetchBrand(orgId: string): Promise<BrandGraft> {
     api<Paginated<ApiSource>>('GET', `/orgs/${orgId}/brand/sources`, list),
     api<Paginated<ApiTopic>>('GET', `/orgs/${orgId}/brand/topics`, list),
   ])
-  return adaptBrand(tones.items, voices.items, sources.items, topics.items)
+  const graft = adaptBrand(tones.items, voices.items, sources.items, topics.items)
+  // HSN-03: `language`/`length` are not persisted upstream yet, so the read
+  // is completed from the interim client sidecar here — the one seam that
+  // knows the org — with a server value winning wherever one arrives.
+  return { ...graft, tones: hydrateToneFields(orgId, graft.tones) }
 }
 
 /**
