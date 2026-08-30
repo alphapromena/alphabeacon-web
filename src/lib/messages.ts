@@ -93,6 +93,19 @@ export const MESSAGES = {
     lastOwner: 'You are the only owner. Make someone else an owner first.',
     teamActionFailed: 'That team change did not go through. Try again in a moment.',
     knowledgeUnreadable: 'We could not read that file. Try a text-based PDF, DOCX, TXT, or CSV.',
+    // Knowledge upload (HSN-04): the type is chosen and the file is checked
+    // against it before anything leaves the browser; the description is
+    // required because it travels with the file.
+    knowledgeKindRequired: 'Choose what you are uploading first — an image, a video or a document.',
+    knowledgeDescriptionRequired: 'Describe what this is so drafts know when to use it.',
+    knowledgeTypeMismatch:
+      'That file is not the type you chose. Pick the matching type, or a different file.',
+    knowledgeTypeUnknown:
+      'We could not tell what type that file is. Give it a standard extension and try again.',
+    // The brand-kit caps (HSN-04): ceilings the screens enforce, never a
+    // silent trim. Existing entries above a cap stay listed.
+    sourcesCapReached: 'You can follow at most 10 sources. Remove one to add another.',
+    topicsCapReached: 'You can keep at most 30 topics. Remove one to add another.',
 
     // I4's live preview (INT-7). Three outcomes worth telling apart: the org
     // has nothing to ground on yet, the platform is busy, and everything else.
@@ -321,7 +334,8 @@ export const MESSAGES = {
     capabilityComingSoon: 'Available to your workspace — the form for it arrives in a later phase.',
     knowledgeUploadBlocked:
       'Uploading a file from the browser is not available yet. Paste the text or add a link instead.',
-    knowledgeAccepts: 'PDF, Word, plain text or Markdown.',
+    /** Static mode: the Knowledge upload simulation, named as such (HSN-04). */
+    knowledgeSimulated: 'Simulated in the demo — nothing leaves the browser.',
     /** C4 — what the day's rules actually are. */
     holidayGuidance: 'How Malaky will treat this day',
     holidayGenericRule: 'General guidance for this day.',

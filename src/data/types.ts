@@ -182,11 +182,17 @@ export interface FollowedSource {
 /** Uploading → Processing → Ready | Failed. Per file, mixed within one batch. */
 export type KnowledgeStatus = 'uploading' | 'processing' | 'ready' | 'failed'
 
+/** What the user said the upload IS, before it left the browser (HSN-04). */
+export type KnowledgeUploadKind = 'image' | 'video' | 'document'
+
 export interface KnowledgeDoc {
   id: string
   filename: string
   sizeBytes: number
   status: KnowledgeStatus
+  /** HSN-04: the type chosen and the description given at upload. */
+  kind?: KnowledgeUploadKind
+  description?: string
   /** 0–100 while uploading; absent once the upload finishes. */
   progress?: number
   /** failed only: what went wrong, shown next to Retry. */
@@ -484,6 +490,17 @@ export interface Dataset {
 // ---------------------------------------------------------------------------
 
 export const MAX_POSTS_PER_DAY = 3
+
+/**
+ * Client-side PRODUCT caps on the brand kit (ORDER HSN-04, 2026-08-30 — the
+ * founder's word, matching the 2026-08-28 meeting record "max sources =
+ * ten"). The same precedent as `MAX_POSTS_PER_DAY`: Ward's API is not
+ * changing, so these are ceilings the screens enforce at every add path.
+ * Data already above a cap is rendered, never trimmed; only adding stops.
+ * The generation gate's floor (at least one of each) is a different rule.
+ */
+export const MAX_FOLLOWED_SOURCES = 10
+export const MAX_TOPICS = 30
 
 /** A2 locks out after this many consecutive failures (screens4.md A2). */
 export const MAX_SIGN_IN_ATTEMPTS = 3

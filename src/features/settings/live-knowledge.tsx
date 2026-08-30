@@ -16,7 +16,7 @@
  * All three answer 202 and settle through Uploading, Processing, then Ready or
  * Failed - which is why the list polls rather than claiming success on submit.
  */
-import { FileText, Link2, Trash2, Upload } from 'lucide-react'
+import { FileText, Link2, Trash2 } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { ConfirmDialog } from '@/components/ab/confirm-dialog'
 import { StatusBadge } from '@/components/ab/status-badge'
@@ -25,9 +25,10 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { EXTRACTABLE_MEDIA_TYPES, useKnowledgeActions, type KnowledgeSource } from '@/data/studio'
+import { useKnowledgeActions, type KnowledgeSource } from '@/data/studio'
 import { pluralize } from '@/lib/format'
 import { MESSAGES } from '@/lib/messages'
+import { KnowledgeUploadForm } from './knowledge-upload-form'
 
 const SETTLING = /^(uploading|processing)$/i
 
@@ -46,7 +47,6 @@ export function LiveKnowledge() {
   const [text, setText] = useState('')
   const [title, setTitle] = useState('')
   const [error, setError] = useState<string | null>(null)
-  const fileInput = useRef<HTMLInputElement | null>(null)
   const cancelled = useRef(false)
 
   // Its own dependency-free effect, per INT-10's latched-guard lesson.
@@ -95,40 +95,29 @@ export function LiveKnowledge() {
 
   return (
     <div className="flex flex-col gap-5">
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="kn-file">Upload a document</Label>
-          <input
-            ref={fileInput}
-            id="kn-file"
-            type="file"
-            tabIndex={-1}
-            className="sr-only"
-            accept={EXTRACTABLE_MEDIA_TYPES.join(',')}
-            onChange={async (event) => {
-              const file = event.target.files?.[0]
-              if (!file || !collectionId) return
-              setError(null)
-              setBusy(true)
-              const mediaType = (EXTRACTABLE_MEDIA_TYPES as readonly string[]).includes(file.type)
-                ? file.type
-                : 'text/plain'
-              report(await knowledge.uploadFile(collectionId, file, mediaType))
-              event.target.value = ''
-            }}
-          />
-          <Button
-            type="button"
-            variant="outline"
-            disabled={busy || !collectionId}
-            onClick={() => fileInput.current?.click()}
-          >
-            <Upload aria-hidden />
-            Choose a file
-          </Button>
-          <p className="text-xs text-muted-foreground">{MESSAGES.notices.knowledgeAccepts}</p>
-        </div>
+      {/* HSN-04: type + description before the file leaves the browser. The
+          file's real MIME is what goes on the presign, checked against the
+          chosen type — the old `text/plain` fallback for anything unknown is
+          gone, because a relabelled file is a lie the extractor pays for. */}
+      <KnowledgeUploadForm
+        disabled={busy || !collectionId}
+        onUpload={async (files, upload) => {
+          const first = files[0]
+          if (!first || !collectionId) return
+          setError(null)
+          setBusy(true)
+          report(
+            await knowledge.uploadFile(
+              collectionId,
+              first.file,
+              first.mediaType,
+              upload.description,
+            ),
+          )
+        }}
+      />
 
+      <div className="grid gap-4 sm:grid-cols-2">
         <div className="flex flex-col gap-1.5">
           <Label htmlFor="kn-url">Or add a link</Label>
           <div className="flex gap-2">

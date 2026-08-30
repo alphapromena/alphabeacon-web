@@ -11,6 +11,7 @@
  */
 import { useCallback, useEffect, useRef } from 'react'
 import { useDataDispatch } from '@/data/provider'
+import type { KnowledgeUploadKind } from '@/data/types'
 import { MESSAGES } from '@/lib/messages'
 
 /** What the extractor can get text out of. Images and video cannot be read. */
@@ -72,8 +73,14 @@ export function useKnowledgeUpload() {
     [after, dispatch],
   )
 
+  /**
+   * HSN-04: the type and description the form collected ride on the record,
+   * so the simulation shows what was said about the file. The VERDICT is
+   * unchanged — an image or a video the extractor cannot read still fails
+   * honestly, which is exactly what the wire did the last time it was asked.
+   */
   const accept = useCallback(
-    (files: File[]) => {
+    (files: File[], upload: { kind: KnowledgeUploadKind; description: string }) => {
       files.forEach((file, index) => {
         const docId = `kd_${Date.now()}_${index}`
         const readable = isReadable(file)
@@ -86,6 +93,8 @@ export function useKnowledgeUpload() {
             status: 'uploading',
             progress: 0,
             addedAt: new Date().toISOString(),
+            kind: upload.kind,
+            description: upload.description,
           },
         })
         for (let step = 1; step <= 5; step += 1) {

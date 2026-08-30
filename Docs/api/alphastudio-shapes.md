@@ -4317,6 +4317,27 @@ rewrite the sections above to match it.
 }
 ```
 
+## Upstream presign envelope — Hasan meeting chat 2026-08-28
+
+Founder-supplied, verbatim from Hasan's meeting chat (recorded for ORDER
+HSN-04, 2026-08-30). The presign body carries a `desc` — the user's own
+description of the uploaded thing — beside `mediaType`, which derives from
+the REAL file. The key name is `desc`, exactly.
+
+```json
+{ "mediaType": "image/png", "desc": "<user's description>" }
+```
+
+What the app sends as of HSN-04: the Knowledge upload's presign — the RAG
+door, `POST .../rag/collections/:id/sources/presign` — carries
+`{ filename, mediaType, desc }`, with NO disable switch by the founder's
+word (decisions.md HSN-04; note that Phase 0 found this door HEALTHY on
+2026-08-30 — `ok 201` in the sweep — where open-item 43's media door was
+the broken one). The media door, `POST .../media/assets/presign` (body
+`{ mediaType }`, `uploadReferenceImage` in `src/data/studio.ts`, no UI
+caller today), is untouched pending the founder's next-order ruling. The
+final gate probes both.
+
 ## Upstream social-posts.media envelope — Hasan sync 2026-08-28 (structure authoritative, values illustrative)
 
 Founder-supplied reference for the `POST .../alphastudio/media/jobs` body with

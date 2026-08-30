@@ -34,12 +34,20 @@ import { retireToneFields, writeToneFields } from '@/data/adapters/tone-fields'
 import type { AuthActionResult } from '@/data/auth'
 import {
   useDataDispatch,
+  useFollowedSources,
   useLiveBrandIds,
   useLiveWorkingOrgId,
   useOrg,
   useTopics,
 } from '@/data/provider'
-import type { BrandVoice, FollowedSource, Tone } from '@/data/types'
+import {
+  MAX_FOLLOWED_SOURCES,
+  MAX_TOPICS,
+  type BrandVoice,
+  type FollowedSource,
+  type Tone,
+} from '@/data/types'
+import { MESSAGES } from '@/lib/messages'
 import { deriveSourceName, normalizeSourceUrl } from '@/lib/source-url'
 import { composeTonePreview, type TonePreview } from '@/lib/tone-preview'
 
@@ -69,6 +77,16 @@ function toneFieldsForWire(tone: Tone): { language?: string; length?: string } {
 const ok: AuthActionResult = { ok: true }
 
 /**
+ * A client-side cap refused at the seam (HSN-04). It is shaped like a
+ * validation failure so every screen's existing error path renders it, but
+ * it never reached the wire — the screens disable the add control first;
+ * this is the guard for any path that did not.
+ */
+function capReached(field: string, message: string): AuthActionResult {
+  return { ok: false, code: 'validation_failed', message, fieldErrors: [{ field, message }] }
+}
+
+/**
  * A preview either produced a card or failed the way every other seam action
  * fails, so callers can branch on `ok` exactly as they already do elsewhere.
  */
@@ -95,6 +113,7 @@ export function useBrandActions() {
   const orgId = useLiveWorkingOrgId()
   const brandIds = useLiveBrandIds()
   const topics = useTopics()
+  const sources = useFollowedSources()
   const org = useOrg()
   const live = isLiveMode()
 
@@ -219,8 +238,11 @@ export function useBrandActions() {
      * turns it into "save your brand voice first" rather than a shrug.
      */
     async previewTone(
-      tone: Pick<Tone, 'name' | 'description' | 'rules' | 'example'>,
+      tone: Pick<Tone, 'name' | 'description' | 'rules' | 'example' | 'language'>,
     ): Promise<TonePreviewResult> {
+      // HSN-04 rider: an Arabic tone previews in Arabic; English is only the
+      // fallback for a tone that has not chosen yet.
+      const language = tone.language ?? 'en'
       const composed = composeTonePreview({ offer: org.offer, brandVoice: org.brandVoice }, tone)
       if (!live || !orgId) return { ok: true, preview: composed }
       try {
@@ -230,9 +252,9 @@ export function useBrandActions() {
             description: tone.description,
             rules: joinRules(tone.rules),
             ...(tone.example ? { example: tone.example } : {}),
-            language: 'en',
+            language,
           },
-          language: 'en',
+          language,
         }
         const run = await api<ApiRun>('POST', `/orgs/${orgId}/alphastudio/posts/tones-preview`, {
           body,
@@ -250,6 +272,10 @@ export function useBrandActions() {
     },
 
     async addSource(input: string): Promise<AuthActionResult> {
+      // HSN-04: the product cap, a ceiling. Rows already above it stay.
+      if (sources.length >= MAX_FOLLOWED_SOURCES) {
+        return capReached('url', MESSAGES.errors.sourcesCapReached)
+      }
       const url = normalizeSourceUrl(input)
       if (!live || !orgId) {
         const source: FollowedSource = {
@@ -288,6 +314,11 @@ export function useBrandActions() {
 
     /** Topics keep the app's replace semantics; the seam diffs into row CRUD. */
     async setTopics(next: string[]): Promise<AuthActionResult> {
+      // HSN-04: the cap is on GROWTH. A list already above it may still
+      // shrink; it may not be replaced with one over the cap.
+      if (next.length > MAX_TOPICS && next.length > topics.length) {
+        return capReached('topics', MESSAGES.errors.topicsCapReached)
+      }
       if (!live || !orgId) {
         dispatch({ type: 'topics/set', topics: next })
         return ok

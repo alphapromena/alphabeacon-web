@@ -20,6 +20,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useBrandActions } from '@/data/brand'
 import { useFollowedSources, useTopics } from '@/data/provider'
+import { MAX_FOLLOWED_SOURCES, MAX_TOPICS } from '@/data/types'
 import { shortDate } from '@/lib/format'
 import { MESSAGES } from '@/lib/messages'
 import { TagInput } from './field-editors'
@@ -34,8 +35,16 @@ export function SourcesScreen() {
   const [error, setError] = useState<string | null>(null)
 
   const detected = isSourceUrlValid(entry) ? deriveSourceName(entry) : ''
+  // HSN-04: a ceiling, enforced here and again in the seam. A workspace
+  // already above it (possible from another client) keeps every row listed;
+  // only adding stops.
+  const atCap = sources.length >= MAX_FOLLOWED_SOURCES
 
   const add = async () => {
+    if (atCap) {
+      setError(MESSAGES.errors.sourcesCapReached)
+      return
+    }
     const url = normalizeSourceUrl(entry)
     if (!url) {
       setError(MESSAGES.errors.sourceUrlRequired)
@@ -70,12 +79,18 @@ export function SourcesScreen() {
         </div>
 
         <div className="flex flex-col gap-2">
-          <Label htmlFor="source-url">Add a source</Label>
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <Label htmlFor="source-url">Add a source</Label>
+            <span className="text-xs text-muted-foreground" aria-live="polite">
+              <MonoNumber value={sources.length} /> / <MonoNumber value={MAX_FOLLOWED_SOURCES} />
+            </span>
+          </div>
           <div className="flex gap-2">
             <Input
               id="source-url"
               value={entry}
               placeholder="perfectdailygrind.com/feed"
+              disabled={atCap}
               aria-invalid={error ? true : undefined}
               onChange={(event) => {
                 setEntry(event.target.value)
@@ -88,13 +103,17 @@ export function SourcesScreen() {
                 }
               }}
             />
-            <Button type="button" onClick={() => void add()}>
+            <Button type="button" disabled={atCap} onClick={() => void add()}>
               Add source
             </Button>
           </div>
           {error ? (
             <p role="alert" className="text-sm text-destructive">
               {error}
+            </p>
+          ) : atCap ? (
+            <p role="status" className="text-sm text-muted-foreground">
+              {MESSAGES.errors.sourcesCapReached}
             </p>
           ) : (
             detected && (
@@ -158,6 +177,8 @@ export function SourcesScreen() {
           placeholder="single origin"
           values={topics}
           onChange={(next) => void brand.setTopics(next)}
+          max={MAX_TOPICS}
+          capMessage={MESSAGES.errors.topicsCapReached}
         />
 
         {topics.length === 0 && (

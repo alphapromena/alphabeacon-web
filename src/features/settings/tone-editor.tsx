@@ -245,6 +245,10 @@ export function ToneEditorForm({
               description: values.description,
               example: values.example.trim() || undefined,
               rules: { do: toLines(values.dos), dont: toLines(values.donts) },
+              // HSN-04 rider: an Arabic tone previews in Arabic. Unchosen
+              // stays undefined, and the seam falls back to English.
+              language: TONE_LANGUAGE_OPTIONS.find((option) => option.value === values.language)
+                ?.value,
             })
             setPreviewing(false)
             if (result.ok) {

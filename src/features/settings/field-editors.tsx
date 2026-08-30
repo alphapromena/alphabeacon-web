@@ -9,6 +9,7 @@
  */
 import { Plus, X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
+import { MonoNumber } from '@/components/ab/mono-number'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -20,6 +21,8 @@ export function TagInput({
   placeholder,
   values,
   onChange,
+  max,
+  capMessage,
 }: {
   id: string
   label: string
@@ -27,19 +30,35 @@ export function TagInput({
   placeholder?: string
   values: string[]
   onChange: (next: string[]) => void
+  /**
+   * A product cap (HSN-04). At the cap the add control is disabled and the
+   * counter says so; entries already above it are still listed and can be
+   * removed — nothing is ever trimmed.
+   */
+  max?: number
+  /** What the cap means, shown once it is reached. */
+  capMessage?: string
 }) {
   const [entry, setEntry] = useState('')
+  const atCap = max !== undefined && values.length >= max
 
   const add = () => {
     const value = entry.trim()
-    if (!value || values.includes(value)) return
+    if (atCap || !value || values.includes(value)) return
     onChange([...values, value])
     setEntry('')
   }
 
   return (
     <div className="flex flex-col gap-2">
-      <Label htmlFor={id}>{label}</Label>
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <Label htmlFor={id}>{label}</Label>
+        {max !== undefined && (
+          <span className="text-xs text-muted-foreground" aria-live="polite">
+            <MonoNumber value={values.length} /> / <MonoNumber value={max} />
+          </span>
+        )}
+      </div>
       {description && <p className="text-sm text-muted-foreground">{description}</p>}
 
       {values.length > 0 && (
@@ -70,6 +89,7 @@ export function TagInput({
           id={id}
           value={entry}
           placeholder={placeholder}
+          disabled={atCap}
           onChange={(event) => setEntry(event.target.value)}
           // Enter adds the tag rather than submitting whatever form is around
           // it — the surprise otherwise is losing the whole screen's edits.
@@ -80,11 +100,16 @@ export function TagInput({
             }
           }}
         />
-        <Button type="button" variant="outline" onClick={add}>
+        <Button type="button" variant="outline" disabled={atCap} onClick={add}>
           <Plus aria-hidden />
           Add
         </Button>
       </div>
+      {atCap && capMessage && (
+        <p role="status" className="text-sm text-muted-foreground">
+          {capMessage}
+        </p>
+      )}
     </div>
   )
 }

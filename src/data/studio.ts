@@ -40,7 +40,7 @@ import type {
 import { joinRules } from '@/data/adapters/brand-adapter'
 import type { AuthActionResult } from '@/data/auth'
 import { useLiveWorkingOrgId } from '@/data/provider'
-import type { Tone } from '@/data/types'
+import type { KnowledgeUploadKind, Tone } from '@/data/types'
 
 export type {
   ApiCapabilityCatalog as CapabilityCatalog,
@@ -88,6 +88,52 @@ export const EXTRACTABLE_MEDIA_TYPES = [
   'text/markdown',
   'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
 ] as const
+
+/**
+ * The Knowledge upload's type choice (ORDER HSN-04): what a user may say they
+ * are uploading, and the REAL media types each choice accepts. The picker's
+ * `accept` list and the post-pick check both read this one table, so they
+ * cannot disagree. `document` is exactly the extractable set the smoke run
+ * proved; image and video are the founder's ruling — whether the RAG door
+ * ingests them is the final gate's to observe, not this table's to assume.
+ */
+export const KNOWLEDGE_UPLOAD_KINDS: {
+  kind: KnowledgeUploadKind
+  label: string
+  hint: string
+  mediaTypes: readonly string[]
+}[] = [
+  {
+    kind: 'image',
+    label: 'Image',
+    hint: 'PNG, JPG or WebP.',
+    mediaTypes: ['image/png', 'image/jpeg', 'image/webp'],
+  },
+  { kind: 'video', label: 'Video', hint: 'MP4.', mediaTypes: ['video/mp4'] },
+  {
+    kind: 'document',
+    label: 'Document',
+    hint: 'PDF, Word, plain text or Markdown.',
+    mediaTypes: EXTRACTABLE_MEDIA_TYPES,
+  },
+]
+
+/**
+ * The file's REAL type against the chosen kind. Honest in both failure modes:
+ * a browser that reports no type at all is `unknown-type` (never coerced to
+ * `text/plain`, as the old live path did), and a type outside the chosen
+ * kind's list is `mismatch`. The media type that goes on the wire is the
+ * file's own, verbatim.
+ */
+export function checkKnowledgeFile(
+  kind: KnowledgeUploadKind,
+  file: { name: string; type: string },
+): { ok: true; mediaType: string } | { ok: false; reason: 'unknown-type' | 'mismatch' } {
+  const spec = KNOWLEDGE_UPLOAD_KINDS.find((entry) => entry.kind === kind)
+  if (!file.type) return { ok: false, reason: 'unknown-type' }
+  if (!spec || !spec.mediaTypes.includes(file.type)) return { ok: false, reason: 'mismatch' }
+  return { ok: true, mediaType: file.type }
+}
 
 /** A media job is terminal here — NOT a run. `succeeded`, not `completed`. */
 export function isJobTerminal(job: ApiMediaJob | null | undefined): boolean {
@@ -432,17 +478,25 @@ export function useKnowledgeActions() {
      * issued; ingestion starts BY ITSELF when the object lands — there is no
      * "complete" call — and the presign expires in 15 minutes. The bytes must
      * carry exactly the requested media type: it is part of the signature.
+     *
+     * HSN-04: the presign body now carries `desc` — the user's own description
+     * of the file — beside `mediaType`, per Hasan's 2026-08-28 envelope
+     * (`Docs/api/alphastudio-shapes.md`, "Upstream presign envelope"). Sent
+     * with NO switch, by the founder's word; the reasoning, and the fact that
+     * this is the RAG door rather than open-item 43's media door, are in
+     * decisions.md HSN-04. The key name is `desc`, exactly.
      */
     async uploadFile(
       collectionId: string,
       file: File,
       mediaType: string,
+      desc: string,
     ): Promise<{ ok: true; source: ApiRagSource } | Failure> {
       try {
         const ticket = await api<RagUploadTicket>(
           'POST',
           studio(`/rag/collections/${collectionId}/sources/presign`),
-          { body: { filename: file.name, mediaType } },
+          { body: { filename: file.name, mediaType, desc } },
         )
         await uploadToPresignedUrl(ticket.uploadUrl, file, ticket.mediaType)
         const source = await api<ApiRagSource>('GET', studio(`/rag/sources/${ticket.sourceId}`))

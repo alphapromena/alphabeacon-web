@@ -10,18 +10,17 @@
  * read at all offers Remove and the reason, because a button that can never
  * succeed is worse than no button.
  */
-import { CheckCircle2, FileText, TriangleAlert, Trash2, Upload } from 'lucide-react'
-import { useRef, useState } from 'react'
+import { CheckCircle2, FileText, TriangleAlert, Trash2 } from 'lucide-react'
 import { EmptyState } from '@/components/ab/empty-state'
 import { MonoNumber } from '@/components/ab/mono-number'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { Spinner } from '@/components/ui/spinner'
 import { useDataDispatch, useKnowledgeDocs, useLiveMode } from '@/data/provider'
+import { KnowledgeUploadForm } from './knowledge-upload-form'
 import { LiveKnowledge } from './live-knowledge'
 import type { KnowledgeDoc } from '@/data/types'
 import { MESSAGES } from '@/lib/messages'
-import { cn } from '@/lib/utils'
 import { useKnowledgeUpload } from './use-knowledge-upload'
 
 /** "2.3 MB" — sizes read mono, like every other figure. */
@@ -50,59 +49,21 @@ function StaticKnowledgeScreen() {
   const docs = useKnowledgeDocs()
   const dispatch = useDataDispatch()
   const { accept, retry } = useKnowledgeUpload()
-  const fileInput = useRef<HTMLInputElement>(null)
-  const [dragging, setDragging] = useState(false)
 
   return (
     <>
-      <div
-        // A dropzone is a target, not a control: the button inside it is the
-        // keyboard path, so the div itself stays out of the tab order.
-        onDragOver={(event) => {
-          event.preventDefault()
-          setDragging(true)
-        }}
-        onDragLeave={() => setDragging(false)}
-        onDrop={(event) => {
-          event.preventDefault()
-          setDragging(false)
-          accept(Array.from(event.dataTransfer.files))
-        }}
-        className={cn(
-          'flex flex-col items-center gap-3 rounded-xl border border-dashed border-border px-6 py-10 text-center transition-colors',
-          dragging && 'border-primary bg-primary/5',
-        )}
-      >
-        <Upload aria-hidden className="size-6 text-muted-foreground" />
-        <div className="flex flex-col gap-1">
-          <p className="text-sm font-medium">Drop files here</p>
-          <p className="text-xs text-muted-foreground">
-            PDF, DOCX, TXT, CSV or JSON. Images cannot be read, and will say so.
-          </p>
-        </div>
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={() => fileInput.current?.click()}
-        >
-          Browse files
-        </Button>
-        <input
-          ref={fileInput}
-          type="file"
-          multiple
-          className="sr-only"
-          // "Browse files" is the affordance; this must not hold a tab stop of
-          // its own that renders no focus indicator.
-          tabIndex={-1}
-          aria-label="Choose documents to upload"
-          onChange={(event) => {
-            accept(Array.from(event.target.files ?? []))
-            event.target.value = ''
-          }}
-        />
-      </div>
+      {/* HSN-04: the same type + description form the live screen runs; the
+          verdict below is the demo's, and it says so. */}
+      <KnowledgeUploadForm
+        multiple
+        onUpload={(files, upload) =>
+          accept(
+            files.map((entry) => entry.file),
+            upload,
+          )
+        }
+      />
+      <p className="text-xs text-muted-foreground">{MESSAGES.notices.knowledgeSimulated}</p>
 
       {docs.length === 0 ? (
         <EmptyState
@@ -119,6 +80,12 @@ function StaticKnowledgeScreen() {
                   <FileText aria-hidden className="size-4 shrink-0 text-muted-foreground" />
                   <div className="flex min-w-0 flex-col">
                     <span className="truncate text-sm font-medium">{doc.filename}</span>
+                    {doc.description && (
+                      <span className="truncate text-xs text-muted-foreground">
+                        {doc.kind ? `${doc.kind} · ` : ''}
+                        {doc.description}
+                      </span>
+                    )}
                     <MonoNumber
                       value={fileSize(doc.sizeBytes)}
                       className="text-xs text-muted-foreground"
