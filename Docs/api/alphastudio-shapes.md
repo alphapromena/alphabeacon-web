@@ -4336,7 +4336,108 @@ word (decisions.md HSN-04; note that Phase 0 found this door HEALTHY on
 the broken one). The media door, `POST .../media/assets/presign` (body
 `{ mediaType }`, `uploadReferenceImage` in `src/data/studio.ts`, no UI
 caller today), is untouched pending the founder's next-order ruling. The
-final gate probes both.
+final gate probes both — and did; the record follows.
+
+## HSN-FINAL Phase 0 — both presign doors probed with `desc` (2026-08-30)
+
+Fresh isolated QA org **1415** (`qa+1788095922469hsnfinal@alphapromena.com`,
+user 1778, membership 1635; org 619 untouched). Presign only — no byte `PUT`,
+no job, no run; every minted row deleted afterwards. Bodies verbatim, urls
+and the token redacted.
+
+### P1 — media door WITH `desc` (Hasan's meeting-chat body) → **201**
+
+`POST /orgs/1415/alphastudio/media/assets/presign` · request-id
+`45f67ae4-d154-481a-aaba-f73a4d63f19d` · 826 ms
+
+```json
+{"mediaType":"image/png","desc":"HSN-FINAL probe P1 — a reference image"}
+```
+
+```json
+{
+  "assetId": "masset_adb3fe2af9067cead02c329d",
+  "uploadUrl": "<redacted uploadUrl: 1639 chars>",
+  "expiresAt": "2026-08-30T13:33:49.916Z",
+  "mediaType": "image/png"
+}
+```
+
+### P1-control — the same door, the open-item 43 body (no `desc`) → **400**
+
+Same org, same minute. `POST /orgs/1415/alphastudio/media/assets/presign` ·
+request-id `99de0be4-2c05-4a4a-911b-0d0fee9d9cef` · 873 ms
+
+```json
+{"mediaType":"image/png"}
+```
+
+```json
+{
+  "error": {
+    "code": "bad_request",
+    "message": "The media service rejected the request — check the body against the capability's schema",
+    "requestId": "99de0be4-2c05-4a4a-911b-0d0fee9d9cef"
+  }
+}
+```
+
+**Verdict: the missing `desc` WAS the regression.** One field, same door,
+201 with it and 400 without it, on the same org in the same minute.
+Open-item 43 is SOLVED-PENDING-WARD-CONFIRM. (Cleanup: `DELETE
+/media/assets/masset_adb3fe2af9067cead02c329d` → 204, request-id
+`7b479a19-7123-4ee3-a4ba-b3bb6dfc7637`.)
+
+### P2 — RAG door WITH `desc` (the HSN-04 shape) → **201**
+
+Scratch collection `col_1c3a617d8d6a4e3e8479160163cb4fcf` (`POST
+/rag/collections` → 201, request-id `ff71b923-cd36-4e73-a84f-d6041a8379c8`).
+`POST /orgs/1415/alphastudio/rag/collections/col_1c3a…/sources/presign` ·
+request-id `d77dd2b2-2f03-42c3-804d-e5b1de0dda9c` · 804 ms
+
+```json
+{"filename":"probe-p2.txt","mediaType":"text/plain","desc":"HSN-FINAL probe P2 — roasting notes"}
+```
+
+```json
+{
+  "sourceId": "src_1c6a488fbcd7444194f3efbfe46675ec",
+  "uploadUrl": "<redacted uploadUrl: 1651 chars>",
+  "expiresAt": "2026-08-30T13:33:53.341Z",
+  "mediaType": "text/plain"
+}
+```
+
+**Verdict: `desc` is tolerated on the RAG door; the built shape stands, no
+revert.** (Cleanup: `DELETE /rag/sources/src_1c6a…` → 200
+`{ "vectorsDeleted": 0 }`, request-id `540866e9-6b03-4577-a517-0bb72e49c7e1`.)
+
+### P2 observations — Image and Video on the RAG door → **400**, both
+
+The HSN-04 form offers Image | Video | Document; decisions.md HSN-04 said the
+final gate observes whether the RAG door takes the first two. It does not:
+
+- `{"filename":"probe-p2.png","mediaType":"image/png","desc":"…"}` → **400**
+  request-id `d7553931-3b03-46ea-b656-b14abc41ca77`
+- `{"filename":"probe-p2.mp4","mediaType":"video/mp4","desc":"…"}` → **400**
+  request-id `3182f312-c962-4cb9-9fca-c3e9d93e50f3`
+
+Both with the same envelope:
+
+```json
+{
+  "error": {
+    "code": "bad_request",
+    "message": "The knowledge service rejected the request — check the body (e.g. a name already used, or a media type it cannot extract)",
+    "requestId": "d7553931-3b03-46ea-b656-b14abc41ca77"
+  }
+}
+```
+
+So on the live Knowledge screen an Image or Video upload is refused by the
+wire before any byte leaves the browser, and the refusal shows inline —
+which is the honest behaviour the form was built to show. Whether the RAG
+door should accept them is Hasan's side; nothing was changed here.
 
 ## Upstream social-posts.media envelope — Hasan sync 2026-08-28 (structure authoritative, values illustrative)
 

@@ -2406,3 +2406,75 @@ Closes open-item 38, which ONB-0827 created and the live suite caught.
 - Instead of: trimming over-cap data (a silent delete), hiding it (a lie
   about what the org has), coercing an unknown file type to `text/plain`
   (the old behaviour), or a switch on `desc` (ruled out by name).
+
+### 2026-08-30 — HSN-FINAL: the series gate — both doors probed, the deferred coverage, one gate-found fix, and the deploy that Vercel blocks
+
+- **Provenance.** The founder closed the Hasan series at four items and made
+  this order its single consolidated gate: the testing the series law
+  deferred lands here, then ONE ff merge to `main`. House law back in force —
+  probe-first, two-round live suite with round 2 as the merge gate, decisions
+  logged, report-and-stop.
+- **Phase 0, measured not argued (fresh QA org 1415, presign only, zero
+  spend).** P1: the media door WITH Hasan's `desc` answered **201**; the
+  08-17-era body without it answered **400** on the same org in the same
+  minute — **the missing `desc` was open-item 43's regression**, one field,
+  not a broken route. Item 43 is SOLVED-PENDING-WARD-CONFIRM and the Ward
+  message's item 3 is rewritten to say so. P2: the RAG door with `desc`
+  answered **201** — HSN-04's built shape stands and the documented one-line
+  revert was NOT flipped. Observation, not a change: the RAG door refuses
+  `image/png` and `video/mp4` even with `desc` ("a media type it cannot
+  extract"), so the Knowledge form's Image and Video choices are refused
+  inline by the wire — the honest behaviour it was built to show, and
+  Hasan's side to widen. Verbatim record in `alphastudio-shapes.md`.
+- **What the coverage was shaped to prove, and where each claim lives.**
+  Static e2e (`e2e/hsn-series.spec.ts`) proves what a user can reach in the
+  demo: both Create visual entry points, the refused blank kind, the guidance
+  cap, the single flight, the simulated lifecycle, that nothing is attached,
+  the reset on reopen, axe on the modal; the required tone language and the
+  form-only length default; the caps' counter, disabled add and shrink; the
+  Knowledge form's filter, real-MIME refusal and required description. Unit
+  tests hold what the demo cannot reach: the sidecar's hydrate/retire/prune
+  rules, the caps at the seam THROUGH the real provider (so the reducer and
+  the seam are tested together), `checkKnowledgeFile`, the visual body, the
+  receipt tolerance incl. `unconfirmed_receipt` and its bill-again copy, and
+  the generate body's language/length sourcing with no `options`. Three
+  things are deliberately NOT in static e2e and say so in the file header:
+  the `unconfirmed_receipt` copy (a live failure path), a tone reading "Not
+  set" (only a pre-HSN-03 live tone can), and the paid render
+  (`live-create-visual.spec.ts`, gated on `LIVE_MEDIA`, authored and not
+  exercised — the wire was proven by HSN-02's trail and this gate's probes).
+- **The gate found a defect in HSN-02, and it is fixed, not reported around.**
+  The popup's Cancel/Close/Done called the parent's `onOpenChange` directly;
+  Radix reports only an open-change IT initiated (Escape, the overlay), so
+  the state machine never reset — reopening the popup, even for a different
+  draft, showed the last result. `close` now resets first. And the static
+  simulation's timer is no longer cancelled on close: the demo's job settles
+  whether or not the dialog is open, which is what the copy already promised
+  ("it keeps going if you close this"); only the dialog's own state is gated
+  on the epoch. Two small changes, both making a documented law true.
+- **The stale specs were updated for the new steps, not loosened.** Four
+  tests learned HSN-03/04's required steps (choose a type and describe the
+  upload; pick a language) and assert MORE than before (the row carries its
+  type and description). The one whose PNG used to be declared a document
+  now declares it an image, because a PNG declared as a document is refused
+  before it is listed — and that refusal is its own test.
+- **The deploy Vercel will block — a founder decision, flagged not worked
+  around.** Every deployment since the repo went PRIVATE (between HSN-02 and
+  HSN-03, 2026-08-30) is `BLOCKED`, error link "troubleshoot project
+  collaboration → team configuration". Vercel's rule, verbatim: *"The Hobby
+  Plan does not support collaboration for private repositories. To deploy
+  commits under a Hobby team, the commit author must be the owner of the
+  Hobby team."* Commits here are authored by `qus0i`; the Hobby team's owner
+  is `alphapromena`. So the ff merge — which the order authorises on a green
+  round 2 — will land on `main` and `live` but PRODUCE NO DEPLOYMENT until
+  one of three founder moves: make the repo public again, move to Pro and
+  add the author, or author commits from the owner's GitHub identity.
+  Production keeps serving the pre-merge commit meanwhile; nothing breaks,
+  nothing ships. The merge goes ahead because it is what the gate authorises
+  and it is safe; the deploy is not this order's to force.
+- Instead of: skipping the probes because HSN-04 had already committed to
+  `desc` (the founder's word, and the control call is what made P1 a verdict
+  rather than a hope); leaving the reset bug as a "static-only quirk" (it is
+  live too — reopen on another draft after a live run shows the old asset);
+  re-authoring commits under the owner's identity to get past Vercel (an
+  attribution the founder decides, not the agent).

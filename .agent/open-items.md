@@ -591,6 +591,26 @@ build, so they are worth asking as a batch.
     So HSN-04 does not by itself close this item. The final gate probes
     both doors — this one with `{ mediaType, desc }` — and says which
     hypothesis held. Full record: decisions.md HSN-04.
+    **SOLVED-PENDING-WARD-CONFIRM (2026-08-30, ORDER HSN-FINAL Phase 0 —
+    two presign-only wire calls, zero spend).** On a fresh QA org (1415), the
+    SAME door in the SAME minute: `{"mediaType":"image/png","desc":"…"}` →
+    **201** (`assetId masset_adb3fe2af9067cead02c329d`, request-id
+    `45f67ae4-d154-481a-aaba-f73a4d63f19d`); the 08-17-era
+    `{"mediaType":"image/png"}` → **400** `bad_request`, the same message as
+    above (request-id `99de0be4-2c05-4a4a-911b-0d0fee9d9cef`). **The missing
+    `desc` was the regression** — one field, not a broken route. The RAG door
+    with `desc` answered **201** too (request-id
+    `d77dd2b2-2f03-42c3-804d-e5b1de0dda9c`), so HSN-04's built shape stands.
+    Verbatim bodies: `Docs/api/alphastudio-shapes.md`, "HSN-FINAL Phase 0".
+    **What is NOT yet done, by order:** `uploadReferenceImage`'s body and the
+    smoke script's media presign still send `{ mediaType }` — the founder
+    rules on the other presign callers; the fix is one field on each. **For
+    Ward (message item 3, rewritten):** the media presign now REQUIRES
+    `desc`; confirm it is intentional and document it in api.md — then this
+    item closes. Side observation for Hasan: the RAG door refuses
+    `image/png` and `video/mp4` with `desc` present (400, "a media type it
+    cannot extract"; request-ids `d7553931-…`, `3182f312-…`), so the
+    Knowledge form's Image and Video choices are refused inline on the wire.
 
 ### M1 cinematic items — RETIRED by the rebrand (2026-08-08)
 
