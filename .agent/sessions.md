@@ -2660,3 +2660,54 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   `LIVE_MEDIA` off, one file at a time, under the two-round law on the final
   tree: **round 1 15/15 in 756 s, round 2 (the gate) 15/15 in 777 s.**
 - Next: **the founder's eye-pass.** Six branches on `origin`, nothing merged.
+
+### 2026-08-30 — ONB-0827-MERGE: the onboarding redesign is on `main` and live
+
+- Did: on the founder's explicit approval after the eye-pass, fast-forwarded
+  `main` from `fd84173` to **`963c9f7`** — the whole onboarding redesign,
+  **fourteen commits across four stacked branches, no merge commit, one linear
+  history** — then pushed `main` and `main:live`. Preconditions were checked
+  first and all held: clean tree, `main` == `origin/main` == `fd84173`,
+  `feat/onb-04-invite-org` == `origin` == `963c9f7`, and `main` an ancestor of
+  the tip so `--ff-only` could not have produced a merge commit.
+- **The suite was NOT re-run.** The merge gate already stood on this exact tree
+  (round 2, 15/15 in 777 s) and no code changed between it and the merge — the
+  order says re-run only if `--ff-only` refuses, and it did not.
+- **The real site was verified, not assumed.** The pre-merge entry hash was
+  captured first so the comparison is a measurement:
+  `index-Cel1CcpM.js` → **`index-CDsww8Wq.js`**, changed ~60 s after the push.
+  Then, against the deployed bundle rather than the local build:
+  **no `onboarding-screen` chunk exists at all** among the 93 chunks; all five
+  wizard strings ("Tell us about your brand", "Start your pipeline", "Resume
+  setup", "Your pipeline is running", "Go to your dashboard") are **gone**; and
+  every ONB-0827 catalogue string is **present** — the checklist prompt, the
+  blocked-generation line, the tones empty state, the fallback sentence and
+  N3's "your workspace was never created".
+- **One scripted smoke on `https://1.malaky.ai`, 11/11.** Fresh
+  `qa+1788073501108smoke@…`: signup → verify with `000000` → **lands on the
+  Dashboard with zero wizard landmarks** → the workspace wears the name typed
+  at signup → `/generate` is **gated**, with no dead Generate form behind it,
+  and the checklist names all four brand entities with a "Set up" link each,
+  plus the two optional rows marked. Only two origins were contacted: the site
+  and the API. **No generation was run**, so nothing was spent.
+  One honest note: the first attempt failed 5 of 11 because it counted the
+  checklist rows the instant the heading appeared. That is the component
+  behaving correctly — it refuses to claim anything about a workspace until the
+  live sync answers (trap 20) — so the smoke waits for the region now. The
+  product was right and the script was wrong.
+- Phase: **ONB-0827-MERGE**. The cycle is closed.
+- Files: `.agent/state.md` (cycle closed at the merge commit),
+  `.agent/sessions.md`. No product code changed.
+- Decisions: none — the decisions are D-ONB-A…F, already recorded.
+- Verify: nothing re-run for the merge itself; it is a fast-forward to a tree
+  whose gates were run in full hours earlier (lint, typecheck, 471 unit / 43
+  files, guard-static 322 clean, static e2e 93 passed / 61 skips / 0 failed,
+  and the live suite 15/15 twice under the two-round law).
+- Branches: the four `feat/onb-*` and the two `probe/*` stay on `origin` as the
+  per-phase record, the house pattern for `w/NN` and `int/NN`.
+  `.agent/intake-2026-08-28.md` is left exactly as it is.
+- Next: nothing outstanding on this cycle. Still open elsewhere: item 38b
+  (signup funds a tenant that may never be used), 40 (the remembered workspace
+  dies with the session — widen only on a founder's word), 41 (a decision can
+  take ~30 s to read back), 42 (sustained-load degradation — Ward), 43 (the
+  four-day-old presign regression — Ward), and W7's two manual gates.
