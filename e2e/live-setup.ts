@@ -79,6 +79,8 @@ export async function createFirstTone(
   await openSettingsTab(page, 'Tones')
   await page.getByRole('link', { name: 'Create your first tone' }).click()
   await page.getByLabel('Tone name').fill(tone.name)
+  // HSN-03: a tone's language is required, with no default.
+  await page.getByLabel('Language').selectOption('en')
   await page.getByLabel('What this tone sounds like').fill(tone.description)
   // NOT optional: the editor refuses a tone with no do and no dont
   // (`toneSchema`'s refine, MESSAGES.errors.toneRuleRequired). A helper that

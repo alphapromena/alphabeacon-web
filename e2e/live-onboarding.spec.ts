@@ -142,6 +142,8 @@ test('completing the four brand entities unlocks generation', async ({ page }) =
   await openSettingsTab(page, 'Tones')
   await page.getByRole('link', { name: 'Create your first tone' }).click()
   await page.getByLabel('Tone name').fill(TONE_NAME)
+  // HSN-03: a tone's language is required, with no default.
+  await page.getByLabel('Language').selectOption('en')
   await page.getByLabel('What this tone sounds like').fill('Warm, specific, smells of coffee.')
   // A tone needs at least one do or dont, or the editor refuses it.
   await page.getByLabel('Do', { exact: true }).fill('Name the roast date')

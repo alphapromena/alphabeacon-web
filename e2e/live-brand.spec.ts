@@ -77,6 +77,8 @@ test('a custom tone: created under the adapter, edited, and it survives a reload
   await expect(page.getByLabel('Do', { exact: true })).toHaveCount(1)
 
   await page.getByLabel('Tone name').fill('Roastery floor')
+  // HSN-03: a tone's language is required, with no default.
+  await page.getByLabel('Language').selectOption('en')
   await page.getByLabel('What this tone sounds like').fill('Warm, specific, smells of coffee.')
   await page.getByLabel('Do', { exact: true }).fill('Name the roast date')
   await page.getByRole('button', { name: 'Create tone' }).click()

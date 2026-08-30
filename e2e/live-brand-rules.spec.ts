@@ -113,6 +113,8 @@ test('a tone keeps its rules, and a PATCH replaces the whole list', async ({ pag
   await page.getByRole('link', { name: 'Create your first tone' }).click()
 
   await page.getByLabel('Tone name').fill('Roastery floor')
+  // HSN-03: a tone's language is required, with no default.
+  await page.getByLabel('Language').selectOption('en')
   await page.getByLabel('What this tone sounds like').fill('Warm, specific, smells of coffee.')
   await page.getByLabel('Do', { exact: true }).fill('Name the farm\nName the roast date')
   await page.getByLabel("Don't", { exact: true }).fill('Say artisanal')
@@ -192,6 +194,8 @@ test('Preview this tone returns a real sample from the platform', async ({ page 
   await page.getByRole('link', { name: 'Create custom tone' }).first().click()
 
   await page.getByLabel('Tone name').fill('Counter service')
+  // HSN-03: a tone's language is required, with no default.
+  await page.getByLabel('Language').selectOption('en')
   await page
     .getByLabel('What this tone sounds like')
     .fill('Plain and warm, the way you would say it across the counter.')
