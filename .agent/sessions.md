@@ -2591,3 +2591,60 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   small change nobody has asked for yet.
 - Next: **the founder's eye-pass.** Five branches pushed; `feat/onb-04` pushes
   when its live rounds finish. No merge, and `main`/`live` remain untouched.
+
+### 2026-08-30 — ONB-0827-C: the record is pushed, and the collapse was the API, not us
+
+- Did: **Step 0 first, before anything ran.** Pushed `feat/onb-04-invite-org`
+  (`14aba1e`) on the founder's explicit waiver of the "when green" condition —
+  record protection outranks it. **All six branches now verified on `origin`
+  with tips equal to local**; `main` (`fd84173`) and `live` untouched, no
+  merges.
+- **Step 1 — classified yesterday's 9/15 before touching a single spec, and it
+  is (a): environmental.** Three independent measurements, in the order the
+  live-red playbook asks for:
+  1. **Direct latency probe, no Playwright.** `/health` cold 1,514 ms, twelve
+     back-to-back at **0.08 s**, and after 20 s idle **0.22 s / 0.21 s** — **no
+     cold-start penalty at all**, against `live-red-2026-08-23`'s 7.40 s for
+     the same idle. Ten known authed ops: p50 **650 ms**, p90 **3,697 ms**, max
+     **4,345 ms**, **zero over 5 s** (08-23: 31 of 118 over 5 s).
+  2. **Contract sweep**, the same `api-sweep.mjs` (md5 `7bb47b3…`) both
+     baselines used: **no status changed on any shared operation, none added,
+     none removed.** One mismatch, and it is four days old — see below.
+  3. **One virgin full round** on the untouched tree: **15/15 in 857 s.**
+- **The curve, and why it is the API's.** Rounds 11→14 on the SAME tree:
+  15/15 (886 s) → 14/15 (952 s) → **9/15 (1,195 s)** → **15/15 (857 s)**. The
+  wall clock tracks the pass rate; `live-team` went 108 → 229 → 119 s and
+  `live-wallet` 46 → 103 → 39 s with **no code change between 13 and 14**,
+  only ~14 h of rest. Every round-13 failure was a timeout, never a wrong
+  assertion, and a different test each time. Recorded as **open-item 42**, new
+  evidence for Ward beside his item 5 — by reference, because the 20-item list
+  is not in this repo. This is NOT the 08-23 cold-start story: cold starts are
+  gone. It is degradation under sustained traffic that clears with rest.
+- **The one contract diff is NOT new** (open-item 43). The sweep called 115
+  operations to the baseline's 118 with one mismatch: `POST
+  .../media/assets/presign` **400 `bad_request`** where 08-19 and 08-23 both
+  got 201; the three "missing" ops are purely mechanical, gated on the
+  `uploadUrl` that never arrives. It reproduces byte-for-byte as finding 5 of
+  `probe-alphastudio-assets-2026-08-26.md` — same body, status and message,
+  request-ids `e0d5320d-…` and `2883784f-…` on fresh org 1278. **Our validator
+  is provably intact** (`{}` and `{contentType}` still answer
+  `validation_failed`; anything with a valid `mediaType` clears us and is
+  refused upstream), the neighbouring media surface is healthy, and **no live
+  spec touches that route** — `live-knowledge` uses the RAG presign, which the
+  sweep shows `ok 201`. So it neither explains the collapse nor gated this
+  cycle, and nothing was adapted to it.
+- Phase: **ONB-0827-C** — diagnosis and gate, no product code changed.
+- Files: `Docs/api/sweep-2026-08-30.md` (new, the sweep artifact),
+  `.agent/open-items.md` (5 superseded, 42 and 43 added), `.agent/sessions.md`.
+- Decisions: none — this cycle settles facts, not design.
+- **Deliberately NOT done:** no wait was re-tuned off round 13. One caveat
+  stated rather than buried: the 80 s budget on `live-proposals`' decline
+  (item 41) was set on 2026-08-28 from a measurement taken while the API was
+  already degrading, so it is likely more generous than a healthy API needs. It
+  is left alone — re-tuning it off one healthy round would be the same mistake
+  pointing the other way.
+- Verify: no product code changed, so the static gates from ONB-0827-B stand
+  (471 unit / 43 files, static e2e 93, guard-static 322, verify:w00–w06 all
+  PASS). LIVE under the two-round law on the final tree — numbers in the
+  report.
+- Next: **the founder's eye-pass.** Six branches on `origin`, nothing merged.

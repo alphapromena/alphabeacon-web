@@ -95,7 +95,15 @@ item to "Signed off" (with the date) only when a human has actually done it.
    (an owner can do everything the admin UI offers). INT-2 must teach the
    team screen the real model — "last OWNER cannot leave/demote" (409), not
    last admin — and `screens4.md` I7 should gain the owner tier when revised.
-5. **Onboarding state is client-inferred in live mode.** The API has no
+5. **SUPERSEDED 2026-08-28 by ORDER ONB-0827 (decisions.md D-ONB-C).** There
+   is no onboarding state left to infer: the wizard is deleted, and
+   `org.onboarding {completed, resumeStep}` became `org.exists` — which is not
+   an inference but the plain API fact "this user belongs to at least one org".
+   The ask this item carried (server-side resumable wizard state) is moot
+   because the wizard it would have resumed no longer exists. **Nothing to send
+   Ward.**
+   _The original item, for the record:_
+   **Onboarding state is client-inferred in live mode.** The API has no
    onboarding concept, so "has at least one org" stands in for "onboarding
    complete" (auth-adapter). Fine for INT-1; if the product wants the full
    five-step wizard resumable server-side, that needs backend state.
@@ -482,6 +490,85 @@ build, so they are worth asking as a batch.
     late rather than never. Not investigated here: ONB-0827-B did not touch
     proposals, and choosing between those two without measuring would have been
     a guess.
+
+42. **SUSTAINED LOAD degrades the deployed API, and it recovers with rest —
+    measured end to end (2026-08-30, ORDER ONB-0827-C).** New evidence for
+    Ward, recorded BY REFERENCE against his own item 5: the 20-item list he
+    holds is not in this repo, so there is no in-place row to append to, and
+    whoever reconciles the two lists should paste this beside it.
+
+    **What was seen.** On 2026-08-28 the full live suite was run repeatedly
+    while ONB-0827-B was finished. The pass rate fell as the session went on
+    and the WALL CLOCK tracked it almost exactly:
+
+    | round | green | suite total | live-team | live-proposals | live-wallet |
+    | ----- | ----- | ----------- | --------- | -------------- | ----------- |
+    | 11    | 15/15 | 886 s       | 108 s     | 100 s          | 46 s        |
+    | 12    | 14/15 | 952 s       | 111 s     | 140 s          | 54 s        |
+    | 13    | 9/15  | **1,195 s** | **229 s** | 107 s          | **103 s**   |
+    | 14    | 15/15 | **857 s**   | 119 s     | 82 s           | 39 s        |
+
+    Round 14 is the SAME TREE as 13, run the next morning after ~14 h idle,
+    with no code change of any kind between them — and it is the fastest of the
+    four. Round 13 is 39 % slower overall than round 14, `live-team` 1.9× and
+    `live-wallet` 2.6×. Every round-13 failure was a TIMEOUT, never a wrong
+    assertion, and a different test each time — the tell recorded under trap 22
+    that consecutive reds which do not agree on WHAT broke are about the
+    harness or the service, not the branch.
+
+    **Confirmed three ways on 2026-08-30, before any spec was touched.**
+    1. **Direct latency probe, no Playwright.** `/health` cold 1,514 ms, then
+       twelve back-to-back at **0.08 s**, and after 20 s idle **0.22 s** and
+       **0.21 s** — i.e. **no cold-start penalty at all**, where
+       `live-red-2026-08-23` measured 7.40 s after the same idle. Ten known
+       authed operations: p50 **650 ms**, p90 **3,697 ms**, max **4,345 ms**,
+       **zero calls over 5 s** (08-23: 31 of 118 over 5 s, 9 over 10 s).
+       Request-ids in the session record.
+    2. **Contract sweep**, the same `api-sweep.mjs` (md5 `7bb47b3…`) as both
+       baselines: **no status changed on any shared operation, and no operation
+       was added or removed.** Its single mismatch is item 43 below, which is
+       four days old and already reported.
+    3. **One virgin full round** on the untouched tree: **15/15**.
+
+    **What it means for Ward.** This is not the cold-start story from
+    2026-08-23 — cold starts are gone. It is a slow degradation under sustained
+    traffic that clears after a rest, which is the shape of a resource leak or
+    a connection/pool exhaustion somewhere behind the function rather than
+    provisioning. The frontend cannot fix it and should not be tuned around it:
+    the standing rule stays that a red which passes solo on a healthy API is
+    the service's, and a red that survives one is ours.
+
+    **What was deliberately NOT done:** no wait was re-tuned off round 13. One
+    caveat stated rather than buried — the 80 s budget on `live-proposals`'
+    decline assertion (item 41) was set on 2026-08-28 from a measurement taken
+    while the API was already degrading, so it is probably more generous than a
+    healthy API needs. It is left alone, because re-tuning it off a single
+    healthy round would be the same mistake pointing the other way.
+
+43. **The `media/assets/presign` regression is STILL OPEN, and it is the only
+    contract diff on the wire** (re-confirmed 2026-08-30). The 2026-08-30 sweep
+    called 115 operations against the baseline's 118 with **one** mismatch:
+    `POST /orgs/:id/alphastudio/media/assets/presign` answered **400
+    `bad_request` — "The media service rejected the request — check the body
+    against the capability's schema"** where 2026-08-19 and 2026-08-23 both got
+    201. The three missing operations are purely mechanical: the sweep gates
+    the storage `PUT`, the re-presign and the asset `DELETE` on the `uploadUrl`
+    that never arrives.
+    **This is NOT a new overnight deployment.** It is finding 5 of
+    `Docs/api/probe-alphastudio-assets-2026-08-26.md` (branch
+    `probe/assets-0826`, pushed 2026-08-28), reproduced today byte-for-byte on
+    a fresh org: same endpoint, same `{"mediaType":"image/png"}` body, same
+    status, same message — request-ids `e0d5320d-97d4-4548-bfc5-6f65d7d8fea3`
+    and `2883784f-544c-4cc2-8da8-4c5af9641e13`, on org 1278.
+    **Our side is provably intact:** `{}` and `{contentType}` still answer
+    `validation_failed` from OUR validator, and every body with a syntactically
+    valid `mediaType` clears it and is refused upstream. The neighbouring media
+    surface is healthy (`GET /media/jobs`, wallet and the `media.generate`
+    catalog all 200 in under a second).
+    **It does not touch the live suite** — no spec exercises that route; the
+    presign `live-knowledge` uses is the RAG one
+    (`/rag/collections/:id/sources/presign`), which the sweep shows `ok 201`.
+    So it is not part of item 42's story, and it did not gate this cycle.
 
 ### M1 cinematic items — RETIRED by the rebrand (2026-08-08)
 

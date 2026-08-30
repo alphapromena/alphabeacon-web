@@ -80,7 +80,12 @@ test('a custom tone: created under the adapter, edited, and it survives a reload
   await page.getByLabel('What this tone sounds like').fill('Warm, specific, smells of coffee.')
   await page.getByLabel('Do', { exact: true }).fill('Name the roast date')
   await page.getByRole('button', { name: 'Create tone' }).click()
-  await expect(page.getByText('Tone created')).toBeVisible()
+  // A save and its toast: the ONE_CALL rung, not the suite's 5 s default.
+  // Brand mutations are the SLOWEST saves the app makes — every committed
+  // voice/source/topic write re-pushes the org's context bundle server-side
+  // (api.md, "Context sync"), documented as ~1–2 s longer than a read. These
+  // sat at 5 s and passed only while the API happened to answer inside it.
+  await expect(page.getByText('Tone created')).toBeVisible({ timeout: ONE_CALL })
   await expect(page.getByText('Roastery floor')).toBeVisible()
 
   // A reload re-reads the server: the tone is real.
@@ -100,7 +105,7 @@ test('voice rules: the flat live list persists through the API', async ({ page }
   await page.getByRole('button', { name: 'Add do', exact: true }).click()
   await page.locator('input[id^="voice-do"]').last().fill('Name the farm when it matters')
   await page.getByRole('button', { name: 'Save changes' }).click()
-  await expect(page.getByText('Brand voice saved')).toBeVisible()
+  await expect(page.getByText('Brand voice saved')).toBeVisible({ timeout: ONE_CALL })
 
   await page.goto('/settings/brand-voice')
   await expect(page.locator('input[id^="voice-do"]').first()).toHaveValue(

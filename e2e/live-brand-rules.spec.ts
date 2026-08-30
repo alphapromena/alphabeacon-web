@@ -18,7 +18,7 @@
 import type { Page } from '@playwright/test'
 import { expect, test } from './fixtures'
 import { signUpAndEnter } from './live-setup'
-import { SCREEN_SYNC } from './live-clocks'
+import { ONE_CALL, SCREEN_SYNC } from './live-clocks'
 
 const API_BASE = process.env.VITE_API_BASE_URL
 const RUN = Date.now()
@@ -117,7 +117,12 @@ test('a tone keeps its rules, and a PATCH replaces the whole list', async ({ pag
   await page.getByLabel('Do', { exact: true }).fill('Name the farm\nName the roast date')
   await page.getByLabel("Don't", { exact: true }).fill('Say artisanal')
   await page.getByRole('button', { name: 'Create tone' }).click()
-  await expect(page.getByText('Tone created')).toBeVisible()
+  // A save and its toast: the ONE_CALL rung, not the suite's 5 s default.
+  // Brand mutations are the SLOWEST saves the app makes — every committed
+  // voice/source/topic write re-pushes the org's context bundle server-side
+  // (api.md, "Context sync"), documented as ~1–2 s longer than a read. These
+  // sat at 5 s and passed only while the API happened to answer inside it.
+  await expect(page.getByText('Tone created')).toBeVisible({ timeout: ONE_CALL })
 
   // A reload re-reads the server: the rules are really stored.
   await page.goto('/settings/tones')
