@@ -118,6 +118,12 @@ test('the upload inputs are not tab stops, so focus never vanishes', async ({ pa
   await expect(page.getByRole('heading', { name: 'Knowledge', level: 1 })).toBeVisible()
   await expect(page.locator('input[type="file"]')).toHaveAttribute('tabindex', '-1')
 
+  // HSN-04: the affordance is disabled until the upload is typed and
+  // described, and a disabled button cannot take focus — so describe it first.
+  await page.getByRole('radio', { name: 'Document' }).click()
+  await page.getByLabel('What is it?', { exact: true }).fill('Price list')
+  await expect(page.getByRole('button', { name: 'Browse files' })).toBeEnabled()
+
   // Tabbing off the visible affordance must reach something visible, not the
   // invisible input behind it.
   await page.getByRole('button', { name: 'Browse files' }).focus()

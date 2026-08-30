@@ -447,6 +447,7 @@ function e2eNavigationRuleHolds(): boolean {
     'studio-billing.spec.ts',
     'compose-analytics-settings.spec.ts',
     'settings-a11y.spec.ts',
+    'hsn-series.spec.ts',
   ]
   let ok = true
   for (const name of specs) {

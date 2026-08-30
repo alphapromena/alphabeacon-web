@@ -6,10 +6,28 @@
  * The local run-ledger tests that used to live here went with the ledger in
  * INT-12 — the proposals ledger indexes runs server-side now, so its coverage
  * is in `proposals.test.ts`.
+ *
+ * HSN-FINAL added the generate BODY's sourcing rules (HSN-01 + HSN-03): no
+ * `options`, per-tone `length` only when the tone has one, per-tone
+ * `language` from the tone before the page's picker.
  */
-import { describe, expect, it } from 'vitest'
+import { act, renderHook } from '@testing-library/react'
+import { createElement, type ReactNode } from 'react'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import type { PostsGenerateRequest } from '@/api/types'
+import { DataProvider } from '@/data/provider'
+import type { Tone } from '@/data/types'
 import type { GenerationRun } from './generate'
-import { draftsFromRun, isRunTerminal, toRunTone } from './generate'
+import { draftsFromRun, isRunTerminal, toRunTone, useGenerateActions } from './generate'
+
+vi.mock('@/api/client', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@/api/client')>()),
+  api: vi.fn(),
+}))
+import { api } from '@/api/client'
+const apiMock = vi.mocked(api)
+
+beforeEach(() => apiMock.mockReset())
 
 /** Verbatim from Docs/api/alphastudio-shapes.md — a real completed run. */
 const OBSERVED: GenerationRun = {
@@ -76,15 +94,17 @@ describe('isRunTerminal', () => {
   })
 })
 
+const PLAIN: Tone = {
+  id: 'tone_1',
+  name: 'Roastery floor',
+  kind: 'custom',
+  description: 'Warm and specific.',
+  rules: { do: ['Name the farm'], dont: ['Say artisanal'] },
+}
+
 describe('toRunTone', () => {
   it('sends the tone whole, with its rules, and omits an absent example', () => {
-    const sent = toRunTone({
-      id: 'tone_1',
-      name: 'Roastery floor',
-      kind: 'custom',
-      description: 'Warm and specific.',
-      rules: { do: ['Name the farm'], dont: ['Say artisanal'] },
-    })
+    const sent = toRunTone(PLAIN)
     expect(sent).toEqual({
       id: 'tone_1',
       name: 'Roastery floor',
@@ -95,5 +115,45 @@ describe('toRunTone', () => {
       ],
     })
     expect('example' in sent).toBe(false)
+  })
+
+  it('sends `length` when the tone has one, and OMITS the key when it does not (HSN-03)', () => {
+    // A pre-HSN-03 tone never gets a length invented for it.
+    expect(toRunTone({ ...PLAIN, length: 'long' }).length).toBe('long')
+    expect('length' in toRunTone(PLAIN)).toBe(false)
+  })
+})
+
+const wrapper = ({ children }: { children: ReactNode }) =>
+  createElement(DataProvider, { initialDatasetId: 'active', children })
+
+describe('the generate body (HSN-01 + HSN-03)', () => {
+  it("takes each tone's language from the tone, falls back to the picker, and carries no `options`", async () => {
+    apiMock.mockResolvedValueOnce({ runId: 'run_1' })
+    const arabic: Tone = { ...PLAIN, id: 'tone_ar', language: 'ar', length: 'short' }
+    const { result } = renderHook(() => useGenerateActions(), { wrapper })
+
+    let outcome: Awaited<ReturnType<typeof result.current.generate>> | undefined
+    await act(async () => {
+      outcome = await result.current.generate({
+        tones: [arabic, PLAIN],
+        plan: 'balanced',
+        language: 'en',
+      })
+    })
+    expect(outcome).toEqual({ ok: true, runId: 'run_1' })
+
+    const [method, path, options] = apiMock.mock.calls[0]
+    expect(method).toBe('POST')
+    expect(path).toMatch(/\/alphastudio\/posts\/generate$/)
+    const body = options?.body as PostsGenerateRequest
+    expect(body.tones[0]).toMatchObject({ id: 'tone_ar', language: 'ar', length: 'short' })
+    expect(body.tones[1]).toMatchObject({ id: 'tone_1', language: 'en' })
+    expect('length' in body.tones[1]).toBe(false)
+    // HSN-01: the multiplier and its wrapper are gone from the wire.
+    expect('options' in body).toBe(false)
+    // `slot` is required on the wire (trap 13) and always built.
+    expect(body.slot?.timezone).toBeTruthy()
+    expect(body.plan).toBe('balanced')
   })
 })

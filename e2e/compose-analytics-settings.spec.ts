@@ -287,6 +287,9 @@ test('@golden a custom tone written once shows up wherever tones are picked', as
   await page.getByLabel('Tone name').fill('Roastery floor')
   await page.getByLabel('What this tone sounds like').fill('Plain, first person, no polish.')
   await page.getByLabel('Do', { exact: true }).fill('Say what we changed')
+  // HSN-03: a tone's language is required, with no default (hsn-series.spec.ts
+  // proves the refusal; this walk just picks one).
+  await page.getByLabel('Language').selectOption('en')
 
   // Preview shows the INTERACTION: brand voice and tone, both in force.
   await page.getByRole('button', { name: 'Preview' }).click()
@@ -347,6 +350,9 @@ test('knowledge plays the whole ingestion lifecycle, per file', async ({ page })
   await expect(page.getByText('Failed').first()).toBeVisible()
   await expect(page.getByRole('button', { name: 'Retry' })).toBeVisible()
 
+  // HSN-04: say what it is and describe it before the picker opens.
+  await page.getByRole('radio', { name: 'Document' }).click()
+  await page.getByLabel('What is it?', { exact: true }).fill('Spring price list')
   await page.getByLabel('Choose documents to upload').setInputFiles({
     name: 'price-list.txt',
     mimeType: 'text/plain',
@@ -354,8 +360,14 @@ test('knowledge plays the whole ingestion lifecycle, per file', async ({ page })
   })
   const uploaded = page.getByRole('listitem').filter({ hasText: 'price-list.txt' })
   await expect(uploaded.getByText('Ready')).toBeVisible({ timeout: 15_000 })
+  // The row carries what was said about it.
+  await expect(uploaded).toContainText('document · Spring price list')
 
   // A file with no text in it fails honestly, and offers no retry it cannot win.
+  // Declared as what it IS — a PNG declared as a document is refused before it
+  // is ever listed (hsn-series.spec.ts covers that refusal).
+  await page.getByRole('radio', { name: 'Image' }).click()
+  await page.getByLabel('What is it?', { exact: true }).fill('The roastery at dawn')
   await page.getByLabel('Choose documents to upload').setInputFiles({
     name: 'roastery.png',
     mimeType: 'image/png',
@@ -396,7 +408,9 @@ test('a role can be changed in place, and the last admin cannot be demoted', asy
   // The only admin: demotion is ABSENT, not disabled, and the row says why.
   const mine = page.getByLabel('Role for Maya Haddad')
   await expect(mine.getByRole('option')).toHaveCount(1)
-  await expect(page.getByText('The only admin. Promote someone else before changing this.')).toBeVisible()
+  await expect(
+    page.getByText('The only admin. Promote someone else before changing this.'),
+  ).toBeVisible()
 
   // Promotion is immediate — it grants access and is reversible.
   await page.getByLabel('Role for Omar Nasser').selectOption('admin')

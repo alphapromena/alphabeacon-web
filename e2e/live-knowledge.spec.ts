@@ -72,9 +72,16 @@ test('a FILE uploads straight to storage from the browser (open-item 24)', async
   await page.goto('/settings/knowledge')
   await expect(page.locator('[aria-busy="true"]')).toHaveCount(0)
 
+  // HSN-04: the form asks WHAT this is and for a description before any file
+  // leaves the browser — the description rides on the presign as `desc`
+  // (probe P2 at the HSN-FINAL gate: the RAG door answers 201 with it).
+  await page.getByRole('radio', { name: 'Document' }).click()
+  await page.getByLabel('What is it?', { exact: true }).fill('Roasting notes for the Guji lot')
+
   // The collection is created lazily, so wait until the surface is ready.
   // `setInputFiles` bypasses the disabled BUTTON, so the button's state is the
-  // only readiness signal available here.
+  // only readiness signal available here (it is also disabled until the type
+  // and the description above are given).
   await expect(page.getByRole('button', { name: 'Choose a file' })).toBeEnabled({
     timeout: 30_000,
   })
