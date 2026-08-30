@@ -5,7 +5,35 @@ without reconstructing it from the session log. **Update this file at the end
 of any turn that finishes a phase or changes the plan.** `sessions.md` is the
 chronological record; this is the current picture.
 
-_Last updated: 2026-08-30, after **ORDER HSN-04** — item 4 of the Hasan
+_Last updated: 2026-08-30, after **ORDER HSN-FINAL** — the Hasan series'
+consolidated gate, and **THE SERIES IS MERGED**: `main` fast-forwarded
+`289cad5` → **`6f45679`** (fourteen commits across five stacked branches, no
+merge commit, one linear history) and pushed with `main:live`, after the
+full house law ran on the tip — Phase 0's two presign probes (**open-item 43
+SOLVED-PENDING-WARD-CONFIRM: `desc` was the regression**, P1 201 with it /
+400 without on the same org; P2 the RAG door 201, HSN-04's shape stands), the
+deferred coverage (+31 unit, +6 static e2e, four stale specs updated, one
+`LIVE_MEDIA`-gated live spec authored not exercised), every static gate green
+(lint, typecheck, **501 unit / 46 files**, guard-static **331**, static e2e
+**99 passed / 64 skipped**, `verify:w00`–`w06` all PASS), and the live suite
+under the two-round law: **round 1 15/16** (the one red was the LOCAL dev
+server refusing a connection — harness), **round 2 — the gate — 16/16**.
+The gate found and fixed two things the series had deferred: the Create
+visual popup did not reset on its own Close/Done (Radix reports only
+open-changes IT initiates), and every live tone creation had to learn
+HSN-03's required language. **BUT NOTHING DEPLOYED:** both Vercel
+deployments at `6f45679` — production `dpl_2f9jcfToFHjohGKBtjwVdzz9YoUT`
+and the `live` preview `dpl_8e2DnP1MWCmdiH7Xdd1iv7KnCsbE` — are **BLOCKED**,
+as every deployment has been since the repo went private earlier the same
+day: Vercel's Hobby plan deploys a private repo only for commits authored by
+the team owner, and ours are authored by `qus0i`. Production still SERVES
+`289cad5` (`dpl_GYJNtXZX4Jwj9YUjqWfJEHJ4B5yu`, the rollback candidate) and
+`1.malaky.ai` still serves `index-CDsww8Wq.js`. **Founder decision:** make
+the repo public again, move to Pro and add the author, or author commits
+from the owner's identity — then Redeploy from the Vercel dashboard (or
+push again). The Phase-5 production smoke is written and waiting
+(`smoke-hsn-final.mjs` in the session record) and was NOT run against the
+old bundle. Before that, same day: **ORDER HSN-04** — item 4 of the Hasan
 series. **Part A:** sources are capped at **10** and topics at **30** —
 client-side product ceilings (the `MAX_POSTS_PER_DAY` precedent), enforced at
 the I5 screen, in `TagInput` and at the seam; over-cap data is rendered, never
@@ -153,7 +181,7 @@ below).
 |            |                                                        |
 | ---------- | ------------------------------------------------------ |
 | Remote     | `github.com/alphapromena/alphabeacon-web` (private)    |
-| `main`     | Production line, now at **`963c9f7`** — the whole **onboarding redesign** (ONB-0827 → 0827-B → 0827-C, fourteen commits across four stacked branches) fast-forwarded and **pushed 2026-08-30** on the founder's explicit approval, `main:live` with it. Before that push it was `fd84173`. The wizard is deleted, a fresh live org starts with zero tones, nothing generates before brand setup is complete, and a session opens in the org it remembers. Decisions D-ONB-A…F. Previously at **`039adfb`** — the whole **M2 design cycle** (`design/m2-concept-v2`, four commits) fast-forwarded and **pushed 2026-08-24** on the founder's explicit approval, `main:live` with it. Before that push it was `b8becc1`. Previously at **`b8becc1`** — the live-suite warm-up (`df23176` plus its close-out, three commits) fast-forwarded and pushed 2026-08-24, `main:live` with it. Before that push it was `5c01c68`. Previously at **`83ec448`** — the E2E-0820 triage (B1–B9, three commits) fast-forwarded and **pushed 2026-08-20** on the founder's explicit approval, `main:live` with it. Before that push it was `550f54e`. Previously at **`c6e3489`** — everything below PLUS the whole live integration (INT-6…12), merged as a fast-forward and **pushed 2026-08-19** on the founder's explicit approval. Before that push it was `6c598b2`. Open-items 16–18 still hold the human gates |
+| `main`     | Production line, now at **`6f45679`** — the whole **Hasan series** (HSN-01…04 plus the HSN-FINAL gate, fourteen commits across five stacked branches) fast-forwarded and **pushed 2026-08-30** on a green round 2, `main:live` with it — **but Vercel BLOCKED both deployments** (private repo on the Hobby plan; the commit author is not the team owner), so production still SERVES `289cad5` until the founder unblocks. Before that push it was `289cad5`. Previously at **`963c9f7`** — the whole **onboarding redesign** (ONB-0827 → 0827-B → 0827-C, fourteen commits across four stacked branches) fast-forwarded and **pushed 2026-08-30** on the founder's explicit approval, `main:live` with it. Before that push it was `fd84173`. The wizard is deleted, a fresh live org starts with zero tones, nothing generates before brand setup is complete, and a session opens in the org it remembers. Decisions D-ONB-A…F. Previously at **`039adfb`** — the whole **M2 design cycle** (`design/m2-concept-v2`, four commits) fast-forwarded and **pushed 2026-08-24** on the founder's explicit approval, `main:live` with it. Before that push it was `b8becc1`. Previously at **`b8becc1`** — the live-suite warm-up (`df23176` plus its close-out, three commits) fast-forwarded and pushed 2026-08-24, `main:live` with it. Before that push it was `5c01c68`. Previously at **`83ec448`** — the E2E-0820 triage (B1–B9, three commits) fast-forwarded and **pushed 2026-08-20** on the founder's explicit approval, `main:live` with it. Before that push it was `550f54e`. Previously at **`c6e3489`** — everything below PLUS the whole live integration (INT-6…12), merged as a fast-forward and **pushed 2026-08-19** on the founder's explicit approval. Before that push it was `6c598b2`. Open-items 16–18 still hold the human gates |
 | `rb/02-v1-brief` | Website V1 per Abdullah's brief + the ambient idle drift + the M1 card-realism passes through 2026-08-12 — tip `6c598b2`, and `origin/main` is at the same commit, so the production line has all of it |
 | Local `main` ref | **No longer stale** (checked 2026-08-24): local `main` == `origin/main`, and this merge fast-forwards both. The 2026-08-17 warning stood because the local ref had never been fast-forwarded and `git log main..` over-reported by 22 commits — worth re-checking with `git rev-parse main origin/main` before trusting any local `main` comparison. |
 | `fix/e2e-0820` | **The E2E-0820 triage, 2026-08-20 — branched off `main` (`550f54e`), MERGED as a fast-forward and pushed; kept on `origin` as the per-fix record.** F3 Generate reachable from the rail/dashboard/Today, F4 the "credits" vocabulary + `/billing/balance`, F5 the pre-run count, F6 the tone-preview reference, F9 the balance chip's three states, F10 the stale results footer, F11 pluralization, F12 the wizard Finish (failure-tolerant, reported, idempotent), B9 the schedule draft reconciler + a blank schedule for a live org that has none. Gate output in the session entry |
@@ -163,10 +191,11 @@ below).
 | `feat/onb-02-entry` | **MERGED 2026-08-30. ONB-0827 Phase 2 — stacked on Phase 1; PUSHED 2026-08-28, merged 2026-08-30.** `src/features/onboarding/*` DELETED; `/onboarding` is a redirect into the app; `org.onboarding {completed,resumeStep}` becomes `org.exists`; `finishOnboarding` becomes a lean `createWorkspace` (org only, idempotent) called at verify; N3 is reframed as the workspace-creation retry. `e2e/onboarding.spec.ts` is `e2e/entry-flow.spec.ts`. Closes open-item 27a. D-ONB-C |
 | `feat/onb-03-gate` | **MERGED 2026-08-30. ONB-0827 Phase 3 — the tip of the ONB-0827 stack; PUSHED 2026-08-28, merged 2026-08-30.** `src/data/readiness.ts` is the one selector; `ab/setup-checklist.tsx` is the one surface; the gate is enforced at `/generate`, the Studio composer, D4's dialog and Today's affordances, and `verify:w06` has a structural check that keeps it that way. D-ONB-D (PENDING) |
 | `feat/onb-04-invite-org` | **MERGED 2026-08-30 — this is the commit `main` now points at (`963c9f7`). ONB-0827-B, 2026-08-28 — stacked on `feat/onb-03-gate`. PUSHED, NOT merged.** Closes open-item 38: `src/data/adapters/org-selection.ts` is the one selector (`selectActiveOrg`, `mostRecentlyJoined`), the active org is persisted beside the session and stamped with the user id, `graftAuthSession` takes the chosen org instead of reaching for `orgs[0]`, accepting an invite switches immediately, a revoked membership falls back with a latched toast, and the rail's footer becomes a switcher at two orgs. D-ONB-F |
-| `feat/hsn-01-generate` | **HSN-01, 2026-08-30 — branched off `main` (`289cad5`). PUSHED, NOT merged; later HSN orders stack on it.** The Generate page's "drafts per tone" option deleted (control, state, copy, plumbing), `options.perTone` gone from the generate body and the emptied `options` wrapper with it; `MAX_FANOUT`/`overBudget`/`fanoutTooLarge` deleted as the multiplier's own plumbing. Hasan's target envelope appended to `Docs/api/alphastudio-shapes.md`. Probe: 202 without the field (org 1364, req `ce257b64-…`) |
-| `feat/hsn-02-create-visual` | **HSN-02, 2026-08-30 — branched off `feat/hsn-01-generate` (`df13b5f`). PUSHED, NOT merged; later HSN orders stack on it.** "Create visual" on live Today cards (beside Approve/Decline), on live Generate result cards (the legacy disabled button rewired), and on static D2 cards beside Approve/Reject; one `CreateVisualDialog` submitting Hasan's `social-posts.media` envelope (one post, `params {}`, `collection.use` false, guidance ≤ 6, `kind` chosen never defaulted), the 202 read as a job LIST, polled through the shared `use-job-poll.ts`. Attaches nothing. Build hygiene only, by the series law |
-| `feat/hsn-03-tone-lang-length` | **HSN-03, 2026-08-30 — branched off `feat/hsn-02-create-visual` (`6281cd6`). PUSHED, NOT merged; later HSN orders stack on it.** Tones gain `language` (required, no default) + `length` (default medium) in the Settings editor, create and edit; interim client sidecar `ab-tone-fields:<orgId>` hydrated in `fetchBrand`, wire send disabled behind `TONE_FIELDS_ON_WIRE`; generate body carries `length` (omitted when absent) and per-tone `language` from the tone; `SelectField` added to `ab/form.tsx`; rider copy on `visualUnconfirmed`. Build hygiene only |
-| `feat/hsn-04-limits-knowledge` | **HSN-04, 2026-08-30 — branched off `feat/hsn-03-tone-lang-length` (`ab26bb8`). PUSHED, NOT merged; later HSN orders stack on it.** Sources ≤ 10 / topics ≤ 30 as client-side ceilings (screen + `TagInput` + seam; over-cap rendered, never trimmed); the shared `KnowledgeUploadForm` (Image | Video | Document, required description, real-MIME check) in both worlds; the RAG presign body carries `desc`, no switch; `previewTone` sends the tone's language. Build hygiene only |
+| `feat/hsn-01-generate` | **MERGED 2026-08-30 (HSN-FINAL, `6f45679`); kept on `origin` as the per-order record. HSN-01, 2026-08-30 — branched off `main` (`289cad5`).** The Generate page's "drafts per tone" option deleted (control, state, copy, plumbing), `options.perTone` gone from the generate body and the emptied `options` wrapper with it; `MAX_FANOUT`/`overBudget`/`fanoutTooLarge` deleted as the multiplier's own plumbing. Hasan's target envelope appended to `Docs/api/alphastudio-shapes.md`. Probe: 202 without the field (org 1364, req `ce257b64-…`) |
+| `feat/hsn-02-create-visual` | **MERGED 2026-08-30 (HSN-FINAL). HSN-02, 2026-08-30 — branched off `feat/hsn-01-generate` (`df13b5f`); kept as the record.** "Create visual" on live Today cards (beside Approve/Decline), on live Generate result cards (the legacy disabled button rewired), and on static D2 cards beside Approve/Reject; one `CreateVisualDialog` submitting Hasan's `social-posts.media` envelope (one post, `params {}`, `collection.use` false, guidance ≤ 6, `kind` chosen never defaulted), the 202 read as a job LIST, polled through the shared `use-job-poll.ts`. Attaches nothing. Build hygiene only, by the series law |
+| `feat/hsn-03-tone-lang-length` | **MERGED 2026-08-30 (HSN-FINAL). HSN-03, 2026-08-30 — branched off `feat/hsn-02-create-visual` (`6281cd6`); kept as the record.** Tones gain `language` (required, no default) + `length` (default medium) in the Settings editor, create and edit; interim client sidecar `ab-tone-fields:<orgId>` hydrated in `fetchBrand`, wire send disabled behind `TONE_FIELDS_ON_WIRE`; generate body carries `length` (omitted when absent) and per-tone `language` from the tone; `SelectField` added to `ab/form.tsx`; rider copy on `visualUnconfirmed`. Build hygiene only |
+| `feat/hsn-04-limits-knowledge` | **MERGED 2026-08-30 (HSN-FINAL). HSN-04, 2026-08-30 — branched off `feat/hsn-03-tone-lang-length` (`ab26bb8`); kept as the record at `1520369`.** Sources ≤ 10 / topics ≤ 30 as client-side ceilings (screen + `TagInput` + seam; over-cap rendered, never trimmed); the shared `KnowledgeUploadForm` (Image | Video | Document, required description, real-MIME check) in both worlds; the RAG presign body carries `desc`, no switch; `previewTone` sends the tone's language. Build hygiene only |
+| `feat/hsn-final-gate` | **HSN-FINAL, 2026-08-30 — branched off `feat/hsn-04-limits-knowledge` (`1520369`), MERGED as the tip `main` now points at (`6f45679`); kept on `origin` as the gate's record.** The two presign probes, the deferred coverage (`e2e/hsn-series.spec.ts`, `e2e/live-create-visual.spec.ts`, five unit files), four stale specs and every live tone creation updated for HSN-03/04, the gate-found Create visual reset fix, the `verify:w06` upload check re-pointed, and the probe record in `alphastudio-shapes.md` |
 | `probe/int13` | The PROBE-INT13 media probe (2026-08-26/27), branched off `main` (`fd84173`) — **PUSHED 2026-08-28**, not merged, so its open-items 34/35 do NOT exist on the ONB stack. Phase B is still blocked on Ward |
 | `probe/assets-0826` | The assets-endpoint probe (2026-08-26), docs-only — **PUSHED 2026-08-28** so the Ward message's file pointers resolve on GitHub |
 | `chore/api-sweep` | The 118-operation contract sweep (`89199d9`), one commit ahead of `main`, untouched by the triage |
@@ -211,6 +240,7 @@ aspirational, not a rule this repo follows.
 | — **Website V1** (`rb/02-v1-brief`) | M1 | Built + verified 2026-08-10 — **SUPERSEDED by M2, 2026-08-23** |
 | — **M2: concept-v2** (`design/m2-concept-v2`) | the whole visitor world | Built 2026-08-23, corrected and **MERGED 2026-08-24** (D-M2-F-r2) — the accessibility gate in open-items 21 is closed; what remains there blocks DNS cutover, not the merge |
 | — **ONB-0827: the onboarding ruling** (`feat/onb-01…04`) | A5 (deleted), N3, I3, F1, E2, D4, D1, the rail | **MERGED and SHIPPED 2026-08-30** (`963c9f7`). A5 is RETIRED |
+| — **The Hasan series** (`feat/hsn-01…04` + `feat/hsn-final-gate`) | F1, D2, E3, I3, I4, I5, I6 | **MERGED 2026-08-30** (`6f45679`) on a green round 2 — **NOT DEPLOYED: Vercel BLOCKS every deployment of the now-private repo** (Hobby plan, commit author ≠ team owner); the founder unblocks |
 | **W7 Hardening + ship**              | —                            | **Parked behind the two manual gates**                        |
 
 ## Integration phases (AlphaStudio API — contract at `docs/api/api.md`)
@@ -292,10 +322,29 @@ invented or faked: where a spec promised something the wire cannot deliver, the
 honest subset ships and the deviation is logged. The backend questions live in
 open-items 1–13 and 21–27; W7 still waits on the two reopened manual gates.
 
-**On `feat/hsn-04-limits-knowledge` (2026-08-30): build hygiene only, by the
-series law** — lint clean, typecheck clean, **470 unit tests** (43 files,
-unchanged), guard-static **328 files clean** (one new file), prettier clean
-on every changed file. No e2e, no `verify:wNN`, no axe, no live call.
+**Current totals on `main` (`6f45679`, merged 2026-08-30 — the HSN-FINAL
+gate, run on the tip):** lint clean, typecheck clean, **501 unit tests / 46
+files** (+31, three new files), guard-static **331 files clean**, **static
+e2e 99 passed / 64 live-spec skips** (169 specs; `e2e/hsn-series.spec.ts` +6,
+`live-create-visual` +3 self-skipping), `verify:w00`–`w06` **all PASS** (w02
+and w06 on clean solo runs after the drain — see trap 22's fifth sighting;
+w06's `uploads` check was re-pointed at the file HSN-04 moved the input to),
+and the FULL live suite — now **16 files**, `live-create-visual` added,
+`LIVE_MEDIA` off — under the two-round law: **round 1 15/16 in 724 s**
+(`live-auth`'s only red was `net::ERR_CONNECTION_REFUSED` from the LOCAL dev
+server on its second test — the harness, not the API, not the product;
+7/7 in round 2), **round 2 — the merge gate — 16/16 in 760 s**, 60 passed /
+5 skipped, no red anywhere. Before the language fix, an aborted round 1
+failed five files deterministically on `Tone created` — the deferred HSN-03
+breakage, fixed in `62fb19d`, not the weather. Pre-existing and untouched:
+28 files are prettier-dirty on `main` (none HSN-touched except the smoke
+script, which was already dirty).
+
+Before that, **on `feat/hsn-04-limits-knowledge` (2026-08-30): build hygiene
+only, by the series law** — lint clean, typecheck clean, **470 unit tests**
+(43 files, unchanged), guard-static **328 files clean** (one new file),
+prettier clean on every changed file. No e2e, no `verify:wNN`, no axe, no
+live call.
 
 **On `feat/hsn-03-tone-lang-length` (2026-08-30): build hygiene only, by the
 series law** — lint clean, typecheck clean, **470 unit tests** (43 files,
@@ -620,6 +669,26 @@ These are learned the hard way; each cost a debugging cycle.
     run"** — a precondition you can check rather than a re-run you hope about.
     Two different tests failing in the same seam is the tell: when consecutive
     reds do not agree on WHAT broke, suspect the harness, not the branch.
+
+    **Fifth sighting, 2026-08-30 (HSN-FINAL), the same tell with numbers.**
+    The gate ran the full static suite EIGHT times on one tree (a bare
+    `pnpm e2e`, then `verify:w00`–`w06`, each after a full drain). The bare
+    run lost THREE tests that do not agree on what broke (the golden tone
+    walk at F1's tone select, the knowledge lifecycle's `Ready`, the
+    keyboard walk "must reach the main content"); `verify:w02`'s run lost ONE
+    (`calendar-connections`' "Syncing, never a zero" hunt); the other SIX
+    runs were 99/99, and every red passed on a clean solo run of its file
+    minutes later. Four reds across eight runs, never the same one twice,
+    never surviving solo: the harness. Two shapes worth naming: the bare
+    run was the FIRST Playwright run after `pnpm test` (vitest's workers had
+    just released the CPU), and the calendar hunt samples
+    `sheet.getByText(/Syncing…/).count()` right after a click — `count()`
+    does not wait (trap 14), so under load it can miss the slot and move on.
+    Left as it is (one sighting; it is W4's spec and this order did not touch
+    it), recorded so the next sighting is the second and the fix is obvious.
+    A LIVE cousin the same day: `live-auth` opened round 1 with
+    `net::ERR_CONNECTION_REFUSED at http://localhost:5199/login` on its
+    SECOND test — the local dev server, not the API — and ran 7/7 in round 2.
 
 19. **"Has the user edited?" is a fact to RECORD, not to infer from a JSON
     diff against a moving reference.** C1 decided whether to adopt a freshly

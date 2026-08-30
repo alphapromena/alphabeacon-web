@@ -2934,3 +2934,158 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
 - Next: founder review; branch pushed, nothing merged; the founder rules on
   the other presign callers next order. Later HSN orders stack on
   `feat/hsn-04-limits-knowledge`.
+
+### 2026-08-30 17:50 — ORDER HSN-FINAL: the series gate — probed, covered, merged; the deploy Vercel blocks
+
+- Did: **Phase 0 — two free presign probes** on a fresh isolated QA org
+  **1415** (`qa+1788095922469hsnfinal@…`, user 1778; org 619 untouched; no
+  byte PUT, no job, no run; every minted row deleted). **P1 — media door WITH
+  `desc`** (`{"mediaType":"image/png","desc":"HSN-FINAL probe P1 — a
+  reference image"}`) → **201**, `assetId masset_adb3fe2af9067cead02c329d`,
+  request `45f67ae4-d154-481a-aaba-f73a4d63f19d`, 826 ms. **P1-control —
+  the open-item 43 body** (`{"mediaType":"image/png"}`), same org, same
+  minute → **400 `bad_request` "The media service rejected the request —
+  check the body against the capability's schema"**, request
+  `99de0be4-2c05-4a4a-911b-0d0fee9d9cef`. **Verdict: the missing `desc` WAS
+  the regression — item 43 SOLVED-PENDING-WARD-CONFIRM**, Ward-message item 3
+  rewritten by reference in open-items. **P2 — RAG door WITH `desc`**
+  (`{"filename":"probe-p2.txt","mediaType":"text/plain","desc":"HSN-FINAL
+  probe P2 — roasting notes"}`, scratch collection
+  `col_1c3a617d8d6a4e3e8479160163cb4fcf`) → **201**, `sourceId
+  src_1c6a488fbcd7444194f3efbfe46675ec`, request
+  `d77dd2b2-2f03-42c3-804d-e5b1de0dda9c`, 804 ms. **Verdict: `desc`
+  tolerated; the built shape stands; the revert was NOT flipped.**
+  Observation: the same RAG door refuses `image/png` (request
+  `d7553931-3b03-46ea-b656-b14abc41ca77`) and `video/mp4` (request
+  `3182f312-c962-4cb9-9fca-c3e9d93e50f3`) with `desc` present — 400 "a
+  media type it cannot extract" — so the Knowledge form's Image and Video
+  choices are refused inline by the wire (Hasan's side to widen). Verbatim
+  bodies in `Docs/api/alphastudio-shapes.md`, "HSN-FINAL Phase 0".
+  **Phase 1 — coverage.** Static e2e `e2e/hsn-series.spec.ts` (**6**):
+  Create visual on Today (beside Approve/Reject, blank kind refused,
+  guidance capped at six, single flight, simulated lifecycle with the
+  `visualSimulated` + `visualNotAttached` copy, attaches nothing, blank on
+  reopen) and on a Generate result, `@axe` on the modal; tone language
+  required / length defaulted to medium / both on the card / edited; sources
+  10 and topics 30 (counter, disabled add, room after a removal); the
+  Knowledge form (type filters `accept`, real-MIME refusal by filename,
+  required description, the row carrying type · description). Four stale
+  specs updated for the new steps: `live-knowledge.spec.ts`,
+  `compose-analytics-settings.spec.ts` ×2 (the knowledge lifecycle now
+  declares its PNG an image; the golden tone walk picks a language),
+  `settings-a11y.spec.ts`. Unit **+31** (470 → **501**, 43 → **46 files**):
+  `adapters/tone-fields.test.ts` (11 — write/hydrate/server-wins/retire/
+  prune/unreadable store), `data/brand.test.ts` (4 — the caps at the seam
+  through the real `DataProvider`: refuse growth, allow shrink, never trim,
+  no wire), `data/studio.test.ts` (+12 — `checkKnowledgeFile` incl. the
+  no-coercion rule, `buildPostVisualRequest`, `jobFromFanOutReceipt`,
+  `createPostVisual` → job / `unconfirmed_receipt` + its bill-again copy /
+  `requestId` through a 502), `data/generate.test.ts` (+2 — `length`
+  omitted when absent; the body's per-tone language from the tone before
+  the picker, no `options`), `settings/tone-fields.test.ts` (2 — the
+  vocabulary and the "Not set" contract). One live spec,
+  `e2e/live-create-visual.spec.ts`, gated on `LIVE_MEDIA` at file level,
+  **authored and NOT exercised** (3 skipped in both rounds). Hygiene:
+  `draft-detail-screen.tsx` prettier-fixed (pre-existing, on `main`).
+  **Two gate-found fixes, both in the series' own code:** (1)
+  `create-visual-dialog.tsx` — Cancel/Close/Done bypassed `reset()`
+  (Radix reports only open-changes IT initiates), so reopening — even for
+  another draft — showed the last result; `close` resets first, and
+  `use-create-visual.ts` lets the demo's simulated job finish after a close
+  (the copy promised it). (2) Every live tone creation had to learn HSN-03's
+  required language (`live-setup.ts`, `live-brand`, `live-brand-rules` ×2,
+  `live-onboarding`) — an aborted round 1 failed FIVE files on `Tone
+  created` deterministically before the fix. Plus `verify:w06`'s upload
+  tab-stop check re-pointed at `knowledge-upload-form.tsx`, where HSN-04
+  moved the input (the law held; the check read the old file — trap 15).
+  **Phase 2 — static gates at the tip**, each Playwright run after a full
+  TIME_WAIT drain: lint clean · typecheck clean · **501 unit / 46 files** ·
+  guard-static **331 clean** · `pnpm e2e` **96 passed / 64 skipped / 3
+  failed** (the three passed in seven neighbouring full runs and solo — trap
+  22, fifth sighting in state.md) · `verify:w00` PASS 99/99 · `w01` PASS ·
+  `w02` FAIL on one `calendar-connections` red then **PASS 99/99 solo** ·
+  `w03` PASS · `w04` PASS · `w05` PASS · `w06` FAIL on the stale `uploads`
+  check (e2e 99/99) then **PASS 99/99 solo after the fix**. **Phase 3 —
+  the live suite, 16 files, `LIVE_MEDIA` off, one file at a time, drains
+  between.** Round 1 (**724 s**): auth **1 failed / 1 passed** —
+  `net::ERR_CONNECTION_REFUSED at localhost:5199/login` on test 2, the LOCAL
+  dev server, classified harness · brand 5/5 · brand-rules 5/5 · country
+  4/4 · generate 2/2 · invite-org 3/3 · knowledge 3/3 · notifications 1/1 ·
+  onboarding 6/6 · proposals 4/4 · schedule-repair 3/3 · scheduling 2/2 +1
+  skip · studio 3/3 +1 skip · team 6/6 · wallet 4/4 · create-visual 3 skip.
+  **Round 2 — THE MERGE GATE (760 s): 16/16 files, 60 passed / 5 skipped,
+  no red** — auth 7/7 · brand 5/5 · brand-rules 5/5 · country 4/4 ·
+  generate 2/2 · invite-org 3/3 · knowledge 3/3 · notifications 1/1 ·
+  onboarding 6/6 · proposals 4/4 · schedule-repair 3/3 · scheduling 2/2 +1
+  · studio 3/3 +1 · team 6/6 · wallet 4/4 · create-visual 3 skipped.
+  **Phase 4 — merged.** Preconditions held (clean tree; `main` ==
+  `origin/main` == `origin/live` == `289cad5`; `main` an ancestor of the
+  tip). The gate's commits moved to **`feat/hsn-final-gate`** (off
+  `feat/hsn-04-limits-knowledge` = `1520369`, whose record tip is restored
+  to what was pushed); `main` fast-forwarded `289cad5` → **`6f45679`**,
+  **fourteen commits, zero merge commits in the range**, pushed `main`,
+  `main:live` and the gate branch. `feat/hsn-01…04` stay as the record.
+  **Phase 5 — production verification: BLOCKED, not verified.** Vercel
+  created the two deployments at `6f45679` and BLOCKED both — production
+  **`dpl_2f9jcfToFHjohGKBtjwVdzz9YoUT`** (target production, ref `main`)
+  and **`dpl_8e2DnP1MWCmdiH7Xdd1iv7KnCsbE`** (ref `live`) — exactly as it
+  blocked HSN-03's and HSN-04's branch deploys earlier today, since the repo
+  turned PRIVATE between HSN-02 (`githubRepoVisibility: public`, READY) and
+  HSN-03 (`private`, BLOCKED). Vercel's rule, fetched verbatim from the
+  error link: *"The Hobby Plan does not support collaboration for private
+  repositories. To deploy commits under a Hobby team, the commit author
+  must be the owner of the Hobby team."* Author `qus0i`, owner
+  `alphapromena`. **Production still serves `289cad5`** —
+  `dpl_GYJNtXZX4Jwj9YUjqWfJEHJ4B5yu` (READY, the rollback candidate) — and
+  `1.malaky.ai` still serves **`index-CDsww8Wq.js`** (checked 14:46 UTC,
+  unchanged). The zero-spend smoke was written
+  (`smoke-hsn-final.mjs`: bundle hash + seven HSN strings in the deployed
+  chunks + no `perTone`; a fresh org's tone Language/Length, the 10/30
+  counters, the Knowledge type + description, the gate; then org 1364 —
+  whose QA login and pending proposal were confirmed by API, zero spend —
+  opening and CANCELLING Create visual on Today, and the Generate form
+  without the deleted control) and **deliberately NOT run against the old
+  bundle**. Nothing was worked around: no MCP/CLI deploy, no re-authoring.
+- Divergences / observations for the founder: (1) the Generate page's Create
+  visual on a READY org lives on a RESULT card, which only a paid run makes
+  — the smoke proves that entry point through the deployed bundle's strings
+  and the Today card, not by pressing Generate; (2) `live-create-visual`
+  spends a run AND a render when enabled — it is one command away
+  (`LIVE_MEDIA=1`), the founder's call; (3) `uploadReferenceImage` and the
+  smoke script's media presign still send `{ mediaType }` — one field each,
+  waiting on the founder's ruling on the other presign callers; (4) the
+  `calendar-connections` "Syncing" hunt has a trap-14 shape (`count()`
+  right after a click) — one sighting, left alone, named in state.md; (5) 28
+  prettier-dirty files pre-exist on `main`, none HSN-touched but the smoke
+  script, and none touched here; (6) the merge tip `6f45679` is a docs-only
+  commit on top of the gated tree `62fb19d` (the shapes record, item 43,
+  the decision entry), the house pattern.
+- Phase: **HSN-FINAL** — the Hasan series is CLOSED at four items and
+  merged; production is NOT updated pending the founder's Vercel decision.
+- Files: `e2e/{hsn-series.spec.ts (new),live-create-visual.spec.ts (new),live-knowledge.spec.ts,compose-analytics-settings.spec.ts,settings-a11y.spec.ts,live-setup.ts,live-brand.spec.ts,live-brand-rules.spec.ts,live-onboarding.spec.ts}`,
+  `src/data/{brand.test.ts (new),studio.test.ts,generate.test.ts}`,
+  `src/data/adapters/tone-fields.test.ts (new)`,
+  `src/features/settings/tone-fields.test.ts (new)`,
+  `src/features/studio/{create-visual-dialog.tsx,use-create-visual.ts}`,
+  `src/features/today/draft-detail-screen.tsx` (prettier),
+  `scripts/verify-w06.ts`, `Docs/api/alphastudio-shapes.md`,
+  `.agent/{decisions,open-items,state,sessions}.md`
+- Decisions: see decisions.md — HSN-FINAL (2026-08-30)
+- Verify: everything above — static gates all green at the tip (lint ·
+  typecheck · 501 unit · guard 331 · e2e 99/64 · verify:w00–w06 PASS) and
+  the live suite round 2 16/16 (round 1 15/16, harness red). **The deploy
+  did not happen** (BLOCKED); the production smoke is written, not run.
+- Next: **founder** — unblock Vercel (public repo, or Pro + member, or the
+  owner's commit identity), Redeploy `6f45679` (or push), then run the
+  smoke — or say the word and it runs from here. Ward: confirm `desc` is
+  now required on `media/assets/presign` and document it (item 43 closes).
+  Hasan: `TONE_FIELDS_ON_WIRE` waits on persistence; the RAG door refuses
+  image/video. Still open: 38b, 40, 41, 42, W7's two manual gates.
+- ls-remote receipt (`git ls-remote --heads origin`, 2026-08-30):
+  `6f45679396778630b526dd00bbf2896840ec70b3 refs/heads/main` ·
+  `6f45679396778630b526dd00bbf2896840ec70b3 refs/heads/live` ·
+  `6f45679396778630b526dd00bbf2896840ec70b3 refs/heads/feat/hsn-final-gate` ·
+  `15203692b49d6180d5f65f08c122ad8e8687e82f refs/heads/feat/hsn-04-limits-knowledge` ·
+  `ab26bb89d4eb9f0da7e83d56d9d07969bdf64efc refs/heads/feat/hsn-03-tone-lang-length` ·
+  `6281cd657ea7a459bd519cf8f3b092454742fbf5 refs/heads/feat/hsn-02-create-visual` ·
+  `df13b5f65ad677eeff6eec733ac3ad2fb384c26d refs/heads/feat/hsn-01-generate`.
