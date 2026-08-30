@@ -2217,3 +2217,71 @@ Closes open-item 38, which ONB-0827 created and the live suite caught.
   that), or keeping the wire field "harmlessly" (upstream ignoring a field
   today is not a contract that it will tomorrow — the reference envelope is
   the contract, and it has no `options`).
+
+### 2026-08-30 — HSN-02: Create visual is ONE popup, ONE post, NO retry, and attaches nothing
+
+- **Provenance.** Item 2 of the Hasan-sync series (the founder's sync with the
+  AlphaStudio upstream owner, 2026-08-28). The reference envelopes — image and
+  video — are recorded verbatim at the end of `Docs/api/alphastudio-shapes.md`
+  ("Upstream social-posts.media envelope — Hasan sync 2026-08-28"). Structure
+  is the contract; the values are samples.
+- **The ruling.** A "Create visual" action in two places — each generated draft
+  on the Generate page, and each draft card on Today beside Approve and
+  Decline — opens ONE modal that submits `social-posts.media` for THAT draft.
+  `capability`, the single `posts[]` entry `{ref, content, tone{id, name,
+  description, rules[]}}`, `params: {}` and `collection: {use: false}` are
+  derived and never rendered as inputs; `kind` (no default), `plan`
+  (balanced), `imgStyle` (Cinematic), `style.text`/`style.logo` (on) and up to
+  six `guidance` strings are the form. The 202 is read as a LIST of jobs and
+  the one job is followed through the Studio's own poller.
+- **The laws, and where each lives structurally.**
+  - *Single post per call* — `SocialPostsMediaRequest.posts` is a one-tuple
+    and `buildPostVisualRequest` is the only builder (PROBE-INT13: the
+    multi-post path bills and then 502s; single-post is the clean control).
+  - *No retry, anywhere* — the submit is single-flight (`submitting` disables
+    it) and a failure parks in `failed` until "Back to the form"; only a
+    fresh press sends. Every failure string says a retry may bill again,
+    because the `posts[]` path has created and billed a job and then answered
+    502. `upstreamUnavailable` ("nothing was charged") is deliberately NOT
+    used for this call.
+  - *`collection.use` is false, hardcoded* — the founder's explicit word for
+    this modification; no toggle exists.
+  - *Guidance max six* — founder-confirmed; blanks are trimmed and a seventh
+    row cannot be added.
+  - *`imgStyle` is client-side curation only* — sent verbatim, upstream
+    accepts any string, so the list is revisable without contract impact.
+  - *The series no-testing law* — no e2e, verify, axe, live call or new spec
+    of any kind this item; coverage is authored in the final-gate order.
+- **Interpretations on record (each reversible in a line).**
+  1. *The receipt.* The fan-out receipt has never been observed on the wire
+     (PROBE-INT13, open-item 34a). `jobFromFanOutReceipt` reads the ruled
+     `{jobs: [...]}`, TOLERATES a bare job (the single-job control's shape),
+     and treats anything else as `unconfirmed_receipt` — accepted, maybe
+     billed, not success.
+  2. *The static card.* On the static D2 card the button renders in the same
+     row-state as Approve and Reject (`canApprove`), so an approved static
+     card keeps D4 — the demo's credits composer and its one attach path — as
+     its single visual button. On the live Today card it renders on every
+     card that has a draft. Rendering it on approved static cards too is a
+     one-line change (drop `canApprove &&`).
+  3. *The legacy control.* `live-generate.tsx`'s disabled "Create visual"
+     (`visualComingNext`) was REWIRED and the notice deleted with it — no
+     second path. D4's "Create image or video" and E4's "Attach to a draft"
+     are the static demo's ATTACH pipeline, not create-visual controls; both
+     untouched, both reported as attachment surfaces for a later order.
+  4. *The poller.* E3's poll loop moved verbatim into
+     `features/studio/use-job-poll.ts` and both E3 and the dialog call it —
+     one machinery, two consumers. The only additions: a `timedOut` signal,
+     and a guard so a restarted effect cannot leave an orphan loop behind.
+  5. *The gate.* The dialog reads `useReadiness()` and renders
+     `GenerationBlocked` inside itself, exactly as D4 does (D-ONB-D: a media
+     job is a generation job).
+  6. *Static mode* resolves through the existing Studio simulation as a
+     STANDALONE job (`media/start` → `media/succeed`), labelled simulated,
+     zero network — and attaches nothing, because this order attaches
+     nothing.
+- Instead of: a second poller inside the dialog; typing the receipt as a
+  single job because that is the only shape ever seen (the ruling says list);
+  defaulting `kind` to image (the two kinds cost differently); or hiding the
+  tone-less case behind a fabricated tone (a draft whose tone is gone gets an
+  honest refusal — `rules` are never invented).

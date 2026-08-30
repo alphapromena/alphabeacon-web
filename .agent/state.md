@@ -5,7 +5,23 @@ without reconstructing it from the session log. **Update this file at the end
 of any turn that finishes a phase or changes the plan.** `sessions.md` is the
 chronological record; this is the current picture.
 
-_Last updated: 2026-08-30, after **ORDER HSN-01** — item 1 of the
+_Last updated: 2026-08-30, after **ORDER HSN-02** — item 2 of the Hasan
+series. A **"Create visual"** action now exists in two places — each generated
+draft on the Generate page (the disabled legacy button, REWIRED) and each draft
+card on Today beside Approve and Decline — and opens ONE modal that submits
+Hasan's `social-posts.media` envelope for THAT draft: one post per call, no
+retry anywhere (every failure says a retry may bill again — the `posts[]`
+path has billed and then 502'd), `collection.use` false by the founder's word,
+guidance capped at six. The 202 is read as a LIST and the one job is followed
+through the Studio's own poller (E3's loop, lifted into `use-job-poll.ts`).
+Static mode resolves through the Studio simulation, standalone and labelled.
+**Nothing is attached to a draft yet** — the attachment surfaces are reported
+in the session entry for a later order. **By the series law NO testing ran
+beyond build hygiene** (lint, typecheck, 470 unit, guard-static 325 clean);
+e2e, verify and live coverage are the final-gate order's. On branch
+**`feat/hsn-02-create-visual`** (off `feat/hsn-01-generate` = `df13b5f`),
+**pushed, NOT merged**; later HSN orders stack on it. Before that, same day:
+**ORDER HSN-01** — item 1 of the
 contract-alignment series from the founder's 2026-08-28 sync with Hasan
 (AlphaStudio upstream owner). The Generate page's "drafts per tone" option is
 **DELETED** — control, state, copy, plumbing — and the generate body no longer
@@ -119,6 +135,7 @@ below).
 | `feat/onb-03-gate` | **MERGED 2026-08-30. ONB-0827 Phase 3 — the tip of the ONB-0827 stack; PUSHED 2026-08-28, merged 2026-08-30.** `src/data/readiness.ts` is the one selector; `ab/setup-checklist.tsx` is the one surface; the gate is enforced at `/generate`, the Studio composer, D4's dialog and Today's affordances, and `verify:w06` has a structural check that keeps it that way. D-ONB-D (PENDING) |
 | `feat/onb-04-invite-org` | **MERGED 2026-08-30 — this is the commit `main` now points at (`963c9f7`). ONB-0827-B, 2026-08-28 — stacked on `feat/onb-03-gate`. PUSHED, NOT merged.** Closes open-item 38: `src/data/adapters/org-selection.ts` is the one selector (`selectActiveOrg`, `mostRecentlyJoined`), the active org is persisted beside the session and stamped with the user id, `graftAuthSession` takes the chosen org instead of reaching for `orgs[0]`, accepting an invite switches immediately, a revoked membership falls back with a latched toast, and the rail's footer becomes a switcher at two orgs. D-ONB-F |
 | `feat/hsn-01-generate` | **HSN-01, 2026-08-30 — branched off `main` (`289cad5`). PUSHED, NOT merged; later HSN orders stack on it.** The Generate page's "drafts per tone" option deleted (control, state, copy, plumbing), `options.perTone` gone from the generate body and the emptied `options` wrapper with it; `MAX_FANOUT`/`overBudget`/`fanoutTooLarge` deleted as the multiplier's own plumbing. Hasan's target envelope appended to `Docs/api/alphastudio-shapes.md`. Probe: 202 without the field (org 1364, req `ce257b64-…`) |
+| `feat/hsn-02-create-visual` | **HSN-02, 2026-08-30 — branched off `feat/hsn-01-generate` (`df13b5f`). PUSHED, NOT merged; later HSN orders stack on it.** "Create visual" on live Today cards (beside Approve/Decline), on live Generate result cards (the legacy disabled button rewired), and on static D2 cards beside Approve/Reject; one `CreateVisualDialog` submitting Hasan's `social-posts.media` envelope (one post, `params {}`, `collection.use` false, guidance ≤ 6, `kind` chosen never defaulted), the 202 read as a job LIST, polled through the shared `use-job-poll.ts`. Attaches nothing. Build hygiene only, by the series law |
 | `probe/int13` | The PROBE-INT13 media probe (2026-08-26/27), branched off `main` (`fd84173`) — **PUSHED 2026-08-28**, not merged, so its open-items 34/35 do NOT exist on the ONB stack. Phase B is still blocked on Ward |
 | `probe/assets-0826` | The assets-endpoint probe (2026-08-26), docs-only — **PUSHED 2026-08-28** so the Ward message's file pointers resolve on GitHub |
 | `chore/api-sweep` | The 118-operation contract sweep (`89199d9`), one commit ahead of `main`, untouched by the triage |
@@ -243,6 +260,12 @@ published-social (they exist upstream but are not proxied). None of it is
 invented or faked: where a spec promised something the wire cannot deliver, the
 honest subset ships and the deviation is logged. The backend questions live in
 open-items 1–13 and 21–27; W7 still waits on the two reopened manual gates.
+
+**On `feat/hsn-02-create-visual` (2026-08-30): build hygiene only, by the
+series law** — lint clean, typecheck clean, **470 unit tests** (43 files,
+unchanged), guard-static **325 files clean** (three new files), prettier
+clean. No e2e, no `verify:wNN`, no axe, no live call: the series consolidates
+every test into one final-gate order before a single ff merge.
 
 **Current totals on `feat/hsn-01-generate` (2026-08-30): 470 unit tests**
 (43 files — one net test fewer than `main`: the deleted over-budget guard's

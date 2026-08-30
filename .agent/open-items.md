@@ -569,6 +569,16 @@ build, so they are worth asking as a batch.
     presign `live-knowledge` uses is the RAG one
     (`/rag/collections/:id/sources/presign`), which the sweep shows `ok 201`.
     So it is not part of item 42's story, and it did not gate this cycle.
+    **Ledger note, 2026-08-30 (ORDER HSN-02 — NO wire call made).** The
+    leading hypothesis is now a MISSING FIELD rather than a broken route:
+    Hasan's meeting chat (2026-08-28) shows the presign body as
+    `{ "mediaType": "image/png", "desc": "..." }` — a `desc` our 08-17-era
+    body (`{ mediaType }` only; `uploadReferenceImage` in
+    `src/data/studio.ts`, and the smoke script) has never sent — and "check
+    the body against the capability's schema" is exactly what a newly
+    required field would say. Nothing touched, by the series law; **to be
+    probed in the final-gate order**, and if it holds the fix is one field
+    on one body.
 
 ### M1 cinematic items — RETIRED by the rebrand (2026-08-08)
 

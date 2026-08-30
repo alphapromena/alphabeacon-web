@@ -2774,3 +2774,55 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   file that runs it.
 - Next: founder review; the branch is pushed, nothing merged. Later HSN
   orders stack on `feat/hsn-01-generate`.
+
+### 2026-08-30 15:10 — ORDER HSN-02: Create visual — the popup, the envelope, and the no-retry law (item 2 of the Hasan series)
+
+- Did: **Phase 0 (repo only, ZERO wire calls):** endpoint `POST
+  /orgs/:orgId/alphastudio/media/jobs`, body `capability: "social-posts.media"`
+  — from `Docs/api/api.md` §media/jobs, the PROBE-INT13 doc (`probe/int13`,
+  `31dd687`) and `createJob` in `src/data/studio.ts`. Receipt:
+  `MediaJobFanOutReceipt { jobs: MediaJobReceipt[] }` in `src/api/types.ts` —
+  declared, and the probe record says in capitals it has NEVER been observed
+  (both `posts[]` sends 502'd after creating and billing the job). The
+  founder's ruling (a list; take the one job) is what the code reads; the
+  unobserved-ness is written on the type and handled as `unconfirmed_receipt`.
+  Poller: E3's `live-jobs.tsx` loop — lifted into `use-job-poll.ts` and
+  reused, not copied. Legacy control: ONE — `live-generate.tsx`'s disabled
+  "Create visual" (rewired). The Studio gallery's `social-posts.media`
+  composer link (`/studio/new?capability=`) sends a PROMPT body, not Hasan's
+  `posts[]` envelope, and is Studio's own — left, reported. Presign `desc`
+  hypothesis logged on open-item 43. **Phase 1 (build):** `CreateVisualDialog`
+  + `useCreateVisual` (form → submitting → running → done | failed),
+  `SocialPostsMediaRequest` types, `buildPostVisualRequest` / `toVisualTone` /
+  `jobFromFanOutReceipt` / `createPostVisual` in the data layer, eleven
+  catalogue strings (`visualComingNext` deleted), the button on the live Today
+  card beside Approve/Decline, on the live Generate result card, and on the
+  static D2 card beside Approve/Reject (static resolves through the Studio
+  simulation, standalone, labelled). Both envelopes appended to
+  `alphastudio-shapes.md`.
+- Divergences / observations for the founder: (1) static approved cards keep
+  D4 as their one visual button (decisions.md HSN-02 §2); (2) the receipt
+  tolerance (§1); (3) attachment surfaces for a later order — D4 /
+  `MediaPanel` → `media/succeed` attaches `assetId` and moves the draft to
+  `media_ready`; E4's "Attach to a draft" (`asset/attach`); D3's own action
+  row (`draft-detail-screen.tsx`); in live mode `origin.ref` on the job
+  (= `posts[0].ref`) is the re-association key PROBE-INT13 confirmed; (4)
+  `MediaJobRequest.guidance` is `{role, text}[]` per api.md while Hasan's
+  envelope sends plain strings — the new type is separate, the old untouched;
+  (5) the tone sent carries no `length` — the same open point as HSN-01's
+  divergence (1).
+- Phase: HSN-02 (contract alignment; INT culture — branch per order)
+- Files: `src/api/types.ts`, `src/data/studio.ts`, `src/lib/messages.ts`,
+  `src/features/studio/{use-job-poll.ts,use-create-visual.ts,create-visual-dialog.tsx,live-jobs.tsx}`,
+  `src/features/generate/live-generate.tsx`,
+  `src/features/today/{live-today.tsx,draft-card.tsx,draft-dialogs.tsx,use-draft-actions.ts}`,
+  `Docs/api/alphastudio-shapes.md`, `.agent/{state,decisions,open-items,sessions}.md`
+- Decisions: see decisions.md — HSN-02 (2026-08-30)
+- Verify: build hygiene ONLY, by the series law — lint clean · typecheck
+  clean · **470 unit / 43 files** (unchanged: nothing authored, nothing
+  broke) · guard-static **325 files clean** (three new files) · prettier
+  clean. NOT run, deliberately: e2e, verify:wNN, axe, anything live.
+- Next: founder review; branch pushed, nothing merged. Later HSN orders stack
+  on `feat/hsn-02-create-visual`. The final-gate order authors the coverage
+  (unit for `buildPostVisualRequest` / `jobFromFanOutReceipt`, static e2e for
+  the dialog's states, one paid live render) and probes item 43.
