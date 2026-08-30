@@ -227,9 +227,12 @@ export function useCreateVisual({ subject, tone }: { subject: VisualSubject | nu
     setPhase('running')
     const mine = epoch.current
     timer.current = window.setTimeout(() => {
-      if (mine !== epoch.current) return
       const assetId = `asset_${jobId}`
+      // The job finishes whether or not this dialog is still open — "it keeps
+      // going if you close this" is true of the demo too (HSN-FINAL gate).
+      // Only the dialog's OWN state is gated on the epoch.
       dispatch({ type: 'media/succeed', jobId, assetId })
+      if (mine !== epoch.current) return
       setSimulatedAssetId(assetId)
       setPhase('done')
     }, COMPOSER_RUN_MS)
@@ -293,8 +296,9 @@ export function useCreateVisual({ subject, tone }: { subject: VisualSubject | nu
 
   /** Close: forget everything, including the kind — the next one is chosen afresh. */
   function reset() {
+    // The epoch bump is what detaches a closed dialog from its job; the
+    // simulation's timer is left to finish so the demo's job settles.
     epoch.current += 1
-    window.clearTimeout(timer.current)
     setForm(EMPTY_VISUAL_FORM)
     setPhase('form')
     setError(null)

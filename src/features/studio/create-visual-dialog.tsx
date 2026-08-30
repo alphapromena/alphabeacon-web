@@ -73,7 +73,14 @@ export function CreateVisualDialog({
 
   if (!subject) return null
 
-  const close = () => onOpenChange(false)
+  // Every in-dialog Cancel/Close/Done goes through here. Radix reports only
+  // an open-change IT initiated (Escape, the overlay), so a controlled close
+  // from a button must reset the machine itself — found by the HSN-FINAL
+  // gate: without it the next draft's popup opened on the last one's result.
+  const close = () => {
+    visual.reset()
+    onOpenChange(false)
+  }
   const busy = visual.phase === 'submitting'
   const snippet = `${subject.content.slice(0, 140)}${subject.content.length > 140 ? '…' : ''}`
 
