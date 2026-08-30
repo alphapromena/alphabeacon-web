@@ -579,6 +579,18 @@ build, so they are worth asking as a batch.
     required field would say. Nothing touched, by the series law; **to be
     probed in the final-gate order**, and if it holds the fix is one field
     on one body.
+    **Ledger note, 2026-08-30 (ORDER HSN-04 — NO wire call made).** The
+    `desc` fix is now OPERATIONALIZED — on the KNOWLEDGE upload's presign,
+    which Phase 0 found is the RAG door
+    (`POST /orgs/:id/alphastudio/rag/collections/:cid/sources/presign`, body
+    `{filename, mediaType}` → now `{filename, mediaType, desc}`, sent with
+    no switch by the founder's word), NOT this item's media door. This
+    item's own route, `POST /media/assets/presign` (`uploadReferenceImage`,
+    body `{ mediaType }`), has NO caller in the app today and is untouched
+    pending the founder's next-order ruling on the other presign callers.
+    So HSN-04 does not by itself close this item. The final gate probes
+    both doors — this one with `{ mediaType, desc }` — and says which
+    hypothesis held. Full record: decisions.md HSN-04.
 
 ### M1 cinematic items — RETIRED by the rebrand (2026-08-08)
 

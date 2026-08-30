@@ -5,7 +5,22 @@ without reconstructing it from the session log. **Update this file at the end
 of any turn that finishes a phase or changes the plan.** `sessions.md` is the
 chronological record; this is the current picture.
 
-_Last updated: 2026-08-30, after **ORDER HSN-03** — item 3 of the Hasan
+_Last updated: 2026-08-30, after **ORDER HSN-04** — item 4 of the Hasan
+series. **Part A:** sources are capped at **10** and topics at **30** —
+client-side product ceilings (the `MAX_POSTS_PER_DAY` precedent), enforced at
+the I5 screen, in `TagInput` and at the seam; over-cap data is rendered, never
+trimmed, and only adding stops. **Part B:** the Knowledge upload asks Image |
+Video | Document plus a REQUIRED description before any file leaves the
+browser, checks the file's real MIME against the choice (no more `text/plain`
+coercion), and the presign body carries **`desc`** beside `mediaType` with NO
+switch, by the founder's word — **with a correction on record:** that door is
+the RAG presign, healthy on 08-30; open-item 43's broken door is the media
+presign, which has no UI caller and is untouched pending the next order. Riders:
+`previewTone` sends the tone's language; every close-out now attaches the
+`git ls-remote --heads origin` receipt. Build hygiene only. On branch
+**`feat/hsn-04-limits-knowledge`** (off `feat/hsn-03-tone-lang-length` =
+`ab26bb8`), **pushed, NOT merged**; later HSN orders stack on it. Before that,
+same day: **ORDER HSN-03** — item 3 of the Hasan
 series. Every tone gains **`language`** (Arabic | English, required in the
 editor with no default) and **`length`** (short | medium | long, form default
 medium), set in Settings on create and edit — built **AHEAD of the backend**:
@@ -151,6 +166,7 @@ below).
 | `feat/hsn-01-generate` | **HSN-01, 2026-08-30 — branched off `main` (`289cad5`). PUSHED, NOT merged; later HSN orders stack on it.** The Generate page's "drafts per tone" option deleted (control, state, copy, plumbing), `options.perTone` gone from the generate body and the emptied `options` wrapper with it; `MAX_FANOUT`/`overBudget`/`fanoutTooLarge` deleted as the multiplier's own plumbing. Hasan's target envelope appended to `Docs/api/alphastudio-shapes.md`. Probe: 202 without the field (org 1364, req `ce257b64-…`) |
 | `feat/hsn-02-create-visual` | **HSN-02, 2026-08-30 — branched off `feat/hsn-01-generate` (`df13b5f`). PUSHED, NOT merged; later HSN orders stack on it.** "Create visual" on live Today cards (beside Approve/Decline), on live Generate result cards (the legacy disabled button rewired), and on static D2 cards beside Approve/Reject; one `CreateVisualDialog` submitting Hasan's `social-posts.media` envelope (one post, `params {}`, `collection.use` false, guidance ≤ 6, `kind` chosen never defaulted), the 202 read as a job LIST, polled through the shared `use-job-poll.ts`. Attaches nothing. Build hygiene only, by the series law |
 | `feat/hsn-03-tone-lang-length` | **HSN-03, 2026-08-30 — branched off `feat/hsn-02-create-visual` (`6281cd6`). PUSHED, NOT merged; later HSN orders stack on it.** Tones gain `language` (required, no default) + `length` (default medium) in the Settings editor, create and edit; interim client sidecar `ab-tone-fields:<orgId>` hydrated in `fetchBrand`, wire send disabled behind `TONE_FIELDS_ON_WIRE`; generate body carries `length` (omitted when absent) and per-tone `language` from the tone; `SelectField` added to `ab/form.tsx`; rider copy on `visualUnconfirmed`. Build hygiene only |
+| `feat/hsn-04-limits-knowledge` | **HSN-04, 2026-08-30 — branched off `feat/hsn-03-tone-lang-length` (`ab26bb8`). PUSHED, NOT merged; later HSN orders stack on it.** Sources ≤ 10 / topics ≤ 30 as client-side ceilings (screen + `TagInput` + seam; over-cap rendered, never trimmed); the shared `KnowledgeUploadForm` (Image | Video | Document, required description, real-MIME check) in both worlds; the RAG presign body carries `desc`, no switch; `previewTone` sends the tone's language. Build hygiene only |
 | `probe/int13` | The PROBE-INT13 media probe (2026-08-26/27), branched off `main` (`fd84173`) — **PUSHED 2026-08-28**, not merged, so its open-items 34/35 do NOT exist on the ONB stack. Phase B is still blocked on Ward |
 | `probe/assets-0826` | The assets-endpoint probe (2026-08-26), docs-only — **PUSHED 2026-08-28** so the Ward message's file pointers resolve on GitHub |
 | `chore/api-sweep` | The 118-operation contract sweep (`89199d9`), one commit ahead of `main`, untouched by the triage |
@@ -275,6 +291,11 @@ published-social (they exist upstream but are not proxied). None of it is
 invented or faked: where a spec promised something the wire cannot deliver, the
 honest subset ships and the deviation is logged. The backend questions live in
 open-items 1–13 and 21–27; W7 still waits on the two reopened manual gates.
+
+**On `feat/hsn-04-limits-knowledge` (2026-08-30): build hygiene only, by the
+series law** — lint clean, typecheck clean, **470 unit tests** (43 files,
+unchanged), guard-static **328 files clean** (one new file), prettier clean
+on every changed file. No e2e, no `verify:wNN`, no axe, no live call.
 
 **On `feat/hsn-03-tone-lang-length` (2026-08-30): build hygiene only, by the
 series law** — lint clean, typecheck clean, **470 unit tests** (43 files,

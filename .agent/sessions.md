@@ -2878,3 +2878,59 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   (unit for the sidecar's hydrate/retire rules and `toRunTone`'s omitted
   `length`, static e2e for the editor's required language) and flips nothing:
   `TONE_FIELDS_ON_WIRE` waits on Hasan.
+
+### 2026-08-30 17:45 — ORDER HSN-04: sources/topics caps, and the Knowledge upload names what it is (item 4 of the Hasan series)
+
+- Did: **Phase 0 (repo only, zero wire calls):** add paths — sources: ONE,
+  `sources-screen.tsx` `add()` → `brand.addSource(url)` (live `POST
+  /orgs/:id/brand/sources {url, title}`; static dispatch); topics: ONE,
+  `TagInput` on the same screen → `brand.setTopics(next)` (live diff → row
+  `POST/DELETE /brand/topics`; static dispatch). `organization-screen.tsx`'s
+  `TagInput` is differentiators, not topics — untouched. Knowledge upload,
+  end to end: LIVE hits the **RAG door** — `POST
+  /orgs/:id/alphastudio/rag/collections/:cid/sources/presign` body
+  `{ filename: file.name, mediaType }` (→ 201 ticket → `PUT` bytes → `GET
+  /rag/sources/:id`), with unknown types coerced to `text/plain`; STATIC
+  runs `use-knowledge-upload.ts`'s timers. All presign callers: (1) that
+  RAG presign in `uploadFile`; (2) `uploadReferenceImage` → `POST
+  /media/assets/presign` `{ mediaType }` — **no caller in `src/`**; (3)
+  `scripts/smoke-alphastudio.ts` — media `{ mediaType: 'image/png' }` and
+  the RAG matrix `{ filename, mediaType }`. `previewTone` send site:
+  `brand.ts`, `language: 'en'` hardcoded twice. **Phase 1 (build):** caps
+  `MAX_FOLLOWED_SOURCES = 10` / `MAX_TOPICS = 30` (types.ts), enforced on
+  the I5 screen (disabled control, `n / cap` counter, message), in `TagInput`
+  (`max` + `capMessage`) and at the seam (`capReached` validation-shaped
+  refusal; `setTopics` refuses growth only, so an over-cap list can still
+  shrink); the shared `KnowledgeUploadForm` (Image | Video | Document,
+  required description, real-MIME check, dropzone + button) in both worlds;
+  `uploadFile(…, desc)` sends `{ filename, mediaType, desc }` with NO switch;
+  static docs carry kind + description; the `text/plain` coercion deleted;
+  `knowledgeAccepts` retired (per-kind hints replace it). Riders: preview
+  sends `language: tone.language ?? 'en'`; ls-remote receipt attached.
+- **Premise correction, for the founder:** the "already broken door" of
+  open-item 43 is the MEDIA presign, which has no UI caller; the Knowledge
+  upload uses the RAG presign, healthy on 2026-08-30. `desc` therefore lands
+  on a working call whose tolerance of an extra field is unobserved. Built
+  as ruled; one-line revert is the `desc` key in `uploadFile`. Item 43
+  updated to say exactly this.
+- Other observations: over-cap is unreachable in the app after this order and
+  reachable only via another client — rendered honestly either way; demo data
+  (3 sources, 5 topics) needed no trim; `knowledgeUploadBlocked` was already
+  an unreachable catalogue entry before this order (left, reported); e2e
+  specs that will need the new type + description step at the final gate:
+  `live-knowledge.spec.ts:78-84` (`#kn-file`), `compose-analytics-settings.spec.ts:350-359`
+  (`Choose documents to upload`), `settings-a11y.spec.ts:123` (`Browse
+  files` — the label is kept). Image/video uploads may be refused by the RAG
+  door upstream; the wire's answer shows inline.
+- Phase: HSN-04 (contract alignment; INT culture — branch per order)
+- Files: `src/data/{types,studio,brand}.ts`, `src/lib/messages.ts`,
+  `src/features/settings/{knowledge-upload-form.tsx (new),knowledge-screen.tsx,live-knowledge.tsx,use-knowledge-upload.ts,field-editors.tsx,sources-screen.tsx,tone-editor.tsx}`,
+  `Docs/api/alphastudio-shapes.md`, `.agent/{open-items,decisions,sessions,state}.md`
+- Decisions: see decisions.md — HSN-04 (2026-08-30)
+- Verify: build hygiene ONLY, by the series law — lint clean · typecheck
+  clean · **470 unit / 43 files** (unchanged) · guard-static **328 files
+  clean** (one new file) · prettier clean on every changed file. NOT run:
+  e2e, verify:wNN, axe, anything live.
+- Next: founder review; branch pushed, nothing merged; the founder rules on
+  the other presign callers next order. Later HSN orders stack on
+  `feat/hsn-04-limits-knowledge`.

@@ -2342,3 +2342,67 @@ Closes open-item 38, which ONB-0827 created and the live suite caught.
   server silently ignores is a field the user thinks is saved), defaulting
   an old tone's language on display (a lie about a choice never made), or
   a Radix `Select` (it cannot represent an empty required value cleanly).
+
+### 2026-08-30 — HSN-04: brand-kit caps as client-side ceilings, and the Knowledge upload names what it is
+
+- **Provenance.** Item 4 of the Hasan-sync series. Two rulings and two riders.
+- **Part A — caps.** Sources are capped at **10** and topics at **30**
+  (`MAX_FOLLOWED_SOURCES`, `MAX_TOPICS` in `src/data/types.ts`), the
+  founder's word matching the 2026-08-28 meeting record ("max sources =
+  ten"). Ward's API is not changing, so these are CLIENT-SIDE PRODUCT CAPS —
+  the same precedent as `MAX_POSTS_PER_DAY`. Enforced at every add path: the
+  I5 screen disables the add control at the cap with an honest counter
+  (`n / 10`, `n / 30`) and the catalogue message, `TagInput` grew `max` +
+  `capMessage` for it, and the seam (`addSource`, `setTopics`) refuses growth
+  past the cap as a validation-shaped failure so any path the screens did not
+  gate still cannot exceed it. **Over-cap data is rendered, never trimmed or
+  hidden** — a live org can be above a cap from another client or from
+  before this order, and it keeps every row; only adding stops (`setTopics`
+  refuses only lists that GROW past the cap, so an over-cap list may still
+  shrink). Reachability: in the app it is unreachable after this order; on
+  the wire it stays reachable through any other client. The demo datasets
+  hold 3 sources and 5 topics, so nothing was trimmed. The generation gate's
+  floor (≥1 of each, `readiness.ts`) is untouched — caps are ceilings.
+- **Part B — the Knowledge upload.** Before any file leaves the browser the
+  user chooses Image | Video | Document and gives a REQUIRED description.
+  The choice filters the picker's `accept` list AND the chosen file's real
+  MIME is checked against it (`checkKnowledgeFile`) — a mismatch, or a
+  browser that reports no type, is an inline error and nothing is sent. The
+  old live path's `text/plain` fallback for unknown types is GONE: that was
+  a silent coercion. One form (`knowledge-upload-form.tsx`) serves the live
+  screen and the static demo; the demo says it is simulated and keeps its
+  honest verdict (an image still fails to extract, as the wire did).
+  Accept lists, verbatim: image `image/png, image/jpeg, image/webp`; video
+  `video/mp4`; document `application/pdf, text/plain, text/markdown,
+  application/vnd.openxmlformats-officedocument.wordprocessingml.document`
+  (= the extractable set the smoke run proved). Image and video may be
+  refused by the RAG door upstream — that is the wire's truth to show, and
+  the final gate's to observe.
+- **The presign body, and the NO-switch rationale — with a correction on
+  record.** The Knowledge upload's presign now carries `desc` beside
+  `mediaType` (`{ filename, mediaType, desc }`), per Hasan's 2026-08-28
+  envelope (`Docs/api/alphastudio-shapes.md`, "Upstream presign envelope").
+  Sent with NO disable switch — the founder's explicit word, the opposite of
+  HSN-03 — on the reasoning that this door is already broken (open-item 43)
+  and the new shape is the leading fix. **Phase 0 found the premise does not
+  hold for this door:** the Knowledge upload uses the RAG presign
+  (`POST …/rag/collections/:id/sources/presign`), which the 2026-08-30 sweep
+  showed HEALTHY (`ok 201`); the broken door of open-item 43 is the media
+  presign (`POST …/media/assets/presign`, `uploadReferenceImage`), which has
+  no UI caller today. So `desc` is being added to a working call whose
+  tolerance of an extra field is unobserved. Built as ruled, because the
+  ruling was explicit and Ward mirrors his side; the one-line revert is the
+  `desc` key in `uploadFile`'s body, and the final gate probes both doors.
+  The other presign callers were located and TOUCHED NOTHING: (1)
+  `uploadReferenceImage` — `POST …/media/assets/presign` body
+  `{ mediaType }`, no caller in `src/`; (2) `scripts/smoke-alphastudio.ts`
+  — the same media body and the RAG matrix `{ filename, mediaType }`.
+- **Rider 1.** `previewTone` sends `language: tone.language ?? 'en'` (both
+  the tone's and the request's `language`, which the body carries twice), and
+  the editor passes the chosen language — an Arabic tone previews in Arabic.
+- **Rider 2.** From this order on, every close-out attaches the verbatim
+  `git ls-remote --heads origin` receipt: the repo is private, and the
+  receipt replaces the public verification channel.
+- Instead of: trimming over-cap data (a silent delete), hiding it (a lie
+  about what the org has), coercing an unknown file type to `text/plain`
+  (the old behaviour), or a switch on `desc` (ruled out by name).
