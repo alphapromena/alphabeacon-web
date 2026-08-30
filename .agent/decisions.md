@@ -2285,3 +2285,60 @@ Closes open-item 38, which ONB-0827 created and the live suite caught.
   defaulting `kind` to image (the two kinds cost differently); or hiding the
   tone-less case behind a fabricated tone (a draft whose tone is gone gets an
   honest refusal — `rules` are never invented).
+
+### 2026-08-30 — HSN-03: tones gain `language` + `length`, AHEAD of the backend, behind one switch
+
+- **Provenance.** Item 3 of the Hasan-sync series. The founder's ruling: every
+  tone gains two user-chosen fields in Settings — `language` (Arabic |
+  English) and `length` (short | medium | long) — which will drive generation
+  on Hasan's side. **The founder's stated constraint:** the tones API persists
+  only `{name, description, preset, rules}` today; Hasan adds the two later.
+  So this is a DELIBERATE ahead-of-backend deviation, built honestly.
+- **The interim, and its flip condition.** The two fields live in a client
+  sidecar — `src/data/adapters/tone-fields.ts`, localStorage
+  `ab-tone-fields:<orgId>` → `{ [toneId]: { language, length } }` — written
+  by the seam on every create/update (keyed by the SERVER's tone id), retired
+  on delete, and hydrated into the tone model in `fetchBrand`, the one seam
+  that knows the org. The wire send is implemented and DISABLED behind
+  **`TONE_FIELDS_ON_WIRE`** in `src/data/brand.ts`. **Flip condition:** Hasan
+  confirms persistence → set it `true` → optionally re-save existing tones to
+  backfill. Once the server echoes a field it wins over the sidecar, and an
+  entry the server has fully superseded deletes itself on the next read — so
+  the sidecar empties without a migration. The `description` field stays
+  clean: the no-smuggling law holds.
+- **The vocabulary.** `language` is `ar` | `en` — exactly what the generate
+  body already sent per tone from the page picker (located, not chosen).
+  `length` is `short` | `medium` | `long`: the reference shows short/long,
+  `medium` is founder-stated.
+- **The form (create AND edit, one `ToneEditorForm`).** `language` is
+  REQUIRED with NO default — `''` until the user chooses, and an old tone
+  cannot be saved until its owner says. `length` pre-selects `medium` as a
+  FORM default only; the model never assumes it. Both selects are the new
+  `SelectField` in `ab/form.tsx` — a native select, because it accepts an
+  empty "not chosen" value and matches the product's other pickers.
+- **Existing tones.** Absent values render "Not set" on the I3 card — never
+  fabricated, never silently defaulted on display. In live mode the editor
+  says the fields are kept in this browser for now (`toneFieldsLocal`),
+  because a second device will honestly show them as not set.
+- **The generate body (this order's only wire change).** `toRunTone` adds
+  `length` from the tone and OMITS the key when the tone has none — closes
+  HSN-01 divergence #1. Per-tone `language` keeps flowing, now
+  `tone.language ?? <page picker>`: the tone's own setting wins, the page's
+  picker covers only tones without one, and its helper line says so.
+  Divergence #2 (the reference shows no `language`) stays recorded; the
+  founder confirms Hasan consumes it later. The HSN-02 `social-posts.media`
+  tone object is untouched — no `length`, no `language` there.
+- **Static world.** Demo tones carry sensible values on the record itself;
+  static create/edit run through the same seam and model with zero network.
+  The sidecar is live-only, because static mode persists nothing by law
+  (architecture.md) — that is the one place the "same path" is a different
+  store, and it is the law's doing, not this order's.
+- **Rider (HSN-02 acceptance).** `visualUnconfirmed` now reads: *"The
+  platform did not confirm this visual. The job may already exist and may
+  already have billed — check your Studio renders before trying again,
+  because a retry can bill again."*
+- Instead of: smuggling the fields into `description` (forbidden), sending
+  them on the wire now (upstream drops unknown fields today, and a field the
+  server silently ignores is a field the user thinks is saved), defaulting
+  an old tone's language on display (a lie about a choice never made), or
+  a Radix `Select` (it cannot represent an empty required value cleanly).

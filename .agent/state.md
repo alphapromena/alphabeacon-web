@@ -5,7 +5,21 @@ without reconstructing it from the session log. **Update this file at the end
 of any turn that finishes a phase or changes the plan.** `sessions.md` is the
 chronological record; this is the current picture.
 
-_Last updated: 2026-08-30, after **ORDER HSN-02** — item 2 of the Hasan
+_Last updated: 2026-08-30, after **ORDER HSN-03** — item 3 of the Hasan
+series. Every tone gains **`language`** (Arabic | English, required in the
+editor with no default) and **`length`** (short | medium | long, form default
+medium), set in Settings on create and edit — built **AHEAD of the backend**:
+the tones API persists neither yet, so they live in a client sidecar
+(`ab-tone-fields:<orgId>`, `src/data/adapters/tone-fields.ts`, live-only,
+server value wins and retires it) and the wire send waits behind ONE switch,
+**`TONE_FIELDS_ON_WIRE`** in `src/data/brand.ts`, until Hasan confirms
+persistence. The generate body now carries per-tone `length` (omitted when a
+tone has none — closes HSN-01 divergence #1) and per-tone `language` from the
+tone itself (`ar`/`en`, the vocabulary it always sent). Old tones read "Not
+set". Build hygiene only, by the series law. On branch
+**`feat/hsn-03-tone-lang-length`** (off `feat/hsn-02-create-visual` =
+`6281cd6`), **pushed, NOT merged**; later HSN orders stack on it. Before that,
+same day: **ORDER HSN-02** — item 2 of the Hasan
 series. A **"Create visual"** action now exists in two places — each generated
 draft on the Generate page (the disabled legacy button, REWIRED) and each draft
 card on Today beside Approve and Decline — and opens ONE modal that submits
@@ -136,6 +150,7 @@ below).
 | `feat/onb-04-invite-org` | **MERGED 2026-08-30 — this is the commit `main` now points at (`963c9f7`). ONB-0827-B, 2026-08-28 — stacked on `feat/onb-03-gate`. PUSHED, NOT merged.** Closes open-item 38: `src/data/adapters/org-selection.ts` is the one selector (`selectActiveOrg`, `mostRecentlyJoined`), the active org is persisted beside the session and stamped with the user id, `graftAuthSession` takes the chosen org instead of reaching for `orgs[0]`, accepting an invite switches immediately, a revoked membership falls back with a latched toast, and the rail's footer becomes a switcher at two orgs. D-ONB-F |
 | `feat/hsn-01-generate` | **HSN-01, 2026-08-30 — branched off `main` (`289cad5`). PUSHED, NOT merged; later HSN orders stack on it.** The Generate page's "drafts per tone" option deleted (control, state, copy, plumbing), `options.perTone` gone from the generate body and the emptied `options` wrapper with it; `MAX_FANOUT`/`overBudget`/`fanoutTooLarge` deleted as the multiplier's own plumbing. Hasan's target envelope appended to `Docs/api/alphastudio-shapes.md`. Probe: 202 without the field (org 1364, req `ce257b64-…`) |
 | `feat/hsn-02-create-visual` | **HSN-02, 2026-08-30 — branched off `feat/hsn-01-generate` (`df13b5f`). PUSHED, NOT merged; later HSN orders stack on it.** "Create visual" on live Today cards (beside Approve/Decline), on live Generate result cards (the legacy disabled button rewired), and on static D2 cards beside Approve/Reject; one `CreateVisualDialog` submitting Hasan's `social-posts.media` envelope (one post, `params {}`, `collection.use` false, guidance ≤ 6, `kind` chosen never defaulted), the 202 read as a job LIST, polled through the shared `use-job-poll.ts`. Attaches nothing. Build hygiene only, by the series law |
+| `feat/hsn-03-tone-lang-length` | **HSN-03, 2026-08-30 — branched off `feat/hsn-02-create-visual` (`6281cd6`). PUSHED, NOT merged; later HSN orders stack on it.** Tones gain `language` (required, no default) + `length` (default medium) in the Settings editor, create and edit; interim client sidecar `ab-tone-fields:<orgId>` hydrated in `fetchBrand`, wire send disabled behind `TONE_FIELDS_ON_WIRE`; generate body carries `length` (omitted when absent) and per-tone `language` from the tone; `SelectField` added to `ab/form.tsx`; rider copy on `visualUnconfirmed`. Build hygiene only |
 | `probe/int13` | The PROBE-INT13 media probe (2026-08-26/27), branched off `main` (`fd84173`) — **PUSHED 2026-08-28**, not merged, so its open-items 34/35 do NOT exist on the ONB stack. Phase B is still blocked on Ward |
 | `probe/assets-0826` | The assets-endpoint probe (2026-08-26), docs-only — **PUSHED 2026-08-28** so the Ward message's file pointers resolve on GitHub |
 | `chore/api-sweep` | The 118-operation contract sweep (`89199d9`), one commit ahead of `main`, untouched by the triage |
@@ -260,6 +275,11 @@ published-social (they exist upstream but are not proxied). None of it is
 invented or faked: where a spec promised something the wire cannot deliver, the
 honest subset ships and the deviation is logged. The backend questions live in
 open-items 1–13 and 21–27; W7 still waits on the two reopened manual gates.
+
+**On `feat/hsn-03-tone-lang-length` (2026-08-30): build hygiene only, by the
+series law** — lint clean, typecheck clean, **470 unit tests** (43 files,
+unchanged), guard-static **327 files clean** (two new files), prettier clean
+on every changed file. No e2e, no `verify:wNN`, no axe, no live call.
 
 **On `feat/hsn-02-create-visual` (2026-08-30): build hygiene only, by the
 series law** — lint clean, typecheck clean, **470 unit tests** (43 files,

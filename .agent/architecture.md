@@ -152,10 +152,13 @@ clean in CI (a failing assert); no analytics or telemetry vendors.
 
 ## Persistence
 
-Two things, both named: the theme preference (`localStorage`, always) and the
+Three things, all named: the theme preference (`localStorage`, always), the
 live-mode auth session (`src/api/session.ts` — localStorage with `rememberMe`,
-sessionStorage without; discarded on load if expired). Everything else is
-provider state and resets on refresh, in both modes.
+sessionStorage without; discarded on load if expired), and — INTERIM, HSN-03
+— the live-mode tone sidecar (`src/data/adapters/tone-fields.ts`, localStorage
+`ab-tone-fields:<orgId>`), which holds each tone's `language`/`length` until
+the tones API persists them and retires itself once the server echoes them.
+Everything else is provider state and resets on refresh, in both modes.
 
 ## Cross-cutting
 

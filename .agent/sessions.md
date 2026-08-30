@@ -2826,3 +2826,55 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   on `feat/hsn-02-create-visual`. The final-gate order authors the coverage
   (unit for `buildPostVisualRequest` / `jobFromFanOutReceipt`, static e2e for
   the dialog's states, one paid live render) and probes item 43.
+
+### 2026-08-30 16:40 — ORDER HSN-03: tones gain language + length, ahead of the backend (item 3 of the Hasan series)
+
+- Did: **Phase 0 (repo only, zero wire calls):** located the shapes verbatim
+  — app `Tone {id, name, kind, description, rules {do, dont}, example?}`;
+  wire `ApiTone {id, orgId, createdAt, updatedAt, name, description, preset,
+  rules[]}`; create `POST /orgs/:id/brand/tones {name, description, preset:
+  false, rules}`, edit `PATCH …/tones/:id {name, description, rules}` (partial
+  PATCH, `rules` replaces); generate per-tone `{...toRunTone(tone), language:
+  <page picker>}` with the picker's vocabulary **`en` | `ar`** — so no new
+  vocabulary was chosen; the tones-preview body hardcodes `language: 'en'`
+  (left, observed). **Phase 1 (build):** `Tone.language?`/`length?` on the
+  model (`ToneLanguage`, `ToneLength`), optional on `ApiTone` and `ApiRunTone`;
+  the sidecar `adapters/tone-fields.ts` (key `ab-tone-fields:<orgId>` →
+  `{ [toneId]: { language, length } }`, server value wins, entries retire
+  and prune); `fetchBrand` hydrates; `brand.ts` writes/retires the sidecar
+  and carries the fields on the wire ONLY behind **`TONE_FIELDS_ON_WIRE =
+  false`**; `SelectField` (native) added to `ab/form.tsx`; the editor gains
+  Language (required, no default) and Length (form default `medium`) on both
+  create and edit, with the live-mode interim notice; the I3 card shows
+  "Not set" for absent values; demo tones carry values; `toRunTone` sends
+  `length` (omitted when absent), per-tone `language` is
+  `tone.language ?? picker` with a helper line on the picker. Rider: the
+  `visualUnconfirmed` copy now names the job explicitly. Docs: shapes note
+  under the generate reference, architecture + conventions persistence lines.
+- Divergences / observations: (1) the sidecar is live-only — static persists
+  nothing by law, so the demo carries the fields on the record; (2) the
+  Generate page's language picker is kept and now only covers tones without
+  a language (its helper line says so) — removing it was out of scope; (3)
+  `previewTone` still sends `language: 'en'` regardless of the tone — left,
+  reported; (4) TS 5.5 infers a type guard from a bare `===` refine, which
+  clashed with the resolver's input type — the schema uses a boolean
+  predicate over `TONE_LANGUAGE_OPTIONS` instead (comment at the site).
+- Phase: HSN-03 (contract alignment; INT culture — branch per order)
+- Files: `src/data/types.ts`, `src/api/types.ts`,
+  `src/data/adapters/{tone-fields.ts (new),brand-adapter.ts}`,
+  `src/data/{live-sync,generate,brand}.ts`, `src/data/entities/tones.ts`,
+  `src/components/ab/form.tsx`, `src/lib/messages.ts`,
+  `src/features/settings/{tone-editor.tsx,tones-screen.tsx,tone-fields.ts (new)}`,
+  `src/features/generate/live-generate.tsx`, `Docs/api/alphastudio-shapes.md`,
+  `.agent/{architecture,conventions,state,decisions,sessions}.md`
+- Decisions: see decisions.md — HSN-03 (2026-08-30)
+- Verify: build hygiene ONLY, by the series law — lint clean · typecheck
+  clean · **470 unit / 43 files** (unchanged: nothing authored, nothing
+  broke) · guard-static **327 files clean** (two new files) · prettier clean
+  on every changed file. NOT run, deliberately: e2e, verify:wNN, axe,
+  anything live.
+- Next: founder review; branch pushed, nothing merged. Later HSN orders stack
+  on `feat/hsn-03-tone-lang-length`. The final gate authors the coverage
+  (unit for the sidecar's hydrate/retire rules and `toRunTone`'s omitted
+  `length`, static e2e for the editor's required language) and flips nothing:
+  `TONE_FIELDS_ON_WIRE` waits on Hasan.

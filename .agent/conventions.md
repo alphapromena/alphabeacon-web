@@ -119,8 +119,10 @@ both worlds' law and is guarded twice.**
 - Every screen must remain fully exercisable via `/dev/datasets` +
   `/dev/states` in static mode — if a state needs a code change to appear, add
   a dataset or a record instead.
-- Static-mode mutations are session-scoped and reset on refresh. The one
-  durable record is the live-mode auth session (`src/api/session.ts`).
+- Static-mode mutations are session-scoped and reset on refresh. The durable
+  records are the live-mode auth session (`src/api/session.ts`) and, interim
+  until the tones API persists `language`/`length`, the live-mode tone sidecar
+  (`src/data/adapters/tone-fields.ts`, HSN-03).
 
 ## Testing conventions
 
