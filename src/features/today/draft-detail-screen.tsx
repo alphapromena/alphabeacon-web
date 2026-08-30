@@ -115,10 +115,7 @@ export function DraftDetailScreen() {
               <h2 className="font-display text-sm font-semibold">Media</h2>
               {asset ? (
                 <div className="flex items-center gap-3 rounded-lg border border-border p-3">
-                  <span
-                    aria-hidden
-                    className="flex size-12 shrink-0 rounded-md bg-brand"
-                  />
+                  <span aria-hidden className="flex size-12 shrink-0 rounded-md bg-brand" />
                   <span className="text-sm">{asset.label}</span>
                   {canTransition(draft.status, 'media_pending') && (
                     <Button
