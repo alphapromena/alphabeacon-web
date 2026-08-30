@@ -20,6 +20,8 @@ export interface DraftActionHandlers {
   onReject: () => void
   onEdit: () => void
   onCreateMedia: () => void
+  /** HSN-02: the social-posts.media popup for this draft — attaches nothing. */
+  onCreateVisual: () => void
   onSchedule: () => void
   onRetry: () => void
 }
@@ -28,6 +30,8 @@ export interface DraftActions {
   handlersFor: (draft: Draft) => DraftActionHandlers
   mediaFor: Draft | null
   setMediaFor: (draft: Draft | null) => void
+  visualFor: Draft | null
+  setVisualFor: (draft: Draft | null) => void
   scheduleFor: Draft | null
   setScheduleFor: (draft: Draft | null) => void
   rejectFor: Draft | null
@@ -39,6 +43,7 @@ export interface DraftActions {
 export function useDraftActions(): DraftActions {
   const dispatch = useDataDispatch()
   const [mediaFor, setMediaFor] = useState<Draft | null>(null)
+  const [visualFor, setVisualFor] = useState<Draft | null>(null)
   const [scheduleFor, setScheduleFor] = useState<Draft | null>(null)
   const [rejectFor, setRejectFor] = useState<Draft | null>(null)
   const [editFor, setEditFor] = useState<Draft | null>(null)
@@ -52,11 +57,14 @@ export function useDraftActions(): DraftActions {
       onReject: () => setRejectFor(draft),
       onEdit: () => setEditFor(draft),
       onCreateMedia: () => setMediaFor(draft),
+      onCreateVisual: () => setVisualFor(draft),
       onSchedule: () => setScheduleFor(draft),
       onRetry: () => dispatch({ type: 'draft/publish', draftId: draft.id }),
     }),
     mediaFor,
     setMediaFor,
+    visualFor,
+    setVisualFor,
     scheduleFor,
     setScheduleFor,
     rejectFor,

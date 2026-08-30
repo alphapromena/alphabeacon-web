@@ -5,8 +5,9 @@
  * for a token stream and the full D2 action row. The proxy has no stream
  * endpoint and no drafts store, so this ships the honest subset — a queued run
  * with calm progress, then READ-ONLY drafts whose only actions are Copy and
- * Create visual. Approve, decline and schedule are ABSENT, not disabled: an
- * approval that cannot be recorded anywhere would be a button that lies.
+ * Create visual — real since HSN-02: it opens the `social-posts.media` popup
+ * for that one draft. Approve, decline and schedule are ABSENT, not disabled:
+ * an approval that cannot be recorded anywhere would be a button that lies.
  *
  * Three things it must never do, each learned from the contract:
  * - invent a stream (there is nothing to stream from);
@@ -36,6 +37,7 @@ import {
 import { useProposalActions, type ReviewItem } from '@/data/proposals'
 import { useCalendarEvents, useTones } from '@/data/provider'
 import { useWallet, useWalletActions } from '@/data/wallet'
+import { CreateVisualDialog } from '@/features/studio/create-visual-dialog'
 import { planRun, reconcileSelection } from './run-plan'
 import { errorReference } from '@/lib/error-reference'
 import { pluralize, shortDate } from '@/lib/format'
@@ -72,6 +74,7 @@ export function LiveGenerate() {
   const [error, setError] = useState<string | null>(null)
   const [shortBalance, setShortBalance] = useState(false)
   const [recent, setRecent] = useState<ReviewItem[]>([])
+  const [visualFor, setVisualFor] = useState<LiveDraft | null>(null)
   const cancelled = useRef(false)
 
   // The unmount guard is its OWN effect, with no dependencies. Sharing it with
@@ -362,7 +365,11 @@ export function LiveGenerate() {
             {drafts.length} draft{drafts.length === 1 ? '' : 's'}
           </h2>
           {drafts.map((draft) => (
-            <DraftCard key={`${draft.runId}-${draft.index}`} draft={draft} />
+            <DraftCard
+              key={`${draft.runId}-${draft.index}`}
+              draft={draft}
+              onCreateVisual={() => setVisualFor(draft)}
+            />
           ))}
           <p className="text-xs text-muted-foreground">
             {MESSAGES.notices.draftsReadOnly}{' '}
@@ -391,16 +398,34 @@ export function LiveGenerate() {
                     recent.filter((item) => item.proposal.runId === runId).length,
                     'draft',
                   )}{' '}
-                  ·{' '}
-                  {runId.slice(0, 14)}…
+                  · {runId.slice(0, 14)}…
                 </Button>
               </li>
             ))}
           </ul>
         </section>
       )}
+
+      {/* HSN-02: one modal for every result card on this page. */}
+      <CreateVisualDialog
+        subject={
+          visualFor
+            ? { ref: visualRef(visualFor), content: visualFor.content, toneId: visualFor.toneId }
+            : null
+        }
+        open={visualFor !== null}
+        onOpenChange={(next) => !next && setVisualFor(null)}
+      />
     </div>
   )
+}
+
+/**
+ * `posts[0].ref` for a generated draft: the proposal the ledger stamped on it,
+ * or — before the ledger has one — the run output it came from.
+ */
+function visualRef(draft: LiveDraft): string {
+  return draft.proposalId ?? `${draft.runId}:${draft.index}`
 }
 
 /**
@@ -412,7 +437,7 @@ export function LiveGenerate() {
  * the same reason the preview shows its rule list — it is how someone can tell
  * whether the tone actually did what they asked.
  */
-function DraftCard({ draft }: { draft: LiveDraft }) {
+function DraftCard({ draft, onCreateVisual }: { draft: LiveDraft; onCreateVisual: () => void }) {
   const tones = useTones()
   const tone = tones.find((entry) => entry.id === draft.toneId)
 
@@ -473,7 +498,10 @@ function DraftCard({ draft }: { draft: LiveDraft }) {
           <Copy aria-hidden />
           Copy
         </Button>
-        <Button variant="outline" size="sm" disabled title={MESSAGES.notices.visualComingNext}>
+        {/* The legacy control sat here disabled, "coming with the Studio
+            integration". HSN-02 rewired it: it opens the capability popup for
+            this draft, and there is no second path. */}
+        <Button variant="outline" size="sm" onClick={onCreateVisual}>
           <ImageIcon aria-hidden />
           Create visual
         </Button>

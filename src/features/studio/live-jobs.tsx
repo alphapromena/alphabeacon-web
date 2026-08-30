@@ -8,7 +8,9 @@
  * pre-fetching everything.
  *
  * Polling uses the MEDIA JOB vocabulary (`succeeded`), never a run's
- * (`completed`). Sharing one predicate between them would poll forever.
+ * (`completed`). Sharing one predicate between them would poll forever. The
+ * schedule itself lives in `use-job-poll.ts` (HSN-02), so this list and the
+ * Create-visual dialog follow a job through one machinery.
  */
 import { Download, Image as ImageIcon, Trash2 } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -20,16 +22,11 @@ import { StatusBadge } from '@/components/ab/status-badge'
 import { toastError, toastSuccess } from '@/components/ab/toast'
 import { Button } from '@/components/ui/button'
 import { isJobTerminal, useStudioActions, type MediaJob } from '@/data/studio'
-import { useWalletActions } from '@/data/wallet'
 import { MESSAGES } from '@/lib/messages'
-
-/** 2s, 5s, 10s and up, stopping at five minutes (the order's schedule). */
-const POLL_DELAYS = [2000, 5000, 10_000, 10_000, 15_000, 20_000, 30_000]
-const POLL_CEILING_MS = 300_000
+import { useJobPolling } from './use-job-poll'
 
 export function LiveJobs() {
   const studio = useStudioActions()
-  const walletActions = useWalletActions()
   const [params] = useSearchParams()
 
   const [jobs, setJobs] = useState<MediaJob[] | null>(null)
@@ -59,30 +56,9 @@ export function LiveJobs() {
 
   const statusKey = (jobs ?? []).map((job) => job.status).join(',')
 
-  // Poll only while something is genuinely in flight.
-  useEffect(() => {
-    if (!jobs || jobs.every((job) => isJobTerminal(job))) return
-    let attempt = 0
-    const startedAt = Date.now()
-    let timer: ReturnType<typeof setTimeout>
-
-    const tick = async () => {
-      const list = await refresh()
-      if (cancelled.current) return
-      if (list.every((job) => isJobTerminal(job))) {
-        // A hold is released or settled exactly here, so the balance moves.
-        void walletActions.refresh()
-        return
-      }
-      if (Date.now() - startedAt > POLL_CEILING_MS) return
-      attempt += 1
-      timer = setTimeout(() => void tick(), POLL_DELAYS[Math.min(attempt, POLL_DELAYS.length - 1)])
-    }
-
-    timer = setTimeout(() => void tick(), POLL_DELAYS[0])
-    return () => clearTimeout(timer)
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- restart when the set settles
-  }, [statusKey])
+  // Poll only while something is genuinely in flight — the Studio's one
+  // poller, shared with the Create-visual dialog since HSN-02.
+  useJobPolling(jobs, refresh)
 
   // Arriving from the composer names a job in the query string, so it is
   // already "open" and its Open button never renders — which means nothing

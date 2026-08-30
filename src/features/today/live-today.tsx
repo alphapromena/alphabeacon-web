@@ -14,7 +14,7 @@
  * - **No Undo**: decisions are changeable (approve a declined one later), but
  *   there is no un-decide, so nothing pretends otherwise.
  */
-import { Check, Copy, X } from 'lucide-react'
+import { Check, Copy, Image as ImageIcon, X } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router'
 import { ConfirmDialog } from '@/components/ab/confirm-dialog'
@@ -35,6 +35,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { useProposalActions, type ProposalState, type ReviewItem } from '@/data/proposals'
 import { useTones } from '@/data/provider'
 import { useReadiness } from '@/data/readiness'
+import { CreateVisualDialog } from '@/features/studio/create-visual-dialog'
 import { shortDate } from '@/lib/format'
 import { MESSAGES } from '@/lib/messages'
 import { Inbox } from 'lucide-react'
@@ -62,6 +63,8 @@ export function LiveToday() {
   const [declining, setDeclining] = useState<ReviewItem | null>(null)
   const [reason, setReason] = useState('')
   const [busyId, setBusyId] = useState<string | null>(null)
+  // Held by id and read back live (trap 4): the card's draft is what the body carries.
+  const [visualFor, setVisualFor] = useState<string | null>(null)
   const cancelled = useRef(false)
 
   // Its own dependency-free effect (the INT-10 latched-guard lesson).
@@ -125,6 +128,10 @@ export function LiveToday() {
     void load()
   }
 
+  const visualItem = visualFor
+    ? items?.find((item) => item.proposal.proposalId === visualFor)
+    : undefined
+
   return (
     <div className="mx-auto flex w-full max-w-[820px] flex-col gap-4">
       <p className="text-sm text-muted-foreground" role="status">
@@ -185,6 +192,7 @@ export function LiveToday() {
                 setReason('')
                 setDeclining(item)
               }}
+              onCreateVisual={() => setVisualFor(item.proposal.proposalId)}
             />
           ))}
         </ul>
@@ -226,6 +234,22 @@ export function LiveToday() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* HSN-02: one modal for every card in the queue. The proposal id is the
+          post's `ref`, which is what the platform echoes back as `origin.ref`. */}
+      <CreateVisualDialog
+        subject={
+          visualItem?.draft
+            ? {
+                ref: visualItem.proposal.proposalId,
+                content: visualItem.draft.content,
+                toneId: visualItem.draft.toneId,
+              }
+            : null
+        }
+        open={visualFor !== null}
+        onOpenChange={(next) => !next && setVisualFor(null)}
+      />
     </div>
   )
 }
@@ -240,11 +264,13 @@ function ReviewCard({
   busy,
   onApprove,
   onDecline,
+  onCreateVisual,
 }: {
   item: ReviewItem
   busy: boolean
   onApprove: () => void
   onDecline: () => void
+  onCreateVisual: () => void
 }) {
   const tones = useTones()
   const { proposal, draft } = item
@@ -330,6 +356,15 @@ function ReviewCard({
           <Button size="sm" variant="ghost" disabled={busy} onClick={onDecline}>
             <X aria-hidden />
             Decline
+          </Button>
+        )}
+        {/* HSN-02: beside Approve and Decline on every card that has a draft
+            to build the body from. Never disabled — a failure inside the
+            dialog waits for a fresh press, it never re-sends. */}
+        {draft && (
+          <Button size="sm" variant="outline" onClick={onCreateVisual}>
+            <ImageIcon aria-hidden />
+            Create visual
           </Button>
         )}
         {draft && (

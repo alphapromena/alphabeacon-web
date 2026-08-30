@@ -4302,3 +4302,86 @@ rewrite the sections above to match it.
   }
 }
 ```
+
+## Upstream social-posts.media envelope — Hasan sync 2026-08-28 (structure authoritative, values illustrative)
+
+Founder-supplied reference for the `POST .../alphastudio/media/jobs` body with
+`capability: "social-posts.media"`, directly from Hasan (AlphaStudio upstream
+owner), recorded for ORDER HSN-02 (2026-08-30). The STRUCTURE is the contract;
+the values are Hasan's hand-test samples. What the app derives and what it lets
+the user edit is decided in `src/data/studio.ts` (`buildPostVisualRequest`):
+`posts` is EXACTLY ONE entry (PROBE-INT13: the multi-post path billed and then
+502'd), `params` is always `{}`, `collection` is always `{ "use": false }` by
+the founder's word, and `guidance` is at most six strings. The 202 receipt for
+this body has NEVER been observed — see the PROBE-INT13 section above — and
+the ruling is that it answers `{ "jobs": [...] }` even for one post.
+
+### image
+
+```json
+{
+  "capability": "social-posts.media",
+  "plan": "balanced",
+  "kind": "image",
+  "posts": [
+    {
+      "ref": "hand-test-draft-precise",
+      "content": "Most enterprises are deploying agentic AI before the governance foundations are in place to manage it safely. Deloitte found that 74% of companies plan to deploy autonomous agents at moderate or significant scale within two years — yet only 21% have a mature governance model to support them.\n\nThe risk is structural. Agents that act on poorly classified, uncertified or untracked data don't just make mistakes — they make them faster and at greater scale. Governance here is not a compliance checkbox. It is the mechanism that determines whether agentic AI creates value or operational exposure.\n\nThe enterprises that move confidently are the ones treating data quality, lineage and access control as runtime requirements, not pre-launch reviews.",
+      "tone": {
+        "id": "executive",
+        "name": "Executive / Thought Leadership",
+        "description": "Confident, concise, business-first writing for executives and decision-makers.",
+        "rules": [
+          { "kind": "do", "text": "Lead with a strong business observation" },
+          { "kind": "do", "text": "Use short, decisive paragraphs" },
+          { "kind": "do", "text": "Connect AI/data topics to business impact" },
+          { "kind": "do", "text": "Sound experienced, not promotional" },
+          { "kind": "dont", "text": "Sound like a vendor pitch" },
+          { "kind": "dont", "text": "Overuse technical jargon" },
+          { "kind": "dont", "text": "Use hype language" },
+          { "kind": "dont", "text": "Open with “We're excited” or “We're thrilled”" }
+        ]
+      }
+    }
+  ],
+  "style": { "imgStyle": "Cinematic", "text": true, "logo": true },
+  "guidance": [ "show the alphapromena logo and the ataccama logo in good way" ],
+  "params": {},
+  "collection": { "use": false }
+}
+```
+
+### video — identical, with `"kind": "video"`
+
+```json
+{
+  "capability": "social-posts.media",
+  "plan": "balanced",
+  "kind": "video",
+  "posts": [
+    {
+      "ref": "hand-test-draft-precise",
+      "content": "Most enterprises are deploying agentic AI before the governance foundations are in place to manage it safely. Deloitte found that 74% of companies plan to deploy autonomous agents at moderate or significant scale within two years — yet only 21% have a mature governance model to support them.\n\nThe risk is structural. Agents that act on poorly classified, uncertified or untracked data don't just make mistakes — they make them faster and at greater scale. Governance here is not a compliance checkbox. It is the mechanism that determines whether agentic AI creates value or operational exposure.\n\nThe enterprises that move confidently are the ones treating data quality, lineage and access control as runtime requirements, not pre-launch reviews.",
+      "tone": {
+        "id": "executive",
+        "name": "Executive / Thought Leadership",
+        "description": "Confident, concise, business-first writing for executives and decision-makers.",
+        "rules": [
+          { "kind": "do", "text": "Lead with a strong business observation" },
+          { "kind": "do", "text": "Use short, decisive paragraphs" },
+          { "kind": "do", "text": "Connect AI/data topics to business impact" },
+          { "kind": "do", "text": "Sound experienced, not promotional" },
+          { "kind": "dont", "text": "Sound like a vendor pitch" },
+          { "kind": "dont", "text": "Overuse technical jargon" },
+          { "kind": "dont", "text": "Use hype language" },
+          { "kind": "dont", "text": "Open with “We're excited” or “We're thrilled”" }
+        ]
+      }
+    }
+  ],
+  "style": { "imgStyle": "Cinematic", "text": true, "logo": true },
+  "guidance": [ "show the alphapromena logo and the ataccama logo in good way" ],
+  "params": {},
+  "collection": { "use": false }
+}
+```

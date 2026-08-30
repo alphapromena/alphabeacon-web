@@ -37,6 +37,7 @@ export function DraftCard({
   onReject,
   onEdit,
   onCreateMedia,
+  onCreateVisual,
   onSchedule,
   onRetry,
 }: {
@@ -51,6 +52,8 @@ export function DraftCard({
   onReject: () => void
   onEdit: () => void
   onCreateMedia: () => void
+  /** HSN-02: the social-posts.media popup — not the approval-gated media entry. */
+  onCreateVisual: () => void
   onSchedule: () => void
   onRetry: () => void
 }) {
@@ -171,6 +174,19 @@ export function DraftCard({
             <Button size="sm" variant="ghost" onClick={onReject}>
               <ThumbsDown aria-hidden />
               Reject
+            </Button>
+          )}
+          {/*
+           * Create visual (HSN-02) sits beside Approve and Reject, by the
+           * founder's ruling. It is NOT the approval-gated media entry below:
+           * it requests a visual through the social-posts.media capability
+           * and attaches nothing to the draft, so the gate is untouched — an
+           * approved card keeps D4 as its one attach path.
+           */}
+          {canApprove && (
+            <Button size="sm" variant="outline" onClick={onCreateVisual}>
+              <ImageIcon aria-hidden />
+              Create visual
             </Button>
           )}
           {/* Absent before approval — the whole point of the gate. */}

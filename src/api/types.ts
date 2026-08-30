@@ -711,9 +711,73 @@ export interface ApiMediaJob {
  */
 export type MediaJobReceipt = ApiMediaJob
 
-/** A fan-out answers a LIST, because one request produced several jobs. */
+/**
+ * A fan-out answers a LIST, because one request produced several jobs.
+ *
+ * HSN-02 (2026-08-30): the founder's ruling is that a `social-posts.media`
+ * request answers this shape EVEN FOR ONE POST — take `jobs[0]`. Stated
+ * plainly: the shape has never been observed on the wire. PROBE-INT13 (branch
+ * `probe/int13`, `Docs/api/probe-int13-social-posts-media-2026-08-26.md`) saw
+ * the `posts[]` path create and bill the job and then answer 502 instead, so
+ * `jobFromFanOutReceipt` in `src/data/studio.ts` reads this list, tolerates a
+ * bare job (the single-job control call's shape), and treats anything else as
+ * "accepted but unconfirmed" rather than as success.
+ */
 export interface MediaJobFanOutReceipt {
   jobs: MediaJobReceipt[]
+}
+
+/**
+ * `POST .../media/jobs` with `capability: "social-posts.media"` — Hasan's
+ * post-visual envelope (sync 2026-08-28; HSN-02). Transcribed from the
+ * founder-supplied reference body in `Docs/api/alphastudio-shapes.md`
+ * ("Upstream social-posts.media envelope — Hasan sync 2026-08-28"):
+ * structure authoritative, values illustrative.
+ *
+ * This is NOT `MediaJobRequest` narrowed. Two fields differ in SHAPE from the
+ * `media.generate` body that type describes: `guidance` is a list of plain
+ * strings here (not `{role, text}`), and a post's `tone` carries exactly
+ * `{id, name, description, rules[]}` — no `length`, `example` or `language`.
+ *
+ * `posts` holds EXACTLY ONE entry by law (HSN-02, from PROBE-INT13 evidence:
+ * the multi-post path billed and then 502'd; single-post is the proven-clean
+ * control). `params` is always `{}` and `collection` is always
+ * `{ use: false }` — hardcoded by the founder's word, never a UI toggle.
+ */
+export interface SocialPostMediaTone {
+  id: string
+  name: string
+  description: string
+  /** `[]` when the tone has no rules — never invented, and the key is never omitted. */
+  rules: ApiRuleInput[]
+}
+
+export interface SocialPostMediaPost {
+  /** The draft's own id: a proposal id from Today, a run output otherwise. */
+  ref: string
+  content: string
+  tone: SocialPostMediaTone
+}
+
+export interface SocialPostMediaStyle {
+  /** Sent verbatim; upstream accepts any string. The list is curated client-side. */
+  imgStyle: string
+  /** Include text on the visual. */
+  text: boolean
+  /** Include the brand logo. */
+  logo: boolean
+}
+
+export interface SocialPostsMediaRequest {
+  capability: 'social-posts.media'
+  plan: ApiPlan
+  kind: 'image' | 'video'
+  posts: [SocialPostMediaPost]
+  style: SocialPostMediaStyle
+  /** Free text, at most 6 entries (founder-confirmed). */
+  guidance: string[]
+  params: Record<string, never>
+  collection: { use: false }
 }
 
 /** `GET .../media/jobs` → newest first, assets WITHOUT presigned urls. */

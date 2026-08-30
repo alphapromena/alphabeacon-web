@@ -22,19 +22,25 @@ import type {
   ApiCapabilityCatalog,
   ApiMediaJob,
   ApiMediaJobList,
+  ApiPlan,
   ApiRagCollection,
   ApiRagCollectionList,
   ApiRagSource,
   ApiRagSourceList,
   MediaDownloadTicket,
+  MediaJobFanOutReceipt,
   MediaJobRequest,
   MediaUploadTicket,
   RagDeleteReceipt,
   RagSourceRequest,
   RagUploadTicket,
+  SocialPostMediaTone,
+  SocialPostsMediaRequest,
 } from '@/api/types'
+import { joinRules } from '@/data/adapters/brand-adapter'
 import type { AuthActionResult } from '@/data/auth'
 import { useLiveWorkingOrgId } from '@/data/provider'
+import type { Tone } from '@/data/types'
 
 export type {
   ApiCapabilityCatalog as CapabilityCatalog,
@@ -89,6 +95,115 @@ export function isJobTerminal(job: ApiMediaJob | null | undefined): boolean {
   return /^(succeeded|failed|cancell?ed)$/i.test(job.status)
 }
 
+// --- Create visual (HSN-02, decisions.md 2026-08-30) -------------------------
+
+/**
+ * The founder-approved style list. CLIENT-SIDE CURATION ONLY: `imgStyle` is
+ * sent verbatim as a string and upstream accepts any string, so this list can
+ * change without touching the contract. Cinematic is first because it is the
+ * default.
+ */
+export const IMG_STYLES = [
+  'Cinematic',
+  'Photorealistic',
+  'Minimalist',
+  'Editorial',
+  'Corporate',
+  'Illustration',
+  '3D Render',
+  'Abstract',
+] as const
+
+/** Free-text guidance entries per request — founder-confirmed. */
+export const MAX_VISUAL_GUIDANCE = 6
+
+export type VisualKind = 'image' | 'video'
+
+/** The user-editable half of the envelope. Everything else is derived. */
+export interface PostVisualOptions {
+  kind: VisualKind
+  plan: ApiPlan
+  imgStyle: string
+  text: boolean
+  logo: boolean
+  guidance: string[]
+}
+
+/** The ONE post a request carries: the clicked draft, with its tone hydrated. */
+export interface PostVisualSubject {
+  ref: string
+  content: string
+  tone: Tone
+}
+
+/**
+ * Our tone to the inline object a post carries. `rules` is `[]` when the
+ * tone has none — never invented, and the key is never omitted.
+ */
+export function toVisualTone(tone: Tone): SocialPostMediaTone {
+  return {
+    id: tone.id,
+    name: tone.name,
+    description: tone.description,
+    rules: joinRules(tone.rules),
+  }
+}
+
+/**
+ * The whole body, built in one place so the laws are structural rather than
+ * a matter of care: exactly one post (the tuple type), `params` `{}`,
+ * `collection.use` false, and guidance trimmed of blanks and capped at six.
+ */
+export function buildPostVisualRequest(
+  subject: PostVisualSubject,
+  options: PostVisualOptions,
+): SocialPostsMediaRequest {
+  return {
+    capability: 'social-posts.media',
+    plan: options.plan,
+    kind: options.kind,
+    posts: [{ ref: subject.ref, content: subject.content, tone: toVisualTone(subject.tone) }],
+    style: { imgStyle: options.imgStyle, text: options.text, logo: options.logo },
+    guidance: options.guidance
+      .map((entry) => entry.trim())
+      .filter(Boolean)
+      .slice(0, MAX_VISUAL_GUIDANCE),
+    params: {},
+    collection: { use: false },
+  }
+}
+
+/**
+ * The single job out of a fan-out receipt. The ruling says a LIST even for
+ * one post, so the list is what is read. A bare job object is tolerated — the
+ * single-job control call answered that shape (PROBE-INT13) — and anything
+ * else is `null`: the request may have been accepted and billed, but there is
+ * no job to follow, and the caller must say so rather than claim success.
+ */
+export function jobFromFanOutReceipt(receipt: unknown): ApiMediaJob | null {
+  if (!receipt || typeof receipt !== 'object') return null
+  const record = receipt as Partial<MediaJobFanOutReceipt> & Partial<ApiMediaJob>
+  if (Array.isArray(record.jobs)) {
+    const first: unknown = record.jobs[0]
+    return first && typeof first === 'object' && typeof (first as ApiMediaJob).jobId === 'string'
+      ? (first as ApiMediaJob)
+      : null
+  }
+  return typeof record.jobId === 'string' ? (record as ApiMediaJob) : null
+}
+
+export type PostVisualResult =
+  | { ok: true; job: ApiMediaJob }
+  | {
+      ok: false
+      /** A 2xx with no job to follow — see `jobFromFanOutReceipt`. */
+      code: 'unconfirmed_receipt'
+      message: string
+      requestId?: undefined
+      retryAfterSeconds?: undefined
+    }
+  | Failure
+
 type Failure = Extract<AuthActionResult, { ok: false }>
 
 function toFailure(error: unknown): Failure {
@@ -133,6 +248,36 @@ export function useStudioActions() {
         return { ok: true, job }
       } catch (error) {
         return toFailure(error)
+      }
+    },
+
+    /**
+     * Create visual (HSN-02): ONE post per call, and NEVER retried here. The
+     * same route as `createJob`; only the body shape differs. The `posts[]`
+     * path has been seen to create and bill a job and then answer 502
+     * (PROBE-INT13), so a failure from this call is "unconfirmed", not
+     * "nothing ran" — the caller says so, and only a fresh click sends
+     * again. `requestId` travels with a failure so the report is actionable.
+     */
+    async createPostVisual(
+      subject: PostVisualSubject,
+      options: PostVisualOptions,
+    ): Promise<PostVisualResult> {
+      const body = buildPostVisualRequest(subject, options)
+      try {
+        const receipt = await api<unknown>('POST', studio('/media/jobs'), { body })
+        const job = jobFromFanOutReceipt(receipt)
+        if (!job) {
+          return {
+            ok: false,
+            code: 'unconfirmed_receipt',
+            message: 'The platform accepted the request but returned no job to follow.',
+          }
+        }
+        return { ok: true, job }
+      } catch (error) {
+        if (isApiError(error)) return { ...toFailure(error), requestId: error.requestId }
+        throw error
       }
     },
 

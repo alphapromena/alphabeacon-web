@@ -123,6 +123,29 @@ export const MESSAGES = {
     /** 502 bad_gateway. The contract guarantees nothing changed — say so. */
     upstreamUnavailable:
       'The generation service is unavailable right now. Nothing was changed or charged — try again in a moment.',
+
+    // Create visual (HSN-02). Every failure here is worded around one fact
+    // from PROBE-INT13: the posts[] path has created AND BILLED a job and then
+    // answered 502, so "nothing ran" may be false and a retry may bill again.
+    // `upstreamUnavailable` above promises the opposite and must not be used
+    // for this call.
+    /** The kind is chosen, never defaulted — images and videos are priced differently. */
+    visualKindRequired:
+      'Choose image or video first. The two are priced differently, so this is never picked for you.',
+    /** The draft's tone id no longer resolves, so the body cannot be built honestly. */
+    visualToneMissing:
+      "This draft's tone is no longer in your workspace, so a visual can't be requested for it.",
+    /** 502, or a 2xx with no job to follow: accepted, maybe billed, unconfirmed. */
+    visualUnconfirmed:
+      'The platform did not confirm this visual. It may still have been created and charged — check your Studio renders before trying again, because a retry can bill again.',
+    /** Any other refusal. */
+    visualFailed:
+      'That visual did not go through. Check your Studio renders before trying again — a retry can bill again.',
+    /** The job itself ended failed; the upstream reason follows when there is one. */
+    visualRenderFailed: 'The platform could not render this visual.',
+    /** Static demo only: the Studio simulation refuses a short credit balance. */
+    visualCreditsShort:
+      'Not enough credits for this visual. Your settings are kept — top up and come back to it.',
   },
   empty: {
     dashboardFresh: 'Your pipeline has not started yet — finish setup to see drafts here.',
@@ -256,7 +279,17 @@ export const MESSAGES = {
     /** INT-12: this is the shared ledger now, not a per-browser cache. */
     recentRunsFromLedger:
       'Everything still waiting on your review, including drafts written while you were away.',
-    visualComingNext: 'Visuals for a draft arrive with the Studio integration.',
+    // Create visual (HSN-02). `visualComingNext` — "visuals arrive with the
+    // Studio integration" — went with the disabled button it labelled.
+    visualRunning:
+      'Images usually take under a minute; videos take longer. It keeps going if you close this.',
+    visualStillRunning:
+      'Still rendering. It keeps going server-side — follow it in your Studio renders.',
+    /** This order attaches nothing to the draft; the honest line says where the file is. */
+    visualNotAttached:
+      'Saved in your Studio renders. Attaching it to the draft arrives in a later phase.',
+    /** Static mode: the Studio simulation, named as such (D-ONB-E spirit). */
+    visualSimulated: 'Simulated in the demo — nothing was sent anywhere.',
 
     // Today, live mode (INT-12).
     /** The whole truth about what Approve does today (D-INT-K). */
