@@ -369,12 +369,11 @@ async function main() {
   // --- The generate run: where the DRAFT OUTPUT SHAPE is discovered. -----
   log('\n--- posts/generate (batch) ---')
   const today = new Date(RUN).toISOString().slice(0, 10)
-  const generate = await call('posts/generate — plan balanced, one tone, perTone 1', 'POST', studio('/posts/generate'), {
+  const generate = await call('posts/generate — plan balanced, one tone', 'POST', studio('/posts/generate'), {
     body: {
       tones: [TONE],
       plan: 'balanced',
       slot: { ref: `smoke-${RUN}`, dateISO: today, time: '09:00', timezone: 'Asia/Amman' },
-      options: { perTone: 1 },
     },
   })
   const runId = (generate.body as { runId?: string })?.runId
@@ -391,7 +390,7 @@ async function main() {
 
   // Is `slot` required? The answer decides whether F1 must ask for one.
   const noSlot = await call('posts/generate — WITHOUT slot (is it required?)', 'POST', studio('/posts/generate'), {
-    body: { tones: [TONE], plan: 'balanced', options: { perTone: 1 } },
+    body: { tones: [TONE], plan: 'balanced' },
     note: 'a 400 here means F1 must always send a slot; a 202 means it is optional',
   })
   finding(

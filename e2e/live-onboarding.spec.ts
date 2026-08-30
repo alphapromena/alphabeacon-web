@@ -13,7 +13,7 @@
  * under test is the JOURNEY, and the journey is what the wizard's deletion
  * changed. A workspace that is half set up is only reachable by walking it.
  *
- * Cost discipline (D-INT-I): ONE balanced run, one tone, perTone 1 — the same
+ * Cost discipline (D-INT-I): ONE balanced run, one tone — the same
  * budget `live-generate` keeps, and the cheapest run that can prove the gate
  * really opened rather than merely looking open.
  */
@@ -185,7 +185,7 @@ test('the unlocked run really runs — one balanced draft', async ({ page }) => 
     timeout: SCREEN_SYNC,
   })
 
-  // One tone, one draft per tone, balanced — the cheapest proof the gate did
+  // One tone, balanced — the cheapest proof the gate did
   // not just look open (D-INT-I).
   await expect(page.getByText('1 draft')).toBeVisible({ timeout: SCREEN_SYNC })
   await page.getByRole('button', { name: 'Generate' }).click()

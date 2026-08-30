@@ -8,7 +8,7 @@
  * - the local ledger makes that run re-pullable after a reload, which is the
  *   only history there is until a list-runs endpoint exists.
  *
- * Cost discipline (D-INT-I): ONE balanced run, one tone, perTone 1.
+ * Cost discipline (D-INT-I): ONE balanced run, one tone.
  */
 import type { Page } from '@playwright/test'
 import { expect, test } from './fixtures'
@@ -60,7 +60,7 @@ test('one balanced run returns a draft with its tone and its rationale', async (
   await page.goto('/generate')
   await expect(page.getByRole('heading', { name: 'Generate', level: 1 })).toBeVisible()
 
-  // One tone, one draft per tone, balanced — the cheapest run that proves it.
+  // One tone, balanced — the cheapest run that proves it.
   //
   // The rung, and the reason is ONB-0827's gate: `/generate` renders the
   // CHECKLIST until readiness is known, and readiness is not known until the

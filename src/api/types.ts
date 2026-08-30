@@ -481,7 +481,7 @@ export interface ApiAttachedEvent {
 
 /** `POST .../posts/generate` — batch; answers a receipt, not the drafts. */
 export interface PostsGenerateRequest {
-  /** 1–3, ids unique. `tones.length × options.perTone` may not exceed 6. */
+  /** 1–3, ids unique. */
   tones: ApiRunTone[]
   plan?: ApiPlan
   /**
@@ -491,7 +491,6 @@ export interface PostsGenerateRequest {
    */
   slot: ApiRunSlot
   attachedEvent?: ApiAttachedEvent
-  options?: { perTone?: 1 | 2 }
 }
 
 /** A `202` from a batch run: the drafts are pulled from the run endpoint. */

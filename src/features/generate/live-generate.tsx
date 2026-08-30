@@ -64,7 +64,6 @@ export function LiveGenerate() {
   const [selected, setSelected] = useState<string[]>(() => tones.slice(0, 1).map((t) => t.id))
   const [plan, setPlan] = useState<GenerationPlan>('balanced')
   const [language, setLanguage] = useState<'en' | 'ar'>('en')
-  const [perTone, setPerTone] = useState<1 | 2>(1)
   const [occasionId, setOccasionId] = useState('')
   const [notes, setNotes] = useState('')
 
@@ -112,10 +111,8 @@ export function LiveGenerate() {
     setSelected((current) => reconcileSelection(tones, current))
   }, [tones])
 
-  // Upstream refuses an over-budget fan-out rather than truncating it, so the
-  // client refuses first and says which number to change.
-  const runPlan = planRun(tones, selected, perTone)
-  const { fanout, overBudget, empty: noTone } = runPlan
+  const runPlan = planRun(tones, selected)
+  const { fanout, empty: noTone } = runPlan
   const busy = phase === 'running'
 
   const toggleTone = (id: string) =>
@@ -171,7 +168,6 @@ export function LiveGenerate() {
       tones: runPlan.tones,
       plan,
       language,
-      perTone,
       occasion: occasions.find((event) => event.id === occasionId),
     })
     void loadRecent()
@@ -296,20 +292,6 @@ export function LiveGenerate() {
               </select>
             </div>
 
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="gen-pertone">Drafts per tone</Label>
-              <select
-                id="gen-pertone"
-                value={perTone}
-                disabled={busy}
-                onChange={(event) => setPerTone(Number(event.target.value) === 2 ? 2 : 1)}
-                className="h-9 rounded-lg border border-input bg-background px-3 text-sm"
-              >
-                <option value={1}>1</option>
-                <option value={2}>2</option>
-              </select>
-            </div>
-
             {occasions.length > 0 && (
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="gen-occasion">Attach an occasion (optional)</Label>
@@ -346,11 +328,6 @@ export function LiveGenerate() {
           <p className="text-xs text-muted-foreground">{MESSAGES.notices.generateNotesPending}</p>
         </div>
 
-        {overBudget && (
-          <p role="alert" className="text-sm text-destructive">
-            {MESSAGES.errors.fanoutTooLarge}
-          </p>
-        )}
         {error && (
           <p role="alert" className="text-sm text-destructive">
             {error}
@@ -366,7 +343,7 @@ export function LiveGenerate() {
                 ? ''
                 : `${fanout} draft${fanout === 1 ? '' : 's'}`}
           </p>
-          <Button onClick={submit} disabled={busy || noTone || overBudget}>
+          <Button onClick={submit} disabled={busy || noTone}>
             <Sparkles aria-hidden />
             {busy ? 'Writing…' : 'Generate'}
           </Button>

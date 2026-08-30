@@ -14,28 +14,23 @@
  * Resolving through the tone records is what keeps the promise honest: the
  * number on screen is computed from the same tones the request will carry.
  */
-import { MAX_FANOUT } from '@/data/generate'
 import type { Tone } from '@/data/types'
 
 export interface RunPlan {
   /** The selected tones that still exist, in the org's own order. */
   tones: Tone[]
-  /** Σ(selected tones × drafts per tone) — exactly what the run will produce. */
+  /** One draft per selected tone (HSN-01) — exactly what the run will produce. */
   fanout: number
   /** Nothing resolves, so there is nothing to run and nothing to count. */
   empty: boolean
-  /** Upstream refuses an over-budget fan-out rather than truncating it. */
-  overBudget: boolean
 }
 
-export function planRun(tones: Tone[], selectedIds: string[], perTone: 1 | 2): RunPlan {
+export function planRun(tones: Tone[], selectedIds: string[]): RunPlan {
   const resolved = tones.filter((tone) => selectedIds.includes(tone.id))
-  const fanout = resolved.length * perTone
   return {
     tones: resolved,
-    fanout,
+    fanout: resolved.length,
     empty: resolved.length === 0,
-    overBudget: fanout > MAX_FANOUT,
   }
 }
 

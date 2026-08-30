@@ -2873,9 +2873,13 @@ access-control-max-age: 3600
 }
 ```
 
-### posts/generate — plan balanced, one tone, perTone 1
+### posts/generate — plan balanced, one tone
 
 `POST /orgs/570/alphastudio/posts/generate` → **202**
+> HSN-01 (2026-08-30): `options.perTone` is removed from the generate body — upstream
+> does not read it, and a probe without it (fresh QA org 1364, request
+> `ce257b64-e5e1-4b3a-a00f-74144dc9388a`) answered 202. The capture below predates
+> that removal; the target envelope is at the end of this file.
 
 ```json
 {
@@ -4248,3 +4252,53 @@ page boundary would never be discovered at all. That needs >200 rows in the
 window AND a boundary landing exactly on one run's whole cluster. It is
 accepted for now, and it disappears the moment the tie-break is fixed
 server-side — no frontend change needed.
+
+## Upstream target envelope — Hasan sync 2026-08-28 (structure authoritative, values illustrative)
+
+Founder-supplied reference for the `POST .../alphastudio/posts/generate` body,
+directly from Hasan (AlphaStudio upstream owner). The STRUCTURE is the
+contract; the values are Postman samples. HSN-01's only wire change was
+removing `options.perTone` (the emptied `options` wrapper with it); later HSN
+orders converge the rest of the body on this envelope step by step — do not
+rewrite the sections above to match it.
+
+```json
+{
+  "slot": {
+    "ref": "postman-slot-1",
+    "dateISO": "2026-02-03",
+    "time": "09:00",
+    "timezone": "Asia/Riyadh"
+  },
+  "tones": [
+    {
+      "id": "executive",
+      "name": "Executive Brief",
+      "length": "long",
+      "description": "For a CDO, CFO or government programme owner. Opens on the exposure — cost, regulatory reporting, AI-readiness — then the platform, then one clear next step.",
+      "rules": [
+        { "kind": "do", "text": "Open with the number or the exposure, and close with a single next step such as info@alphapromena.com." }
+      ]
+    },
+    {
+      "id": "practitioner",
+      "name": "Practitioner",
+      "length": "short",
+      "description": "For the data-quality owner who will actually run the platform. Specific about which capability does the work and what it removes from their week.",
+      "rules": [
+        { "kind": "do", "text": "Name the specific mechanism — auto-generated quality rules, anomaly flagging, fixes executed at source — not the category." },
+        { "kind": "dont", "text": "No rhetorical questions and no analogies; state the mechanism plainly." }
+      ]
+    }
+  ],
+  "plan": "balanced",
+  "attachedEvent": {
+    "title": "Ataccama named a Leader in The Forrester Wave: Data Quality Solutions, 2026, with the highest score in Strategy",
+    "dateISO": "2026-01-28",
+    "rules": [
+      { "kind": "do", "text": "Name the analyst firm and the exact recognition; it is the whole point of the post." },
+      { "kind": "dont", "text": "Do not imply the recognition covers products or categories it does not." }
+    ]
+  }
+}
+```

@@ -38,9 +38,6 @@ export type { ApiPlan as GenerationPlan } from '@/api/types'
  */
 export type { ApiRun as GenerationRun } from '@/api/types'
 
-/** The upstream cap: `tones.length x perTone` may not exceed this. */
-export const MAX_FANOUT = 6
-
 /** One draft, flattened out of the observed run shape for a screen to render. */
 export interface LiveDraft {
   runId: string
@@ -95,7 +92,6 @@ export interface GenerateInput {
   tones: Tone[]
   plan: PostsGenerateRequest['plan']
   language: 'en' | 'ar'
-  perTone: 1 | 2
   /** An occasion from the org's own calendar; its rules outrank every other. */
   occasion?: CalendarEvent
 }
@@ -132,7 +128,6 @@ export function useGenerateActions() {
           time: now.toTimeString().slice(0, 5),
           timezone: schedule.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone,
         },
-        options: { perTone: input.perTone },
         ...(input.occasion
           ? {
               attachedEvent: {

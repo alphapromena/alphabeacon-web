@@ -104,8 +104,6 @@ export const MESSAGES = {
     countryInvalid: 'Pick a country from the list — holidays are only available for these.',
 
     // On-demand generation, live mode (INT-10).
-    /** Refused client-side: the upstream refuses an over-budget fan-out too. */
-    fanoutTooLarge: 'That is more than 6 drafts. Pick fewer tones, or one draft per tone.',
     runFailed: 'That run did not finish. Nothing was charged for a failed run — try again.',
     runMissing: 'That run is no longer available, so it has been removed from your recent runs.',
 

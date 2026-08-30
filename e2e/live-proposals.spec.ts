@@ -7,7 +7,7 @@
  * between a review screen and a scratchpad — and it is what makes a draft
  * written by a scheduled run (once those land) appear here at all.
  *
- * Cost discipline (D-INT-I): ONE balanced text run, perTone 1.
+ * Cost discipline (D-INT-I): ONE balanced text run, one tone.
  */
 import type { Page } from '@playwright/test'
 import { expect, test } from './fixtures'
