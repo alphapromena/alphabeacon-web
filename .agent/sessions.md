@@ -2643,8 +2643,20 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   already degrading, so it is likely more generous than a healthy API needs. It
   is left alone — re-tuning it off one healthy round would be the same mistake
   pointing the other way.
-- Verify: no product code changed, so the static gates from ONB-0827-B stand
-  (471 unit / 43 files, static e2e 93, guard-static 322, verify:w00–w06 all
-  PASS). LIVE under the two-round law on the final tree — numbers in the
-  report.
+- **Step 2 — the gate, and one more thing the healthy API exposed.** The first
+  gate round on the final tree came back 13/15 in **734 s — the fastest round
+  of the whole cycle**, so its two reds were not item 42's degradation. Both
+  were the same shape: a 5 s default over a SAVE AND ITS TOAST
+  (`live-brand`'s "Brand voice saved" and "Tone created", `live-brand-rules`'
+  "Tone created"), which is exactly what the `ONE_CALL` rung was derived for —
+  and brand mutations are the slowest saves the app makes, because every
+  committed voice/source/topic write re-pushes the org's context bundle
+  server-side (api.md, "Context sync"). They took the rung; solo after it,
+  live-brand 5/5 and live-brand-rules 5/5. **These were always too short and
+  passed only while the API happened to answer inside five seconds** — the
+  healthy API is what made them visible, not what broke them.
+- Verify: lint · typecheck · **471 unit / 43 files** · guard-static **322
+  clean** · **static e2e 93 passed / 61 skips / 0 failed**. LIVE, all 15 files,
+  `LIVE_MEDIA` off, one file at a time, under the two-round law on the final
+  tree: **round 1 15/15 in 756 s, round 2 (the gate) 15/15 in 777 s.**
 - Next: **the founder's eye-pass.** Six branches on `origin`, nothing merged.
