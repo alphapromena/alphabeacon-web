@@ -2176,3 +2176,44 @@ Closes open-item 38, which ONB-0827 created and the live suite caught.
   the persistence without the switcher (parts 2 and 3 would have been real and
   open-item 38 would still have been open, because nothing could ever change
   what was remembered for an existing user).
+
+### 2026-08-30 — HSN-01: draft-per-tone is DELETED, and the generate body loses `options` with it
+
+- **Provenance.** The founder's sync with Hasan (AlphaStudio upstream owner),
+  2026-08-28. HSN-01 is item 1 of a series of contract-alignment orders; the
+  founder supplied Hasan's reference envelope for the generate body verbatim,
+  and it is recorded at the end of `Docs/api/alphastudio-shapes.md`
+  ("Upstream target envelope — Hasan sync 2026-08-28"). Structure is the
+  contract there; the values are Postman samples.
+- **The ruling.** The "Drafts per tone" option on the Generate page is deleted
+  — control, state, copy, plumbing — the same law as the ONB wizard: deleted,
+  not bypassed, not flagged off. On the wire the field was `options.perTone`
+  (`PostsGenerateRequest`), and upstream does not read it; removing it emptied
+  the `options` wrapper, so the wrapper went too. This order's ONLY wire
+  change is that removal — every other divergence from the reference envelope
+  (tone `length`, our per-tone `language` and `example`, `attachedEvent`, plan
+  vocabulary) is reported, untouched, for later HSN orders to converge on.
+- **Probed before built, per the house Phase-0 law.** ONE generate request =
+  the exact body `src/data/generate.ts` builds minus `options`, against a
+  fresh isolated QA org: **202 in 1054 ms**, request
+  **`ce257b64-e5e1-4b3a-a00f-74144dc9388a`**, run
+  `run_9ca46bb7b3f46d355e998505` (queued; capabilityVersion now 10). Org 954
+  was the ordered first choice but its owner's QA password lived only in the
+  ONB session (a credential correctly never written down), so a fresh org was
+  provisioned mirroring 954's four-entity setup — org **1364**
+  (`qa+1788081957033hsn1@alphapromena.com`), with a sibling **1363** minted
+  by an aborted first attempt (a tones-list parse bug; no generate call, no
+  spend). The platform's org ids have moved past the 9xx range — 1363/1364
+  are QA-isolated all the same. **Org 619 and every production org were
+  untouched.**
+- **What went with the multiplier, deliberately.** `MAX_FANOUT` and
+  `RunPlan.overBudget` existed only to police `tones.length × perTone > 6`;
+  with the multiplier gone the fan-out IS the tone count, capped at 3 by the
+  picker, so the guard could never trip again. It was deleted along with
+  `MESSAGES.errors.fanoutTooLarge` — whose copy named the deleted option —
+  rather than left as dead coverage (the D-ONB-B rule: an unreachable failure
+  mode reads as coverage and is not).
+- Instead of: hiding the select behind a flag (the order forbids exactly
+  that), or keeping the wire field "harmlessly" (upstream ignoring a field
+  today is not a contract that it will tomorrow — the reference envelope is
+  the contract, and it has no `options`).

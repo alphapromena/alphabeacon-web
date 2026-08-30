@@ -5,7 +5,21 @@ without reconstructing it from the session log. **Update this file at the end
 of any turn that finishes a phase or changes the plan.** `sessions.md` is the
 chronological record; this is the current picture.
 
-_Last updated: 2026-08-30, after the **ONBOARDING REDESIGN WAS MERGED AND
+_Last updated: 2026-08-30, after **ORDER HSN-01** — item 1 of the
+contract-alignment series from the founder's 2026-08-28 sync with Hasan
+(AlphaStudio upstream owner). The Generate page's "drafts per tone" option is
+**DELETED** — control, state, copy, plumbing — and the generate body no longer
+carries `options.perTone` (the emptied `options` wrapper went with it). Probed
+before built: the body without the field answered **202** (fresh QA org 1364,
+request `ce257b64-e5e1-4b3a-a00f-74144dc9388a`). Hasan's reference envelope for
+the generate body is recorded verbatim at the end of
+`Docs/api/alphastudio-shapes.md`; every OTHER divergence from it (tone
+`length`, our per-tone `language`/`example`, plan vocabulary) is reported in
+the session entry and deliberately unchanged — later HSN orders converge on it
+step by step. On branch **`feat/hsn-01-generate`** (off `main` = `289cad5`),
+**pushed, NOT merged — every merge waits on founder review**, and later HSN
+orders stack on this branch. Before that, same day: the
+**ONBOARDING REDESIGN WAS MERGED AND
 SHIPPED** on the founder's explicit approval (eye-pass passed). `main`
 fast-forwarded `fd84173` → **`963c9f7`**, fourteen commits, **no merge commit —
 one linear history**, and pushed with `main:live`. **`1.malaky.ai` serves it**:
@@ -104,6 +118,7 @@ below).
 | `feat/onb-02-entry` | **MERGED 2026-08-30. ONB-0827 Phase 2 — stacked on Phase 1; PUSHED 2026-08-28, merged 2026-08-30.** `src/features/onboarding/*` DELETED; `/onboarding` is a redirect into the app; `org.onboarding {completed,resumeStep}` becomes `org.exists`; `finishOnboarding` becomes a lean `createWorkspace` (org only, idempotent) called at verify; N3 is reframed as the workspace-creation retry. `e2e/onboarding.spec.ts` is `e2e/entry-flow.spec.ts`. Closes open-item 27a. D-ONB-C |
 | `feat/onb-03-gate` | **MERGED 2026-08-30. ONB-0827 Phase 3 — the tip of the ONB-0827 stack; PUSHED 2026-08-28, merged 2026-08-30.** `src/data/readiness.ts` is the one selector; `ab/setup-checklist.tsx` is the one surface; the gate is enforced at `/generate`, the Studio composer, D4's dialog and Today's affordances, and `verify:w06` has a structural check that keeps it that way. D-ONB-D (PENDING) |
 | `feat/onb-04-invite-org` | **MERGED 2026-08-30 — this is the commit `main` now points at (`963c9f7`). ONB-0827-B, 2026-08-28 — stacked on `feat/onb-03-gate`. PUSHED, NOT merged.** Closes open-item 38: `src/data/adapters/org-selection.ts` is the one selector (`selectActiveOrg`, `mostRecentlyJoined`), the active org is persisted beside the session and stamped with the user id, `graftAuthSession` takes the chosen org instead of reaching for `orgs[0]`, accepting an invite switches immediately, a revoked membership falls back with a latched toast, and the rail's footer becomes a switcher at two orgs. D-ONB-F |
+| `feat/hsn-01-generate` | **HSN-01, 2026-08-30 — branched off `main` (`289cad5`). PUSHED, NOT merged; later HSN orders stack on it.** The Generate page's "drafts per tone" option deleted (control, state, copy, plumbing), `options.perTone` gone from the generate body and the emptied `options` wrapper with it; `MAX_FANOUT`/`overBudget`/`fanoutTooLarge` deleted as the multiplier's own plumbing. Hasan's target envelope appended to `Docs/api/alphastudio-shapes.md`. Probe: 202 without the field (org 1364, req `ce257b64-…`) |
 | `probe/int13` | The PROBE-INT13 media probe (2026-08-26/27), branched off `main` (`fd84173`) — **PUSHED 2026-08-28**, not merged, so its open-items 34/35 do NOT exist on the ONB stack. Phase B is still blocked on Ward |
 | `probe/assets-0826` | The assets-endpoint probe (2026-08-26), docs-only — **PUSHED 2026-08-28** so the Ward message's file pointers resolve on GitHub |
 | `chore/api-sweep` | The 118-operation contract sweep (`89199d9`), one commit ahead of `main`, untouched by the triage |
@@ -229,8 +244,15 @@ invented or faked: where a spec promised something the wire cannot deliver, the
 honest subset ships and the deviation is logged. The backend questions live in
 open-items 1–13 and 21–27; W7 still waits on the two reopened manual gates.
 
-**Current totals on `main` (`963c9f7`, merged and shipped 2026-08-30):
-471 unit tests** (43 files), **static e2e 93 passed / 61 live-spec
+**Current totals on `feat/hsn-01-generate` (2026-08-30): 470 unit tests**
+(43 files — one net test fewer than `main`: the deleted over-budget guard's
+test went with the guard), **static e2e 93 passed / 61 live-spec skips**,
+guard-static **322 files clean**, `verify:w00`–`w06` all PASS, and the FULL
+live suite (15 files, `LIVE_MEDIA` off, one file at a time) under the
+two-round law — round results in the session entry.
+
+Before that, on `main` (`963c9f7`, merged and shipped 2026-08-30):
+**471 unit tests** (43 files), **static e2e 93 passed / 61 live-spec
 skips**, guard-static **322 files clean**, `verify:w00`–`w06` all PASS, and the
 FULL live suite — now **15 files**, `live-invite-org` added — under the
 two-round law. Round results are in the session entry; the standing shape is

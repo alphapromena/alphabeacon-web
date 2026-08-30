@@ -2711,3 +2711,66 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   dies with the session — widen only on a founder's word), 41 (a decision can
   take ~30 s to read back), 42 (sustained-load degradation — Ward), 43 (the
   four-day-old presign regression — Ward), and W7's two manual gates.
+
+### 2026-08-30 13:30 — ORDER HSN-01: draft-per-tone deleted, generate body aligned (item 1 of the Hasan series)
+
+- Did: **Phase 0 (probe-first):** located the option — UI select in
+  `live-generate.tsx`, state `perTone`, wire name **`options.perTone`** on
+  `PostsGenerateRequest` — and probed the removal before building: ONE
+  generate request, the exact body `src/data/generate.ts` builds minus
+  `options`, answered **202 in 1054 ms**, request
+  **`ce257b64-e5e1-4b3a-a00f-74144dc9388a`**, run
+  `run_9ca46bb7b3f46d355e998505`. Org 954 was the ordered reuse but its
+  owner's QA password lived only in the ONB session (never written down, by
+  the no-secrets law), so a fresh isolated QA org was provisioned mirroring
+  954's four-entity setup — **org 1364** (`qa+1788081957033hsn1@…`); a
+  sibling **1363** was minted by an aborted first attempt (tones-list parse
+  bug, no generate call, no spend). Minted ids have moved past the 9xx range;
+  **org 619 and every production org untouched.** **Phase 1 (build):** the
+  option is DELETED — control + `gen-pertone` state + copy + plumbing — and
+  with the multiplier gone, `MAX_FANOUT`, `RunPlan.overBudget` and
+  `MESSAGES.errors.fanoutTooLarge` (copy that named the option) went too;
+  `planRun(tones, selected)` now counts one draft per resolved tone. The
+  emptied `options` wrapper is deleted from the wire type. Smoke-script
+  bodies and three live-spec cost-discipline comments updated;
+  `alphastudio-shapes.md` generate heading retitled with a dated note, and
+  **Hasan's target envelope appended verbatim** under the ordered label.
+- **Divergence report (current body vs the reference — all left unchanged):**
+  (1) reference tones carry `length` (`"long"`/`"short"`); ours never sends
+  it. (2) ours sends per-tone `language`; the reference has none. (3) ours
+  sends a tone's `example` when present; the reference has none. (4) `plan`:
+  the sample shows only `"balanced"`, so our `creative`/`precise` values are
+  unverified against the new contract. (5) `slot` and `attachedEvent` match
+  structurally. Docs that still carry the deleted field, deliberately
+  untouched: `Docs/api/api.md` (§generate, `options.perTone` prose),
+  `Docs/api/alphaprostudio.postman.json` (upstream collection), and the
+  2026-08-19 proposals-investigation captures in `alphastudio-shapes.md`
+  (historical record; the keyset-paging bug analysis depends on the
+  `perTone: 2` run).
+- Phase: HSN-01 (contract alignment; INT culture — branch per order, verify
+  before advancing)
+- Files: `src/api/types.ts`, `src/data/generate.ts`,
+  `src/features/generate/{run-plan.ts,run-plan.test.ts,live-generate.tsx}`,
+  `src/lib/messages.ts`, `scripts/smoke-alphastudio.ts`,
+  `e2e/live-{generate,onboarding,proposals}.spec.ts`,
+  `Docs/api/alphastudio-shapes.md`, `.agent/{state,decisions,sessions}.md`
+- Decisions: see decisions.md — HSN-01 (2026-08-30)
+- Verify: lint · typecheck · **470 unit / 43 files** (one net fewer: the
+  over-budget test died with the guard) · guard-static **322 clean** ·
+  **static e2e 93 passed / 61 skips** · `verify:w00`–`w06` **all PASS**
+  (trap-22 drain honored between phases). LIVE, all 15 files, `LIVE_MEDIA`
+  off, one file at a time, two rounds: **round 1 15/15**, **round 2 (the
+  gate) 13/15**. Round 2's reds, recorded not re-run away: `live-auth`'s
+  401-purge test (the SAME test as the 2026-08-28 round-2 red;
+  `live-auth.spec.ts` is byte-identical to `main` and `src/api/` differs only
+  by the removed request field) and `live-proposals`' decline read-back
+  blowing its NAMED 80 s budget (open-item 41's exact caveat — the budget was
+  measured on a degrading API and flagged 2026-08-30 as suspect; the file ran
+  2.6 m vs round 1's 1.4 m, so the API was slow on that pass). Both passed
+  solo after a full TIME_WAIT drain — **live-auth 7/7, live-proposals 4/4**
+  — and both surfaces are untouched by this branch, so both reds are the
+  API's weather by the standing rule. **Not claimed as green.** Generation
+  itself — the thing this order changed — was green in every round on every
+  file that runs it.
+- Next: founder review; the branch is pushed, nothing merged. Later HSN
+  orders stack on `feat/hsn-01-generate`.
