@@ -73,6 +73,8 @@ function StaticKnowledgeScreen() {
                   assetId: `md_${Date.now()}_${index}`,
                   desc: upload.description,
                   kind,
+                  // The demo mirrors a wire that echoes the role (MED-0831/R).
+                  ...(upload.role ? { role: upload.role } : {}),
                 },
               })
             })

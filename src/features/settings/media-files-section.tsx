@@ -23,6 +23,12 @@ export interface MediaFileRow {
   assetId: string
   desc?: string
   kind?: string
+  /**
+   * MED-0831/R (A2/A3): shown as a badge ONLY when the wire row carries
+   * `role === "logo"` — whether the list echoes the presign's role is
+   * unknown, so absence hides nothing and claims nothing.
+   */
+  role?: string
 }
 
 const KIND_WORD: Record<string, string> = { image: 'Image', video: 'Video' }
@@ -70,7 +76,14 @@ export function MediaFilesSection({
                 <div className="flex min-w-0 items-center gap-3">
                   <Icon aria-hidden className="size-4 shrink-0 text-muted-foreground" />
                   <div className="flex min-w-0 flex-col">
-                    <span className="truncate text-sm">{name}</span>
+                    <span className="flex min-w-0 items-center gap-1.5">
+                      <span className="truncate text-sm">{name}</span>
+                      {file.role === 'logo' && (
+                        <span className="shrink-0 rounded-full bg-muted px-1.5 py-0.5 text-[10px] tracking-wide text-muted-foreground uppercase">
+                          logo
+                        </span>
+                      )}
+                    </span>
                     <span className="text-xs text-muted-foreground">
                       {KIND_WORD[file.kind ?? ''] ?? file.kind ?? 'File'}
                     </span>

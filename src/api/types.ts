@@ -694,6 +694,12 @@ export interface ApiMediaAsset {
   /** The `desc` the presign was minted with (MED-0831 Phase 0). */
   desc?: string
   /**
+   * MED-0831/R (A2): whether the list echoes the presign's `role` is
+   * UNKNOWN — read it when present ("logo" is the only value today), never
+   * rely on it; the org logo falls back to the exact-`desc` lookup.
+   */
+  role?: string
+  /**
    * Observed on a job's assets: `{ width, height, synthetic }`; on the list
    * endpoint's rows: `{ synthetic }` (MED-0831 Phase 0 — an UPLOADED asset
    * reads `synthetic: false`). Typed loose because the proxy forwards it.
@@ -823,7 +829,9 @@ export interface ApiMediaJobList {
  * `POST .../media/assets/presign` → 201. The org's own file, in: `PUT` the
  * bytes to `uploadUrl` with exactly this `mediaType` (it is part of the
  * signature) via `uploadToPresignedUrl`. The request body is
- * `{ mediaType, desc }` — `desc` is REQUIRED by the wire (400 without it;
+ * `{ mediaType, desc }`, plus `role: "logo"` when the upload IS a logo
+ * (MED-0831/R, ASSUMED until Hasan's production review; the key is omitted
+ * otherwise) — `desc` is REQUIRED by the wire (400 without it;
  * open-item 43) — and the door filters nothing by type at presign time
  * (MED-0831 Phase 0 measured 201 for all eight probed types); the app's
  * four-type limit is a client allowlist. Nothing is metered.

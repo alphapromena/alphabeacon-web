@@ -136,6 +136,27 @@ export function isMediaUploadKind(kind: KnowledgeUploadKind): kind is 'image' | 
 export const LOGO_ASSET_DESC = 'logo'
 
 /**
+ * The presign body's `role` vocabulary (MED-0831/R, assumption A1 — Hasan
+ * delegated, founder-approved, ASSUMED until his production review): the
+ * only value today is `"logo"`, and when an upload is not a logo the key is
+ * OMITTED from the body — never null.
+ */
+export type MediaAssetRole = 'logo'
+
+/**
+ * Which role a Knowledge upload carries (MED-0831/R, A3/A4): only the IMAGE
+ * path can mark a logo — never Video, never Document — and an unmarked
+ * upload carries none (undefined here, absent on the wire). Both screens
+ * read this one function, the routing law's pattern.
+ */
+export function uploadRoleFor(
+  kind: KnowledgeUploadKind,
+  markedLogo: boolean,
+): MediaAssetRole | undefined {
+  return kind === 'image' && markedLogo ? 'logo' : undefined
+}
+
+/**
  * Whether a user-typed description collides with the logo's reserved marker
  * (MED-0831 Phase 3 ruling): the Knowledge form refuses it — trimmed and
  * case-insensitive, so "Logo " cannot sneak a near-collision past the exact
@@ -476,16 +497,22 @@ export function useStudioActions() {
      * otherwise stand as a phantom upload; the failure carries the minted id
      * either way. (Folds in and replaces `uploadReferenceImage`, which had
      * no caller.)
+     *
+     * MED-0831/R: `role` rides the presign when the upload IS something —
+     * today only `"logo"` (assumption A1). The body is a CLOSED set either
+     * way: `{ mediaType, desc }` or `{ mediaType, desc, role }` — an absent
+     * role is an absent KEY, never null, unit-asserted.
      */
     async uploadMediaAsset(
       file: Blob,
       mediaType: string,
       desc: string,
+      role?: MediaAssetRole,
     ): Promise<UploadMediaAssetResult> {
       let ticket: MediaUploadTicket
       try {
         ticket = await api<MediaUploadTicket>('POST', studio('/media/assets/presign'), {
-          body: { mediaType, desc },
+          body: role === undefined ? { mediaType, desc } : { mediaType, desc, role },
         })
       } catch (error) {
         if (isApiError(error)) return { ...toFailure(error), requestId: error.requestId }

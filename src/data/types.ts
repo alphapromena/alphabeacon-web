@@ -209,6 +209,8 @@ export interface MediaFileRecord {
   assetId: string
   desc: string
   kind: 'image' | 'video'
+  /** MED-0831/R: the demo mirrors a wire that echoes the presign's role. */
+  role?: 'logo'
 }
 
 export type PlanTier = 'free' | 'pro' | 'studio'

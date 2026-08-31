@@ -29,6 +29,7 @@ import {
   LOGO_ASSET_DESC,
   MAX_VISUAL_GUIDANCE,
   VISUAL_COLLECTION,
+  uploadRoleFor,
   useStudioActions,
 } from './studio'
 
@@ -284,6 +285,33 @@ describe('uploadMediaAsset', () => {
     return outcome
   }
 
+  it('a role rides the presign as EXACTLY { mediaType, desc, role }, and an omitted one is an ABSENT key, never null', async () => {
+    apiMock.mockResolvedValueOnce(TICKET)
+    uploadMock.mockResolvedValueOnce(undefined)
+    const { result } = renderHook(() => useStudioActions(), { wrapper })
+    await act(async () => {
+      await result.current.uploadMediaAsset(FILE, 'image/png', 'the mark', 'logo')
+    })
+    // toEqual is a closed key set: nothing else rides along (MED-0831/R A1).
+    expect(apiMock.mock.calls[0][2]?.body).toEqual({
+      mediaType: 'image/png',
+      desc: 'the mark',
+      role: 'logo',
+    })
+
+    apiMock.mockReset()
+    uploadMock.mockReset()
+    apiMock.mockResolvedValueOnce(TICKET)
+    uploadMock.mockResolvedValueOnce(undefined)
+    await act(async () => {
+      await result.current.uploadMediaAsset(FILE, 'image/png', 'no mark')
+    })
+    const body = apiMock.mock.calls[0][2]?.body as Record<string, unknown>
+    expect(body).toEqual({ mediaType: 'image/png', desc: 'no mark' })
+    // The law by name: an omitted role is an absent KEY — never role: null.
+    expect(Object.prototype.hasOwnProperty.call(body, 'role')).toBe(false)
+  })
+
   it('presigns with EXACTLY { mediaType, desc }, then PUTs the ticket, in that order', async () => {
     apiMock.mockResolvedValueOnce(TICKET)
     uploadMock.mockResolvedValueOnce(undefined)
@@ -374,6 +402,15 @@ describe('isMediaUploadKind', () => {
     expect(isMediaUploadKind('image')).toBe(true)
     expect(isMediaUploadKind('video')).toBe(true)
     expect(isMediaUploadKind('document')).toBe(false)
+  })
+})
+
+describe('uploadRoleFor', () => {
+  it('only a MARKED IMAGE carries the logo role — never video, never document (A4)', () => {
+    expect(uploadRoleFor('image', true)).toBe('logo')
+    expect(uploadRoleFor('image', false)).toBeUndefined()
+    expect(uploadRoleFor('video', true)).toBeUndefined()
+    expect(uploadRoleFor('document', true)).toBeUndefined()
   })
 })
 

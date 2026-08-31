@@ -4689,3 +4689,32 @@ this shape from a real upload. DELETE → **204** (request-id
 (request-id `1118b507-873d-42e6-88aa-c35091a979cc`). So Phase 1's law — a
 failed PUT reports the minted asset id — has a second reason to exist: the
 id is also the handle for cleaning the phantom row up.
+
+## MED-0831/R — `role` on the media presign (Hasan addendum, 2026-08-31) — ASSUMED
+
+Hasan's same-day addendum, delegated to assumption and founder-approved
+(ORDER MED-0831/R, the fast-path ruling): NO wire call was made before
+shipping — the founder tests on production with Hasan, and a wrong
+assumption here must fail VISIBLY there. Every line below is **ASSUMED
+until Hasan's production review**.
+
+```json
+{ "mediaType": "image/png", "desc": "<user's description>", "role": "logo" }
+```
+
+- **A1** — the field is `role` on the presign body; the only value today is
+  `"logo"`. When the upload is not a logo the key is OMITTED — never null.
+  The app's body is a closed set either way (`uploadMediaAsset`,
+  unit-asserted).
+- **A2** — whether `GET .../media/assets` echoes `role` is UNKNOWN: the app
+  reads it when present and the org logo keeps the exact-`desc: "logo"`
+  lookup as the read-side truth, which is why the org logo sends BOTH
+  markers. H3's conflict rule (more than one desc-"logo" row is shown,
+  never picked from) stands.
+- **A3** — the same `"logo"` role serves the org logo AND Knowledge images
+  the user marks as logos (partner/product marks). Logo-marked Knowledge
+  images stay in the Files section (badge `logo` only when the row echoes
+  the role); the `"logo"` DESCRIPTION reservation stays.
+- **A4** — Knowledge offers the mark as a checkbox ("This image is a
+  logo"), Image only, never Video, unchecked by default; Organization
+  always sends the role, no control.

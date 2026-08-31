@@ -5,10 +5,40 @@ without reconstructing it from the session log. **Update this file at the end
 of any turn that finishes a phase or changes the plan.** `sessions.md` is the
 chronological record; this is the current picture.
 
-_Last updated: 2026-08-31, after **ORDER CUT-0831** — two Generate controls
+_Last updated: 2026-08-31, after **ORDER MED-0831 (+ its /R rider) SHIPPED
+on the founder's fast-path ruling** — the media presign door is the product's:
+Knowledge Image/Video uploads and the org logo go through
+`uploadMediaAsset` (presign `{mediaType, desc, role?}` → PUT → done; `desc`
+required, a failed PUT deletes its own phantom row and reports the id;
+`role: "logo"` per Hasan's ASSUMED addendum A1–A4 in
+`alphastudio-shapes.md`); Documents stay on the RAG door byte-for-byte; the
+Knowledge "Files" section and the Organization logo read
+`GET …/media/assets` — THE record, no sidecar of any kind (H2 re-ruled;
+the list answers 200 now, Ward item 4 apparently fixed; rows are minted at
+presign time; `isUploadedMediaFile` excludes `synthetic===true` and the
+`desc:"logo"` row); H5 flipped `collection: {use: true}` on Create Visual
+(one constant, first proof = the founder's LIVE_MEDIA render); "logo" is a
+reserved Knowledge description. **The gate ran verify:w00–w06 ALL PASS and
+static e2e 102/67/0 at `2205261`, then the founder ABORTED the live rounds**
+(three attempts poisoned by orphaned harness children — trap 22's sixth
+shape, in sessions.md; live-auth 7/7, live-brand-rules 5/5, live-country
+4/4 stand as the record, no classification, his word) **and ruled the fast
+path with Hasan in the room: lint · typecheck · unit only (521/47 green),
+no e2e/verify/live, merge and deploy WITHOUT the eye-pass — Hasan reviews
+on production; a wrong assumption fails visibly there.** Merged as TWO
+recorded ff steps: `main` → `feat/cut-0831` (`aa6162e`) → `feat/med-0831`'s
+tip; `main` and `main:live` pushed; the deployment verification (READY via
+the Vercel API, the 1.malaky.ai bundle-hash change, the rollback candidate)
+is in the 2026-08-31 MED-0831/R session report. Still Hasan's/Ward's:
+does the list echo `role` (A2), `createdAt`+`mediaType` on the row
+(item 44), `TONE_FIELDS_ON_WIRE`. Before that, same day: **ORDER
+CUT-0831** — two Generate controls
 and the preset concept are gone, on branch **`feat/cut-0831`** (off `main` =
-`7b7222d`), **pushed, NOT merged — the merge waits on the founder's
-localhost eye-pass and his explicit go**. Probed first (fresh QA org 1485,
+`7b7222d`) — **SHIPPED with MED-0831 under the same fast-path ruling** (its
+own gate was green on 2026-08-31: round 2 16/16; the eye-pass was waived by
+the founder's ruling; his post-deploy hand-work — deleting org 619's 8
+legacy preset rows, re-saving the 4 custom tones — is now live and still
+his). Probed first (fresh QA org 1485,
 zero spend): create with `preset:true` → 201, DELETE → 204 — so the wire
 deletes preset rows and the founder's post-deploy hand-delete of org 619's
 8 legacy rows will work. Item 1: the "Anything to steer it?" box is deleted
@@ -241,7 +271,8 @@ below).
 | `feat/hsn-03-tone-lang-length` | **MERGED 2026-08-30 (HSN-FINAL). HSN-03, 2026-08-30 — branched off `feat/hsn-02-create-visual` (`6281cd6`); kept as the record.** Tones gain `language` (required, no default) + `length` (default medium) in the Settings editor, create and edit; interim client sidecar `ab-tone-fields:<orgId>` hydrated in `fetchBrand`, wire send disabled behind `TONE_FIELDS_ON_WIRE`; generate body carries `length` (omitted when absent) and per-tone `language` from the tone; `SelectField` added to `ab/form.tsx`; rider copy on `visualUnconfirmed`. Build hygiene only |
 | `feat/hsn-04-limits-knowledge` | **MERGED 2026-08-30 (HSN-FINAL). HSN-04, 2026-08-30 — branched off `feat/hsn-03-tone-lang-length` (`ab26bb8`); kept as the record at `1520369`.** Sources ≤ 10 / topics ≤ 30 as client-side ceilings (screen + `TagInput` + seam; over-cap rendered, never trimmed); the shared `KnowledgeUploadForm` (Image | Video | Document, required description, real-MIME check) in both worlds; the RAG presign body carries `desc`, no switch; `previewTone` sends the tone's language. Build hygiene only |
 | `feat/hsn-final-gate` | **HSN-FINAL, 2026-08-30 — branched off `feat/hsn-04-limits-knowledge` (`1520369`), MERGED as the tip `main` now points at (`6f45679`); kept on `origin` as the gate's record.** The two presign probes, the deferred coverage (`e2e/hsn-series.spec.ts`, `e2e/live-create-visual.spec.ts`, five unit files), four stale specs and every live tone creation updated for HSN-03/04, the gate-found Create visual reset fix, the `verify:w06` upload check re-pointed, and the probe record in `alphastudio-shapes.md` |
-| `feat/cut-0831` | **CUT-0831, 2026-08-31 — branched off `main` (`7b7222d`). PUSHED, NOT merged: founder's localhost eye-pass, then his explicit go.** The steering box and the page-level Language picker deleted; per-tone language is the tone's own (`RunnableTone`, disabled dashed chips otherwise); the preset concept removed (`Tone.kind` gone, one list on I3, every tone deletable, wire bodies frozen in `brand-wire.test.ts`); the live suite performs the per-context language backfill (`ensureToneLanguage`). Probe: preset create 201 / DELETE 204 on org 1485 |
+| `feat/med-0831` | **MED-0831 + /R, 2026-08-31 — branched off `main` (`7b7222d`), REBASED onto `feat/cut-0831` (`aa6162e`) by the founder's stack ruling, MERGED and SHIPPED the same day on his fast-path ruling; kept on `origin` as the per-order record.** Phase 0 probed the media door in full (all eight types presign 201 with `desc`; the lifecycle clean; `GET …/media/assets` answers 200 — Ward item 4 apparently fixed; rows minted at presign time). Phase 1 `uploadMediaAsset` (no retry; a failed PUT deletes its own mint and reports the id). Phase 2 the Knowledge door split (H1) + the wire-only Files section (H2 re-ruled: no sidecar ever). Phase 3 the wire's org logo (H3; delete-then-upload replace; conflict shown, never picked), H5 `collection:{use:true}`, "logo" reserved. /R: `role: "logo"` on the presign per Hasan's ASSUMED A1–A4. Gate: verify w00–w06 ALL PASS, static 102/67/0, live rounds ABORTED by the founder (auth 7/7 · brand-rules 5/5 · country 4/4 stand) |
+| `feat/cut-0831` | **CUT-0831, 2026-08-31 — branched off `main` (`7b7222d`). SHIPPED 2026-08-31 with MED-0831 (the first of the two ff steps; its own round-2 gate was 16/16; the eye-pass waived by the founder's fast-path ruling); kept on `origin` as the per-order record.** The steering box and the page-level Language picker deleted; per-tone language is the tone's own (`RunnableTone`, disabled dashed chips otherwise); the preset concept removed (`Tone.kind` gone, one list on I3, every tone deletable, wire bodies frozen in `brand-wire.test.ts`); the live suite performs the per-context language backfill (`ensureToneLanguage`). Probe: preset create 201 / DELETE 204 on org 1485 |
 | `probe/int13` | The PROBE-INT13 media probe (2026-08-26/27), branched off `main` (`fd84173`) — **PUSHED 2026-08-28**, not merged, so its open-items 34/35 do NOT exist on the ONB stack. Phase B is still blocked on Ward |
 | `probe/assets-0826` | The assets-endpoint probe (2026-08-26), docs-only — **PUSHED 2026-08-28** so the Ward message's file pointers resolve on GitHub |
 | `chore/api-sweep` | The 118-operation contract sweep (`89199d9`), one commit ahead of `main`, untouched by the triage |
@@ -368,7 +399,19 @@ invented or faked: where a spec promised something the wire cannot deliver, the
 honest subset ships and the deviation is logged. The backend questions live in
 open-items 1–13 and 21–27; W7 still waits on the two reopened manual gates.
 
-**On `feat/cut-0831` (2026-08-31), the full gate at the tip:** lint clean ·
+**On `feat/med-0831` at the ship (2026-08-31, MED-0831 + /R):** lint clean ·
+typecheck clean · **521 unit / 47 files** (+18 over CUT's tip: the
+uploader, the routing, the filter, `listAssets`, the reducer trio, H5, the
+reservation, the role body incl. never-null, `uploadRoleFor`) ·
+guard-static **334 files clean** · static e2e **102 passed / 67 skipped /
+0 failed** (`med-media.spec.ts` +3; `live-media-upload.spec.ts` authored,
+3 self-skipping) · `verify:w00`–`w06` **all PASS** with drains at the
+gated tree `2205261` · live rounds ABORTED by the founder (record kept:
+auth 7/7 · brand-rules 5/5 · country 4/4 · create-visual 3 skipped);
+the /R rider shipped on lint · typecheck · unit alone, his explicit
+ruling — Hasan reviews on production.
+
+Before that: **On `feat/cut-0831` (2026-08-31), the full gate at the tip:** lint clean ·
 typecheck clean · **503 unit tests / 47 files** (+2: `brand-wire.test.ts`
 freezes the tone create/PATCH bodies; the run-plan and body tests moved to
 the no-picker shapes) · guard-static **332 files clean** · static e2e

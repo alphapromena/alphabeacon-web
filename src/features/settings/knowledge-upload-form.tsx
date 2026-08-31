@@ -18,10 +18,17 @@
 import { Upload } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
-import { KNOWLEDGE_UPLOAD_KINDS, checkKnowledgeFile, isReservedMediaDesc } from '@/data/studio'
+import {
+  KNOWLEDGE_UPLOAD_KINDS,
+  checkKnowledgeFile,
+  isReservedMediaDesc,
+  uploadRoleFor,
+  type MediaAssetRole,
+} from '@/data/studio'
 import type { KnowledgeUploadKind } from '@/data/types'
 import { MESSAGES } from '@/lib/messages'
 import { cn } from '@/lib/utils'
@@ -42,11 +49,13 @@ export function KnowledgeUploadForm({
   disabled?: boolean
   onUpload: (
     files: CheckedFile[],
-    upload: { kind: KnowledgeUploadKind; description: string },
+    upload: { kind: KnowledgeUploadKind; description: string; role?: MediaAssetRole },
   ) => void | Promise<void>
 }) {
   const [kind, setKind] = useState<'' | KnowledgeUploadKind>('')
   const [description, setDescription] = useState('')
+  // MED-0831/R (A4): Image only, unchecked by default, reset on kind change.
+  const [markedLogo, setMarkedLogo] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [dragging, setDragging] = useState(false)
   const fileInput = useRef<HTMLInputElement>(null)
@@ -86,9 +95,15 @@ export function KnowledgeUploadForm({
       checked.push({ file, mediaType: verdict.mediaType })
     }
     setError(null)
-    void onUpload(checked, { kind, description: description.trim() })
-    // The next upload is a different thing and needs its own description.
+    void onUpload(checked, {
+      kind,
+      description: description.trim(),
+      role: uploadRoleFor(kind, markedLogo),
+    })
+    // The next upload is a different thing and needs its own description —
+    // and its own logo mark.
     setDescription('')
+    setMarkedLogo(false)
   }
 
   return (
@@ -102,6 +117,9 @@ export function KnowledgeUploadForm({
           onValueChange={(next) => {
             if (!next) return
             setKind(next as KnowledgeUploadKind)
+            // A4: the logo mark belongs to the Image path — a hidden-but-
+            // checked box must not send a role for a video or a document.
+            setMarkedLogo(false)
             setError(null)
           }}
           className="justify-start"
@@ -116,6 +134,21 @@ export function KnowledgeUploadForm({
         <p className="text-xs text-muted-foreground">
           {spec ? spec.hint : 'Pick one first — it decides which files can be chosen.'}
         </p>
+        {kind === 'image' && (
+          // MED-0831/R (A3/A4): a partner or product logo, marked so the
+          // studio knows what it is. Image only — never offered for video.
+          <div className="flex items-center gap-2">
+            <Checkbox
+              id="kn-logo-mark"
+              checked={markedLogo}
+              disabled={disabled}
+              onCheckedChange={(next) => setMarkedLogo(next === true)}
+            />
+            <label htmlFor="kn-logo-mark" className="text-sm">
+              This image is a logo
+            </label>
+          </div>
+        )}
       </fieldset>
 
       <div className="flex flex-col gap-1.5">

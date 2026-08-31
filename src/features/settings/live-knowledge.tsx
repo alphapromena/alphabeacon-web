@@ -175,6 +175,9 @@ export function LiveKnowledge() {
               first.file,
               first.mediaType,
               upload.description,
+              // MED-0831/R: "logo" when the user marked the image; omitted
+              // otherwise — the form computes it, this only forwards.
+              upload.role,
             )
             setBusy(false)
             if (result.ok) {

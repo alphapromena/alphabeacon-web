@@ -984,9 +984,14 @@ branch; all of it blocks DNS cutover or launch.
     not), and uploads read `meta.synthetic: false` while a RENDER's value is
     UNOBSERVED until the founder's `LIVE_MEDIA=1` render — the Files filter
     (`isUploadedMediaFile`) excludes only `synthetic === true` and must be
-    revisited when a render row is first seen. Separately, the founder has
-    drafted the request for **`logoAssetId` on `/orgs/:id`** (ruling W1):
-    when Ward ships it, the `desc: "logo"` convention (H3) and the
-    Organization screen's list-scan for it get revisited — the org record
-    would name its logo directly. Until then the convention stands and
-    "logo" stays a reserved description in Knowledge.
+    revisited when a render row is first seen.
+    **Rewritten 2026-08-31 (ORDER MED-0831/R):** the `logoAssetId` request
+    is DROPPED — superseded by the list-as-record and the presign's `role`
+    field (Hasan's addendum; `desc: "logo"` + `role: "logo"` mark the org
+    logo, and the list-scan stays the read side). What remains asked of the
+    platform: (1) **`createdAt` and `mediaType` on the list row** — the
+    Files section has no date column and only kinds the type until they
+    arrive; (2) **for Hasan: does `GET …/media/assets` echo `role`?**
+    (assumption A2 — the app reads it when present, and the Files "logo"
+    badge lights only when it is echoed). "logo" stays a reserved
+    description in Knowledge either way.

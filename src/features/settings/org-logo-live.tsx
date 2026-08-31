@@ -124,7 +124,10 @@ export function OrgLogoLive({ orgName }: { orgName: string }) {
       }
     }
 
-    const result = await studio.uploadMediaAsset(file, file.type, LOGO_ASSET_DESC)
+    // MED-0831/R (A2): the logo sends BOTH markers — `role: "logo"` on the
+    // presign and the exact `desc` — because whether the list echoes `role`
+    // is unknown; the desc lookup below stays the read-side truth.
+    const result = await studio.uploadMediaAsset(file, file.type, LOGO_ASSET_DESC, 'logo')
     if (cancelled.current) return
     setBusy(false)
     if (result.ok) {

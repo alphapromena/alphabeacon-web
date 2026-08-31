@@ -2812,3 +2812,54 @@ Closes open-item 38, which ONB-0827 created and the live suite caught.
   sidebar read of the asset list (no new bootstrap read, and the rail never
   showed the org logo), or shipping the "visuals can use it" claim before a
   render proves it.
+
+### 2026-08-31 — MED-0831 gate ABORTED by the founder, and MED-0831/R ships on the fast path
+
+- **The gate, as far as it ran.** verify:w00–w06 **all PASS** at the gated
+  tip `2205261` (each behind a full TIME_WAIT drain; 519 unit and a
+  102/67/0 static suite inside every one). The live round was attempted
+  three times and the founder ABORTED the gate mid-third: attempt 1 died on
+  a Windows-shim-mangled `--grep` ("No tests found"); attempt 2 adopted an
+  orphaned dev server and was killed; attempt 3 ran clean until orphaned
+  CHILDREN of the killed attempts (playwright + vite survive a parent kill
+  on Windows — trap 22's sixth shape, recorded in sessions) shared the port
+  and poisoned everything after `live-country`. What RAN CLEAN and stands
+  as the record, no classification needed (the founder's word):
+  **live-auth 7/7** (solo, clean environment, 1.1 m), **live-brand-rules
+  5/5**, **live-country 4/4**, live-create-visual 3 skipped (LIVE_MEDIA
+  off). No other file produced a clean run.
+- **The founder's fast-path ruling (2026-08-31, Hasan in the room), verbatim
+  in effect:** stop the gate; build the `role` rider; run lint · typecheck ·
+  unit ONLY (build hygiene so the Vercel build cannot fail — not a gate);
+  NO e2e, NO verify, NO live spec; merge and deploy WITHOUT the eye-pass —
+  **Hasan reviews on production, and a wrong assumption must fail visibly
+  there, never silently.** The merge is two recorded ff steps: `main` →
+  `feat/cut-0831`'s tip (CUT-0831 ships under the same ruling), then →
+  `feat/med-0831`'s tip.
+- **MED-0831/R — the assumptions, on record (Hasan delegated the answers;
+  founder-approved; ASSUMED until his production review; also in
+  `alphastudio-shapes.md`, "MED-0831/R"):**
+  - *A1* — the presign field is `role`, only value `"logo"`; a non-logo
+    upload OMITS the key, never null. Built as a closed body either way
+    (`uploadMediaAsset(file, mediaType, desc, role?)`), unit-asserted
+    including the never-null law by name.
+  - *A2* — whether the list echoes `role` is unknown: read when present;
+    the org logo sends BOTH `role: "logo"` and `desc: "logo"`, and the
+    exact-desc lookup + H3's conflict rule stay the read side.
+  - *A3* — the same role serves the org logo and logo-MARKED Knowledge
+    images (partner/product marks), which stay in Files with a `logo`
+    badge only when the row echoes the role; the "logo" description
+    reservation stays.
+  - *A4* — Knowledge's mark is a checkbox, "This image is a logo", Image
+    only, never Video, unchecked by default — and it RESETS when the kind
+    changes, so a hidden-but-checked box can never send a role for a video
+    or a document (`uploadRoleFor`, the one routing function, unit-tested
+    across all kinds). Organization always sends the role, no control.
+- **Also in the rider:** open-item 44 rewritten — the `logoAssetId` request
+  DROPPED (superseded by list-as-record + `role`), `createdAt` + `mediaType`
+  still asked of the row, and "does the list echo `role`?" added for Hasan.
+- Instead of: probing the door with `role` before shipping (the founder
+  ruled the production review IS the probe), a select for future roles (one
+  value exists), sending `role: null` for non-logos (A1 forbids it by
+  name), or gating the ship on the aborted round's unread files (the
+  founder's word closes the gate).

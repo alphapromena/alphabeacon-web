@@ -3436,3 +3436,63 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   zero spend, NOT LIVE_MEDIA-gated); verify w00–w06 with drains; live
   round 1, then round 2 = the merge gate; push; ls-remote receipt; the
   full report.
+
+### 2026-08-31 15:30 — ORDER MED-0831 gate (aborted by the founder) + ORDER MED-0831/R: role "logo", and the ship
+
+- Did: **the gate, as far as it ran.** Static: `med-media.spec.ts` (new, 3)
+  + the re-pointed knowledge-lifecycle Image half; full static suite
+  **102 passed / 67 skipped / 0 failed**; `verify:w00`–`w06` **all PASS**
+  behind full drains (7 × RESULT: PASS, log receipts in the session
+  scratchpad). LIVE: three round attempts — (1) a Windows-shim-mangled
+  `--grep` found no tests; (2) an orphaned dev server was adopted (killed);
+  (3) clean until the killed attempts' surviving CHILDREN (playwright +
+  vite outlive a parent kill on Windows — **trap 22, sixth shape: killing
+  a round wrapper orphans its children, which keep running tests, holding
+  5199 and hammering the API; the next run silently adopts their server**)
+  poisoned everything after live-country — one snapshot showed DEMO data
+  under a live spec. **The founder ABORTED the gate** mid-remediation (his
+  ruling, on record): what ran clean stands as the record, no
+  classification — **live-auth 7/7** (solo, purged environment),
+  **live-brand-rules 5/5**, **live-country 4/4**, live-create-visual 3
+  skipped. **ORDER MED-0831/R (the fast path, Hasan in the room):**
+  `uploadMediaAsset` gains `role?: 'logo'` — the presign body is a CLOSED
+  set, `{mediaType, desc}` or `{mediaType, desc, role}`, an omitted role is
+  an absent key never null (unit-asserted by name); `uploadRoleFor` is the
+  one role router (image+marked only — A4 across all kinds, unit-tested);
+  the Knowledge form grows the "This image is a logo" checkbox (Image
+  only, unchecked default, RESETS on kind change so a hidden mark cannot
+  ride a video); the Files row wears a `logo` badge ONLY when the wire row
+  echoes `role === "logo"` (A2/A3); the org logo sends BOTH `role: "logo"`
+  and `desc: "logo"`, keeping the exact-desc lookup and H3's conflict rule
+  as the read side; the demo mirrors an echoing wire
+  (`MediaFileRecord.role`). Shapes doc: "MED-0831/R" addendum, A1–A4
+  verbatim, marked **ASSUMED until Hasan's production review — no wire
+  call was made before shipping, by the founder's ruling; a wrong
+  assumption fails visibly on production, never silently.** Open-item 44
+  rewritten (logoAssetId dropped; createdAt + mediaType kept;
+  "does the list echo role?" added for Hasan).
+- Phase: MED-0831 gate CLOSED by founder abort; MED-0831/R BUILT and
+  SHIPPING — this commit rides `feat/med-0831`, then two recorded ff
+  steps: `main` → `feat/cut-0831`'s tip (`aa6162e`, CUT-0831 ships under
+  the same ruling) → `feat/med-0831`'s tip; `main` and `main:live` pushed;
+  production verification (deployment READY via the Vercel API, the bundle
+  hash change on 1.malaky.ai, the rollback candidate) is recorded in this
+  session's close-out report.
+- Files: `src/data/{studio.ts,studio.test.ts,types.ts}`, `src/api/types.ts`,
+  `src/features/settings/{knowledge-upload-form.tsx,knowledge-screen.tsx,live-knowledge.tsx,media-files-section.tsx,org-logo-live.tsx}`,
+  `Docs/api/alphastudio-shapes.md`, `.agent/{decisions,open-items,sessions,state}.md`
+- Decisions: see decisions.md — "MED-0831 gate ABORTED … MED-0831/R ships
+  on the fast path" (2026-08-31): the abort record, A1–A4, and the
+  interpretations.
+- Verify: **the founder's build-hygiene set only, by his explicit ruling**
+  — lint clean · typecheck clean · **521 unit / 47 files** (+2: the closed
+  role body incl. never-null; `uploadRoleFor` across kinds) · prettier
+  clean on every changed file. Deliberately NOT run, by the same ruling:
+  e2e, verify:wNN, any live spec — Hasan reviews on production.
+- Next: the founder + Hasan on production — the presign with `role`
+  (A1: a 400 here is the visible failure the ruling accepts), the list's
+  `role` echo (A2 → the Files badge), `createdAt`/`mediaType` on the row
+  (item 44), the LIVE_MEDIA render that first proves H5's collection and
+  a render row's `meta.synthetic`. The founder's post-deploy hand-work
+  from CUT-0831 (delete the 8 legacy preset rows on org 619, re-save the
+  4 custom tones) is now LIVE too and still his.
