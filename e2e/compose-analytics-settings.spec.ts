@@ -369,9 +369,11 @@ test('knowledge plays the whole ingestion lifecycle, per file', async ({ page })
   // The row carries what was said about it.
   await expect(uploaded).toContainText('document · Spring price list')
 
-  // A file with no text in it fails honestly, and offers no retry it cannot win.
-  // Declared as what it IS — a PNG declared as a document is refused before it
-  // is ever listed (hsn-series.spec.ts covers that refusal).
+  // An IMAGE never reaches the extractor any more (MED-0831 ruling H1): it
+  // goes through the media door and lands WHOLE under Files — described, not
+  // ingested — instead of failing extraction as it did before the doors
+  // split. The document count above is untouched by it.
+  const docsBefore = await page.getByRole('listitem').filter({ hasText: 'price-list.txt' }).count()
   await page.getByRole('radio', { name: 'Image' }).click()
   await page.getByLabel('What is it?', { exact: true }).fill('The roastery at dawn')
   await page.getByLabel('Choose documents to upload').setInputFiles({
@@ -379,10 +381,15 @@ test('knowledge plays the whole ingestion lifecycle, per file', async ({ page })
     mimeType: 'image/png',
     buffer: Buffer.from([0x89, 0x50, 0x4e, 0x47]),
   })
-  const image = page.getByRole('listitem').filter({ hasText: 'roastery.png' })
-  await expect(image.getByText('Failed')).toBeVisible({ timeout: 15_000 })
-  await expect(image.getByText(/could not read that file/i)).toBeVisible()
-  await expect(image.getByRole('button', { name: 'Retry' })).toHaveCount(0)
+  const files = page.getByRole('region', { name: 'Files' })
+  const imageRow = files.getByRole('listitem').filter({ hasText: 'The roastery at dawn' })
+  await expect(imageRow).toBeVisible()
+  await expect(imageRow).toContainText('Image')
+  // Not a knowledge source: no status, no extraction verdict, no retry.
+  await expect(imageRow.getByText(/Failed|Ready|Processing/)).toHaveCount(0)
+  expect(await page.getByRole('listitem').filter({ hasText: 'price-list.txt' }).count()).toBe(
+    docsBefore,
+  )
 })
 
 test('the team screen invites, refuses a duplicate, and never offers to remove you', async ({

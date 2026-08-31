@@ -971,3 +971,22 @@ branch; all of it blocks DNS cutover or launch.
       artwork, so it is a decision for the founder and Abdullah, not a port.
       This also blocks the W7 Lighthouse budget for marketing (≥ 95 perf).
 
+
+44. **The media asset list is thin, and two Ward deliveries would fatten it
+    (2026-08-31, ORDER MED-0831).** `GET /orgs/:id/alphastudio/media/assets`
+    ANSWERS NOW — 200 where Ward item 4 expected 502, measured Phase 0
+    (request-id `c09531e7-fc46-413b-8be1-b903236b448b`) — but its rows carry
+    only `{assetId, kind, desc, meta.synthetic}`: **no mediaType, no date**,
+    so the Knowledge "Files" row has no date column and only kinds the type
+    (asked of Ward, this order's report). Two facts measured for whoever
+    fattens it: rows are minted at PRESIGN time (a failed PUT leaves a
+    phantom row until deleted — the app deletes its own, other clients may
+    not), and uploads read `meta.synthetic: false` while a RENDER's value is
+    UNOBSERVED until the founder's `LIVE_MEDIA=1` render — the Files filter
+    (`isUploadedMediaFile`) excludes only `synthetic === true` and must be
+    revisited when a render row is first seen. Separately, the founder has
+    drafted the request for **`logoAssetId` on `/orgs/:id`** (ruling W1):
+    when Ward ships it, the `desc: "logo"` convention (H3) and the
+    Organization screen's list-scan for it get revisited — the org record
+    would name its logo directly. Until then the convention stands and
+    "logo" stays a reserved description in Knowledge.
