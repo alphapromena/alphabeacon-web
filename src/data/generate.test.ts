@@ -155,5 +155,8 @@ describe('the generate body (HSN-01 + HSN-03)', () => {
     // `slot` is required on the wire (trap 13) and always built.
     expect(body.slot?.timezone).toBeTruthy()
     expect(body.plan).toBe('balanced')
+    // CUT-0831 item 1: the steering box was never on the wire — the body's
+    // key set is CLOSED, so deleting the control changed no byte of it.
+    expect(Object.keys(body).sort()).toEqual(['plan', 'slot', 'tones'])
   })
 })

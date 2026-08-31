@@ -25,7 +25,6 @@ import { toastError, toastSuccess } from '@/components/ab/toast'
 import { ToneBadge } from '@/components/ab/tone-badge'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
 import {
   draftsFromRun,
   isRunTerminal,
@@ -67,7 +66,6 @@ export function LiveGenerate() {
   const [plan, setPlan] = useState<GenerationPlan>('balanced')
   const [language, setLanguage] = useState<'en' | 'ar'>('en')
   const [occasionId, setOccasionId] = useState('')
-  const [notes, setNotes] = useState('')
 
   const [phase, setPhase] = useState<'idle' | 'running' | 'done' | 'failed' | 'slow'>('idle')
   const [drafts, setDrafts] = useState<LiveDraft[]>([])
@@ -321,19 +319,6 @@ export function LiveGenerate() {
               </div>
             )}
           </div>
-        </div>
-
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="gen-notes">Anything to steer it? (optional)</Label>
-          <Textarea
-            id="gen-notes"
-            rows={2}
-            value={notes}
-            disabled={busy}
-            onChange={(event) => setNotes(event.target.value)}
-            placeholder="This week's arrival, the Guji lot"
-          />
-          <p className="text-xs text-muted-foreground">{MESSAGES.notices.generateNotesPending}</p>
         </div>
 
         {error && (

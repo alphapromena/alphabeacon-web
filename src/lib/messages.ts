@@ -288,8 +288,6 @@ export const MESSAGES = {
       'Your country is the event source now — public holidays load automatically and scheduling works around them. Calendars you keep yourself will connect here in a later phase.',
     // On-demand generation, live mode (INT-10).
     occasionOutranks: "The day's own guidance outranks your tone and brand rules for that post.",
-    generateNotesPending:
-      'Steering notes are not on the wire yet — for now drafts follow your tones, brand voice, sources and knowledge.',
     generateWorking: 'Writing your drafts…',
     generateStillWorking:
       'Still working. It keeps running even if you leave — check Waiting for review in a minute.',
