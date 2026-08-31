@@ -3089,3 +3089,59 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   `ab26bb89d4eb9f0da7e83d56d9d07969bdf64efc refs/heads/feat/hsn-03-tone-lang-length` ·
   `6281cd657ea7a459bd519cf8f3b092454742fbf5 refs/heads/feat/hsn-02-create-visual` ·
   `df13b5f65ad677eeff6eec733ac3ad2fb384c26d refs/heads/feat/hsn-01-generate`.
+
+### 2026-08-31 06:20 — ORDER HSN-FINAL/5: the deploy landed, verified, and the series is SHIPPED
+
+- Did: **the trigger.** The founder reverted the repo to PUBLIC (his
+  decision, on record) to clear Vercel's Hobby private-repo block; blocked
+  deployments stay blocked, so one docs commit — the 2026-08-31 note in
+  `state.md`/`decisions.md` — was pushed to `main` and `main:live`
+  (`01a249a` → **`0a5e84d`**, docs only) as the fresh git event. **The
+  deployments.** Both went **READY** at `0a5e84d`, repo visibility now
+  `public` in Vercel's own metadata: production
+  **`dpl_5ASg1kwjqAsEAN45chuEukyjWwKJ`** (target production, ref `main`,
+  now the rollback candidate) and the `live` preview
+  **`dpl_HSvSjvQoQ437eCunKQCc7togzn7u`** (ref `live`). Nothing blocked; no
+  workaround was needed or used. **The bundle.** `1.malaky.ai` moved
+  `index-CDsww8Wq.js` → **`index-B6ntD0ng.js`** within ~90 s of the push.
+  **The zero-spend smoke (`smoke-hsn-final.mjs`), 31/32:** bundle — hash
+  changed; the HSN-02 bill-again copy, HSN-03 "Pick the language", HSN-04
+  both cap messages + "What are you uploading?" + the required-description
+  copy all present in the deployed chunks; `perTone` GONE. Walk 1 (fresh
+  `qa+1788156373014hsnsmoke@…`): signup → 000000 → Dashboard; the tone
+  editor shows Language (no default, Arabic/English) and Length (defaults
+  medium); the 10 and 30 counters; Knowledge offers Image | Video | Document
+  with a required description and a picker disabled until both; `/generate`
+  is GATED with no dead form. Walk 2 (org 1364, its QA login): Today's card
+  carries "Create visual" beside Approve/Decline, the modal OPENS on the
+  real site with the kind unchosen, and was CANCELLED — no submit, zero
+  spend; the Generate form renders with the deleted "drafts per tone"
+  control gone. Only two origins contacted: the site and the API.
+  **The one FAIL was the smoke script's, not the product's:** its
+  lazy-chunk regex expected `"./name.js"` while Vite references chunks as
+  `assets/name-hash.js`, so the "Create a visual" title check scanned too
+  little. Disproven twice: walk 2 opened that very modal in the browser,
+  and a direct sweep of all 94 deployed chunks found the title in
+  `use-draft-actions-CAU0htIZ.js` and the button label in both
+  `today-screen-B7dDl6a0.js` and `generate-screen-BUPAPU8d.js`. 32/32 in
+  substance; the script stays as run, the miss recorded here.
+- Phase: **HSN-FINAL/5 — the Hasan series is SHIPPED.** Production serves
+  the gated tree; rollback candidate `dpl_GYJNtXZX4Jwj9YUjqWfJEHJ4B5yu`
+  (`289cad5`) noted.
+- Files: `.agent/{state,decisions}.md` (the trigger commit `0a5e84d`), then
+  `.agent/{state,sessions}.md` (this close-out). No product code changed.
+- Decisions: see decisions.md — 2026-08-31, the repo is PUBLIC again.
+- Verify: nothing re-run — docs-only commits on the tree whose gates ran in
+  full on 2026-08-30 (501 unit / 46 files, guard 331, static e2e 99/64,
+  verify:w00–w06 PASS, live round 2 16/16). The deployment verification and
+  the 31/32 smoke above are this order's own gate.
+- Next: Ward — confirm `desc` is required on `media/assets/presign` and
+  document it (item 43 closes). Hasan — `TONE_FIELDS_ON_WIRE` waits on
+  persistence; the RAG door refuses image/video. Founder — the other presign
+  callers' `desc` ruling; `LIVE_MEDIA=1` for `live-create-visual` when he
+  wants the one paid render. Still open: 38b, 40, 41, 42, W7's two manual
+  gates.
+- ls-remote receipt (`git ls-remote --heads origin`, 2026-08-31): see the
+  close-out command's output in the report — `main` = `live` = the close-out
+  commit, `feat/hsn-final-gate` kept at the gate's record, `feat/hsn-01…04`
+  unchanged.
