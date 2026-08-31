@@ -2478,3 +2478,18 @@ Closes open-item 38, which ONB-0827 created and the live suite caught.
   live too — reopen on another draft after a live run shows the old asset);
   re-authoring commits under the owner's identity to get past Vercel (an
   attribution the founder decides, not the agent).
+
+### 2026-08-31 — the repo is PUBLIC again, by the founder, to clear the Vercel block
+
+- **The founder's decision, on record (ORDER HSN-FINAL/5).** HSN-FINAL merged
+  the series (`main` = `01a249a`, gated round 2 16/16) but Vercel BLOCKED
+  both deployments: the Hobby plan deploys a private repo only for commits
+  authored by the team owner, and the repo had been private since mid
+  2026-08-30. Of the three unblock paths the gate laid out (public repo, Pro
+  + member, owner-authored commits), the founder chose reverting the repo to
+  PUBLIC. Blocked deployments stay blocked, so the commit carrying this note
+  is itself the fresh git event that re-triggers production and the `live`
+  preview; Phase 5's verification runs against what it produces.
+- Instead of: upgrading to Pro (a billing decision nobody ordered) or
+  re-authoring commits under the owner's identity (an attribution change the
+  gate had already declined to make on its own).

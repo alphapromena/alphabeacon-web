@@ -33,7 +33,13 @@ the repo public again, move to Pro and add the author, or author commits
 from the owner's identity — then Redeploy from the Vercel dashboard (or
 push again). The Phase-5 production smoke is written and waiting
 (`smoke-hsn-final.mjs` in the session record) and was NOT run against the
-old bundle. Before that, same day: **ORDER HSN-04** — item 4 of the Hasan
+old bundle. **Update 2026-08-31 (ORDER HSN-FINAL/5):** the repo was
+reverted to PUBLIC by the founder — his decision, on record — to clear the
+Vercel Hobby private-repo block; the BLOCKED deployments stay blocked by
+design, so this note's own commit is the fresh git event that re-triggers
+them, and Phase 5 (READY confirmation, entry-hash change, the zero-spend
+smoke) resumes on it — the 2026-08-31 session entry carries the verification.
+Before that, same day: **ORDER HSN-04** — item 4 of the Hasan
 series. **Part A:** sources are capped at **10** and topics at **30** —
 client-side product ceilings (the `MAX_POSTS_PER_DAY` precedent), enforced at
 the I5 screen, in `TagInput` and at the seam; over-cap data is rendered, never
