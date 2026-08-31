@@ -12,7 +12,7 @@
 import type { Page } from '@playwright/test'
 import { expect, test } from './fixtures'
 import { SCREEN_SYNC } from './live-clocks'
-import { completeBrandSetup, signUpAndEnter } from './live-setup'
+import { completeBrandSetup, ensureToneLanguage, signUpAndEnter } from './live-setup'
 
 const API_BASE = process.env.VITE_API_BASE_URL
 const RUN = Date.now()
@@ -118,9 +118,11 @@ test('approving records it as posted, and the decision survives a reload', async
 })
 
 test('declining asks why, keeps the row, and is reversible', async ({ page }) => {
-  test.setTimeout(180_000)
+  test.setTimeout(240_000)
   await login(page)
 
+  // CUT-0831: a fresh browser needs the tone's language re-saved (sidecar).
+  await ensureToneLanguage(page, 'Roastery floor')
   // A second run, so there is something pending to decline.
   await page.goto('/generate')
   await page.getByRole('button', { name: 'Generate' }).click()
