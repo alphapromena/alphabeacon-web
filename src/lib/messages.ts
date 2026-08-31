@@ -14,6 +14,15 @@ export const MESSAGES = {
     postsPerDayCap: 'You can schedule at most 3 posts a day.',
     activeDaysRequired: 'Pick at least one day to generate on.',
     toneRequired: 'Pick at least one tone so drafts know how to sound.',
+    /**
+     * CUT-0831: the page-level language picker is gone, so a tone without a
+     * language of its own (a legacy row, or one written on another browser
+     * while the fields are client-side) cannot be run — only pointed at the
+     * screen that fixes it.
+     */
+    toneNeedsLanguage: 'Needs a language — set it in Settings › Tones.',
+    noTonesRunnable:
+      'None of these tones can generate yet — each needs a language, set in Settings › Tones.',
     timezoneRequired: 'Pick a timezone so posts go out at the right local time.',
 
     // Auth (A1–A4). Sign-in stays deliberately vague about which half was

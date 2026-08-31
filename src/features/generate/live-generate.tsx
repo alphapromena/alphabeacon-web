@@ -26,6 +26,7 @@ import { ToneBadge } from '@/components/ab/tone-badge'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import {
+  isRunnableTone,
   draftsFromRun,
   isRunTerminal,
   useGenerateActions,
@@ -62,9 +63,13 @@ export function LiveGenerate() {
   const wallet = useWallet()
   const walletActions = useWalletActions()
 
-  const [selected, setSelected] = useState<string[]>(() => tones.slice(0, 1).map((t) => t.id))
+  const [selected, setSelected] = useState<string[]>(() =>
+    tones
+      .filter(isRunnableTone)
+      .slice(0, 1)
+      .map((t) => t.id),
+  )
   const [plan, setPlan] = useState<GenerationPlan>('balanced')
-  const [language, setLanguage] = useState<'en' | 'ar'>('en')
   const [occasionId, setOccasionId] = useState('')
 
   const [phase, setPhase] = useState<'idle' | 'running' | 'done' | 'failed' | 'slow'>('idle')
@@ -108,11 +113,15 @@ export function LiveGenerate() {
    * it is still selected. Pruning keeps the picker, the counter and the
    * request body describing the same run (E2E-0820 F5).
    */
+  // CUT-0831: a tone with no language cannot be run — its language would
+  // have to be invented, and no default exists anywhere on the wire any more.
+  const selectable = tones.filter(isRunnableTone)
+
   useEffect(() => {
-    setSelected((current) => reconcileSelection(tones, current))
+    setSelected((current) => reconcileSelection(tones.filter(isRunnableTone), current))
   }, [tones])
 
-  const runPlan = planRun(tones, selected)
+  const runPlan = planRun(selectable, selected)
   const { fanout, empty: noTone } = runPlan
   const busy = phase === 'running'
 
@@ -168,7 +177,6 @@ export function LiveGenerate() {
     const result = await generate.generate({
       tones: runPlan.tones,
       plan,
-      language,
       occasion: occasions.find((event) => event.id === occasionId),
     })
     void loadRecent()
@@ -234,6 +242,9 @@ export function LiveGenerate() {
           <p className="text-sm text-muted-foreground">
             One to three of your own tones. Each one writes its own draft, with its rules attached.
           </p>
+          {selectable.length === 0 && tones.length > 0 && (
+            <p className="text-sm text-muted-foreground">{MESSAGES.errors.noTonesRunnable}</p>
+          )}
           <div className="flex flex-wrap gap-2">
             {tones.map((tone) => (
               <button
@@ -241,7 +252,10 @@ export function LiveGenerate() {
                 type="button"
                 aria-pressed={selected.includes(tone.id)}
                 onClick={() => toggleTone(tone.id)}
-                disabled={busy}
+                // CUT-0831: no language, no draft — the chip is disabled and
+                // the note under the row says what unlocks it.
+                disabled={busy || !isRunnableTone(tone)}
+                title={!isRunnableTone(tone) ? MESSAGES.errors.toneNeedsLanguage : undefined}
                 // Selection shows on the WRAPPER, never on the badge: a tone
                 // renders identically everywhere by design law, so a "muted"
                 // variant would make a deselected tone look like a lesser one.
@@ -250,11 +264,23 @@ export function LiveGenerate() {
                   selected.includes(tone.id) ? 'ring-2 ring-primary' : 'opacity-100',
                 )}
               >
-                <ToneBadge tone={tone} />
+                <ToneBadge
+                  tone={tone}
+                  className={
+                    !isRunnableTone(tone) ? 'border-dashed text-muted-foreground' : undefined
+                  }
+                />
               </button>
             ))}
           </div>
-          {noTone && <p className="text-sm text-destructive">{MESSAGES.errors.toneRequired}</p>}
+          {selectable.length < tones.length && selectable.length > 0 && (
+            <p className="text-xs text-muted-foreground">
+              Dashed: {MESSAGES.errors.toneNeedsLanguage}
+            </p>
+          )}
+          {noTone && selectable.length > 0 && (
+            <p className="text-sm text-destructive">{MESSAGES.errors.toneRequired}</p>
+          )}
         </fieldset>
 
         <div className="grid gap-4 sm:grid-cols-2">
@@ -279,25 +305,6 @@ export function LiveGenerate() {
           </fieldset>
 
           <div className="flex flex-col gap-3">
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="gen-language">Language</Label>
-              <select
-                id="gen-language"
-                value={language}
-                disabled={busy}
-                onChange={(event) => setLanguage(event.target.value as 'en' | 'ar')}
-                className="h-9 rounded-lg border border-input bg-background px-3 text-sm"
-              >
-                <option value="en">English</option>
-                <option value="ar">العربية</option>
-              </select>
-              {/* HSN-03: a tone's own language (Settings) drives its draft; this
-                  picker only covers a tone that has none set yet. */}
-              <p className="text-xs text-muted-foreground">
-                For tones with no language of their own — a tone&apos;s own setting wins.
-              </p>
-            </div>
-
             {occasions.length > 0 && (
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="gen-occasion">Attach an occasion (optional)</Label>

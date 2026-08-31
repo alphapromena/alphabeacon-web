@@ -27,7 +27,7 @@ import type {
 import { joinRules } from '@/data/adapters/brand-adapter'
 import type { AuthActionResult } from '@/data/auth'
 import { useLiveWorkingOrgId, useSchedule } from '@/data/provider'
-import type { CalendarEvent, Tone } from '@/data/types'
+import type { CalendarEvent, Tone, ToneLanguage } from '@/data/types'
 
 export type { ApiPlan as GenerationPlan } from '@/api/types'
 /**
@@ -95,10 +95,20 @@ export function toRunTone(tone: Tone): ApiRunTone {
   }
 }
 
+/**
+ * A tone the generate body can carry (CUT-0831): its language is its OWN,
+ * set in Settings — there is no page-level default and no fallback anywhere
+ * on the wire. A tone without one is not selectable on the Generate page.
+ */
+export type RunnableTone = Tone & { language: ToneLanguage }
+
+export function isRunnableTone(tone: Tone): tone is RunnableTone {
+  return tone.language !== undefined
+}
+
 export interface GenerateInput {
-  tones: Tone[]
+  tones: RunnableTone[]
   plan: PostsGenerateRequest['plan']
-  language: 'en' | 'ar'
   /** An occasion from the org's own calendar; its rules outrank every other. */
   occasion?: CalendarEvent
 }
@@ -126,11 +136,11 @@ export function useGenerateActions() {
       const body: PostsGenerateRequest = {
         tones: input.tones.map((tone) => ({
           ...toRunTone(tone),
-          // HSN-03: the tone's own language (set in Settings) is what drives
-          // generation; the page's picker only covers a tone that has none yet.
-          // The reference envelope shows no `language` — HSN-01 divergence #2
-          // stays recorded, and Hasan consumes the field later.
-          language: tone.language ?? input.language,
+          // CUT-0831: the tone's OWN language, nothing else — the page picker
+          // and its `??` fallback are gone; a tone without a language never
+          // reaches this body. The reference envelope shows no `language` —
+          // HSN-01 divergence #2 stays recorded; Hasan consumes it later.
+          language: tone.language,
         })),
         plan: input.plan,
         slot: {

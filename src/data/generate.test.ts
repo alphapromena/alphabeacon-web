@@ -17,8 +17,14 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { PostsGenerateRequest } from '@/api/types'
 import { DataProvider } from '@/data/provider'
 import type { Tone } from '@/data/types'
-import type { GenerationRun } from './generate'
-import { draftsFromRun, isRunTerminal, toRunTone, useGenerateActions } from './generate'
+import type { GenerationRun, RunnableTone } from './generate'
+import {
+  draftsFromRun,
+  isRunnableTone,
+  isRunTerminal,
+  toRunTone,
+  useGenerateActions,
+} from './generate'
 
 vi.mock('@/api/client', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@/api/client')>()),
@@ -127,18 +133,26 @@ describe('toRunTone', () => {
 const wrapper = ({ children }: { children: ReactNode }) =>
   createElement(DataProvider, { initialDatasetId: 'active', children })
 
-describe('the generate body (HSN-01 + HSN-03)', () => {
-  it("takes each tone's language from the tone, falls back to the picker, and carries no `options`", async () => {
+describe('isRunnableTone (CUT-0831)', () => {
+  it('admits only a tone with a language of its own — no default exists anywhere', () => {
+    expect(isRunnableTone(PLAIN)).toBe(false)
+    expect(isRunnableTone({ ...PLAIN, language: 'ar' })).toBe(true)
+    expect(isRunnableTone({ ...PLAIN, language: 'en' })).toBe(true)
+  })
+})
+
+describe('the generate body (HSN-01 + HSN-03 + CUT-0831)', () => {
+  it("takes each tone's language from the TONE — no picker, no fallback — and carries no `options`", async () => {
     apiMock.mockResolvedValueOnce({ runId: 'run_1' })
-    const arabic: Tone = { ...PLAIN, id: 'tone_ar', language: 'ar', length: 'short' }
+    const arabic: RunnableTone = { ...PLAIN, id: 'tone_ar', language: 'ar', length: 'short' }
+    const english: RunnableTone = { ...PLAIN, id: 'tone_en', language: 'en' }
     const { result } = renderHook(() => useGenerateActions(), { wrapper })
 
     let outcome: Awaited<ReturnType<typeof result.current.generate>> | undefined
     await act(async () => {
       outcome = await result.current.generate({
-        tones: [arabic, PLAIN],
+        tones: [arabic, english],
         plan: 'balanced',
-        language: 'en',
       })
     })
     expect(outcome).toEqual({ ok: true, runId: 'run_1' })
@@ -148,8 +162,12 @@ describe('the generate body (HSN-01 + HSN-03)', () => {
     expect(path).toMatch(/\/alphastudio\/posts\/generate$/)
     const body = options?.body as PostsGenerateRequest
     expect(body.tones[0]).toMatchObject({ id: 'tone_ar', language: 'ar', length: 'short' })
-    expect(body.tones[1]).toMatchObject({ id: 'tone_1', language: 'en' })
+    expect(body.tones[1]).toMatchObject({ id: 'tone_en', language: 'en' })
     expect('length' in body.tones[1]).toBe(false)
+    // CUT-0831 item 2: every language on the wire is a tone's own.
+    for (const [index, sent] of body.tones.entries()) {
+      expect(sent.language).toBe([arabic, english][index].language)
+    }
     // HSN-01: the multiplier and its wrapper are gone from the wire.
     expect('options' in body).toBe(false)
     // `slot` is required on the wire (trap 13) and always built.

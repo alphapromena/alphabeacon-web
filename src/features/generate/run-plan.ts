@@ -16,16 +16,20 @@
  */
 import type { Tone } from '@/data/types'
 
-export interface RunPlan {
+export interface RunPlan<T extends Tone = Tone> {
   /** The selected tones that still exist, in the org's own order. */
-  tones: Tone[]
+  tones: T[]
   /** One draft per selected tone (HSN-01) — exactly what the run will produce. */
   fanout: number
   /** Nothing resolves, so there is nothing to run and nothing to count. */
   empty: boolean
 }
 
-export function planRun(tones: Tone[], selectedIds: string[]): RunPlan {
+/**
+ * Generic over the tone type so a caller that pre-filters (CUT-0831: the
+ * Generate page passes only RunnableTone) keeps that knowledge in the plan.
+ */
+export function planRun<T extends Tone>(tones: T[], selectedIds: string[]): RunPlan<T> {
   const resolved = tones.filter((tone) => selectedIds.includes(tone.id))
   return {
     tones: resolved,
