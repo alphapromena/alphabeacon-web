@@ -115,6 +115,17 @@ export const MESSAGES = {
     // silent trim. Existing entries above a cap stay listed.
     sourcesCapReached: 'You can follow at most 10 sources. Remove one to add another.',
     topicsCapReached: 'You can keep at most 30 topics. Remove one to add another.',
+    // MED-0831: the media door. An upload is presign → PUT → done, so a
+    // failure either left nothing (the reserved slot was deleted) or left a
+    // listed slot the user can delete — said plainly, with the asset id
+    // appended at the site. Uploads are not billable, so "try again" is safe
+    // copy here, unlike a render's.
+    mediaListUnavailable:
+      'The studio’s file list is not answering right now. Files you already uploaded are kept on the platform and will show when it answers.',
+    mediaUploadFailedCleaned:
+      'The upload did not reach the studio. Nothing was kept — try again when you are ready.',
+    mediaUploadFailedLeft:
+      'The upload did not reach the studio, but its reserved slot may still be listed under Files — you can delete it there.',
 
     // I4's live preview (INT-7). Three outcomes worth telling apart: the org
     // has nothing to ground on yet, the platform is busy, and everything else.
@@ -193,6 +204,8 @@ export const MESSAGES = {
     noFollowedSources: 'No sources yet — add a feed so drafts have something current to work from.',
     noTopics: 'No topics yet — add a few so drafts stay on subjects you care about.',
     noKnowledge: 'No documents yet — upload your price list, FAQs, or product notes.',
+    // MED-0831: the Knowledge "Files" section (media uploads, wire-listed).
+    noMediaFiles: 'No files yet — images and videos you upload appear here.',
     noCapabilities: 'Nothing in the studio is available to this workspace yet.',
     noJobs: 'Nothing rendered yet — create something and it shows up here.',
     noReview: 'Nothing waiting for review — generate posts to start.',

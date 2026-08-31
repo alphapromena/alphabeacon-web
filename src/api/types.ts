@@ -691,8 +691,25 @@ export interface ApiMediaAsset {
   mediaType?: string
   /** `image` | `video`. */
   kind?: string
-  /** Observed: `{ width, height, synthetic }`. Useful for laying out E4. */
-  meta?: Record<string, unknown>
+  /** The `desc` the presign was minted with (MED-0831 Phase 0). */
+  desc?: string
+  /**
+   * Observed on a job's assets: `{ width, height, synthetic }`; on the list
+   * endpoint's rows: `{ synthetic }` (MED-0831 Phase 0 — an UPLOADED asset
+   * reads `synthetic: false`). Typed loose because the proxy forwards it.
+   */
+  meta?: { synthetic?: boolean } & Record<string, unknown>
+}
+
+/**
+ * `GET .../media/assets` — the org's asset list, answering since 2026-08-31
+ * (it was 502 before — Ward item 4). Rows carry `assetId`, `kind`, `desc`
+ * and `meta.synthetic` ONLY — no mediaType, no date (asked of Ward) — and a
+ * row exists from PRESIGN time, before any byte lands (MED-0831 Phase 0,
+ * P3b), so an abandoned upload is listed until its asset is deleted.
+ */
+export interface ApiMediaAssetList {
+  assets: ApiMediaAsset[]
 }
 
 /**
@@ -800,9 +817,13 @@ export interface ApiMediaJobList {
 }
 
 /**
- * `POST .../media/assets/presign` → 201. The org's own image, in: `PUT` the
+ * `POST .../media/assets/presign` → 201. The org's own file, in: `PUT` the
  * bytes to `uploadUrl` with exactly this `mediaType` (it is part of the
- * signature) via `uploadToPresignedUrl`. png/jpeg/webp only. Nothing is metered.
+ * signature) via `uploadToPresignedUrl`. The request body is
+ * `{ mediaType, desc }` — `desc` is REQUIRED by the wire (400 without it;
+ * open-item 43) — and the door filters nothing by type at presign time
+ * (MED-0831 Phase 0 measured 201 for all eight probed types); the app's
+ * four-type limit is a client allowlist. Nothing is metered.
  */
 export interface MediaUploadTicket {
   assetId: string

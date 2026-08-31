@@ -20,6 +20,8 @@ import { isApiError } from '@/api/errors'
 import { uploadToPresignedUrl } from '@/api/upload'
 import type {
   ApiCapabilityCatalog,
+  ApiMediaAsset,
+  ApiMediaAssetList,
   ApiMediaJob,
   ApiMediaJobList,
   ApiPlan,
@@ -117,6 +119,39 @@ export const KNOWLEDGE_UPLOAD_KINDS: {
     mediaTypes: EXTRACTABLE_MEDIA_TYPES,
   },
 ]
+
+/**
+ * Which door a Knowledge upload goes through (MED-0831, ruling H1): images
+ * and videos are MEDIA ASSETS — presign → PUT → done, the platform picks the
+ * asset up by itself with no registration call — while documents stay on the
+ * RAG door byte-for-byte. A type guard, so the media branch KNOWS its kind.
+ * Both screens read this one function, so the routing is structural rather
+ * than a matter of care.
+ */
+export function isMediaUploadKind(kind: KnowledgeUploadKind): kind is 'image' | 'video' {
+  return kind !== 'document'
+}
+
+/** The `desc` that marks the org's logo asset (MED-0831, ruling H3). */
+export const LOGO_ASSET_DESC = 'logo'
+
+/**
+ * Whether an asset-list row belongs in the Knowledge "Files" section —
+ * UPLOADS only, by the founder's ruling.
+ *
+ * The `meta.synthetic` interpretation, on record (MED-0831): Phase 0
+ * measured every UPLOADED asset as `synthetic: false` (orgs 1611/1612); a
+ * RENDER's row is unobserved until the founder's LIVE_MEDIA render. So the
+ * filter excludes only what is POSITIVELY marked synthetic (`true` = the
+ * platform made it, not the user) and shows `false` or absent — if the flag
+ * turns out not to separate uploads from renders, this shows what the wire
+ * gives, which is the ruled fallback. The logo row (`desc: "logo"`) is the
+ * Organization screen's, never a file row.
+ */
+export function isUploadedMediaFile(asset: ApiMediaAsset): boolean {
+  if (asset.meta?.synthetic === true) return false
+  return asset.desc !== LOGO_ASSET_DESC
+}
 
 /**
  * The file's REAL type against the chosen kind. Honest in both failure modes:
@@ -356,6 +391,25 @@ export function useStudioActions() {
         return (await api<ApiMediaJobList>('GET', studio('/media/jobs'))).jobs
       } catch {
         return []
+      }
+    },
+
+    /**
+     * The org's asset list — THE record of what was uploaded (MED-0831, H2
+     * re-ruled: the wire wins, no local ledger of any kind). Read LAZILY,
+     * only when a screen that shows it opens (Knowledge's Files section, the
+     * Organization logo) — it does not join the bootstrap burst — and
+     * re-read after every delete. A refusal is returned as itself so the
+     * section can say the list is not answering rather than showing a
+     * remembered one.
+     */
+    async listAssets(): Promise<{ ok: true; assets: ApiMediaAsset[] } | Failure> {
+      try {
+        const list = await api<ApiMediaAssetList>('GET', studio('/media/assets'))
+        return { ok: true, assets: list.assets }
+      } catch (error) {
+        if (isApiError(error)) return { ...toFailure(error), requestId: error.requestId }
+        throw error
       }
     },
 

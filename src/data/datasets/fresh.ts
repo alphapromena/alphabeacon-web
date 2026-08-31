@@ -24,6 +24,7 @@ export function buildFreshDataset(): Dataset {
     followedSources: [],
     topics: [],
     knowledgeDocs: [],
+    mediaFiles: [],
     eventSources: [],
     events: [],
     schedule: {

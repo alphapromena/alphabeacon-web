@@ -34,6 +34,7 @@ export function buildActiveDataset(): Dataset {
     followedSources: atlasFollowedSources(),
     topics: [...ATLAS_TOPICS],
     knowledgeDocs: atlasKnowledgeDocs(),
+    mediaFiles: [],
     eventSources: atlasEventSources(),
     events: atlasEvents(),
     schedule: {

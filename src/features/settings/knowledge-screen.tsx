@@ -16,9 +16,11 @@ import { MonoNumber } from '@/components/ab/mono-number'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { Spinner } from '@/components/ui/spinner'
-import { useDataDispatch, useKnowledgeDocs, useLiveMode } from '@/data/provider'
+import { useDataDispatch, useKnowledgeDocs, useLiveMode, useMediaFiles } from '@/data/provider'
+import { isMediaUploadKind } from '@/data/studio'
 import { KnowledgeUploadForm } from './knowledge-upload-form'
 import { LiveKnowledge } from './live-knowledge'
+import { MediaFilesSection } from './media-files-section'
 import type { KnowledgeDoc } from '@/data/types'
 import { MESSAGES } from '@/lib/messages'
 import { useKnowledgeUpload } from './use-knowledge-upload'
@@ -47,21 +49,40 @@ export function KnowledgeScreen() {
 
 function StaticKnowledgeScreen() {
   const docs = useKnowledgeDocs()
+  const mediaFiles = useMediaFiles()
   const dispatch = useDataDispatch()
   const { accept, retry } = useKnowledgeUpload()
 
   return (
     <>
       {/* HSN-04: the same type + description form the live screen runs; the
-          verdict below is the demo's, and it says so. */}
+          verdict below is the demo's, and it says so. MED-0831 (H1): the
+          chosen type picks the DOOR here too — image and video become
+          simulated media files (the media door has no lifecycle, so the row
+          lands whole), documents keep the ingestion simulation. */}
       <KnowledgeUploadForm
         multiple
-        onUpload={(files, upload) =>
+        onUpload={(files, upload) => {
+          // A const so the guard's narrowing survives into the callback.
+          const kind = upload.kind
+          if (isMediaUploadKind(kind)) {
+            files.forEach((_, index) => {
+              dispatch({
+                type: 'media/upload',
+                file: {
+                  assetId: `md_${Date.now()}_${index}`,
+                  desc: upload.description,
+                  kind,
+                },
+              })
+            })
+            return
+          }
           accept(
             files.map((entry) => entry.file),
             upload,
           )
-        }
+        }}
       />
       <p className="text-xs text-muted-foreground">{MESSAGES.notices.knowledgeSimulated}</p>
 
@@ -129,6 +150,14 @@ function StaticKnowledgeScreen() {
           ))}
         </ul>
       )}
+
+      {/* MED-0831: the simulated media uploads. No Open in the demo — it
+          keeps no bytes, and a control that could never work is the
+          disabled-teasing the design law forbids. */}
+      <MediaFilesSection
+        files={mediaFiles}
+        onDelete={(assetId) => dispatch({ type: 'media/delete', assetId })}
+      />
     </>
   )
 }

@@ -148,6 +148,30 @@ describe('knowledge ingestion', () => {
   })
 })
 
+describe('media files (MED-0831, the static simulation)', () => {
+  const file = { assetId: 'md_test', desc: 'A shop window photo', kind: 'image' as const }
+
+  it('an upload lands whole — the media door has no lifecycle — and delete removes it', () => {
+    let state = dataReducer(world(), { type: 'media/upload', file })
+    expect(state.world.mediaFiles[0]).toEqual(file)
+
+    state = dataReducer(state, { type: 'media/delete', assetId: file.assetId })
+    expect(state.world.mediaFiles.some((f) => f.assetId === file.assetId)).toBe(false)
+  })
+
+  it('never touches the knowledge docs — the two doors keep separate records', () => {
+    const start = world()
+    const next = dataReducer(start, { type: 'media/upload', file })
+    expect(next.world.knowledgeDocs).toEqual(start.world.knowledgeDocs)
+  })
+
+  it('every seed world starts with no media files — populated is reached by uploading', () => {
+    for (const id of ['visitor', 'fresh', 'active', 'past-due', 'quiet-week'] as const) {
+      expect(world(id).world.mediaFiles).toEqual([])
+    }
+  })
+})
+
 describe('the team', () => {
   it('invites, then revokes', () => {
     const invite = {

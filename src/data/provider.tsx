@@ -50,6 +50,7 @@ import type {
   FollowedSource,
   KnowledgeDoc,
   KnowledgeStatus,
+  MediaFileRecord,
   Org,
   Platform,
   PlanTier,
@@ -237,6 +238,10 @@ export type DataAction =
   | { type: 'knowledge/status'; docId: string; status: KnowledgeStatus; failureReason?: string }
   | { type: 'knowledge/progress'; docId: string; progress: number }
   | { type: 'knowledge/remove'; docId: string }
+  // MED-0831: the static demo's media uploads (image/video). Live mode never
+  // dispatches these — the wire's asset list is the only record there.
+  | { type: 'media/upload'; file: MediaFileRecord }
+  | { type: 'media/delete'; assetId: string }
   | { type: 'team/invite'; invite: TeamInvite }
   | { type: 'team/revokeInvite'; inviteId: string }
   | { type: 'team/removeMember'; userId: string }
@@ -1021,6 +1026,21 @@ export function dataReducer(state: DataState, action: DataAction): DataState {
         },
       }
 
+    /** MED-0831: a media upload lands whole — the door has no lifecycle. */
+    case 'media/upload':
+      return {
+        ...state,
+        world: { ...state.world, mediaFiles: [action.file, ...state.world.mediaFiles] },
+      }
+    case 'media/delete':
+      return {
+        ...state,
+        world: {
+          ...state.world,
+          mediaFiles: state.world.mediaFiles.filter((file) => file.assetId !== action.assetId),
+        },
+      }
+
     case 'team/invite':
       return {
         ...state,
@@ -1416,6 +1436,11 @@ export function useTopics() {
 
 export function useKnowledgeDocs() {
   return useData().state.world.knowledgeDocs
+}
+
+/** MED-0831: the static demo's simulated media uploads. Live reads the wire. */
+export function useMediaFiles() {
+  return useData().state.world.mediaFiles
 }
 
 export function useDrafts() {

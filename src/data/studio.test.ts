@@ -19,10 +19,13 @@ import {
   buildPostVisualRequest,
   checkKnowledgeFile,
   isJobTerminal,
+  isMediaUploadKind,
+  isUploadedMediaFile,
   jobFromFanOutReceipt,
   COMPOSABLE_CAPABILITIES,
   GALLERY_CAPABILITIES,
   KNOWLEDGE_UPLOAD_KINDS,
+  LOGO_ASSET_DESC,
   MAX_VISUAL_GUIDANCE,
   useStudioActions,
 } from './studio'
@@ -352,6 +355,77 @@ describe('uploadMediaAsset', () => {
     expect(outcome).toMatchObject({ ok: false, code: 'bad_request', requestId: 'req-400' })
     expect(outcome && 'assetId' in outcome ? outcome.assetId : undefined).toBeUndefined()
     expect(uploadMock).not.toHaveBeenCalled()
+    expect(apiMock).toHaveBeenCalledTimes(1)
+  })
+})
+
+// --- MED-0831: the routing law (H1) and the Files filter ---------------------
+
+describe('isMediaUploadKind', () => {
+  it('routes image and video to the media door, and only documents to RAG', () => {
+    expect(isMediaUploadKind('image')).toBe(true)
+    expect(isMediaUploadKind('video')).toBe(true)
+    expect(isMediaUploadKind('document')).toBe(false)
+  })
+})
+
+describe('isUploadedMediaFile', () => {
+  it('excludes what is POSITIVELY synthetic — a render is not an upload', () => {
+    expect(isUploadedMediaFile({ assetId: 'a', kind: 'image', meta: { synthetic: true } })).toBe(
+      false,
+    )
+  })
+
+  it('shows synthetic:false AND an absent flag — if the flag does not separate, the wire wins', () => {
+    // Phase 0 measured every UPLOAD as `synthetic: false`; a render's row is
+    // unobserved, so absence must not hide anything the wire chose to list.
+    expect(
+      isUploadedMediaFile({ assetId: 'a', kind: 'image', desc: 'x', meta: { synthetic: false } }),
+    ).toBe(true)
+    expect(isUploadedMediaFile({ assetId: 'a', kind: 'video', desc: 'x' })).toBe(true)
+  })
+
+  it('the logo row belongs to Organization, never to Files', () => {
+    expect(
+      isUploadedMediaFile({
+        assetId: 'a',
+        kind: 'image',
+        desc: LOGO_ASSET_DESC,
+        meta: { synthetic: false },
+      }),
+    ).toBe(false)
+  })
+})
+
+describe('listAssets', () => {
+  it('reads the wire list and hands the rows through untouched', async () => {
+    apiMock.mockResolvedValueOnce({
+      assets: [{ assetId: 'masset_1', kind: 'image', desc: 'x', meta: { synthetic: false } }],
+    })
+    const { result } = renderHook(() => useStudioActions(), { wrapper })
+    let outcome: Awaited<ReturnType<typeof result.current.listAssets>> | undefined
+    await act(async () => {
+      outcome = await result.current.listAssets()
+    })
+    expect(outcome).toEqual({
+      ok: true,
+      assets: [{ assetId: 'masset_1', kind: 'image', desc: 'x', meta: { synthetic: false } }],
+    })
+    const [method, path] = apiMock.mock.calls[0]
+    expect(method).toBe('GET')
+    expect(path).toMatch(/\/alphastudio\/media\/assets$/)
+  })
+
+  it('returns a refusal AS a refusal — the caller says the list is down, no local memory', async () => {
+    apiMock.mockRejectedValueOnce(
+      new ApiError(502, 'bad_gateway', 'The upstream did not answer.', undefined, 'req-502'),
+    )
+    const { result } = renderHook(() => useStudioActions(), { wrapper })
+    let outcome: Awaited<ReturnType<typeof result.current.listAssets>> | undefined
+    await act(async () => {
+      outcome = await result.current.listAssets()
+    })
+    expect(outcome).toMatchObject({ ok: false, code: 'bad_gateway', requestId: 'req-502' })
     expect(apiMock).toHaveBeenCalledTimes(1)
   })
 })

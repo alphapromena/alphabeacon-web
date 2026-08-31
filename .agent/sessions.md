@@ -3329,3 +3329,56 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   Knowledge routing (Image/Video → `uploadMediaAsset`, Document → the RAG
   path byte-for-byte) and the "Files" section on the WIRE list per the
   re-ruled H2.
+
+### 2026-08-31 13:35 — ORDER MED-0831 Phase 2: Image/Video to the media door, Document untouched, Files on the wire
+
+- Did: **routing (H1):** `isMediaUploadKind` (a type guard in
+  `src/data/studio.ts`) is the ONE router both Knowledge screens read —
+  image/video go to `uploadMediaAsset` with the form's description as
+  `desc`; document goes to `uploadFile`, the RAG call byte-for-byte (no
+  edit to it); url and pasted text untouched. **Files on the wire (H2 as
+  re-ruled):** `listAssets()` in the studio hook returns rows or the
+  refusal itself; `isUploadedMediaFile` filters the section to uploads —
+  excludes `meta.synthetic === true` (a render) and the `desc: "logo"` row
+  (`LOGO_ASSET_DESC`), shows false/absent — the logged interpretation from
+  Phase 0's measurements (uploads read false; a render row is unobservable
+  without spend; if the flag does not separate, this shows what the wire
+  gives). `media-files-section.tsx` (new, shared): description, the kind
+  word, Open (live only, read-presign on click, new tab), Delete (confirm,
+  DELETE, re-read); no date, no exact MIME (the wire has neither — asked of
+  Ward); on refusal the section shows `mediaListUnavailable` and no rows —
+  no local memory anywhere. The list is read LAZILY (the screen's own
+  per-org effect, never bootstrap) and re-read after every upload and
+  delete. The live form no longer waits on the RAG collection (the media
+  door needs none; the document branch guards itself). Upload failure copy
+  names the phantom row's fate with the minted id appended either way
+  (`mediaUploadFailedCleaned` / `mediaUploadFailedLeft`). **Static:**
+  `MediaFileRecord` + `world.mediaFiles` (types.ts — deliberate), reducer
+  `media/upload` and `media/delete`, rows land whole (the door has no
+  lifecycle), all seeds empty, no Open in the demo (no bytes kept — absent,
+  never disabled). **Unit +9** (516 / 47 files): the router; the filter
+  (synthetic true out, false/absent in, logo out); `listAssets` ok and
+  refusal-as-refusal; the reducer trio (lands whole and deletes, knowledge
+  docs untouched, every seed empty).
+- Phase: MED-0831 Phase 2 — built and gated on the branch; STOPPED at the
+  Phase 2 gate per the order.
+- Files: `src/api/types.ts` (`ApiMediaAssetList`, `ApiMediaAsset.desc`, the
+  presign-ticket comment), `src/data/{studio.ts,types.ts,provider.tsx}`,
+  `src/data/{studio,settings-system}.test.ts`,
+  `src/data/datasets/{active,fresh,visitor}.ts`, `src/lib/messages.ts`,
+  `src/features/settings/{media-files-section.tsx (new),live-knowledge.tsx,knowledge-screen.tsx}`,
+  `.agent/{decisions,sessions}.md`
+- Decisions: see decisions.md — MED-0831 Phase 2 (2026-08-31).
+- Verify: lint clean · typecheck clean · guard-static **333 files clean**
+  (one new file) · **516 unit / 47 files** (+9, all green) · prettier clean
+  on every changed file. NOT run, by the phase law: e2e, verify:wNN, axe,
+  anything live. **Known and deferred to the gate:** the static specs the
+  routing strands — `compose-analytics-settings.spec.ts` (the knowledge
+  lifecycle's Image half now lands in Files instead of failing extraction)
+  and `e2e/hsn-series.spec.ts` (the Knowledge form walk) — updated at the
+  gate, the HSN pattern.
+- Next: the founder reads the Phase 2 gate report; on his go, Phase 3 —
+  Organization › Logo through `uploadMediaAsset` with `desc: "logo"`
+  (replace = delete old then upload; remove = delete + clear; the status
+  line; the copy proposal), `collection: { use: true }` on Create Visual
+  (H5), then the gate.

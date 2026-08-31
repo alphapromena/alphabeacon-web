@@ -198,6 +198,19 @@ export interface KnowledgeDoc {
   addedAt: string
 }
 
+/**
+ * A media upload the studio holds (MED-0831) — the static demo's mirror of
+ * the wire's asset-list row, which carries exactly this much: no media type,
+ * no date. Image and video Knowledge uploads land here; documents are
+ * `KnowledgeDoc`s. Live mode never stores these — the wire list is the only
+ * record, by the founder's ruling.
+ */
+export interface MediaFileRecord {
+  assetId: string
+  desc: string
+  kind: 'image' | 'video'
+}
+
 export type PlanTier = 'free' | 'pro' | 'studio'
 
 /** Copy-drafting model — friendly names only, never vendor ids. */
@@ -465,6 +478,8 @@ export interface Dataset {
   followedSources: FollowedSource[]
   topics: string[]
   knowledgeDocs: KnowledgeDoc[]
+  /** MED-0831: simulated media uploads (image/video); empty in every seed. */
+  mediaFiles: MediaFileRecord[]
   eventSources: CalendarSource[]
   events: CalendarEvent[]
   schedule: Schedule

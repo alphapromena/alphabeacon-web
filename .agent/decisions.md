@@ -2669,3 +2669,75 @@ Closes open-item 38, which ONB-0827 created and the live suite caught.
   caller's `mediaType` on success (the ticket's is the signed truth),
   retrying the cleanup DELETE (the go says one call), or parking the unit
   tests in a new file to dodge the CUT overlap the stack ruling dissolved.
+
+### 2026-08-31 — MED-0831 Phase 2: the Knowledge doors split, and Files reads the wire
+
+- **Provenance.** The founder's Phase 2 go (2026-08-31), which added: the
+  asset list is read LAZILY — when Knowledge (and later Organization) opens,
+  never in the bootstrap burst; after a Delete the wire list is re-read; no
+  local ledger of any kind; "Files" is uploads only — exclude the
+  `desc: "logo"` row, apply the `meta.synthetic` interpretation once read in
+  anger and log it; Document stays on the RAG path byte-for-byte.
+- **The routing (H1) is ONE type guard.** `isMediaUploadKind` in
+  `src/data/studio.ts` — image and video are media assets
+  (`uploadMediaAsset`: presign with the form's description as `desc`, then
+  the PUT, done — no registration call), a document is the RAG call it has
+  always been (`uploadFile`, byte-for-byte — the diff shows no edit to it).
+  Both screens read the guard, so the routing is structural. Url and
+  pasted-text sources untouched.
+- **The `meta.synthetic` interpretation, ON RECORD (`isUploadedMediaFile`).**
+  What was read in anger: Phase 0 measured every UPLOAD as
+  `synthetic: false` (orgs 1611/1612); a RENDER's list row is unobservable
+  without paid spend, so its value is still unmeasured. The filter therefore
+  excludes only what is POSITIVELY marked `synthetic: true` and shows
+  `false` or absent — if the flag turns out not to separate uploads from
+  renders, this degrades to exactly the ruled fallback (show what the wire
+  gives). The logo row (`desc === "logo"`, `LOGO_ASSET_DESC`) is excluded as
+  Organization's. Revisit the flag when the founder's LIVE_MEDIA render
+  makes a render row observable.
+- **The Files section (`media-files-section.tsx`, shared).** A row is what
+  the wire carries and no more: description (falling back to the asset id),
+  the kind word, Open (LIVE only — read-presign on click through `assetUrl`,
+  about an hour, opened in a new tab), Delete (confirm, then the DELETE,
+  then re-read the list). No date column, no exact MIME — asked of Ward. On
+  a list refusal the section renders `mediaListUnavailable` and NOTHING
+  else: the error state structurally precedes the rows, so a stale list
+  cannot masquerade as current. The read is a per-org effect in the screen —
+  the lazy trigger is the screen opening.
+- **Interpretations on record.**
+  1. *The form no longer waits on the RAG collection* (`disabled={busy}`,
+     was `busy || !collectionId`): the media door needs no collection, and
+     gating an image upload on an unrelated RAG failure would couple the
+     doors H1 separates. The document branch still requires it and reports
+     honestly when it is missing.
+  2. *Failure copy names the phantom row's fate.* `mediaUploadFailedCleaned`
+     (the one cleanup DELETE succeeded — nothing kept) vs
+     `mediaUploadFailedLeft` (the slot may still be listed under Files — its
+     own Delete is the handle), the minted id appended at the site either
+     way. "Try again" is safe copy here — presigns and PUTs are not billable
+     — unlike a render's bill-again warnings.
+  3. *The upload success toast says what happened and no more* — "Uploaded —
+     the studio has it now", against RAG's "Added — we are reading it now":
+     the media door has no ingestion to claim.
+  4. *The static world mirrors the wire's shape* — `MediaFileRecord`
+     (assetId, desc, kind) on the Dataset (`src/data/types.ts` touched: the
+     world gained a collection — a deliberate reconciliation-point change),
+     reducer actions `media/upload` and `media/delete`, rows landing WHOLE
+     because the media door has no lifecycle. All seven seeds start empty
+     (the three base datasets carry `mediaFiles: []`; the derived four
+     spread them) — populated is reached by uploading, and the parked
+     demo-data question stays parked. No Open in the demo: it keeps no
+     bytes, and a control that can never work is disabled-teasing.
+  5. *Live mode never dispatches the static actions* — the wire list is the
+     only live record, per the ruling; the reducer comment says so.
+- **Deferred to the gate, by the phase law (build hygiene only):** the
+  static specs this routing knowingly strands —
+  `compose-analytics-settings.spec.ts` (the knowledge lifecycle's PNG half:
+  declared an Image it now lands in Files instead of failing extraction) and
+  `e2e/hsn-series.spec.ts` (the Knowledge form walk) — are updated at the
+  gate with the rest of the suite, the HSN series pattern.
+- Instead of: keeping the collection gate on the whole form (couples the
+  doors), a `MEDIA_LIST_ON_WIRE` switch or any sidecar (re-ruled away), a
+  date column fed by local memory (the ruling says no local ledger — the
+  wire has no date, so neither do we), or hiding absent-`synthetic` rows
+  (would let the filter silently eat wire truth).

@@ -35,6 +35,7 @@ export function buildVisitorDataset(): Dataset {
     followedSources: [],
     topics: [],
     knowledgeDocs: [],
+    mediaFiles: [],
     // Every platform shows as connectable: this world has never connected
     // anything, so B1 is where it first has something to say.
     connections: (['facebook', 'instagram', 'linkedin', 'x'] as const).map((platform) => ({
