@@ -398,6 +398,10 @@ build, so they are worth asking as a batch.
     a save would leave an active schedule with no tones, or the tone-delete
     confirm naming the schedules it will empty. Recorded so the next person to
     touch tone deletion does not discover it the expensive way.
+    **CUT-0831 (2026-08-31) widened the reachable surface:** the preset
+    concept is gone, so EVERY tone is deletable and the reducer guard that
+    kept a schedule from being emptied by deleting the last preset went with
+    it. Still observation-only; the future guard proposed above is unchanged.
 
 38. **CLOSED 2026-08-28 (ORDER ONB-0827-B, decisions.md D-ONB-F).** Fixed on
     `feat/onb-04-invite-org` and verified live in `e2e/live-invite-org.spec.ts`,

@@ -314,16 +314,22 @@ test('@golden a custom tone written once shows up wherever tones are picked', as
   await expect(page.getByLabel('Tone')).toContainText('Roastery floor')
 })
 
-test('deleting a custom tone names what it costs before it happens', async ({ page }) => {
+test('deleting a tone names what it costs before it happens', async ({ page }) => {
   await open(page, 'Settings')
   await page.getByRole('tab', { name: 'Tones' }).click()
 
-  await page.getByRole('button', { name: 'Delete' }).first().click()
+  // CUT-0831: one list, every tone deletable — the first card is a sample
+  // tone that shipped as a "preset", and deleting it works like any other.
+  const doomed = page.locator('[data-slot="card"]').filter({ hasText: 'Provocative' })
+  await doomed.getByRole('button', { name: 'Delete' }).click()
   const confirm = page.getByRole('alertdialog')
   await expect(confirm).toContainText('Drafts already using it keep their existing copy')
   await confirm.getByRole('button', { name: 'Delete tone' }).click()
 
-  await expect(page.getByText('No custom tones yet', { exact: true })).toBeVisible()
+  // The card is gone; the list itself remains, one tone shorter.
+  await expect(page.getByText('Tone deleted')).toBeVisible()
+  await expect(doomed).toHaveCount(0)
+  await expect(page.locator('[data-slot="card"]').filter({ hasText: 'Educational' })).toBeVisible()
 })
 
 test('a source is named from its address, and prose is refused', async ({ page }) => {

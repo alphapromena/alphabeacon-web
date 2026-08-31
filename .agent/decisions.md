@@ -2493,3 +2493,66 @@ Closes open-item 38, which ONB-0827 created and the live suite caught.
 - Instead of: upgrading to Pro (a billing decision nobody ordered) or
   re-authoring commits under the owner's identity (an attribution change the
   gate had already declined to make on its own).
+
+### 2026-08-31 — CUT-0831: two Generate controls die, and the preset concept with them
+
+- **Provenance.** The founder's ruling from the 1.malaky.ai screenshots: the
+  page-level Language picker and the "Anything to steer it?" box must not
+  exist, and the preset concept — abolished for seeding in ONB-0827 but
+  surviving as code (the Settings "Presets" section, the kind badge, the
+  undeletable rows) — dies in code. The 8 legacy rows in org 619 (the old
+  wizard Finish ran twice — the trap 19/20 fingerprint) die by the founder's
+  hand after deploy, not by code.
+- **Probed before built (fresh QA org 1485; org 619 untouched; zero spend).**
+  P1: today's create body with `preset: true` → **201** (tone 1881, request
+  `6988e345-6d58-41d1-8df5-22f69a205312`). P2: `DELETE` that row → **204**
+  (request `c5a43e72-5af5-4614-bfea-4a1d611877d1`), and the list read back
+  empty (request `bc4d7f1a-b6a6-4efa-b9ea-e796ef138f9a`). The wire deletes a
+  preset row, so item 3 shipped in full and the founder's post-deploy manual
+  delete of the 8 rows will work. The probe row was its own cleanup.
+- **Item 1.** The steering box never reached the wire (its own copy said so);
+  the control, its state and `generateNotesPending` are gone, and the body
+  builder's unit test now asserts the body's CLOSED key set
+  (`{plan, slot, tones}`) — the before/after bodies are byte-identical by
+  construction, not by care.
+- **Item 2, and its interim consequence.** Per-tone `language` is the tone's
+  own, full stop: `GenerateInput` takes `RunnableTone` (a `Tone` whose
+  `language` is set), the `?? picker` fallback is deleted, and no default
+  language exists anywhere on the wire. A tone with no language renders as a
+  DISABLED, dashed, muted chip — receding via tokens, never opacity (trap 3)
+  — and cannot be selected; when nothing is selectable, one line above the
+  chips says what unlocks generation. `previewTone`'s `'en'` default is
+  preview-only and stays. Readiness (D-ONB-D) is untouched — it counts
+  tones, not languages. **The interim, on record as ordered:** until Hasan
+  persists `language` and the founder's post-deploy re-save backfills it,
+  the field lives in the per-browser sidecar (HSN-03) — so a member on
+  ANOTHER browser sees every tone as "Needs a language — set it in
+  Settings › Tones" and cannot generate until they set it there (their
+  sidecar then carries it). That is the honest cost of no-default, chosen
+  over inventing a language the tone was never given.
+- **Item 3, and its interpretations.** `Tone.kind` is deleted from the
+  model; the wire's `preset` field is READ AND IGNORED (it still arrives on
+  every row) and the bodies are frozen by `brand-wire.test.ts`: create keeps
+  `preset: false` byte-for-byte, PATCH never carried it. Interpretations,
+  each reversible in a line: (1) the demo worlds' five sample rows KEEP
+  their ids, values and languages as ordinary tones — the constant renames
+  `PRESET_TONES → SAMPLE_TONES` because a constant named "preset" is the
+  concept surviving; the demo-world data question stays parked as ordered.
+  (2) The reducer's preset-delete refusal goes, which re-opens the known
+  stranding of open-item 37 (a delete can empty an active schedule) — noted
+  there, not fixed here, per "no drive-by". (3) `ToneBadge` takes only a
+  name: the identical-rendering law is now STRUCTURAL (the type cannot
+  express a second-class tone), and its test now guards the one thing left —
+  no decoration around the name. (4) The "Create custom tone" button label
+  and `noCustomTones` catalogue copy stay — renaming them is UI copy the
+  ruling did not touch, and four specs hang off the label. (5) screens4.md
+  still describes I3 with presets; the founder's ruling supersedes it and
+  this entry flags the contradiction rather than editing the product doc
+  silently. (6) No seeding code survived ONB-0827 — confirmed by grep, as
+  the order asked.
+- Instead of: hiding the two controls behind flags (the ruling says not
+  exist), keeping `kind` as a vestigial field "for compatibility" (a concept
+  that survives in the type survives), trimming the demo tones (a data
+  change the order parked), or re-adding a delete guard for empty schedules
+  (open-item 37 is a recorded decision for a future order, and the founder's
+  own hand-delete of 8 rows must not be second-guessed by the client).
