@@ -2608,3 +2608,64 @@ Closes open-item 38, which ONB-0827 created and the live suite caught.
   off this door (the order says measure the full list for the record), or
   treating the 200 list as licence to skip the ruled sidecar (the ruling is
   final; the premise change is the founder's to re-rule at a gate).
+
+### 2026-08-31 — MED-0831 Phase 1: one uploader, and the go's two re-rulings on record
+
+- **Provenance.** The founder's go on the Phase 0 report (2026-08-31), which
+  carried two rulings beyond the standing order:
+  1. *Merge order — stack, don't wait.* `feat/med-0831` is REBASED onto
+     `origin/feat/cut-0831` (`aa6162e`) and Phases 1–3 build on top.
+     CUT-0831 gates and ff-merges first; MED follows as a straight ff. If
+     cut's tip moves, `rebase --onto` the new tip and report the hash; no
+     conflict is ever resolved silently.
+  2. *H2 re-ruled — the wire wins from day one.* NO media-uploads sidecar,
+     NO `MEDIA_LIST_ON_WIRE`, and W1's org-logo sidecar
+     (`ab-org-logo:<orgId>` behind `ORG_LOGO_ON_WIRE`) goes too:
+     `GET …/media/assets` is the list for both. The logo is the row whose
+     `desc` is `"logo"` (H3); more than one such row is SAID, never picked
+     from. "Files" shows desc, kind, Open (read-presign on click), Delete —
+     no date column and no exact MIME until the wire row carries them (asked
+     of Ward). `meta.synthetic`'s interpretation must be logged when Phase 2
+     reads it. A 502 from the list renders as itself — no local memory of
+     what was uploaded. A failed PUT deletes the asset it just minted — one
+     call, no retry — and the report carries the id either way.
+- **The rebase, performed and recorded.** `git rebase --onto
+  origin/feat/cut-0831 main feat/med-0831` hit the EXPECTED conflicts in the
+  two append-only logs (`.agent/decisions.md`, `.agent/sessions.md`) — both
+  branches appended entries at EOF. Resolution, in the open: BOTH entries
+  kept, CUT-0831's first (chronological), one blank line restored at each
+  seam; not a word of either entry changed, nothing else touched. Pushed
+  `--force-with-lease`; the rebased Phase 0 commit is `a22bec8` on top of
+  `aa6162e`.
+- **The ruling (Phase 1).** `uploadMediaAsset(file, mediaType, desc)` in
+  `src/data/studio.ts` is the ONE uploader for every media-door caller:
+  presign `{ mediaType, desc }` → `uploadToPresignedUrl` with the TICKET's
+  `uploadUrl` and `mediaType` → `{ assetId, mediaType }` back. `desc` is
+  required at the type level — no caller can omit it. No read-presign in the
+  chain: a download url is minted only on demand through the existing
+  `assetUrl`. No retry anywhere. `uploadReferenceImage` is folded in and
+  DELETED — grep confirms it had no caller under `src/`.
+- **Interpretations on record (each reversible in a line).**
+  1. *The result type.* `UploadMediaAssetResult` — success
+     `{ ok: true, assetId, mediaType }` carrying the TICKET's `mediaType`
+     (the value storage signed), failure the house `Failure` shape plus
+     `assetId?` and `cleanup?: 'deleted' | 'left'`; `requestId` travels on
+     API failures, the `createPostVisual` precedent.
+  2. *The cleanup DELETE's own failure is absorbed, not reported over the
+     PUT's.* The PUT's error is the one the user acts on; the cleanup's
+     outcome only sets `cleanup` — `deleted` (the phantom row is gone) or
+     `left` (the id is the handle for a later delete). One DELETE, never
+     retried, per the go's wording.
+  3. *A non-ApiError still throws* — the house `toFailure` law: only wire
+     shapes become results; a programming error surfaces as one.
+  4. *The unit tests live in `src/data/studio.test.ts`* — the stack ruling
+     makes the CUT-shared file safe to edit. Four tests: the closed presign
+     body (`toEqual` is a closed key set), presign-before-PUT order with the
+     ticket's own values and NO second api call on success, the failed-PUT
+     delete-once-and-carry-the-id law (both cleanup outcomes), and the
+     failed-presign case (nothing minted, nothing PUT, nothing deleted).
+- Instead of: keeping `uploadReferenceImage` beside the new uploader (two
+  doors to one route; the order says folded in and deleted), returning the
+  caller's `mediaType` on success (the ticket's is the signed truth),
+  retrying the cleanup DELETE (the go says one call), or parking the unit
+  tests in a new file to dodge the CUT overlap the stack ruling dissolved.

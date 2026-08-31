@@ -250,6 +250,19 @@ export type PostVisualResult =
     }
   | Failure
 
+/**
+ * What the ONE media uploader answers (MED-0831). On success the asset exists
+ * and the platform picks it up by itself — there is no registration call
+ * (ruling H1). A failure AFTER the presign carries the minted `assetId`
+ * either way, because the row is in the org's list from presign time
+ * (Phase 0, P3b) — plus what the one cleanup DELETE did: `deleted` when it
+ * cleared the phantom row, `left` when even that call failed and the id is
+ * the handle for cleaning it up later.
+ */
+export type UploadMediaAssetResult =
+  | { ok: true; assetId: string; mediaType: string }
+  | (Failure & { assetId?: string; cleanup?: 'deleted' | 'left' })
+
 type Failure = Extract<AuthActionResult, { ok: false }>
 
 function toFailure(error: unknown): Failure {
@@ -370,26 +383,58 @@ export function useStudioActions() {
     },
 
     /**
-     * A reference image, in. Two steps because the platform never proxies
-     * bytes: our API mints the presign, the browser PUTs to storage
-     * (D-INT-A), then a download presign yields the url a job body carries.
+     * A media asset, in (MED-0831 — rulings H1/H3/H4, decisions.md
+     * 2026-08-31). The ONE uploader for every media-door caller — the
+     * Knowledge screen's image/video uploads and the org logo. Two steps
+     * because the platform never proxies bytes (D-INT-A): our API mints the
+     * presign — the body carries the file's real `mediaType` and the user's
+     * own `desc`, REQUIRED at the type level so no caller can omit it (the
+     * door 400s without it, open-item 43) — and the browser PUTs the bytes
+     * with the ticket's exact media type. The asset then exists: the
+     * platform picks it up by itself, there is no registration call, and a
+     * download url is minted only on demand through `assetUrl`.
+     *
+     * NO RETRY anywhere in the chain. A failed PUT deletes the asset the
+     * presign just minted — ONE call, itself never retried — because the row
+     * is in the org's list from presign time (Phase 0, P3b) and would
+     * otherwise stand as a phantom upload; the failure carries the minted id
+     * either way. (Folds in and replaces `uploadReferenceImage`, which had
+     * no caller.)
      */
-    async uploadReferenceImage(
+    async uploadMediaAsset(
       file: Blob,
       mediaType: string,
-    ): Promise<{ ok: true; url: string } | Failure> {
+      desc: string,
+    ): Promise<UploadMediaAssetResult> {
+      let ticket: MediaUploadTicket
       try {
-        const ticket = await api<MediaUploadTicket>('POST', studio('/media/assets/presign'), {
-          body: { mediaType },
+        ticket = await api<MediaUploadTicket>('POST', studio('/media/assets/presign'), {
+          body: { mediaType, desc },
         })
-        await uploadToPresignedUrl(ticket.uploadUrl, file, ticket.mediaType)
-        const download = await api<MediaDownloadTicket>(
-          'POST',
-          studio(`/media/assets/${ticket.assetId}/presign`),
-        )
-        return { ok: true, url: download.url }
       } catch (error) {
-        return toFailure(error)
+        if (isApiError(error)) return { ...toFailure(error), requestId: error.requestId }
+        throw error
+      }
+      try {
+        await uploadToPresignedUrl(ticket.uploadUrl, file, ticket.mediaType)
+        return { ok: true, assetId: ticket.assetId, mediaType: ticket.mediaType }
+      } catch (error) {
+        let cleanup: 'deleted' | 'left' = 'left'
+        try {
+          await api<void>('DELETE', studio(`/media/assets/${ticket.assetId}`))
+          cleanup = 'deleted'
+        } catch {
+          // The id still travels with the failure below.
+        }
+        if (isApiError(error)) {
+          return {
+            ...toFailure(error),
+            requestId: error.requestId,
+            assetId: ticket.assetId,
+            cleanup,
+          }
+        }
+        throw error
       }
     },
   }

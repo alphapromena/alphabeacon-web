@@ -3287,3 +3287,45 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   `uploadMediaAsset` in `src/data/studio.ts` — noting the CUT-0831 overlap
   above bites there (`studio.test.ts`), so the merge order of the two
   branches wants a ruling with the go.
+
+### 2026-08-31 13:15 — ORDER MED-0831 Phase 1: stacked on CUT-0831, and the one uploader is built
+
+- Did: **the go's rulings applied.** (1) Stacked: `git rebase --onto
+  origin/feat/cut-0831 main feat/med-0831` — expected conflicts in the two
+  append-only logs (`decisions.md`, `sessions.md`; both branches appended at
+  EOF), resolved in the open by keeping BOTH entries, CUT-0831's first, one
+  blank line per seam, nothing else touched; pushed `--force-with-lease`.
+  Phase 0's commit is now `a22bec8` on `aa6162e` (cut's gate tip). (2) H2
+  re-ruled by the founder: the wire wins from day one — no media-uploads
+  sidecar, no `MEDIA_LIST_ON_WIRE`, no org-logo sidecar; recorded verbatim
+  in the decision entry for Phases 2–3 to build against. **Phase 1 —
+  `uploadMediaAsset(file, mediaType, desc)` in `src/data/studio.ts`:**
+  presign `{ mediaType, desc }` (`desc` required at the type level) → PUT
+  via `uploadToPresignedUrl` with the TICKET's url and mediaType → returns
+  `{ assetId, mediaType }` (the ticket's). No read-presign in the chain
+  (`assetUrl` mints on demand); no retry anywhere; a failed PUT DELETEs the
+  minted asset — one call, itself never retried — and the failure carries
+  the minted id either way plus `cleanup: 'deleted' | 'left'` (the go's
+  phantom-row ruling; Phase 0 P3b measured the row existing from presign
+  time). `uploadReferenceImage` folded in and deleted — no caller in `src/`
+  (grep-confirmed; only docs and this file's history name it). Unit **+4**
+  in `src/data/studio.test.ts` (now stack-shared with CUT, safe to edit):
+  the closed presign body, the presign→PUT order with the ticket's own
+  values and exactly ONE api call on success, failed-PUT → one DELETE of
+  exactly the minted id with the id in the report (both cleanup outcomes),
+  failed-presign → nothing minted, no PUT, no DELETE.
+- Phase: MED-0831 Phase 1 — built and gated on the branch; STOPPED at the
+  Phase 1 gate per the order.
+- Files: `src/data/studio.ts`, `src/data/studio.test.ts`,
+  `.agent/{decisions,sessions}.md`
+- Decisions: see decisions.md — MED-0831 Phase 1 (2026-08-31): the go's two
+  re-rulings verbatim, the rebase record, and the uploader's four
+  interpretations.
+- Verify: lint clean · typecheck clean · guard-static **332 files clean** ·
+  **507 unit / 47 files** (503 + 4) · prettier clean on both changed source
+  files. No e2e, no verify:wNN, nothing live — Phase 1 ships no UI and the
+  gate at the tip owns the suites.
+- Next: the founder reads the Phase 1 gate report; on his go, Phase 2 —
+  Knowledge routing (Image/Video → `uploadMediaAsset`, Document → the RAG
+  path byte-for-byte) and the "Files" section on the WIRE list per the
+  re-ruled H2.
