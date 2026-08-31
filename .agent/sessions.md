@@ -3145,3 +3145,89 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   close-out command's output in the report — `main` = `live` = the close-out
   commit, `feat/hsn-final-gate` kept at the gate's record, `feat/hsn-01…04`
   unchanged.
+
+### 2026-08-31 08:55 — ORDER CUT-0831: the Generate cuts and the preset concept, gated on the branch
+
+- Did: **Phase 0 (fresh QA org 1485, `qa+1788160…cut@…`; org 619 untouched;
+  zero spend).** P1: today's create body with `preset: true` → **201**
+  (tone 1881, request `6988e345-6d58-41d1-8df5-22f69a205312`). P2: DELETE →
+  **204** (request `c5a43e72-5af5-4614-bfea-4a1d611877d1`); the list read
+  back empty (request `bc4d7f1a-b6a6-4efa-b9ea-e796ef138f9a`). The wire
+  deletes preset rows → item 3 shipped in full; the probe row was its own
+  cleanup. **Item 1** (`bdc14a6`): the steering box, its state, its copy and
+  `generateNotesPending` deleted; the body builder's unit test asserts the
+  CLOSED key set `{plan, slot, tones}` — byte-identical before/after by
+  construction. **Item 2** (`bc6000a`): the Language picker, its state, its
+  copy and the `?? picker` fallback deleted; `GenerateInput` takes
+  `RunnableTone` (= `Tone` with `language` set, `isRunnableTone` the guard),
+  `planRun` generic; a languageless tone is a DISABLED dashed muted chip
+  (receding via tokens, trap 3) titled and footnoted "Needs a language — set
+  it in Settings › Tones.", and an all-languageless list gets one line above
+  the chips (`noTonesRunnable`); `previewTone`'s preview-only `'en'` stays;
+  readiness untouched. **Item 3** (`86b45cc`): `Tone.kind` deleted from the
+  model; adapter maps nothing from the wire's `preset` (read and ignored);
+  create keeps `preset: false` and PATCH never carried it —
+  `brand-wire.test.ts` freezes both bodies with the provider hooks stubbed;
+  I3 is ONE list, no Presets section/badge/copy, Edit + Delete on every
+  tone; the reducer's preset-delete guard gone (open-item 37 notes the
+  widened surface); `PRESET_TONES` → `SAMPLE_TONES` with rows byte-unchanged;
+  ToneBadge takes only a name (the identical-rendering law is structural
+  now); kitchen-sink, schedule copy, fixtures, conventions.md and context.md
+  follow; no seeding code survived ONB-0827 (grep-confirmed). **Spec updates
+  the cuts forced, each found by the gate, none loosened:** the tone-delete
+  walk deletes a SAMPLE tone and asserts the list stays (`904b5e5`);
+  `hsn-series` asserts no Presets heading + a deletable sample; and the live
+  suite learned the RULED INTERIM — a tone's language lives in the
+  per-browser sidecar, every Playwright context is a fresh browser, so
+  `ensureToneLanguage` (live-setup) performs the founder's documented
+  re-save gesture before the three generates that need it
+  (live-generate, live-onboarding `ff70252`, live-proposals `4fb8783` —
+  the third found by the first round pair, which was aborted and re-run).
+- **Gate at the tip (`4fb8783`):** lint · typecheck · **503 unit / 47
+  files** · guard-static **332 clean** · static e2e **99 passed / 64
+  skipped / 0 failed** · `verify:w00`–`w06` **all PASS** with drains (one
+  earlier sweep FAILed on the stale tone-delete walk — fixed, full sweep
+  re-run green). **LIVE, two rounds on the final tree: round 1 15/16 in
+  840 s** — the one red was `live-invite-org` test 1 landing on "Welcome
+  back" once (a file this order does not touch, green in six other rounds
+  today; classified with a direct latency probe first: API healthy, p50
+  621 ms / max 786 ms on eight authed reads) — **round 2, THE MERGE GATE:
+  16/16, 60 passed / 5 skipped, no red, 829 s.**
+- Divergences / observations for the founder: (1) the ruled interim bites
+  exactly as logged — every fresh browser sees "Needs a language" until the
+  one-time re-save; the suite now performs it per context, and your
+  post-deploy backfill of the 4 custom tones is the same gesture; (2)
+  "Create custom tone" button label and `noCustomTones` copy kept (UI copy
+  the ruling did not touch; four specs hang off the label); (3) screens4.md
+  still describes I3 with presets — flagged in decisions, not edited; (4)
+  the demo worlds keep their five sample rows unchanged (`SAMPLE_TONES`) —
+  the demo-data question stays parked; (5) open-item 37's stranding is now
+  reachable through EVERY tone's Delete — noted there, deliberately not
+  guarded here.
+- Phase: **CUT-0831** — built and gated; **NOT merged.** The founder's
+  localhost eye-pass, then his explicit go, then the ff merge runs the
+  standing merge procedure.
+- Files: `src/data/{types,generate,brand}.ts`, `src/data/generate.test.ts`,
+  `src/data/brand-wire.test.ts (new)`, `src/data/provider.tsx`,
+  `src/data/entities/tones.ts`, `src/data/datasets/{active,fresh,visitor}.ts`,
+  `src/data/adapters/{brand-adapter.ts,brand-adapter.test.ts,tone-fields.test.ts}`,
+  `src/data/{settings-system,auth-flow,studio}.test.ts`,
+  `src/components/ab/{tone-badge.tsx,tone-badge.test.tsx}`,
+  `src/features/generate/{live-generate.tsx,run-plan.ts,run-plan.test.ts}`,
+  `src/features/settings/{tones-screen.tsx,tone-editor.tsx}`,
+  `src/features/calendar/schedule-fields.tsx`,
+  `src/features/dev/dev-kitchen-sink.tsx`, `src/lib/messages.ts`,
+  `e2e/{hsn-series,compose-analytics-settings,live-generate,live-onboarding,live-proposals}.spec.ts`,
+  `e2e/live-setup.ts`, `.agent/{conventions,context,decisions,open-items,state,sessions}.md`
+- Decisions: see decisions.md — CUT-0831 (2026-08-31)
+- Verify: the gate above, in full, at the tip. Nothing merged, nothing
+  deployed.
+- Next: the founder's localhost eye-pass (`pnpm dev`, no `.env.local`
+  change needed — /generate and /settings/tones in the demo; live mode via
+  the env var for the disabled-chip state on a second browser profile).
+  On his explicit go: ff-only merge + push main + main:live, then BY HAND on
+  production — delete the 8 legacy rows (Educational ×2, Direct-CTA ×2,
+  Story ×2, Provocative, Data-driven) in Settings › Tones and re-save the 4
+  custom tones once so each carries its language.
+- ls-remote receipt: in the close-out command's output beside this entry —
+  `feat/cut-0831` at the gate tip; `main` = `live` untouched at `7b7222d`.

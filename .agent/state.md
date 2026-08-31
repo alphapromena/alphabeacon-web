@@ -5,7 +5,35 @@ without reconstructing it from the session log. **Update this file at the end
 of any turn that finishes a phase or changes the plan.** `sessions.md` is the
 chronological record; this is the current picture.
 
-_Last updated: 2026-08-30, after **ORDER HSN-FINAL** — the Hasan series'
+_Last updated: 2026-08-31, after **ORDER CUT-0831** — two Generate controls
+and the preset concept are gone, on branch **`feat/cut-0831`** (off `main` =
+`7b7222d`), **pushed, NOT merged — the merge waits on the founder's
+localhost eye-pass and his explicit go**. Probed first (fresh QA org 1485,
+zero spend): create with `preset:true` → 201, DELETE → 204 — so the wire
+deletes preset rows and the founder's post-deploy hand-delete of org 619's
+8 legacy rows will work. Item 1: the "Anything to steer it?" box is deleted
+(never on the wire; the body's closed key set is now unit-asserted). Item 2:
+the page-level Language picker and the `?? picker` fallback are deleted —
+per-tone `language` is the tone's own, `GenerateInput` takes `RunnableTone`,
+and a tone without a language is a disabled dashed chip pointing at
+Settings › Tones. **The ruled interim consequence is real and the suite met
+it first:** the language lives in the per-browser sidecar until the backend
+persists it, so every fresh browser (and every Playwright context) must
+re-save the tone once — `ensureToneLanguage` in `live-setup.ts` performs
+that documented backfill gesture in three specs. Item 3: `Tone.kind` is
+deleted, the wire's `preset` is read and ignored (bodies frozen byte-exact
+in `brand-wire.test.ts`), Settings › Tones is ONE list with Edit + Delete
+on every tone, the reducer's preset-delete guard is gone (open-item 37
+notes the widened surface), and the demo rows survive unchanged as
+`SAMPLE_TONES`. Gate at the tip: lint · typecheck · **503 unit / 47 files**
+· guard-static **332** · static e2e **99 passed / 64 skipped / 0 failed** ·
+`verify:w00`–`w06` **all PASS** · live **round 1 15/16** (one signup-landing
+one-off in `live-invite-org`, 3/3 in round 2) · **round 2 — the merge gate —
+16/16, 60 passed / 5 skipped, no red**. Decisions: CUT-0831 (2026-08-31).
+After merge + deploy, BY HAND on production: the founder deletes the 8
+legacy preset rows in Settings › Tones and re-saves the 4 custom tones once
+so each carries a language. Before that, same day: the HSN-FINAL/5 deploy
+(below). Before that: **ORDER HSN-FINAL** — the Hasan series'
 consolidated gate, and **THE SERIES IS MERGED**: `main` fast-forwarded
 `289cad5` → **`6f45679`** (fourteen commits across five stacked branches, no
 merge commit, one linear history) and pushed with `main:live`, after the
@@ -213,6 +241,7 @@ below).
 | `feat/hsn-03-tone-lang-length` | **MERGED 2026-08-30 (HSN-FINAL). HSN-03, 2026-08-30 — branched off `feat/hsn-02-create-visual` (`6281cd6`); kept as the record.** Tones gain `language` (required, no default) + `length` (default medium) in the Settings editor, create and edit; interim client sidecar `ab-tone-fields:<orgId>` hydrated in `fetchBrand`, wire send disabled behind `TONE_FIELDS_ON_WIRE`; generate body carries `length` (omitted when absent) and per-tone `language` from the tone; `SelectField` added to `ab/form.tsx`; rider copy on `visualUnconfirmed`. Build hygiene only |
 | `feat/hsn-04-limits-knowledge` | **MERGED 2026-08-30 (HSN-FINAL). HSN-04, 2026-08-30 — branched off `feat/hsn-03-tone-lang-length` (`ab26bb8`); kept as the record at `1520369`.** Sources ≤ 10 / topics ≤ 30 as client-side ceilings (screen + `TagInput` + seam; over-cap rendered, never trimmed); the shared `KnowledgeUploadForm` (Image | Video | Document, required description, real-MIME check) in both worlds; the RAG presign body carries `desc`, no switch; `previewTone` sends the tone's language. Build hygiene only |
 | `feat/hsn-final-gate` | **HSN-FINAL, 2026-08-30 — branched off `feat/hsn-04-limits-knowledge` (`1520369`), MERGED as the tip `main` now points at (`6f45679`); kept on `origin` as the gate's record.** The two presign probes, the deferred coverage (`e2e/hsn-series.spec.ts`, `e2e/live-create-visual.spec.ts`, five unit files), four stale specs and every live tone creation updated for HSN-03/04, the gate-found Create visual reset fix, the `verify:w06` upload check re-pointed, and the probe record in `alphastudio-shapes.md` |
+| `feat/cut-0831` | **CUT-0831, 2026-08-31 — branched off `main` (`7b7222d`). PUSHED, NOT merged: founder's localhost eye-pass, then his explicit go.** The steering box and the page-level Language picker deleted; per-tone language is the tone's own (`RunnableTone`, disabled dashed chips otherwise); the preset concept removed (`Tone.kind` gone, one list on I3, every tone deletable, wire bodies frozen in `brand-wire.test.ts`); the live suite performs the per-context language backfill (`ensureToneLanguage`). Probe: preset create 201 / DELETE 204 on org 1485 |
 | `probe/int13` | The PROBE-INT13 media probe (2026-08-26/27), branched off `main` (`fd84173`) — **PUSHED 2026-08-28**, not merged, so its open-items 34/35 do NOT exist on the ONB stack. Phase B is still blocked on Ward |
 | `probe/assets-0826` | The assets-endpoint probe (2026-08-26), docs-only — **PUSHED 2026-08-28** so the Ward message's file pointers resolve on GitHub |
 | `chore/api-sweep` | The 118-operation contract sweep (`89199d9`), one commit ahead of `main`, untouched by the triage |
@@ -339,7 +368,21 @@ invented or faked: where a spec promised something the wire cannot deliver, the
 honest subset ships and the deviation is logged. The backend questions live in
 open-items 1–13 and 21–27; W7 still waits on the two reopened manual gates.
 
-**Current totals on `main` (`6f45679`, merged 2026-08-30 — the HSN-FINAL
+**On `feat/cut-0831` (2026-08-31), the full gate at the tip:** lint clean ·
+typecheck clean · **503 unit tests / 47 files** (+2: `brand-wire.test.ts`
+freezes the tone create/PATCH bodies; the run-plan and body tests moved to
+the no-picker shapes) · guard-static **332 files clean** · static e2e
+**99 passed / 64 skipped / 0 failed** · `verify:w00`–`w06` **all PASS**
+(each with the trap-22 drain) · LIVE, 16 files, `LIVE_MEDIA` off, one file
+at a time, two rounds on the final tree: **round 1 15/16** — the one red was
+`live-invite-org`'s first signup landing on "Welcome back" once (untouched
+by this order, green in six other rounds the same day; 3/3 in round 2) —
+**round 2, the merge gate: 16/16, 60 passed / 5 skipped, no red** (840 s /
+829 s). Three live specs learned the ruled interim (the per-context language
+re-save) during the rounds — deterministic, ours, fixed as
+`ensureToneLanguage`; an earlier same-day round pair was aborted for it.
+
+Before that: **Current totals on `main` (`6f45679`, merged 2026-08-30 — the HSN-FINAL
 gate, run on the tip):** lint clean, typecheck clean, **501 unit tests / 46
 files** (+31, three new files), guard-static **331 files clean**, **static
 e2e 99 passed / 64 live-spec skips** (169 specs; `e2e/hsn-series.spec.ts` +6,
