@@ -178,6 +178,13 @@ test('a tone needs a language, defaults only its length, shows both on its card,
   await expect(page.getByText('Tone saved')).toBeVisible()
   await expect(card).toContainText(/Language\s*Arabic/)
   await expect(card).toContainText(/Length\s*Long/)
+
+  // CUT-0831: ONE list — no Presets section, and a sample tone that shipped
+  // as a preset gets Edit and Delete like any tone the org wrote.
+  await expect(page.getByRole('heading', { name: 'Presets' })).toHaveCount(0)
+  const sample = page.locator('[data-slot="card"]').filter({ hasText: 'Educational' })
+  await expect(sample.getByRole('link', { name: 'Edit' })).toBeVisible()
+  await expect(sample.getByRole('button', { name: 'Delete' })).toBeVisible()
 })
 
 // ---------------------------------------------------------------------------

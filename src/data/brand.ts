@@ -132,6 +132,9 @@ export function useBrandActions() {
           body: {
             name: tone.name,
             description: tone.description,
+            // CUT-0831: the app no longer has a preset concept, but the WIRE
+            // keeps the field and this body stays byte-what-it-was — measured
+            // 2026-08-31 (probe P1/P2) and asserted in brand-wire.test.ts.
             preset: false,
             rules: joinRules(tone.rules),
             ...toneFieldsForWire(tone),

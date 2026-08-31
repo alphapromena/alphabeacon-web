@@ -1,24 +1,16 @@
 /**
  * A tone's name, wherever a tone is shown (D2, D3, C1, F1, I3).
  *
- * THE LAW: a custom tone renders IDENTICALLY to a preset. No accent dot, no
- * "Custom" suffix, no muted variant, no smaller size — a tone the user wrote
- * is not a second-class tone. `kind` is therefore accepted and deliberately
- * never read; it exists only so `tone-badge.test.tsx` can prove that passing
- * either value produces byte-identical markup, which is the only way this
- * promise survives future edits.
+ * THE LAW, now structural: a badge is ONLY the name — no accent dot, no
+ * suffix, no muted variant, no smaller size. The preset concept is gone
+ * (CUT-0831), so the type can no longer even express a second-class tone;
+ * what remains to guard is that no caller decorates the name.
  */
 import type { Tone } from '@/data/types'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 
-export function ToneBadge({
-  tone,
-  className,
-}: {
-  tone: Pick<Tone, 'name' | 'kind'>
-  className?: string
-}) {
+export function ToneBadge({ tone, className }: { tone: Pick<Tone, 'name'>; className?: string }) {
   return (
     <Badge variant="outline" className={cn('font-normal', className)}>
       {tone.name}

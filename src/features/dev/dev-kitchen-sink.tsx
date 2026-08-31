@@ -99,18 +99,16 @@ const FLAGGED_CLAIM: Claim = {
   state: 'flagged',
 }
 
-const PRESET_TONE: Tone = {
+const ANALYST_TONE: Tone = {
   id: 'tone-analyst',
   name: 'Analyst',
-  kind: 'preset',
   description: 'Measured, figures first, no adjective doing a number the work.',
   rules: { do: ['Lead with the figure'], dont: ['Predict prices'] },
 }
 
-const CUSTOM_TONE: Tone = {
+const DESK_TONE: Tone = {
   id: 'tone-desk-note',
   name: 'Desk note',
-  kind: 'custom',
   description: 'The way this desk actually writes to its clients.',
   rules: { do: ['Name the source'], dont: ['Reach for hype words'] },
 }
@@ -405,13 +403,13 @@ export function DevKitchenSinkScreen() {
 
         <Section title="Tone badges" purpose="A tone's name, wherever a tone is shown.">
           <div className="flex flex-wrap items-center gap-3">
-            <ToneBadge tone={PRESET_TONE} />
-            <ToneBadge tone={CUSTOM_TONE} />
+            <ToneBadge tone={ANALYST_TONE} />
+            <ToneBadge tone={DESK_TONE} />
           </div>
           <Caption>
-            One of these is a preset and one is written by the user, and there is no way to tell
-            which from the badge. That is the law: no accent dot, no "Custom" suffix, no quieter
-            variant. If these two ever stop looking identical, the law broke.
+            A badge is only the tone's name — no accent dot, no suffix, no quieter variant. The
+            preset concept is gone (CUT-0831): every tone is the org's own, and none may render as a
+            second-class one.
           </Caption>
         </Section>
 

@@ -185,9 +185,7 @@ export function TonesField({
   return (
     <fieldset className="flex flex-col gap-2">
       <legend className="text-sm font-medium">Tones</legend>
-      <p className="text-sm text-muted-foreground">
-        Drafts rotate through the tones you pick. Custom tones sit alongside the presets.
-      </p>
+      <p className="text-sm text-muted-foreground">Drafts rotate through the tones you pick.</p>
       <div className="mt-1 flex flex-wrap items-center gap-2">
         {tones.map((tone) => {
           const selected = value.includes(tone.id)

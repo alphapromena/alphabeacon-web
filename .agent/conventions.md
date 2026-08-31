@@ -79,7 +79,8 @@ both worlds' law and is guarded twice.**
   DM Sans and IBM Plex Sans Arabic, self-hosted.
 - Status is never color-only (`StatusBadge` = icon + text). Destructive dialogs
   name their consequence. Action labels persist through their flow (Approve →
-  Approved…). Custom tones render identically to presets.
+  Approved…). A tone badge is only the tone's name — the preset concept is
+  gone (CUT-0831), and no tone may render as a second-class one.
 - Motion: signal-sweep + beacon-pulse live in `ab/` and are **removed** under
   `prefers-reduced-motion` (Playwright asserts). Contrast ≥ AA. The visitor
   world inherits the removal law and carries its own motion (design.md 7.7):

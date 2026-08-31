@@ -4,7 +4,7 @@ import { GENERATION_MODELS } from '@/data/entities/generation-models'
 import { NOVA_ORG, NOVA_USERS } from '@/data/entities/orgs'
 import { PLANS } from '@/data/entities/plans'
 import { STUDIO_MODELS } from '@/data/entities/studio-models'
-import { PRESET_TONES } from '@/data/entities/tones'
+import { SAMPLE_TONES } from '@/data/entities/tones'
 import type { Dataset } from '@/data/types'
 
 /** A brand-new tenant: signed up minutes ago, nothing configured. This is the
@@ -38,7 +38,7 @@ export function buildFreshDataset(): Dataset {
     },
     slots: [],
     drafts: [],
-    tones: structuredClone(PRESET_TONES),
+    tones: structuredClone(SAMPLE_TONES),
     generationModels: structuredClone(GENERATION_MODELS),
     studioModels: structuredClone(STUDIO_MODELS),
     jobs: [],

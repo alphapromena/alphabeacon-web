@@ -5,7 +5,6 @@ import type { Tone } from '@/data/types'
 const tone = (id: string): Tone => ({
   id,
   name: id,
-  kind: 'preset',
   description: '',
   rules: { do: [], dont: [] },
 })

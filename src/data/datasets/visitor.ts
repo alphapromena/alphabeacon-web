@@ -2,7 +2,7 @@ import { dayFromNow } from '@/data/dates'
 import { GENERATION_MODELS } from '@/data/entities/generation-models'
 import { PLANS } from '@/data/entities/plans'
 import { STUDIO_MODELS } from '@/data/entities/studio-models'
-import { PRESET_TONES } from '@/data/entities/tones'
+import { SAMPLE_TONES } from '@/data/entities/tones'
 import type { Dataset } from '@/data/types'
 
 /**
@@ -58,7 +58,7 @@ export function buildVisitorDataset(): Dataset {
     },
     slots: [],
     drafts: [],
-    tones: structuredClone(PRESET_TONES),
+    tones: structuredClone(SAMPLE_TONES),
     generationModels: structuredClone(GENERATION_MODELS),
     studioModels: structuredClone(STUDIO_MODELS),
     jobs: [],

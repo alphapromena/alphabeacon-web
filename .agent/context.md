@@ -37,7 +37,7 @@ stays on the static datasets, awaiting backend phase 2.
 | Dataset          | a whole-tenant static state (visitor, fresh, active, low-credits, needs-reauth, past-due) | switchable at `/dev/datasets`                                      |
 | State switcher   | forces loading / error presentation on any screen                                         | `/dev/states`; the dataset supplies empty + populated              |
 | Data layer       | `src/data/` — types, entity modules, datasets, `DataProvider`                             | features read via provider hooks only                              |
-| Tone             | preset or custom writing style                                                            | custom renders identically to presets everywhere                   |
+| Tone             | a writing style the org owns                                                              | every tone is editable and deletable; a badge is only the name     |
 | ClaimChip        | a source attribution chip (verified / flagged)                                            | grounding is shown, never hidden                                   |
 | Message          | a named error/empty string in `src/lib/messages.ts`                                       | one catalogue; no screen invents its own error copy                |
 
@@ -63,7 +63,7 @@ Agents: use these exact terms in code, commits, and UI copy — never synonyms.
 - Numbers that matter are mono; status is never color-only; destructive actions
   name their consequence; action labels persist through their flow.
 - Dashboard stats equal Today/Calendar/Billing exactly; marketing pricing equals
-  H1 (one source); custom tones look exactly like presets everywhere.
+  H1 (one source); no tone renders as a second-class one.
 - Content flagged by guardrails is shown flagged, never hidden; limited
   analytics get the honesty note, never a broken-looking chart.
 - Reduced motion removes signal-sweep and beacon-pulse entirely; contrast ≥ AA;

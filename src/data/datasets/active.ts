@@ -15,7 +15,7 @@ import {
 } from '@/data/entities/settings'
 import { atlasAssets, atlasJobs } from '@/data/entities/studio'
 import { STUDIO_MODELS } from '@/data/entities/studio-models'
-import { ATLAS_CUSTOM_TONES, PRESET_TONES } from '@/data/entities/tones'
+import { ATLAS_CUSTOM_TONES, SAMPLE_TONES } from '@/data/entities/tones'
 import type { Dataset } from '@/data/types'
 
 /** A healthy, mid-life tenant: pipeline running, drafts across the whole
@@ -55,7 +55,7 @@ export function buildActiveDataset(): Dataset {
     },
     slots: atlasSlots(),
     drafts: atlasDrafts(),
-    tones: [...structuredClone(PRESET_TONES), ...structuredClone(ATLAS_CUSTOM_TONES)],
+    tones: [...structuredClone(SAMPLE_TONES), ...structuredClone(ATLAS_CUSTOM_TONES)],
     generationModels: structuredClone(GENERATION_MODELS),
     studioModels: structuredClone(STUDIO_MODELS),
     jobs: atlasJobs(),

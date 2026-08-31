@@ -103,7 +103,6 @@ describe('isRunTerminal', () => {
 const PLAIN: Tone = {
   id: 'tone_1',
   name: 'Roastery floor',
-  kind: 'custom',
   description: 'Warm and specific.',
   rules: { do: ['Name the farm'], dont: ['Say artisanal'] },
 }

@@ -113,7 +113,8 @@ describe('adaptBrand — tones (D-INT-C)', () => {
       [],
       [],
     )
-    expect(graft.tones[0].kind).toBe('preset')
+    // CUT-0831: the wire's `preset` is read and IGNORED — no kind survives.
+    expect('kind' in graft.tones[0]).toBe(false)
     expect(graft.tones[0].rules).toEqual({
       do: ['Open with the figure'],
       dont: ['Round beyond recognition'],

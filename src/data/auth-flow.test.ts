@@ -90,7 +90,6 @@ describe('first run (A5 retired — ORDER ONB-0827)', () => {
       tone: {
         id: 'tone_desk',
         name: 'Desk note',
-        kind: 'custom',
         description: 'How this desk writes.',
         rules: { do: ['Name the source'], dont: [] },
       },

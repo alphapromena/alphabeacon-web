@@ -1,11 +1,14 @@
 import type { Tone } from '@/data/types'
 
-/** The five presets — always present, view-only in I3. */
-export const PRESET_TONES: Tone[] = [
+/**
+ * The demo worlds' five sample tones — ORDINARY tones (CUT-0831: the preset
+ * concept is gone; nothing here is view-only or undeletable any more). The
+ * rows themselves are unchanged demo data.
+ */
+export const SAMPLE_TONES: Tone[] = [
   {
     id: 'tone_provocative',
     name: 'Provocative',
-    kind: 'preset',
     language: 'en',
     length: 'short',
     description: 'Challenges an assumption to stop the scroll.',
@@ -17,7 +20,6 @@ export const PRESET_TONES: Tone[] = [
   {
     id: 'tone_data_driven',
     name: 'Data-driven',
-    kind: 'preset',
     language: 'en',
     length: 'medium',
     description: 'Leads with a number and lets the evidence talk.',
@@ -29,7 +31,6 @@ export const PRESET_TONES: Tone[] = [
   {
     id: 'tone_educational',
     name: 'Educational',
-    kind: 'preset',
     language: 'en',
     length: 'long',
     description: 'Teaches one useful thing, plainly.',
@@ -41,7 +42,6 @@ export const PRESET_TONES: Tone[] = [
   {
     id: 'tone_story',
     name: 'Story',
-    kind: 'preset',
     language: 'en',
     length: 'long',
     description: 'A small narrative arc with a concrete detail.',
@@ -53,7 +53,6 @@ export const PRESET_TONES: Tone[] = [
   {
     id: 'tone_direct_cta',
     name: 'Direct-CTA',
-    kind: 'preset',
     language: 'en',
     length: 'short',
     description: 'Says exactly what to do next, once.',
@@ -64,12 +63,11 @@ export const PRESET_TONES: Tone[] = [
   },
 ]
 
-/** Custom tones owned by the active demo org — render identically to presets. */
+/** A tone the active demo org wrote itself, beside the samples. */
 export const ATLAS_CUSTOM_TONES: Tone[] = [
   {
     id: 'tone_founders_voice',
     name: "Founder's voice",
-    kind: 'custom',
     language: 'en',
     length: 'medium',
     description: 'First-person, workshop-floor honesty from the founder.',

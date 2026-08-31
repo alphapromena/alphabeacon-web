@@ -34,7 +34,7 @@ describe('one timezone, not two', () => {
 describe('the tones library', () => {
   it('edits a tone in place, keeping its id so drafts keep pointing at it', () => {
     const start = world()
-    const tone = start.world.tones.find((t) => t.kind === 'custom')
+    const tone = start.world.tones.find((t) => t.id === 'tone_founders_voice')
     expect(tone).toBeDefined()
     if (!tone) return
 
@@ -46,10 +46,10 @@ describe('the tones library', () => {
     expect(next.world.tones.find((t) => t.id === tone.id)?.description).toBe('Rewritten.')
   })
 
-  it('deleting a custom tone also removes it from the schedule', () => {
+  it('deleting a tone also removes it from the schedule', () => {
     const start = world()
-    const tone = start.world.tones.find((t) => t.kind === 'custom')
-    if (!tone) throw new Error('the active world should own a custom tone')
+    const tone = start.world.tones.find((t) => t.id === 'tone_founders_voice')
+    if (!tone) throw new Error('the active world should own its written tone')
     expect(start.world.schedule.toneIds).toContain(tone.id)
 
     const next = dataReducer(start, { type: 'tones/delete', toneId: tone.id })
@@ -60,18 +60,21 @@ describe('the tones library', () => {
     expect(next.world.schedule.toneIds.length).toBeGreaterThan(0)
   })
 
-  it('refuses to delete a preset, so a workspace always has something to speak in', () => {
+  it('deletes ANY tone — the preset concept is gone (CUT-0831)', () => {
+    // 'Educational' shipped as a preset until CUT-0831; deleting it must work
+    // exactly like deleting a tone the org wrote.
     const start = world()
-    const preset = start.world.tones.find((t) => t.kind === 'preset')
-    if (!preset) throw new Error('presets are always present')
-    const next = dataReducer(start, { type: 'tones/delete', toneId: preset.id })
-    expect(next.world.tones.some((t) => t.id === preset.id)).toBe(true)
+    const sample = start.world.tones.find((t) => t.id === 'tone_educational')
+    if (!sample) throw new Error('the demo world ships tone_educational')
+    const next = dataReducer(start, { type: 'tones/delete', toneId: sample.id })
+    expect(next.world.tones.some((t) => t.id === sample.id)).toBe(false)
+    expect(next.world.schedule.toneIds).not.toContain(sample.id)
   })
 
   it('leaves drafts that already used a deleted tone with their copy intact', () => {
     const start = world()
-    const tone = start.world.tones.find((t) => t.kind === 'custom')
-    if (!tone) throw new Error('the active world should own a custom tone')
+    const tone = start.world.tones.find((t) => t.id === 'tone_founders_voice')
+    if (!tone) throw new Error('the active world should own its written tone')
     const before = start.world.drafts.map((d) => d.copy)
     const next = dataReducer(start, { type: 'tones/delete', toneId: tone.id })
     expect(next.world.drafts.map((d) => d.copy)).toEqual(before)
@@ -81,9 +84,8 @@ describe('the tones library', () => {
 describe('one tone record, read by every screen', () => {
   it('is referenced by id from the schedule, the drafts, and the analytics posts', () => {
     const world = buildDataset('active')
-    const custom = world.tones.filter((tone) => tone.kind === 'custom')
-    expect(custom).toHaveLength(1)
-    const tone = custom[0]
+    const tone = world.tones.find((t) => t.id === 'tone_founders_voice')!
+    expect(tone).toBeDefined()
 
     // C1 reads it through the schedule; D2/D3/F1 through a
     // draft; G2 through a published post. All four are the SAME record —

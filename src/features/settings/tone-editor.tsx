@@ -118,7 +118,6 @@ export function ToneEditorForm({
         onSave({
           id: toneIdFor(values.name, initial?.id),
           name: values.name,
-          kind: 'custom',
           description: values.description,
           rules: { do: toLines(values.dos), dont: toLines(values.donts) },
           example: values.example.trim() || undefined,

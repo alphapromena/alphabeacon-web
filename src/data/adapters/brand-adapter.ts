@@ -6,7 +6,9 @@
  * text}`, embedded in every read (open-items 7, now partly closed).
  *
  * - **Tones** (D-INT-C): `rules[]` ↔ the app's `{do, dont}`, both ways.
- *   `preset` still maps to `kind`. `example` STILL has no wire home, so it is
+ *   `preset` arrives on every read and is IGNORED — the concept is gone
+ *   client-side (CUT-0831) while the wire keeps the field. `example` STILL
+ *   has no wire home, so it is
  *   never smuggled into `description` and its editor stays disabled.
  * - **Voices** (D-INT-B): the app has ONE brand voice; the wire has a list of
  *   voice rows. Reads FLATTEN every row's rules in creation order — which is
@@ -94,7 +96,6 @@ export function adaptBrand(
     tones: tones.map((tone) => ({
       id: tone.id,
       name: tone.name,
-      kind: tone.preset ? 'preset' : 'custom',
       description: tone.description,
       rules: splitRules(tone.rules),
       // HSN-03: read ONLY when the server echoes them — it does not yet. The

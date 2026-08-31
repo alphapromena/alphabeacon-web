@@ -14,7 +14,6 @@ function tone(id: string, extra: Partial<Tone> = {}): Tone {
   return {
     id,
     name: id,
-    kind: 'custom',
     description: 'A tone.',
     rules: { do: [], dont: [] },
     ...extra,

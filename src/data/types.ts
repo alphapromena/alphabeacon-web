@@ -154,8 +154,6 @@ export type ToneLength = 'short' | 'medium' | 'long'
 export interface Tone {
   id: string
   name: string
-  /** Custom tones render identically to presets everywhere — no second-class UI. */
-  kind: 'preset' | 'custom'
   description: string
   rules: { do: string[]; dont: string[] }
   /** Optional sample sentence used to steer generation. */

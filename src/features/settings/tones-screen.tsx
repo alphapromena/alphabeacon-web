@@ -1,25 +1,17 @@
 /**
  * I3 — Tones library · `/settings/tones`, and I4's routed page.
  *
- * The durable home for what C1 creates inline. Presets are
- * view-only — an org that could edit "Educational" into something else would
- * break every other org's mental model of it. Custom tones sit in the SAME card
- * shape with the same badge treatment, because `ToneBadge`'s law (a tone you
- * wrote is not a second-class tone) has to hold on the screen that manages them
- * too.
- *
- * PRESETS ARE NO LONGER A FLOOR (ORDER ONB-0827, D-ONB-B). A live workspace
- * created since that ruling starts with ZERO tones and its owner writes the
- * first one here, so this screen has three shapes rather than two: no tones at
- * all, custom-only, and the demo world's preset + custom mix. Nothing about
- * managing an existing tone changed.
+ * The durable home for what C1 creates inline. ONE list (CUT-0831 — the
+ * preset concept is gone): every tone is the org's own, every tone gets Edit
+ * and Delete, and no section, badge or copy claims some tones are the
+ * platform's. Two shapes: no tones at all (ORDER ONB-0827 — a live workspace
+ * starts with zero and its owner writes the first one here), or the list.
  */
 import { Palette, Pencil, Plus, Trash2 } from 'lucide-react'
 import { Link, useNavigate, useParams } from 'react-router'
 import { ConfirmDialog } from '@/components/ab/confirm-dialog'
 import { EmptyState } from '@/components/ab/empty-state'
 import { toastError, toastSuccess } from '@/components/ab/toast'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { useTones } from '@/data/provider'
@@ -33,15 +25,11 @@ export function TonesScreen() {
   const tones = useTones()
   const brand = useBrandActions()
 
-  const presets = tones.filter((tone) => tone.kind === 'preset')
-  const custom = tones.filter((tone) => tone.kind === 'custom')
-
   /**
    * A workspace with nothing to speak in (ORDER ONB-0827). Live orgs are no
    * longer seeded with presets, so this is a real state now and it gets ONE
-   * honest empty state rather than an empty "Your tones" list above a
-   * "Presets — always available, in every workspace" heading with nothing
-   * under it. The demo world still owns five presets, so it never lands here.
+   * honest empty state. The demo worlds carry sample tones, so they never
+   * land here.
    */
   if (tones.length === 0) {
     return (
@@ -77,20 +65,9 @@ export function TonesScreen() {
           </Button>
         </div>
 
-        {custom.length === 0 ? (
-          <EmptyState
-            icon={Palette}
-            title="No custom tones yet"
-            description={MESSAGES.empty.noCustomTones}
-            action={
-              <Button asChild>
-                <Link to="/settings/tones/new">Create custom tone</Link>
-              </Button>
-            }
-          />
-        ) : (
+        {
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {custom.map((tone) => (
+            {tones.map((tone) => (
               <ToneCard
                 key={tone.id}
                 tone={tone}
@@ -107,27 +84,8 @@ export function TonesScreen() {
               />
             ))}
           </div>
-        )}
+        }
       </section>
-
-      {/* Presets exist where a world has them — the demo world, and orgs that
-          were seeded before ONB-0827. A live workspace created since then has
-          none, and a heading claiming they are "always available" above an
-          empty grid would be the screen telling the user something untrue. */}
-      {presets.length > 0 && (
-        <section className="flex flex-col gap-3">
-          <h2 className="font-display text-lg font-semibold">Presets</h2>
-          <p className="text-sm text-muted-foreground">
-            Starting points you did not have to write. Add a custom tone to say something these do
-            not.
-          </p>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {presets.map((tone) => (
-              <ToneCard key={tone.id} tone={tone} />
-            ))}
-          </div>
-        </section>
-      )}
     </>
   )
 }
@@ -138,9 +96,6 @@ function ToneCard({ tone, onDelete }: { tone: Tone; onDelete?: () => void }) {
       <CardContent className="flex h-full flex-col gap-3">
         <div className="flex flex-wrap items-center gap-2">
           <span className="font-medium">{tone.name}</span>
-          <Badge variant="outline" className="font-normal capitalize">
-            {tone.kind}
-          </Badge>
         </div>
         <p className="text-sm text-muted-foreground">{tone.description}</p>
 

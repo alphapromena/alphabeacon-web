@@ -122,7 +122,6 @@ describe('checkKnowledgeFile', () => {
 const TONE: Tone = {
   id: 'tone_exec',
   name: 'Executive',
-  kind: 'custom',
   description: 'Confident and concise.',
   rules: { do: ['Lead with an observation'], dont: ['Sound like a pitch'] },
   language: 'en',

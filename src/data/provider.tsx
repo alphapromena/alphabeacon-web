@@ -945,17 +945,16 @@ export function dataReducer(state: DataState, action: DataAction): DataState {
      * Deleting a tone takes it out of the library and out of the schedule, so
      * nothing new can be drafted in it. Drafts that already used it keep their
      * copy — that text was written, and unwriting it would be a lie about what
-     * was published. Presets are never deletable, so a schedule can never be
-     * left with nothing to speak in.
+     * was published. EVERY tone is deletable (CUT-0831 — the preset concept
+     * is gone); a delete that empties an active schedule is open-item 37's
+     * known stranding, unchanged here.
      */
     case 'tones/delete':
       return {
         ...state,
         world: {
           ...state.world,
-          tones: state.world.tones.filter(
-            (tone) => tone.id !== action.toneId || tone.kind === 'preset',
-          ),
+          tones: state.world.tones.filter((tone) => tone.id !== action.toneId),
           schedule: {
             ...state.world.schedule,
             toneIds: state.world.schedule.toneIds.filter((id) => id !== action.toneId),
