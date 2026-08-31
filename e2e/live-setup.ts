@@ -92,6 +92,27 @@ export async function createFirstTone(
 }
 
 /**
+ * CUT-0831 interim: a tone's language lives in a per-browser SIDECAR until
+ * the backend persists it, so a fresh context — which every Playwright test
+ * is — sees the org's tones as "Needs a language" and the Generate page has
+ * nothing selectable. This performs the documented backfill gesture (open
+ * the tone, pick its language, save) in THIS context, exactly the re-save
+ * the founder does by hand on production after the deploy.
+ */
+export async function ensureToneLanguage(page: Page, toneName: string) {
+  await openSettingsTab(page, 'Tones')
+  await page
+    .locator('[data-slot="card"]')
+    .filter({ hasText: toneName })
+    .getByRole('link', { name: 'Edit' })
+    .click()
+  await page.getByLabel('Tone name').waitFor()
+  await page.getByLabel('Language').selectOption('en')
+  await page.getByRole('button', { name: 'Save changes' }).click()
+  await expect(page.getByText('Tone saved')).toBeVisible({ timeout: SCREEN_SYNC })
+}
+
+/**
  * The four brand entities, through the real screens — everything the readiness
  * gate asks for (D-ONB-D), and nothing it does not.
  *

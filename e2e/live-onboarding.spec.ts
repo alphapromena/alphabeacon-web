@@ -20,7 +20,7 @@
 import type { Page } from '@playwright/test'
 import { expect, test } from './fixtures'
 import { SCREEN_SYNC } from './live-clocks'
-import { openSettingsTab, signUpAndEnter } from './live-setup'
+import { ensureToneLanguage, openSettingsTab, signUpAndEnter } from './live-setup'
 
 const API_BASE = process.env.VITE_API_BASE_URL
 const RUN = Date.now()
@@ -181,7 +181,10 @@ test('completing the four brand entities unlocks generation', async ({ page }) =
 })
 
 test('the unlocked run really runs — one balanced draft', async ({ page }) => {
+  test.setTimeout(180_000)
   await login(page)
+  // CUT-0831: a fresh browser needs the tone's language re-saved (sidecar).
+  await ensureToneLanguage(page, TONE_NAME)
   await page.goto('/generate')
   await expect(page.getByRole('heading', { name: 'Generate', level: 1 })).toBeVisible({
     timeout: SCREEN_SYNC,
