@@ -2741,3 +2741,74 @@ Closes open-item 38, which ONB-0827 created and the live suite caught.
   date column fed by local memory (the ruling says no local ledger — the
   wire has no date, so neither do we), or hiding absent-`synthetic` rows
   (would let the filter silently eat wire truth).
+
+### 2026-08-31 — MED-0831 Phase 3: the logo lives on the wire, H5 flips the collection in, and "logo" is reserved
+
+- **Provenance.** The founder's Phase 3 go (2026-08-31) with three additions:
+  (1) "logo" is a RESERVED description in Knowledge — refused trimmed,
+  case-insensitive, with an honest message; (2) more than one `desc: "logo"`
+  row renders EVERY row with its own Delete, Upload/Replace disabled until
+  one or zero remains, never pick; (3) live mode shows the WIRE's logo —
+  read-presign on screen open (lazy, not bootstrap), the local preview only
+  bridges until the upload lands, other members see the same logo, and the
+  sidebar keeps today's behaviour with no new bootstrap read (measured:
+  the rail shows the Malaky wordmark, not the org logo — nothing to change).
+- **The live logo (`org-logo-live.tsx`, H3 + W1 as re-ruled).** The logo is
+  the asset whose `desc` is exactly `"logo"` in `GET …/media/assets`, read
+  when the Organization screen opens and read-presigned (~1 h). Upload =
+  `uploadMediaAsset(file, file.type, LOGO_ASSET_DESC)` with a real-MIME
+  check (png/jpeg/webp; the square hint stays). Replace = DELETE the old
+  asset FIRST, then upload — a failed delete STOPS the replace and says so;
+  nothing retries, and a second logo is never uploaded beside a first.
+  Remove = DELETE + clear. The status line beside the buttons speaks the
+  ruled vocabulary: "Sent to the studio." · "Not sent — <the error>", the
+  phantom-slot id appended when the uploader's cleanup could not delete it.
+  It sits OUTSIDE the form's save bar, the country's precedent (D-INT-F): a
+  field with its own wire calls must not ride an all-or-nothing commit.
+- **Interpretations on record.**
+  1. *Upload/Replace is also disabled while the list is unread or refused*
+     (not only in conflict): Replace must know what it deletes, and an
+     upload against an unknown list could mint a second logo row blind. The
+     refusal line says why the button is dark.
+  2. *The wire match is EXACT `"logo"`; the reservation check is
+     case-insensitive.* We only ever mint the exact marker, and inventing
+     breadth on the wire side could adopt another client's near-miss row as
+     the logo; the form-side reservation is deliberately wider so a user's
+     " Logo " cannot near-collide with a marker they cannot see.
+  3. *The bridge clears on failure and on the wire's answer* — a preview of
+     a logo that is not stored would be a lie; after a successful upload the
+     re-read + presign replaces it, which is also what every other member
+     sees.
+  4. *The conflict rows are labelled by asset id* (the wire's only handle —
+     every row's desc is the same word), each with its own Delete; the
+     `logoConflict` line says Malaky never guesses which is current.
+- **H5, flipped and logged.** `VISUAL_COLLECTION = { use: true }` — ONE
+  constant, no toggle; `buildPostVisualRequest` carries it and one unit test
+  pins both the value and the identity. This REVERSES HSN-02's
+  `collection.use: false`, which was itself the founder's word — the
+  reversal is his, in person, 2026-08-31 (rulings final). The type
+  (`SocialPostsMediaRequest.collection`), the HSN-02 comments and the shapes
+  doc's envelope note now say so (the old line kept, marked SUPERSEDED).
+  **The first proof that a render actually draws on the collection is the
+  founder's own `LIVE_MEDIA=1` render** — nothing in this order spends to
+  prove it.
+- **"logo" reserved in Knowledge (addition 1).** `isReservedMediaDesc` in
+  `src/data/studio.ts` (trimmed, lowercased, equal to `LOGO_ASSET_DESC`),
+  called by the shared form between the required-description check and the
+  file check; `knowledgeDescReserved` names where the logo actually lives.
+  Only the marker itself is refused — a description that merely mentions
+  "logo" passes (unit-tested both ways).
+- **The copy.** "It is shown beside your name, never inside a post" is
+  deleted — H5 makes it false by design. Shipped in BOTH modes: **"Square
+  works best. It is kept with your brand files."** — the one claim the wire
+  provably keeps today. The stronger line ("…so your visuals can use it")
+  is PROPOSED in the report and waits on the founder's render proof, per
+  "do not invent a claim the wire cannot keep".
+- **Static world unchanged:** the FileReader data-URL flow, the save bar,
+  zero network — only the hint line moved to the new copy.
+- Instead of: picking the newest logo row in a conflict (ruled out by
+  name), uploading before deleting on replace (would stand two rows on the
+  wire mid-flow), auto-retrying the failed delete (no retry anywhere), a
+  sidebar read of the asset list (no new bootstrap read, and the rail never
+  showed the org logo), or shipping the "visuals can use it" claim before a
+  render proves it.

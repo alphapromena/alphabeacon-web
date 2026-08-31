@@ -4448,7 +4448,11 @@ the values are Hasan's hand-test samples. What the app derives and what it lets
 the user edit is decided in `src/data/studio.ts` (`buildPostVisualRequest`):
 `posts` is EXACTLY ONE entry (PROBE-INT13: the multi-post path billed and then
 502'd), `params` is always `{}`, `collection` is always `{ "use": false }` by
-the founder's word, and `guidance` is at most six strings. The 202 receipt for
+the founder's word — **SUPERSEDED 2026-08-31 (MED-0831 ruling H5): the
+founder reversed it in person; `collection` is now always `{ "use": true }`,
+one constant (`VISUAL_COLLECTION`), and the first proof a render draws on
+the collection is his own `LIVE_MEDIA=1` render** — and `guidance` is at
+most six strings. The 202 receipt for
 this body has NEVER been observed — see the PROBE-INT13 section above — and
 the ruling is that it answers `{ "jobs": [...] }` even for one post.
 

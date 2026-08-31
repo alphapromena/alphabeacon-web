@@ -20,6 +20,7 @@ import {
   checkKnowledgeFile,
   isJobTerminal,
   isMediaUploadKind,
+  isReservedMediaDesc,
   isUploadedMediaFile,
   jobFromFanOutReceipt,
   COMPOSABLE_CAPABILITIES,
@@ -27,6 +28,7 @@ import {
   KNOWLEDGE_UPLOAD_KINDS,
   LOGO_ASSET_DESC,
   MAX_VISUAL_GUIDANCE,
+  VISUAL_COLLECTION,
   useStudioActions,
 } from './studio'
 
@@ -175,8 +177,14 @@ describe('buildPostVisualRequest', () => {
       style: { imgStyle: 'Cinematic', text: true, logo: false },
       guidance: ['show the logo', 'dark background'],
       params: {},
-      collection: { use: false },
+      collection: { use: true },
     })
+  })
+
+  it('always asks the collection in — H5, one constant, no toggle', () => {
+    // The founder reversed HSN-02's `use: false` in person (2026-08-31).
+    expect(VISUAL_COLLECTION).toEqual({ use: true })
+    expect(buildPostVisualRequest(SUBJECT, OPTIONS).collection).toBe(VISUAL_COLLECTION)
   })
 
   it('caps guidance at six, and sends an empty rules list rather than omitting the key', () => {
@@ -366,6 +374,19 @@ describe('isMediaUploadKind', () => {
     expect(isMediaUploadKind('image')).toBe(true)
     expect(isMediaUploadKind('video')).toBe(true)
     expect(isMediaUploadKind('document')).toBe(false)
+  })
+})
+
+describe('isReservedMediaDesc', () => {
+  it('refuses "logo" trimmed and case-insensitive — the org logo owns that marker', () => {
+    expect(isReservedMediaDesc('logo')).toBe(true)
+    expect(isReservedMediaDesc(' Logo ')).toBe(true)
+    expect(isReservedMediaDesc('LOGO')).toBe(true)
+  })
+
+  it('refuses only the marker itself, never a description that merely mentions it', () => {
+    expect(isReservedMediaDesc('our logo on the shop window')).toBe(false)
+    expect(isReservedMediaDesc('logos')).toBe(false)
   })
 })
 

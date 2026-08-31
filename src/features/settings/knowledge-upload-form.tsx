@@ -21,7 +21,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
-import { KNOWLEDGE_UPLOAD_KINDS, checkKnowledgeFile } from '@/data/studio'
+import { KNOWLEDGE_UPLOAD_KINDS, checkKnowledgeFile, isReservedMediaDesc } from '@/data/studio'
 import type { KnowledgeUploadKind } from '@/data/types'
 import { MESSAGES } from '@/lib/messages'
 import { cn } from '@/lib/utils'
@@ -62,6 +62,12 @@ export function KnowledgeUploadForm({
     }
     if (description.trim().length === 0) {
       setError(MESSAGES.errors.knowledgeDescriptionRequired)
+      return
+    }
+    // MED-0831: "logo" is the organization logo's marker on the wire — a
+    // Knowledge file wearing it would be indistinguishable from the logo.
+    if (isReservedMediaDesc(description)) {
+      setError(MESSAGES.errors.knowledgeDescReserved)
       return
     }
     const checked: CheckedFile[] = []

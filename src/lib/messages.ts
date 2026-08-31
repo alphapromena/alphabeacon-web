@@ -111,6 +111,10 @@ export const MESSAGES = {
       'That file is not the type you chose. Pick the matching type, or a different file.',
     knowledgeTypeUnknown:
       'We could not tell what type that file is. Give it a standard extension and try again.',
+    // MED-0831 Phase 3: "logo" marks the organization's logo on the wire, so
+    // a Knowledge upload may not wear it — refused trimmed, case-insensitive.
+    knowledgeDescReserved:
+      '“logo” is reserved for your organization’s logo — set that in Settings › Organization, and describe this file another way.',
     // The brand-kit caps (HSN-04): ceilings the screens enforce, never a
     // silent trim. Existing entries above a cap stay listed.
     sourcesCapReached: 'You can follow at most 10 sources. Remove one to add another.',
@@ -126,6 +130,10 @@ export const MESSAGES = {
       'The upload did not reach the studio. Nothing was kept — try again when you are ready.',
     mediaUploadFailedLeft:
       'The upload did not reach the studio, but its reserved slot may still be listed under Files — you can delete it there.',
+    // MED-0831 Phase 3: the org logo on the wire.
+    logoType: 'Choose a PNG, JPEG or WebP image.',
+    logoConflict:
+      'More than one logo is stored. Delete the extras below — Malaky never guesses which one is current.',
 
     // I4's live preview (INT-7). Three outcomes worth telling apart: the org
     // has nothing to ground on yet, the platform is busy, and everything else.

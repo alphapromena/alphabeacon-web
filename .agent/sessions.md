@@ -3382,3 +3382,57 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   (replace = delete old then upload; remove = delete + clear; the status
   line; the copy proposal), `collection: { use: true }` on Create Visual
   (H5), then the gate.
+
+### 2026-08-31 13:55 — ORDER MED-0831 Phase 3: the wire's logo, the reserved word, and H5 flipped
+
+- Did: **the live logo** (`org-logo-live.tsx`, new — H3 + W1 as re-ruled +
+  the go's addition 3): the logo is the `desc: "logo"` row of
+  `GET …/media/assets`, read when Organization opens (lazy, never
+  bootstrap) and read-presigned (~1 h); the FileReader preview only BRIDGES
+  until the upload lands and the wire's own url takes over (which is what
+  every other member sees). Upload checks the real MIME (png/jpeg/webp,
+  square hint kept); Replace = DELETE the old asset FIRST, then upload — a
+  failed delete stops the replace, reported, no retry; Remove = DELETE +
+  clear; the status line says "Sent to the studio." / "Not sent — <error>"
+  (+ the phantom slot id when cleanup failed). MORE THAN ONE logo row
+  (addition 2): every row renders with its own Delete, labelled by asset
+  id, Upload/Replace disabled until one or zero remains — never picked; the
+  button is also disabled while the list is unread/refused (Replace must
+  know what it deletes — interpretation logged). Sits outside the save bar
+  (the country's D-INT-F precedent). The sidebar was measured: it shows the
+  Malaky wordmark, never the org logo — today's behaviour kept, no new
+  read. **"logo" reserved in Knowledge (addition 1):** `isReservedMediaDesc`
+  (trimmed, case-insensitive) refuses it in the shared form with
+  `knowledgeDescReserved`; only the marker itself, not descriptions that
+  mention it. **H5:** `VISUAL_COLLECTION = { use: true }` — one constant,
+  no toggle, one test pinning value + identity; reverses HSN-02's
+  `use: false` on the founder's in-person word; type, comments and the
+  shapes doc's envelope note updated (old line marked SUPERSEDED); the
+  first proof a render draws on the collection is the founder's
+  `LIVE_MEDIA=1` render. **Copy:** "beside your name, never inside a post"
+  deleted in both modes; shipped "Square works best. It is kept with your
+  brand files." — the stronger "…so your visuals can use it" is proposed in
+  the report, waiting on the render proof. Static logo flow otherwise
+  byte-identical (FileReader, save bar, zero network). **Unit +3** (519 /
+  47): the H5 constant + body identity; the reservation both ways.
+- Phase: MED-0831 Phase 3 — built and gated on the branch; STOPPED at the
+  Phase 3 gate per the order. The GATE remains: specs, verifies, two live
+  rounds.
+- Files: `src/features/settings/{org-logo-live.tsx (new),organization-screen.tsx,knowledge-upload-form.tsx}`,
+  `src/data/{studio.ts,studio.test.ts}`, `src/api/types.ts`,
+  `src/lib/messages.ts`, `src/features/studio/create-visual-dialog.tsx`
+  (comment), `Docs/api/alphastudio-shapes.md`,
+  `.agent/{decisions,sessions}.md`
+- Decisions: see decisions.md — MED-0831 Phase 3 (2026-08-31).
+- Verify: lint clean · typecheck clean · guard-static **334 files clean**
+  (one new file) · **519 unit / 47 files** (+3, all green) · prettier clean
+  on every changed file. NOT run, by the phase law: e2e, verify:wNN, axe,
+  anything live. Known strands for the gate: unchanged from Phase 2 (the
+  knowledge-lifecycle Image half; the hsn-series Knowledge walk); no spec
+  touches the logo UI or the collection body.
+- Next: the founder reads the Phase 3 gate report; on his go, the GATE at
+  the tip — unit already in; static e2e for Knowledge and Organization
+  updated; the new `live-media-upload.spec.ts` (fresh QA org, full chain,
+  zero spend, NOT LIVE_MEDIA-gated); verify w00–w06 with drains; live
+  round 1, then round 2 = the merge gate; push; ls-remote receipt; the
+  full report.

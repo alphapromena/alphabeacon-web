@@ -136,6 +136,17 @@ export function isMediaUploadKind(kind: KnowledgeUploadKind): kind is 'image' | 
 export const LOGO_ASSET_DESC = 'logo'
 
 /**
+ * Whether a user-typed description collides with the logo's reserved marker
+ * (MED-0831 Phase 3 ruling): the Knowledge form refuses it — trimmed and
+ * case-insensitive, so "Logo " cannot sneak a near-collision past the exact
+ * wire marker — because a Files row described "logo" would be
+ * indistinguishable from the organization's logo.
+ */
+export function isReservedMediaDesc(desc: string): boolean {
+  return desc.trim().toLowerCase() === LOGO_ASSET_DESC
+}
+
+/**
  * Whether an asset-list row belongs in the Knowledge "Files" section —
  * UPLOADS only, by the founder's ruling.
  *
@@ -198,6 +209,16 @@ export const IMG_STYLES = [
 /** Free-text guidance entries per request — founder-confirmed. */
 export const MAX_VISUAL_GUIDANCE = 6
 
+/**
+ * H5 (MED-0831, final): every Create Visual body asks the org's collection
+ * in — the media uploads (Knowledge Files, the logo) are what it offers a
+ * render. ONE constant, no toggle. It was `{ use: false }` under HSN-02;
+ * the founder reversed it in person, 2026-08-31. The first proof that a
+ * render actually draws on the collection is the founder's own
+ * `LIVE_MEDIA=1` render (decisions.md).
+ */
+export const VISUAL_COLLECTION = { use: true } as const
+
 export type VisualKind = 'image' | 'video'
 
 /** The user-editable half of the envelope. Everything else is derived. */
@@ -233,7 +254,8 @@ export function toVisualTone(tone: Tone): SocialPostMediaTone {
 /**
  * The whole body, built in one place so the laws are structural rather than
  * a matter of care: exactly one post (the tuple type), `params` `{}`,
- * `collection.use` false, and guidance trimmed of blanks and capped at six.
+ * `collection` always `VISUAL_COLLECTION` (H5), and guidance trimmed of
+ * blanks and capped at six.
  */
 export function buildPostVisualRequest(
   subject: PostVisualSubject,
@@ -250,7 +272,7 @@ export function buildPostVisualRequest(
       .filter(Boolean)
       .slice(0, MAX_VISUAL_GUIDANCE),
     params: {},
-    collection: { use: false },
+    collection: VISUAL_COLLECTION,
   }
 }
 

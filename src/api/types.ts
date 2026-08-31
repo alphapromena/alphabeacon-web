@@ -773,7 +773,10 @@ export interface MediaJobFanOutReceipt {
  * `posts` holds EXACTLY ONE entry by law (HSN-02, from PROBE-INT13 evidence:
  * the multi-post path billed and then 502'd; single-post is the proven-clean
  * control). `params` is always `{}` and `collection` is always
- * `{ use: false }` — hardcoded by the founder's word, never a UI toggle.
+ * `{ use: true }` — hardcoded (MED-0831 ruling H5; it was `false` under
+ * HSN-02 and the founder reversed it), never a UI toggle. The org's media
+ * uploads — the Knowledge Files and the logo — are what the collection
+ * offers a render.
  */
 export interface SocialPostMediaTone {
   id: string
@@ -808,7 +811,7 @@ export interface SocialPostsMediaRequest {
   /** Free text, at most 6 entries (founder-confirmed). */
   guidance: string[]
   params: Record<string, never>
-  collection: { use: false }
+  collection: { use: true }
 }
 
 /** `GET .../media/jobs` → newest first, assets WITHOUT presigned urls. */

@@ -6,9 +6,13 @@
  * fields holding the same fact is how a product ends up posting at the right
  * time on one screen and the wrong one on another.
  *
- * The logo is read locally with a FileReader and kept as a data URL. Nothing is
- * uploaded anywhere — there is nowhere to upload to — but the preview, the
- * replace and the remove are all real, which is the part the design is about.
+ * The logo (MED-0831): in LIVE mode it is the media asset whose `desc` is
+ * "logo" — `OrgLogoLive` reads the wire's asset list when the screen opens
+ * and uploads/replaces/removes through the media door, outside this form's
+ * save bar exactly as the country is (its own wire calls; an all-or-nothing
+ * commit would lie about it). In STATIC mode it stays the demo's FileReader
+ * data URL: nothing is uploaded anywhere, but the preview, the replace and
+ * the remove are all real, which is the part the design is about.
  */
 import { Trash2, Upload } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
@@ -27,6 +31,7 @@ import { MESSAGES } from '@/lib/messages'
 import { TIMEZONES, zoneAbbreviation } from '@/lib/timezone'
 import { AccountSection } from './account-section'
 import { TagInput } from './field-editors'
+import { OrgLogoLive } from './org-logo-live'
 
 export function OrganizationScreen() {
   const org = useOrg()
@@ -84,58 +89,63 @@ export function OrganizationScreen() {
       <SetupChecklist heading="Brand setup" />
 
       <section className="flex flex-col gap-5">
-        <div className="flex flex-wrap items-center gap-4">
-          <Avatar className="size-16 rounded-xl">
-            {draft.logo && <AvatarImage src={draft.logo} alt="" />}
-            <AvatarFallback className="rounded-xl text-lg">
-              {draft.name.charAt(0) || '?'}
-            </AvatarFallback>
-          </Avatar>
-          <div className="flex flex-col gap-2">
-            <p className="text-sm font-medium">Logo</p>
-            <div className="flex flex-wrap gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => fileInput.current?.click()}
-              >
-                <Upload aria-hidden />
-                {draft.logo ? 'Replace' : 'Upload'}
-              </Button>
-              {draft.logo && (
+        {live ? (
+          // MED-0831: the wire's logo, its own calls, outside the save bar.
+          <OrgLogoLive orgName={draft.name} />
+        ) : (
+          <div className="flex flex-wrap items-center gap-4">
+            <Avatar className="size-16 rounded-xl">
+              {draft.logo && <AvatarImage src={draft.logo} alt="" />}
+              <AvatarFallback className="rounded-xl text-lg">
+                {draft.name.charAt(0) || '?'}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex flex-col gap-2">
+              <p className="text-sm font-medium">Logo</p>
+              <div className="flex flex-wrap gap-2">
                 <Button
                   type="button"
-                  variant="ghost"
+                  variant="outline"
                   size="sm"
-                  onClick={() => patch({ logo: undefined })}
+                  onClick={() => fileInput.current?.click()}
                 >
-                  <Trash2 aria-hidden />
-                  Remove
+                  <Upload aria-hidden />
+                  {draft.logo ? 'Replace' : 'Upload'}
                 </Button>
-              )}
+                {draft.logo && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => patch({ logo: undefined })}
+                  >
+                    <Trash2 aria-hidden />
+                    Remove
+                  </Button>
+                )}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Square works best. It is kept with your brand files.
+              </p>
             </div>
-            <p className="text-xs text-muted-foreground">
-              Square works best. It is shown beside your name, never inside a post.
-            </p>
+            <input
+              ref={fileInput}
+              type="file"
+              accept="image/*"
+              className="sr-only"
+              // The visible button is the affordance. Left tabbable, this steals a
+              // tab stop that shows nothing — focus appears to vanish. It keeps
+              // its name, so it is still reachable and operable by control name.
+              tabIndex={-1}
+              aria-label="Choose a logo image"
+              onChange={(event) => {
+                const file = event.target.files?.[0]
+                if (file) readLogo(file)
+                event.target.value = ''
+              }}
+            />
           </div>
-          <input
-            ref={fileInput}
-            type="file"
-            accept="image/*"
-            className="sr-only"
-            // The visible button is the affordance. Left tabbable, this steals a
-            // tab stop that shows nothing — focus appears to vanish. It keeps
-            // its name, so it is still reachable and operable by control name.
-            tabIndex={-1}
-            aria-label="Choose a logo image"
-            onChange={(event) => {
-              const file = event.target.files?.[0]
-              if (file) readLogo(file)
-              event.target.value = ''
-            }}
-          />
-        </div>
+        )}
 
         <div className="flex flex-col gap-2">
           <Label htmlFor="org-name">Organization name</Label>

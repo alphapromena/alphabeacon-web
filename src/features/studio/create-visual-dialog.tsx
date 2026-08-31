@@ -3,7 +3,7 @@
  *
  * ONE modal, two entry points: a generated draft on the Generate page and a
  * draft card on Today. It submits the `social-posts.media` request for THAT
- * draft — one post, `params` `{}`, `collection.use` false — and follows the
+ * draft — one post, `params` `{}`, `collection.use` true (H5) — and follows the
  * job through the Studio's own poller. Everything a user can change is a
  * form field here; everything else is derived and never rendered as an input.
  *
