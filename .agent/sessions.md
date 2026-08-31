@@ -3231,3 +3231,59 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   custom tones once so each carries its language.
 - ls-remote receipt: in the close-out command's output beside this entry —
   `feat/cut-0831` at the gate tip; `main` = `live` untouched at `7b7222d`.
+
+### 2026-08-31 12:52 — ORDER MED-0831 Phase 0: the media door probed in full — the gate conditions hold, and two premises moved
+
+- Did: **setup.** Branch `feat/med-0831` cut off `main` (`7b7222d` =
+  `origin/main` = `origin/live`, verified) and PUSHED before any work, per
+  the order. **The CUT-0831 overlap is measured, not guessed:**
+  `git diff --name-only main...origin/feat/cut-0831` shows the in-flight
+  branch touches `src/data/studio.test.ts`, `src/lib/messages.ts`,
+  `e2e/hsn-series.spec.ts`, `e2e/compose-analytics-settings.spec.ts` and
+  `e2e/live-setup.ts` — all files MED-0831's Phases 1–3 are likely to need
+  (`studio.test.ts` for the uploader's unit tests, `messages.ts` for copy,
+  the specs at the gate). Phase 0 touches none of them (docs only); the
+  overlap is REPORTED at this gate rather than discovered mid-build.
+  **Phase 0 (fresh QA orgs 1611 + 1612; org 619 untouched; zero spend —
+  presigns, one 70-byte PUT, list reads, deletes; no job, no run):**
+  P1 — presign per type WITH `desc`, no bytes: **201 for ALL EIGHT** (png,
+  jpeg, webp, mp4, pdf, plain, markdown, docx) — the door filters nothing
+  by type at presign; H4's four-type set is a product allowlist, ours to
+  enforce. Every minted asset DELETEd cleanly (**204 × 8** — a
+  never-uploaded asset deletes fine). P2 — one full lifecycle, CLEAN:
+  presign 201 (`masset_f84f6d79c5c7ef90e1d070ee`, rid `44e2af12-…`) → PUT
+  the 1×1 PNG with the ticket's exact mediaType → **200** → read-presign
+  **200** (key is `url`, expiry ~1 h, rid `994c0f2a-…`) → GET **200**
+  (70 bytes, `image/png`) → DELETE **204** (rid `ec33072e-…`) →
+  re-presign **404 `not_found` "Asset not found"** (rid `c382b5a5-…`) —
+  that is what "gone" looks like. P3 — run BETWEEN P2's upload and delete:
+  `GET …/media/assets` → **200, NOT the expected 502** (rid `c09531e7-…`) —
+  Ward item 4 appears FIXED; the row shape is
+  `{assetId, kind, desc, meta.synthetic}` — NO mediaType, NO date.
+  `GET …/media/jobs` →
+  `{"jobs":[]}` — uploads do not appear as jobs. P3b supplement (org 1612):
+  a NEVER-uploaded presign DOES appear in the list — rows are minted at
+  presign time, so a failed PUT leaves a phantom row; DELETE clears it.
+  Verbatim bodies + every rid: `Docs/api/alphastudio-shapes.md`,
+  "MED-0831 Phase 0".
+- **The gate's entry condition for Phase 1 HOLDS:** P1 201 for
+  png/jpeg/webp/mp4 ✓ and P2's chain clean ✓. Two premise changes are
+  REPORTED for the founder at this gate, not worked around: (1) H2's 502 is
+  gone — the wire list answers 200 today, but cannot fill the "Files" row's
+  date column and only kinds the type, so the ruled sidecar is still the
+  richer record; whether `MEDIA_LIST_ON_WIRE` starts true is the founder's
+  call at the Phase 2 gate; (2) the phantom-row fact (P3b) will shape
+  Phase 2's list semantics when the wire wins.
+- Phase: MED-0831 Phase 0 — probe only; STOPPED at the gate per the order.
+- Files: `Docs/api/alphastudio-shapes.md`,
+  `.agent/{decisions,sessions}.md`. No product code touched.
+- Decisions: see decisions.md — MED-0831 Phase 0 (2026-08-31): the probe
+  interpretations (P3 mid-P2, the P3b supplement, the docx string, two orgs)
+  and the measured facts later phases must respect.
+- Verify: build hygiene on a docs-only change — lint clean · typecheck
+  clean · unit green (unchanged) · guard-static clean · prettier clean on
+  the changed files. Receipts in the report.
+- Next: the founder reads the Phase 0 report; on his go, Phase 1 builds
+  `uploadMediaAsset` in `src/data/studio.ts` — noting the CUT-0831 overlap
+  above bites there (`studio.test.ts`), so the merge order of the two
+  branches wants a ruling with the go.

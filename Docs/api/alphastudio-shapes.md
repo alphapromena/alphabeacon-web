@@ -4521,3 +4521,167 @@ the ruling is that it answers `{ "jobs": [...] }` even for one post.
   "collection": { "use": false }
 }
 ```
+
+## MED-0831 Phase 0 — the media door measured in full (2026-08-31)
+
+Two fresh isolated QA orgs — **1611** (`qa+1788169635185med@alphapromena.com`,
+P1/P2/P3) and **1612** (`qa+1788169728359medb@alphapromena.com`, the P3b
+supplement) — org 619 untouched. Zero spend throughout: presigns (not
+billable), one 70-byte storage `PUT` (free), list reads, deletes. No job, no
+run, no render. Bodies verbatim; presigned urls and the token redacted. The
+order expected the 14xx org range; the API is minting 16xx now — same fresh
+isolation either way.
+
+### P1 — presign per media type, `desc` present, no bytes → **201, ALL EIGHT**
+
+`POST /orgs/1611/alphastudio/media/assets/presign`, one call per type, each
+body `{"mediaType":"<type>","desc":"MED-0831 probe P1 — <type>"}`:
+
+| mediaType                                                                 | status  | assetId                           | request-id                             | ms  |
+| ------------------------------------------------------------------------- | ------- | --------------------------------- | -------------------------------------- | --- |
+| `image/png`                                                               | **201** | `masset_a20f75e8a2c89ff7a9b6c8fd` | `4f16ce68-543c-4643-8ba9-d3e4f6b68f8a` | 821 |
+| `image/jpeg`                                                              | **201** | `masset_94ab21cb9f5e9f529401ed6c` | `75a4d16b-6a84-46f8-97be-bb32cab7a569` | 792 |
+| `image/webp`                                                              | **201** | `masset_06ec3922a65192fe327b6872` | `0ba36c59-150e-471e-8fff-19bedc6fd3e8` | 740 |
+| `video/mp4`                                                               | **201** | `masset_e794a06b2521319d590cf5cc` | `4fe63dc4-c242-45b6-aef7-c07803fd5f22` | 743 |
+| `application/pdf`                                                         | **201** | `masset_f27dfb9455ee84a614341f45` | `2ccc3b04-065c-4365-98f7-ac3bcb8e212f` | 743 |
+| `text/plain`                                                              | **201** | `masset_5c3994179938f2d6729073e9` | `d983f966-0825-4a2c-b290-f53c63958db4` | 740 |
+| `text/markdown`                                                           | **201** | `masset_2273a542fd0425c5a22a04ca` | `a82875df-f503-4b3e-b315-43108573b789` | 758 |
+| `application/vnd.openxmlformats-officedocument.wordprocessingml.document` | **201** | `masset_c629abd138b8a7dc618ed316` | `13618d09-ed8f-4654-8093-2139a611dbde` | 750 |
+
+Every 201 answered the P1 ticket shape (representative, `image/png`):
+
+```json
+{
+  "assetId": "masset_a20f75e8a2c89ff7a9b6c8fd",
+  "uploadUrl": "<redacted uploadUrl: 1689 chars>",
+  "expiresAt": "2026-08-31T10:02:22.397Z",
+  "mediaType": "image/png"
+}
+```
+
+**Finding: the media door filters NOTHING by type at presign time.** H4's
+png/jpeg/webp/mp4 set is therefore a PRODUCT allowlist (H1 routes documents
+to the RAG door), not a wire constraint. The presign expiry is ~15 minutes,
+as on the RAG door.
+
+**P1 cleanup — every never-uploaded asset deletes cleanly, 204 × 8:**
+`41835f84-cd70-4345-b955-19a62fbc6cc2` (png) ·
+`5d177719-4b03-4535-87dd-8ae7b707d820` (jpeg) ·
+`e1e88b90-cfa9-485d-abf4-5742269ef9cc` (webp) ·
+`46faec6d-0670-46d1-a0c0-afb1d5320e52` (mp4) ·
+`9db99d4a-dc55-431c-93ac-146191e715af` (pdf) ·
+`6975701f-781b-4159-be4e-a33400968533` (plain) ·
+`48370352-96dd-41f5-963b-565526e84732` (markdown) ·
+`29324790-ec28-4118-a1c0-b80f7592faab` (docx).
+
+### P2 — one full lifecycle, clean end to end
+
+1. **Presign** `POST /orgs/1611/alphastudio/media/assets/presign` → **201** ·
+   request-id `44e2af12-b6ed-422f-8964-2a34cbc43082` · 744 ms
+
+   ```json
+   {"mediaType":"image/png","desc":"MED-0831 probe P2 — a 1x1 PNG lifecycle"}
+   ```
+
+   ```json
+   {
+     "assetId": "masset_f84f6d79c5c7ef90e1d070ee",
+     "uploadUrl": "<redacted uploadUrl: 1689 chars>",
+     "expiresAt": "2026-08-31T10:02:34.562Z",
+     "mediaType": "image/png"
+   }
+   ```
+
+2. **PUT the bytes** (from Node, `content-type` exactly the ticket's
+   `mediaType`) → **200**. A 1×1 transparent PNG, **70 bytes** (the probe
+   script's own comment said 68; the buffer is 70 — recorded honestly).
+3. **Read-presign** `POST .../media/assets/masset_f84f6d79c5c7ef90e1d070ee/presign`
+   → **200** · request-id `994c0f2a-d704-4770-936b-10c2c5f71beb`. NOTE the
+   download ticket's key is `url` (not `uploadUrl`) and the expiry is ~1 hour:
+
+   ```json
+   {
+     "assetId": "masset_f84f6d79c5c7ef90e1d070ee",
+     "url": "<redacted url: 1649 chars>",
+     "expiresAt": "2026-08-31T10:47:35.823Z"
+   }
+   ```
+
+4. **GET the url** → **200**, `content-type: image/png`, 70 bytes back — the
+   same object that went up.
+5. **DELETE** `.../media/assets/masset_f84f6d79c5c7ef90e1d070ee` → **204** ·
+   request-id `ec33072e-9062-4b74-b9a9-5865dfd3b218`.
+6. **Read-presign AFTER the delete — what "gone" looks like** → **404**:
+
+   ```json
+   {
+     "error": {
+       "code": "not_found",
+       "message": "Asset not found",
+       "requestId": "c382b5a5-ecbc-4424-acd8-9c16195ad818"
+     }
+   }
+   ```
+
+### P3 — the read-back list ANSWERS NOW: **200, not 502** (Ward item 4 apparently fixed)
+
+Run between P2's upload and P2's delete, so the strongest version of both
+checks. `GET /orgs/1611/alphastudio/media/assets` → **200** · request-id
+`c09531e7-fc46-413b-8be1-b903236b448b` · 752 ms:
+
+```json
+{
+  "assets": [
+    {
+      "assetId": "masset_f84f6d79c5c7ef90e1d070ee",
+      "kind": "image",
+      "desc": "MED-0831 probe P2 — a 1x1 PNG lifecycle",
+      "meta": {
+        "synthetic": false
+      }
+    }
+  ]
+}
+```
+
+**The 502 this order (and Ward item 4) expected is not what the wire says
+today.** The row shape carries `assetId`, `kind` (a word, not the exact
+mediaType), `desc` and `meta.synthetic` — **no mediaType, no uploadedAt, no
+date of any kind**, which matters for H2's "Files" row (description · type ·
+date): the wire list cannot fill the date column and only kinds the type.
+
+`GET /orgs/1611/alphastudio/media/jobs` → **200** · request-id
+`8b49e097-3af9-4912-b430-cf8800592698` — `{"jobs": []}` while the uploaded
+asset existed. **Uploads do NOT appear as jobs**, as expected.
+
+### P3b supplement — a NEVER-UPLOADED presign appears in the list (org 1612)
+
+Because Phase 2 must know what a failed `PUT` leaves behind. Fresh org 1612:
+presign `image/png` with `desc: "MED-0831 probe P3b — never uploaded"` →
+**201** `masset_b1d54926355990d00b4d421f` (request-id
+`f226694a-d250-4302-9459-451ad65f1368`), NO bytes sent, then
+`GET .../media/assets` → **200** (request-id
+`f720d213-bb46-40ac-9699-c15808e50b48`):
+
+```json
+{
+  "assets": [
+    {
+      "assetId": "masset_b1d54926355990d00b4d421f",
+      "kind": "image",
+      "desc": "MED-0831 probe P3b — never uploaded",
+      "meta": {
+        "synthetic": false
+      }
+    }
+  ]
+}
+```
+
+**The row is minted at PRESIGN time, not when the bytes land** — a failed or
+abandoned `PUT` leaves a phantom row in the wire list, indistinguishable in
+this shape from a real upload. DELETE → **204** (request-id
+`3442381f-623e-49f9-9c66-31e03b50b417`), list re-read → `{"assets": []}`
+(request-id `1118b507-873d-42e6-88aa-c35091a979cc`). So Phase 1's law — a
+failed PUT reports the minted asset id — has a second reason to exist: the
+id is also the handle for cleaning the phantom row up.

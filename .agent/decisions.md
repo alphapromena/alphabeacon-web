@@ -2556,3 +2556,55 @@ Closes open-item 38, which ONB-0827 created and the live suite caught.
   change the order parked), or re-adding a delete guard for empty schedules
   (open-item 37 is a recorded decision for a future order, and the founder's
   own hand-delete of 8 rows must not be second-guessed by the client).
+
+### 2026-08-31 — MED-0831 Phase 0: the media door measured, and two premises the wire has moved past
+
+- **Provenance.** ORDER MED-0831 — the media presign door: Knowledge
+  uploads and the org logo. Rulings H1–H5 and W1 are FINAL, from Hasan in person
+  (2026-08-31), confirmed by the founder. This entry records Phase 0's probe
+  interpretations and the measured facts that bear on later phases; the
+  build decisions land with their phases. On branch `feat/med-0831` off
+  `main` (`7b7222d`), pushed before work began, per the order.
+- **Probe interpretations, each on record.**
+  1. *P3 ran in the middle of P2* — between the byte `PUT` and the `DELETE` —
+     so the list and jobs reads happened while a real uploaded asset existed:
+     the strongest version of "does the list see it" and "do uploads appear
+     as jobs". The order sequences P3 after P2; the reordering strengthens
+     the measurement and changes no call.
+  2. *A P3b supplement was added beyond the ordered probes* (fresh org 1612,
+     zero spend: one presign, two list reads, one delete): does a
+     NEVER-uploaded presign appear in the assets list? It does — the row is
+     minted at presign time, so a failed `PUT` leaves a phantom row. Phase 2
+     must know this; measuring it now cost four free calls.
+  3. *The docx `mediaType`* is the app's own `EXTRACTABLE_MEDIA_TYPES` value
+     (`application/vnd.openxmlformats-officedocument.wordprocessingml.document`),
+     matching every prior probe.
+  4. *Two orgs, not one* — the supplement ran as its own script with a fresh
+     identity (1612) rather than reusing 1611's token, which was not kept.
+     Both are QA-isolated; org 619 untouched. The order expected the 14xx
+     range; the platform is minting 16xx now — recorded, same isolation.
+- **Measured facts that later phases must respect (verbatim record in
+  `Docs/api/alphastudio-shapes.md`, "MED-0831 Phase 0").**
+  - *The gate conditions Hold:* P1 answered **201 for png/jpeg/webp/mp4**
+    (and for pdf, plain, markdown, docx — all eight), and P2's chain is
+    clean end to end (201 → PUT 200 → read-presign 200 → GET 200 → DELETE
+    204 → re-presign 404 `not_found` "Asset not found").
+  - *H4 is a product allowlist, not a wire constraint:* the door filters
+    nothing by type at presign time. The app's four-type limit is ours to
+    enforce (H1 routes documents to the RAG door), and the record says so.
+  - *H2's premise has moved:* `GET …/media/assets` answered **200, not
+    502** — Ward item 4 appears fixed. The row shape is
+    `{assetId, kind, desc, meta.synthetic}`: NO `mediaType`, NO date. So the
+    ruled sidecar interim (`MEDIA_LIST_ON_WIRE = false`) is built as ruled,
+    and whether to flip the switch — knowing the wire list cannot fill the
+    row's date column and only kinds the type — is reported at the Phase 2
+    gate for the founder, not decided here.
+  - *Phantom rows exist:* a presign minted and never uploaded appears in the
+    list until deleted. Phase 1's law that a failed PUT reports the minted
+    asset id gains a second purpose: the id is the cleanup handle.
+  - *Uploads never appear in `GET …/media/jobs`* (`{"jobs": []}` beside a
+    live uploaded asset), and never-uploaded assets DELETE cleanly (204 × 8).
+- Instead of: skipping the document-type presigns because H1 keeps documents
+  off this door (the order says measure the full list for the record), or
+  treating the 200 list as licence to skip the ruled sidecar (the ruling is
+  final; the premise change is the founder's to re-rule at a gate).
