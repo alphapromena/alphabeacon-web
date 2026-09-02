@@ -3160,3 +3160,66 @@ Closes open-item 38, which ONB-0827 created and the live suite caught.
   repo's business); or counting the sleep-poisoned file as a round-2 red
   without a supplement (the law says a red in round 2 is a red — this one
   was the host's, and the supplement says so with its timestamps).
+
+### 2026-09-02 — BIL-0902/R: the funding ruling (no dev-credit door), the Enterprise card, one mechanism for the funded QA org, and a contract that kept its keys
+
+- **The founder's funding ruling:** there is no dev-credit door and none
+  will be asked for. A QA org is funded the REAL way — a test-mode checkout
+  paid once with Stripe's test card `4242 4242 4242 4242`; nothing is
+  charged and the wallet is credited for real. The first such org is minted
+  at manual gate M-BIL-1 (step 8) and its owner's credentials go into the
+  QA-creds store as `QA_FUNDED_EMAIL` / `QA_FUNDED_PASSWORD` (documented in
+  `stack.md`, never committed). This CLOSES open-item 46: the live suite's
+  full green is reachable again by a paid QA org, not by the sandbox
+  funding fresh ones.
+- **One mechanism, never two.** `skipUnlessFunded` (HSN-0902's 402 rule)
+  is the single door: a spec reads its org's wallet first; funded → it
+  runs; zero and a funded QA org configured → it signs in as that org's
+  owner (through the real login, from a cleared store), ensures the four
+  brand entities IDEMPOTENTLY (checked on the wire, added through the real
+  screens only when missing; the tone's per-browser language re-saved every
+  time), and runs THERE; zero and nothing configured → it self-skips with
+  the honest reason exactly as before. The funded org's own wallet is read
+  too — an empty one means "pay again" and skips with that reason, never a
+  red. Media renders stay behind `LIVE_MEDIA`: test money does not change
+  what a render costs upstream. `live-proposals` opts OUT of the switch
+  (`switchToFundedOrg: false`) because its assertions count a FRESH org's
+  queue ("1 needs review", then "0"); a shared funded org carries every
+  earlier run's queue, and loosening those counts would weaken the proof.
+  Until the funded org exists the mechanism is built and unexercised; the
+  first live run after M-BIL-1 step 8 is its first proof, and the report
+  says so.
+- **The one spec that asserts the 402 is `live-billing`.** HSN-0902 put the
+  assertion in `live-generate`; this series' own Phase 3 proof — "refused
+  with 402, and the refusal points at Billing" — is the richer one and the
+  billing order's, so it owns the assertion now and the duplicate leaves
+  `live-generate` (which also still expected the pre-BIL copy). One
+  asserting spec, every other generating spec self-skipping — the rule as
+  the founder wrote it.
+- **The Enterprise card:** Enterprise is a plan the wire does NOT carry and
+  Stripe never checks out — sales-assisted, Managed arranged directly, no
+  add-on (the founder's word, §0). So `/billing` shows it BESIDE the wire's
+  plans with no price ("Custom"), no Subscribe, and exactly one action: the
+  existing `/request-demo` route. It is a fixed card in `PlansSection`, the
+  same for owners and members and in both modes — nothing on it is gated by
+  a role, and nothing on it can spend.
+- **The plan union is read, not assumed — and the wire kept its keys.**
+  Phase 0/R (org 1745) delivered `base` = "Malaky Business" 59900 usd/month
+  and `pro` = "Malaky Scale" 89900 usd/month: Ward's correction changed the
+  names, the amounts and the interval and KEPT the keys, so
+  `ApiBillingPlanId` stays `'base' | 'pro'` and the "old key" probe answers
+  201 because `base` is the live key. The demo plans mirror the delivered
+  rows exactly (keys, names, cents, interval); the interval word renders
+  from the wire; no "$500", "yearly" or "/ year" survives anywhere in the
+  tree. The order's §2 expected a 400 on `base` — recorded as it fell, and
+  read in the record's own "Reading" note so nobody mistakes it for the old
+  contract surviving.
+- Instead of: a dev-credit endpoint or a QA allowance on `POST /orgs` (the
+  founder ruled it out — a real checkout is the honest funding); a second
+  skip helper for the funded org (one mechanism); running `live-proposals`
+  on the shared org with loosened counts (a weaker proof is not a proof);
+  two specs asserting the 402 (the rule says one); a Subscribe on the
+  Enterprise card that leads nowhere (no checkout exists — a button that
+  cannot succeed is the disabled-teasing the design law forbids); or
+  renaming the keys to `business`/`scale` because the order expected them
+  (the wire is the record, and it said `base`/`pro`).

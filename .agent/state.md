@@ -5,7 +5,57 @@ without reconstructing it from the session log. **Update this file at the end
 of any turn that finishes a phase or changes the plan.** `sessions.md` is the
 chronological record; this is the current picture.
 
-_Last updated: 2026-09-02, after **ORDER BIL-0902/R began: `feat/bil-0902`
+_Last updated: 2026-09-02, after **ORDER BIL-0902/R — billing on Ward's
+corrected plans — REBASED, RE-PROBED, RE-TARGETED and GATED on
+`feat/bil-0902`; report-and-stop for the founder's word.** The branch sits on
+`main` = `d645607` (HSN-0902 merged and deployed): the held WIP `df14989`
+replayed as `492fc45`, then the /R commits; **NOT pushed, NOT merged.**
+**Phase 0/R (fresh QA org 1745, zero spend, `Docs/api/billing-shapes.md`,
+the old record kept below as history):** `GET /billing/plans` delivers the
+KEYS **unchanged — `base` and `pro`** — with the names **"Malaky Business"
+/ "Malaky Scale"**, **59900 / 89900 usd per `month`** (request
+`65719d4c-…`); so the client's plan union stays `'base' | 'pro'`, read from
+the wire; the "old key" probe answered **201, not 400**, because `base` IS
+the live key (recorded and read as such); subscription `none` with the full
+field set; credits empty; wallet `{0,0,0}`; member reads 200, member
+checkout 403; **portal at `none` still 201**; the delivered-key checkout 201
+(url never opened); **the org fields are still DROPPED by `PATCH /orgs/:id`
+— item 48 stays blocked.** **What stands:** the demo plans mirror the
+delivered rows exactly; the interval renders from the wire; the
+**Enterprise card** beside the plans (Custom, no checkout, `/request-demo`);
+`billing-frontend.md` carries the superseded note; no `$500` / `yearly` /
+`/ year` / `Malaki` anywhere in `src` or `e2e`; **the founder's funding
+ruling** — no dev-credit door, one designated QA org funded by a real
+test-mode checkout at M-BIL-1 step 8, its owner in `QA_FUNDED_EMAIL` /
+`QA_FUNDED_PASSWORD` (`stack.md`) — is built into `skipUnlessFunded` as the
+ONE mechanism (zero wallet + creds → sign in as the funded owner, ensure the
+brand entities idempotently, run there; `live-proposals` opts out;
+unexercised until the org exists); `live-billing` is the one spec asserting
+the 402 (the HSN duplicate left `live-generate`). Open-item 46 CLOSED by
+the ruling; 45 = M-BIL-1 (/R); 47 re-scoped (the keys question for Ward).
+**The gate (final tree):** lint · typecheck · prettier · guard-static 345 ·
+unit **601 / 53** · static e2e **111 passed / 82 skipped / 0 failed** ·
+`verify:w00`–`w06` **all PASS** · **live round 1 18/19 clean** (billing
+7/7; the one red, `live-wallet`, never ran — the global warm-up refused it
+on THIS HOST'S LINK) · **live round 2:** the 18:25Z attempt stopped on a dead link (and its loop had to be ended by
+command line); the CLEAN round (18:48–19:22Z) judged 8/19 files — **billing
+7/7**, brand-kit 3/3, brand-rules 4 + 1, country 4/4, create-visual 3
+skipped, generate 1 + 1 — with four reds of one shape (a login or an upload
+not within its rung: auth, brand, invite-org, knowledge; none in this
+series' files) and **10 files REFUSED at warm-up when the link died at
+~19:00Z; the 14-file supplement is PENDING the link.** So the gate is
+**PARTIAL**: every static number green, round 1 18/19, this series' own
+surfaces 7/7 in both rounds, the rest waiting on a stable link. **This host's
+link dropped four times this evening** (17:12–17:39Z, 18:23Z, ~18:5xZ,
+19:0xZ–…; gateway 192.168.1.1 unreachable, DNS timing out) — the reds it
+left are the harness's, classified per file in sessions.md; and **trap 22
+took a seventh shape: a `TaskStop` on a round script does NOT end its bash
+loop** — it kept iterating and interleaved with a restart on the same port
+and log until all 18 harness processes were ended by command line. Next:
+the founder's word → ff `main`, push `main` and `main:live`, deployment
+ids; **M-BIL-1 (/R) on `1.malaky.ai`** (item 45), step 8 mints the funded
+QA org; HSN-0902/B on item 48. Before that, same day: **ORDER BIL-0902/R
+began: `feat/bil-0902`
 REBASED onto the new `main` (`d645607` — HSN-0902 merged and deployed),
 one commit replayed, seven conflicts resolved (the five journal files by
 keeping both series in date order, `package.json`/`stack.md` by keeping both

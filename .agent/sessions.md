@@ -3904,3 +3904,120 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   render with a duration under its maximum (the clip length, and whether
   the job echoes `durationS`). Then **BIL-0902/R after the rebase**, and
   **HSN-0902/B** when Hasan/Ward name the door (item 48).
+
+### 2026-09-02 22:10 — ORDER BIL-0902/R: rebased, re-probed on Ward's corrected plans, re-targeted, and GATED (report-and-stop)
+
+- Did: **the rebase.** `feat/bil-0902` (`df14989`, one WIP commit off the
+  old `main` `9adb47c`) replayed onto `d645607` (HSN-0902 merged and
+  deployed) → `492fc45`. Seven conflicts, resolved as the addendum ruled:
+  the five journal files by keeping BOTH series in date order (BIL's
+  10:35/13:50/14:40 entries before HSN's), `package.json` and `stack.md` by
+  keeping both script rows, `e2e/live-wallet.spec.ts` in BIL's favour
+  (zeros = never subscribed; its three starter-funding assertions are
+  rewritten, not skipped); HSN's `skipUnlessFunded` and the 402 rule stand in
+  `live-setup.ts`. After the rebase: typecheck clean, lint clean, unit 599 /
+  53, prettier clean on every BIL file.
+  **Phase 0/R (fresh QA org 1745, zero spend, `Docs/api/billing-shapes.md`
+  rewritten with the old record kept below as dated history):** `GET
+  /billing/plans` → 200 (request `65719d4c-d272-4f46-9892-505b1ebcae4b`) —
+  **the KEYS are unchanged, `base` and `pro`**; the names as delivered
+  **"Malaky Business"** and **"Malaky Scale"**; amounts **59900 / 89900 usd
+  per `month`**. So Ward's correction changed names, amounts and interval
+  and kept the keys — the client's plan union stays `'base' | 'pro'`, read
+  from the wire as the order asked, never assumed. Subscription at `none`
+  with the full field set (`4383041d-…`); credits `{items: [], total: 0}`
+  (`552dca56-…`); wallet `{0,0,0}` (`83a13bc4-…`); member reads 200 ×3.
+  **The "old key" probe answered 201, not 400** (`b0eaf265-de72-48d8-9f48-c59a296231d8`)
+  — because `base` IS the live key; recorded as it fell, abandoned unopened,
+  redacted, and read in the record's own "Reading" note. Member checkout 403
+  `forbidden` (`29edb4e1-…`); **portal at `none` still 201 `{url}`**
+  (`30912741-2631-4316-aa0c-e230f1f28cda`); the delivered-key checkout 201
+  `{url, sessionId}`, host `checkout.stripe.com`, never opened
+  (`e1475ee5-…`); subscription and wallet unchanged after. **The org-fields
+  probe for item 48:** `PATCH /orgs/:id` with both fields beside `name` →
+  200, read-back carries NEITHER (`79bce607-…`, `4c199f3d-…`) — **still
+  blocked, nothing changed on that door.** The probe script now redacts 5b
+  whatever it answers and never writes the record on an early exit (a dead
+  link answered status 0 twice before the run; the record was restored from
+  git both times).
+  **The delta:** `ApiBillingPlanId` stays `'base' | 'pro'` (comments
+  transcribe the new rows); `DEMO_BILLING_PLANS` mirrors the delivered rows
+  exactly (keys, names, cents, `month`); the interval renders from the
+  wire's word (`formatPlanPrice`); the **Enterprise card** beside the plans
+  — "Custom", no price, no Subscribe, `/request-demo` as its one action,
+  identical for owners/members and in both modes; `billing-frontend.md`
+  carries the superseded note at its top; every `$500`, `yearly`, `/ year`
+  and `Malaki` literal is gone from `src` and `e2e`; `live-billing` checks
+  out with the first DELIVERED key, compares the interval from the wire,
+  asserts the Enterprise card, and is THE ONE spec asserting the 402 (the
+  HSN duplicate left `live-generate` — it also still expected the pre-BIL
+  copy). **§4 — the funded QA org:** `fundedOrgCredentials()` reads
+  `QA_FUNDED_EMAIL` / `QA_FUNDED_PASSWORD` (documented in `stack.md`);
+  `skipUnlessFunded` is the ONE mechanism — zero wallet + creds → sign in as
+  the funded owner from a cleared store, ensure the brand entities
+  idempotently (wire checks, screen writes, the tone language re-saved),
+  run there; an empty funded wallet skips with "pay again"; nothing
+  configured → self-skip as before; `live-proposals` opts out
+  (`switchToFundedOrg: false`, its counts are a fresh queue's). Built and
+  UNEXERCISED until M-BIL-1 step 8 mints the org.
+  **The gate (final tree):** lint clean · typecheck clean · prettier clean ·
+  guard-static 345 · unit **601 / 53** · static e2e **111 passed / 82
+  skipped / 0 failed** (first pass, no re-run needed) · `verify:w00`–`w06`
+  **all PASS** in one chained pipeline (each 111/81/0) · **live round 1**
+  (18:05–18:25Z, host held awake): **18/19 clean** — auth 7/7, **billing
+  7/7**, brand-kit 3/3, brand-rules 4 + 1 skipped, brand 5/5, country 4/4,
+  create-visual 3 skipped, generate 1 + 1 skipped, invite-org 3/3, knowledge
+  3/3, media-upload 3/3, notifications 1/1, onboarding 5 + 1 skipped,
+  proposals 1 + 4 skipped, schedule-repair 3/3, scheduling 2 + 1 skipped,
+  studio 3 + 1 skipped, team 6/6, video-duration 2 + 1 skipped; the one red,
+  **wallet, never ran**: the global warm-up refused it ("API fleet never
+  warmed" — 8 bursts of 12 concurrent probes all `fetch failed` in ~10.6 s
+  while single probes answered in 134 ms) — THIS HOST'S LINK, which dropped
+  three times today (17:12–17:39Z, 18:23Z–…: gateway 192.168.1.1 unreachable,
+  DNS timing out), not the API. **Round 2's first attempt (18:25Z) was
+  stopped** after `live-auth` hit the same refusal on the dead link; its
+  orphaned Vite server on 5199 was identified by command line and ended
+  (trap 22); round 2 restarted whole once three consecutive 12-way health
+  bursts all answered under 3 s. **Live round 2 — the gate:** the 18:25Z attempt was STOPPED after its first file hit the dead link — and
+  the stop did not end the bash loop (trap 22, seventh shape): it kept
+  iterating, interleaved with a 18:48Z restart on the same port and log, until
+  all 18 harness processes (two scripts, two Playwright runs, the Vite server,
+  headless Chromium) were ended by command line. **The CLEAN round
+  (18:48–19:22Z) judged 8 of 19 files:** **billing 7/7**, brand-kit 3/3,
+  brand-rules 4 + 1 skipped, country 4/4, create-visual 3 skipped, generate 1 +
+  1 skipped — and four reds of ONE shape, none in this series' own files:
+  auth 2 + 1 failed + 4 not run (the login → verify redirect not within 20 s),
+  brand 4 + 1 (the login not within the 40 s rung), invite-org 2 + 1 (the login
+  not within 40 s), knowledge 2 + 1 (the upload row not within 30 s, with the
+  link failing at that file's own warm-up: four `fetch failed` probes). Then
+  **the link died at ~19:00Z and the remaining 10 files (media-upload →
+  wallet) were REFUSED at warm-up** ("API fleet never warmed", every probe
+  `fetch failed` in ~10.6 s). The link was still down at 20:02Z when this was
+  written (gateway 192.168.1.1 unreachable). **The supplement for those 14
+  files is PENDING the link** — the runner is ready
+  (`gate-live-supplement2.sh`); it runs the moment four consecutive 12-way
+  bursts hold, or on the founder's word. Classification: every red of the
+  clean round is the host's link or the API's login/sync latency under an
+  evening of back-to-back rounds (open-item 42's shape); this series' own
+  surfaces — billing, the Enterprise card, the 402 pointing at Billing — are
+  7/7 in BOTH rounds.
+- Phase: BIL-0902/R — BUILT; gate PARTIAL (static + verify green, live
+  round 1 18/19, round 2 judged 8/19 on a link that then died; the 14-file
+  supplement pending the link); report-and-stop for the founder's word. M-BIL-1 (item 45, /R) is the founder's, on production.
+- Files: `scripts/probe-billing.ts`, `Docs/api/{billing-shapes,billing-frontend}.md`,
+  `src/api/types.ts`, `src/data/{billing,billing.test}.ts`,
+  `src/data/adapters/notification-adapter.test.ts`, `src/lib/messages.ts`,
+  `src/features/billing/{billing-screen.tsx,billing-screen.test.tsx,billing-view.ts,billing-view.test.ts}`,
+  `e2e/{billing.spec.ts,live-billing.spec.ts,live-setup.ts,live-generate.spec.ts,live-proposals.spec.ts}`,
+  `.agent/{state,sessions,decisions,open-items,stack}.md`
+- Decisions: BIL-0902/R (decisions.md) — the funding ruling, one mechanism,
+  the one asserting spec, the Enterprise card, the keys read not assumed.
+  Open-items: 45 re-scoped to the /R checklist, 46 CLOSED by the ruling, 47
+  re-scoped (DASHBOARD_URL answered; the keys question for Ward).
+- Verify: as above.
+- Next: the founder's word → ff `main`, push `main` and `main:live`, report
+  the deployment ids; then M-BIL-1 on `1.malaky.ai` (item 45), step 8 mints
+  the funded QA org; HSN-0902/B still on item 48. For the standing law: a
+  live round needs a STABLE link as much as an awake host — the fleet
+  warm-up's refusal is the tell, and a stopped round leaves a Vite server on
+  5199 to end by hand (trap 22, seventh shape).

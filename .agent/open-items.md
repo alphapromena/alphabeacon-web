@@ -1004,74 +1004,72 @@ branch; all of it blocks DNS cutover or launch.
     is live; only (1) — `createdAt` + `mediaType` on the row — remains
     asked of Ward.
 
-### BIL-0902 — billing goes live on the Stripe sandbox (2026-09-02)
+### BIL-0902 — billing goes live on the Stripe sandbox (2026-09-02; /R on Ward's corrected plans)
 
-45. **MANUAL GATE M-BIL-1 — the paid path, on a QA org, after the founder's
-    word (cannot be automated: no test drives the Stripe page).** Local
-    verification does not need `DASHBOARD_URL` — pay, then open
-    `localhost:5173/billing/success?orgId=<id>` by hand; the poll never needs
-    `session_id` back.
-    1. Sign in as the org's OWNER → `/billing` → **Subscribe** on the base plan
-       → the Stripe Checkout page opens (host `checkout.stripe.com`) → card
-       `4242 4242 4242 4242`, any future expiry, any CVC, any postcode.
-    2. Land on `/billing/success?orgId=<id>&session_id=cs_…` (or open it by
-       hand with the org id) → "Confirming your payment…" shows the wire's
-       status each tick → flips to **"You're on the Malaki Base plan"** within
-       the minute (the guide: the webhook lands a second or two later).
-    3. The success page shows the wallet **$500.00 available** (50 000 cents)
-       after the existing wallet read; the header chip agrees; `/billing` →
-       **Billing history** shows ONE row — the invoice id, `base`, +$500.00,
-       today; the bell shows `billing.wallet_credited` linking to `/billing`.
-       Record the credit row's real field set (it is the one billing shape
-       nobody has observed — `src/api/types.ts` carries the guide's fields).
-    4. On `/billing` (now Manage billing): open a second tab, force a second
-       checkout (e.g. `/billing` → any surviving Subscribe, or `POST
-       /checkout` via the console) → **409 `conflict`** surfaces as the
-       "already has a subscription — manage it instead" note with Manage
-       billing; **record the request id**.
-    5. **Manage billing** → the Stripe portal opens; leave it → returns to
-       `/billing?orgId=<id>` cleanly (the short poll re-reads; status still
-       `active`, badge and period end shown). Optional: cancel in the portal
-       → back on `/billing`, "Your plan is set to end on <date>" appears once
-       the webhook lands.
-    6. A generation on the now-funded org runs (the 402 is gone); the wallet
-       moves; `/billing/balance` shows the spend in usage.
-    Sign off with the org id, the invoice id, and the 409 request id.
+45. **MANUAL GATE M-BIL-1 (/R) — the paid path, by the founder, on
+    `1.malaky.ai` after the deploy (cannot be automated: no test drives the
+    Stripe page).** The plans are Ward's corrected ones as `GET /billing/plans`
+    delivers them (Phase 0/R, org 1745, `Docs/api/billing-shapes.md`): the
+    keys `base` / `pro` UNCHANGED, the names **"Malaky Business"** /
+    **"Malaky Scale"**, 59900 / 89900 usd per **month**.
+    1. Fresh QA org → `/billing` → the two plans read **Malaky Business $599.00
+       / month** and **Malaky Scale $899.00 / month**, and **Enterprise
+       "Custom"** with the demo link beside them; the names on the cards are
+       Ward's Stripe names — check the spelling there and on the Stripe page.
+    2. **Subscribe → Malaky Business** → Stripe Checkout (host
+       `checkout.stripe.com`) → card `4242 4242 4242 4242`, any future expiry,
+       any CVC and postcode.
+    3. Stripe returns to `1.malaky.ai/billing/success?orgId=…` → the poll
+       flips to **active** within the minute → the plan and the wallet shown.
+    4. Wallet available = **59 900** cents; the credits list shows ONE row with
+       the invoice id (record the row's real field set — the one billing
+       shape nobody has observed); the bell shows `billing.wallet_credited`.
+    5. A second Subscribe → surfaced as **Manage billing** (409 `conflict`
+       underneath; **record the request id**).
+    6. **Manage billing** → the Stripe portal opens → return to
+       `/billing?orgId=…` cleanly (the short poll re-reads; status `active`).
+    7. Start a second checkout on ANOTHER fresh org and press back on the
+       Stripe page → lands on `/billing?…&checkout=cancelled` with the small
+       note, subscription still `none`.
+    8. **Hand this paid org's credentials to the QA-creds store** as the
+       designated funded QA org: `QA_FUNDED_EMAIL` / `QA_FUNDED_PASSWORD`
+       (`stack.md`; §4 of the order). From then on the generating text specs
+       run there instead of self-skipping — the first live run after step 8
+       is the mechanism's first proof.
+    9. Tell Ward **"sandbox verified"** — his cue to move Stripe to LIVE.
+       Before that flip, the Stripe dashboard branding (Malaky logo,
+       `#FF1E57`) should be in.
+    Sign off with the org id, the invoice id, the 409 request id, and the
+    funded org's email (never its password) in the journal.
 
-46. **THE FUNDING MODEL CHANGED UNDER THE LIVE SUITE — every generating spec
-    now hits 402 on a fresh org.** Measured Phase 0 (org 1670, request
-    `3aa41779-6ef5-4d49-b101-12009d9b6d64`): a fresh org's wallet is
-    `{0,0,0}` — the $50 starter funding is gone, by Ward's model ("no other
-    way to fund a wallet"). **Pinned during the gate** (fresh org 1683,
-    `Docs/api/billing-shapes.md` addendum): `POST …/posts/tones-preview` on
-    the zero wallet → **402 `wallet_insufficient`**, request
-    `f4220662-0752-4488-9ffc-133a7bbd5779`, wallet unchanged. So
-    `live-generate`, `live-proposals`, `live-studio` (Render),
-    `live-brand-rules` (Preview this tone) and `live-create-visual`
-    (LIVE_MEDIA) cannot pass on a fresh QA org any more — not a frontend
-    regression, the sandbox's new truth. Round 1 of the BIL-0902 gate showed
-    exactly that: `live-generate` 1/2 (no draft), `live-brand-rules` 4/5
-    (no sample). The gate reports them as they fell. Options for the
-    founder/Ward: (a) the sandbox funds QA orgs again (a flag on `POST /orgs`,
-    or a QA allowance), (b) those specs run against a pre-subscribed QA org
-    (the one M-BIL-1 pays for, its id in the run's environment), or (c) a
-    scripted test-mode payment through Stripe's API — which the order rules
-    out of the frontend suite ("no test drives the Stripe page"). Until one
-    is chosen the merge gate's "16/16" cannot be met by anyone, on any branch.
+46. **CLOSED 2026-09-02 by the founder's funding ruling (BIL-0902/R).** The
+    measurement stands — a fresh org's wallet is `{0,0,0}` and every
+    generation answers 402 `wallet_insufficient` until it subscribes (org 1670,
+    request `3aa41779-6ef5-4d49-b101-12009d9b6d64`; org 1683, request
+    `f4220662-0752-4488-9ffc-133a7bbd5779`; org 1745 again on the corrected
+    contract) — and the answer is option (b): **no dev-credit door; one
+    designated QA org funded by a real test-mode checkout (M-BIL-1 step 8),
+    its credentials in the QA-creds store, and `skipUnlessFunded` routing
+    the generating text specs there** (media stays behind `LIVE_MEDIA`).
+    `live-proposals` keeps self-skipping on a fresh org by design (its counts
+    are a fresh queue's); `live-billing` is the one spec that asserts the
+    refusal. The merge gate's full green is reachable again the day step 8
+    is done.
 
-47. **For Ward (BIL-0902 Phase 0, no blocker):** (1) the sandbox value of
-    `DASHBOARD_URL` — the founder is asking; local verification does not need
-    it. (2) `GET /billing/plans` delivers the names **"Malaki Base" /
-    "Malaki Pro"** — Stripe's spelling, rendered as is; the fix is in the
-    Stripe dashboard, not in our code. (3) `POST /billing/portal` answers
-    `201 {url}` on a never-subscribed org (request
-    `8a2e7e6d-6baf-4872-afc2-194994183bf4`) — the product only offers Manage
-    billing where the guide's table says so; is a portal at `none` intended?
-    (4) The credit row's full field set is unobserved until a payment (the
-    guide's `…`); `createdAt` ordering "newest first" is taken on the guide's
-    word. (5) `Docs/api/api.md`'s Billing section and the refreshed
-    `openapi.json` were not supplied with the guide — the frontend built to
-    `billing-frontend.md` plus its own probes.
+47. **For Ward (BIL-0902 Phase 0 → /R, no blocker):** (1) `DASHBOARD_URL` —
+    ANSWERED: `https://1.malaky.ai` (Ward, 2026-09-02). (2) The plan KEYS
+    stayed `base` / `pro` under the correction — only the names, amounts and
+    interval changed (Phase 0/R, request `65719d4c-d272-4f46-9892-505b1ebcae4b`);
+    intended, or a rename to `business` / `scale` still to come? The client
+    reads the keys from the wire either way, but a rename would move the
+    checkout body. (3) `POST /billing/portal` at `none` still answers `201
+    {url}` (request `30912741-2631-4316-aa0c-e230f1f28cda`) — the product
+    only offers Manage billing where the guide's table says so; is a portal
+    at `none` intended? (4) The credit row's full field set is unobserved
+    until a payment (M-BIL-1 step 4). (5) `Docs/api/api.md`'s Billing
+    section and the refreshed `openapi.json` were not supplied with the
+    guide — the frontend built to `billing-frontend.md` (its names, amounts
+    and interval now superseded by the wire as recorded) plus its own probes.
 
 ### HSN-0902 — Hasan's three changes (2026-09-02) — HELD at the end of Phase 0
 
