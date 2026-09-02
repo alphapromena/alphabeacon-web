@@ -205,8 +205,7 @@ async function main() {
   })
   const ownerToken = (ownerVerified.body as { token?: string })?.token ?? null
   if (!ownerToken) {
-    log('probe-billing: no owner token — cannot continue.')
-    await writeReport(null)
+    log('probe-billing: no owner token — cannot continue (the record is untouched).')
     process.exit(1)
   }
   const created = await call('create org', 'POST', '/orgs', {
@@ -216,8 +215,7 @@ async function main() {
   })
   const orgId = (created.body as { org?: { id?: string } })?.org?.id
   if (!orgId) {
-    log('probe-billing: no org id — cannot continue.')
-    await writeReport(null)
+    log('probe-billing: no org id — cannot continue (the record is untouched).')
     process.exit(1)
   }
   finding(`Fresh QA org: id ${orgId} ("${ORG_NAME}").`)
@@ -503,8 +501,8 @@ async function writeReport(orgId: string | null) {
   writeFileSync(REPORT_PATH, lines.join('\n') + '\n', 'utf8')
 }
 
-main().catch(async (error) => {
+main().catch((error) => {
+  // A crash mid-run leaves the record untouched: nothing half-observed is written.
   console.error(error)
-  await writeReport(null)
   process.exit(1)
 })
