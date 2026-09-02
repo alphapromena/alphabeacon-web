@@ -14,11 +14,17 @@
  * through the Studio's poller to an asset, and attaches nothing — the draft is
  * still the same proposal on Today afterwards, with the button still there.
  * No retry is ever pressed here; a failure is a failure.
+ *
+ * It renders an IMAGE (the cheapest proof). The VIDEO's `params.durationS`
+ * (HSN-0902) has its shape probe in `live-video-duration.spec.ts` and its
+ * positive proof — the job accepts it, the clip length matches — on the
+ * founder's own `LIVE_MEDIA=1` render, M-HSN-1 step 4. And the 402 rule
+ * (HSN-0902): even under LIVE_MEDIA, a zero wallet self-skips the render.
  */
 import type { Page } from '@playwright/test'
 import { expect, test } from './fixtures'
 import { SCREEN_SYNC } from './live-clocks'
-import { completeBrandSetup, signUpAndEnter } from './live-setup'
+import { completeBrandSetup, signUpAndEnter, skipUnlessFunded } from './live-setup'
 
 const API_BASE = process.env.VITE_API_BASE_URL
 const WITH_MEDIA = process.env.LIVE_MEDIA === '1'
@@ -61,9 +67,11 @@ test('a fresh owner + org with its brand set up', async ({ page }) => {
 
 test('one run, then Create visual on its result renders ONE image and attaches nothing', async ({
   page,
+  request,
 }) => {
   test.setTimeout(600_000)
   await login(page)
+  await skipUnlessFunded(page, request, 'the generate run and the render')
   await page.goto('/generate')
   await expect(page.getByText('1 draft')).toBeVisible({ timeout: SCREEN_SYNC })
   await page.getByRole('button', { name: 'Generate' }).click()

@@ -17,7 +17,7 @@
  */
 import type { Page } from '@playwright/test'
 import { expect, test } from './fixtures'
-import { signUpAndEnter } from './live-setup'
+import { signUpAndEnter, skipUnlessFunded } from './live-setup'
 import { ONE_CALL, SCREEN_SYNC } from './live-clocks'
 
 const API_BASE = process.env.VITE_API_BASE_URL
@@ -188,8 +188,11 @@ test('the brand voice writes to one row, and an edit does not reorder it', async
   )
 })
 
-test('Preview this tone returns a real sample from the platform', async ({ page }) => {
+test('Preview this tone returns a real sample from the platform', async ({ page, request }) => {
   await login(page)
+  // The 402 rule (HSN-0902): a preview is a paid run — on a zero wallet the
+  // wire refuses it at intake, and this spec is not the one that asserts that.
+  await skipUnlessFunded(page, request, 'Preview this tone')
   await openSettingsTab(page, 'Tones')
   await page.getByRole('link', { name: 'Create custom tone' }).first().click()
 

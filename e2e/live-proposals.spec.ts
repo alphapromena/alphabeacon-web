@@ -8,11 +8,21 @@
  * written by a scheduled run (once those land) appear here at all.
  *
  * Cost discipline (D-INT-I): ONE balanced text run, one tone.
+ *
+ * THE 402 RULE (ORDER HSN-0902): every test that needs a run — the run
+ * itself and everything the ledger shows after it — reads the wallet first
+ * and self-skips on a zero one with the honest reason (`skipUnlessFunded`);
+ * `live-generate` is the one spec that asserts the refusal.
  */
 import type { Page } from '@playwright/test'
 import { expect, test } from './fixtures'
 import { SCREEN_SYNC } from './live-clocks'
-import { completeBrandSetup, ensureToneLanguage, signUpAndEnter } from './live-setup'
+import {
+  completeBrandSetup,
+  ensureToneLanguage,
+  signUpAndEnter,
+  skipUnlessFunded,
+} from './live-setup'
 
 const API_BASE = process.env.VITE_API_BASE_URL
 const RUN = Date.now()
@@ -33,7 +43,7 @@ async function login(page: Page) {
   })
 }
 
-test('a fresh owner + org, then one balanced run', async ({ page }) => {
+test('a fresh owner + org, with its brand set up', async ({ page }) => {
   test.setTimeout(240_000)
   await signUpAndEnter(page, {
     name: 'QA Proposals Owner',
@@ -50,17 +60,27 @@ test('a fresh owner + org, then one balanced run', async ({ page }) => {
     toneDescription: 'Warm, specific, smells of coffee.',
     doRule: 'Name the roast date',
   })
+})
 
-  // One run — the drafts it produces become the proposals under test.
+test('one balanced run — the drafts it produces become the proposals under test', async ({
+  page,
+  request,
+}) => {
+  test.setTimeout(240_000)
+  await login(page)
+  await skipUnlessFunded(page, request, 'the balanced run')
+  // CUT-0831: a fresh browser needs the tone's language re-saved (sidecar).
+  await ensureToneLanguage(page, 'Roastery floor')
   await page.goto('/generate')
-  await expect(page.getByText('1 draft')).toBeVisible()
+  await expect(page.getByText('1 draft')).toBeVisible({ timeout: SCREEN_SYNC })
   await page.getByRole('button', { name: 'Generate' }).click()
   await expect(page.getByRole('heading', { name: /^1 draft$/ })).toBeVisible({ timeout: 120_000 })
 })
 
-test('after a RELOAD, Today shows the draft from the ledger', async ({ page }) => {
+test('after a RELOAD, Today shows the draft from the ledger', async ({ page, request }) => {
   test.setTimeout(120_000)
   await login(page)
+  await skipUnlessFunded(page, request, 'the run this ledger read depends on')
   // A different browser context from the run: nothing local survives, so
   // anything on screen came from the platform.
   await page.goto('/today')
@@ -75,9 +95,13 @@ test('after a RELOAD, Today shows the draft from the ledger', async ({ page }) =
   await expect(card).toContainText(/records this as posted/)
 })
 
-test('approving records it as posted, and the decision survives a reload', async ({ page }) => {
+test('approving records it as posted, and the decision survives a reload', async ({
+  page,
+  request,
+}) => {
   test.setTimeout(120_000)
   await login(page)
+  await skipUnlessFunded(page, request, 'the run this approval depends on')
   await page.goto('/today')
   await expect(page.locator('[aria-busy="true"]')).toHaveCount(0, { timeout: SCREEN_SYNC })
   await expect(page.getByRole('main').getByRole('listitem').first()).toBeVisible({
@@ -117,9 +141,10 @@ test('approving records it as posted, and the decision survives a reload', async
   )
 })
 
-test('declining asks why, keeps the row, and is reversible', async ({ page }) => {
+test('declining asks why, keeps the row, and is reversible', async ({ page, request }) => {
   test.setTimeout(240_000)
   await login(page)
+  await skipUnlessFunded(page, request, 'the second run this decline depends on')
 
   // CUT-0831: a fresh browser needs the tone's language re-saved (sidecar).
   await ensureToneLanguage(page, 'Roastery floor')

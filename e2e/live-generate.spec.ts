@@ -9,11 +9,24 @@
  *   only history there is until a list-runs endpoint exists.
  *
  * Cost discipline (D-INT-I): ONE balanced run, one tone.
+ *
+ * THE 402 RULE (ORDER HSN-0902, 2026-09-02): this is THE ONE spec that
+ * asserts the wallet refusal. A fresh org's wallet is zero (the plan is the
+ * only funding — open-item 46), so on an unfunded org the run is refused at
+ * intake with `402 wallet_insufficient` and the page renders the balance
+ * state; on a funded org that test skips and the real run below runs. Every
+ * other generating spec self-skips through `skipUnlessFunded` instead.
  */
 import type { Page } from '@playwright/test'
 import { expect, test } from './fixtures'
 import { SCREEN_SYNC } from './live-clocks'
-import { ensureToneLanguage, completeBrandSetup, signUpAndEnter } from './live-setup'
+import {
+  ensureToneLanguage,
+  completeBrandSetup,
+  readWallet,
+  signUpAndEnter,
+  skipUnlessFunded,
+} from './live-setup'
 
 const API_BASE = process.env.VITE_API_BASE_URL
 const RUN = Date.now()
@@ -53,9 +66,40 @@ test('a fresh owner + org, made through the product', async ({ page }) => {
   })
 })
 
-test('one balanced run returns a draft with its tone and its rationale', async ({ page }) => {
+test('on an unfunded org the run is refused with 402 wallet_insufficient, and the page keeps the form', async ({
+  page,
+  request,
+}) => {
   test.setTimeout(240_000)
   await login(page)
+  const wallet = await readWallet(page, request)
+  test.skip(
+    wallet.availableCents > 0,
+    'the org is funded — the 402 walk needs an unfunded org; the run below is the proof instead',
+  )
+  await ensureToneLanguage(page, 'Roastery floor')
+  await page.goto('/generate')
+  await expect(page.getByText('1 draft')).toBeVisible({ timeout: SCREEN_SYNC })
+  await page.getByRole('button', { name: 'Generate' }).click()
+
+  // The refusal is a STATE, not a toast (INT-9): the balance is shown, the
+  // instruction is honest, nothing ran and nothing was charged — and the
+  // form is kept, so the user is not punished for the platform's accounting.
+  const refusal = page.getByRole('status').filter({ hasText: /can't cover this generation/ })
+  await expect(refusal).toBeVisible({ timeout: 60_000 })
+  await expect(refusal).toContainText(/Available: \$0\.00/)
+  await expect(refusal).toContainText('Nothing was generated and nothing was charged')
+  await expect(page.getByRole('button', { name: 'Generate' })).toBeEnabled()
+  await expect(page.getByRole('heading', { name: /^1 draft$/ })).toHaveCount(0)
+})
+
+test('one balanced run returns a draft with its tone and its rationale', async ({
+  page,
+  request,
+}) => {
+  test.setTimeout(240_000)
+  await login(page)
+  await skipUnlessFunded(page, request, 'the balanced run')
   // CUT-0831: this test is a fresh browser, so the tone's language (per-
   // browser sidecar until the backend persists it) must be re-saved here.
   await ensureToneLanguage(page, 'Roastery floor')

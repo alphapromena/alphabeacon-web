@@ -16,7 +16,7 @@
 import type { Page } from '@playwright/test'
 import { expect, test } from './fixtures'
 import { AFTER_COUNTRY, SCREEN_SYNC } from './live-clocks'
-import { signUpAndEnter } from './live-setup'
+import { readWallet, signUpAndEnter } from './live-setup'
 
 const API_BASE = process.env.VITE_API_BASE_URL
 const RUN = Date.now()
@@ -71,8 +71,19 @@ test('a fresh owner + org, made through the product', async ({ page }) => {
   })
 })
 
-test('the balance chip shows money, and it is the AVAILABLE money', async ({ page }) => {
+/**
+ * The sandbox funds NOTHING at creation since 2026-09-02 (Ward's model — the
+ * plan is the only funding; open-item 46, measured on org 1692). The three
+ * starter-funding assertions below are BIL-0902's to re-target on its held
+ * branch; here they self-skip on a zero wallet with the reason, so the gate
+ * carries no red that is only "no funding" (the HSN-0902 402 rule).
+ */
+const NO_STARTER_FUNDING =
+  'the sandbox funds nothing at creation (Ward, 2026-09-02; open-item 46) — the starter-funding assertion is BIL-0902’s to re-target, skipped rather than red'
+
+test('the balance chip shows money, and it is the AVAILABLE money', async ({ page, request }) => {
   await login(page)
+  test.skip((await readWallet(page, request)).availableCents === 0, NO_STARTER_FUNDING)
   // Documented starter funding: 5000 cents, nothing held. The chip lives in
   // the header; the dashboard tile shows the same number, so scope to one.
   const chip = page.getByRole('banner').getByRole('link', { name: '$50.00', exact: true })
@@ -85,8 +96,12 @@ test('the balance chip shows money, and it is the AVAILABLE money', async ({ pag
   await expect(page.getByText(/\bcredits\b/i)).toHaveCount(0)
 })
 
-test('H3 is a balance and a real usage read-back, in both allowed grains', async ({ page }) => {
+test('H3 is a balance and a real usage read-back, in both allowed grains', async ({
+  page,
+  request,
+}) => {
   await login(page)
+  test.skip((await readWallet(page, request)).availableCents === 0, NO_STARTER_FUNDING)
   await page.goto('/billing/balance')
   await expect(page.locator('[aria-busy="true"]')).toHaveCount(0)
 
@@ -129,9 +144,9 @@ test('the wallet and usage endpoints answer the shapes the UI is built on', asyn
   const wallet = (await (
     await request.get(`${API_BASE}/orgs/${orgId}/alphastudio/wallet`, { headers: auth })
   ).json()) as { cents: number; heldCents: number; availableCents: number }
-  expect(wallet).toEqual({ cents: 5000, heldCents: 0, availableCents: 5000 })
-  // The invariant every screen leans on.
+  // The invariant every screen leans on — true at any funding.
   expect(wallet.availableCents).toBe(wallet.cents - wallet.heldCents)
+  expect(wallet.heldCents).toBe(0)
 
   const to = new Date().toISOString().slice(0, 10)
   const from = new Date(Date.now() - 29 * 86_400_000).toISOString().slice(0, 10)
@@ -152,4 +167,8 @@ test('the wallet and usage endpoints answer the shapes the UI is built on', asyn
     { headers: auth },
   )
   expect(bad.status()).toBe(400)
+
+  // Last, so the shape assertions above stand whatever the funding is.
+  test.skip(wallet.availableCents === 0, NO_STARTER_FUNDING)
+  expect(wallet).toEqual({ cents: 5000, heldCents: 0, availableCents: 5000 })
 })

@@ -15,11 +15,75 @@
  * something about tone creation writes it out itself; a spec that just needs a
  * tone to exist calls in here.
  */
-import { expect, type Page } from '@playwright/test'
+import { expect, test, type APIRequestContext, type Page } from '@playwright/test'
 import { SCREEN_SYNC } from './live-clocks'
 
 /** Every dev verification code is `000000` (api.md, Auth). */
 const CODE = '000000'
+
+const API_BASE = process.env.VITE_API_BASE_URL
+
+/**
+ * The session token the app stored (`src/api/session.ts`, tab-scoped first,
+ * remembered second) — for a spec's OWN reads with the same Bearer. It is
+ * used, never printed.
+ */
+export async function sessionToken(page: Page): Promise<string> {
+  const raw = await page.evaluate(
+    () =>
+      window.sessionStorage.getItem('ab-live-session') ??
+      window.localStorage.getItem('ab-live-session'),
+  )
+  if (!raw) throw new Error('no live session in storage — log in first')
+  return (JSON.parse(raw) as { token: string }).token
+}
+
+export interface WalletRead {
+  orgId: string
+  token: string
+  availableCents: number
+}
+
+/** The working org and its wallet, straight from the wire. */
+export async function readWallet(page: Page, request: APIRequestContext): Promise<WalletRead> {
+  const token = await sessionToken(page)
+  const auth = { authorization: `Bearer ${token}` }
+  const orgs = (await (await request.get(`${API_BASE}/me/orgs`, { headers: auth })).json()) as {
+    items: { id: string }[]
+  }
+  const orgId = orgs.items[0].id
+  const wallet = (await (
+    await request.get(`${API_BASE}/orgs/${orgId}/alphastudio/wallet`, { headers: auth })
+  ).json()) as { availableCents: number }
+  return { orgId, token, availableCents: wallet.availableCents }
+}
+
+/**
+ * THE 402 RULE for the live gate (founder, ORDER HSN-0902, 2026-09-02).
+ *
+ * A fresh org's wallet is ZERO — the plan is the only funding (Ward's model,
+ * measured 2026-09-02; open-item 46) — so every generation answers
+ * `402 wallet_insufficient` at intake, before any spend. ONE spec asserts
+ * that refusal (`live-generate`); every OTHER generating spec calls this
+ * first and self-skips with the honest reason, the way `live-create-visual`
+ * self-skips on `LIVE_MEDIA`. "No red that is only no funding."
+ *
+ * The wallet is read BEFORE any body is sent: a funded org still runs the
+ * real thing, and an unfunded one never sends a body it knows the wire will
+ * refuse. A precondition, never an assertion.
+ */
+export async function skipUnlessFunded(
+  page: Page,
+  request: APIRequestContext,
+  what: string,
+): Promise<WalletRead> {
+  const wallet = await readWallet(page, request)
+  test.skip(
+    wallet.availableCents === 0,
+    `402 wallet_insufficient would refuse ${what}: the org's wallet is $0.00 — the plan is the only funding (open-item 46), not a product failure`,
+  )
+  return wallet
+}
 
 /**
  * Signup → verify → THE APP, which since ONB-0827 (D-ONB-C) is the whole
