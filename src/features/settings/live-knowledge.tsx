@@ -81,6 +81,17 @@ export function LiveKnowledge() {
   const knowledge = useKnowledgeActions()
   const studio = useStudioActions()
   const [collectionId, setCollectionId] = useState<string | null>(null)
+  /**
+   * The same id, readable from ANY closure. A document submitted in the
+   * first seconds after this screen opens can resolve the collection itself
+   * (below) — and the list refresh that follows must read the id that was
+   * actually written to, not the null the click's render still held.
+   */
+  const collectionRef = useRef<string | null>(null)
+  const adoptCollection = (id: string) => {
+    collectionRef.current = id
+    setCollectionId(id)
+  }
   const [sources, setSources] = useState<KnowledgeSource[]>([])
   const [files, setFiles] = useState<MediaFileRow[] | null>(null)
   const [filesError, setFilesError] = useState<string | null>(null)
@@ -102,19 +113,23 @@ export function LiveKnowledge() {
   useEffect(() => {
     void knowledge.ensureCollection().then(async (id) => {
       if (cancelled.current || !id) return
-      setCollectionId(id)
+      adoptCollection(id)
       const list = await knowledge.listSources(id)
       if (!cancelled.current) setSources(list)
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps -- once per org
   }, [knowledge.orgId])
 
+  // Reads the ref, never the state: a refresh asked for by a submit that
+  // itself resolved the collection would otherwise see null and do nothing —
+  // the row it just wrote never appearing (found by the HSN-0902 gate).
   const refresh = useCallback(async () => {
-    if (!collectionId) return
-    const list = await knowledge.listSources(collectionId)
+    const id = collectionRef.current
+    if (!id) return
+    const list = await knowledge.listSources(id)
     if (!cancelled.current) setSources(list)
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- stable per collection
-  }, [collectionId])
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- stable per org
+  }, [knowledge.orgId])
 
   /**
    * The Files rows, from the wire and nowhere else. On a refusal the section
@@ -199,20 +214,27 @@ export function LiveKnowledge() {
             }
             return
           }
-          if (!collectionId) {
-            // The RAG collection could not be created or found — the one
-            // path that still needs it. The media door above never does.
+          // The RAG collection is created LAZILY, and since MED-0831 the
+          // form no longer waits on it (the media door needs none) — so a
+          // document dropped in the first seconds after this screen opens
+          // used to land here BEFORE the id had arrived and read "Something
+          // went wrong on our side" (found by the HSN-0902 gate; the same
+          // red BIL-0902's round 1 saw). Resolve it at submit time instead:
+          // the one path that needs it asks for it, once, and only a
+          // collection that really cannot be created or found is an error.
+          let collection = collectionRef.current
+          if (!collection) {
+            collection = await knowledge.ensureCollection()
+            if (cancelled.current) return
+            if (collection) adoptCollection(collection)
+          }
+          if (!collection) {
             setBusy(false)
             setError(MESSAGES.errors.generic)
             return
           }
           report(
-            await knowledge.uploadFile(
-              collectionId,
-              first.file,
-              first.mediaType,
-              upload.description,
-            ),
+            await knowledge.uploadFile(collection, first.file, first.mediaType, upload.description),
           )
         }}
       />

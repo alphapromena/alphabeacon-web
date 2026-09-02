@@ -20,7 +20,7 @@
 import type { Page } from '@playwright/test'
 import { expect, test } from './fixtures'
 import { SCREEN_SYNC } from './live-clocks'
-import { ensureToneLanguage, openSettingsTab, signUpAndEnter } from './live-setup'
+import { ensureToneLanguage, openSettingsTab, signUpAndEnter, skipUnlessFunded } from './live-setup'
 
 const API_BASE = process.env.VITE_API_BASE_URL
 const RUN = Date.now()
@@ -180,9 +180,15 @@ test('completing the four brand entities unlocks generation', async ({ page }) =
   await expect(page.getByRole('heading', { name: 'Finish setting up' })).toHaveCount(0)
 })
 
-test('the unlocked run really runs — one balanced draft', async ({ page }) => {
+test('the unlocked run really runs — one balanced draft', async ({ page, request }) => {
   test.setTimeout(180_000)
   await login(page)
+  // The 402 rule (HSN-0902): the gate being OPEN is proved above; whether
+  // the run is PAID for is the wallet's business — on a zero wallet the
+  // wire refuses it at intake, and `live-generate` is the spec that
+  // asserts that refusal. This one self-skips rather than reading a
+  // funding refusal as a closed gate.
+  await skipUnlessFunded(page, request, 'the balanced run that proves the unlocked gate')
   // CUT-0831: a fresh browser needs the tone's language re-saved (sidecar).
   await ensureToneLanguage(page, TONE_NAME)
   await page.goto('/generate')

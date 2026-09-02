@@ -10,6 +10,7 @@
  */
 import type { Page } from '@playwright/test'
 import { expect, test } from './fixtures'
+import { SCREEN_SYNC } from './live-clocks'
 import { signUpAndEnter } from './live-setup'
 
 const API_BASE = process.env.VITE_API_BASE_URL
@@ -45,7 +46,12 @@ test('pasted text becomes a Ready source, and removing it removes it', async ({ 
   test.setTimeout(150_000)
   await login(page)
   await page.goto('/settings/knowledge')
-  await expect(page.locator('[aria-busy="true"]')).toHaveCount(0)
+  // A reload's whole screen sync, at the SCREEN_SYNC rung (a decision taken
+  // on purpose — live-clocks.ts): since MED-0831 this screen fans out two
+  // more lazy reads on open — the RAG collection + its sources, and the
+  // media asset list — each able to land on a cold container. The suite's
+  // 5 s default failed here in BOTH rounds of the HSN-0902 gate (2026-09-02).
+  await expect(page.locator('[aria-busy="true"]')).toHaveCount(0, { timeout: SCREEN_SYNC })
 
   await page.getByLabel('Or paste some text').fill('Roasting notes')
   await page.getByLabel('Text to add').fill('Ethiopia Guji, washed. Roast date matters most.')
@@ -70,7 +76,12 @@ test('a FILE uploads straight to storage from the browser (open-item 24)', async
   test.setTimeout(150_000)
   await login(page)
   await page.goto('/settings/knowledge')
-  await expect(page.locator('[aria-busy="true"]')).toHaveCount(0)
+  // A reload's whole screen sync, at the SCREEN_SYNC rung (a decision taken
+  // on purpose — live-clocks.ts): since MED-0831 this screen fans out two
+  // more lazy reads on open — the RAG collection + its sources, and the
+  // media asset list — each able to land on a cold container. The suite's
+  // 5 s default failed here in BOTH rounds of the HSN-0902 gate (2026-09-02).
+  await expect(page.locator('[aria-busy="true"]')).toHaveCount(0, { timeout: SCREEN_SYNC })
 
   // HSN-04: the form asks WHAT this is and for a description before any file
   // leaves the browser — the description rides on the presign as `desc`
