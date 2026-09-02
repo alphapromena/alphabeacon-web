@@ -180,8 +180,12 @@ export interface FollowedSource {
 /** Uploading → Processing → Ready | Failed. Per file, mixed within one batch. */
 export type KnowledgeStatus = 'uploading' | 'processing' | 'ready' | 'failed'
 
-/** What the user said the upload IS, before it left the browser (HSN-04). */
-export type KnowledgeUploadKind = 'image' | 'video' | 'document'
+/**
+ * What the user said the upload IS, before it left the browser (HSN-04).
+ * `brandkit` (HSN-0902): the org's brand guidelines — a PDF the user never
+ * describes, because it is always the branding kit.
+ */
+export type KnowledgeUploadKind = 'image' | 'video' | 'document' | 'brandkit'
 
 export interface KnowledgeDoc {
   id: string
@@ -208,9 +212,10 @@ export interface KnowledgeDoc {
 export interface MediaFileRecord {
   assetId: string
   desc: string
-  kind: 'image' | 'video'
-  /** MED-0831/R: the demo mirrors a wire that echoes the presign's role. */
-  role?: 'logo'
+  /** The wire's word: a PDF lists back as `document` (HSN-0902 Phase 0). */
+  kind: 'image' | 'video' | 'document'
+  /** The wire ECHOES the presign's role (measured 2026-09-02); the demo mirrors it. */
+  role?: 'logo' | 'brandkit'
 }
 
 export type PlanTier = 'free' | 'pro' | 'studio'

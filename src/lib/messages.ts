@@ -115,6 +115,10 @@ export const MESSAGES = {
     // a Knowledge upload may not wear it — refused trimmed, case-insensitive.
     knowledgeDescReserved:
       '“logo” is reserved for your organization’s logo — set that in Settings › Organization, and describe this file another way.',
+    // HSN-0902: "brandkit" marks the brand kit the same way. The Brand kit
+    // type sends it by itself; typed as a free description it is refused.
+    knowledgeDescReservedBrandKit:
+      '“brandkit” is reserved for your brand kit — choose the Brand kit type to upload it, and describe this file another way.',
     // The brand-kit caps (HSN-04): ceilings the screens enforce, never a
     // silent trim. Existing entries above a cap stay listed.
     sourcesCapReached: 'You can follow at most 10 sources. Remove one to add another.',
@@ -186,6 +190,13 @@ export const MESSAGES = {
       'That visual did not go through. Check your Studio renders before trying again — a retry can bill again.',
     /** The job itself ended failed; the upstream reason follows when there is one. */
     visualRenderFailed: 'The platform could not render this visual.',
+    /**
+     * HSN-0902: a video's duration is whole seconds from 1 up to the plan's
+     * maximum, which the control shows beside itself — so the message names
+     * the rule and points at the number rather than restating a table.
+     */
+    visualDurationRange:
+      'Duration must be a whole number of seconds, from 1 up to the maximum shown for this quality.',
     /** Static demo only: the Studio simulation refuses a short credit balance. */
     visualCreditsShort:
       'Not enough credits for this visual. Your settings are kept — top up and come back to it.',

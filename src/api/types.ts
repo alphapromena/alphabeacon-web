@@ -694,9 +694,10 @@ export interface ApiMediaAsset {
   /** The `desc` the presign was minted with (MED-0831 Phase 0). */
   desc?: string
   /**
-   * MED-0831/R (A2): whether the list echoes the presign's `role` is
-   * UNKNOWN — read it when present ("logo" is the only value today), never
-   * rely on it; the org logo falls back to the exact-`desc` lookup.
+   * The presign's `role`, ECHOED by the list — MED-0831/R's A2, measured
+   * 2026-09-02 (HSN-0902 Phase 0, org 1692): `"logo"` and `"brandkit"` both
+   * come back on the row. Still typed open because the proxy forwards it;
+   * the org logo keeps the exact-`desc` lookup as its read side regardless.
    */
   role?: string
   /**
@@ -778,11 +779,12 @@ export interface MediaJobFanOutReceipt {
  *
  * `posts` holds EXACTLY ONE entry by law (HSN-02, from PROBE-INT13 evidence:
  * the multi-post path billed and then 502'd; single-post is the proven-clean
- * control). `params` is always `{}` and `collection` is always
- * `{ use: true }` — hardcoded (MED-0831 ruling H5; it was `false` under
- * HSN-02 and the founder reversed it), never a UI toggle. The org's media
- * uploads — the Knowledge Files and the logo — are what the collection
- * offers a render.
+ * control). `collection` is always `{ use: true }` — hardcoded (MED-0831
+ * ruling H5; it was `false` under HSN-02 and the founder reversed it), never
+ * a UI toggle. The org's media uploads — the Knowledge Files, the brand kit
+ * and the logo — are what the collection offers a render. `params` was
+ * always `{}` under HSN-02; since HSN-0902 it is a VIDEO-ONLY key carrying
+ * `durationS` and is ABSENT from an image body (see `SocialPostsMediaParams`).
  */
 export interface SocialPostMediaTone {
   id: string
@@ -808,6 +810,20 @@ export interface SocialPostMediaStyle {
   logo: boolean
 }
 
+/**
+ * `params` on a VIDEO body (HSN-0902, Hasan 2026-09-02: `"params": {
+ * "durationS": 8 }`). `durationS` is whole SECONDS. The wire validates it
+ * BEFORE the wallet check — a non-integer and an over-max both answer 400
+ * `bad_request` (measured on org 1692, requests `a13b2826-…` and
+ * `7c0f8c45-…`) with a sentence that names neither the field nor the limit,
+ * so the per-plan maximum is the client's table (`VIDEO_DURATION_MAX_S` in
+ * `src/data/studio.ts`). An IMAGE body carries no `params` key at all: such
+ * a body clears validation (402 on the zero wallet, request `5a74875a-…`).
+ */
+export interface SocialPostsMediaParams {
+  durationS: number
+}
+
 export interface SocialPostsMediaRequest {
   capability: 'social-posts.media'
   plan: ApiPlan
@@ -816,7 +832,8 @@ export interface SocialPostsMediaRequest {
   style: SocialPostMediaStyle
   /** Free text, at most 6 entries (founder-confirmed). */
   guidance: string[]
-  params: Record<string, never>
+  /** Video only — a top-level key, absent on an image body (HSN-0902). */
+  params?: SocialPostsMediaParams
   collection: { use: true }
 }
 
@@ -829,12 +846,15 @@ export interface ApiMediaJobList {
  * `POST .../media/assets/presign` → 201. The org's own file, in: `PUT` the
  * bytes to `uploadUrl` with exactly this `mediaType` (it is part of the
  * signature) via `uploadToPresignedUrl`. The request body is
- * `{ mediaType, desc }`, plus `role: "logo"` when the upload IS a logo
- * (MED-0831/R, ASSUMED until Hasan's production review; the key is omitted
- * otherwise) — `desc` is REQUIRED by the wire (400 without it;
- * open-item 43) — and the door filters nothing by type at presign time
- * (MED-0831 Phase 0 measured 201 for all eight probed types); the app's
- * four-type limit is a client allowlist. Nothing is metered.
+ * `{ mediaType, desc }`, plus `role` when the upload IS something —
+ * `"logo"` for the org logo, `"brandkit"` for the brand kit (MED-0831/R,
+ * MEASURED by HSN-0902 Phase 0 on 2026-09-02: both answer 201 and both
+ * are echoed by the list; the key is omitted otherwise) — `desc` is
+ * REQUIRED by the wire (400 without it; open-item 43). The door filters
+ * nothing by type at presign time WITHOUT a role (MED-0831 Phase 0
+ * measured 201 for all eight probed types) but BINDS `"brandkit"` to
+ * `application/pdf` (a PNG with it → 400 `bad_request`); the app's type
+ * limits are a client allowlist that mirrors that. Nothing is metered.
  */
 export interface MediaUploadTicket {
   assetId: string

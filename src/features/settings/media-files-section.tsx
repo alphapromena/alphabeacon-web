@@ -13,10 +13,11 @@
  * demo keeps no bytes, and an affordance that could never work would be the
  * disabled-teasing the design law forbids.
  */
-import { ExternalLink, Film, Image as ImageIcon, Trash2 } from 'lucide-react'
+import { ExternalLink, FileText, Film, Image as ImageIcon, Trash2 } from 'lucide-react'
 import { ConfirmDialog } from '@/components/ab/confirm-dialog'
 import { SkeletonList } from '@/components/ab/skeletons'
 import { Button } from '@/components/ui/button'
+import { isBrandKitAsset } from '@/data/studio'
 import { MESSAGES } from '@/lib/messages'
 
 export interface MediaFileRow {
@@ -24,14 +25,22 @@ export interface MediaFileRow {
   desc?: string
   kind?: string
   /**
-   * MED-0831/R (A2/A3): shown as a badge ONLY when the wire row carries
-   * `role === "logo"` — whether the list echoes the presign's role is
-   * unknown, so absence hides nothing and claims nothing.
+   * MED-0831/R (A2/A3), measured by HSN-0902 Phase 0: the wire row ECHOES
+   * the presign's role, and the badge shows exactly what the row carries —
+   * `logo` or `brandkit` — never what the app remembers sending.
    */
   role?: string
 }
 
-const KIND_WORD: Record<string, string> = { image: 'Image', video: 'Video' }
+const KIND_WORD: Record<string, string> = { image: 'Image', video: 'Video', document: 'Document' }
+/** The badge word per echoed role — an unknown role shows no badge, claims nothing. */
+const ROLE_BADGE: Record<string, string> = { logo: 'logo', brandkit: 'brand kit' }
+
+function iconFor(kind: string | undefined) {
+  if (kind === 'video') return Film
+  if (kind === 'document') return FileText
+  return ImageIcon
+}
 
 export function MediaFilesSection({
   files,
@@ -66,8 +75,15 @@ export function MediaFilesSection({
       ) : (
         <ul className="flex flex-col gap-2">
           {files.map((file) => {
-            const name = file.desc || file.assetId
-            const Icon = file.kind === 'video' ? Film : ImageIcon
+            // HSN-0902: the brand kit is listed like every other file, under
+            // its own label — its wire `desc` is the reserved marker, not a
+            // sentence anyone wrote — and typed by what it can only be: a PDF
+            // (the door binds the role to that type).
+            const brandKit = isBrandKitAsset(file)
+            const name = brandKit ? 'Brand kit' : file.desc || file.assetId
+            const kindWord = brandKit ? 'PDF' : (KIND_WORD[file.kind ?? ''] ?? file.kind ?? 'File')
+            const badge = file.role ? ROLE_BADGE[file.role] : undefined
+            const Icon = iconFor(file.kind)
             return (
               <li
                 key={file.assetId}
@@ -78,15 +94,13 @@ export function MediaFilesSection({
                   <div className="flex min-w-0 flex-col">
                     <span className="flex min-w-0 items-center gap-1.5">
                       <span className="truncate text-sm">{name}</span>
-                      {file.role === 'logo' && (
+                      {badge && (
                         <span className="shrink-0 rounded-full bg-muted px-1.5 py-0.5 text-[10px] tracking-wide text-muted-foreground uppercase">
-                          logo
+                          {badge}
                         </span>
                       )}
                     </span>
-                    <span className="text-xs text-muted-foreground">
-                      {KIND_WORD[file.kind ?? ''] ?? file.kind ?? 'File'}
-                    </span>
+                    <span className="text-xs text-muted-foreground">{kindWord}</span>
                   </div>
                 </div>
                 <div className="flex shrink-0 items-center gap-2">

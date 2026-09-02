@@ -125,8 +125,10 @@ export function OrgLogoLive({ orgName }: { orgName: string }) {
     }
 
     // MED-0831/R (A2): the logo sends BOTH markers — `role: "logo"` on the
-    // presign and the exact `desc` — because whether the list echoes `role`
-    // is unknown; the desc lookup below stays the read-side truth.
+    // presign and the exact `desc`. The list DOES echo `role` (measured
+    // 2026-09-02, HSN-0902 Phase 0); the exact-desc lookup stays the
+    // read-side truth anyway — one marker to scan, and the reserved word
+    // keeps it unique — so nothing here changed when the assumption did.
     const result = await studio.uploadMediaAsset(file, file.type, LOGO_ASSET_DESC, 'logo')
     if (cancelled.current) return
     setBusy(false)

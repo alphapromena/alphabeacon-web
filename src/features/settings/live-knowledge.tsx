@@ -69,7 +69,12 @@ function describeMediaUploadFailure(result: Extract<UploadMediaAssetResult, { ok
     result.cleanup === 'deleted'
       ? MESSAGES.errors.mediaUploadFailedCleaned
       : MESSAGES.errors.mediaUploadFailedLeft
-  return `${base} (asset ${result.assetId})`
+  // The wall, named (HSN-0902): a PUT that never reached storage — the
+  // bucket's CORS or the network — carries its own sentence, and the status
+  // line keeps it, as the logo's does, so a browser-side wall is never read
+  // as a studio-side refusal.
+  const wall = result.code === 'network_error' && result.message ? `${result.message} ` : ''
+  return `${wall}${base} (asset ${result.assetId})`
 }
 
 export function LiveKnowledge() {
@@ -159,10 +164,10 @@ export function LiveKnowledge() {
           file's real MIME is what goes on the presign, checked against the
           chosen type — the old `text/plain` fallback for anything unknown is
           gone, because a relabelled file is a lie the extractor pays for.
-          MED-0831 (H1): the chosen type also picks the DOOR — image and
-          video are media assets, document is a RAG source, byte-for-byte
-          the call it has always been. The media door needs no collection,
-          so the form no longer waits on one. */}
+          MED-0831 (H1): the chosen type also picks the DOOR — image, video
+          and the brand kit (HSN-0902) are media assets, document is a RAG
+          source, byte-for-byte the call it has always been. The media door
+          needs no collection, so the form no longer waits on one. */}
       <KnowledgeUploadForm
         disabled={busy}
         onUpload={async (chosen, upload) => {
@@ -181,7 +186,13 @@ export function LiveKnowledge() {
             )
             setBusy(false)
             if (result.ok) {
-              toastSuccess('Uploaded — the studio has it now')
+              // The brand kit reads as the logo does (HSN-0902, M-HSN-1):
+              // one closed pair on the wire, one ruled status line.
+              toastSuccess(
+                upload.kind === 'brandkit'
+                  ? 'Sent to the studio.'
+                  : 'Uploaded — the studio has it now',
+              )
               void refreshFiles()
             } else {
               setError(describeMediaUploadFailure(result))

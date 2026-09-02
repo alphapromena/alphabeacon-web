@@ -17,7 +17,7 @@ import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { Spinner } from '@/components/ui/spinner'
 import { useDataDispatch, useKnowledgeDocs, useLiveMode, useMediaFiles } from '@/data/provider'
-import { isMediaUploadKind } from '@/data/studio'
+import { assetKindForUpload, isMediaUploadKind } from '@/data/studio'
 import { KnowledgeUploadForm } from './knowledge-upload-form'
 import { LiveKnowledge } from './live-knowledge'
 import { MediaFilesSection } from './media-files-section'
@@ -57,9 +57,10 @@ function StaticKnowledgeScreen() {
     <>
       {/* HSN-04: the same type + description form the live screen runs; the
           verdict below is the demo's, and it says so. MED-0831 (H1): the
-          chosen type picks the DOOR here too — image and video become
-          simulated media files (the media door has no lifecycle, so the row
-          lands whole), documents keep the ingestion simulation. */}
+          chosen type picks the DOOR here too — image, video and the brand
+          kit (HSN-0902) become simulated media files (the media door has no
+          lifecycle, so the row lands whole), documents keep the ingestion
+          simulation. */}
       <KnowledgeUploadForm
         multiple
         onUpload={(files, upload) => {
@@ -72,8 +73,10 @@ function StaticKnowledgeScreen() {
                 file: {
                   assetId: `md_${Date.now()}_${index}`,
                   desc: upload.description,
-                  kind,
-                  // The demo mirrors a wire that echoes the role (MED-0831/R).
+                  // The wire's own word for the row — a PDF is a `document`.
+                  kind: assetKindForUpload(kind),
+                  // The demo mirrors the wire, which echoes the role
+                  // (MED-0831/R, measured by HSN-0902 Phase 0).
                   ...(upload.role ? { role: upload.role } : {}),
                 },
               })

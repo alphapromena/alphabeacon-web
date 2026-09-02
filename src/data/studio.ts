@@ -42,7 +42,7 @@ import type {
 import { joinRules } from '@/data/adapters/brand-adapter'
 import type { AuthActionResult } from '@/data/auth'
 import { useLiveWorkingOrgId } from '@/data/provider'
-import type { KnowledgeUploadKind, Tone } from '@/data/types'
+import type { KnowledgeUploadKind, MediaFileRecord, Tone } from '@/data/types'
 
 export type {
   ApiCapabilityCatalog as CapabilityCatalog,
@@ -118,53 +118,117 @@ export const KNOWLEDGE_UPLOAD_KINDS: {
     hint: 'PDF, Word, plain text or Markdown.',
     mediaTypes: EXTRACTABLE_MEDIA_TYPES,
   },
+  // HSN-0902: the brand guidelines. PDF ONLY — a client allowlist that the
+  // door happens to share (Phase 0: `role: "brandkit"` on a PNG → 400). No
+  // description is ever asked: it is always the brand kit.
+  {
+    kind: 'brandkit',
+    label: 'Brand kit',
+    hint: 'PDF — your brand guidelines. No description needed.',
+    mediaTypes: ['application/pdf'],
+  },
 ]
 
+/** The Knowledge kinds that are MEDIA ASSETS — everything but a document. */
+export type MediaUploadKind = Exclude<KnowledgeUploadKind, 'document'>
+
 /**
- * Which door a Knowledge upload goes through (MED-0831, ruling H1): images
- * and videos are MEDIA ASSETS — presign → PUT → done, the platform picks the
- * asset up by itself with no registration call — while documents stay on the
- * RAG door byte-for-byte. A type guard, so the media branch KNOWS its kind.
- * Both screens read this one function, so the routing is structural rather
- * than a matter of care.
+ * Which door a Knowledge upload goes through (MED-0831, ruling H1): images,
+ * videos and — since HSN-0902 — the brand kit are MEDIA ASSETS — presign →
+ * PUT → done, the platform picks the asset up by itself with no registration
+ * call — while documents stay on the RAG door byte-for-byte. A type guard,
+ * so the media branch KNOWS its kind. Both screens read this one function,
+ * so the routing is structural rather than a matter of care.
  */
-export function isMediaUploadKind(kind: KnowledgeUploadKind): kind is 'image' | 'video' {
+export function isMediaUploadKind(kind: KnowledgeUploadKind): kind is MediaUploadKind {
   return kind !== 'document'
+}
+
+/**
+ * What the wire will CALL the asset (its list row's `kind`): a PDF lists back
+ * as `document` (HSN-0902 Phase 0, org 1692). The static demo mirrors the
+ * wire's word so the Files row reads the same in both modes.
+ */
+export function assetKindForUpload(kind: MediaUploadKind): MediaFileRecord['kind'] {
+  return kind === 'brandkit' ? 'document' : kind
 }
 
 /** The `desc` that marks the org's logo asset (MED-0831, ruling H3). */
 export const LOGO_ASSET_DESC = 'logo'
 
 /**
- * The presign body's `role` vocabulary (MED-0831/R, assumption A1 — Hasan
- * delegated, founder-approved, ASSUMED until his production review): the
- * only value today is `"logo"`, and when an upload is not a logo the key is
- * OMITTED from the body — never null.
+ * The `desc` that marks the brand kit (HSN-0902): the user never types a
+ * description for it, so the reserved word IS the description — the exact
+ * pattern of the logo, sent beside `role: "brandkit"`.
  */
-export type MediaAssetRole = 'logo'
+export const BRAND_KIT_ASSET_DESC = 'brandkit'
 
 /**
- * Which role a Knowledge upload carries (MED-0831/R, A3/A4): only the IMAGE
- * path can mark a logo — never Video, never Document — and an unmarked
- * upload carries none (undefined here, absent on the wire). Both screens
- * read this one function, the routing law's pattern.
+ * The presign body's `role` vocabulary — MEASURED, no longer assumed
+ * (HSN-0902 Phase 0, 2026-09-02, org 1692): `"logo"` and `"brandkit"` both
+ * answer 201 and both come back on the list row. When an upload is neither,
+ * the key is OMITTED from the body — never null. The door binds
+ * `"brandkit"` to `application/pdf` (a PNG with it → 400).
+ */
+export type MediaAssetRole = 'logo' | 'brandkit'
+
+/**
+ * Which role a Knowledge upload carries (MED-0831/R, A3/A4; HSN-0902): the
+ * brand kit ALWAYS carries `"brandkit"`; only the IMAGE path can mark a logo
+ * — never Video, never Document — and an unmarked upload carries none
+ * (undefined here, absent on the wire). Both screens read this one function,
+ * the routing law's pattern.
  */
 export function uploadRoleFor(
   kind: KnowledgeUploadKind,
   markedLogo: boolean,
 ): MediaAssetRole | undefined {
+  if (kind === 'brandkit') return 'brandkit'
   return kind === 'image' && markedLogo ? 'logo' : undefined
 }
 
 /**
- * Whether a user-typed description collides with the logo's reserved marker
- * (MED-0831 Phase 3 ruling): the Knowledge form refuses it — trimmed and
- * case-insensitive, so "Logo " cannot sneak a near-collision past the exact
- * wire marker — because a Files row described "logo" would be
- * indistinguishable from the organization's logo.
+ * The two markers a Knowledge upload puts on the presign — its `desc` and
+ * its `role` — decided in ONE place (HSN-0902). The brand kit is the closed
+ * pair `{ desc: "brandkit", role: "brandkit" }` whatever was typed or
+ * ticked; every other kind sends the user's trimmed description and the
+ * role `uploadRoleFor` allows it. An absent role is an absent KEY.
  */
+export function knowledgeUploadMarkers(
+  kind: KnowledgeUploadKind,
+  description: string,
+  markedLogo: boolean,
+): { desc: string; role?: MediaAssetRole } {
+  if (kind === 'brandkit') return { desc: BRAND_KIT_ASSET_DESC, role: 'brandkit' }
+  const role = uploadRoleFor(kind, markedLogo)
+  return role === undefined ? { desc: description.trim() } : { desc: description.trim(), role }
+}
+
+/** The descriptions the wire reads as markers — never a user's free text. */
+export const RESERVED_MEDIA_DESCS = [LOGO_ASSET_DESC, BRAND_KIT_ASSET_DESC] as const
+export type ReservedMediaDesc = (typeof RESERVED_MEDIA_DESCS)[number]
+
+/**
+ * Which reserved marker a user-typed description collides with, if any
+ * (MED-0831 Phase 3 ruling, extended by HSN-0902): the Knowledge form
+ * refuses it — trimmed and case-insensitive, so "Logo " or "BrandKit"
+ * cannot sneak a near-collision past the exact wire marker — because a
+ * Files row described "logo" would be indistinguishable from the
+ * organization's logo, and one described "brandkit" from the brand kit.
+ * The WIRE match stays exact: only the exact lowercase word is a marker.
+ */
+export function reservedMediaDesc(desc: string): ReservedMediaDesc | null {
+  const normalized = desc.trim().toLowerCase()
+  return RESERVED_MEDIA_DESCS.find((word) => word === normalized) ?? null
+}
+
 export function isReservedMediaDesc(desc: string): boolean {
-  return desc.trim().toLowerCase() === LOGO_ASSET_DESC
+  return reservedMediaDesc(desc) !== null
+}
+
+/** Whether an asset-list row IS the brand kit — by its exact `desc`, as the logo is found. */
+export function isBrandKitAsset(asset: { desc?: string }): boolean {
+  return asset.desc === BRAND_KIT_ASSET_DESC
 }
 
 /**
@@ -178,7 +242,8 @@ export function isReservedMediaDesc(desc: string): boolean {
  * platform made it, not the user) and shows `false` or absent — if the flag
  * turns out not to separate uploads from renders, this shows what the wire
  * gives, which is the ruled fallback. The logo row (`desc: "logo"`) is the
- * Organization screen's, never a file row.
+ * Organization screen's, never a file row; the brand kit row IS a file row
+ * (HSN-0902, the founder's ruling — stored like every other file).
  */
 export function isUploadedMediaFile(asset: ApiMediaAsset): boolean {
   if (asset.meta?.synthetic === true) return false
@@ -242,15 +307,69 @@ export const VISUAL_COLLECTION = { use: true } as const
 
 export type VisualKind = 'image' | 'video'
 
-/** The user-editable half of the envelope. Everything else is derived. */
-export interface PostVisualOptions {
-  kind: VisualKind
+// --- Video duration (HSN-0902 Phase 2, Hasan 2026-09-02) --------------------
+//
+// THE UNIT IS SECONDS, everywhere in this block: the wire key is `durationS`,
+// and every constant carries the `_S` suffix so a millisecond can never be
+// sent by accident. The maximum depends on the plan and lives HERE ONLY,
+// keyed by the plan vocabulary (`ApiPlan`) rather than by a string, so a
+// plan the table does not name is a type error, not a runtime surprise.
+// Phase 0 measured the wire's own guard: a non-integer or an over-max
+// `durationS` answers 400 BEFORE the wallet check, with a sentence that
+// names neither the field nor the limit — so this table is the only
+// human-readable limit there is, and the wire's 400 renders as itself.
+
+/** Seconds. */
+export const VIDEO_DURATION_MIN_S = 1
+/** Seconds — Hasan's example (`"params": { "durationS": 8 }`). */
+export const VIDEO_DURATION_DEFAULT_S = 8
+/** Seconds, per plan: balanced 10 · creative 20 · precise 30 (Hasan, 2026-09-02). */
+export const VIDEO_DURATION_MAX_S: Readonly<Record<ApiPlan, number>> = {
+  balanced: 10,
+  creative: 20,
+  precise: 30,
+}
+
+export function videoDurationMax(plan: ApiPlan): number {
+  return VIDEO_DURATION_MAX_S[plan]
+}
+
+/** Whole seconds within the plan's range — what the form lets through. */
+export function isValidVideoDuration(plan: ApiPlan, seconds: number): boolean {
+  return (
+    Number.isInteger(seconds) &&
+    seconds >= VIDEO_DURATION_MIN_S &&
+    seconds <= videoDurationMax(plan)
+  )
+}
+
+/**
+ * The value a plan CHANGE leaves behind: rounded to whole seconds and pulled
+ * inside the new plan's range. Only a plan change clamps — a value the user
+ * types out of range is refused by `isValidVideoDuration` with the message,
+ * never silently rewritten under their hands.
+ */
+export function clampVideoDuration(plan: ApiPlan, seconds: number): number {
+  if (!Number.isFinite(seconds)) return VIDEO_DURATION_DEFAULT_S
+  return Math.min(videoDurationMax(plan), Math.max(VIDEO_DURATION_MIN_S, Math.round(seconds)))
+}
+
+interface PostVisualOptionsBase {
   plan: ApiPlan
   imgStyle: string
   text: boolean
   logo: boolean
   guidance: string[]
 }
+
+/**
+ * The user-editable half of the envelope. Everything else is derived. A
+ * UNION on the kind, so the type itself carries the law: a video option set
+ * MUST carry `durationS` and an image option set CANNOT (HSN-0902).
+ */
+export type PostVisualOptions =
+  | (PostVisualOptionsBase & { kind: 'image' })
+  | (PostVisualOptionsBase & { kind: 'video'; durationS: number })
 
 /** The ONE post a request carries: the clicked draft, with its tone hydrated. */
 export interface PostVisualSubject {
@@ -274,9 +393,13 @@ export function toVisualTone(tone: Tone): SocialPostMediaTone {
 
 /**
  * The whole body, built in one place so the laws are structural rather than
- * a matter of care: exactly one post (the tuple type), `params` `{}`,
- * `collection` always `VISUAL_COLLECTION` (H5), and guidance trimmed of
- * blanks and capped at six.
+ * a matter of care: exactly one post (the tuple type), `collection` always
+ * `VISUAL_COLLECTION` (H5), guidance trimmed of blanks and capped at six,
+ * and `params` — a TOP-LEVEL key — present on a VIDEO body only, carrying
+ * `durationS` exactly as the form validated it (HSN-0902). An image body has
+ * NO `params` key at all: Phase 0 measured that such a body clears the
+ * wire's validation (402 on the zero wallet, not 400), so the absence is the
+ * wire's shape, not a hope. Nothing here clamps — the form did.
  */
 export function buildPostVisualRequest(
   subject: PostVisualSubject,
@@ -292,7 +415,7 @@ export function buildPostVisualRequest(
       .map((entry) => entry.trim())
       .filter(Boolean)
       .slice(0, MAX_VISUAL_GUIDANCE),
-    params: {},
+    ...(options.kind === 'video' ? { params: { durationS: options.durationS } } : {}),
     collection: VISUAL_COLLECTION,
   }
 }
@@ -498,10 +621,11 @@ export function useStudioActions() {
      * either way. (Folds in and replaces `uploadReferenceImage`, which had
      * no caller.)
      *
-     * MED-0831/R: `role` rides the presign when the upload IS something —
-     * today only `"logo"` (assumption A1). The body is a CLOSED set either
-     * way: `{ mediaType, desc }` or `{ mediaType, desc, role }` — an absent
-     * role is an absent KEY, never null, unit-asserted.
+     * MED-0831/R, measured by HSN-0902 Phase 0: `role` rides the presign
+     * when the upload IS something — `"logo"` or `"brandkit"` — and the
+     * list echoes it. The body is a CLOSED set either way:
+     * `{ mediaType, desc }` or `{ mediaType, desc, role }` — an absent role
+     * is an absent KEY, never null, unit-asserted.
      */
     async uploadMediaAsset(
       file: Blob,

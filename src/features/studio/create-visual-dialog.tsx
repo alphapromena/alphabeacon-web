@@ -3,9 +3,10 @@
  *
  * ONE modal, two entry points: a generated draft on the Generate page and a
  * draft card on Today. It submits the `social-posts.media` request for THAT
- * draft — one post, `params` `{}`, `collection.use` true (H5) — and follows the
- * job through the Studio's own poller. Everything a user can change is a
- * form field here; everything else is derived and never rendered as an input.
+ * draft — one post, `collection.use` true (H5), and `params.durationS` on a
+ * VIDEO only (HSN-0902) — and follows the job through the Studio's own poller.
+ * Everything a user can change is a form field here; everything else is
+ * derived and never rendered as an input.
  *
  * The readiness gate reaches this dialog too (ORDER ONB-0827, D-ONB-D): a
  * media job is a generation job. It sits INSIDE the dialog, as D4's does, so
@@ -18,6 +19,7 @@
 import { Download, Plus, Sparkles } from 'lucide-react'
 import { Link } from 'react-router'
 import { InsufficientBalance } from '@/components/ab/insufficient-balance'
+import { MonoNumber } from '@/components/ab/mono-number'
 import { SignalSweep } from '@/components/ab/motion'
 import { GenerationBlocked } from '@/components/ab/setup-checklist'
 import { SkeletonForm } from '@/components/ab/skeletons'
@@ -36,7 +38,12 @@ import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
 import { useTones } from '@/data/provider'
 import { useReadiness } from '@/data/readiness'
-import { IMG_STYLES, MAX_VISUAL_GUIDANCE, type MediaPlan } from '@/data/studio'
+import {
+  IMG_STYLES,
+  MAX_VISUAL_GUIDANCE,
+  VIDEO_DURATION_MIN_S,
+  type MediaPlan,
+} from '@/data/studio'
 import { useWallet } from '@/data/wallet'
 import { MESSAGES } from '@/lib/messages'
 import {
@@ -189,6 +196,8 @@ export function CreateVisualDialog({
 function VisualFields({ visual, disabled }: { visual: CreateVisualState; disabled: boolean }) {
   const { form, patch } = visual
   const kindMissing = visual.error === MESSAGES.errors.visualKindRequired
+  const durationInvalid = visual.error === MESSAGES.errors.visualDurationRange
+  const planLabel = PLANS.find((option) => option.id === form.plan)?.label ?? form.plan
 
   return (
     <div className="flex flex-col gap-4">
@@ -233,6 +242,36 @@ function VisualFields({ visual, disabled }: { visual: CreateVisualState; disable
           <p className="text-xs text-muted-foreground">The platform picks the model from this.</p>
         </div>
       </div>
+
+      {form.kind === 'video' && (
+        // HSN-0902: VIDEO ONLY. Whole seconds, sent as the top-level
+        // `params.durationS`; the ceiling follows the quality and is shown
+        // here, and a quality change pulls the value inside it.
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="visual-duration">Duration (seconds)</Label>
+          <Input
+            id="visual-duration"
+            type="number"
+            inputMode="numeric"
+            min={VIDEO_DURATION_MIN_S}
+            max={visual.durationMax}
+            step={1}
+            className="w-32"
+            value={Number.isNaN(form.durationS) ? '' : form.durationS}
+            disabled={disabled}
+            aria-invalid={durationInvalid ? true : undefined}
+            onChange={(event) =>
+              patch({
+                durationS: event.target.value === '' ? Number.NaN : Number(event.target.value),
+              })
+            }
+          />
+          <p className="text-xs text-muted-foreground">
+            Whole seconds, up to <MonoNumber value={visual.durationMax} /> s on {planLabel}.
+            Changing the quality keeps it within its limit.
+          </p>
+        </div>
+      )}
 
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="visual-style">Style</Label>

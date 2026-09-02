@@ -2,13 +2,16 @@
  * The Knowledge upload form (ORDER HSN-04, decisions.md 2026-08-30) — ONE
  * implementation for the live screen and the static demo.
  *
- * Before any file leaves the browser the user says WHAT it is (image, video
- * or document) and DESCRIBES it. The type filters the picker's `accept` list
- * and then validates the chosen file's real MIME against it — a mismatch is
- * an inline error, never a silent coercion (the old live path quietly relabelled
- * anything unknown as `text/plain`; it no longer does). The description is
- * required because it travels with the file: `desc` on the presign body, per
- * Hasan's 2026-08-28 envelope.
+ * Before any file leaves the browser the user says WHAT it is (image, video,
+ * document — or, since HSN-0902, the brand kit) and DESCRIBES it. The type
+ * filters the picker's `accept` list and then validates the chosen file's
+ * real MIME against it — a mismatch is an inline error, never a silent
+ * coercion (the old live path quietly relabelled anything unknown as
+ * `text/plain`; it no longer does). The description is required because it
+ * travels with the file: `desc` on the presign body, per Hasan's 2026-08-28
+ * envelope. The ONE exception is the brand kit: it is always the branding
+ * kit, so no description field is rendered and the form sends the reserved
+ * pair `desc: "brandkit"` + `role: "brandkit"` — the logo's exact pattern.
  *
  * The button is the keyboard path; the dropzone is a target, not a control, so
  * it stays out of the tab order. The hidden input keeps its id and label so the
@@ -25,8 +28,8 @@ import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import {
   KNOWLEDGE_UPLOAD_KINDS,
   checkKnowledgeFile,
-  isReservedMediaDesc,
-  uploadRoleFor,
+  knowledgeUploadMarkers,
+  reservedMediaDesc,
   type MediaAssetRole,
 } from '@/data/studio'
 import type { KnowledgeUploadKind } from '@/data/types'
@@ -61,7 +64,9 @@ export function KnowledgeUploadForm({
   const fileInput = useRef<HTMLInputElement>(null)
 
   const spec = KNOWLEDGE_UPLOAD_KINDS.find((entry) => entry.kind === kind)
-  const ready = kind !== '' && description.trim().length > 0
+  // HSN-0902: the brand kit is never described — it is always the brand kit.
+  const describes = kind !== 'brandkit'
+  const ready = kind !== '' && (!describes || description.trim().length > 0)
 
   function submit(chosen: File[]) {
     if (chosen.length === 0) return
@@ -69,15 +74,23 @@ export function KnowledgeUploadForm({
       setError(MESSAGES.errors.knowledgeKindRequired)
       return
     }
-    if (description.trim().length === 0) {
-      setError(MESSAGES.errors.knowledgeDescriptionRequired)
-      return
-    }
-    // MED-0831: "logo" is the organization logo's marker on the wire — a
-    // Knowledge file wearing it would be indistinguishable from the logo.
-    if (isReservedMediaDesc(description)) {
-      setError(MESSAGES.errors.knowledgeDescReserved)
-      return
+    if (describes) {
+      if (description.trim().length === 0) {
+        setError(MESSAGES.errors.knowledgeDescriptionRequired)
+        return
+      }
+      // MED-0831 / HSN-0902: "logo" and "brandkit" are markers on the wire —
+      // a Knowledge file wearing one as free text would be indistinguishable
+      // from the organization's logo or the brand kit.
+      const reserved = reservedMediaDesc(description)
+      if (reserved === 'logo') {
+        setError(MESSAGES.errors.knowledgeDescReserved)
+        return
+      }
+      if (reserved === 'brandkit') {
+        setError(MESSAGES.errors.knowledgeDescReservedBrandKit)
+        return
+      }
     }
     const checked: CheckedFile[] = []
     for (const file of chosen) {
@@ -95,11 +108,11 @@ export function KnowledgeUploadForm({
       checked.push({ file, mediaType: verdict.mediaType })
     }
     setError(null)
-    void onUpload(checked, {
-      kind,
-      description: description.trim(),
-      role: uploadRoleFor(kind, markedLogo),
-    })
+    // ONE place decides the wire's markers: the brand kit is the closed
+    // `{ desc: "brandkit", role: "brandkit" }` pair, everything else the
+    // user's description plus the role the kind allows.
+    const markers = knowledgeUploadMarkers(kind, description, markedLogo)
+    void onUpload(checked, { kind, description: markers.desc, role: markers.role })
     // The next upload is a different thing and needs its own description —
     // and its own logo mark.
     setDescription('')
@@ -151,25 +164,29 @@ export function KnowledgeUploadForm({
         )}
       </fieldset>
 
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="kn-desc">What is it?</Label>
-        <Input
-          id="kn-desc"
-          value={description}
-          maxLength={500}
-          disabled={disabled}
-          placeholder="Our spring price list, valid until June"
-          aria-invalid={error === MESSAGES.errors.knowledgeDescriptionRequired ? true : undefined}
-          onChange={(event) => {
-            setDescription(event.target.value)
-            if (error) setError(null)
-          }}
-        />
-        <p className="text-xs text-muted-foreground">
-          Required — it travels with the file so drafts know when to use it.
-          {multiple ? ' Applies to every file in this upload.' : ''}
-        </p>
-      </div>
+      {describes && (
+        // Absent for the brand kit (HSN-0902): there is nothing to say about
+        // it — the wire's marker IS its description.
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="kn-desc">What is it?</Label>
+          <Input
+            id="kn-desc"
+            value={description}
+            maxLength={500}
+            disabled={disabled}
+            placeholder="Our spring price list, valid until June"
+            aria-invalid={error === MESSAGES.errors.knowledgeDescriptionRequired ? true : undefined}
+            onChange={(event) => {
+              setDescription(event.target.value)
+              if (error) setError(null)
+            }}
+          />
+          <p className="text-xs text-muted-foreground">
+            Required — it travels with the file so drafts know when to use it.
+            {multiple ? ' Applies to every file in this upload.' : ''}
+          </p>
+        </div>
+      )}
 
       <div
         // A dropzone is a target, not a control: the button inside it is the

@@ -36,8 +36,12 @@ import {
 import {
   IMG_STYLES,
   MAX_VISUAL_GUIDANCE,
+  VIDEO_DURATION_DEFAULT_S,
+  clampVideoDuration,
   isJobTerminal,
+  isValidVideoDuration,
   useStudioActions,
+  videoDurationMax,
   type MediaJob,
   type MediaPlan,
   type PostVisualOptions,
@@ -66,6 +70,14 @@ export interface VisualForm {
   text: boolean
   logo: boolean
   guidance: string[]
+  /**
+   * HSN-0902: whole SECONDS, video only. Kept in the form whatever the kind
+   * (switching image → video → image keeps what was typed) but SENT only on
+   * a video body — `buildPostVisualRequest` reads it through the options
+   * union, which cannot carry it for an image. `NaN` while the field is
+   * cleared, which the validator refuses like any other non-integer.
+   */
+  durationS: number
 }
 
 export const EMPTY_VISUAL_FORM: VisualForm = {
@@ -75,14 +87,36 @@ export const EMPTY_VISUAL_FORM: VisualForm = {
   text: true,
   logo: true,
   guidance: [],
+  durationS: VIDEO_DURATION_DEFAULT_S,
 }
 
 export type VisualPhase = 'form' | 'submitting' | 'running' | 'done' | 'failed'
 
-/** The one thing the form can get wrong before the wire sees it. */
+/**
+ * The two things the form can get wrong before the wire sees it: no kind,
+ * and — for a video — a duration outside the plan's whole-second range.
+ */
 export function validateVisualForm(form: VisualForm): string | null {
   if (form.kind !== 'image' && form.kind !== 'video') return MESSAGES.errors.visualKindRequired
+  if (form.kind === 'video' && !isValidVideoDuration(form.plan, form.durationS)) {
+    return MESSAGES.errors.visualDurationRange
+  }
   return null
+}
+
+/**
+ * One edit applied to the form. The ONE side effect lives here so it is
+ * testable without the hook: a PLAN change clamps the duration into the new
+ * plan's range (HSN-0902 — "on model change: clamp to the new max"). Nothing
+ * else is rewritten under the user's hands; a typed out-of-range value is
+ * refused by `validateVisualForm` with its message instead.
+ */
+export function applyVisualPatch(current: VisualForm, changes: Partial<VisualForm>): VisualForm {
+  const next = { ...current, ...changes }
+  if (changes.plan !== undefined && changes.plan !== current.plan) {
+    next.durationS = clampVideoDuration(next.plan, next.durationS)
+  }
+  return next
 }
 
 function withReference(base: string, failure: { requestId?: string; code?: string }): string {
@@ -160,7 +194,10 @@ export function useCreateVisual({ subject, tone }: { subject: VisualSubject | nu
     // eslint-disable-next-line react-hooks/exhaustive-deps -- runs when it settles
   }, [job?.jobId, job?.status])
 
-  const patch = (changes: Partial<VisualForm>) => setForm((current) => ({ ...current, ...changes }))
+  const patch = (changes: Partial<VisualForm>) =>
+    setForm((current) => applyVisualPatch(current, changes))
+  /** Seconds — the current plan's ceiling, shown beside the control. */
+  const durationMax = videoDurationMax(form.plan)
 
   const addGuidance = () =>
     setForm((current) =>
@@ -222,6 +259,8 @@ export function useCreateVisual({ subject, tone }: { subject: VisualSubject | nu
         text: options.text,
         logo: options.logo,
         ...(guidance.length > 0 ? { guidance: guidance.join(' | ') } : {}),
+        // The demo's job record shows the same video-only field the wire gets.
+        ...(options.kind === 'video' ? { durationS: options.durationS } : {}),
       },
     })
     setPhase('running')
@@ -245,14 +284,19 @@ export function useCreateVisual({ subject, tone }: { subject: VisualSubject | nu
       setError(invalid)
       return
     }
-    const options: PostVisualOptions = {
-      kind: form.kind as VisualKind,
+    const base = {
       plan: form.plan,
       imgStyle: form.imgStyle,
       text: form.text,
       logo: form.logo,
       guidance: form.guidance,
     }
+    // The union decides what a body may carry: `durationS` rides a video
+    // option set and cannot ride an image one (HSN-0902).
+    const options: PostVisualOptions =
+      form.kind === 'video'
+        ? { ...base, kind: 'video', durationS: form.durationS }
+        : { ...base, kind: 'image' }
     setError(null)
     setShortBalance(false)
     if (!live) {
@@ -319,6 +363,7 @@ export function useCreateVisual({ subject, tone }: { subject: VisualSubject | nu
     live,
     form,
     patch,
+    durationMax,
     addGuidance,
     setGuidance,
     removeGuidance,
