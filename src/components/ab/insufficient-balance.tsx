@@ -1,5 +1,5 @@
 /**
- * The 402 state (INT-9, decisions.md D-INT-E).
+ * The 402 state (INT-9, decisions.md D-INT-E; re-ruled by ORDER BIL-0902).
  *
  * `wallet_insufficient` is the one refusal in this API that a user could act
  * on — which is exactly why it has its own code instead of hiding inside a 400
@@ -11,11 +11,13 @@
  *    them for the platform's accounting.
  * 2. **Show the actual balance.** "Insufficient funds" without a number is
  *    unanswerable.
- * 3. **Not offer a top-up.** There is no funding endpoint on this API — orgs
- *    are funded once, server-side, at creation. A "Buy more" button here would
- *    lead nowhere, so the honest instruction is to contact support.
+ * 3. **Point at the one way to fund it.** Since BIL-0902 the wallet is funded
+ *    by the org's plan and nothing else — every paid invoice credits it — so
+ *    the honest instruction is "subscribe or renew", with the link to do it.
  */
 import { Wallet } from 'lucide-react'
+import { Link } from 'react-router'
+import { Button } from '@/components/ui/button'
 import type { Wallet as WalletBalance } from '@/data/wallet'
 import { MESSAGES } from '@/lib/messages'
 import { formatCents } from '@/lib/money'
@@ -42,7 +44,10 @@ export function InsufficientBalance({ wallet }: { wallet: WalletBalance | null }
           )}
         </p>
       )}
-      <p className="text-sm text-muted-foreground">{MESSAGES.notices.noSelfServeTopUp}</p>
+      <p className="text-sm text-muted-foreground">{MESSAGES.notices.fundedByPlan}</p>
+      <Button asChild size="sm" className="self-start">
+        <Link to="/billing">Go to billing</Link>
+      </Button>
       <p className="text-xs text-muted-foreground">
         Nothing was generated and nothing was charged — what you wrote is still here.
       </p>

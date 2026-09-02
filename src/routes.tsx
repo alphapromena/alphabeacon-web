@@ -88,6 +88,12 @@ const el = {
     lazyEl(() => import('@/features/studio/studio-screens'), 'StudioComposerScreen'),
   studioJobs: () => lazyEl(() => import('@/features/studio/studio-screens'), 'StudioJobsScreen'),
   studioAsset: () => lazyEl(() => import('@/features/studio/studio-screens'), 'StudioAssetScreen'),
+  // BIL-0902: the product's billing, on the wire — plans + state, and the
+  // Stripe return. The two paths are hard-coded by the backend (DASHBOARD_URL);
+  // never rename them without telling Ward.
+  billing: () => lazyEl(() => import('@/features/billing/billing-screen'), 'BillingScreen'),
+  billingSuccess: () =>
+    lazyEl(() => import('@/features/billing/billing-success-screen'), 'BillingSuccessScreen'),
   billingSubscription: () =>
     lazyEl(() => import('@/features/billing/billing-screens'), 'SubscriptionScreen'),
   billingPlans: () => lazyEl(() => import('@/features/billing/billing-screens'), 'PlansScreen'),
@@ -229,8 +235,12 @@ export const router = createBrowserRouter([
     { path: '/studio/jobs', element: el.studioJobs() },
     { path: '/studio/assets/:id', element: el.studioAsset() },
 
-    // Area H — Billing
-    { path: '/billing', element: el.billingSubscription() },
+    // Area H — Billing. `/billing` and `/billing/success` are the product's
+    // (BIL-0902, wire); `/billing/plans`, `/billing/subscription` and
+    // `/billing/return` are the static demo's H1/H2/H4 and redirect to
+    // `/billing` in live mode; `/billing/balance` is H3 in both modes.
+    { path: '/billing', element: el.billing() },
+    { path: '/billing/success', element: el.billingSuccess() },
     { path: '/billing/plans', element: el.billingPlans() },
     { path: '/billing/subscription', element: el.billingSubscription() },
     { path: '/billing/balance', element: el.billingBalance() },

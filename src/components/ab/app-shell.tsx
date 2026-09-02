@@ -72,7 +72,7 @@ import {
   useScreenPhase,
   useSession,
 } from '@/data/provider'
-import { isFundingPending, useWallet } from '@/data/wallet'
+import { isUnfunded, useWallet } from '@/data/wallet'
 import { MESSAGES } from '@/lib/messages'
 import { formatCents } from '@/lib/money'
 import { cn } from '@/lib/utils'
@@ -336,19 +336,19 @@ function PlanCreditChip() {
   const phase = useScreenPhase()
 
   if (live) {
-    // Funding is server-side and best-effort at org creation, so an all-zero
-    // wallet means it has not landed yet — that is a WAIT, not an error, and
-    // certainly not "you have no money".
-    const pending = isFundingPending(wallet)
+    // The plan is the only funding (BIL-0902): an all-zero wallet is a
+    // workspace that has never subscribed, and the chip says so and leads to
+    // the page that fixes it — not "funding pending", not an error.
+    const unfunded = isUnfunded(wallet)
     // ...and a wallet nobody has read yet is not a wallet that is missing.
     // The chip mounts on every screen, so the two-to-five seconds the org sync
     // takes were long enough to read as a verdict (E2E-0820 F9).
     const unread = wallet === null
     const loading = unread && phase === 'loading'
-    const low = wallet !== null && !pending && wallet.availableCents < 100
+    const low = wallet !== null && (unfunded || wallet.availableCents < 100)
     return (
       <Link
-        to="/billing/balance"
+        to={unfunded ? '/billing' : '/billing/balance'}
         className={cn(
           'hidden items-center gap-1.5 rounded-full border border-border px-3 py-1 text-xs font-medium transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none sm:inline-flex',
           low && 'border-warning/60 text-warning',
@@ -358,8 +358,8 @@ function PlanCreditChip() {
           <span className="text-muted-foreground">{MESSAGES.notices.balanceLoading}</span>
         ) : unread ? (
           <span className="text-muted-foreground">{MESSAGES.notices.balanceUnread}</span>
-        ) : pending ? (
-          <span className="text-muted-foreground">{MESSAGES.notices.balanceUnavailable}</span>
+        ) : unfunded ? (
+          <span>{MESSAGES.notices.balanceUnfunded}</span>
         ) : (
           <>
             <span>{formatCents(wallet.availableCents)}</span>
@@ -377,7 +377,9 @@ function PlanCreditChip() {
   const low = credits < 50
   return (
     <Link
-      to="/billing"
+      // The demo's subscription page (H2) — its plan and its credits ledger.
+      // `/billing` itself is the product's plans page since BIL-0902.
+      to="/billing/subscription"
       className={cn(
         'hidden items-center gap-1.5 rounded-full border border-border px-3 py-1 text-xs font-medium transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none sm:inline-flex',
         low && 'border-warning/60 text-warning',

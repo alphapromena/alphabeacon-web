@@ -3497,6 +3497,163 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   from CUT-0831 (delete the 8 legacy preset rows on org 619, re-save the
   4 custom tones) is now LIVE too and still his.
 
+### 2026-09-02 10:35 — ORDER BIL-0902 Phase 0: Ward's guide committed verbatim, billing probed on org 1670
+
+- Did: branch **`feat/bil-0902`** cut from `main` (`9adb47c`). Ward's
+  `billing-frontend.md` (found in the founder's Downloads, `cmp`-identical)
+  committed verbatim at `Docs/api/billing-frontend.md`. **`pnpm probe:billing`**
+  (`scripts/probe-billing.ts`, new; listed in `stack.md`) mints a fresh QA
+  org and runs the order's seven probes plus two extras, writing
+  **`Docs/api/billing-shapes.md`** — its OWN file by the founder-approved
+  ruling (the smoke run overwrites `alphastudio-shapes.md` wholesale).
+  Measured on org **1670**, every request-id in the file: plans
+  `{plan, name, amountCents, currency, interval}` with the names AS DELIVERED
+  **"Malaki Base" / "Malaki Pro"**, 50000/80000 `usd`/`year`; subscription at
+  `none` with EVERY guide field present (nulls + `cancelAtPeriodEnd: false`);
+  credits `{items: [], total: 0}` (limit/offset accepted, not echoed);
+  **wallet ZEROS** (no starter funding any more — INT-9's "funding pending"
+  reading is superseded); member reads 200; bad plan → 400
+  `validation_failed`; member checkout → 403 `forbidden` (a member account
+  was cheap: second QA user invited as `member`, added at once); ONE owner
+  checkout → 201 `{url, sessionId}` (host `checkout.stripe.com`, `cs_test_…`,
+  NEVER opened, abandoned; subscription and wallet unchanged after); extra:
+  portal at `none` → 201 `{url}`. **No contradiction with the guide.**
+- Phase: BIL-0902 Phase 0.
+- Files: `Docs/api/billing-frontend.md` (verbatim, new), `Docs/api/billing-shapes.md`
+  (generated, new), `scripts/probe-billing.ts` (new), `package.json`
+  (`probe:billing`), `.agent/{stack,decisions}.md`
+- Decisions: see decisions.md — "BIL-0902 Phase 0" (2026-09-02): the own-file
+  ruling, the url/sessionId shape-redaction interpretation, the superseded
+  wallet reading.
+- Verify: the probe run itself (all 200/201/400/403 as expected). No app code
+  yet.
+- Next: Phase 1 — types + `src/data/billing.ts`, then the two routes.
+
+### 2026-09-02 13:50 — ORDER BIL-0902 Phases 1–3: the seam, `/billing` + `/billing/success`, and the reactions
+
+- Did: **Types** (`src/api/types.ts`, OURS, above the proxy divider):
+  `ApiBillingPlan`, `ApiSubscription` (nine statuses), `ApiWalletCredit`
+  (guide fields, unobserved), `CheckoutReceipt`, `PortalReceipt`. **The seam**
+  `src/data/billing.ts`: `createBillingActions(live)` behind
+  `useBillingActions()` — `listPlans`, `getSubscription`, `listCredits`,
+  `createCheckout(orgId, plan)`, `createPortal(orgId)`, every call scoped to
+  an explicit org id; single-shot POSTs; failures switched on `code`; the
+  wallet read REUSED (`useWalletActions`/`useWallet`); static demo in the
+  wire's shape (Base/Pro, 50000/80000, none, empty) with zero network, the
+  demo's Subscribe assigning the same success route Stripe would;
+  `useBillingPermissions` (the workspace's protected tier);
+  `useBillingScope` (the query `orgId` is authoritative — switch to a member
+  org, refuse a foreign one). **Screens**: `billing-screen.tsx` (`/billing`:
+  plans from the wire with Subscribe for owners, the honest member line, the
+  status badge wearing the raw wire word, Manage billing → portal, the
+  `past_due/unpaid` banner, `?checkout=cancelled` note, the portal-return
+  short poll, billing history newest first, the 409 → Manage-billing flip),
+  `billing-success-screen.tsx` (polls every 2 s, gives up at 60 s with
+  "Still processing" + Check again, on `active` names the plan and shows the
+  re-read wallet, `session_id` displayed never sent; static: "Nothing was
+  paid"), `use-subscription-poll.ts`, `billing-view.ts` (the status table,
+  price words, failure copy). **Routes**: `/billing` and `/billing/success`
+  named exactly as the backend hard-codes them; the demo's H1/H2/H4
+  `Navigate` to `/billing` in live mode, H3 stays; the static chip →
+  `/billing/subscription`. **Reactions**: zeros = never subscribed
+  (`isFundingPending` → `isUnfunded`; chip "No balance yet — subscribe" →
+  `/billing`; dashboard tile `$0.00`; H3 live copy); the 402 component says
+  "subscribe or renew" with a Go-to-billing link on all three generation
+  surfaces; `billing.wallet_credited` → new `wallet_credited` kind (Wallet
+  icon), `billing.payment_failed` already mapped, both link `/billing`;
+  `cancelAtPeriodEnd` → "ends on <currentPeriodEnd>", Resume in the portal.
+  Messages: `walletInsufficient` reworded; `billingStatic`,
+  `balanceUnavailable`, `noSelfServeTopUp` retired; the billing catalogue
+  added. **Scope check only:** marketing's `usePlans()`/`pricing.ts` do not
+  collide (D-M2-B stands).
+- Phase: BIL-0902 Phases 1–3.
+- Files: `src/api/types.ts`, `src/data/{billing.ts (new),wallet.ts,types.ts}`,
+  `src/data/adapters/notification-adapter.ts`,
+  `src/features/billing/{billing-screen.tsx,billing-success-screen.tsx,use-subscription-poll.ts,billing-view.ts (all new),billing-screens.tsx}`,
+  `src/components/ab/{insufficient-balance.tsx,app-shell.tsx,notification-bell.tsx}`,
+  `src/features/dashboard/dashboard-screen.tsx`, `src/lib/messages.ts`,
+  `src/routes.tsx`, `.agent/{architecture,context,decisions}.md`, `web-plan.md`
+- Decisions: see decisions.md — "BIL-0902 Phases 1–3" (2026-09-02): the
+  explicit-orgId seam, the `orgId` interpretation, the legacy screens
+  demo-only, zeros = never subscribed, the past_due banner on `/billing`
+  only, no demo wallet in cents.
+- Verify: lint clean · typecheck clean · guard-static **344 files clean** ·
+  unit **581 / 52 files** (+60: `billing.test.ts` 20, `billing-view.test.ts`
+  19, `use-subscription-poll.test.ts` 8 under fake timers,
+  `billing-screen.test.tsx` 10 incl. the member view and the single-shot
+  button, `notification-adapter.test.ts` 3) · prettier clean on every new
+  file (`.agent/*.md` are not prettier-clean at HEAD and were not rewritten).
+- Next: the gate — static e2e, verify w00–w06, two live rounds.
+
+### 2026-09-02 14:40 — ORDER BIL-0902 gate PARTIAL, then HELD by the founder's stop order
+
+- Did: **the gate, on the final tree, as far as it ran.** Static: `e2e/billing.spec.ts`
+  (new, 5: the demo plans in the wire's shape with Subscribe for the top
+  tier, the demo's Subscribe landing on the success route that says
+  "Nothing was paid", the `?checkout=cancelled` note, the foreign-org
+  refusal, axe) + `studio-billing.spec.ts` re-pointed at the demo's H2 via
+  the chip; full static suite **107 passed / 74 skipped / 0 failed**;
+  `verify:w00`–`w06` **all PASS** (each with an orphan check; none found).
+  Live round 1, one file at a time, `LIVE_MEDIA` off, on the deployed
+  sandbox: **auth** 3 passed / 1 failed / 3 did not run (the red: a 20 s
+  wait for "Welcome back" after the password reset — the cold-miss class the
+  two-round law exists for); **billing** 4 / 1 / 2 (the red: the success
+  poll's "Still processing" not within 90 s — the give-up only fired after a
+  read returned, so one slow read on a loaded API pushed it out; FIXED after:
+  the give-up is a wall-clock deadline that fires with a read in flight, a
+  late `active` still counts, +2 unit tests, and the spec prints the poll
+  cadence on a red; the 2 not run are the member 403 and the 402 walk);
+  **brand-rules** 4 / 1 (Preview this tone — the 402, open-item 46);
+  **brand 5/5; country 4/4; create-visual** self-skipped; **generate 1 / 1**
+  (the run refused — the 402, the Phase 3 proof; pinned by hand on fresh org
+  1683: `POST …/posts/tones-preview` → 402 `wallet_insufficient`, request
+  `f4220662-0752-4488-9ffc-133a7bbd5779`, wallet unchanged —
+  `billing-shapes.md` addendum); **invite-org 3/3; knowledge** 2 / 1 (a 30 s
+  wait on the upload row); **media-upload 3/3; notifications 1/1;
+  onboarding** INTERRUPTED by the stop order mid-file; **proposals,
+  schedule-repair, scheduling, studio, team, wallet NOT reached; no round 2.**
+  The runner and its Playwright/vite children were drained: nothing
+  listening on 5199 afterwards, no node left (trap 22 honoured, not
+  repeated).
+- **THE STOP ORDER (founder, 14:25):** Ward is changing the plans
+  (base/pro yearly → **business $599/month, scale $899/month; Enterprise has
+  no checkout**) and pointing `DASHBOARD_URL` at `https://1.malaky.ai`. One
+  gate per series, on the new contract. Done as ordered: the running
+  generate result recorded (above); nothing further run; the WIP committed
+  on `feat/bil-0902`, **not pushed, not merged**; `Docs/api/billing-shapes.md`
+  marked **SUPERSEDED — old contract (base/pro yearly) — pending Ward**;
+  state.md carries the hold and the /R delta.
+- **The /R delta (what changes, where):** `ApiBillingPlanId` `'base' | 'pro'`
+  → `'business' | 'scale'` (`src/api/types.ts`, `src/data/billing.ts`,
+  `scripts/probe-billing.ts`'s `{plan:"base"}` bodies); `interval` `year` →
+  `month` (`formatPlanPrice` reads the wire's word already; the M-BIL-1
+  checklist, `paymentFailedDetail`'s "renewal" and the demo copy say yearly);
+  amounts 59900/89900 in `DEMO_BILLING_PLANS`, `billing.test.ts`,
+  `billing-screen.test.tsx`, `e2e/billing.spec.ts` ("$500.00 / year"),
+  `e2e/live-billing.spec.ts` (`['base','pro']`, "/ year"); an **Enterprise
+  CTA** on the plans page with NO checkout — contact/sales, never a
+  Subscribe (whether the wire carries an `enterprise` row or the frontend
+  adds the card is Ward's to say); re-probe on the new contract; and
+  `DASHBOARD_URL = https://1.malaky.ai` — production `main` is the STATIC
+  build, so Stripe's returns would land on the demo's success page; the
+  founder decides (the `live` preview, or the variable on production). The
+  marketing page already sells Business $599 / Scale $899 / Enterprise
+  (D-M2-B): the two pricing documents finally meet on the wire.
+- Phase: BIL-0902 gate — PARTIAL; series HELD at this commit.
+- Files: `e2e/{billing.spec.ts (new),live-billing.spec.ts (new),studio-billing.spec.ts,live-wallet.spec.ts}`,
+  `src/features/billing/{use-subscription-poll.ts,use-subscription-poll.test.ts,billing-screen.test.tsx (new)}`,
+  `Docs/api/billing-shapes.md` (superseded banner + the 402 addendum),
+  `.agent/{state,sessions,open-items,architecture,context}.md`, `web-plan.md`
+- Decisions: none new — the hold is the founder's; open-items 45 (M-BIL-1,
+  to be re-targeted), 46 (the funding model vs the live suite), 47 (for
+  Ward) hold the rest.
+- Verify: (final tree) lint clean · typecheck clean · guard-static 344 ·
+  unit **583 / 52 files** · prettier clean on every new file · static e2e
+  and verify w00–w06 as above · live round 1 partial as above.
+- Next: **BIL-0902/R when Ward confirms** — re-probe, re-target the plan
+  keys/interval/amounts/demo/tests, the Enterprise CTA, the DASHBOARD_URL
+  question, then ONE gate (static + verify + two live rounds) and the
+  manual gate M-BIL-1 on the new plans.
 ### 2026-09-02 15:15 — ORDER HSN-0902 Phase 0: the three doors probed on org 1692; the series HOLDS on the org fields
 
 - Did: **Phase 0 only, by the order's own stop clause.** Branch

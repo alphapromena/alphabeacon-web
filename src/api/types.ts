@@ -294,6 +294,103 @@ export interface ApiSlot {
   kind: string
 }
 
+// --- Billing (ORDER BIL-0902) -----------------------------------------------
+// OURS, not a proxy: our API owns the Stripe integration. The frontend holds
+// no Stripe key and never loads Stripe.js — payment happens on a Stripe-hosted
+// Checkout page the browser is SENT to, whole. Transcribed from what the
+// sandbox actually answered on fresh QA org 1670 (Docs/api/billing-shapes.md,
+// 2026-09-02) and from Ward's Docs/api/billing-frontend.md.
+
+/** The wire's `plan` key. The NAME and the PRICE are read from the wire, never from here. */
+export type ApiBillingPlanId = 'base' | 'pro'
+
+/**
+ * One row of `GET /orgs/:orgId/billing/plans`. Observed verbatim:
+ * `{ plan: "base", name: "Malaki Base", amountCents: 50000, currency: "usd", interval: "year" }`.
+ * `name` is Stripe's and renders as delivered — the fix for a misspelling
+ * belongs in the Stripe dashboard, not in this code (wire is the record).
+ */
+export interface ApiBillingPlan {
+  plan: ApiBillingPlanId
+  name: string
+  /** Integer cents — 50000 is $500.00. */
+  amountCents: number
+  /** ISO 4217, LOWERCASE as observed (`"usd"`). */
+  currency: string
+  /** Stripe's interval word, observed `"year"`. */
+  interval: string
+}
+
+/** Every status the guide's table names, in its order. */
+export type ApiSubscriptionStatus =
+  | 'none'
+  | 'active'
+  | 'trialing'
+  | 'past_due'
+  | 'unpaid'
+  | 'paused'
+  | 'canceled'
+  | 'incomplete'
+  | 'incomplete_expired'
+
+/**
+ * `GET /orgs/:orgId/billing/subscription`. At `none` (never subscribed) every
+ * field is PRESENT: `plan`, the two period stamps, `canceledAt` and
+ * `updatedAt` are `null`, and `cancelAtPeriodEnd` is `false` — observed, not
+ * assumed. `cancelAtPeriodEnd: true` means the plan ends on
+ * `currentPeriodEnd`; the Resume action lives in the Stripe portal.
+ */
+export interface ApiSubscription {
+  plan: ApiBillingPlanId | null
+  status: ApiSubscriptionStatus
+  currentPeriodStart: string | null
+  currentPeriodEnd: string | null
+  cancelAtPeriodEnd: boolean
+  canceledAt: string | null
+  updatedAt: string | null
+}
+
+/**
+ * One row of `GET /orgs/:orgId/billing/credits` — one per PAID Stripe invoice
+ * (first payment, yearly renewal, prorated upgrade), newest first, paged with
+ * `limit`/`offset`. UNOBSERVED as of 2026-09-02: a fresh org has none, and a
+ * row only exists after a real test payment (manual gate M-BIL-1). Fields are
+ * the guide's; its trailing `…` says more may arrive and are carried, not
+ * stripped.
+ */
+export interface ApiWalletCredit {
+  /** What the invoice credited to the wallet — exactly the amount paid. */
+  cents: number
+  plan: string
+  stripeInvoiceId: string
+  createdAt: string
+}
+
+export interface CheckoutRequest {
+  plan: ApiBillingPlanId
+}
+
+/**
+ * `POST /orgs/:orgId/billing/checkout` → 201. `url` is the Stripe-hosted
+ * Checkout page (host `checkout.stripe.com`, observed) and `sessionId` is the
+ * `cs_test_…` session. Owner only (a member's call answers 403 `forbidden`);
+ * a bad plan answers 400 `validation_failed`; an org that already has a live
+ * subscription answers 409 `conflict` (guide; not probeable without a payment).
+ */
+export interface CheckoutReceipt {
+  url: string
+  sessionId: string
+}
+
+/**
+ * `POST /orgs/:orgId/billing/portal` → 201 — the Stripe customer portal.
+ * Observed to answer 201 even on a never-subscribed org; the product still
+ * offers it only where the guide's status table says Manage billing.
+ */
+export interface PortalReceipt {
+  url: string
+}
+
 // ============================================================================
 // AlphaStudio proxies — UPSTREAM SHAPES (INT-9 … INT-11)
 // ============================================================================

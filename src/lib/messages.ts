@@ -164,9 +164,26 @@ export const MESSAGES = {
 
     // Generation, live mode (INT-6 — the two codes the 2026-08-17 contract
     // added). Both are states a screen renders, not toasts to shrug at.
-    /** 402 wallet_insufficient. There is no self-serve top-up on this API. */
+    /**
+     * 402 wallet_insufficient. Since BIL-0902 the wallet is funded by the
+     * org's plan and nothing else, so the way out is the Billing page.
+     */
     walletInsufficient:
-      "Your balance can't cover this generation. There's no self-serve top-up yet — contact support and we'll add funds.",
+      'Your wallet is empty or too low for this generation — subscribe or renew to keep going.',
+
+    // Billing (ORDER BIL-0902) — plans, checkout and the portal.
+    billingLoadFailed:
+      "We couldn't load your billing details. Nothing has changed — try again in a moment.",
+    /** The checkout POST failed for a reason other than 409/403 — nothing was charged. */
+    checkoutFailed: "We couldn't start checkout. Nothing was charged — try again.",
+    /** 409 conflict: the org already has a live subscription. */
+    checkoutConflict: 'This workspace already has a subscription — manage it instead.',
+    /** 403 forbidden on checkout or the portal: not an owner. */
+    billingOwnerOnly: 'Only a workspace owner can subscribe or manage billing.',
+    portalFailed: "We couldn't open the billing portal. Nothing has changed — try again.",
+    /** `?orgId=` names a workspace this account is not a member of. */
+    billingForeignOrg:
+      "This billing link belongs to a workspace this account isn't a member of. Open Billing from your own workspace instead.",
     /** 502 bad_gateway. The contract guarantees nothing changed — say so. */
     upstreamUnavailable:
       'The generation service is unavailable right now. Nothing was changed or charged — try again in a moment.',
@@ -205,6 +222,10 @@ export const MESSAGES = {
     dashboardFresh: 'Your pipeline has not started yet — finish setup to see drafts here.',
     noDrafts: 'No drafts yet — your next slot will generate them.',
     noNotifications: "You're all caught up.",
+    /** Billing history (BIL-0902): one row per paid invoice, none yet. */
+    noCredits: 'No payments yet — your first invoice appears here once you subscribe.',
+    /** `GET /plans` answered an empty list — a wire fact, shown rather than filled. */
+    noPlans: 'No plans are on offer right now. Check back in a moment.',
     noConnections: 'Nothing connected yet — connect your first account to start posting.',
     noEventSources: "No event sources yet — add your country's holidays or connect a calendar.",
     noCustomTones: 'No custom tones yet — create one to match a campaign or product line.',
@@ -298,22 +319,50 @@ export const MESSAGES = {
     countryUnchanged: 'Already set to that country — nothing was reloaded.',
     countryAdminOnly: 'Only an admin or owner can change this.',
     /**
-     * INT-9 — an all-zero wallet is funding that has not landed yet, not an
-     * empty one, and not an error. Orgs are funded server-side at creation.
+     * BIL-0902 — an all-zero wallet is a workspace that has NEVER SUBSCRIBED.
+     * Ward's model: a new org starts at zero and the plan is the only
+     * funding, so zeros are not "funding pending" any more (INT-9's reading,
+     * superseded — the sandbox funds nothing at creation, measured on org
+     * 1670) and not an error: they are the instruction to subscribe.
      *
-     * E2E-0820 F9: this claim is only true of a wallet the API actually
-     * answered with. It may NOT stand in for "not read yet" — the two below
-     * carry those states, because a balance nobody has read is not a balance
-     * that is missing.
+     * E2E-0820 F9 still holds: this claim is only true of a wallet the API
+     * actually answered with. It may NOT stand in for "not read yet" — the
+     * two below carry those states.
      */
-    balanceUnavailable: 'Balance unavailable — funding pending',
+    balanceUnfunded: 'No balance yet — subscribe',
+    balanceUnfundedDetail:
+      'Your wallet is empty. Subscribe to a plan and every payment lands here as balance to generate with.',
     /** The read is in flight. Neutral by design: nothing is known yet. */
     balanceLoading: 'Loading balance…',
     /** The sync finished and brought no wallet back — a failure, not a state. */
     balanceUnread: 'Balance could not be read',
-    /** There is no self-serve top-up endpoint on this API, so say so once. */
-    noSelfServeTopUp:
-      "There's no self-serve top-up yet — contact support and we'll add funds to your workspace.",
+    /** How a wallet is funded — the plan, and nothing else (BIL-0902). */
+    fundedByPlan:
+      'Your wallet is funded by your plan: each paid invoice adds exactly what you paid. Subscribe or renew on the Billing page.',
+    // Billing (ORDER BIL-0902).
+    checkoutCancelled: 'Payment cancelled — nothing was charged and nothing changed.',
+    checkoutOnStripe:
+      'Payment happens on a secure Stripe page. You come back here when it is done.',
+    paymentFailed: 'Payment failed — update your card',
+    paymentFailedDetail:
+      'Your renewal charge did not go through and Stripe is retrying. Update your card in the billing portal to keep your plan.',
+    billingOwnerOnly: 'Only a workspace owner can subscribe or manage billing — ask an owner.',
+    billingShowingOrg: 'Showing billing for',
+    planEndsOn: 'Your plan is set to end on',
+    resumeInPortal: 'You can resume it in the billing portal.',
+    portalDoes:
+      'The portal is where you change your plan, update your card, cancel, and download invoices.',
+    subscriptionCanceled:
+      'Your subscription has ended. Anything already added to your wallet stays there.',
+    subscriptionIncomplete: 'Your first payment never completed. Subscribe again to start.',
+    successConfirming:
+      'Stripe confirms the payment to us a moment after you finish — this usually takes a few seconds.',
+    successStillProcessing:
+      'If you completed the payment, the confirmation can lag — refresh in a moment. If you did not, nothing was charged.',
+    successActive: 'Your payment landed in your wallet and generation is unlocked.',
+    successDemo:
+      'This is the demo: no payment happened and nothing was charged. In the product, this page confirms the subscription and shows the funded wallet.',
+    checkoutSessionRef: 'Checkout session',
     /**
      * E2E-0820 F4 — the product says MONEY, never "credits" (D-INT-E). The
      * plan's grant is a credit count with no honest exchange rate into
@@ -321,9 +370,6 @@ export const MESSAGES = {
      * `entitlements.features` is what actually differentiates the cards.
      */
     planAllowance: 'Includes a monthly generation allowance',
-    /** H1/H2/H4 in live mode: plans are not on the wire. */
-    billingStatic:
-      'Plans and checkout are not connected yet. Your workspace runs on its balance, and this page is a preview of what is coming.',
     /** C2 in live mode: there is nothing to add here any more, and why. */
     eventSourcesSuperseded:
       'Your country is the event source now — public holidays load automatically and scheduling works around them. Calendars you keep yourself will connect here in a later phase.',

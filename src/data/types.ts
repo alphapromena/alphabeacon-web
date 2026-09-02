@@ -445,6 +445,8 @@ export type NotificationType =
   | 'generation_failed'
   | 'payment_failed'
   | 'drafts_ready'
+  /** BIL-0902: `billing.wallet_credited` — a paid invoice landed in the wallet. */
+  | 'wallet_credited'
   /** INT-5: the API's `kind` is free-form and owned by the producing
    *  feature; anything unrecognised renders generically, never crashes. */
   | 'generic'

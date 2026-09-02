@@ -106,8 +106,13 @@ behind the provider; e2e then allows exactly one extra origin — the API's.
   event-sources, slots, notifications) resolve through `src/api/` in live mode.
   The 2026-08-17 contract adds the `/alphastudio/*` proxies — wallet, usage,
   capability catalog, posts runs, media jobs/assets, RAG knowledge — wired in
-  INT-7…11. Everything else — drafts/Today, connections, publish/schedule,
-  billing/plans/checkout, analytics, streaming, proposals — stays on the static
+  INT-7…11. **Billing is live since ORDER BIL-0902 (2026-09-02):**
+  `/orgs/:orgId/billing/{plans,subscription,credits,checkout,portal}` through
+  `src/data/billing.ts` — Stripe-hosted Checkout (no Stripe.js, no key), the
+  wallet funded only by paid invoices; the two routes the backend hard-codes
+  are `/billing` and `/billing/success`, and the static demo's H1/H2/H4
+  redirect there in live mode. Everything else — drafts/Today, connections,
+  publish/schedule, analytics, streaming, proposals — stays on the static
   datasets, marked in code as awaiting a later backend phase.
 - **Two type populations, two levels of trust.** `src/api/types.ts` above the
   proxy divider is our API's own shape: versioned with it, a missing field is a
@@ -133,9 +138,11 @@ behind the provider; e2e then allows exactly one extra origin — the API's.
 - Guards read the provider's session (dataset-faked in static mode, real and
   persisted in live mode): signed-out (redirect to A2),
   onboarding-incomplete (N3 resume), plan-based UI gating. Deep links: slot
-  (`/calendar?slot=`), draft (`/today/:id`), checkout returns
-  (`/billing/return?state=`), connect returns (`/connections?connect=`) — all
-  reachable as in-app routed steps.
+  (`/calendar?slot=`), draft (`/today/:id`), the Stripe returns
+  (`/billing/success?orgId=&session_id=`, `/billing?orgId=&checkout=cancelled`,
+  `/billing?orgId=` — hard-coded by the backend, never renamed without telling
+  Ward; the demo's `/billing/return?state=` is static-only), connect returns
+  (`/connections?connect=`) — all reachable as in-app routed steps.
 - `/settings` is a redirect, not a screen: every entry point into Settings lands
   on the org profile (`/settings/organization`), and the six sections share one
   frame (`features/settings/settings-layout.tsx`).

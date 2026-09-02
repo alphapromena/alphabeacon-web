@@ -10,11 +10,12 @@ and the React app where marketing teams review AI-drafted posts, generate media
 in Creative Studio, schedule and publish across channels, and watch performance.
 Built static-first with all data committed in `src/data/`, and since 2026-07-30
 wired to the **live AlphaStudio API** for the entities it covers (auth, me,
-orgs/members/invites, brand, scheduling, notifications) when
-`VITE_API_BASE_URL` is set. Without it the app is fully static — the demo and
-the test bed, kept working forever. Everything the API does not yet cover
-(drafts/Today, connections, Studio, billing, analytics, compose, knowledge)
-stays on the static datasets, awaiting backend phase 2.
+orgs/members/invites, brand, scheduling, notifications, the Studio proxies,
+knowledge, and — since 2026-09-02 — billing: Stripe-hosted subscriptions
+that fund the org's wallet) when `VITE_API_BASE_URL` is set. Without it the
+app is fully static — the demo and the test bed, kept working forever.
+Everything the API does not yet cover (drafts/Today, connections, analytics,
+compose) stays on the static datasets, awaiting backend phase 2.
 
 ## Users & personas
 
@@ -54,7 +55,11 @@ Agents: use these exact terms in code, commits, and UI copy — never synonyms.
    flags inline → draft card joins the normal review flow; a scripted mid-run
    failure lands in the designed recovery state with partial text kept.
 4. Billing: plans → checkout → return states → credits; `past_due` banners and
-   gates product-wide until recovery.
+   gates product-wide until recovery. **Live (BIL-0902):** subscriptions belong
+   to the ORG, two yearly plans read from the wire, payment on a Stripe-hosted
+   page, every paid invoice credits the wallet, and the wallet is the ONLY
+   funding — a fresh org answers `402 wallet_insufficient` until it subscribes.
+   Owners subscribe and manage; any member reads.
 
 ## UI rules that must never break
 

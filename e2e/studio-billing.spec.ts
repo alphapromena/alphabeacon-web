@@ -76,8 +76,24 @@ test('a standalone asset attaches only to a draft that has earned media', async 
   await expect(page.getByRole('heading', { name: 'Asset', level: 1 })).toBeVisible()
 })
 
+/**
+ * The demo's H2 (subscription + credits) since BIL-0902: `/billing` is the
+ * product's plans page, and the header chip is the demo's way into its own
+ * subscription — the chip's static destination has always been H2's job.
+ */
+async function openDemoSubscription(page: Page, dataset = 'Active org') {
+  await activateDataset(page, dataset)
+  await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible()
+  await page
+    .getByRole('banner')
+    .getByRole('link', { name: /credits/ })
+    .click()
+  await expect(page.getByRole('heading', { name: 'Subscription', level: 1 })).toBeVisible()
+  await expect(page.locator('[aria-busy="true"]')).toHaveCount(0)
+}
+
 test('the credits ledger explains the balance it shows', async ({ page }) => {
-  await open(page, 'Billing')
+  await openDemoSubscription(page)
   await page.getByRole('link', { name: 'Change plan' }).click()
   await expect(page.getByRole('heading', { name: 'Plans', level: 1 })).toBeVisible()
   await expect(page.getByText('Current plan').first()).toBeVisible()
@@ -114,7 +130,7 @@ test('an insufficient balance refuses the run and keeps the work', async ({ page
 })
 
 test('changing plan states its consequence and grants through the ledger', async ({ page }) => {
-  await open(page, 'Billing')
+  await openDemoSubscription(page)
   await page.getByRole('link', { name: 'Change plan' }).click()
 
   await page.getByRole('button', { name: 'Upgrade' }).first().click()

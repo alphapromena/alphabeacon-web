@@ -9,8 +9,10 @@
  * Two facts shape every screen that reads this:
  * - `availableCents` is what the next request is actually checked against, not
  *   `cents` — a wallet with everything held is a wallet that cannot spend.
- * - There is NO funding endpoint. Orgs are funded once, server-side, at
- *   creation. So a 402 cannot offer a top-up, and the honest state says so.
+ * - The PLAN is the only funding (ORDER BIL-0902, Ward's guide). A new org
+ *   starts at zero — measured on org 1670, no starter funding any more — and
+ *   every paid Stripe invoice credits exactly what was paid. So a 402 points
+ *   at the Billing page, and an all-zero wallet means "never subscribed".
  */
 import { api } from '@/api/client'
 import { isLiveMode } from '@/api/config'
@@ -34,8 +36,12 @@ export type {
 /** The two grains an end-user screen may ask for — never `tenant` (D-INT-E). */
 export type { ApiUserUsageGrain as UsageGrain } from '@/api/types'
 
-/** A never-funded tenant reads as all zeros — not a 404, and not an error. */
-export function isFundingPending(wallet: ApiWallet | null): boolean {
+/**
+ * A never-subscribed tenant reads as all zeros — not a 404, not an error,
+ * and (since BIL-0902) not "funding pending": it is the instruction to
+ * subscribe. Only true of a wallet the API actually answered with (F9).
+ */
+export function isUnfunded(wallet: ApiWallet | null): boolean {
   return (
     wallet !== null && wallet.cents === 0 && wallet.heldCents === 0 && wallet.availableCents === 0
   )

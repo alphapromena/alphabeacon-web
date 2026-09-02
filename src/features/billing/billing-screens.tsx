@@ -1,6 +1,14 @@
 /**
  * Billing — H1 plans, H2 subscription, H3 credits ledger, H4 checkout returns.
  *
+ * SINCE ORDER BIL-0902 (2026-09-02) H1, H2 and H4 ARE THE STATIC DEMO'S ONLY.
+ * The product's billing is `/billing` (`billing-screen.tsx`) and
+ * `/billing/success` (`billing-success-screen.tsx`), on the wire; in live
+ * mode these three redirect there, because a page offering the demo's
+ * $29-a-month plans and a "Cancel subscription" that cancels nothing would
+ * be a lie in front of a real subscription. H3 (`/billing/balance`) stays in
+ * both modes: its live branch is the wallet + usage read-back (D-INT-E).
+ *
  * Two rules run through all four.
  *
  * The BALANCE IS NEVER STORED. It is the sum of the ledger, every time, so a
@@ -14,7 +22,7 @@
  * payment nobody notices.
  */
 import { AlertTriangle, ArrowLeft, Check, CreditCard, X } from 'lucide-react'
-import { useSearchParams } from 'react-router'
+import { Navigate, useSearchParams } from 'react-router'
 import { Link } from 'react-router'
 import { AppShell } from '@/components/ab/app-shell'
 import { ConfirmDialog } from '@/components/ab/confirm-dialog'
@@ -37,7 +45,7 @@ import {
   usePlans,
   useScreenPhase,
 } from '@/data/provider'
-import { isFundingPending, useWallet } from '@/data/wallet'
+import { isUnfunded, useWallet } from '@/data/wallet'
 import type { LedgerEntryType, PlanTier } from '@/data/types'
 import { shortDate } from '@/lib/format'
 import { MESSAGES } from '@/lib/messages'
@@ -58,9 +66,11 @@ export function PlansScreen() {
   const phase = useScreenPhase()
   const live = useLiveMode()
 
+  // The demo's plans are not the product's (BIL-0902): live goes to the wire.
+  if (live) return <Navigate to="/billing" replace />
+
   return (
     <AppShell title="Plans" context="Same prices as the public site — one source">
-      {live && <StaticBillingNote />}
       {phase === 'loading' ? (
         <SkeletonCardGrid cards={3} columns={3} label="Loading plans" />
       ) : phase === 'error' ? (
@@ -154,19 +164,6 @@ export function PlansScreen() {
 // H2 — Subscription
 // ---------------------------------------------------------------------------
 
-/** H1/H2/H4 are not on the wire; live mode says so rather than pretending. */
-function StaticBillingNote() {
-  return (
-    <p className="mx-auto w-full max-w-[880px] rounded-lg border border-border bg-muted px-3 py-2 text-sm text-muted-foreground">
-      {MESSAGES.notices.billingStatic}{' '}
-      <Link className="underline underline-offset-4" to="/billing/balance">
-        See your balance
-      </Link>
-      .
-    </p>
-  )
-}
-
 export function SubscriptionScreen() {
   const live = useLiveMode()
   const billing = useBilling()
@@ -177,9 +174,11 @@ export function SubscriptionScreen() {
   const plan = plans.find((p) => p.id === billing.planId)
   const pastDue = billing.status === 'past_due'
 
+  // The demo's subscription is not the product's (BIL-0902): live goes to the wire.
+  if (live) return <Navigate to="/billing" replace />
+
   return (
     <AppShell title="Subscription" context={plan?.name}>
-      {live && <StaticBillingNote />}
       {phase === 'loading' ? (
         <SkeletonList rows={3} label="Loading your subscription" />
       ) : phase === 'error' ? (
@@ -335,10 +334,10 @@ export function BalanceScreen() {
   // answers the same question from the only honest source there is (D-INT-E).
   // Nothing is converted into credits: the balance is money here.
   if (live) {
-    const pending = isFundingPending(wallet)
+    const unfunded = isUnfunded(wallet)
     // The same three states the header chip distinguishes (E2E-0820 F9): a
     // read in flight, a read that brought nothing back, and an API-confirmed
-    // all-zero wallet. Only the last one is "funding pending".
+    // all-zero wallet. Only the last one is "never subscribed" (BIL-0902).
     const unread = wallet === null
     const loading = unread && phase === 'loading'
     return (
@@ -350,8 +349,13 @@ export function BalanceScreen() {
               <p className="text-sm text-muted-foreground">{MESSAGES.notices.balanceLoading}</p>
             ) : unread ? (
               <p className="text-sm text-muted-foreground">{MESSAGES.notices.balanceUnread}</p>
-            ) : pending ? (
-              <p className="text-sm text-muted-foreground">{MESSAGES.notices.balanceUnavailable}</p>
+            ) : unfunded ? (
+              <>
+                <p className="text-2xl font-semibold tabular-nums">{formatCents(0)}</p>
+                <p className="text-sm text-muted-foreground">
+                  {MESSAGES.notices.balanceUnfundedDetail}
+                </p>
+              </>
             ) : (
               <>
                 <p className="text-2xl font-semibold tabular-nums">
@@ -364,7 +368,13 @@ export function BalanceScreen() {
                 </p>
               </>
             )}
-            <p className="text-xs text-muted-foreground">{MESSAGES.notices.noSelfServeTopUp}</p>
+            <p className="text-xs text-muted-foreground">
+              {MESSAGES.notices.fundedByPlan}{' '}
+              <Link className="underline underline-offset-4" to="/billing">
+                Billing
+              </Link>
+              .
+            </p>
           </section>
 
           <UsageView />
@@ -503,7 +513,11 @@ export function CheckoutReturnScreen() {
   const state = params.get('state') ?? 'success'
   const plans = usePlans()
   const billing = useBilling()
+  const live = useLiveMode()
   const plan = plans.find((p) => p.id === billing.planId)
+
+  // The product's checkout returns to /billing/success and /billing (BIL-0902).
+  if (live) return <Navigate to="/billing" replace />
 
   return (
     <AppShell title="Checkout">

@@ -16,13 +16,18 @@ const KNOWN_KINDS: Record<string, NotificationType> = {
   'connection.reauth_needed': 'reauth_needed',
   'billing.low_credits': 'low_credits',
   'generation.failed': 'generation_failed',
+  // BIL-0902: the two kinds the billing backend raises, both with
+  // `action: "/billing"` (Ward's guide) — the adapter's rooted-path rule
+  // below turns that into the link.
   'billing.payment_failed': 'payment_failed',
+  'billing.wallet_credited': 'wallet_credited',
   'content.drafts_ready': 'drafts_ready',
   // The bare forms, in case the producing features use them unqualified.
   reauth_needed: 'reauth_needed',
   low_credits: 'low_credits',
   generation_failed: 'generation_failed',
   payment_failed: 'payment_failed',
+  wallet_credited: 'wallet_credited',
   drafts_ready: 'drafts_ready',
 }
 
@@ -31,7 +36,8 @@ export function adaptNotification(wire: ApiNotification): AppNotification {
   return {
     id: wire.id,
     type: KNOWN_KINDS[wire.kind] ?? 'generic',
-    message: wire.title && wire.message ? `${wire.title} — ${wire.message}` : wire.message || wire.title,
+    message:
+      wire.title && wire.message ? `${wire.title} — ${wire.message}` : wire.message || wire.title,
     at: wire.createdAt,
     read: wire.seenAt !== null,
     // Only a rooted path is a route; a label or null goes home instead.

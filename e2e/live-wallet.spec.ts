@@ -2,9 +2,10 @@
  * INT-9's verify: money, not credits (decisions.md D-INT-E).
  *
  * What is worth proving against the live API:
- * - a fresh org reads back the documented starter funding, and the chip shows
- *   AVAILABLE rather than total — the number the next request is checked
- *   against, not the more comforting one;
+ * - a fresh org reads back a ZERO wallet — the plan is the only funding since
+ *   BIL-0902 (Ward's guide; measured on org 1670, 2026-09-02: no starter
+ *   funding any more) — and the chip says "subscribe" rather than "funding
+ *   pending" or a comforting number;
  * - H3 in live mode is a balance plus a real metering read-back, with no
  *   credits anywhere and no invented exchange rate;
  * - both end-user grains round-trip, and `tenant` is unreachable from the UI
@@ -16,7 +17,7 @@
 import type { Page } from '@playwright/test'
 import { expect, test } from './fixtures'
 import { AFTER_COUNTRY, SCREEN_SYNC } from './live-clocks'
-import { readWallet, signUpAndEnter } from './live-setup'
+import { signUpAndEnter } from './live-setup'
 
 const API_BASE = process.env.VITE_API_BASE_URL
 const RUN = Date.now()
@@ -71,45 +72,37 @@ test('a fresh owner + org, made through the product', async ({ page }) => {
   })
 })
 
-/**
- * The sandbox funds NOTHING at creation since 2026-09-02 (Ward's model — the
- * plan is the only funding; open-item 46, measured on org 1692). The three
- * starter-funding assertions below are BIL-0902's to re-target on its held
- * branch; here they self-skip on a zero wallet with the reason, so the gate
- * carries no red that is only "no funding" (the HSN-0902 402 rule).
- */
-const NO_STARTER_FUNDING =
-  'the sandbox funds nothing at creation (Ward, 2026-09-02; open-item 46) — the starter-funding assertion is BIL-0902’s to re-target, skipped rather than red'
-
-test('the balance chip shows money, and it is the AVAILABLE money', async ({ page, request }) => {
+test('the balance chip shows money — and over a zero wallet, the instruction to subscribe', async ({
+  page,
+}) => {
   await login(page)
-  test.skip((await readWallet(page, request)).availableCents === 0, NO_STARTER_FUNDING)
-  // Documented starter funding: 5000 cents, nothing held. The chip lives in
-  // the header; the dashboard tile shows the same number, so scope to one.
-  const chip = page.getByRole('banner').getByRole('link', { name: '$50.00', exact: true })
+  // A fresh org starts at zero (BIL-0902): the chip lives in the header and
+  // says so, leading to Billing; the dashboard tile shows the honest $0.00.
+  const chip = page
+    .getByRole('banner')
+    .getByRole('link', { name: 'No balance yet — subscribe', exact: true })
   await expect(chip).toBeVisible({ timeout: 20_000 })
+  await expect(chip).toHaveAttribute('href', '/billing')
   // Nothing is held on a fresh org, so no reserved clause is shown.
   await expect(page.getByText(/reserved/)).toHaveCount(0)
-  // The dashboard says the same thing in the same currency.
-  await expect(page.getByRole('link', { name: 'Available balance $50.00' })).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Available balance $0.00' })).toBeVisible()
+  // Zeros are "never subscribed", not "funding pending" (INT-9's reading, superseded).
+  await expect(page.getByText(/funding pending/i)).toHaveCount(0)
   // And no credits vocabulary survives into live mode.
   await expect(page.getByText(/\bcredits\b/i)).toHaveCount(0)
 })
 
-test('H3 is a balance and a real usage read-back, in both allowed grains', async ({
-  page,
-  request,
-}) => {
+test('H3 is a balance and a real usage read-back, in both allowed grains', async ({ page }) => {
   await login(page)
-  test.skip((await readWallet(page, request)).availableCents === 0, NO_STARTER_FUNDING)
   await page.goto('/billing/balance')
   await expect(page.locator('[aria-busy="true"]')).toHaveCount(0)
 
   await expect(page.getByRole('heading', { name: 'Available' })).toBeVisible()
-  // Scoped to main: the header chip carries the same figure.
-  await expect(page.getByRole('main').getByText('$50.00')).toBeVisible()
-  // The 402's instruction lives here too, because there is nowhere to top up.
-  await expect(page.getByText(/no self-serve top-up yet/i)).toBeVisible()
+  // Scoped to main: a zero wallet reads as $0.00 plus the instruction.
+  await expect(page.getByRole('main').getByText('$0.00')).toBeVisible()
+  await expect(page.getByText(/Your wallet is empty\. Subscribe to a plan/)).toBeVisible()
+  // The 402's instruction lives here too: the plan is the only funding.
+  await expect(page.getByText(/funded by your plan/i)).toBeVisible()
 
   // Both end-user grains round-trip against real metering. The wizard's
   // country lookup is itself metered (`holidays.lookup`), so a fresh org has
@@ -144,9 +137,10 @@ test('the wallet and usage endpoints answer the shapes the UI is built on', asyn
   const wallet = (await (
     await request.get(`${API_BASE}/orgs/${orgId}/alphastudio/wallet`, { headers: auth })
   ).json()) as { cents: number; heldCents: number; availableCents: number }
-  // The invariant every screen leans on — true at any funding.
+  // The plan is the only funding (BIL-0902): a fresh org starts at zero.
+  expect(wallet).toEqual({ cents: 0, heldCents: 0, availableCents: 0 })
+  // The invariant every screen leans on.
   expect(wallet.availableCents).toBe(wallet.cents - wallet.heldCents)
-  expect(wallet.heldCents).toBe(0)
 
   const to = new Date().toISOString().slice(0, 10)
   const from = new Date(Date.now() - 29 * 86_400_000).toISOString().slice(0, 10)
@@ -167,8 +161,4 @@ test('the wallet and usage endpoints answer the shapes the UI is built on', asyn
     { headers: auth },
   )
   expect(bad.status()).toBe(400)
-
-  // Last, so the shape assertions above stand whatever the funding is.
-  test.skip(wallet.availableCents === 0, NO_STARTER_FUNDING)
-  expect(wallet).toEqual({ cents: 5000, heldCents: 0, availableCents: 5000 })
 })

@@ -45,7 +45,7 @@ import {
   useSession,
 } from '@/data/provider'
 import { useReadiness } from '@/data/readiness'
-import { isFundingPending, useWallet } from '@/data/wallet'
+import { isUnfunded, useWallet } from '@/data/wallet'
 import { formatCents } from '@/lib/money'
 import { pluralize, relativeTime } from '@/lib/format'
 import { MESSAGES } from '@/lib/messages'
@@ -146,18 +146,15 @@ export function DashboardScreen() {
                 between the two (D-INT-E). A tile that said "458 credits" over
                 a wallet holding $50.00 would be the clearest possible lie. */}
             {live ? (
+              // An all-zero wallet is a workspace that has never subscribed
+              // (BIL-0902): the tile shows the honest $0.00 and leads to the
+              // Billing page rather than to a balance there is nothing to read.
               <StatCard
                 label="Available balance"
-                value={
-                  wallet && !isFundingPending(wallet) ? formatCents(wallet.availableCents) : '—'
-                }
+                value={wallet ? formatCents(wallet.availableCents) : '—'}
                 icon={Coins}
-                to="/billing/balance"
-                tone={
-                  wallet && !isFundingPending(wallet) && wallet.availableCents < 100
-                    ? 'warning'
-                    : 'default'
-                }
+                to={wallet && isUnfunded(wallet) ? '/billing' : '/billing/balance'}
+                tone={wallet && wallet.availableCents < 100 ? 'warning' : 'default'}
               />
             ) : (
               <StatCard

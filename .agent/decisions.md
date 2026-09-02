@@ -2864,6 +2864,140 @@ Closes open-item 38, which ONB-0827 created and the live suite caught.
   name), or gating the ship on the aborted round's unread files (the
   founder's word closes the gate).
 
+### 2026-09-02 — BIL-0902 Phase 0: billing probed on org 1670, and the shapes get their own file
+
+- **The ruling (founder-approved, logged as the order asked):** billing
+  probes live in **`Docs/api/billing-shapes.md`**, their own file, because
+  `pnpm smoke:alphastudio` overwrites `alphastudio-shapes.md` wholesale and a
+  re-run would erase the billing record. `pnpm probe:billing`
+  (`scripts/probe-billing.ts`, a Node script outside `src/`) writes it.
+  Ward's guide is committed verbatim at `Docs/api/billing-frontend.md` — his
+  words, not ours. `Docs/api/api.md`/`openapi.json` are NOT refreshed here:
+  the Billing section lives in the backend repo and was not supplied.
+- **What was measured, on fresh QA org 1670 (all request-ids in the file):**
+  plans `{plan, name, amountCents, currency, interval}` × 2 — names AS
+  DELIVERED are **"Malaki Base"** and **"Malaki Pro"** (misspelled in
+  Stripe; rendered as is, the fix belongs in the Stripe dashboard);
+  `base=50000 usd/year`, `pro=80000 usd/year`. Subscription at `none`: every
+  guide field PRESENT — `plan` and the four stamps `null`,
+  `cancelAtPeriodEnd: false`. Credits `{items: [], total: 0}` with and without
+  `limit/offset` (accepted, not echoed). Wallet **zeros**. Member reads: all
+  200. `POST /checkout {plan:"gold"}` → **400 `validation_failed`**; as a
+  member → **403 `forbidden`**; as the owner → **201 `{url, sessionId}`**,
+  host `checkout.stripe.com`, `cs_test_…` (66 chars), url NEVER opened, the
+  session abandoned; subscription and wallet unchanged afterwards. Extra:
+  `POST /portal` on the never-subscribed org → **201 `{url}`** (a portal
+  exists even at `none`; the product still offers it only where the guide's
+  table says Manage billing).
+- **No contradiction with the guide.** One premise of OURS moved: INT-9's
+  "an all-zero wallet is funding pending" is **superseded** — the sandbox
+  funds nothing at creation any more, and Ward's model says zeros mean
+  "never subscribed". Phases 1–3 build on that.
+- **Interpretation on record:** the checkout `url` and `sessionId` are
+  recorded as their SHAPE (host, prefix, length), not verbatim — the same
+  precedent as tokens and presigned urls in `alphastudio-shapes.md`; a Stripe
+  test-mode link is harmless but it is still a link into a payment page.
+- **A member-role account WAS cheap:** a second QA user, verified with
+  `000000`, invited as `member` — added at once (D-ONB-F's
+  `invitedNewUser: false`). Probe 6 ran.
+- Instead of: appending to `alphastudio-shapes.md` (erased on the next smoke
+  run), or opening the checkout url "just to see" (a payment page opened is
+  a session the founder did not ask for).
+
+### 2026-09-02 — BIL-0902 Phases 1–3: billing on the wire — the seam, the two routes, and the reactions
+
+- **The seam (`src/data/billing.ts`).** `createBillingActions(live)` behind
+  `useBillingActions()`: `listPlans`, `getSubscription`, `listCredits`,
+  `createCheckout(orgId, plan)`, `createPortal(orgId)` — every call takes an
+  EXPLICIT org id because the two Stripe return routes carry the org in their
+  query and that id is authoritative there. The wallet read is the EXISTING
+  one (`useWalletActions().refresh()` / `useWallet()`); nothing reads it a
+  second way. Failures are `AuthActionResult`'s shape, switched on `code`;
+  the two POSTs are single-shot (one click → one call →
+  `window.location.assign(url)`; a failure returns the button, and a second
+  click is the user's). Types are OURS (above the proxy divider in
+  `src/api/types.ts`), transcribed from `billing-shapes.md`; the credit ROW is
+  the guide's, marked unobserved until a real test payment.
+- **Static mode** answers the wire's SHAPE with zero network: two demo plans
+  (`Base`/`Pro`, 50000/80000, usd, year — the names are the demo's, the
+  prices mirror the sandbox), subscription `none` with the full field set,
+  credits empty. The demo's Subscribe assigns the SAME route Stripe would
+  return to (`/billing/success?orgId=…&session_id=demo`) so one code path
+  walks both modes, and the success page in static says "Nothing was paid".
+  **No demo wallet in cents** — the demo's currency is its credits ledger
+  and the two never convert (D-INT-E); the order's "wallet demo" is read as
+  "the demo must not pretend".
+- **Two routes, named exactly as the backend hard-codes them:** `/billing`
+  and `/billing/success`. Both read LAZILY on open (the MED-0831 pattern —
+  never at bootstrap), scoped to the query `orgId`.
+- **The `orgId` interpretation (the order asked for it):** no query → the
+  active org; the active org → as is; **another org this session belongs to
+  → the app SWITCHES to it** (`org/setActive`, the rail switcher's own
+  D-ONB-F mechanics — the user came back from paying for THAT workspace and
+  should be standing in it) and the page says "Showing billing for <org>";
+  **an org this account is not a member of → no call is made** and the page
+  renders "Not your workspace" with the way to its own billing. Static: the
+  demo org's id, same rule.
+- **The status table** (`billing-view.ts`, unit-tested line by line):
+  `none/canceled/incomplete/incomplete_expired` → plans + Subscribe;
+  `active/trialing/paused` → Manage billing; `past_due/unpaid` → the banner,
+  then Manage billing. A status this build has never seen maps to Manage
+  billing AND the raw word is always rendered as the badge — a wrong
+  assumption fails visibly. `409 conflict` on checkout flips the page to
+  Manage billing and re-reads the subscription ONCE (a GET, not a retry).
+- **Owners subscribe and manage; any member reads** — as
+  `useBillingPermissions()`: the viewer's role equals the workspace's
+  protected tier (`owner` live; `admin` in the demo, which has no owner
+  tier — `useTeamPermissions`'s own rule). Members see the plans and the
+  honest line; no disabled-and-teasing button.
+- **The legacy static billing screens (H1 `/billing/plans`, H2
+  `/billing/subscription`, H4 `/billing/return`) are the DEMO's only from
+  this order.** In live mode they `Navigate` to `/billing` — a page offering
+  $29-a-month plans and a Cancel that cancels nothing would lie in front of a
+  real subscription; the `billingStatic` note they wore is deleted. The
+  demo keeps them whole (credits ledger, past-due world, `verify:w05`'s
+  structural checks), reached through the header chip, whose static
+  destination becomes `/billing/subscription` (H2 was always its job). H3
+  `/billing/balance` stays in both modes. Retiring H1/H2/H4 from the demo is
+  a separate founder decision, not this order's.
+- **Zeros mean "never subscribed"** (the Phase-0 finding): `isFundingPending`
+  → `isUnfunded`; the chip says "No balance yet — subscribe" and leads to
+  `/billing`; the dashboard tile shows the honest `$0.00`; H3's live branch
+  says "Your wallet is empty. Subscribe…". `balanceUnavailable` and
+  `noSelfServeTopUp` are retired (both now false); `fundedByPlan` replaces
+  the second. `live-wallet.spec.ts` re-pointed from the $50 starter funding
+  to zeros — the old assertion is red on `main` today against this sandbox.
+- **The 402 reaction** is ONE component (`ab/insufficient-balance.tsx`) on
+  the three generation surfaces that can receive it — Generate (F1), the
+  Studio composer (E2), Create visual (HSN-02) — now saying "Your wallet is
+  empty or too low — subscribe or renew" with a "Go to billing" link; the
+  input is still kept and the balance still shown. Nothing is swallowed:
+  every surface already parked in its `shortBalance` state.
+- **Notifications:** `billing.wallet_credited` → a new `wallet_credited`
+  kind (Wallet icon); `billing.payment_failed` was already mapped. Both carry
+  `action: "/billing"` and the adapter's rooted-path rule links them.
+- **`cancelAtPeriodEnd: true`** → "Your plan is set to end on
+  <currentPeriodEnd>. You can resume it in the billing portal." We only link.
+- **The `past_due` banner lives on `/billing`** (the subscription is read
+  there), not in the shell: a product-wide live banner would need the
+  subscription in the bootstrap sync, which this order's lazy-read law
+  argues against. The shell's existing banner stays the demo's
+  (`world.billing.status`). A follow-up if the founder wants it global.
+- **The poll** (`use-subscription-poll.ts`): `GET /subscription` every 2 s,
+  give up after 60 s with "Still processing" and a Check-again button (a
+  user gesture); the portal return re-reads for 10 s and stops quietly.
+  Cleans up on unmount; a read that lands after unmount sets nothing.
+  Polling a GET is designed behaviour, not a retry.
+- **Scope check, not built:** the marketing page's `usePlans()`/
+  `concept/lib/pricing.ts` do NOT collide with `/billing` — different
+  documents, different owners (D-M2-B stands); the reconciliation open item
+  remains and now has a wire to reconcile against.
+- Instead of: holding the subscription in provider state (the query `orgId`
+  is authoritative on the two routes, so a per-page read scoped to it is
+  simpler and cannot show the wrong org's plan); mapping the demo's
+  free/pro/studio onto base/pro (smuggling); deleting H1/H2/H4 outright (the
+  demo's past-due world and W5's verify depend on them); a global past-due
+  banner from a bootstrap read (a bigger change than the order asked for).
 ### 2026-09-02 — HSN-0902 Phase 0: three doors measured on org 1692, and the series HOLDS on the org fields
 
 - **The ruling that stopped it is the order's own:** "if no door accepts

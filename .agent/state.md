@@ -5,7 +5,18 @@ without reconstructing it from the session log. **Update this file at the end
 of any turn that finishes a phase or changes the plan.** `sessions.md` is the
 chronological record; this is the current picture.
 
-_Last updated: 2026-09-02, after **ORDER HSN-0902 was MERGED and DEPLOYED
+_Last updated: 2026-09-02, after **ORDER BIL-0902/R began: `feat/bil-0902`
+REBASED onto the new `main` (`d645607` — HSN-0902 merged and deployed),
+one commit replayed, seven conflicts resolved (the five journal files by
+keeping both series in date order, `package.json`/`stack.md` by keeping both
+script rows, `e2e/live-wallet.spec.ts` in BIL's favour — zeros = never
+subscribed — while HSN's `skipUnlessFunded` and the 402 rule stand in
+`live-setup.ts` for §4's funded-QA-org mechanism to build on).** Ward's
+corrected plans — Business $599/month, Scale $899/month, Enterprise with no
+checkout, `DASHBOARD_URL` = `https://1.malaky.ai` — are the contract this
+series now re-probes (Phase 0/R) and re-targets; the founder's funding
+ruling: no dev-credit door, a QA org is funded by a real test-mode checkout
+(card 4242). NOT pushed until the founder's word. Before that, same day: **ORDER HSN-0902 was MERGED and DEPLOYED
 on the founder's word.** `main` fast-forwarded `9adb47c` → **`c5456f1`**
 (five commits, no merge commit, one linear history) and was pushed with
 `main:live` at 14:59Z; both deployments **READY** at `c5456f1` —
@@ -14,11 +25,9 @@ production **`dpl_8f1MyYrEhAhq1FUGJKNxmpR2iwnt`** (target production, ref
 `1.malaky.ai` moved `index-D7LsIWPh.js` → **`index-Lxcr-Fsd.js`** ~95 s
 after the push; the rollback candidate is the previous production
 deployment **`dpl_Ch2yVsMCpntumx1BxMvjs55euDbN`** (`9adb47c`, MED-0831/R).
-`feat/hsn-0902` is kept on `origin` as the record. **`feat/bil-0902` (held
-at `df14989`, cut from the OLD `main` `9adb47c`) MUST BE REBASED onto the
-new `main` before BIL-0902/R** — it touches `e2e/live-wallet.spec.ts`,
-`src/api/types.ts` and every `.agent/*.md` beside this series, so expect
-conflicts there, resolved in BIL's favour on its own files. **Next: M-HSN-1
+`feat/hsn-0902` is kept on `origin` as the record. `feat/bil-0902` (held at `df14989`, cut from the OLD `main` `9adb47c`) was
+to be rebased onto the new `main` before BIL-0902/R — done, see the head of
+this paragraph. **Next: M-HSN-1
 on production (open-item 50), the founder's; HSN-0902/B on item 48; trap
 23 (the host sleeping through a live round) is in the ledger below.**
 Before that, same day: **ORDER HSN-0902 — Phases 1, 2 and 4 (the brand kit
@@ -72,11 +81,55 @@ fields → Phases 1–4 NOT built; the founder asks Hasan (open-item 48,
 BLOCKING).** When the door is named the series resumes on this branch
 with Phase 0 pinned (the rulings queued for it: "brandkit" as a reserved
 description, video-only `params`, the one-place per-plan max table
-10/20/30 default 8, the 402 self-skip rule for the live gate). Before
-that, same day: **ORDER BIL-0902 — billing on the Stripe sandbox — BUILT,
-PARTLY GATED, HELD by the founder's stop order** on `feat/bil-0902`
-(`df14989`, off this same `main`; not pushed, not merged; the hold and
-the /R delta are in that branch's own `state.md`). Before that,
+10/20/30 default 8, the 402 self-skip rule for the live gate). Before that, same day: **ORDER BIL-0902 — billing goes live on the
+Stripe sandbox — was BUILT, PARTLY GATED, and then HELD by the founder's
+stop order.** Branch **`feat/bil-0902`** (off `main` = `9adb47c`), committed,
+**NOT pushed, NOT merged**. Ward is changing the plans (base/pro yearly →
+**business $599/month, scale $899/month; Enterprise has no checkout**) and
+pointing `DASHBOARD_URL` at `https://1.malaky.ai`, so the contract this
+series probed and built against changes within hours; one gate per series,
+and it runs once the new contract lands — **BIL-0902/R follows on Ward's
+confirmation.** What stands at the held commit: Ward's guide verbatim at
+`Docs/api/billing-frontend.md`; the Phase-0 probe record
+`Docs/api/billing-shapes.md` (org 1670, every request-id) **marked
+SUPERSEDED — old contract**; the seam `src/data/billing.ts` (explicit org
+id per call, single-shot checkout/portal, static demo in the wire's shape);
+`/billing` (plans from the wire, the status table, Subscribe for owners,
+Manage billing → portal, the past_due banner, history) and
+`/billing/success` (2 s poll, wall-clock 60 s give-up); the demo's H1/H2/H4
+redirect to `/billing` in live mode; zeros = never subscribed (chip, tile,
+H3, the 402 component pointing at Billing); `billing.wallet_credited`.
+**The gate, as far as it ran:** lint · typecheck · prettier · guard-static
+344 · unit **583 / 52 files** · static e2e **107 passed / 74 skipped / 0
+failed** · `verify:w00`–`w06` **all PASS**; live round 1 (one file at a
+time, `LIVE_MEDIA` off) — auth 3/7 (one 20 s wait on "Welcome back" after a
+reset, 3 did not run), **billing 4/7** (the success poll's give-up came
+late on a loaded API — fixed after, wall-clock deadline; 2 did not run),
+brand-rules 4/5 (Preview this tone → **402**), **brand 5/5, country 4/4,
+create-visual self-skipped, generate 1/2 (the run refused with 402 — the
+Phase 3 proof, pinned on org 1683 request `f4220662-0752-4488-9ffc-133a7bbd5779`;
+it stays valid whatever the plans are called)**, invite-org 3/3, knowledge
+2/3 (a 30 s wait on the upload row), media-upload 3/3, notifications 1/1,
+onboarding INTERRUPTED by the stop order; proposals, schedule-repair,
+scheduling, studio, team, wallet NOT reached; **no round 2**. Open-item 46:
+every generating spec 402s on a fresh org now (the plan is the only
+funding) — a decision for the founder/Ward before any live gate can be
+16/16 again. **The /R delta, for whoever picks it up:** `ApiBillingPlanId`
+`'base' | 'pro'` → `'business' | 'scale'` (`src/api/types.ts`,
+`src/data/billing.ts`, the probe script's `{plan:"base"}` bodies); interval
+`year` → `month` (the price words already read the wire's interval; the
+M-BIL-1 checklist and the demo copy say yearly); amounts 59900/89900 in
+`DEMO_BILLING_PLANS`, `billing.test.ts`, `billing-screen.test.tsx`,
+`e2e/billing.spec.ts` ("$500.00 / year") and `e2e/live-billing.spec.ts`
+(`['base','pro']`, "/ year"); an **Enterprise CTA** with NO checkout (a
+contact/sales action on the plans page — a plan row the wire may or may not
+carry; never a Subscribe); re-probe with `pnpm probe:billing`; and
+`DASHBOARD_URL = https://1.malaky.ai` — **production `main` is the STATIC
+build (no `VITE_API_BASE_URL`)**, so Stripe's returns would land on the
+demo's "Nothing was paid" page unless the founder points it at the `live`
+preview or gives production the variable. The marketing page already sells
+Business $599 / Scale $899 / Enterprise (D-M2-B), so the two pricing
+documents finally meet on the wire. Before that,
 2026-08-31: **ORDER MED-0831 (+ its /R rider) SHIPPED
 on the founder's fast-path ruling** — the media presign door is the product's:
 Knowledge Image/Video uploads and the org logo go through
@@ -343,6 +396,7 @@ below).
 | `feat/hsn-03-tone-lang-length` | **MERGED 2026-08-30 (HSN-FINAL). HSN-03, 2026-08-30 — branched off `feat/hsn-02-create-visual` (`6281cd6`); kept as the record.** Tones gain `language` (required, no default) + `length` (default medium) in the Settings editor, create and edit; interim client sidecar `ab-tone-fields:<orgId>` hydrated in `fetchBrand`, wire send disabled behind `TONE_FIELDS_ON_WIRE`; generate body carries `length` (omitted when absent) and per-tone `language` from the tone; `SelectField` added to `ab/form.tsx`; rider copy on `visualUnconfirmed`. Build hygiene only |
 | `feat/hsn-04-limits-knowledge` | **MERGED 2026-08-30 (HSN-FINAL). HSN-04, 2026-08-30 — branched off `feat/hsn-03-tone-lang-length` (`ab26bb8`); kept as the record at `1520369`.** Sources ≤ 10 / topics ≤ 30 as client-side ceilings (screen + `TagInput` + seam; over-cap rendered, never trimmed); the shared `KnowledgeUploadForm` (Image | Video | Document, required description, real-MIME check) in both worlds; the RAG presign body carries `desc`, no switch; `previewTone` sends the tone's language. Build hygiene only |
 | `feat/hsn-final-gate` | **HSN-FINAL, 2026-08-30 — branched off `feat/hsn-04-limits-knowledge` (`1520369`), MERGED as the tip `main` now points at (`6f45679`); kept on `origin` as the gate's record.** The two presign probes, the deferred coverage (`e2e/hsn-series.spec.ts`, `e2e/live-create-visual.spec.ts`, five unit files), four stale specs and every live tone creation updated for HSN-03/04, the gate-found Create visual reset fix, the `verify:w06` upload check re-pointed, and the probe record in `alphastudio-shapes.md` |
+| `feat/bil-0902` | **BIL-0902, 2026-09-02 — branched off `main` (`9adb47c`); BUILT, PARTLY GATED, HELD by the founder's stop order; committed, NOT pushed, NOT merged.** Billing on the Stripe sandbox: Ward's guide verbatim, the Phase-0 probe record (org 1670 — SUPERSEDED, old base/pro yearly contract), the seam, `/billing` + `/billing/success`, the 402/notification/chip reactions, the demo's H1/H2/H4 redirecting live. Gate partial (see the top). **BIL-0902/R** re-targets business/scale monthly + Enterprise + `DASHBOARD_URL` when Ward confirms |
 | `feat/med-0831` | **MED-0831 + /R, 2026-08-31 — branched off `main` (`7b7222d`), REBASED onto `feat/cut-0831` (`aa6162e`) by the founder's stack ruling, MERGED and SHIPPED the same day on his fast-path ruling; kept on `origin` as the per-order record.** Phase 0 probed the media door in full (all eight types presign 201 with `desc`; the lifecycle clean; `GET …/media/assets` answers 200 — Ward item 4 apparently fixed; rows minted at presign time). Phase 1 `uploadMediaAsset` (no retry; a failed PUT deletes its own mint and reports the id). Phase 2 the Knowledge door split (H1) + the wire-only Files section (H2 re-ruled: no sidecar ever). Phase 3 the wire's org logo (H3; delete-then-upload replace; conflict shown, never picked), H5 `collection:{use:true}`, "logo" reserved. /R: `role: "logo"` on the presign per Hasan's ASSUMED A1–A4. Gate: verify w00–w06 ALL PASS, static 102/67/0, live rounds ABORTED by the founder (auth 7/7 · brand-rules 5/5 · country 4/4 stand) |
 | `feat/hsn-0902` | **HSN-0902, 2026-09-02 — branched off `main` (`9adb47c`), MERGED as a fast-forward the same day (`main` → `c5456f1`) and DEPLOYED (production `dpl_8f1MyYrEhAhq1FUGJKNxmpR2iwnt`, live `dpl_8Stid97fok9wb7wA5wCZHJ45VuGQ`); kept on `origin` as the per-order record.** Phase 0 probed three doors on org 1692, zero spend (`pnpm probe:hsn-0902`): the brand-kit presign 201 with `role` ECHOED by the list — A2 answered; `params.durationS` validated BEFORE the wallet (400 on a bad value, 402 on the valid one); NO door for `whatYouOffer`/`whatSetsYouApart` → Phase 3 carved out as HSN-0902/B (item 48). Phases 1+2: the Brand kit kind (PDF only, the closed `{desc,role}` pair from one function, no description asked, listed under Files with the badge from the echoed role, "brandkit" reserved) and `params.durationS` video-only with the one-place per-plan table in seconds (10/20/30, default 8; a type union keeps `params` off image bodies). Phase 4: static + live specs, the 402 self-skip rule (`skipUnlessFunded`; `live-generate` the one asserting spec), the gate-found Knowledge lazy-collection fix, the knowledge spec's SCREEN_SYNC rung. Gate: unit 537/48 · static 106/75/0 · verify w00–w06 PASS · live rounds 16/18 + 16/18 with both reds judged (the host's 51-minute sleep; the MED-0831 race) and cleared by recorded supplements |
 | `feat/cut-0831` | **CUT-0831, 2026-08-31 — branched off `main` (`7b7222d`). SHIPPED 2026-08-31 with MED-0831 (the first of the two ff steps; its own round-2 gate was 16/16; the eye-pass waived by the founder's fast-path ruling); kept on `origin` as the per-order record.** The steering box and the page-level Language picker deleted; per-tone language is the tone's own (`RunnableTone`, disabled dashed chips otherwise); the preset concept removed (`Tone.kind` gone, one list on I3, every tone deletable, wire bodies frozen in `brand-wire.test.ts`); the live suite performs the per-context language backfill (`ensureToneLanguage`). Probe: preset create 201 / DELETE 204 on org 1485 |
@@ -391,6 +445,7 @@ aspirational, not a rule this repo follows.
 | — **M2: concept-v2** (`design/m2-concept-v2`) | the whole visitor world | Built 2026-08-23, corrected and **MERGED 2026-08-24** (D-M2-F-r2) — the accessibility gate in open-items 21 is closed; what remains there blocks DNS cutover, not the merge |
 | — **ONB-0827: the onboarding ruling** (`feat/onb-01…04`) | A5 (deleted), N3, I3, F1, E2, D4, D1, the rail | **MERGED and SHIPPED 2026-08-30** (`963c9f7`). A5 is RETIRED |
 | — **The Hasan series** (`feat/hsn-01…04` + `feat/hsn-final-gate`) | F1, D2, E3, I3, I4, I5, I6 | **MERGED 2026-08-30 and SHIPPED 2026-08-31** — merged at `6f45679` on a green round 2; deployed at `0a5e84d` after the founder reverted the repo to public. `1.malaky.ai` serves it (`index-B6ntD0ng.js`); the zero-spend smoke is green |
+| — **BIL-0902: billing on the Stripe sandbox** (`feat/bil-0902`) | `/billing`, `/billing/success`, the 402 surfaces, N1, the chip, D1 | **BUILT 2026-09-02, gate PARTIAL, HELD by the stop order** — Ward changes the plans; BIL-0902/R re-targets them; merge waits on the new contract's gate + the manual gate M-BIL-1 |
 | **W7 Hardening + ship**              | —                            | **Parked behind the two manual gates**                        |
 
 ## Integration phases (AlphaStudio API — contract at `docs/api/api.md`)
@@ -465,7 +520,7 @@ never addresses directly (decisions.md D-INT-A).
 
 **Still NOT on the wire, and still static:** drafts / Today (D1–D3), the
 publish/schedule dialog (D5), channel connections + OAuth (B1–B3), analytics
-(G1–G2), plans / subscription / checkout (H1, H2, H4), any streaming (F1's
+(G1–G2), any streaming (F1's
 token stream — the proxy has no stream endpoint), and proposals +
 published-social (they exist upstream but are not proxied). None of it is
 invented or faked: where a spec promised something the wire cannot deliver, the

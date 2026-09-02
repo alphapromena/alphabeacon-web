@@ -11,7 +11,16 @@
  * weight and a dot, never by colour alone, and the bell's count is spoken in
  * its accessible name rather than left to the badge.
  */
-import { Bell, Coins, CreditCard, Inbox, Plug, TriangleAlert, type LucideIcon } from 'lucide-react'
+import {
+  Bell,
+  Coins,
+  CreditCard,
+  Inbox,
+  Plug,
+  TriangleAlert,
+  Wallet,
+  type LucideIcon,
+} from 'lucide-react'
 import { Link } from 'react-router'
 import { MonoNumber } from '@/components/ab/mono-number'
 import { Button } from '@/components/ui/button'
@@ -35,6 +44,7 @@ const TYPE_ICON: Record<NotificationType, LucideIcon> = {
   low_credits: Coins,
   generation_failed: TriangleAlert,
   payment_failed: CreditCard,
+  wallet_credited: Wallet,
   drafts_ready: Inbox,
   generic: Bell,
 }
