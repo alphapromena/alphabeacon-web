@@ -43,6 +43,7 @@ dependencies are public — no private registry, no token.
 | lint / format / typecheck                  | `pnpm lint` / `pnpm format` / `pnpm typecheck`                                                      |
 | static guard (also in CI)                  | `pnpm guard:static`                                                                                 |
 | observe the live proxy shapes (INT-6)      | `pnpm smoke:alphastudio` (needs `VITE_API_BASE_URL`; `LIVE_MEDIA=1` adds one paid render)            |
+| probe HSN-0902's three doors (Phase 0)     | `pnpm probe:hsn-0902` (needs `VITE_API_BASE_URL`; zero spend; APPENDS to `Docs/api/alphastudio-shapes.md`) |
 | lighthouse budgets                         | `pnpm lh`                                                                                           |
 | build                                      | `pnpm build`                                                                                        |
 | deploy                                     | `pnpm run deploy --stage <dev\|staging\|prod>` (plain `pnpm deploy` is shadowed by a pnpm built-in) |

@@ -4718,3 +4718,746 @@ until Hasan's production review**.
 - **A4** — Knowledge offers the mark as a checkbox ("This image is a
   logo"), Image only, never Video, unchecked by default; Organization
   always sends the role, no control.
+
+## HSN-0902 Phase 0 — brand kit role, durationS, and the org fields (2026-09-02)
+
+Captured by `pnpm tsx scripts/probe-hsn-0902.ts` against the deployed SANDBOX API on one
+fresh QA org — **1692** (`qa+1788350803187hsn@alphapromena.com`) — org 619 untouched. Zero spend:
+presigns, one free Node PUT, list reads, deletes, org reads and PATCHes, and five
+generation bodies sent ONLY behind the zero-wallet shield (each refused before any
+spend; the wallet and the job list are re-read after). Bodies verbatim; presigned
+urls and the token redacted. Request-ids are the server's `x-request-id` (or the
+envelope's `requestId` on an error). Run stamp: `2026-09-02T12:06:43.187Z`.
+
+### What this run established
+
+- Fresh QA org: id 1692 ("QA HSN-0902 Org 1788350803187").
+- Wallet on the fresh org: 200 {"cents":0,"heldCents":0,"availableCents":0}.
+- P1 brand-kit presign (PDF): 201 assetId=masset_1b77cd881a3c314a0571ca38 mediaType=application/pdf.
+- Storage CORS for http://localhost:5199: 200; allow-origin=*; allow-methods=PUT.
+- Storage CORS for https://1.malaky.ai: 200; allow-origin=*; allow-methods=PUT.
+- Node PUT of a 191-byte PDF: 200.
+- P1 list after the PDF presign: 200; the brand-kit row is listed with keys [assetId, kind, desc, role, meta]; kind="document"; role ECHOED as "brandkit".
+- P1 read-presign of the PDF asset: 200.
+- P1 DELETE: 204.
+- P1 list re-read: 200 {"assets":[]}.
+- P1b role "brandkit" on a PNG: 400 code=bad_request — the door binds role to type.
+- A2 (role "logo" echo): row keys [assetId, kind, desc, role, meta]; role ECHOED as "logo".
+- video, params:{durationS:8} (Hasan’s example; 402 expected): 402 code=wallet_insufficient.
+- video, params:{durationS:"abc"} (400 = validated before the wallet): 400 code=bad_request.
+- video, params:{durationS:999} (400 = a max is enforced before the wallet): 400 code=bad_request.
+- image, NO params key (the ruled image body): 402 code=wallet_insufficient.
+- image, params:{} (HSN-02’s shape, the control): 402 code=wallet_insufficient.
+- P2 after: wallet {"cents":0,"heldCents":0,"availableCents":0}; jobs listed: 0.
+- P3 org record keys before: [id, name, slug, status, createdAt, updatedAt, country].
+- P3a fields alone: PATCH 400 code=validation_failed; read-back carries NEITHER field.
+- P3b fields beside name: PATCH 200 (PATCH response does not carry the fields); read-back carries NEITHER field.
+- P3c org-profile sweep (read-only): /orgs/:id/alphastudio/profile → 404 · /orgs/:id/alphastudio/org → 404 · /orgs/:id/alphastudio/organization → 404 · /orgs/:id/alphastudio/brand → 404 · /orgs/:id/alphastudio/context → 404 · /orgs/:id/profile → 404 · /orgs/:id/brand/profile → 404.
+- P3d NOT RUN: no door echoed the fields, so there are no limits to measure.
+
+### Captured exchanges, in order
+
+#### create org
+
+`POST /orgs` → **201** · request-id `f36f0437-2956-4f93-8102-8944767b6c82`
+> the fresh QA org every probe below runs on
+
+```json
+{
+  "request": {
+    "name": "QA HSN-0902 Org 1788350803187"
+  },
+  "response": {
+    "org": {
+      "id": "1692",
+      "name": "QA HSN-0902 Org 1788350803187",
+      "slug": "qa-hsn-0902-org-1788350803187",
+      "status": "active",
+      "createdAt": "2026-09-02T12:06:47.431Z",
+      "updatedAt": "2026-09-02T12:06:47.431Z",
+      "country": null
+    },
+    "membership": {
+      "id": "1934",
+      "orgId": "1692",
+      "userId": "2070",
+      "role": "owner",
+      "isActive": true,
+      "createdAt": "2026-09-02T12:06:47.431Z",
+      "updatedAt": "2026-09-02T12:06:47.431Z"
+    }
+  }
+}
+```
+
+#### wallet — the fresh org (the 402 shield)
+
+`GET /orgs/1692/alphastudio/wallet` → **200** · request-id `6592aacf-bc22-43e1-b375-d438ceb854e2`
+
+```json
+{
+  "cents": 0,
+  "heldCents": 0,
+  "availableCents": 0
+}
+```
+
+#### P1 · media/assets/presign — application/pdf, desc "brandkit", role "brandkit"
+
+`POST /orgs/1692/alphastudio/media/assets/presign` → **201** · request-id `6a701429-7b4a-4e1d-a0bd-08bbabcfcffe`
+
+```json
+{
+  "request": {
+    "mediaType": "application/pdf",
+    "desc": "brandkit",
+    "role": "brandkit"
+  },
+  "response": {
+    "assetId": "masset_1b77cd881a3c314a0571ca38",
+    "uploadUrl": "<redacted: 1663 chars>",
+    "expiresAt": "2026-09-02T12:21:51.649Z",
+    "mediaType": "application/pdf"
+  }
+}
+```
+
+#### P1 · storage CORS preflight (OPTIONS, from Node) — Origin http://localhost:5199
+
+`OPTIONS (presigned storage url — not our API)` → **200** · request-id `none`
+> what Chromium would be told before its PUT; browser truth is still the browser’s
+
+```json
+{
+  "access-control-allow-origin": "*",
+  "access-control-allow-methods": "PUT",
+  "access-control-allow-headers": "content-type",
+  "access-control-max-age": "3000"
+}
+```
+
+#### P1 · storage CORS preflight (OPTIONS, from Node) — Origin https://1.malaky.ai
+
+`OPTIONS (presigned storage url — not our API)` → **200** · request-id `none`
+> what Chromium would be told before its PUT; browser truth is still the browser’s
+
+```json
+{
+  "access-control-allow-origin": "*",
+  "access-control-allow-methods": "PUT",
+  "access-control-allow-headers": "content-type",
+  "access-control-max-age": "3000"
+}
+```
+
+#### P1 · PUT a tiny PDF to the media presigned url (from Node — NOT browser truth)
+
+`PUT (presigned storage url — not our API)` → **200** · request-id `none`
+> 191 bytes, content-type exactly the ticket's mediaType
+
+#### P1 · media/assets — list (does the row echo role?)
+
+`GET /orgs/1692/alphastudio/media/assets` → **200** · request-id `16dec457-c3a3-4171-8a5d-8b84ee108333`
+
+```json
+{
+  "assets": [
+    {
+      "assetId": "masset_1b77cd881a3c314a0571ca38",
+      "kind": "document",
+      "desc": "brandkit",
+      "role": "brandkit",
+      "meta": {
+        "synthetic": false
+      }
+    }
+  ]
+}
+```
+
+#### P1 · media/assets/:id/presign — download url for the PDF
+
+`POST /orgs/1692/alphastudio/media/assets/masset_1b77cd881a3c314a0571ca38/presign` → **200** · request-id `294385c3-1eb2-4d63-9ecc-c5bad31ca069`
+
+```json
+{
+  "assetId": "masset_1b77cd881a3c314a0571ca38",
+  "url": "<redacted: 1663 chars>",
+  "expiresAt": "2026-09-02T13:06:54.457Z"
+}
+```
+
+#### P1 · media/assets/:id — DELETE the brand kit
+
+`DELETE /orgs/1692/alphastudio/media/assets/masset_1b77cd881a3c314a0571ca38` → **204** · request-id `49690517-9221-422d-917c-21a3fde77f05`
+> expected 204
+
+#### P1 · media/assets — list re-read after the delete
+
+`GET /orgs/1692/alphastudio/media/assets` → **200** · request-id `3b45a9f5-6a91-4d31-85c2-13b280339ab4`
+
+```json
+{
+  "assets": []
+}
+```
+
+#### P1b · media/assets/presign — image/png, desc "brandkit", role "brandkit"
+
+`POST /orgs/1692/alphastudio/media/assets/presign` → **400** · request-id `00e65eaa-21bb-4741-99f8-b8668621b77c`
+
+```json
+{
+  "request": {
+    "mediaType": "image/png",
+    "desc": "brandkit",
+    "role": "brandkit"
+  },
+  "response": {
+    "error": {
+      "code": "bad_request",
+      "message": "The media service rejected the request — check the body against the capability's schema",
+      "requestId": "00e65eaa-21bb-4741-99f8-b8668621b77c"
+    }
+  }
+}
+```
+
+#### P1c · media/assets/presign — image/png, desc "logo", role "logo" (the org logo’s exact body)
+
+`POST /orgs/1692/alphastudio/media/assets/presign` → **201** · request-id `a926b26e-60fb-4233-9dd9-86f9c914d61c`
+
+```json
+{
+  "request": {
+    "mediaType": "image/png",
+    "desc": "logo",
+    "role": "logo"
+  },
+  "response": {
+    "assetId": "masset_ac2ba1dc80eda758793cf1c4",
+    "uploadUrl": "<redacted: 1663 chars>",
+    "expiresAt": "2026-09-02T12:21:57.354Z",
+    "mediaType": "image/png"
+  }
+}
+```
+
+#### P1c · media/assets — list (the logo row)
+
+`GET /orgs/1692/alphastudio/media/assets` → **200** · request-id `7c0d1b42-aa9d-455d-b692-1d603c2dd486`
+
+```json
+{
+  "assets": [
+    {
+      "assetId": "masset_ac2ba1dc80eda758793cf1c4",
+      "kind": "image",
+      "desc": "logo",
+      "role": "logo",
+      "meta": {
+        "synthetic": false
+      }
+    }
+  ]
+}
+```
+
+#### P1c · media/assets/:id — DELETE the logo probe row
+
+`DELETE /orgs/1692/alphastudio/media/assets/masset_ac2ba1dc80eda758793cf1c4` → **204** · request-id `cf8dee3c-9625-4ce1-bf08-665303de85ef`
+> expected 204
+
+#### P2a · media/jobs — video, params:{durationS:8} (Hasan’s example; 402 expected)
+
+`POST /orgs/1692/alphastudio/media/jobs` → **402** · request-id `c08d315f-d8e4-46ff-8303-6532c353d552`
+> sent ONLY because the wallet read 0 — the 402 shield
+
+```json
+{
+  "request": {
+    "capability": "social-posts.media",
+    "plan": "balanced",
+    "kind": "video",
+    "posts": [
+      {
+        "ref": "hsn-0902-probe-draft",
+        "content": "This lot landed Tuesday and we roasted it Thursday — that is the whole trick. Order this week’s roast.",
+        "tone": {
+          "id": "hsn-0902-probe-tone",
+          "name": "Roastery floor",
+          "description": "Warm, specific, smells of coffee.",
+          "rules": [
+            {
+              "kind": "do",
+              "text": "Name the roast date"
+            }
+          ]
+        }
+      }
+    ],
+    "style": {
+      "imgStyle": "Cinematic",
+      "text": true,
+      "logo": true
+    },
+    "guidance": [],
+    "params": {
+      "durationS": 8
+    },
+    "collection": {
+      "use": true
+    }
+  },
+  "response": {
+    "error": {
+      "code": "wallet_insufficient",
+      "message": "The org's wallet cannot cover this request — not enough credits",
+      "requestId": "c08d315f-d8e4-46ff-8303-6532c353d552"
+    }
+  }
+}
+```
+
+#### P2b · media/jobs — video, params:{durationS:"abc"} (400 = validated before the wallet)
+
+`POST /orgs/1692/alphastudio/media/jobs` → **400** · request-id `a13b2826-8794-4b89-872e-5fc99688731b`
+> sent ONLY because the wallet read 0 — the 402 shield
+
+```json
+{
+  "request": {
+    "capability": "social-posts.media",
+    "plan": "balanced",
+    "kind": "video",
+    "posts": [
+      {
+        "ref": "hsn-0902-probe-draft",
+        "content": "This lot landed Tuesday and we roasted it Thursday — that is the whole trick. Order this week’s roast.",
+        "tone": {
+          "id": "hsn-0902-probe-tone",
+          "name": "Roastery floor",
+          "description": "Warm, specific, smells of coffee.",
+          "rules": [
+            {
+              "kind": "do",
+              "text": "Name the roast date"
+            }
+          ]
+        }
+      }
+    ],
+    "style": {
+      "imgStyle": "Cinematic",
+      "text": true,
+      "logo": true
+    },
+    "guidance": [],
+    "params": {
+      "durationS": "abc"
+    },
+    "collection": {
+      "use": true
+    }
+  },
+  "response": {
+    "error": {
+      "code": "bad_request",
+      "message": "The media service rejected the request — check the body against the capability's schema",
+      "requestId": "a13b2826-8794-4b89-872e-5fc99688731b"
+    }
+  }
+}
+```
+
+#### P2c · media/jobs — video, params:{durationS:999} (400 = a max is enforced before the wallet)
+
+`POST /orgs/1692/alphastudio/media/jobs` → **400** · request-id `7c0f8c45-61ab-40a6-b243-5fe54478693f`
+> sent ONLY because the wallet read 0 — the 402 shield
+
+```json
+{
+  "request": {
+    "capability": "social-posts.media",
+    "plan": "balanced",
+    "kind": "video",
+    "posts": [
+      {
+        "ref": "hsn-0902-probe-draft",
+        "content": "This lot landed Tuesday and we roasted it Thursday — that is the whole trick. Order this week’s roast.",
+        "tone": {
+          "id": "hsn-0902-probe-tone",
+          "name": "Roastery floor",
+          "description": "Warm, specific, smells of coffee.",
+          "rules": [
+            {
+              "kind": "do",
+              "text": "Name the roast date"
+            }
+          ]
+        }
+      }
+    ],
+    "style": {
+      "imgStyle": "Cinematic",
+      "text": true,
+      "logo": true
+    },
+    "guidance": [],
+    "params": {
+      "durationS": 999
+    },
+    "collection": {
+      "use": true
+    }
+  },
+  "response": {
+    "error": {
+      "code": "bad_request",
+      "message": "The media service rejected the request — check the body against the capability's schema",
+      "requestId": "7c0f8c45-61ab-40a6-b243-5fe54478693f"
+    }
+  }
+}
+```
+
+#### P2d · media/jobs — image, NO params key (the ruled image body)
+
+`POST /orgs/1692/alphastudio/media/jobs` → **402** · request-id `5a74875a-e52c-426c-ad6d-b26ae594afef`
+> sent ONLY because the wallet read 0 — the 402 shield
+
+```json
+{
+  "request": {
+    "capability": "social-posts.media",
+    "plan": "balanced",
+    "kind": "image",
+    "posts": [
+      {
+        "ref": "hsn-0902-probe-draft",
+        "content": "This lot landed Tuesday and we roasted it Thursday — that is the whole trick. Order this week’s roast.",
+        "tone": {
+          "id": "hsn-0902-probe-tone",
+          "name": "Roastery floor",
+          "description": "Warm, specific, smells of coffee.",
+          "rules": [
+            {
+              "kind": "do",
+              "text": "Name the roast date"
+            }
+          ]
+        }
+      }
+    ],
+    "style": {
+      "imgStyle": "Cinematic",
+      "text": true,
+      "logo": true
+    },
+    "guidance": [],
+    "collection": {
+      "use": true
+    }
+  },
+  "response": {
+    "error": {
+      "code": "wallet_insufficient",
+      "message": "The org's wallet cannot cover this request — not enough credits",
+      "requestId": "5a74875a-e52c-426c-ad6d-b26ae594afef"
+    }
+  }
+}
+```
+
+#### P2e · media/jobs — image, params:{} (HSN-02’s shape, the control)
+
+`POST /orgs/1692/alphastudio/media/jobs` → **402** · request-id `05eb69ef-0f62-4174-ac0c-96b17685895e`
+> sent ONLY because the wallet read 0 — the 402 shield
+
+```json
+{
+  "request": {
+    "capability": "social-posts.media",
+    "plan": "balanced",
+    "kind": "image",
+    "posts": [
+      {
+        "ref": "hsn-0902-probe-draft",
+        "content": "This lot landed Tuesday and we roasted it Thursday — that is the whole trick. Order this week’s roast.",
+        "tone": {
+          "id": "hsn-0902-probe-tone",
+          "name": "Roastery floor",
+          "description": "Warm, specific, smells of coffee.",
+          "rules": [
+            {
+              "kind": "do",
+              "text": "Name the roast date"
+            }
+          ]
+        }
+      }
+    ],
+    "style": {
+      "imgStyle": "Cinematic",
+      "text": true,
+      "logo": true
+    },
+    "guidance": [],
+    "collection": {
+      "use": true
+    },
+    "params": {}
+  },
+  "response": {
+    "error": {
+      "code": "wallet_insufficient",
+      "message": "The org's wallet cannot cover this request — not enough credits",
+      "requestId": "05eb69ef-0f62-4174-ac0c-96b17685895e"
+    }
+  }
+}
+```
+
+#### P2 · wallet — after the five refused bodies
+
+`GET /orgs/1692/alphastudio/wallet` → **200** · request-id `5b496eea-d7d3-4b4f-ad24-0782d1812ee8`
+
+```json
+{
+  "cents": 0,
+  "heldCents": 0,
+  "availableCents": 0
+}
+```
+
+#### P2 · media/jobs — list after (no job may exist)
+
+`GET /orgs/1692/alphastudio/media/jobs` → **200** · request-id `78bfb670-b6db-4f4f-ab8e-51aa2137685f`
+
+```json
+{
+  "jobs": []
+}
+```
+
+#### P3 · GET /orgs/:id — the org record before any write
+
+`GET /orgs/1692` → **200** · request-id `b2a39864-2699-4da5-9358-ae5c7165f039`
+
+```json
+{
+  "org": {
+    "id": "1692",
+    "name": "QA HSN-0902 Org 1788350803187",
+    "slug": "qa-hsn-0902-org-1788350803187",
+    "status": "active",
+    "createdAt": "2026-09-02T12:06:47.431Z",
+    "updatedAt": "2026-09-02T12:06:47.431Z",
+    "country": null
+  },
+  "membership": {
+    "id": "1934",
+    "orgId": "1692",
+    "userId": "2070",
+    "role": "owner",
+    "isActive": true,
+    "createdAt": "2026-09-02T12:06:47.431Z",
+    "updatedAt": "2026-09-02T12:06:47.431Z"
+  }
+}
+```
+
+#### P3a · PATCH /orgs/:id — the two fields ALONE
+
+`PATCH /orgs/1692` → **400** · request-id `e253b332-f190-4188-b0e4-39e660023c17`
+
+```json
+{
+  "request": {
+    "whatYouOffer": "Specialty coffee, roasted to order and shipped within 48 hours.",
+    "whatSetsYouApart": "Roasted to order. Direct-trade sourcing. Carbon-neutral shipping."
+  },
+  "response": {
+    "error": {
+      "code": "validation_failed",
+      "message": "Validation failed",
+      "details": [
+        {
+          "field": "(root)",
+          "message": "Provide at least one field to update"
+        }
+      ],
+      "requestId": "e253b332-f190-4188-b0e4-39e660023c17"
+    }
+  }
+}
+```
+
+#### P3a · GET /orgs/:id — read back
+
+`GET /orgs/1692` → **200** · request-id `93ae8699-ca3c-4870-9eed-4d1fac015e60`
+
+```json
+{
+  "org": {
+    "id": "1692",
+    "name": "QA HSN-0902 Org 1788350803187",
+    "slug": "qa-hsn-0902-org-1788350803187",
+    "status": "active",
+    "createdAt": "2026-09-02T12:06:47.431Z",
+    "updatedAt": "2026-09-02T12:06:47.431Z",
+    "country": null
+  },
+  "membership": {
+    "id": "1934",
+    "orgId": "1692",
+    "userId": "2070",
+    "role": "owner",
+    "isActive": true,
+    "createdAt": "2026-09-02T12:06:47.431Z",
+    "updatedAt": "2026-09-02T12:06:47.431Z"
+  }
+}
+```
+
+#### P3b · PATCH /orgs/:id — the two fields beside `name`
+
+`PATCH /orgs/1692` → **200** · request-id `56022204-f83e-4c3b-8249-64af8853c189`
+
+```json
+{
+  "request": {
+    "name": "QA HSN-0902 Org 1788350803187",
+    "whatYouOffer": "Specialty coffee, roasted to order and shipped within 48 hours.",
+    "whatSetsYouApart": "Roasted to order. Direct-trade sourcing. Carbon-neutral shipping."
+  },
+  "response": {
+    "id": "1692",
+    "name": "QA HSN-0902 Org 1788350803187",
+    "slug": "qa-hsn-0902-org-1788350803187",
+    "status": "active",
+    "createdAt": "2026-09-02T12:06:47.431Z",
+    "updatedAt": "2026-09-02T12:07:06.576Z",
+    "country": null
+  }
+}
+```
+
+#### P3b · GET /orgs/:id — read back
+
+`GET /orgs/1692` → **200** · request-id `45071929-6238-49f7-84dc-598658e40e03`
+
+```json
+{
+  "org": {
+    "id": "1692",
+    "name": "QA HSN-0902 Org 1788350803187",
+    "slug": "qa-hsn-0902-org-1788350803187",
+    "status": "active",
+    "createdAt": "2026-09-02T12:06:47.431Z",
+    "updatedAt": "2026-09-02T12:07:06.576Z",
+    "country": null
+  },
+  "membership": {
+    "id": "1934",
+    "orgId": "1692",
+    "userId": "2070",
+    "role": "owner",
+    "isActive": true,
+    "createdAt": "2026-09-02T12:06:47.431Z",
+    "updatedAt": "2026-09-02T12:06:47.431Z"
+  }
+}
+```
+
+#### P3c · GET /orgs/:id/alphastudio/profile
+
+`GET /orgs/1692/alphastudio/profile` → **404** · request-id `fa1aec74-790a-4bab-952d-ad75497e102e`
+
+```json
+{
+  "error": {
+    "code": "not_found",
+    "message": "Not found"
+  }
+}
+```
+
+#### P3c · GET /orgs/:id/alphastudio/org
+
+`GET /orgs/1692/alphastudio/org` → **404** · request-id `5a13bde2-1e2e-4a8b-9bbc-1702fa40756f`
+
+```json
+{
+  "error": {
+    "code": "not_found",
+    "message": "Not found"
+  }
+}
+```
+
+#### P3c · GET /orgs/:id/alphastudio/organization
+
+`GET /orgs/1692/alphastudio/organization` → **404** · request-id `d9a6e395-746c-4af2-aab7-8a58816051ce`
+
+```json
+{
+  "error": {
+    "code": "not_found",
+    "message": "Not found"
+  }
+}
+```
+
+#### P3c · GET /orgs/:id/alphastudio/brand
+
+`GET /orgs/1692/alphastudio/brand` → **404** · request-id `fcff778b-d101-4c9d-a4e3-887dd4627104`
+
+```json
+{
+  "error": {
+    "code": "not_found",
+    "message": "Not found"
+  }
+}
+```
+
+#### P3c · GET /orgs/:id/alphastudio/context
+
+`GET /orgs/1692/alphastudio/context` → **404** · request-id `a1a842dd-29bb-4360-a8e6-64d2d1d2bba5`
+
+```json
+{
+  "error": {
+    "code": "not_found",
+    "message": "Not found"
+  }
+}
+```
+
+#### P3c · GET /orgs/:id/profile
+
+`GET /orgs/1692/profile` → **404** · request-id `54fb393f-047f-4ab6-aa8a-24f48c1db6b9`
+
+```json
+{
+  "error": {
+    "code": "not_found",
+    "message": "Not found"
+  }
+}
+```
+
+#### P3c · GET /orgs/:id/brand/profile
+
+`GET /orgs/1692/brand/profile` → **404** · request-id `6ec1ed3c-280d-4366-8d91-1f3019d10741`
+
+```json
+{
+  "error": {
+    "code": "not_found",
+    "message": "Not found"
+  }
+}
+```
+

@@ -5,7 +5,38 @@ without reconstructing it from the session log. **Update this file at the end
 of any turn that finishes a phase or changes the plan.** `sessions.md` is the
 chronological record; this is the current picture.
 
-_Last updated: 2026-08-31, after **ORDER MED-0831 (+ its /R rider) SHIPPED
+_Last updated: 2026-09-02, after **ORDER HSN-0902 (Hasan's three changes:
+brand kit · video duration · Organization fields) STOPPED at the end of
+Phase 0 by the order's own clause** — branch **`feat/hsn-0902`** (off `main`
+= `9adb47c`; BIL-0902 stays HELD at `df14989` on its own `feat/bil-0902`,
+untouched), one commit, **NOT pushed**. Probed on fresh QA org **1692**,
+zero spend, every body and request-id appended to
+`Docs/api/alphastudio-shapes.md` ("HSN-0902 Phase 0") by the new
+`pnpm probe:hsn-0902`. **P1 — brand kit:** presign `{application/pdf,
+desc:"brandkit", role:"brandkit"}` → 201, listed as `kind:"document"`
+with **`role` ECHOED — A2 ANSWERED** (the logo's `role:"logo"` echoes
+too; open-item 44's question closes); `role:"brandkit"` on a PNG → 400
+(the door binds role to type); the bucket's CORS preflight allows PUT
+from `*` for localhost:5199 AND 1.malaky.ai — **CORS is not the wall**.
+**P2 — durationS:** a top-level, validated field on the video body: 8 →
+402 (the zero-wallet shield), "abc" and 999 → **400 BEFORE the wallet
+check** (one generic sentence, no limit named — the client clamp is the
+only readable limit); an image body with NO `params` → 402 (clears
+validation). **P3 — the stop:** `PATCH /orgs/:id` refuses
+`whatYouOffer`/`whatSetsYouApart` alone ("Provide at least one field to
+update") and DROPS them beside `name`; no AlphaStudio org-profile path
+exists (seven GETs → 404); Hasan's side sees the org only through Ward's
+context bundle (voice rules, sources, topics). **No door accepts the
+fields → Phases 1–4 NOT built; the founder asks Hasan (open-item 48,
+BLOCKING).** When the door is named the series resumes on this branch
+with Phase 0 pinned (the rulings queued for it: "brandkit" as a reserved
+description, video-only `params`, the one-place per-plan max table
+10/20/30 default 8, the 402 self-skip rule for the live gate). Before
+that, same day: **ORDER BIL-0902 — billing on the Stripe sandbox — BUILT,
+PARTLY GATED, HELD by the founder's stop order** on `feat/bil-0902`
+(`df14989`, off this same `main`; not pushed, not merged; the hold and
+the /R delta are in that branch's own `state.md`). Before that,
+2026-08-31: **ORDER MED-0831 (+ its /R rider) SHIPPED
 on the founder's fast-path ruling** — the media presign door is the product's:
 Knowledge Image/Video uploads and the org logo go through
 `uploadMediaAsset` (presign `{mediaType, desc, role?}` → PUT → done; `desc`

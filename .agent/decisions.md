@@ -2863,3 +2863,50 @@ Closes open-item 38, which ONB-0827 created and the live suite caught.
   value exists), sending `role: null` for non-logos (A1 forbids it by
   name), or gating the ship on the aborted round's unread files (the
   founder's word closes the gate).
+
+### 2026-09-02 — HSN-0902 Phase 0: three doors measured on org 1692, and the series HOLDS on the org fields
+
+- **The ruling that stopped it is the order's own:** "if no door accepts
+  the fields, stop at the end of Phase 0 and report — the founder asks
+  Hasan." Neither Ward's org record (`PATCH /orgs/:id` DROPS
+  `whatYouOffer` / `whatSetsYouApart` beside `name` and refuses them alone
+  as "Provide at least one field to update") nor any AlphaStudio path
+  answers for them (seven read-first GETs, all 404), and the only
+  organization information Hasan's side receives today is the server-side
+  context bundle (voice rules, sources, topics). So nothing of Phases 1–4
+  is built — not even the two Phase 0 cleared — because the order is ONE
+  series → one gate → one merge, and a partial series is not the
+  deliverable. The branch holds Phase 0 alone; the series resumes on it
+  when the door is named.
+- **What Phase 0 pinned, for the resumed order:** (1) the brand kit's
+  closed presign body `{mediaType:"application/pdf", desc:"brandkit",
+  role:"brandkit"}` → 201, listed as `kind:"document"` with `role`
+  ECHOED; the door refuses `role:"brandkit"` on a PNG (400), so the
+  client's PDF allowlist MIRRORS the wire rather than standing in for it.
+  (2) **A2 is answered — `GET …/media/assets` echoes `role`** ("brandkit"
+  and "logo" both measured), so the Files badge on the echo is real, not
+  hypothetical, and the org logo's exact-`desc` lookup can stay as the read
+  side without a second marker ever being needed. (3) `params.durationS`
+  is a known, validated, TOP-LEVEL field on the video body: the upstream
+  400s a non-integer and an over-max BEFORE the wallet check, with a
+  sentence that names neither, so the client clamp (per plan) is the only
+  human-readable limit and the wire's 400 renders as itself. (4) An image
+  body with NO `params` key clears validation (402, not 400) — the
+  "images never send params" ruling is wire-safe. (5) The media bucket's
+  CORS preflight allows `PUT` from `*` for both the dev-server and the
+  production origin — the brand kit does NOT ship behind a CORS wall today.
+- **Probe discipline, kept:** one fresh org (1692); the wallet read
+  `{0,0,0}` BEFORE any generation body, and the five bodies sent only
+  because it did, with the wallet and the job list re-read after
+  (unchanged, empty); every minted asset deleted; presigned urls and the
+  token redacted; the record APPENDED to `alphastudio-shapes.md` (never
+  overwritten) by `scripts/probe-hsn-0902.ts`, the same shape as
+  `probe-billing.ts`.
+- Instead of: building Phases 1–2 while Phase 3 waits (the order's stop
+  clause is explicit, and a two-thirds series would need the whole gate
+  again); encoding the two fields into a voice or topic `description` (the
+  brand-adapter law — never invent a wire home); sending a generation body
+  on a funded wallet to "see the max" (the shield is the zero wallet or
+  nothing); or reading the media door's 400 as "the field is unknown" (the
+  SAME generic sentence answers a bound-role PNG, so it says "refused by
+  the schema", never which key).

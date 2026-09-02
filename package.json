@@ -20,6 +20,7 @@
     "e2e": "playwright test",
     "guard:static": "tsx scripts/guard-static.ts",
     "smoke:alphastudio": "tsx scripts/smoke-alphastudio.ts",
+    "probe:hsn-0902": "tsx scripts/probe-hsn-0902.ts",
     "lh": "tsx scripts/lighthouse.ts",
     "deploy": "tsx scripts/deploy.ts",
     "verify:w00": "tsx scripts/verify-w00.ts",

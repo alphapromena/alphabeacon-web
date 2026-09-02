@@ -995,3 +995,50 @@ branch; all of it blocks DNS cutover or launch.
     (assumption A2 — the app reads it when present, and the Files "logo"
     badge lights only when it is echoed). "logo" stays a reserved
     description in Knowledge either way.
+    **(2) ANSWERED 2026-09-02 (ORDER HSN-0902 Phase 0, org 1692): YES — the
+    list row carries `role`.** A `role:"logo"` presign lists back as
+    `{assetId, kind, desc, role:"logo", meta}` (request
+    `7c0d1b42-aa9d-455d-b692-1d603c2dd486`) and a `role:"brandkit"` one as
+    `role:"brandkit"` with `kind:"document"` (request
+    `16dec457-c3a3-4171-8a5d-8b84ee108333`). The Files badge on the echo
+    is live; only (1) — `createdAt` + `mediaType` on the row — remains
+    asked of Ward.
+
+### HSN-0902 — Hasan's three changes (2026-09-02) — HELD at the end of Phase 0
+
+Numbering: 45–47 belong to BIL-0902 on its held branch `feat/bil-0902`; this
+series counts from 48 so the two merge without a collision.
+
+48. **FOR HASAN — BLOCKING, the series holds here: which door carries
+    `whatYouOffer` (string, ≤500) and `whatSetsYouApart` (string, ≤2000)?**
+    Measured 2026-09-02 on fresh org 1692 (`Docs/api/alphastudio-shapes.md`,
+    "HSN-0902 Phase 0"): `PATCH /orgs/:id` with the two fields ALONE →
+    400 `validation_failed`, `(root) "Provide at least one field to update"`
+    (request `e253b332-f190-4188-b0e4-39e660023c17`) — the keys are not
+    fields; beside `name` → 200 with both DROPPED, and `GET /orgs/:id`
+    carries neither (requests `56022204-f83e-4c3b-8249-64af8853c189`,
+    `45071929-6238-49f7-84dc-598658e40e03`); seven read-first candidate
+    paths under `/orgs/:id/alphastudio/…` and `/orgs/:id/…` → 404. Today the
+    platform learns about the org ONLY through Ward's context bundle (voice
+    rules, sources, topics — api.md §Brand "Context sync"), which no
+    endpoint reads or edits. Options for Hasan/Ward to name: (a) two columns
+    on the org record, accepted by `PATCH /orgs/:id`, echoed by
+    `GET /orgs/:id`, and pushed in the bundle; (b) a new AlphaStudio
+    org-profile endpoint under `/orgs/:id/alphastudio/…`; (c) fields on the
+    generate / media envelopes. The frontend builds Phase 3 on the named
+    door — and Phases 1–2 (brand kit, `durationS`), probed clean, wait with
+    it: one series, one gate.
+
+49. **For Hasan (no blocker): the media door's 400 is one generic
+    sentence.** `role:"brandkit"` on a PNG, `durationS:"abc"` and
+    `durationS:999` all answer `bad_request` — "The media service rejected
+    the request — check the body against the capability's schema" — with no
+    field, no limit and no `details[]` (requests
+    `00e65eaa-21bb-4741-99f8-b8668621b77c`,
+    `a13b2826-8794-4b89-872e-5fc99688731b`,
+    `7c0f8c45-61ab-40a6-b243-5fe54478693f`). The app's own validation is
+    therefore the only human-readable message; a field-level `details[]`
+    (the shape `validation_failed` already carries) would let the wire's
+    refusal name itself. Also for Hasan: the per-plan `durationS` maximum
+    (balanced 10 · creative 20 · precise 30, from the 2026-09-02 walk) is a
+    client-side table until the capability schema or the 400 names it.

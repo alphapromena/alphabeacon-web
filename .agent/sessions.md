@@ -3496,3 +3496,109 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   a render row's `meta.synthetic`. The founder's post-deploy hand-work
   from CUT-0831 (delete the 8 legacy preset rows on org 619, re-save the
   4 custom tones) is now LIVE too and still his.
+
+### 2026-09-02 15:15 — ORDER HSN-0902 Phase 0: the three doors probed on org 1692; the series HOLDS on the org fields
+
+- Did: **Phase 0 only, by the order's own stop clause.** Branch
+  `feat/hsn-0902` off `main` = `9adb47c` (BIL-0902's `df14989` untouched, on
+  its own branch). One fresh QA org **1692**
+  (`qa+1788350803187hsn@alphapromena.com`), wallet `{0,0,0}` (request
+  `6592aacf-bc22-43e1-b375-d438ceb854e2`) — zero spend throughout. New
+  `scripts/probe-hsn-0902.ts` (`pnpm probe:hsn-0902`), which APPENDS its
+  record to `Docs/api/alphastudio-shapes.md` ("HSN-0902 Phase 0": every
+  body verbatim, every request-id, presigned urls and the token redacted).
+  **P1 — brand kit.** Presign `{mediaType:"application/pdf", desc:"brandkit",
+  role:"brandkit"}` → **201** (`masset_1b77cd881a3c314a0571ca38`, request
+  `6a701429-7b4a-4e1d-a0bd-08bbabcfcffe`); a Node PUT of a 191-byte PDF →
+  200; the list row is `{assetId, kind:"document", desc, role:"brandkit",
+  meta}` — **`role` IS ECHOED** (request
+  `16dec457-c3a3-4171-8a5d-8b84ee108333`); read-presign 200 (request
+  `294385c3-1eb2-4d63-9ecc-c5bad31ca069`); DELETE 204 (request
+  `49690517-9221-422d-917c-21a3fde77f05`); re-read `{"assets":[]}` (request
+  `3b45a9f5-6a91-4d31-85c2-13b280339ab4`). **P1b:** `role:"brandkit"` on
+  `image/png` → **400 `bad_request`** "The media service rejected the
+  request — check the body against the capability's schema" (request
+  `00e65eaa-21bb-4741-99f8-b8668621b77c`) — the door BINDS role to type;
+  the client's PDF allowlist mirrors the wire. **P1c / A2:** the org logo's
+  exact body (`image/png`, `desc:"logo"`, `role:"logo"`) → 201 (request
+  `a926b26e-60fb-4233-9dd9-86f9c914d61c`) and lists back with
+  **`role:"logo"` echoed** (request `7c0d1b42-aa9d-455d-b692-1d603c2dd486`);
+  DELETE 204 (request `cf8dee3c-9625-4ce1-bf08-665303de85ef`). **A2 is
+  ANSWERED — `GET …/media/assets` echoes `role`**; item 44's question (2)
+  for Hasan closes and the Files "logo" badge lights for real. **CORS:** the
+  storage bucket's preflight (OPTIONS from Node, request-method PUT,
+  request-headers content-type) answers `access-control-allow-origin: *`,
+  `access-control-allow-methods: PUT` for BOTH `http://localhost:5199` and
+  `https://1.malaky.ai` — **CORS is not the wall today** (browser truth
+  stays Chromium's: `live-media-upload` 3/3 on 2026-09-02 is the last
+  browser proof of a PUT from the app).
+  **P2 — durationS.** `params` is a TOP-LEVEL key of the video body (sent
+  exactly as `buildPostVisualRequest` builds it — one post, style,
+  `guidance: []`, `collection: {use: true}` — plus `params`).
+  `{durationS: 8}` → **402 `wallet_insufficient`** (request
+  `c08d315f-d8e4-46ff-8303-6532c353d552`); `{durationS: "abc"}` → **400
+  `bad_request`** (request `a13b2826-8794-4b89-872e-5fc99688731b`);
+  `{durationS: 999}` → **400 `bad_request`** (request
+  `7c0f8c45-61ab-40a6-b243-5fe54478693f`) — **validation runs BEFORE the
+  wallet check; the field is known and a max is enforced upstream**. The
+  400 carries the same generic sentence as P1b — no field, no limit, no
+  `details` — so the client's own clamp is the only human-readable message
+  and the wire's 400 renders as itself. Image with **NO `params` key** →
+  402 (request `5a74875a-e52c-426c-ad6d-b26ae594afef`); image with
+  `params: {}` (HSN-02's shape) → 402 (request
+  `05eb69ef-0f62-4174-ac0c-96b17685895e`): both clear validation, so the
+  "images never send params" ruling is wire-safe. Wallet after `{0,0,0}`
+  (request `5b496eea-d7d3-4b4f-ad24-0782d1812ee8`), jobs listed 0 (request
+  `78bfb670-b6db-4f4f-ab8e-51aa2137685f`) — nothing minted, nothing held.
+  **P3 — the org fields (read first, then probed).** Reading first: Hasan's
+  side receives organization information today ONLY through the server-side
+  context sync (api.md §Brand "Context sync" — every committed voice /
+  source / topic write re-pushes `{brandVoice.rules, followedSources,
+  topics}` as the org's AlphaProStudio bundle; no endpoint reads or edits
+  it); the generate envelope carries `slot / tones / plan / attachedEvent`
+  and the `social-posts.media` envelope `posts / style / guidance / params /
+  collection` — neither has an organization block; the openapi lists no
+  AlphaStudio org-profile door; the only org record is Ward's
+  `PATCH /orgs/:id {name?, slug?}`. On the wire: `GET /orgs/1692` keys
+  `[id, name, slug, status, createdAt, updatedAt, country]` (request
+  `b2a39864-2699-4da5-9358-ae5c7165f039`); `PATCH /orgs/:id` with the two
+  fields ALONE → **400 `validation_failed`**, `details: [{field: "(root)",
+  message: "Provide at least one field to update"}]` (request
+  `e253b332-f190-4188-b0e4-39e660023c17`) — the keys are not fields; with
+  `name` beside them → **200 and both DROPPED**, the PATCH response and
+  the read-back carry neither (requests
+  `56022204-f83e-4c3b-8249-64af8853c189`,
+  `45071929-6238-49f7-84dc-598658e40e03`). Read-first sweep of seven
+  candidate paths — `/alphastudio/{profile, org, organization, brand,
+  context}`, `/profile`, `/brand/profile` — → **404, all seven** (requests
+  `fa1aec74-790a-4bab-952d-ad75497e102e`,
+  `5a13bde2-1e2e-4a8b-9bbc-1702fa40756f`,
+  `d9a6e395-746c-4af2-aab7-8a58816051ce`,
+  `fcff778b-d101-4c9d-a4e3-887dd4627104`,
+  `a1a842dd-29bb-4360-a8e6-64d2d1d2bba5`,
+  `54fb393f-047f-4ab6-aa8a-24f48c1db6b9`,
+  `6ec1ed3c-280d-4366-8d91-1f3019d10741`). **No door accepts the fields →
+  STOP at the end of Phase 0, per the order; the founder asks Hasan.**
+  Nothing was encoded into `description` or any other field; no limits
+  probed (nothing to measure).
+- Phase: HSN-0902 Phase 0 — DONE. Phases 1–4 NOT started (the order's P3
+  stop clause: one series, one gate — a partial series is not the
+  deliverable).
+- Files: `scripts/probe-hsn-0902.ts` (new), `package.json`
+  (`probe:hsn-0902`), `Docs/api/alphastudio-shapes.md` (appended section),
+  `.agent/{state,sessions,decisions,open-items,stack}.md`
+- Decisions: HSN-0902 Phase 0 (decisions.md); open-items 44 (A2 ANSWERED),
+  48 (BLOCKING, for Hasan: the org fields' door), 49 (for Hasan: the media
+  door's generic 400). Items 45–47 are BIL-0902's on its held branch — this
+  series numbers from 48 so the two merge without a collision.
+- Verify: lint clean · prettier clean on the new script · typecheck clean.
+  No unit / e2e / verify run: nothing under `src/` changed.
+- Next: **on the founder's word, once Hasan names the door** — Phases 1–4
+  as ordered on this branch, with Phase 0's facts pinned: the brand-kit body
+  `{application/pdf, "brandkit", "brandkit"}` is closed AND echoed (the
+  Files badge on `role`, which the list carries; `kind:"document"` on the
+  row); `params.durationS` top-level on the video body only, the client
+  clamp per plan (balanced 10 · creative 20 · precise 30, default 8) the
+  only readable limit, the wire's 400 rendered as itself; image bodies
+  without `params`; the 402 self-skip rule for the live gate; Phase 3 on
+  whichever door Hasan names. Nothing pushed.
