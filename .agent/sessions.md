@@ -3703,3 +3703,47 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   then M-HSN-1 on production (item 50); HSN-0902/B when Hasan/Ward name the
   door (item 48). For the standing law: the host must not sleep during a
   live round — the keep-awake hold is a session gesture, not a fix.
+
+### 2026-09-02 18:05 — ORDER HSN-0902 MERGED and DEPLOYED on the founder's word; `feat/bil-0902` needs a rebase; trap 23 in the ledger
+
+- Did: **the merge.** On the founder's word, `main` fast-forwarded
+  `9adb47c` → **`c5456f1`** (`git merge --ff-only feat/hsn-0902`: five
+  commits — Phase 0 `87be934`, Phases 1+2 `b6df351`, Phase 4 `6ec6c03`,
+  the gate-found fix `1900311`, the close-out `c5456f1` — no merge commit,
+  one linear history), pushed to `origin main` and `main:live` at
+  14:59:42Z (`origin/main` = `origin/live` = `c5456f1`, verified after the
+  push); `feat/hsn-0902` kept on `origin` as the record. **The
+  deployments,** read through the Vercel API (team
+  `alphapromenas-projects`, project `alphabeacon-web`): both **READY** at
+  `c5456f1` — production **`dpl_8f1MyYrEhAhq1FUGJKNxmpR2iwnt`** (target
+  production, ref `main`, created 14:59:43Z) and the `live` preview
+  **`dpl_8Stid97fok9wb7wA5wCZHJ45VuGQ`** (ref `live`, 14:59:45Z); repo
+  visibility `public`, nothing blocked. **The bundle:** `1.malaky.ai`
+  served `index-D7LsIWPh.js` at 15:00:34Z and **`index-Lxcr-Fsd.js`** at
+  15:01:17Z — the change landed ~95 s after the push. **Rollback
+  candidate:** the previous production deployment
+  **`dpl_Ch2yVsMCpntumx1BxMvjs55euDbN`** (`9adb47c`, MED-0831/R, READY).
+  **`feat/bil-0902` needs a REBASE** onto the new `main` before
+  BIL-0902/R: it was cut from `9adb47c` and touches
+  `e2e/live-wallet.spec.ts`, `src/api/types.ts` and every `.agent/*.md`
+  beside this series — expect conflicts in those files, resolved in BIL's
+  favour for its own tests (this series only SKIPPED the starter-funding
+  assertions BIL rewrites) and by keeping both entries for the journals;
+  items 45–47 vs 48–50 already avoid a numbering collision. **Trap 23**
+  (the host sleeping through a live round: the two tells, the power-log
+  check, the process-scoped keep-awake hold, the recorded supplement) is
+  in state.md's ledger beside trap 22.
+- Phase: HSN-0902 — **SHIPPED** (Phases 1, 2, 4). HSN-0902/B held on item
+  48. M-HSN-1 (item 50) is the founder's, on production.
+- Files: `.agent/{state,sessions}.md` (this close-out; the merge itself
+  changed no file).
+- Decisions: none new — the merge is the founder's word; trap 23 is a
+  ledger entry, not a ruling.
+- Verify: nothing re-run — the merge is a fast-forward of the tree whose
+  gate ran in full today (the 17:45 entry); the deployments' READY states
+  and the bundle-hash change are the production checks.
+- Next: the founder's **M-HSN-1** on production (item 50): Brand kit →
+  "Sent to the studio." → listed → Open → Delete; the `LIVE_MEDIA=1` video
+  render with a duration under its maximum (the clip length, and whether
+  the job echoes `durationS`). Then **BIL-0902/R after the rebase**, and
+  **HSN-0902/B** when Hasan/Ward name the door (item 48).

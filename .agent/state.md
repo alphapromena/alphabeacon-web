@@ -5,13 +5,28 @@ without reconstructing it from the session log. **Update this file at the end
 of any turn that finishes a phase or changes the plan.** `sessions.md` is the
 chronological record; this is the current picture.
 
-_Last updated: 2026-09-02, after **ORDER HSN-0902 — Phases 1, 2 and 4
-(the brand kit · the video duration · tests and the gate) BUILT and GATED on
+_Last updated: 2026-09-02, after **ORDER HSN-0902 was MERGED and DEPLOYED
+on the founder's word.** `main` fast-forwarded `9adb47c` → **`c5456f1`**
+(five commits, no merge commit, one linear history) and was pushed with
+`main:live` at 14:59Z; both deployments **READY** at `c5456f1` —
+production **`dpl_8f1MyYrEhAhq1FUGJKNxmpR2iwnt`** (target production, ref
+`main`) and the `live` preview **`dpl_8Stid97fok9wb7wA5wCZHJ45VuGQ`**;
+`1.malaky.ai` moved `index-D7LsIWPh.js` → **`index-Lxcr-Fsd.js`** ~95 s
+after the push; the rollback candidate is the previous production
+deployment **`dpl_Ch2yVsMCpntumx1BxMvjs55euDbN`** (`9adb47c`, MED-0831/R).
+`feat/hsn-0902` is kept on `origin` as the record. **`feat/bil-0902` (held
+at `df14989`, cut from the OLD `main` `9adb47c`) MUST BE REBASED onto the
+new `main` before BIL-0902/R** — it touches `e2e/live-wallet.spec.ts`,
+`src/api/types.ts` and every `.agent/*.md` beside this series, so expect
+conflicts there, resolved in BIL's favour on its own files. **Next: M-HSN-1
+on production (open-item 50), the founder's; HSN-0902/B on item 48; trap
+23 (the host sleeping through a live round) is in the ledger below.**
+Before that, same day: **ORDER HSN-0902 — Phases 1, 2 and 4 (the brand kit
+· the video duration · tests and the gate) BUILT and GATED on
 `feat/hsn-0902`; Phase 3 (the Organization fields) carved out by the founder
 as HSN-0902/B, held on open-item 48, nothing built for it.** Branch off
-`main` = `9adb47c`, five commits, **NOT pushed, NOT merged — report-and-stop
-for the founder's word** (BIL-0902 stays HELD at `df14989` on its own
-branch). **What stands:** a fourth Knowledge kind, **Brand kit** — PDF only,
+`main` = `9adb47c`, five commits, then the merge above (BIL-0902 stays HELD
+at `df14989` on its own branch). **What stands:** a fourth Knowledge kind, **Brand kit** — PDF only,
 no description asked, the closed presign pair `{desc:"brandkit",
 role:"brandkit"}` from ONE function, listed under Files as "Brand kit" ·
 PDF with the badge from the ECHOED role, Open + Delete, "Sent to the
@@ -329,6 +344,7 @@ below).
 | `feat/hsn-04-limits-knowledge` | **MERGED 2026-08-30 (HSN-FINAL). HSN-04, 2026-08-30 — branched off `feat/hsn-03-tone-lang-length` (`ab26bb8`); kept as the record at `1520369`.** Sources ≤ 10 / topics ≤ 30 as client-side ceilings (screen + `TagInput` + seam; over-cap rendered, never trimmed); the shared `KnowledgeUploadForm` (Image | Video | Document, required description, real-MIME check) in both worlds; the RAG presign body carries `desc`, no switch; `previewTone` sends the tone's language. Build hygiene only |
 | `feat/hsn-final-gate` | **HSN-FINAL, 2026-08-30 — branched off `feat/hsn-04-limits-knowledge` (`1520369`), MERGED as the tip `main` now points at (`6f45679`); kept on `origin` as the gate's record.** The two presign probes, the deferred coverage (`e2e/hsn-series.spec.ts`, `e2e/live-create-visual.spec.ts`, five unit files), four stale specs and every live tone creation updated for HSN-03/04, the gate-found Create visual reset fix, the `verify:w06` upload check re-pointed, and the probe record in `alphastudio-shapes.md` |
 | `feat/med-0831` | **MED-0831 + /R, 2026-08-31 — branched off `main` (`7b7222d`), REBASED onto `feat/cut-0831` (`aa6162e`) by the founder's stack ruling, MERGED and SHIPPED the same day on his fast-path ruling; kept on `origin` as the per-order record.** Phase 0 probed the media door in full (all eight types presign 201 with `desc`; the lifecycle clean; `GET …/media/assets` answers 200 — Ward item 4 apparently fixed; rows minted at presign time). Phase 1 `uploadMediaAsset` (no retry; a failed PUT deletes its own mint and reports the id). Phase 2 the Knowledge door split (H1) + the wire-only Files section (H2 re-ruled: no sidecar ever). Phase 3 the wire's org logo (H3; delete-then-upload replace; conflict shown, never picked), H5 `collection:{use:true}`, "logo" reserved. /R: `role: "logo"` on the presign per Hasan's ASSUMED A1–A4. Gate: verify w00–w06 ALL PASS, static 102/67/0, live rounds ABORTED by the founder (auth 7/7 · brand-rules 5/5 · country 4/4 stand) |
+| `feat/hsn-0902` | **HSN-0902, 2026-09-02 — branched off `main` (`9adb47c`), MERGED as a fast-forward the same day (`main` → `c5456f1`) and DEPLOYED (production `dpl_8f1MyYrEhAhq1FUGJKNxmpR2iwnt`, live `dpl_8Stid97fok9wb7wA5wCZHJ45VuGQ`); kept on `origin` as the per-order record.** Phase 0 probed three doors on org 1692, zero spend (`pnpm probe:hsn-0902`): the brand-kit presign 201 with `role` ECHOED by the list — A2 answered; `params.durationS` validated BEFORE the wallet (400 on a bad value, 402 on the valid one); NO door for `whatYouOffer`/`whatSetsYouApart` → Phase 3 carved out as HSN-0902/B (item 48). Phases 1+2: the Brand kit kind (PDF only, the closed `{desc,role}` pair from one function, no description asked, listed under Files with the badge from the echoed role, "brandkit" reserved) and `params.durationS` video-only with the one-place per-plan table in seconds (10/20/30, default 8; a type union keeps `params` off image bodies). Phase 4: static + live specs, the 402 self-skip rule (`skipUnlessFunded`; `live-generate` the one asserting spec), the gate-found Knowledge lazy-collection fix, the knowledge spec's SCREEN_SYNC rung. Gate: unit 537/48 · static 106/75/0 · verify w00–w06 PASS · live rounds 16/18 + 16/18 with both reds judged (the host's 51-minute sleep; the MED-0831 race) and cleared by recorded supplements |
 | `feat/cut-0831` | **CUT-0831, 2026-08-31 — branched off `main` (`7b7222d`). SHIPPED 2026-08-31 with MED-0831 (the first of the two ff steps; its own round-2 gate was 16/16; the eye-pass waived by the founder's fast-path ruling); kept on `origin` as the per-order record.** The steering box and the page-level Language picker deleted; per-tone language is the tone's own (`RunnableTone`, disabled dashed chips otherwise); the preset concept removed (`Tone.kind` gone, one list on I3, every tone deletable, wire bodies frozen in `brand-wire.test.ts`); the live suite performs the per-context language backfill (`ensureToneLanguage`). Probe: preset create 201 / DELETE 204 on org 1485 |
 | `probe/int13` | The PROBE-INT13 media probe (2026-08-26/27), branched off `main` (`fd84173`) — **PUSHED 2026-08-28**, not merged, so its open-items 34/35 do NOT exist on the ONB stack. Phase B is still blocked on Ward |
 | `probe/assets-0826` | The assets-endpoint probe (2026-08-26), docs-only — **PUSHED 2026-08-28** so the Ward message's file pointers resolve on GitHub |
@@ -862,6 +878,28 @@ These are learned the hard way; each cost a debugging cycle.
     field change already went through, and cleared on Cancel and on a good
     save. If a screen needs to know what the user did, have the user's own
     handler say so.
+
+23. **The HOST can sleep through a live round, and the red it leaves looks
+    like the product's (2026-09-02, the HSN-0902 gate).** Round 2's
+    `live-brand-kit` failed on `"Sent to the studio."` not being visible —
+    a plausible CORS or wire failure — and the file "took" 51 minutes for a
+    150 s test timeout. The Windows power log had the answer: Kernel-Power
+    event 42 (entering sleep) at 13:27:48Z, 32 seconds into the file, and
+    the resume at 14:18:50Z; the global-setup heartbeat had stopped after 7
+    beats (35 s). Nothing in the tree or on the wire was wrong: the file
+    re-ran 3/3 in 37 s. **Two tells, either of which settles it:** a
+    test's reported duration longer than its own timeout, and a heartbeat
+    count that does not match the wall clock. **Check the power log before
+    reading the failure** (`Get-WinEvent` on `Microsoft-Windows-Kernel-Power`
+    ids 42/107 and `Power-Troubleshooter` id 1). **The precondition for an
+    unattended round is a host that cannot sleep** — hold it with a
+    process-scoped `SetThreadExecutionState(ES_CONTINUOUS |
+    ES_SYSTEM_REQUIRED)` in a background PowerShell for the run's life
+    (released when the process ends; no power setting changed), never by
+    editing the machine's sleep policy. A red judged as the host's is
+    re-run as a RECORDED supplement with the timestamps beside it — the
+    two-round law says a red in round 2 is a red, and the supplement is
+    how the record says whose.
 
 20. **A null answer from the wire must never fall through to demo data.**
     INT-8 wrote this for `eventSources` — "an empty list is the honest answer
