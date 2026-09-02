@@ -29,14 +29,14 @@ describe('adaptNotification — the billing kinds', () => {
       wire({
         kind: 'billing.wallet_credited',
         title: 'Wallet credited',
-        message: '$500.00 was added to your wallet from your base plan payment.',
+        message: '$599.00 was added to your wallet from your Malaky Business plan payment.',
         action: '/billing',
       }),
     )
     expect(item.type).toBe('wallet_credited')
     expect(item.href).toBe('/billing')
     expect(item.message).toBe(
-      'Wallet credited — $500.00 was added to your wallet from your base plan payment.',
+      'Wallet credited — $599.00 was added to your wallet from your Malaky Business plan payment.',
     )
     expect(item.read).toBe(false)
   })

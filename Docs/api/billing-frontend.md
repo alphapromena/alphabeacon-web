@@ -1,5 +1,11 @@
 # Billing — frontend guide
 
+> **Superseded by the wire as recorded (BIL-0902/R, 2026-09-02):** the plan names, amounts and
+> interval below are the old contract. `GET /billing/plans` now delivers `base` = **"Malaky
+> Business" 59900 usd / month** and `pro` = **"Malaky Scale" 89900 usd / month** (the keys
+> unchanged); Enterprise has no checkout (a "Custom" card with the demo request); Managed is
+> sales-assisted, no add-on; `DASHBOARD_URL` = `https://1.malaky.ai`. Record: `billing-shapes.md`.
+
 How subscriptions work from the frontend's seat. The full endpoint reference is in
 [api.md](api.md) (section **Billing**) and [openapi.json](openapi.json).
 

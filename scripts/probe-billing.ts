@@ -18,8 +18,9 @@
 //   4. GET  /alphastudio/wallet    — the fresh org's starting balance (zeros)
 //   5. POST /billing/checkout with the FIRST DELIVERED key as the owner —
 //      201 {url, sessionId}; the url is NEVER opened; the session is abandoned
-//   5b. POST /billing/checkout with the OLD key `base` — the old contract is
-//      gone; expect 400 `validation_failed` and record the body
+//   5b. POST /billing/checkout with the OLD contract's first key `base` — a
+//      400 means the keys changed, a 201 means only names/amounts/interval
+//      did (Phase 0/R measured the latter); recorded either way, redacted
 //   6. POST /billing/checkout as a MEMBER — the forbidden code
 //   7. POST /billing/portal as the owner on a never-subscribed org
 //   8. PATCH /orgs/:id with `whatYouOffer` + `whatSetsYouApart` beside `name`,
@@ -337,7 +338,12 @@ async function main() {
     `5b · POST /billing/checkout {plan:"${OLD_PLAN_KEY}"} (owner) — the OLD contract's key`,
     'POST',
     billing('/checkout'),
-    { ...owner, body: { plan: OLD_PLAN_KEY } },
+    {
+      ...owner,
+      body: { plan: OLD_PLAN_KEY },
+      // Redacted whatever it answers: a 201 here is a real (abandoned) session.
+      redact: ['url', 'sessionId'],
+    },
   )
   finding(
     `Old key "${OLD_PLAN_KEY}": ${oldKey.status} code=${errorCode(oldKey.body)}${oldKey.status === 201 ? ' — STILL ACCEPTED: the old contract is NOT gone (report)' : ''}.`,

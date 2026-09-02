@@ -1,17 +1,18 @@
 /**
  * The billing seam (ORDER BIL-0902, decisions.md 2026-09-02).
  *
- * THE MODEL, in one line: subscriptions belong to the ORG; two yearly plans;
- * payment happens on a Stripe-hosted page the browser is sent to; every paid
+ * THE MODEL, in one line: subscriptions belong to the ORG; two monthly plans
+ * (and Enterprise, which has no checkout — sales-assisted, a card with one
+ * action); payment happens on a Stripe-hosted page the browser is sent to; every paid
  * invoice credits the org's wallet with exactly what was paid; the wallet is
  * the ONLY funding — a fresh org sits at zero and answers
  * `402 wallet_insufficient` to every generation until it subscribes.
  *
  * Four laws shape this file:
  * - **Wire is the record.** Plan names and prices are rendered from
- *   `GET /plans`, never from a constant here. The demo below carries the
- *   wire's SHAPE so the static page reads like the product; its names are the
- *   demo's own.
+ *   `GET /plans`, never from a constant here. The demo below mirrors the
+ *   rows the sandbox delivered — keys, names, cents, interval — so the static
+ *   page reads exactly like the product; nothing on it is the demo's own.
  * - **Single-shot POSTs, no retry.** `createCheckout` and `createPortal` are
  *   one click → one call → the caller assigns `window.location` to the url.
  *   A failure is returned, never retried; only a fresh click sends again.
@@ -55,13 +56,15 @@ export type {
 // ---------------------------------------------------------------------------
 
 /**
- * Two demo plans mirroring the sandbox's shape and prices on 2026-09-02
- * (base 50000, pro 80000, usd, year). The NAMES are the demo's — in live mode
- * the wire's own names render, whatever Stripe calls them.
+ * Two demo plans mirroring the sandbox EXACTLY as `GET /billing/plans`
+ * delivered it on Ward's corrected contract (BIL-0902/R, org 1745,
+ * 2026-09-02): the keys `base` / `pro` — unchanged by the correction — the
+ * names as Stripe spells them, 59900 / 89900 usd per `month`. In live mode
+ * the wire's own rows render, whatever they say; the demo only mirrors.
  */
 export const DEMO_BILLING_PLANS: readonly ApiBillingPlan[] = [
-  { plan: 'base', name: 'Base', amountCents: 50000, currency: 'usd', interval: 'year' },
-  { plan: 'pro', name: 'Pro', amountCents: 80000, currency: 'usd', interval: 'year' },
+  { plan: 'base', name: 'Malaky Business', amountCents: 59900, currency: 'usd', interval: 'month' },
+  { plan: 'pro', name: 'Malaky Scale', amountCents: 89900, currency: 'usd', interval: 'month' },
 ]
 
 /** The demo has never subscribed — the field set is the wire's at `none`. */

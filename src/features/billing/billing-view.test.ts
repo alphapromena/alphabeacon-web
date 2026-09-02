@@ -53,20 +53,22 @@ describe('subscribeNoteFor', () => {
 })
 
 describe('formatPlanPrice', () => {
-  it('renders integer cents as dollars for usd, never a float', () => {
-    expect(formatPlanPrice({ amountCents: 50000, currency: 'usd', interval: 'year' })).toBe(
-      '$500.00 / year',
+  it('renders integer cents as dollars for usd, never a float — the interval is the wire’s word', () => {
+    expect(formatPlanPrice({ amountCents: 59900, currency: 'usd', interval: 'month' })).toBe(
+      '$599.00 / month',
     )
-    expect(formatPlanPrice({ amountCents: 80000, currency: 'USD', interval: 'year' })).toBe(
-      '$800.00 / year',
+    expect(formatPlanPrice({ amountCents: 89900, currency: 'USD', interval: 'month' })).toBe(
+      '$899.00 / month',
     )
-    expect(formatPlanPrice({ amountCents: 1, currency: 'usd', interval: 'month' })).toBe(
-      '$0.01 / month',
+    // Whatever Stripe says the interval is, that is what renders — nothing
+    // here knows a calendar.
+    expect(formatPlanPrice({ amountCents: 1, currency: 'usd', interval: 'week' })).toBe(
+      '$0.01 / week',
     )
   })
   it('spells out any other currency rather than guessing a symbol', () => {
-    expect(formatPlanPrice({ amountCents: 50000, currency: 'eur', interval: 'year' })).toBe(
-      '500.00 EUR / year',
+    expect(formatPlanPrice({ amountCents: 59900, currency: 'eur', interval: 'month' })).toBe(
+      '599.00 EUR / month',
     )
   })
 })
@@ -75,14 +77,14 @@ describe('planNameFor', () => {
   const plans = [
     {
       plan: 'base' as const,
-      name: 'Malaki Base',
-      amountCents: 50000,
+      name: 'Malaky Business',
+      amountCents: 59900,
       currency: 'usd',
-      interval: 'year',
+      interval: 'month',
     },
   ]
   it('is the WIRE name for a known key, the key itself otherwise, nothing for null', () => {
-    expect(planNameFor(plans, 'base')).toBe('Malaki Base')
+    expect(planNameFor(plans, 'base')).toBe('Malaky Business')
     expect(planNameFor(plans, 'pro')).toBe('pro')
     expect(planNameFor(null, 'pro')).toBe('pro')
     expect(planNameFor(plans, null)).toBe('')

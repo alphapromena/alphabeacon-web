@@ -36,13 +36,21 @@ const ORG = '1670'
 describe('the static demo (zero network)', () => {
   const demo = createBillingActions(false)
 
-  it('offers two plans in the wire shape — base 50000, pro 80000, usd, year', async () => {
+  it('offers the two plans EXACTLY as the sandbox delivers them — base 59900, pro 89900, usd, month', async () => {
     const result = await demo.listPlans(ORG)
     expect(result.ok).toBe(true)
     if (!result.ok) return
+    // Org 1745, request 65719d4c-… (billing-shapes.md, Phase 0/R): the keys
+    // unchanged by Ward's correction, the names and cents as Stripe has them.
     expect(result.value).toEqual([
-      { plan: 'base', name: 'Base', amountCents: 50000, currency: 'usd', interval: 'year' },
-      { plan: 'pro', name: 'Pro', amountCents: 80000, currency: 'usd', interval: 'year' },
+      {
+        plan: 'base',
+        name: 'Malaky Business',
+        amountCents: 59900,
+        currency: 'usd',
+        interval: 'month',
+      },
+      { plan: 'pro', name: 'Malaky Scale', amountCents: 89900, currency: 'usd', interval: 'month' },
     ])
     // The seam hands out a copy: a screen cannot mutate the demo's record.
     expect(result.value).not.toBe(DEMO_BILLING_PLANS)
@@ -99,10 +107,10 @@ describe('live reads', () => {
       items: [
         {
           plan: 'base',
-          name: 'Malaki Base',
-          amountCents: 50000,
+          name: 'Malaky Business',
+          amountCents: 59900,
           currency: 'usd',
-          interval: 'year',
+          interval: 'month',
         },
       ],
       total: 1,
@@ -110,16 +118,16 @@ describe('live reads', () => {
     const result = await live.listPlans(ORG)
     expect(apiMock).toHaveBeenCalledTimes(1)
     expect(apiMock).toHaveBeenCalledWith('GET', '/orgs/1670/billing/plans')
-    // As delivered — "Malaki" is Stripe's spelling and it is rendered, not fixed.
+    // As delivered — the name is Stripe's and it is rendered, never edited.
     expect(result).toEqual({
       ok: true,
       value: [
         {
           plan: 'base',
-          name: 'Malaki Base',
-          amountCents: 50000,
+          name: 'Malaky Business',
+          amountCents: 59900,
           currency: 'usd',
-          interval: 'year',
+          interval: 'month',
         },
       ],
     })

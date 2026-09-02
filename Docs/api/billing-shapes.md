@@ -1,4 +1,378 @@
-# Billing endpoints — observed, not guessed (ORDER BIL-0902 Phase 0)
+# Billing endpoints — observed, not guessed (ORDER BIL-0902 Phase 0/R)
+
+Captured by `pnpm tsx scripts/probe-billing.ts` against the deployed SANDBOX API on one fresh QA
+org, on WARD'S CORRECTED PLANS (Phase 0/R, 2026-09-02). Ward's frontend guide is
+`Docs/api/billing-frontend.md` (its plan names, amounts and interval are superseded by the
+wire as recorded here); this file is what `src/api/types.ts` transcribes the billing shapes
+from. It is its OWN file because `pnpm smoke:alphastudio` overwrites `alphastudio-shapes.md`
+wholesale (founder-approved ruling, decisions.md BIL-0902 Phase 0). The earlier probe on the
+old contract is kept below as dated history. Re-run the script when the backend changes.
+
+- Run: `2026-09-02T17:39:57.508Z`
+- Owner identity: `qa+1788370797508bil@alphapromena.com` · member identity: `qa+1788370797508bilm@alphapromena.com`
+- Fresh QA org: `1745`
+- Spend: none. One Checkout session was created and NEVER opened (abandoned; test mode).
+
+Session tokens are never recorded. The checkout url and sessionId are redacted to their
+shape (a Stripe test-mode link is harmless but it is still a link into a payment page);
+every other field is verbatim. Request-ids are the server's `x-request-id` (or the
+envelope's `requestId` on an error).
+
+> **Reading (BIL-0902/R):** Ward's correction changed the plan NAMES, AMOUNTS and INTERVAL —
+> `"Malaky Business"` 59900 usd/`month` and `"Malaky Scale"` 89900 usd/`month` — and KEPT the
+> plan KEYS `base` / `pro`. So the "old key" probe (5b) answers **201**, not the expected 400,
+> because `base` IS the live key: nothing of the old contract survives except its keys. The
+> client's plan union therefore stays `base | pro`; what changes is what those keys render as.
+> Both 5b and 5 minted a checkout session; both were abandoned unopened (test mode, zero spend).
+## What this run established
+
+- Fresh QA org: id 1745 ("QA Billing Org 1788370797508").
+- Member-role account arranged: a second QA user, invited as `member`, added immediately.
+- Plans: 200; 2 item(s); keys per item: plan, name, amountCents, currency, interval; PLAN KEYS as delivered: "base" · "pro"; names as delivered: "Malaky Business" · "Malaky Scale"; amounts: base=59900 usd/month · pro=89900 usd/month.
+- Subscription at none: 200; status="none"; fields present: plan=null, status=string, currentPeriodStart=null, currentPeriodEnd=null, cancelAtPeriodEnd=boolean, canceledAt=null, updatedAt=null.
+- Credits: 200 {"items":[],"total":0}; with limit/offset: 200 {"items":[],"total":0}.
+- Wallet on the fresh org: 200 {"cents":0,"heldCents":0,"availableCents":0}.
+- Member reads: plans 200 · subscription 200 · credits 200.
+- Old key "base": 201 code=(no envelope) — STILL ACCEPTED: the old contract is NOT gone (report).
+- Member checkout: 403 code=forbidden.
+- Portal at none: 201 keys=url (was 201 on 2026-09-02 10:31).
+- Checkout with "base": 201; keys: url, sessionId; url host: checkout.stripe.com; sessionId prefix: cs_test_… (66 chars).
+- Subscription after an unopened checkout: status="none" (unchanged is the expectation).
+- Wallet after: {"cents":0,"heldCents":0,"availableCents":0}.
+- Org fields: PATCH 200; read-back keys [id, name, slug, status, createdAt, updatedAt, country] — still ABSENT: item 48 stays blocked.
+
+## Captured exchanges, in order
+
+### create org
+
+`POST /orgs` → **201** · as owner · request-id `4521864a-09de-42f2-b5dc-5f670ac22a0f`
+> the fresh QA org every probe below runs on
+
+```json
+{
+  "request": {
+    "name": "QA Billing Org 1788370797508"
+  },
+  "response": {
+    "org": {
+      "id": "1745",
+      "name": "QA Billing Org 1788370797508",
+      "slug": "qa-billing-org-1788370797508",
+      "status": "active",
+      "createdAt": "2026-09-02T17:40:00.900Z",
+      "updatedAt": "2026-09-02T17:40:00.900Z",
+      "country": null
+    },
+    "membership": {
+      "id": "1993",
+      "orgId": "1745",
+      "userId": "2125",
+      "role": "owner",
+      "isActive": true,
+      "createdAt": "2026-09-02T17:40:00.900Z",
+      "updatedAt": "2026-09-02T17:40:00.900Z"
+    }
+  }
+}
+```
+
+### invite the member (existing user → added at once)
+
+`POST /orgs/1745/members/invite` → **201** · as owner · request-id `8e95c219-d6f7-4fa9-98e9-68fee261b39e`
+
+```json
+{
+  "request": {
+    "email": "qa+1788370797508bilm@alphapromena.com",
+    "role": "member"
+  },
+  "response": {
+    "userId": "2126",
+    "email": "qa+1788370797508bilm@alphapromena.com",
+    "role": "member",
+    "invitedNewUser": false
+  }
+}
+```
+
+### 1 · GET /billing/plans (owner)
+
+`GET /orgs/1745/billing/plans` → **200** · as owner · request-id `65719d4c-d272-4f46-9892-505b1ebcae4b`
+
+```json
+{
+  "items": [
+    {
+      "plan": "base",
+      "name": "Malaky Business",
+      "amountCents": 59900,
+      "currency": "usd",
+      "interval": "month"
+    },
+    {
+      "plan": "pro",
+      "name": "Malaky Scale",
+      "amountCents": 89900,
+      "currency": "usd",
+      "interval": "month"
+    }
+  ],
+  "total": 2
+}
+```
+
+### 2 · GET /billing/subscription (owner, never subscribed)
+
+`GET /orgs/1745/billing/subscription` → **200** · as owner · request-id `4383041d-78eb-4e95-8441-a09e890f1ab4`
+
+```json
+{
+  "plan": null,
+  "status": "none",
+  "currentPeriodStart": null,
+  "currentPeriodEnd": null,
+  "cancelAtPeriodEnd": false,
+  "canceledAt": null,
+  "updatedAt": null
+}
+```
+
+### 3 · GET /billing/credits (owner)
+
+`GET /orgs/1745/billing/credits` → **200** · as owner · request-id `552dca56-0670-4056-ade4-4b085e8bde10`
+
+```json
+{
+  "items": [],
+  "total": 0
+}
+```
+
+### 3b · GET /billing/credits?limit=5&offset=0 (paging echo)
+
+`GET /orgs/1745/billing/credits?limit=5&offset=0` → **200** · as owner · request-id `bb6664fe-a4e9-4ae7-9b08-8ce258d1e0cd`
+
+```json
+{
+  "items": [],
+  "total": 0
+}
+```
+
+### 4 · GET /alphastudio/wallet (owner, fresh org)
+
+`GET /orgs/1745/alphastudio/wallet` → **200** · as owner · request-id `83a13bc4-06d7-4fe8-8111-195385f03984`
+
+```json
+{
+  "cents": 0,
+  "heldCents": 0,
+  "availableCents": 0
+}
+```
+
+### GET /billing/plans (member)
+
+`GET /orgs/1745/billing/plans` → **200** · as member · request-id `cbc6c797-230d-4bbd-a1ea-68f02c107065`
+
+```json
+{
+  "items": [
+    {
+      "plan": "base",
+      "name": "Malaky Business",
+      "amountCents": 59900,
+      "currency": "usd",
+      "interval": "month"
+    },
+    {
+      "plan": "pro",
+      "name": "Malaky Scale",
+      "amountCents": 89900,
+      "currency": "usd",
+      "interval": "month"
+    }
+  ],
+  "total": 2
+}
+```
+
+### GET /billing/subscription (member)
+
+`GET /orgs/1745/billing/subscription` → **200** · as member · request-id `b1854ad9-72a0-44bd-bd44-5e0cb73afe47`
+
+```json
+{
+  "plan": null,
+  "status": "none",
+  "currentPeriodStart": null,
+  "currentPeriodEnd": null,
+  "cancelAtPeriodEnd": false,
+  "canceledAt": null,
+  "updatedAt": null
+}
+```
+
+### GET /billing/credits (member)
+
+`GET /orgs/1745/billing/credits` → **200** · as member · request-id `42dae223-da6a-4759-8939-fd0d992966bb`
+
+```json
+{
+  "items": [],
+  "total": 0
+}
+```
+
+### 5b · POST /billing/checkout {plan:"base"} (owner) — the OLD contract's key
+
+`POST /orgs/1745/billing/checkout` → **201** · as owner · request-id `b0eaf265-de72-48d8-9f48-c59a296231d8`
+
+```json
+{
+  "request": {
+    "plan": "base"
+  },
+  "response": {
+    "url": "<redacted: 479 chars, starts "https://chec…">",
+    "sessionId": "<redacted: 66 chars, starts "cs_test_a1A6…">"
+  }
+}
+```
+
+### 6 · POST /billing/checkout {plan:"base"} (member)
+
+`POST /orgs/1745/billing/checkout` → **403** · as member · request-id `29edb4e1-8728-4a3e-85e3-96998e56f153`
+
+```json
+{
+  "request": {
+    "plan": "base"
+  },
+  "response": {
+    "error": {
+      "code": "forbidden",
+      "message": "You do not have access to this resource",
+      "requestId": "29edb4e1-8728-4a3e-85e3-96998e56f153"
+    }
+  }
+}
+```
+
+### 7 · POST /billing/portal (owner, never subscribed)
+
+`POST /orgs/1745/billing/portal` → **201** · as owner · request-id `30912741-2631-4316-aa0c-e230f1f28cda`
+
+```json
+{
+  "url": "<redacted: 133 chars, starts \"https://bill…\">"
+}
+```
+
+### 5 · POST /billing/checkout {plan:"base"} (owner)
+
+`POST /orgs/1745/billing/checkout` → **201** · as owner · request-id `e1475ee5-c248-4ea3-81b7-493303d0aca7`
+> url and sessionId redacted to their shape; the url was NEVER opened and the session is abandoned (test mode, expires on its own)
+
+```json
+{
+  "request": {
+    "plan": "base"
+  },
+  "response": {
+    "url": "<redacted: 479 chars, starts \"https://chec…\">",
+    "sessionId": "<redacted: 66 chars, starts \"cs_test_a1m6…\">"
+  }
+}
+```
+
+### GET /billing/subscription (owner, after an unopened checkout)
+
+`GET /orgs/1745/billing/subscription` → **200** · as owner · request-id `93f6ed94-fe9c-47a6-bbb9-00cd974aeccd`
+
+```json
+{
+  "plan": null,
+  "status": "none",
+  "currentPeriodStart": null,
+  "currentPeriodEnd": null,
+  "cancelAtPeriodEnd": false,
+  "canceledAt": null,
+  "updatedAt": "2026-09-02T17:40:13.724Z"
+}
+```
+
+### GET /alphastudio/wallet (owner, after)
+
+`GET /orgs/1745/alphastudio/wallet` → **200** · as owner · request-id `381698d3-abbe-4c39-a642-c28264cc6124`
+
+```json
+{
+  "cents": 0,
+  "heldCents": 0,
+  "availableCents": 0
+}
+```
+
+### 8 · PATCH /orgs/:id — whatYouOffer + whatSetsYouApart beside name
+
+`PATCH /orgs/1745` → **200** · as owner · request-id `79bce607-9e00-4a80-a30b-bd4582e14fe4`
+
+```json
+{
+  "request": {
+    "name": "QA Billing Org 1788370797508",
+    "whatYouOffer": "Specialty coffee, roasted to order and shipped within 48 hours.",
+    "whatSetsYouApart": "Roasted to order. Direct-trade sourcing. Carbon-neutral shipping."
+  },
+  "response": {
+    "id": "1745",
+    "name": "QA Billing Org 1788370797508",
+    "slug": "qa-billing-org-1788370797508",
+    "status": "active",
+    "createdAt": "2026-09-02T17:40:00.900Z",
+    "updatedAt": "2026-09-02T17:40:19.002Z",
+    "country": null
+  }
+}
+```
+
+### 8 · GET /orgs/:id — read back
+
+`GET /orgs/1745` → **200** · as owner · request-id `4c199f3d-1782-418d-b422-0c4bb9091a5e`
+
+```json
+{
+  "org": {
+    "id": "1745",
+    "name": "QA Billing Org 1788370797508",
+    "slug": "qa-billing-org-1788370797508",
+    "status": "active",
+    "createdAt": "2026-09-02T17:40:00.900Z",
+    "updatedAt": "2026-09-02T17:40:19.002Z",
+    "country": null
+  },
+  "membership": {
+    "id": "1993",
+    "orgId": "1745",
+    "userId": "2125",
+    "role": "owner",
+    "isActive": true,
+    "createdAt": "2026-09-02T17:40:00.900Z",
+    "updatedAt": "2026-09-02T17:40:00.900Z"
+  }
+}
+```
+
+---
+
+## History — the earlier record, kept as dated history (superseded)
+
+What follows is the previous `billing-shapes.md` verbatim, with its top heading demoted.
+Its plan keys, names, amounts and interval describe a contract that no longer answers;
+its shapes for `subscription`, `credits` and the 402 addendum still read the same.
+
+### Billing endpoints — observed, not guessed (ORDER BIL-0902 Phase 0)
 
 > **SUPERSEDED PENDING WARD (founder stop order, 2026-09-02 14:25):** this record is the OLD
 > contract — plans `base`/`pro`, yearly, 50000/80000 cents. Ward is changing the plans to
@@ -337,3 +711,4 @@ nothing at creation. Measured on fresh QA org **1683**:
 So the live suite's generating specs (`live-generate`, `live-proposals`,
 `live-studio`'s Render, `live-brand-rules`' tone preview, `live-create-visual`)
 cannot pass on a fresh QA org until one is subscribed — open-items 46.
+

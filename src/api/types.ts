@@ -301,23 +301,31 @@ export interface ApiSlot {
 // sandbox actually answered on fresh QA org 1670 (Docs/api/billing-shapes.md,
 // 2026-09-02) and from Ward's Docs/api/billing-frontend.md.
 
-/** The wire's `plan` key. The NAME and the PRICE are read from the wire, never from here. */
+/**
+ * The wire's `plan` key. The NAME and the PRICE are read from the wire, never
+ * from here. Ward's corrected contract (BIL-0902/R, org 1745, 2026-09-02)
+ * KEPT these two keys and changed what they render as — `base` is "Malaky
+ * Business" and `pro` is "Malaky Scale" now — so the union is the same and
+ * the card copy comes from the row, as it always did.
+ */
 export type ApiBillingPlanId = 'base' | 'pro'
 
 /**
- * One row of `GET /orgs/:orgId/billing/plans`. Observed verbatim:
- * `{ plan: "base", name: "Malaki Base", amountCents: 50000, currency: "usd", interval: "year" }`.
+ * One row of `GET /orgs/:orgId/billing/plans`. Observed verbatim on the
+ * corrected contract (org 1745, request `65719d4c-…`):
+ * `{ plan: "base", name: "Malaky Business", amountCents: 59900, currency: "usd", interval: "month" }`,
+ * `{ plan: "pro", name: "Malaky Scale", amountCents: 89900, currency: "usd", interval: "month" }`.
  * `name` is Stripe's and renders as delivered — the fix for a misspelling
  * belongs in the Stripe dashboard, not in this code (wire is the record).
  */
 export interface ApiBillingPlan {
   plan: ApiBillingPlanId
   name: string
-  /** Integer cents — 50000 is $500.00. */
+  /** Integer cents — 59900 is $599.00. */
   amountCents: number
   /** ISO 4217, LOWERCASE as observed (`"usd"`). */
   currency: string
-  /** Stripe's interval word, observed `"year"`. */
+  /** Stripe's interval word, observed `"month"` (it was `"year"` on the old contract). */
   interval: string
 }
 
@@ -352,7 +360,7 @@ export interface ApiSubscription {
 
 /**
  * One row of `GET /orgs/:orgId/billing/credits` — one per PAID Stripe invoice
- * (first payment, yearly renewal, prorated upgrade), newest first, paged with
+ * (first payment, each renewal, prorated upgrade), newest first, paged with
  * `limit`/`offset`. UNOBSERVED as of 2026-09-02: a fresh org has none, and a
  * row only exists after a real test payment (manual gate M-BIL-1). Fields are
  * the guide's; its trailing `…` says more may arrive and are carried, not

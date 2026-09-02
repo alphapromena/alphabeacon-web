@@ -3,9 +3,11 @@
  * return routes, rendered from the demo with ZERO network (the fixture's
  * assert is the proof).
  *
- * - `/billing` renders the two demo plans in the wire's shape (base $500.00,
- *   pro $800.00, per year), the subscription status word, the empty history,
- *   and — for the demo's top tier — a Subscribe on each plan.
+ * - `/billing` renders the two demo plans in the wire's shape (BIL-0902/R:
+ *   base "Malaky Business" $599.00, pro "Malaky Scale" $899.00, per month —
+ *   the keys unchanged, the names and prices as the sandbox delivers them),
+ *   the Enterprise card beside them, the subscription status word, the
+ *   empty history, and — for the demo's top tier — a Subscribe on each plan.
  * - The demo's Subscribe walks the SAME return route Stripe would use, and the
  *   success page says, plainly, that nothing was paid.
  * - `?checkout=cancelled` shows the plans again plus the one-line note.
@@ -30,12 +32,13 @@ test('the plans render from the demo in the wire’s shape, with Subscribe for t
   await expect(page.getByRole('heading', { name: 'Billing', level: 1 })).toBeVisible()
 
   const plans = page.getByRole('region', { name: 'Plans' })
-  await expect(plans.getByRole('heading', { name: 'Base', level: 3 })).toBeVisible()
-  await expect(plans.getByRole('heading', { name: 'Pro', level: 3 })).toBeVisible()
-  await expect(plans.getByText('$500.00 / year')).toBeVisible()
-  await expect(plans.getByText('$800.00 / year')).toBeVisible()
-  // Prices are yearly and in dollars — never a monthly figure, never "credits".
-  await expect(plans.getByText(/\/month/)).toHaveCount(0)
+  await expect(plans.getByRole('heading', { name: 'Malaky Business', level: 3 })).toBeVisible()
+  await expect(plans.getByRole('heading', { name: 'Malaky Scale', level: 3 })).toBeVisible()
+  await expect(plans.getByText('$599.00 / month')).toBeVisible()
+  await expect(plans.getByText('$899.00 / month')).toBeVisible()
+  // Prices are monthly and in dollars — the interval is the wire's word, so
+  // no "/ year" survives anywhere on the page, and never "credits".
+  await expect(plans.getByText(/\/ year/)).toHaveCount(0)
   await expect(page.getByRole('main').getByText(/\bcredits\b/i)).toHaveCount(0)
 
   // The wire's status word, worn openly.

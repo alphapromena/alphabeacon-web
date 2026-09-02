@@ -6,9 +6,11 @@
  *   subscription `none` (full field set), credits empty, wallet zeros, and
  *   ONE checkout answering `201 { url, sessionId }` whose url is asserted and
  *   NEVER opened (the session is abandoned; test mode; nothing to clean up);
- * - `/billing` renders the plans FROM THE WIRE — the card names are compared
- *   against the API's own `name` values in the same test, whatever Stripe
- *   calls them — with Subscribe for the owner and the honest empty history;
+ * - `/billing` renders the plans FROM THE WIRE — the card names, cents and
+ *   interval are compared against the API's own values in the same test,
+ *   whatever Stripe calls them (BIL-0902/R: the keys `base`/`pro` unchanged,
+ *   the names "Malaky Business"/"Malaky Scale", monthly) — with Subscribe for
+ *   the owner, the Enterprise card beside them, and the honest empty history;
  * - the chip and the dashboard say "no balance yet" over a zero wallet, not
  *   "funding pending";
  * - the success route, arrived at by hand with the org id and a made-up
@@ -89,9 +91,13 @@ test('the five endpoints answer the shapes the UI is built on — and the checko
     expect(Object.keys(item).sort()).toEqual(
       ['amountCents', 'currency', 'interval', 'name', 'plan'].sort(),
     )
+    // BIL-0902/R: Ward's correction kept the KEYS and changed the rest — the
+    // client's plan union is still exactly these two (org 1745, 2026-09-02).
     expect(['base', 'pro']).toContain(item.plan)
     expect(Number.isInteger(item.amountCents)).toBe(true)
   }
+  // The checkout below uses the FIRST DELIVERED key, never a literal.
+  const deliveredKey = plans.items[0].plan
 
   const subscription = (await (
     await request.get(billing('/subscription'), { headers: auth })
@@ -122,7 +128,7 @@ test('the five endpoints answer the shapes the UI is built on — and the checko
   // ONE checkout. The url is asserted and abandoned — never opened.
   const checkout = await request.post(billing('/checkout'), {
     headers: auth,
-    data: { plan: 'base' },
+    data: { plan: deliveredKey },
   })
   expect(checkout.status()).toBe(201)
   const receipt = (await checkout.json()) as { url: string; sessionId: string }
@@ -150,7 +156,9 @@ test('/billing renders the plans FROM THE WIRE, Subscribe for the owner, and the
   const auth = { authorization: `Bearer ${await sessionToken(page)}` }
   const plans = (await (
     await request.get(`${API_BASE}/orgs/${orgId}/billing/plans`, { headers: auth })
-  ).json()) as { items: { plan: string; name: string; amountCents: number }[] }
+  ).json()) as {
+    items: { plan: string; name: string; amountCents: number; interval: string }[]
+  }
 
   // The chip over a zero wallet: the instruction, not "funding pending".
   await expect(
@@ -164,15 +172,27 @@ test('/billing renders the plans FROM THE WIRE, Subscribe for the owner, and the
   const region = page.getByRole('region', { name: 'Plans' })
   await expect(region).toBeVisible({ timeout: SCREEN_SYNC })
 
-  // Wire is the record: every card's heading is the API's own `name`, and its
-  // price is the API's own cents — whatever Stripe calls the plan.
+  // Wire is the record: every card's heading is the API's own `name`, its
+  // price the API's own cents, and its interval the API's own word —
+  // whatever Stripe calls the plan and however often it bills.
   for (const plan of plans.items) {
     const card = region.locator(`[data-plan="${plan.plan}"]`)
     await expect(card.getByRole('heading', { level: 3 })).toHaveText(plan.name)
     const dollars = `$${Math.floor(plan.amountCents / 100)}.${String(plan.amountCents % 100).padStart(2, '0')}`
-    await expect(card.getByText(`${dollars} / year`)).toBeVisible()
+    await expect(card.getByText(`${dollars} / ${plan.interval}`)).toBeVisible()
     await expect(card.getByRole('button', { name: 'Subscribe' })).toBeVisible()
   }
+  // BIL-0902/R: Enterprise beside the wire's plans — "Custom", no Subscribe,
+  // the demo request as its only action; the same card the demo shows.
+  const enterprise = region.locator('[data-plan="enterprise"]')
+  await expect(enterprise.getByRole('heading', { name: 'Enterprise', level: 3 })).toBeVisible()
+  await expect(enterprise.getByText('Custom', { exact: true })).toBeVisible()
+  await expect(enterprise.getByRole('button', { name: 'Subscribe' })).toHaveCount(0)
+  await expect(enterprise.getByRole('link', { name: 'Request a demo' })).toHaveAttribute(
+    'href',
+    '/request-demo',
+  )
+  await expect(region.getByText(/\/ year/)).toHaveCount(0)
   await expect(region.getByText('none', { exact: true })).toBeVisible()
   await expect(
     page.getByRole('region', { name: 'Billing history' }).getByText(/No payments yet/),
@@ -255,9 +275,11 @@ test('a member cannot start checkout: 403 forbidden, and any member reads', asyn
     headers: memberAuth,
   })
   expect(read.status()).toBe(200)
+  // A real, delivered key — so the 403 is the owner rule, not a plan check.
+  const deliveredKey = ((await read.json()) as { items: { plan: string }[] }).items[0].plan
   const forbidden = await request.post(`${API_BASE}/orgs/${orgId}/billing/checkout`, {
     headers: memberAuth,
-    data: { plan: 'base' },
+    data: { plan: deliveredKey },
   })
   expect(forbidden.status()).toBe(403)
   expect(((await forbidden.json()) as { error: { code: string } }).error.code).toBe('forbidden')

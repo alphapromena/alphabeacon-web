@@ -54,7 +54,8 @@ export function subscribeNoteFor(subscription: Subscription): string | null {
 }
 
 /**
- * "$500.00 / year". USD is the observed currency and reads as dollars; any
+ * "$599.00 / month" — the interval is the wire's own word, never a calendar
+ * this code knows. USD is the observed currency and reads as dollars; any
  * other currency is spelled out rather than given a symbol this code would
  * have to guess. Never a float: cents are integers all the way down.
  */

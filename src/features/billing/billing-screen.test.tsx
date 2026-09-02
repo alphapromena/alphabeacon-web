@@ -29,8 +29,8 @@ vi.mock('@/api/config', () => ({
 }))
 
 const WIRE_PLANS: BillingPlan[] = [
-  { plan: 'base', name: 'Malaki Base', amountCents: 50000, currency: 'usd', interval: 'year' },
-  { plan: 'pro', name: 'Malaki Pro', amountCents: 80000, currency: 'usd', interval: 'year' },
+  { plan: 'base', name: 'Malaky Business', amountCents: 59900, currency: 'usd', interval: 'month' },
+  { plan: 'pro', name: 'Malaky Scale', amountCents: 89900, currency: 'usd', interval: 'month' },
 ]
 
 const NONE: Subscription = {
@@ -57,11 +57,12 @@ describe('PlansSection — the owner/member split', () => {
         onSubscribe={() => {}}
       />,
     )
-    // "Malaki" is Stripe's spelling; the page shows it, it does not fix it.
-    expect(screen.getByRole('heading', { name: 'Malaki Base', level: 3 })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'Malaki Pro', level: 3 })).toBeInTheDocument()
-    expect(screen.getByText('$500.00 / year')).toBeInTheDocument()
-    expect(screen.getByText('$800.00 / year')).toBeInTheDocument()
+    // "Malaky Business" is Stripe's own name for the row (BIL-0902/R); the
+    // page shows it as delivered, it never edits it.
+    expect(screen.getByRole('heading', { name: 'Malaky Business', level: 3 })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Malaky Scale', level: 3 })).toBeInTheDocument()
+    expect(screen.getByText('$599.00 / month')).toBeInTheDocument()
+    expect(screen.getByText('$899.00 / month')).toBeInTheDocument()
     expect(screen.getAllByRole('button', { name: 'Subscribe' })).toHaveLength(2)
     expect(screen.queryByText(MESSAGES.notices.billingOwnerOnly)).not.toBeInTheDocument()
     // The wire's status word is worn openly.
@@ -79,8 +80,8 @@ describe('PlansSection — the owner/member split', () => {
         onSubscribe={() => {}}
       />,
     )
-    expect(screen.getByRole('heading', { name: 'Malaki Base', level: 3 })).toBeInTheDocument()
-    expect(screen.getByText('$500.00 / year')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Malaky Business', level: 3 })).toBeInTheDocument()
+    expect(screen.getByText('$599.00 / month')).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Subscribe' })).not.toBeInTheDocument()
     expect(screen.getByRole('status')).toHaveTextContent(MESSAGES.notices.billingOwnerOnly)
   })
@@ -154,7 +155,7 @@ describe('PlansSection — the owner/member split', () => {
       />,
     )
     expect(screen.getByText(MESSAGES.empty.noPlans)).toBeInTheDocument()
-    expect(screen.queryByText(/\$500\.00/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/\$599\.00/)).not.toBeInTheDocument()
   })
 })
 
@@ -182,7 +183,7 @@ describe('SubscriptionSection', () => {
         onManage={onManage}
       />,
     )
-    expect(screen.getByRole('heading', { name: 'Malaki Pro', level: 2 })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Malaky Scale', level: 2 })).toBeInTheDocument()
     expect(screen.getByText('active')).toBeInTheDocument()
     expect(screen.getByText(/Current period ends/)).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Manage billing' }))
