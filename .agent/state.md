@@ -43,9 +43,16 @@ command line); the CLEAN round (18:48–19:22Z) judged 8/19 files — **billing
 skipped, generate 1 + 1 — with four reds of one shape (a login or an upload
 not within its rung: auth, brand, invite-org, knowledge; none in this
 series' files) and **10 files REFUSED at warm-up when the link died at
-~19:00Z; the 14-file supplement is PENDING the link.** So the gate is
-**PARTIAL**: every static number green, round 1 18/19, this series' own
-surfaces 7/7 in both rounds, the rest waiting on a stable link. **This host's
+~19:00Z. The 14-file supplement ran 20:27–20:46Z on a link that flapped
+again inside it: auth 7/7, invite-org, media-upload, onboarding,
+schedule-repair, studio and video-duration green; brand, knowledge,
+notifications, proposals and scheduling red on the same login/sync-latency
+class, team and wallet refused at warm-up.** So the gate is **PARTIAL,
+closed: static green throughout, round 1 18/19, round 2 + supplement 13/19
+green (this series' own surfaces 7/7 in every run), and 6 files — brand,
+knowledge, notifications, proposals, scheduling, team, wallet — unjudged by
+this host's network; none carries this series' code. The founder's call:
+merge on it, or re-run the six when the link is fixed. **This host's
 link dropped four times this evening** (17:12–17:39Z, 18:23Z, ~18:5xZ,
 19:0xZ–…; gateway 192.168.1.1 unreachable, DNS timing out) — the reds it
 left are the harness's, classified per file in sessions.md; and **trap 22

@@ -4021,3 +4021,39 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   live round needs a STABLE link as much as an awake host — the fleet
   warm-up's refusal is the tell, and a stopped round leaves a Vite server on
   5199 to end by hand (trap 22, seventh shape).
+
+### 2026-09-02 23:50 — BIL-0902/R: the round-2 supplement as it fell; the gate closes PARTIAL on the host's link
+
+- Did: the link held for four consecutive 12-way bursts at 20:27:37Z and the
+  14-file supplement ran (20:27–20:46Z), then the link flapped again inside
+  it. **Green in the supplement:** auth **7/7**, invite-org 3/3,
+  media-upload 3/3, onboarding 5 + 1 skipped, schedule-repair 3/3, studio
+  3 + 1 skipped, video-duration 2 + 1 skipped. **Still red, every one the
+  same class — a login, a signup or a reload's sync not landing inside its
+  wait, in files this series never touched, with the link failing at
+  several files' own warm-up:** brand 1 + 1 failed (the tone not visible
+  within the 40 s sync after a reload), knowledge 2 + 1 (the LOGIN not
+  within 20 s), notifications 1 failed (the signup's "Check your inbox" not
+  within 20 s), proposals 1 + 1 (the login not within 20 s), scheduling
+  1 + 1 (`aria-busy` not clear within 40 s after a reload), **team and
+  wallet REFUSED at warm-up** (every probe `fetch failed`). **The whole
+  gate, judged:** static suite 111/82/0 · verify w00–w06 PASS · unit 601/53
+  · live round 1 18/19 · live round 2 + supplement **13/19 green** —
+  billing 7/7 (twice), brand-kit, brand-rules, country, create-visual,
+  generate, auth, invite-org, media-upload, onboarding, schedule-repair,
+  studio, video-duration — and **6 files unjudged by this host's network:
+  brand, knowledge, notifications, proposals, scheduling, team, wallet**
+  (wallet never once got past the warm-up tonight). None of the six carries
+  this series' code; the 20 s login waits they fail on are the suite's
+  older default, not the re-clocked rung — a clock question for the standing
+  law, not this order's. **The founder's call:** merge on this partial gate
+  (this series' own surfaces are green in every run), or order the six
+  files re-run when the link is fixed — the runner takes a file list.
+- Phase: BIL-0902/R — gate PARTIAL, closed; report-and-stop.
+- Files: `.agent/{state,sessions}.md`.
+- Decisions: none new.
+- Verify: as above.
+- Next: the founder's word. Then M-BIL-1 (/R) on `1.malaky.ai`, step 8
+  mints the funded QA org; HSN-0902/B on item 48. For the ledger: this
+  host's Wi-Fi link dropped at 17:12, 18:23, ~18:50, 19:00 and 20:4xZ —
+  the gate needs a wired or otherwise steady link before the next series.
