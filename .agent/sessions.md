@@ -3602,3 +3602,104 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   only readable limit, the wire's 400 rendered as itself; image bodies
   without `params`; the 402 self-skip rule for the live gate; Phase 3 on
   whichever door Hasan names. Nothing pushed.
+
+### 2026-09-02 17:45 — ORDER HSN-0902 Phases 1, 2 and 4: the brand kit and the video duration, built and GATED; Phase 3 carved out as HSN-0902/B
+
+- Did: **on the founder's word, resumed on `feat/hsn-0902`** — Phases 1, 2
+  and 4; Phase 3 (the Organization fields) is **HSN-0902/B**, held on
+  open-item 48, nothing built. **Phase 1 — brand kit:** a fourth Knowledge
+  kind, "Brand kit", PDF only (the door binds `role:"brandkit"` to
+  `application/pdf`; the client allowlist mirrors it), routed like
+  Image/Video through the ONE uploader with the closed presign pair
+  `{desc:"brandkit", role:"brandkit"}` decided in `knowledgeUploadMarkers`;
+  no description field is rendered for it; `"brandkit"` joins `"logo"` as a
+  reserved free description (`reservedMediaDesc`, trimmed and
+  case-insensitive, the wire match exact); the Files section LISTS it as
+  "Brand kit" · PDF · badge from the ECHOED role (measured — A2), Open +
+  Delete, no cap; success reads "Sent to the studio."; a PUT that never
+  reached storage names the wall in the status line; the demo mirrors the
+  wire's `kind:"document"`. **Phase 2 — video duration:** `params.durationS`
+  is a TOP-LEVEL, video-only key — `PostVisualOptions` is a union on `kind`,
+  so an image body cannot carry it and the key is ABSENT (unit-pinned; Phase
+  0 measured the absent key clears the wire); ONE table in seconds keyed by
+  the plan vocabulary type (`VIDEO_DURATION_MAX_S`: balanced 10 · creative
+  20 · precise 30; default 8, min 1); the control is video-only, shows the
+  maximum beside itself, clamps on a quality change (`applyVisualPatch`),
+  refuses a typed over-max value with the message, and the demo runs the
+  same limits. **A2's ASSUMED marks lifted** in the shapes doc (MED-0831/R
+  section), `src/api/types.ts`, `studio.ts`, the Files section and the org
+  logo (which keeps the exact-`desc` lookup as its read side anyway).
+  **Phase 4 — tests:** unit +12 (the closed pair, the routing, the reserved
+  word, the listing, the uploader's exact body; the table's key set,
+  clamp/validate, the top-level video `params`, the images-never-send-params
+  pin; the form's clamp-on-plan-change and validation — a new
+  `use-create-visual.test.ts`); static `e2e/hsn-0902.spec.ts` (4); live
+  `live-brand-kit.spec.ts` (the wire from Node — NOT browser truth — AND the
+  browser-truth upload from Chromium) and `live-video-duration.spec.ts`
+  (a bad `durationS` is 400 BEFORE the wallet; the valid body self-skips on
+  402). **The 402 rule for this gate:** `skipUnlessFunded` in `live-setup`
+  reads the wallet BEFORE any body is sent; `live-generate` is THE ONE spec
+  asserting the refusal (a new test: the run on a zero wallet renders the
+  balance state, `Available: $0.00`, the form kept); `live-proposals`,
+  `live-brand-rules`, `live-create-visual` and — found by round 1 —
+  `live-onboarding`'s final run self-skip with the reason; `live-wallet`'s
+  three starter-funding assertions skip (BIL-0902's to re-target).
+  **The gate found and fixed two things** (both in files this order
+  touched, both pre-existing on `main` since MED-0831's aborted gate — the
+  BIL-0902 round-1 red "knowledge 2/3, a 30 s wait on the upload row" was
+  the same thing): (1) **the live Knowledge screen's lazy-collection race**
+  — since MED-0831 the form no longer waits on the RAG collection (the media
+  door needs none), so a DOCUMENT dropped in the first seconds after the
+  screen opened landed before the id had arrived and read "Something went
+  wrong on our side"; and once resolved at submit time, the list refresh
+  read the click's stale closure (null) and the new row never appeared.
+  Fixed in `live-knowledge.tsx`: the document path resolves the collection
+  itself when the id has not landed, and `refresh` reads a ref
+  (`collectionRef`) rather than the state. (2) **`live-knowledge.spec.ts`'s
+  two post-reload waits** sat at the 5 s default and failed in BOTH rounds
+  (a screen that now fans out two more lazy reads on open); they take the
+  `SCREEN_SYNC` rung — the seventh file to, on purpose, per live-clocks.ts.
+- Phase: HSN-0902 Phases 1, 2, 4 — DONE and gated; Phase 3 = HSN-0902/B,
+  HELD on item 48.
+- Files: `src/data/{types,studio,studio.test}.ts`, `src/api/types.ts`,
+  `src/lib/messages.ts`,
+  `src/features/settings/{knowledge-upload-form,live-knowledge,knowledge-screen,media-files-section,org-logo-live}.tsx`,
+  `src/features/studio/{use-create-visual.ts,use-create-visual.test.ts (new),create-visual-dialog.tsx}`,
+  `e2e/{hsn-0902.spec.ts (new),live-brand-kit.spec.ts (new),live-video-duration.spec.ts (new),live-setup.ts,live-generate.spec.ts,live-proposals.spec.ts,live-brand-rules.spec.ts,live-create-visual.spec.ts,live-onboarding.spec.ts,live-knowledge.spec.ts,live-wallet.spec.ts}`,
+  `Docs/api/alphastudio-shapes.md` (A2 marks lifted),
+  `.agent/{state,sessions,decisions,open-items}.md`
+- Decisions: HSN-0902 Phases 1/2/4 (decisions.md, the rulings: "brandkit"
+  reserved, video-only `params`, the one-place per-plan table, the 402
+  self-skip); the gate's own entry (the two fixes, the rung, the host
+  sleep). Open-items: 48 re-scoped to HSN-0902/B; 50 = M-HSN-1.
+- Verify (final tree): lint clean · typecheck clean · prettier clean on
+  every changed file · guard-static 335 · unit **537 / 48 files** · static
+  e2e **106 passed / 75 skipped / 0 failed** (standalone; the first run
+  under the pipeline's load had 4 timeouts on compose/connections/team/the
+  shell walk — none on this order's screens — and the same suite was
+  106/75/0 inside verify:w00 minutes later) · `verify:w00`–`w05` PASS in
+  the pipeline, `verify:w06` PASS standalone (its e2e step had 8 timeouts
+  under the same load) · **live round 1** (13:09–13:26Z, one file at a
+  time, LIVE_MEDIA off): 16/18 clean — auth 7/7, **brand-kit 3/3 (browser
+  truth included)**, brand-rules 4 + 1 skipped, brand 5/5, country 4/4,
+  create-visual 3 skipped, **generate 2 + 1 skipped (the 402 asserted)**,
+  invite-org 3/3, knowledge 1 + 1 failed (the 5 s wait), media-upload 3/3,
+  notifications 1/1, onboarding 5 + 1 failed (the missed 402 — fixed),
+  proposals 1 + 4 skipped, schedule-repair 3/3, scheduling 2 + 1 skipped,
+  studio 3 + 1 skipped, team 6/6, **video-duration 2 + 1 skipped (400
+  asserted, 402 self-skipped)**, wallet 1 + 3 skipped · **live round 2 —
+  the gate** (13:26–14:33Z): 16/18 clean, the same file-by-file figures,
+  onboarding 5 + 1 skipped; the two reds: **brand-kit 2 + 1 failed because
+  the HOST SLEPT 51 minutes inside its browser-truth test** (Kernel-Power
+  42 at 13:27:48Z, 32 s into the file; resume 14:18:50Z — the warm-up
+  heartbeat stopped after 7 beats, the test "took" 51.1 m), and knowledge
+  2 + 1 failed (the 5 s wait, test 3 this time) · **round-2 supplements**
+  (14:33–14:43Z, the host held awake by an execution-state request for the
+  duration, no power setting changed): brand-kit **3/3** in 37 s; knowledge
+  with the rung → 2 + 1 failed with the generic alert (the race) → fix 1 →
+  2 + 1 failed, no alert, no row (the stale refresh) → fix 2 → **3/3**;
+  final tree: media-upload **3/3**, brand-kit **3/3**. **No red stands.**
+- Next: the founder's word on the merge (report-and-stop; nothing pushed);
+  then M-HSN-1 on production (item 50); HSN-0902/B when Hasan/Ward name the
+  door (item 48). For the standing law: the host must not sleep during a
+  live round — the keep-awake hold is a session gesture, not a fix.

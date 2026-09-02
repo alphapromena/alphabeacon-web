@@ -2910,3 +2910,119 @@ Closes open-item 38, which ONB-0827 created and the live suite caught.
   nothing); or reading the media door's 400 as "the field is unknown" (the
   SAME generic sentence answers a bound-role PNG, so it says "refused by
   the schema", never which key).
+
+### 2026-09-02 — HSN-0902 Phases 1, 2 and 4: the brand kit, the video duration, the 402 rule — Phase 3 carved out as HSN-0902/B
+
+- **The founder's word (2026-09-02, on the Phase 0 report):** resume with
+  Phases 1, 2 and 4; Phase 3 — the Organization fields — is **HSN-0902/B**,
+  held on open-item 48 until Hasan/Ward name the door, and nothing is built
+  for it; lift the A2 ASSUMED marks now that the echo is measured. So this
+  series ships two of the three changes and says so everywhere it is
+  recorded.
+- **The brand kit is the logo's pattern, LISTED.** A fourth Knowledge kind,
+  "Brand kit", PDF only — the door binds `role: "brandkit"` to
+  `application/pdf` (Phase 0: a PNG with it → 400), so the client allowlist
+  MIRRORS the wire rather than standing in for it — routed like Image/Video
+  through the ONE uploader. The user never types a description: the
+  reserved word IS the description, the closed pair
+  `{ desc: "brandkit", role: "brandkit" }`, decided in one function
+  (`knowledgeUploadMarkers`) so neither screen can assemble the body by
+  hand. `"brandkit"` joins `"logo"` as a reserved free description
+  (trimmed, case-insensitive; the wire match stays exact). Unlike the logo
+  (Organization's), the brand kit IS a Files row — the founder's ruling,
+  stored like every other file — labelled "Brand kit", typed PDF, badged
+  from the ECHOED role, Open + Delete, no cap on count. Success reads
+  "Sent to the studio." (M-HSN-1's line, the logo's), and a PUT that never
+  reached storage names the wall in the status line.
+- **The video duration is one table, one key, one union.** `params.durationS`
+  is a TOP-LEVEL key on the video body and NOTHING on an image body:
+  `PostVisualOptions` is a union on `kind`, so a video option set must carry
+  `durationS` and an image one cannot, and the builder spreads `params` in
+  for a video only — unit-pinned as an ABSENT key, not `{}` (Phase 0
+  measured that such a body clears the wire; HSN-02's `{}` is superseded).
+  The maximum lives in ONE place, `VIDEO_DURATION_MAX_S: Record<ApiPlan,
+  number>` — balanced 10 · creative 20 · precise 30, default 8, min 1 —
+  keyed by the plan vocabulary TYPE (a plan the table does not name is a
+  compile error, never a runtime surprise), with the unit in every name.
+  Client-side validation only — whole seconds inside the plan's range — and
+  the wire's generic 400 renders as itself. A quality change CLAMPS (the one
+  ruled rewrite: "on model change, clamp to the new max"); a typed over-max
+  value is refused with the message, never rewritten under the user's
+  hands. Static runs the same limits with zero network.
+- **The 402 rule, applied to this gate (founder-proposed in BIL-0902).** A
+  fresh org's wallet is zero — the plan is the only funding — so every
+  generation answers 402 at intake. `live-generate` is THE ONE spec that
+  asserts the refusal: a new test walks the run into the balance state
+  (`Available: $0.00`, the form kept, nothing charged) and skips when the
+  org is funded. Its real run and every other generating spec —
+  `live-proposals`, `live-brand-rules`, `live-create-visual` even under
+  `LIVE_MEDIA` — read the wallet FIRST through `skipUnlessFunded` and
+  self-skip with the honest reason: never a body the wire is known to
+  refuse, never a red that is only "no funding". `live-wallet`'s three
+  starter-funding assertions skip the same way (they are BIL-0902's to
+  re-target on its held branch — skipped here, not rewritten). The durationS
+  shape probe (`live-video-duration`) asserts the wire's OWN guard — a bad
+  value is 400 BEFORE the wallet check — and self-skips on the 402 of the
+  valid body; the positive proof (the job accepts, the clip length matches)
+  rides on the founder's `LIVE_MEDIA=1` render, M-HSN-1 step 4.
+- **The brand kit's live proof is two halves, each named as what it is:**
+  the wire from Node — presign the closed pair, PUT a tiny PDF from
+  Playwright's request context (NOT browser truth), then the app reads the
+  row back, Delete, re-read — AND the browser-truth upload from Chromium
+  through the form. Phase 0 measured the bucket's preflight open for both
+  origins, so the second is expected green; if it ever reds on the PUT, the
+  status line names the wall and that is the report.
+- Instead of: a prefilled description field for the brand kit (the founder:
+  the user never types one); listing it outside Files or capping it at one
+  (the ruling: stored like every other file); `params: {}` on image bodies
+  (Phase 0 proved the absent key clears the wire, and the order pins the
+  absence); a per-model maximum read from the catalog schema (Hasan's
+  numbers are per PLAN, and the wire's 400 names no limit); a string-keyed
+  maximum map (a plan the table forgets must fail at compile time);
+  asserting the 402 in every generating spec (one asserts, the rest skip —
+  the founder's rule); or building Phase 3 on a guessed door (the order's
+  brand-adapter law — never invent a wire home).
+
+### 2026-09-02 — HSN-0902 gate: two things found and fixed, one rung taken, and a host that slept
+
+- **The live Knowledge screen's lazy-collection race is a product fix,
+  not a test fix.** Since MED-0831 the upload form no longer waits on the
+  RAG collection (the media door needs none), so a DOCUMENT dropped in the
+  first seconds after the screen opens reached the RAG path before the
+  lazily created collection id had landed — first as "Something went wrong
+  on our side" (the generic alert on a null id), then, once the path
+  resolved the collection itself, as a row that never appeared (the list
+  refresh read the click's stale closure, still null). Both were real for a
+  user, both were the BIL-0902 round-1 red "knowledge 2/3, a 30 s wait on
+  the upload row", and both had been on `main` since MED-0831's gate was
+  aborted. Fixed in `live-knowledge.tsx`: the one path that needs the
+  collection asks for it at submit time when the id has not arrived, and
+  `refresh` reads a ref (`collectionRef`) so it always refreshes the list it
+  actually wrote to. The error stays for the case that is one — a collection
+  that cannot be created or found.
+- **`live-knowledge.spec.ts` takes the `SCREEN_SYNC` rung on its two
+  post-reload waits** — the seventh file to, and on purpose (live-clocks.ts:
+  "a sixth file needing a rung is a decision to take on purpose, not by
+  importing this file"). The measurement: the 5 s default failed in BOTH
+  rounds of this gate on a screen that, since MED-0831, fans out two more
+  lazy reads on open (the RAG collection + sources, and the media asset
+  list), each able to land on a cold container. The assertions are
+  unchanged; only the clock is.
+- **A host that sleeps mid-round is a harness fault, judged as one.**
+  Round 2's `live-brand-kit` red was the machine entering sleep 32 seconds
+  into the file (Kernel-Power event 42 at 13:27:48Z, resume 14:18:50Z; the
+  warm-up heartbeat stopped after 7 beats and the test "took" 51 minutes).
+  The file was re-run as a recorded supplement (3/3 in 37 s) with the host
+  held awake by a `SetThreadExecutionState` request that lives only as long
+  as its process — no power setting was changed — and the power log is the
+  evidence. Trap 22 gets a seventh shape in sessions.md: an unattended
+  round needs the host awake, and a red whose duration is longer than its
+  timeout is the sleep, not the product.
+- Instead of: hiding the knowledge race by re-adding a form-wide wait on
+  the collection (the media door and the brand kit must not wait on a RAG
+  collection they never use); asserting `Uploading|Ready` later with a
+  bigger clock (the row was never coming — a clock cannot fix a stale
+  closure); changing the machine's sleep policy (a session gesture, not a
+  repo's business); or counting the sleep-poisoned file as a round-2 red
+  without a supplement (the law says a red in round 2 is a red — this one
+  was the host's, and the supplement says so with its timestamps).

@@ -5,11 +5,37 @@ without reconstructing it from the session log. **Update this file at the end
 of any turn that finishes a phase or changes the plan.** `sessions.md` is the
 chronological record; this is the current picture.
 
-_Last updated: 2026-09-02, after **ORDER HSN-0902 (Hasan's three changes:
-brand kit · video duration · Organization fields) STOPPED at the end of
-Phase 0 by the order's own clause** — branch **`feat/hsn-0902`** (off `main`
-= `9adb47c`; BIL-0902 stays HELD at `df14989` on its own `feat/bil-0902`,
-untouched), one commit, **NOT pushed**. Probed on fresh QA org **1692**,
+_Last updated: 2026-09-02, after **ORDER HSN-0902 — Phases 1, 2 and 4
+(the brand kit · the video duration · tests and the gate) BUILT and GATED on
+`feat/hsn-0902`; Phase 3 (the Organization fields) carved out by the founder
+as HSN-0902/B, held on open-item 48, nothing built for it.** Branch off
+`main` = `9adb47c`, five commits, **NOT pushed, NOT merged — report-and-stop
+for the founder's word** (BIL-0902 stays HELD at `df14989` on its own
+branch). **What stands:** a fourth Knowledge kind, **Brand kit** — PDF only,
+no description asked, the closed presign pair `{desc:"brandkit",
+role:"brandkit"}` from ONE function, listed under Files as "Brand kit" ·
+PDF with the badge from the ECHOED role, Open + Delete, "Sent to the
+studio."; `"brandkit"` reserved beside `"logo"`. **Create Visual, video
+only:** `params.durationS` top-level (an image body carries NO `params`
+key — a type union pins it), ONE table in seconds keyed by the plan
+vocabulary type (balanced 10 · creative 20 · precise 30; default 8), the
+control shows the maximum, clamps on a quality change, refuses a typed
+over-max value; the demo runs the same limits. **The 402 rule** is in the
+suite: `skipUnlessFunded` reads the wallet before any body; `live-generate`
+is the one spec asserting the refusal; every other generating spec — and
+`live-wallet`'s starter-funding assertions — self-skip with the reason.
+**The gate (final tree): lint · typecheck · prettier · guard-static 335 ·
+unit 537 / 48 · static e2e 106 passed / 75 skipped / 0 failed · verify
+w00–w06 all PASS (w06 standalone) · live round 1 16/18, live round 2 —
+the gate — 16/18 with the two reds judged and cleared by recorded
+supplements: `live-brand-kit` red because the HOST SLEPT 51 min inside it
+(Kernel-Power 42 at 13:27:48Z) → 3/3 in 37 s; `live-knowledge` red on a
+5 s post-reload wait → the `SCREEN_SYNC` rung, which exposed a REAL
+MED-0831 regression (a document dropped before the lazy collection id
+landed erred, then never listed) → fixed in `live-knowledge.tsx` → 3/3;
+final tree `live-media-upload` 3/3, `live-brand-kit` 3/3. No red stands.**
+Then M-HSN-1 (item 50) on production after the merge. Before that, same
+day: **HSN-0902 Phase 0** — probed on fresh QA org **1692**,
 zero spend, every body and request-id appended to
 `Docs/api/alphastudio-shapes.md` ("HSN-0902 Phase 0") by the new
 `pnpm probe:hsn-0902`. **P1 — brand kit:** presign `{application/pdf,

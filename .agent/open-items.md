@@ -1028,6 +1028,9 @@ series counts from 48 so the two merge without a collision.
     generate / media envelopes. The frontend builds Phase 3 on the named
     door — and Phases 1–2 (brand kit, `durationS`), probed clean, wait with
     it: one series, one gate.
+    **Later the same day — the founder's word:** Phase 3 is carved out as
+    **HSN-0902/B**, held on THIS item; Phases 1, 2 and 4 ship as HSN-0902.
+    Nothing is built for the two fields until the door is named.
 
 49. **For Hasan (no blocker): the media door's 400 is one generic
     sentence.** `role:"brandkit"` on a PNG, `durationS:"abc"` and
@@ -1042,3 +1045,24 @@ series counts from 48 so the two merge without a collision.
     refusal name itself. Also for Hasan: the per-plan `durationS` maximum
     (balanced 10 · creative 20 · precise 30, from the 2026-09-02 walk) is a
     client-side table until the capability schema or the 400 names it.
+
+50. **MANUAL GATE M-HSN-1 (founder, after the merge, on production; step 3
+    is HSN-0902/B's, held on item 48).**
+    1. Knowledge → **Brand kit** → a real PDF → **"Sent to the studio."**
+       No description is asked. The bucket's CORS preflight answered
+       `access-control-allow-origin: *` + `PUT` for `https://1.malaky.ai`
+       on 2026-09-02 (org 1692), so this is expected to pass; if the PUT
+       fails, the status line names the wall ("The upload never reached
+       storage.") — record it verbatim.
+    2. Files lists it as **"Brand kit"** · PDF · badge **brand kit** (from
+       the role the wire echoes); **Open** works (a fresh ~1 h url);
+       **Delete** works and the list re-reads without it.
+    3. ~~Organization → both fields → Save → reload → both persist~~ —
+       **HSN-0902/B**, nothing built; waits on item 48.
+    4. On the `LIVE_MEDIA=1` render: Create visual → **Video** → choose a
+       quality, set a duration under its maximum (the control shows it:
+       balanced 10 · creative 20 · precise 30; default 8) → run — confirm the
+       clip length matches `durationS`, and whether the job / status read
+       echoes `durationS` (record the job id and the request-id; item 49
+       asks Hasan to name the limit on the wire).
+    Sign off with the org id, the brand-kit asset id and the video job id.
