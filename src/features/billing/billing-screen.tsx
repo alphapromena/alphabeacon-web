@@ -315,13 +315,14 @@ export function PlansSection({
           {MESSAGES.empty.noPlans}
         </p>
       ) : (
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-6 md:grid-cols-3">
           {plans.map((plan) => (
             <Card key={plan.plan} data-plan={plan.plan}>
               <CardHeader>
                 {/* The name as Stripe delivers it — wire is the record. */}
                 <h3 className="font-display text-xl font-semibold">{plan.name}</h3>
                 <p className="flex items-baseline gap-1">
+                  {/* The interval word is the wire's too — never a hardcoded "/ year". */}
                   <MonoNumber value={formatPlanPrice(plan)} className="text-2xl font-semibold" />
                 </p>
                 <p className="text-sm text-muted-foreground">
@@ -339,6 +340,7 @@ export function PlansSection({
               </CardContent>
             </Card>
           ))}
+          <EnterpriseCard />
         </div>
       )}
 
@@ -349,6 +351,32 @@ export function PlansSection({
       )}
       <p className="text-xs text-muted-foreground">{MESSAGES.notices.checkoutOnStripe}</p>
     </section>
+  )
+}
+
+/**
+ * Enterprise (BIL-0902/R, the founder's ruling): a plan the wire does NOT
+ * carry and Stripe never checks out — sales-assisted, Managed arranged
+ * directly, no add-on. So the card has no price, no Subscribe, and exactly
+ * one action: the existing request-a-demo route. Identical in both modes,
+ * for owners and members alike — there is nothing here a role gates.
+ */
+export function EnterpriseCard() {
+  return (
+    <Card data-plan="enterprise">
+      <CardHeader>
+        <h3 className="font-display text-xl font-semibold">Enterprise</h3>
+        <p className="flex items-baseline gap-1">
+          <span className="text-2xl font-semibold">Custom</span>
+        </p>
+        <p className="text-sm text-muted-foreground">{MESSAGES.notices.enterpriseCustom}</p>
+      </CardHeader>
+      <CardContent className="flex flex-1 flex-col justify-end">
+        <Button asChild variant="outline">
+          <Link to="/request-demo">Request a demo</Link>
+        </Button>
+      </CardContent>
+    </Card>
   )
 }
 

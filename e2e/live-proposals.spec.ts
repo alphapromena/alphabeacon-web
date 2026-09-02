@@ -62,13 +62,21 @@ test('a fresh owner + org, with its brand set up', async ({ page }) => {
   })
 })
 
+/**
+ * NOT on the funded QA org (BIL-0902/R §4): every assertion below counts a
+ * FRESH org's queue — "1 needs review", then "0 need review" — and a shared
+ * funded org carries the queues of every run before it. These four skip on
+ * a zero wallet until fresh orgs are funded again; they never switch.
+ */
+const STAY_ON_THIS_ORG = { switchToFundedOrg: false } as const
+
 test('one balanced run — the drafts it produces become the proposals under test', async ({
   page,
   request,
 }) => {
   test.setTimeout(240_000)
   await login(page)
-  await skipUnlessFunded(page, request, 'the balanced run')
+  await skipUnlessFunded(page, request, 'the balanced run', STAY_ON_THIS_ORG)
   // CUT-0831: a fresh browser needs the tone's language re-saved (sidecar).
   await ensureToneLanguage(page, 'Roastery floor')
   await page.goto('/generate')
@@ -80,7 +88,7 @@ test('one balanced run — the drafts it produces become the proposals under tes
 test('after a RELOAD, Today shows the draft from the ledger', async ({ page, request }) => {
   test.setTimeout(120_000)
   await login(page)
-  await skipUnlessFunded(page, request, 'the run this ledger read depends on')
+  await skipUnlessFunded(page, request, 'the run this ledger read depends on', STAY_ON_THIS_ORG)
   // A different browser context from the run: nothing local survives, so
   // anything on screen came from the platform.
   await page.goto('/today')
@@ -101,7 +109,7 @@ test('approving records it as posted, and the decision survives a reload', async
 }) => {
   test.setTimeout(120_000)
   await login(page)
-  await skipUnlessFunded(page, request, 'the run this approval depends on')
+  await skipUnlessFunded(page, request, 'the run this approval depends on', STAY_ON_THIS_ORG)
   await page.goto('/today')
   await expect(page.locator('[aria-busy="true"]')).toHaveCount(0, { timeout: SCREEN_SYNC })
   await expect(page.getByRole('main').getByRole('listitem').first()).toBeVisible({
@@ -144,7 +152,7 @@ test('approving records it as posted, and the decision survives a reload', async
 test('declining asks why, keeps the row, and is reversible', async ({ page, request }) => {
   test.setTimeout(240_000)
   await login(page)
-  await skipUnlessFunded(page, request, 'the second run this decline depends on')
+  await skipUnlessFunded(page, request, 'the second run this decline depends on', STAY_ON_THIS_ORG)
 
   // CUT-0831: a fresh browser needs the tone's language re-saved (sidecar).
   await ensureToneLanguage(page, 'Roastery floor')

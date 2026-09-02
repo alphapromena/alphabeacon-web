@@ -44,6 +44,17 @@ test('the plans render from the demo in the wire’s shape, with Subscribe for t
   // may subscribe: one Subscribe per plan.
   await expect(plans.getByRole('button', { name: 'Subscribe' })).toHaveCount(2)
 
+  // BIL-0902/R: Enterprise beside the two — "Custom", no price, no Subscribe,
+  // the demo request as its only action (identical in live mode).
+  const enterprise = plans.locator('[data-plan="enterprise"]')
+  await expect(enterprise.getByRole('heading', { name: 'Enterprise', level: 3 })).toBeVisible()
+  await expect(enterprise.getByText('Custom', { exact: true })).toBeVisible()
+  await expect(enterprise.getByRole('button', { name: 'Subscribe' })).toHaveCount(0)
+  await expect(enterprise.getByRole('link', { name: 'Request a demo' })).toHaveAttribute(
+    'href',
+    '/request-demo',
+  )
+
   const history = page.getByRole('region', { name: 'Billing history' })
   await expect(history.getByText(/No payments yet/)).toBeVisible()
 })

@@ -59,28 +59,162 @@ export async function readWallet(page: Page, request: APIRequestContext): Promis
 }
 
 /**
- * THE 402 RULE for the live gate (founder, ORDER HSN-0902, 2026-09-02).
+ * THE DESIGNATED FUNDED QA ORG (founder's ruling, ORDER BIL-0902/R §4).
+ *
+ * No dev-credit door exists: a QA org is funded the real way — a test-mode
+ * checkout paid once with Stripe's test card at manual gate M-BIL-1 (step 8),
+ * after which THAT org's owner credentials go into the QA-creds store as
+ * two environment variables (documented in `stack.md`, never committed):
+ *
+ *   QA_FUNDED_EMAIL     the owner's sign-in email
+ *   QA_FUNDED_PASSWORD  the owner's password
+ *
+ * When both are present, the generating TEXT specs run on that org instead
+ * of skipping; when either is absent the suite self-skips exactly as before.
+ * Media renders stay behind `LIVE_MEDIA` regardless — test money in the
+ * wallet does not change what a render costs upstream.
+ */
+export function fundedOrgCredentials(): { email: string; password: string } | null {
+  const email = process.env.QA_FUNDED_EMAIL?.trim()
+  const password = process.env.QA_FUNDED_PASSWORD
+  return email && password ? { email, password } : null
+}
+
+/**
+ * Leave the current session and sign in as the funded org's owner — through
+ * the real login screen, from a cleared store, so the session, the remembered
+ * org and every per-browser sidecar start clean.
+ */
+async function signInAsFundedOwner(page: Page, funded: { email: string; password: string }) {
+  await page.goto('/login')
+  await page.evaluate(() => {
+    window.sessionStorage.clear()
+    window.localStorage.clear()
+  })
+  await page.goto('/login')
+  await page.getByLabel('Work email').fill(funded.email)
+  await page.getByLabel('Password', { exact: true }).fill(funded.password)
+  await page.getByRole('button', { name: 'Sign in' }).click()
+  await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible({
+    timeout: SCREEN_SYNC,
+  })
+}
+
+/** The tone every generating spec runs with; the funded org keeps one of it. */
+export const FUNDED_TONE = {
+  name: 'Roastery floor',
+  description: 'Warm, specific, smells of coffee.',
+  doRule: 'Name the roast date',
+}
+
+/**
+ * The four brand entities the readiness gate asks for (D-ONB-D), ensured
+ * IDEMPOTENTLY on the funded org: each is checked on the wire and added
+ * through the real screen only when missing, so a shared org that has run
+ * before is left as it is. The tone's language is a per-browser sidecar
+ * (CUT-0831), so it is re-saved here every time, as `ensureToneLanguage`
+ * does for a fresh org.
+ */
+async function ensureFundedBrand(page: Page, request: APIRequestContext, wallet: WalletRead) {
+  const auth = { authorization: `Bearer ${wallet.token}` }
+  const brand = (resource: string) =>
+    request
+      .get(`${API_BASE}/orgs/${wallet.orgId}/brand/${resource}`, { headers: auth })
+      .then((r) => r.json() as Promise<{ items: { name?: string; rules?: unknown[] }[] }>)
+
+  const voices = await brand('voices')
+  if (!voices.items.some((voice) => (voice.rules?.length ?? 0) > 0)) {
+    await openSettingsTab(page, 'Brand voice')
+    await page.getByRole('button', { name: 'Add do', exact: true }).click()
+    await page.locator('input[id^="voice-do"]').last().fill(FUNDED_TONE.doRule)
+    await page.getByRole('button', { name: 'Save changes' }).click()
+    await expect(page.getByText('Brand voice saved')).toBeVisible({ timeout: SCREEN_SYNC })
+  }
+
+  const tones = await brand('tones')
+  if (!tones.items.some((tone) => tone.name === FUNDED_TONE.name)) {
+    if (tones.items.length === 0) {
+      await createFirstTone(page, FUNDED_TONE)
+    } else {
+      await openSettingsTab(page, 'Tones')
+      await page.getByRole('link', { name: 'Create custom tone' }).first().click()
+      await page.getByLabel('Tone name').fill(FUNDED_TONE.name)
+      await page.getByLabel('Language').selectOption('en')
+      await page.getByLabel('What this tone sounds like').fill(FUNDED_TONE.description)
+      await page.getByLabel('Do', { exact: true }).fill(FUNDED_TONE.doRule)
+      await page.getByRole('button', { name: 'Create tone' }).click()
+      await expect(page.getByText('Tone created')).toBeVisible({ timeout: SCREEN_SYNC })
+    }
+  }
+  await ensureToneLanguage(page, FUNDED_TONE.name)
+
+  const sources = await brand('sources')
+  const topics = await brand('topics')
+  if (sources.items.length === 0 || topics.items.length === 0) {
+    await openSettingsTab(page, 'Sources & topics')
+    if (sources.items.length === 0) {
+      await page.getByLabel('Add a source').fill('perfectdailygrind.com/feed')
+      await page.getByRole('button', { name: 'Add source' }).click()
+      await expect(page.getByText('Source added')).toBeVisible({ timeout: SCREEN_SYNC })
+    }
+    if (topics.items.length === 0) {
+      await page.getByLabel('Add a topic').fill('single origin')
+      await page.keyboard.press('Enter')
+      await expect(page.getByText('single origin')).toBeVisible()
+      await page.waitForTimeout(2000)
+    }
+  }
+}
+
+/**
+ * THE 402 RULE for the live gate (founder, ORDER HSN-0902, 2026-09-02) —
+ * and, since BIL-0902/R §4, THE ONE MECHANISM that routes a generating spec
+ * to the designated funded QA org.
  *
  * A fresh org's wallet is ZERO — the plan is the only funding (Ward's model,
- * measured 2026-09-02; open-item 46) — so every generation answers
- * `402 wallet_insufficient` at intake, before any spend. ONE spec asserts
- * that refusal (`live-generate`); every OTHER generating spec calls this
- * first and self-skips with the honest reason, the way `live-create-visual`
- * self-skips on `LIVE_MEDIA`. "No red that is only no funding."
+ * measured 2026-09-02; open-item 46, closed by the founder's ruling) — so
+ * every generation answers `402 wallet_insufficient` at intake, before any
+ * spend. ONE spec asserts that refusal (`live-generate`); every OTHER
+ * generating spec calls this first. What happens next, in order:
  *
- * The wallet is read BEFORE any body is sent: a funded org still runs the
- * real thing, and an unfunded one never sends a body it knows the wire will
- * refuse. A precondition, never an assertion.
+ * 1. the current org's wallet is read — funded, and the spec simply runs on;
+ * 2. zero, and a funded QA org is configured (`fundedOrgCredentials`), and
+ *    the spec allows the switch (the default — a spec whose assertions count
+ *    a FRESH org's queue opts out): the page signs in as that org's owner,
+ *    its brand setup is ensured idempotently, and the spec runs THERE. Its
+ *    wallet must be funded too — an empty funded org means "pay again"
+ *    (M-BIL-1 step 8) and skips with that reason;
+ * 3. zero, and nothing configured: the spec self-skips with the honest
+ *    reason, the way `live-create-visual` self-skips on `LIVE_MEDIA`. "No
+ *    red that is only no funding."
+ *
+ * The wallet is read BEFORE any body is sent: nothing here ever sends a body
+ * the wire is known to refuse. A precondition, never an assertion.
  */
 export async function skipUnlessFunded(
   page: Page,
   request: APIRequestContext,
   what: string,
+  options: { switchToFundedOrg?: boolean } = {},
 ): Promise<WalletRead> {
   const wallet = await readWallet(page, request)
+  if (wallet.availableCents > 0) return wallet
+
+  const funded = options.switchToFundedOrg === false ? null : fundedOrgCredentials()
+  if (funded) {
+    await signInAsFundedOwner(page, funded)
+    const fundedWallet = await readWallet(page, request)
+    test.skip(
+      fundedWallet.availableCents === 0,
+      `the designated funded QA org (${funded.email}) has an EMPTY wallet — pay it again with the test card (M-BIL-1 step 8) before ${what} can run there`,
+    )
+    await ensureFundedBrand(page, request, fundedWallet)
+    return fundedWallet
+  }
+
   test.skip(
-    wallet.availableCents === 0,
-    `402 wallet_insufficient would refuse ${what}: the org's wallet is $0.00 — the plan is the only funding (open-item 46), not a product failure`,
+    true,
+    `402 wallet_insufficient would refuse ${what}: the org's wallet is $0.00 — the plan is the only funding, and no funded QA org is configured (QA_FUNDED_EMAIL / QA_FUNDED_PASSWORD; M-BIL-1 step 8) — not a product failure`,
   )
   return wallet
 }

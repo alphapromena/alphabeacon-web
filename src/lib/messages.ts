@@ -341,6 +341,13 @@ export const MESSAGES = {
       'Your wallet is funded by your plan: each paid invoice adds exactly what you paid. Subscribe or renew on the Billing page.',
     // Billing (ORDER BIL-0902).
     checkoutCancelled: 'Payment cancelled — nothing was charged and nothing changed.',
+    /**
+     * BIL-0902/R: Enterprise is a plan with NO checkout — sales-assisted,
+     * Managed included by arrangement, never an add-on — so its card carries
+     * no price and one action, the demo request. The founder's ruling.
+     */
+    enterpriseCustom:
+      'Tailored terms for larger teams, with a managed service arranged directly with us.',
     checkoutOnStripe:
       'Payment happens on a secure Stripe page. You come back here when it is done.',
     paymentFailed: 'Payment failed — update your card',

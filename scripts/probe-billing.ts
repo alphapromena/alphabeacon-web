@@ -1,24 +1,30 @@
-// probe-billing: ORDER BIL-0902 Phase 0 — the billing endpoints observed, not
-// guessed, on ONE fresh QA org against the DEPLOYED sandbox API.
+// probe-billing: ORDER BIL-0902 Phase 0 — and Phase 0/R (Ward's corrected
+// plans) — the billing endpoints observed, not guessed, on ONE fresh QA org
+// against the DEPLOYED sandbox API.
 //
 // Why a separate script and a separate file: `pnpm smoke:alphastudio`
 // overwrites `Docs/api/alphastudio-shapes.md` wholesale, so billing probes
 // get their own record — `Docs/api/billing-shapes.md` — by the founder's
 // ruling (decisions.md, BIL-0902 Phase 0). `src/api/types.ts` is transcribed
-// from THAT file, never from prose.
+// from THAT file, never from prose. Since /R the script APPENDS the previous
+// record below the new one as dated history, so the old contract stays on
+// record without standing in for the current one.
 //
-// What it answers (the order's seven probes, plus two cheap extras):
-//   1. GET  /billing/plans         — the exact item shape and the real names
+// What it answers (the /R order's five probes, plus the member split):
+//   1. GET  /billing/plans         — the plan KEYS, names, amounts, currency and
+//      interval exactly as delivered; the keys become the client's plan union
 //   2. GET  /billing/subscription  — the full field set at `none`
 //   3. GET  /billing/credits       — `{items: [], total: 0}` + paging echo
-//   4. GET  /alphastudio/wallet    — the fresh org's starting balance
-//   5. POST /billing/checkout {plan:"base"} as the owner — 201 {url, sessionId};
-//      the url is NEVER opened; the session is abandoned (test mode, expires)
+//   4. GET  /alphastudio/wallet    — the fresh org's starting balance (zeros)
+//   5. POST /billing/checkout with the FIRST DELIVERED key as the owner —
+//      201 {url, sessionId}; the url is NEVER opened; the session is abandoned
+//   5b. POST /billing/checkout with the OLD key `base` — the old contract is
+//      gone; expect 400 `validation_failed` and record the body
 //   6. POST /billing/checkout as a MEMBER — the forbidden code
-//   7. POST /billing/checkout {plan:"gold"} — the bad-plan code
+//   7. POST /billing/portal as the owner on a never-subscribed org
+//   8. PATCH /orgs/:id with `whatYouOffer` + `whatSetsYouApart` beside `name`,
+//      read back — for HSN-0902/B (open-item 48): persisted or dropped
 //   +  GET  /billing/plans|subscription|credits as the member (any member reads)
-//   +  POST /billing/portal as the owner on a never-subscribed org (what does
-//      Manage billing answer when there is nothing to manage?)
 //
 // Cost discipline: zero spend. No payment is made, no url is opened, nothing
 // needs cleaning up — an abandoned Checkout session expires on its own.
@@ -61,6 +67,8 @@ const MEMBER_EMAIL = `qa+${RUN}bilm@alphapromena.com`
 const PASSWORD = 'Roasted2Order!'
 const CODE = '000000'
 const ORG_NAME = `QA Billing Org ${RUN}`
+/** The OLD contract's first key — it must be refused now. */
+const OLD_PLAN_KEY = 'base'
 
 interface Capture {
   title: string
@@ -152,7 +160,7 @@ async function call(
       status,
       requestId,
       note: options.note,
-      body: recorded,
+      body: options.body !== undefined ? { request: options.body, response: recorded } : recorded,
       actor: options.actor ?? (options.token ? 'owner' : 'anonymous'),
     })
   }
@@ -173,8 +181,16 @@ const errorCode = (body: unknown) =>
 
 // ---------------------------------------------------------------------------
 
+interface PlanRow {
+  plan?: string
+  name?: string
+  amountCents?: number
+  currency?: string
+  interval?: string
+}
+
 async function main() {
-  log(`\n=== probe-billing · ${new Date(RUN).toISOString()} ===`)
+  log(`\n=== probe-billing (/R) · ${new Date(RUN).toISOString()} ===`)
   log(`owner: ${OWNER_EMAIL}\nmember: ${MEMBER_EMAIL}\n`)
 
   // --- The owner: signup → verify → org (the fresh QA org). ----------------
@@ -210,8 +226,6 @@ async function main() {
   const owner = { token: ownerToken, actor: 'owner' as const }
 
   // --- The member: a second account, added to the org as `member`. --------
-  // An existing user invited to an org is added immediately (D-ONB-F,
-  // `invitedNewUser: false`) — no code to redeem, so this is cheap.
   log('\n--- member identity, added to the org ---')
   await call('signup (member)', 'POST', '/auth/signup', {
     body: { name: 'QA Billing Member', email: MEMBER_EMAIL, password: PASSWORD },
@@ -228,10 +242,7 @@ async function main() {
       'invite the member (existing user → added at once)',
       'POST',
       org('/members/invite'),
-      {
-        body: { email: MEMBER_EMAIL, role: 'member' },
-        ...owner,
-      },
+      { body: { email: MEMBER_EMAIL, role: 'member' }, ...owner },
     )
     const receipt = invited.body as { invitedNewUser?: boolean } | undefined
     if (invited.status === 201 && receipt?.invitedNewUser === false) {
@@ -250,17 +261,23 @@ async function main() {
     )
   }
 
-  // --- Probe 1: plans ------------------------------------------------------
-  log('\n--- 1. plans ---')
+  // --- Probe 1: plans — THE KEYS, as delivered ----------------------------
+  log('\n--- 1. plans (the keys become the client union) ---')
   const plans = await call('1 · GET /billing/plans (owner)', 'GET', billing('/plans'), owner)
-  const planItems = (plans.body as { items?: Record<string, unknown>[] })?.items ?? []
+  const planItems = ((plans.body as { items?: PlanRow[] })?.items ?? []).filter(
+    (row): row is PlanRow => !!row && typeof row === 'object',
+  )
   finding(
     `Plans: ${plans.status}; ${planItems.length} item(s); keys per item: ${
       planItems[0] ? Object.keys(planItems[0]).join(', ') : '(none)'
-    }; names as delivered: ${planItems.map((p) => JSON.stringify(p.name)).join(' · ') || '(none)'}; amounts: ${planItems
+    }; PLAN KEYS as delivered: ${planItems.map((p) => JSON.stringify(p.plan)).join(' · ') || '(none)'}; names as delivered: ${planItems.map((p) => JSON.stringify(p.name)).join(' · ') || '(none)'}; amounts: ${planItems
       .map((p) => `${p.plan}=${p.amountCents} ${p.currency}/${p.interval}`)
       .join(' · ')}.`,
   )
+  const firstKey = planItems[0]?.plan
+  if (!firstKey) {
+    finding('No plan key delivered — the checkout probes cannot run.')
+  }
 
   // --- Probe 2: subscription at `none` ------------------------------------
   log('\n--- 2. subscription (never subscribed) ---')
@@ -278,17 +295,6 @@ async function main() {
       .map((k) => `${k}=${subBody[k] === null ? 'null' : typeof subBody[k]}`)
       .join(', ')}.`,
   )
-  for (const field of [
-    'plan',
-    'currentPeriodStart',
-    'currentPeriodEnd',
-    'cancelAtPeriodEnd',
-    'canceledAt',
-    'updatedAt',
-  ]) {
-    if (!(field in subBody))
-      finding(`Subscription at none: guide field \`${field}\` is ABSENT from the body.`)
-  }
 
   // --- Probe 3: credits ----------------------------------------------------
   log('\n--- 3. credits ---')
@@ -297,13 +303,10 @@ async function main() {
     '3b · GET /billing/credits?limit=5&offset=0 (paging echo)',
     'GET',
     billing('/credits'),
-    {
-      ...owner,
-      query: { limit: 5, offset: 0 },
-    },
+    { ...owner, query: { limit: 5, offset: 0 } },
   )
   finding(
-    `Credits: ${credits.status} ${JSON.stringify(credits.body)}; with limit/offset: ${creditsPaged.status} ${JSON.stringify(creditsPaged.body)} — top-level keys: ${Object.keys((creditsPaged.body as object) ?? {}).join(', ')}.`,
+    `Credits: ${credits.status} ${JSON.stringify(credits.body)}; with limit/offset: ${creditsPaged.status} ${JSON.stringify(creditsPaged.body)}.`,
   )
 
   // --- Probe 4: wallet -----------------------------------------------------
@@ -330,107 +333,125 @@ async function main() {
     finding(`Member reads: plans ${mp.status} · subscription ${ms.status} · credits ${mc.status}.`)
   }
 
-  // --- Probe 7 first (bad plan) so the org is still pristine for probe 5. --
-  log('\n--- 7. checkout with a bad plan ---')
-  const bad = await call(
-    '7 · POST /billing/checkout {plan:"gold"} (owner)',
+  // --- Probe 5b: the OLD key must be refused now ---------------------------
+  log('\n--- 5b. checkout with the OLD key (the old contract is gone) ---')
+  const oldKey = await call(
+    `5b · POST /billing/checkout {plan:"${OLD_PLAN_KEY}"} (owner) — the OLD contract's key`,
     'POST',
     billing('/checkout'),
-    {
-      ...owner,
-      body: { plan: 'gold' },
-    },
+    { ...owner, body: { plan: OLD_PLAN_KEY } },
   )
-  finding(`Bad plan: ${bad.status} code=${errorCode(bad.body)}.`)
+  finding(
+    `Old key "${OLD_PLAN_KEY}": ${oldKey.status} code=${errorCode(oldKey.body)}${oldKey.status === 201 ? ' — STILL ACCEPTED: the old contract is NOT gone (report)' : ''}.`,
+  )
 
-  // --- Probe 6: checkout as a member ----------------------------------------
-  if (member) {
+  // --- Probe 6: checkout as a member (the delivered key) -------------------
+  if (member && firstKey) {
     log('\n--- 6. checkout as a member ---')
     const forbidden = await call(
-      '6 · POST /billing/checkout {plan:"base"} (member)',
+      `6 · POST /billing/checkout {plan:"${firstKey}"} (member)`,
       'POST',
       billing('/checkout'),
-      {
-        ...member,
-        body: { plan: 'base' },
-      },
+      { ...member, body: { plan: firstKey } },
     )
     finding(`Member checkout: ${forbidden.status} code=${errorCode(forbidden.body)}.`)
   }
 
-  // --- Extra: portal on a never-subscribed org ------------------------------
-  log('\n--- extra: portal with nothing to manage ---')
+  // --- Probe 7: portal on a never-subscribed org ---------------------------
+  log('\n--- 7. portal with nothing to manage ---')
   const portal = await call(
-    'extra · POST /billing/portal (owner, never subscribed)',
+    '7 · POST /billing/portal (owner, never subscribed)',
     'POST',
     billing('/portal'),
-    {
-      ...owner,
-      body: undefined,
-      redact: ['url'],
-    },
+    { ...owner, body: undefined, redact: ['url'] },
   )
   finding(
-    `Portal at none: ${portal.status} ${portal.status >= 400 ? `code=${errorCode(portal.body)}` : `keys=${Object.keys((portal.body as object) ?? {}).join(', ')}`}.`,
+    `Portal at none: ${portal.status} ${portal.status >= 400 ? `code=${errorCode(portal.body)}` : `keys=${Object.keys((portal.body as object) ?? {}).join(', ')}`} (was 201 on 2026-09-02 10:31).`,
   )
 
-  // --- Probe 5: ONE checkout as the owner — NOT opened, abandoned. ----------
-  log('\n--- 5. ONE checkout (owner) — url never opened ---')
-  const checkout = await call(
-    '5 · POST /billing/checkout {plan:"base"} (owner)',
-    'POST',
-    billing('/checkout'),
-    {
-      ...owner,
-      body: { plan: 'base' },
-      redact: ['url', 'sessionId'],
-      note: 'url and sessionId redacted to their shape; the url was NEVER opened and the session is abandoned (test mode, expires on its own)',
-    },
-  )
-  const checkoutBody = (checkout.body ?? {}) as Record<string, unknown>
-  let checkoutHost = '(none)'
-  try {
-    checkoutHost = new URL(String(checkoutBody.url)).host
-  } catch {
-    /* not a url */
+  // --- Probe 5: ONE checkout with the DELIVERED key — NOT opened. ----------
+  if (firstKey) {
+    log(`\n--- 5. ONE checkout with the delivered key "${firstKey}" (owner) — url never opened ---`)
+    const checkout = await call(
+      `5 · POST /billing/checkout {plan:"${firstKey}"} (owner)`,
+      'POST',
+      billing('/checkout'),
+      {
+        ...owner,
+        body: { plan: firstKey },
+        redact: ['url', 'sessionId'],
+        note: 'url and sessionId redacted to their shape; the url was NEVER opened and the session is abandoned (test mode, expires on its own)',
+      },
+    )
+    const checkoutBody = (checkout.body ?? {}) as Record<string, unknown>
+    let checkoutHost = '(none)'
+    try {
+      checkoutHost = new URL(String(checkoutBody.url)).host
+    } catch {
+      /* not a url */
+    }
+    finding(
+      `Checkout with "${firstKey}": ${checkout.status}; keys: ${Object.keys(checkoutBody).join(', ')}; url host: ${checkoutHost}; sessionId prefix: ${String(checkoutBody.sessionId ?? '').slice(0, 8)}… (${String(checkoutBody.sessionId ?? '').length} chars).`,
+    )
+
+    log('\n--- after the (abandoned) checkout ---')
+    const subAfter = await call(
+      'GET /billing/subscription (owner, after an unopened checkout)',
+      'GET',
+      billing('/subscription'),
+      owner,
+    )
+    finding(
+      `Subscription after an unopened checkout: status=${JSON.stringify((subAfter.body as { status?: unknown })?.status)} (unchanged is the expectation).`,
+    )
+    const walletAfter = await call(
+      'GET /alphastudio/wallet (owner, after)',
+      'GET',
+      org('/alphastudio/wallet'),
+      owner,
+    )
+    finding(`Wallet after: ${JSON.stringify(walletAfter.body)}.`)
   }
-  finding(
-    `Checkout: ${checkout.status}; keys: ${Object.keys(checkoutBody).join(', ')}; url host: ${checkoutHost}; sessionId prefix: ${String(checkoutBody.sessionId ?? '').slice(0, 8)}… (${String(checkoutBody.sessionId ?? '').length} chars).`,
-  )
 
-  // --- After the (abandoned) checkout: does the subscription move? ---------
-  log('\n--- after the abandoned checkout ---')
-  const subAfter = await call(
-    'GET /billing/subscription (owner, after an unopened checkout)',
-    'GET',
-    billing('/subscription'),
-    owner,
+  // --- Probe 8: the org fields, for HSN-0902/B (open-item 48) --------------
+  log('\n--- 8. the org fields beside name (HSN-0902/B, item 48) ---')
+  const OFFER = 'Specialty coffee, roasted to order and shipped within 48 hours.'
+  const APART = 'Roasted to order. Direct-trade sourcing. Carbon-neutral shipping.'
+  const patched = await call(
+    '8 · PATCH /orgs/:id — whatYouOffer + whatSetsYouApart beside name',
+    'PATCH',
+    org(''),
+    { ...owner, body: { name: ORG_NAME, whatYouOffer: OFFER, whatSetsYouApart: APART } },
   )
+  const readBack = await call('8 · GET /orgs/:id — read back', 'GET', org(''), owner)
+  const record = ((readBack.body as { org?: Record<string, unknown> })?.org ?? {}) as Record<
+    string,
+    unknown
+  >
+  const persisted = record.whatYouOffer === OFFER && record.whatSetsYouApart === APART
   finding(
-    `Subscription after an unopened checkout: status=${JSON.stringify((subAfter.body as { status?: unknown })?.status)} (unchanged is the expectation).`,
+    persisted
+      ? `ORG FIELDS PERSIST NOW: PATCH ${patched.status}, read-back echoes whatYouOffer and whatSetsYouApart — open-item 48 UNBLOCKS; the founder orders HSN-0902/B.`
+      : `Org fields: PATCH ${patched.status}${patched.status >= 400 ? ` code=${errorCode(patched.body)}` : ''}; read-back keys [${Object.keys(record).join(', ')}] — still ${'whatYouOffer' in record ? 'present but not equal' : 'ABSENT'}: item 48 stays blocked.`,
   )
-  const walletAfter = await call(
-    'GET /alphastudio/wallet (owner, after)',
-    'GET',
-    org('/alphastudio/wallet'),
-    owner,
-  )
-  finding(`Wallet after: ${JSON.stringify(walletAfter.body)}.`)
 
   await writeReport(orgId)
   log(`\nwrote ${REPORT_PATH}`)
 }
 
 async function writeReport(orgId: string | null) {
+  const previous = existsSync(REPORT_PATH) ? readFileSync(REPORT_PATH, 'utf8') : ''
   const lines: string[] = []
-  lines.push('# Billing endpoints — observed, not guessed (ORDER BIL-0902 Phase 0)')
+  lines.push('# Billing endpoints — observed, not guessed (ORDER BIL-0902 Phase 0/R)')
   lines.push('')
   lines.push(
-    'Captured by `pnpm tsx scripts/probe-billing.ts` against the deployed SANDBOX API on one',
-    "fresh QA org. Ward's frontend guide is `Docs/api/billing-frontend.md`; this file is what",
-    '`src/api/types.ts` transcribes the billing shapes from. It is its OWN file because',
-    '`pnpm smoke:alphastudio` overwrites `alphastudio-shapes.md` wholesale (founder-approved',
-    'ruling, decisions.md BIL-0902 Phase 0). Re-run the script when the backend changes.',
+    'Captured by `pnpm tsx scripts/probe-billing.ts` against the deployed SANDBOX API on one fresh QA',
+    "org, on WARD'S CORRECTED PLANS (Phase 0/R, 2026-09-02). Ward's frontend guide is",
+    '`Docs/api/billing-frontend.md` (its plan names, amounts and interval are superseded by the',
+    'wire as recorded here); this file is what `src/api/types.ts` transcribes the billing shapes',
+    'from. It is its OWN file because `pnpm smoke:alphastudio` overwrites `alphastudio-shapes.md`',
+    'wholesale (founder-approved ruling, decisions.md BIL-0902 Phase 0). The earlier probe on the',
+    'old contract is kept below as dated history. Re-run the script when the backend changes.',
   )
   lines.push('')
   lines.push(`- Run: \`${new Date(RUN).toISOString()}\``)
@@ -465,6 +486,19 @@ async function writeReport(orgId: string | null) {
     lines.push(JSON.stringify(capture.body ?? null, null, 2))
     lines.push('```')
     lines.push('')
+  }
+  if (previous.trim()) {
+    lines.push('---')
+    lines.push('')
+    lines.push('## History — the earlier record, kept as dated history (superseded)')
+    lines.push('')
+    lines.push(
+      'What follows is the previous `billing-shapes.md` verbatim, with its top heading demoted.',
+      'Its plan keys, names, amounts and interval describe a contract that no longer answers;',
+      'its shapes for `subscription`, `credits` and the 402 addendum still read the same.',
+    )
+    lines.push('')
+    lines.push(previous.replace(/^# /, '### '))
   }
   writeFileSync(REPORT_PATH, lines.join('\n') + '\n', 'utf8')
 }

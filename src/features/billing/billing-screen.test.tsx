@@ -246,3 +246,46 @@ describe('useBillingPermissions', () => {
     expect(result.current.canManageBilling).toBe(true)
   })
 })
+
+// --- BIL-0902/R: the Enterprise card -----------------------------------------
+
+describe('the Enterprise card (BIL-0902/R)', () => {
+  it('sits beside the wire’s plans with no price and no checkout — one action, the demo request', () => {
+    inRouter(
+      <PlansSection
+        plans={WIRE_PLANS}
+        subscription={NONE}
+        conflict={false}
+        canSubscribe
+        busy={false}
+        onSubscribe={() => {}}
+      />,
+    )
+    expect(screen.getByRole('heading', { name: 'Enterprise', level: 3 })).toBeInTheDocument()
+    expect(screen.getByText('Custom')).toBeInTheDocument()
+    expect(screen.getByText(MESSAGES.notices.enterpriseCustom)).toBeInTheDocument()
+    // Subscribe exists for the wire's plans only — never for Enterprise.
+    expect(screen.getAllByRole('button', { name: 'Subscribe' })).toHaveLength(WIRE_PLANS.length)
+    const demo = screen.getByRole('link', { name: 'Request a demo' })
+    expect(demo).toHaveAttribute('href', '/request-demo')
+  })
+
+  it('reads the same to a member — nothing on it is gated by a role', () => {
+    inRouter(
+      <PlansSection
+        plans={WIRE_PLANS}
+        subscription={NONE}
+        conflict={false}
+        canSubscribe={false}
+        busy={false}
+        onSubscribe={() => {}}
+      />,
+    )
+    expect(screen.getByRole('heading', { name: 'Enterprise', level: 3 })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Request a demo' })).toHaveAttribute(
+      'href',
+      '/request-demo',
+    )
+    expect(screen.queryByRole('button', { name: 'Subscribe' })).not.toBeInTheDocument()
+  })
+})
