@@ -4162,3 +4162,47 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   `gate-live-sup4b-<file>.log` — this session's scratchpad.
 - Next: the founder's merge word. Then M-BIL-1 (/R) on `1.malaky.ai`, step
   8 mints the funded QA org; HSN-0902/B on item 48.
+
+### 2026-09-03 12:50 — ORDER BIL-0902/R MERGED and DEPLOYED on the founder's word
+
+- Did: **the merge.** On the founder's word, `main` fast-forwarded
+  `d645607` → **`5cbda94`** (`git merge --ff-only feat/bil-0902`: eleven
+  commits — the replayed WIP `492fc45`, part 1 `c4bed4a`, the probe guard
+  `76d0b6a`, part 2 `7e21e16`, the one-402-spec `d7dddcb`, the close-out
+  `3a112a2`, the supplement records `29fdbdd` and `8f1803f`, the two spec
+  fixes `cb46033` and `9a1090e`, the gate close `5cbda94` — no merge
+  commit, one linear history), pushed to `origin main` at 12:44:09Z and
+  `main:live` at 12:44:15Z (`origin/main` = `origin/live` = `5cbda94`,
+  verified by `ls-remote` after the push). `feat/bil-0902` is kept as the
+  record — locally: it was never on `origin`, and neither is
+  `feat/hsn-0902` today, whatever the 09-02 entry says. **The
+  deployments,** read through the Vercel API (team
+  `alphapromenas-projects`, project `alphabeacon-web`): both **READY** at
+  `5cbda94` — production **`dpl_3QpLH1SqJ5BrGbptusyp6TG5gZWs`** (target
+  production, ref `main`, created 12:44:15Z, ready 12:45:09Z; aliases
+  `malaky.ai`, `alphabeacon-web.vercel.app`) and the `live` preview
+  **`dpl_EjY9KcdJVFBqtR4NG7tx5m7SFUUn`** (ref `live`, created 12:44:17Z,
+  ready 12:45:46Z; alias `1.malaky.ai`). **The bundle:** `1.malaky.ai`
+  served `index-Lxcr-Fsd.js` at 12:43:14Z and **`index-DUHITzRc.js`** at
+  12:45:48Z — the change landed ~99 s after the push. **Rollback
+  candidate:** the `d645607` pair — production
+  **`dpl_85t8AoU2RX69XzPJvc5hAFEdkPrZ`** (READY, 2026-09-02 15:03Z, and
+  Vercel's own `isRollbackCandidate`) and the `live` preview
+  **`dpl_F5HpQTqGSqdj8L83efJzG56K23UZ`** (READY, 15:03Z).
+- Phase: BIL-0902/R — **SHIPPED.** M-BIL-1 (/R) on `1.malaky.ai` is the
+  founder's (item 45); its step 8 mints the funded QA org
+  (`QA_FUNDED_EMAIL` / `QA_FUNDED_PASSWORD`, stack.md). HSN-0902/B held on
+  item 48; item 47 (the keys question) for Ward.
+- Files: `.agent/{state,sessions}.md` (this close-out; the merge itself
+  changed no file).
+- Decisions: none new — the merge is the founder's word.
+- Verify: nothing re-run — the merge is a fast-forward of the tree whose
+  gate closed 20/20 today (the 12:45 entry); the deployments' READY states
+  and the bundle-hash change are the production checks.
+- Next: the founder's **M-BIL-1 (/R)** on `1.malaky.ai` (item 45, the nine
+  steps in open-items.md): the plans as the wire delivers them (Malaky
+  Business $599.00 / month, Malaky Scale $899.00 / month, the Enterprise
+  card → Request a demo), the real test-mode checkout with card 4242 on the
+  designated QA org at step 8 — its owner's credentials into the QA-creds
+  store as `QA_FUNDED_EMAIL` / `QA_FUNDED_PASSWORD`, never committed — and
+  then the funded live specs run un-skipped for the first time.
