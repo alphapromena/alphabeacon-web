@@ -215,6 +215,10 @@ test('inviting an EXISTING user adds them immediately, and the role ladder holds
   // And to member, then out entirely.
   await memberRow.getByLabel(/Role for/).selectOption('member')
   await page.getByRole('button', { name: 'Change to member' }).click()
+  // One PATCH round-trip — live-red-2026-08-23 — before the row is touched again:
+  // clicking Remove inside the demotion's round-trip raced the row's re-render
+  // and the confirm never opened (supplement 4, 2026-09-03).
+  await expect(page.getByText(/is now a member/)).toBeVisible({ timeout: ONE_CALL })
   await memberRow.getByRole('button', { name: 'Remove' }).click()
   await page.getByRole('button', { name: 'Remove member' }).click()
   // One DELETE round-trip — live-red-2026-08-23.
