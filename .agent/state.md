@@ -26,8 +26,13 @@ as ordered, were deleted by the step-9 run; the runner's `report.json`
 survived and five frames were re-taken read-only. A record must never
 live under `test-results/`; on the founder's word the M-BIL-1 record
 moved to **`Docs/qa/m-bil-1/`** (scrubbed of session tokens before
-commit — its README says what is there and what was lost), and `main` +
-`main:live` carry it.** Before that, same
+commit — its README says what is there and what was lost); `main` carries
+it (`9ade5ef`, production `dpl_3AGbgoYYRsiUXdDfbFHJZtV4euPD` READY) and
+**`main:live` awaits the founder's own push** — the session's permission
+classifier refused it, so `origin/live` = `463806c` and `1.malaky.ai`
+serves `5cbda94`'s bundle, which is also what `9ade5ef` builds. The
+GitHub repo is PUBLIC (Vercel's deployment meta) — every record is
+scrubbed with that in mind.** Before that, same
 day: **ORDER BIL-0902/R MERGED and DEPLOYED on
 the founder's word: `main` fast-forwarded `d645607` → `5cbda94` (eleven
 commits, one linear history), pushed to `origin main` and `main:live` at
