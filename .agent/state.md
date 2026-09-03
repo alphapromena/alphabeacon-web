@@ -5,7 +5,28 @@ without reconstructing it from the session log. **Update this file at the end
 of any turn that finishes a phase or changes the plan.** `sessions.md` is the
 chronological record; this is the current picture.
 
-_Last updated: 2026-09-03, after **ORDER BIL-0902/R MERGED and DEPLOYED on
+_Last updated: 2026-09-03, after **M-BIL-1 (/auto) RAN GREEN on
+`1.malaky.ai`: the founder's billing gate, steps 1–8 by a headed Chromium
+session, recorded (sessions.md "M-BIL-1 on production") — org **1813**
+funded by ONE test-mode checkout (Malaky Business, invoice
+`in_1UBaHlKy5r44oOSRSZXHynCY`, wallet `{59900,0,59900}`, the first poll
+`active` 0.9 s after Stripe's return, the credit row's full field set now
+observed, the `billing.wallet_credited` notification), the 409
+`c083f46c-5b4c-45e3-a2f8-a2a3b660d442`, the portal round-trip clean, org
+**1814**'s abandoned checkout back on `?checkout=cancelled` at `none`; the
+funded QA org's owner in the QA-creds store (`QA_FUNDED_EMAIL` /
+`QA_FUNDED_PASSWORD`, User-scope env vars on this machine, `stack.md`); the
+FIRST funded live run 6/6 — `live-generate`'s balanced run executed on org
+1813 through `skipUnlessFunded`, `live-wallet` 4/4; item 45 CLOSED; step 9
+(Ward's "sandbox verified", and the Stripe-side branding — the pages carry
+the account name "alpha pro mena" today) is the founder's word. TRAP 24 for
+the ledger: `test-results/` is Playwright's outputDir and `pnpm e2e` CLEANS
+it at the start of every run — the gate's frames and HARs, written there
+as ordered, were deleted by the step-9 run; the runner's `report.json`
+survived and five frames were re-taken read-only. A record must never
+live under `test-results/`; the M-BIL-1 record sits there now AND in the
+session scratchpad — move it before the next e2e run.** Before that, same
+day: **ORDER BIL-0902/R MERGED and DEPLOYED on
 the founder's word: `main` fast-forwarded `d645607` → `5cbda94` (eleven
 commits, one linear history), pushed to `origin main` and `main:live` at
 12:44Z; production `dpl_3QpLH1SqJ5BrGbptusyp6TG5gZWs` and the `live` preview

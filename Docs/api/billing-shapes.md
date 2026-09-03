@@ -24,6 +24,25 @@ envelope's `requestId` on an error).
 > because `base` IS the live key: nothing of the old contract survives except its keys. The
 > client's plan union therefore stays `base | pro`; what changes is what those keys render as.
 > Both 5b and 5 minted a checkout session; both were abandoned unopened (test mode, zero spend).
+
+> **M-BIL-1 addendum (2026-09-03, the PAID path on `1.malaky.ai`, org 1813 — the shapes only a
+> payment shows; the run's record is sessions.md "M-BIL-1 on production"):** the credit row of
+> `GET /billing/credits` is `{ id, orgId, cents, reference, stripeInvoiceId, stripeSubscriptionId,
+> plan, createdAt }` — `reference` reads `stripe-invoice-<stripeInvoiceId>`, `cents` is exactly the
+> amount paid (59900) — request `487952fb-b1a7-487b-a370-37883ac9a5c7`. `GET /billing/subscription`
+> at `active` carries `plan: "base"`, both period stamps (a month apart) and `updatedAt`
+> (request `ff851ad8-bc3d-4413-92eb-b169caf344a0`, the FIRST poll after Stripe's return, 0.9 s in).
+> A second `POST /billing/checkout` on the subscribed org answers **409**
+> `{ error: { code: "conflict", message: "This org already has a subscription — change or cancel
+> it in the billing portal", requestId } }` (request `c083f46c-5b4c-45e3-a2f8-a2a3b660d442`).
+> The wallet reads `{ cents: 59900, heldCents: 0, availableCents: 59900 }`; the notification is
+> `kind: "billing.wallet_credited"`, title "Wallet credited", message "$599.00 was added to your
+> wallet from your base plan payment.", action `/billing`. `POST /billing/portal` on the active
+> org: 201 `{ url }` on `billing.stripe.com` (request `c616a80f-bda6-4b34-8474-22aa2892a1f1`).
+> One more observation: an ABANDONED checkout (org 1814, back link on the Stripe page) leaves
+> `status: "none"` but SETS `updatedAt` (request `180380f9-b7d0-4874-a856-b2e7d78ed082`) — at
+> `none` the field is `null` only before the first checkout session is created; `live-billing`
+> asserts the all-null shape BEFORE its checkout, so nothing in the suite trips on it.
 ## What this run established
 
 - Fresh QA org: id 1745 ("QA Billing Org 1788370797508").

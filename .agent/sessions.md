@@ -4206,3 +4206,158 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   designated QA org at step 8 — its owner's credentials into the QA-creds
   store as `QA_FUNDED_EMAIL` / `QA_FUNDED_PASSWORD`, never committed — and
   then the funded live specs run un-skipped for the first time.
+
+### 2026-09-03 13:20 — M-BIL-1 on production: the founder's billing gate run ONCE by a headed Chromium session on `1.malaky.ai` — steps 1–8 GREEN, the funded QA org minted (1813), its credentials in the QA-creds store, the first funded live run 6/6; one harness defect (Playwright cleaned the record)
+
+- Did: **ORDER M-BIL-1/auto.** A one-off headed Playwright runner (not a
+  spec — the suite's "never drive the Stripe page" stands;
+  `run-m-bil-1.mjs`, kept with the record) walked the nine steps on
+  production, Stripe in TEST mode, card 4242, org 619 untouched. Started
+  13:01:50Z, steps 1–8 done 13:03:56Z (2 m 6 s). Every rid below is the
+  server's `x-request-id`, read off the wire by the runner's response
+  listener.
+  1. **Sign-up → the app mints its org.** `qa+1788440509919@alphapromena.com`
+     ("QA Funded Org 1788440509919"): signup 201
+     `5a4d16b7-cb7b-465b-a7b8-5d1748503616`, verify-email 200
+     `0cdf7c01-1565-4f06-8dc7-55509f00cfc7`, `POST /orgs` 201
+     `31357859-9a2c-4336-815c-75cde4adef4c`, `GET /me/orgs`
+     `0f19c3fe-a822-4382-a81c-a88ba67626ca` → **org 1813.**
+  2. **`/billing`.** `GET /billing/plans` `ffaa696e-1abc-4561-b4cb-9c2b6105d388`
+     delivered `base` "Malaky Business" 59900 usd/month and `pro` "Malaky
+     Scale" 89900 usd/month; the cards rendered, exactly: **"Malaky
+     Business" · "$599.00 / month" · Subscribe**, **"Malaky Scale" ·
+     "$899.00 / month" · Subscribe**, **"Enterprise" · "Custom" · no
+     Subscribe · "Request a demo" → `/request-demo`**; status badge `none`;
+     history "No payments yet".
+  3. **Subscribe → Business.** `POST /billing/checkout {plan:"base"}` **201**
+     `d3b864c7-6263-4d02-b2e8-649e8b016aab` → the browser landed on
+     `checkout.stripe.com` (session `cs_test_a1eEQ2LyZdTA…`, 66 chars). The
+     Stripe page as shown: title **"alpha pro mena"**, header/back link
+     "alpha pro mena", product **"Subscribe to Malaky Business"**, total
+     **"US$599.00 per month"**, description "For one business that wants
+     Malaky running its core marketing operation."; **branding = the Stripe
+     account name "alpha pro mena", no Malaky logo, no `#FF1E57`** (item 45
+     step 9's precondition is NOT in yet — for Ward, before the LIVE flip).
+     The runner's TEST-MODE-badge text probe found nothing; the `cs_test_`
+     session id is the proof of test mode.
+  4. **Paid with the test card** (4242, 12/34, 123, US 10001). Stripe returned
+     **8.26 s** after submit to
+     `https://1.malaky.ai/billing/success?orgId=1813&session_id=cs_test_…`.
+     **The FIRST `GET /billing/subscription` after landing answered `active`
+     — 0.88 s in — rid `ff851ad8-bc3d-4413-92eb-b169caf344a0`** (plan
+     `base`, period 2026-09-03T13:02:33Z → 2026-10-03T13:02:33Z,
+     `updatedAt` 13:02:38.261Z: the webhook had landed 3 s before the
+     browser was back, so the poll never had to wait). The page: heading
+     "Your subscription is active" (the generic heading — the plan-named
+     variant needs the plans read, which landed after the heading was
+     captured; the recovered `/billing` frame shows "Malaky Business ·
+     $599.00 / month · active"), then **"Wallet: $599.00 available"**.
+  5. **Wallet** `03d94c55-c64f-4064-b007-27c70e7e3e23` →
+     `{cents 59900, heldCents 0, availableCents 59900}`. **Credits**
+     `487952fb-b1a7-487b-a370-37883ac9a5c7` → ONE row, **the field set
+     nobody had observed:** `{id "4", orgId "1813", cents 59900, reference
+     "stripe-invoice-in_1UBaHlKy5r44oOSRSZXHynCY", stripeInvoiceId
+     "in_1UBaHlKy5r44oOSRSZXHynCY", stripeSubscriptionId
+     "sub_1UBaHnKy5r44oOSRHqWlkYnh", plan "base", createdAt
+     2026-09-03T13:02:39.220Z}` (recorded in `Docs/api/billing-shapes.md`;
+     `src/api/types.ts`'s four fields are a subset, the rest carried).
+     **Notification** `5ff33653-b2dd-428a-881f-673ba49a19e9` → one item,
+     `kind "billing.wallet_credited"` (id 41, "Wallet credited", "$599.00
+     was added to your wallet from your base plan payment.", action
+     `/billing`, unread). `/billing` showed **Manage billing**, zero
+     Subscribe, one history row ("Sep 3 · base plan · invoice
+     in_1UBaHlKy5r44oOSRSZXHynCY · +$599.00").
+  6. **A second checkout** (`POST /billing/checkout {plan:"base"}` by browser
+     fetch with the session) → **409**
+     `c083f46c-5b4c-45e3-a2f8-a2a3b660d442` `{error:{code:"conflict",
+     message:"This org already has a subscription — change or cancel it in
+     the billing portal"}}`; the page still on Manage billing, no
+     Subscribe.
+  7. **Manage billing** → `POST /billing/portal` **201**
+     `c616a80f-bda6-4b34-8474-22aa2892a1f1` → `billing.stripe.com` (title
+     "alpha pro mena Billing") → Stripe's "Return" link (href
+     `https://1.malaky.ai/billing?orgId=1813`) → landed **clean** (no alert,
+     no cancelled note), the re-read `bc88120b-55c1-41d5-b33c-1467c6a2a536`
+     → `active`, Manage billing shown.
+  8. **Second fresh org** `qa+1788440509919c@alphapromena.com` → **org 1814**
+     (`GET /me/orgs` `db5fd2cc-b13f-486b-97f0-edf74a8d6e38`) → `/billing` →
+     Subscribe → checkout 201 `e6001d80-191e-4d19-8dff-55c4cb697012` → on the
+     Stripe page the back link (href
+     `…/billing?orgId=1814&checkout=cancelled`) → landed there with the
+     note "Payment cancelled — nothing was charged and nothing changed.",
+     both Subscribes back; subscription
+     `180380f9-b7d0-4874-a856-b2e7d78ed082` → **`none`** (observation: an
+     abandoned checkout SETS `updatedAt` at `none` — null only before the
+     first session is created; `live-billing` asserts the all-null shape
+     before its checkout, so nothing trips). Wallet `{0,0,0}`.
+  9. **The QA-creds store:** `QA_FUNDED_EMAIL` = org 1813's owner,
+     `QA_FUNDED_PASSWORD` = its password (28 chars, generated, never
+     written anywhere but the store) — as **User-scope environment
+     variables on this dev machine** (`[Environment]::SetEnvironmentVariable(…,
+     'User')`), documented in `stack.md`'s row. **The first funded live
+     run** (`VITE_API_BASE_URL` + both creds exported to `pnpm e2e
+     e2e/live-generate.spec.ts e2e/live-wallet.spec.ts`): **attempt 1 (two
+     workers) RED at once on both files' first test** — the Settings sync
+     answered the app's "Something went wrong — We couldn't load this
+     screen" and the chip "Balance could not be read" on two fresh orgs at
+     the same moment, before any generation: the parallel-burst harness
+     class the earlier rounds avoided by running files one at a time (its
+     log was under `test-results/` — see the defect below — so only the
+     two `error-context.md` snapshots remain). **Attempt 2, serial
+     (`--workers=1`, 13:11–13:14Z): 6 passed (2.3 m)** — `live-generate`
+     **2/2**: the fresh org 32.9 s, **"one balanced run returns a draft
+     with its tone and its rationale" 1.1 m — RAN, for the first time,
+     through `skipUnlessFunded`**: the fresh org's wallet read zero, the
+     page signed in as org 1813's owner, the four brand entities were
+     ensured on 1813 (voice, the "Roastery floor" tone, source, topic —
+     none existed), one draft came back with "Why it wrote this:" and was
+     re-pulled after the reload; `live-wallet` **4/4** (16.9 s, 5.5 s,
+     6.5 s, 5.6 s) — it carries no self-skip in the final tree (its zeros
+     are its own fresh org's, BIL-0902/R), so of the two only
+     `live-generate`'s skip turned into a run. After the run org 1813's
+     wallet still reads `{59900, 0, 59900}` and its usage table shows
+     `social-posts.generate` at **$0.0094 estimated** (guardrail 2 units,
+     6,778 input / 523 output tokens) — under a cent, not yet debited.
+- **A harness defect, and what it cost:** the order put the record under
+  `test-results/m-bil-1/`, and `test-results/` is Playwright's outputDir,
+  which **`pnpm e2e` CLEANS at the start of every run** — the step-9 run
+  deleted the whole folder: the 11 frames, `network-org1.har` (66 MB),
+  `network-org2.har` (21 MB), `api-calls.json`, the runner and both logs.
+  **Kept:** `report.json` — the runner's own record with every rid,
+  timing and body above — had been printed in full at 13:04Z and is
+  re-saved verbatim (marked); `run.log` partially; the runner itself.
+  **Recovered at 13:15Z, read-only** (`recover-m-bil-1.mjs`: sign-ins,
+  GETs, no Stripe page, nothing that can bill): five frames of the
+  persisted state — org 1813's dashboard chip "$599.00", `/billing` with
+  Manage billing and the invoice row, `/billing/balance` with the usage,
+  the bell's "Wallet credited"; org 1814's cancelled deep link — with NEW
+  rids (wallet `9b06d4b0-18e6-4d8f-9618-7b3c7e3467d4`, subscription
+  `8ff6a3ed-2cf4-46ba-8ae9-9679db5a0974`, credits
+  `a948e33b-2ad6-401b-ac06-287065cff61d`, notifications
+  `7d9f34f3-6a8c-453b-8977-88bb0116a4bc`; org 1814 subscription
+  `93fdb76b-ce53-4ce4-8b6e-d056c2bc9f92`, wallet
+  `6f4c379f-213d-47aa-a586-994d4a4e7408`) and their own HAR. **Lost for
+  good:** the Stripe checkout frames (both orgs), the portal frame, the
+  confirming/active success frames, the two HARs. No step was re-driven
+  and nothing that can bill was retried. The record now sits in
+  `test-results/m-bil-1/` as ordered AND in this session's scratchpad —
+  **move it out of `test-results/` before the next `pnpm e2e`.** Trap for
+  the ledger (state.md): a record must never live in Playwright's
+  outputDir. Also, this session's Bash cwd reset to the top-level folder
+  once more (the known trap) — one copy landed in
+  `c:\alphabeacon-web\test-results\` and was removed.
+- Phase: M-BIL-1 (/auto) — steps 1–8 GREEN, step 9 (Ward's "sandbox
+  verified") is the founder's word; item 45 CLOSED; report-and-stop.
+- Files: `.agent/{open-items,sessions,stack,state}.md`,
+  `Docs/api/billing-shapes.md` (the M-BIL-1 addendum). No code changed.
+- Decisions: none new. For the ledger: the Stripe pages carry the account
+  name "alpha pro mena" (item 45 step 9's branding is pending on Ward's
+  side); `updatedAt` at `none` is set by an abandoned checkout; a
+  sub-cent generation is not debited from the wallet on the next read.
+- Verify: docs only — no lint/typecheck/test to run. The runs: M-BIL-1
+  steps 1–8 PASS (report.json), the funded live run "6 passed (2.3m)"
+  (`live-funded-run2.log`), the recovery `ok: true` (`recovery.json`).
+- Next: the founder tells Ward **"sandbox verified"** and asks for the
+  Stripe-side branding (Malaky logo, `#FF1E57`) before the LIVE flip;
+  HSN-0902/B on item 48; item 47's keys question for Ward stands. Move
+  the M-BIL-1 record out of `test-results/` before the next e2e run.

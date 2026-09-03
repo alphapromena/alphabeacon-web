@@ -1006,7 +1006,59 @@ branch; all of it blocks DNS cutover or launch.
 
 ### BIL-0902 — billing goes live on the Stripe sandbox (2026-09-02; /R on Ward's corrected plans)
 
-45. **MANUAL GATE M-BIL-1 (/R) — the paid path, by the founder, on
+45. **CLOSED 2026-09-03 — M-BIL-1 (/auto): the founder's gate, run ONCE by a
+    headed Chromium session on `1.malaky.ai`, recorded (sessions.md "M-BIL-1
+    on production"). Steps 1–7 GREEN as written; step 8 done; step 9 is the
+    founder's word to Ward.** The sign-off facts: **org 1813**
+    (`qa+1788440509919@alphapromena.com`, "QA Funded Org 1788440509919" —
+    the designated funded QA org, its password in the QA-creds store only);
+    **invoice `in_1UBaHlKy5r44oOSRSZXHynCY`** (subscription
+    `sub_1UBaHnKy5r44oOSRHqWlkYnh`, credit row id 4, 59900 cents, request
+    `487952fb-b1a7-487b-a370-37883ac9a5c7`); **the 409 request id
+    `c083f46c-5b4c-45e3-a2f8-a2a3b660d442`** (`conflict`, "This org already
+    has a subscription — change or cancel it in the billing portal"); the
+    cancel-path org **1814** (`qa+1788440509919c@alphapromena.com`, status
+    `none`, request `180380f9-b7d0-4874-a856-b2e7d78ed082`). Per step: (1)
+    the cards read exactly the wire's rows — Malaky Business $599.00 /
+    month, Malaky Scale $899.00 / month, Enterprise "Custom" + Request a
+    demo (plans request `ffaa696e-1abc-4561-b4cb-9c2b6105d388`); (2)
+    checkout 201 (`d3b864c7-6263-4d02-b2e8-649e8b016aab`) → the Stripe page
+    read "Subscribe to Malaky Business · US$599.00 per month" under the
+    Stripe account name **"alpha pro mena"** (no Malaky logo, no `#FF1E57`
+    — the branding of step 9 is NOT in yet; the portal's title is "alpha
+    pro mena Billing" likewise); (3) Stripe returned 8.3 s after submit and
+    the FIRST poll answered `active` 0.9 s after landing (request
+    `ff851ad8-bc3d-4413-92eb-b169caf344a0`); the page said "Your
+    subscription is active" and "Wallet: $599.00 available"; (4) wallet
+    `{59900, 0, 59900}` (`03d94c55-c64f-4064-b007-27c70e7e3e23`), ONE credit
+    row whose real field set is `id, orgId, cents, reference,
+    stripeInvoiceId, stripeSubscriptionId, plan, createdAt` (recorded in
+    `Docs/api/billing-shapes.md`), the bell's `billing.wallet_credited`
+    ("Wallet credited", "$599.00 was added to your wallet from your base
+    plan payment.", request `5ff33653-b2dd-428a-881f-673ba49a19e9`); (5) the
+    409 above, the page on Manage billing with no Subscribe; (6) portal 201
+    (`c616a80f-bda6-4b34-8474-22aa2892a1f1`) → `billing.stripe.com` →
+    "Return" → `/billing?orgId=1813` clean, re-read `active`
+    (`bc88120b-55c1-41d5-b33c-1467c6a2a536`); (7) org 1814's checkout 201
+    (`e6001d80-191e-4d19-8dff-55c4cb697012`) → the Stripe back link →
+    `/billing?orgId=1814&checkout=cancelled` with the note, two Subscribes
+    back, subscription `none`; (8) `QA_FUNDED_EMAIL` / `QA_FUNDED_PASSWORD`
+    stored (User-scope env vars, `stack.md`) — the first funded live run
+    (serial, `--workers=1`, 13:11–13:14Z): **6 passed (2.3 m)** —
+    `live-generate` 2/2 with its balanced run EXECUTED on org 1813 through
+    `skipUnlessFunded` (the mechanism's first proof), `live-wallet` 4/4 (no
+    self-skip in it since /R); a first attempt with two workers went red on
+    both files' Settings sync at once, the parallel-burst harness class,
+    before any generation; (9) NOT done here — the founder tells Ward "sandbox
+    verified"; the Stripe-side branding is still to come before the flip.
+    **A harness defect to know:** the run's screenshots and HARs were
+    written under `test-results/m-bil-1/`, which is Playwright's outputDir,
+    and the step-8 `pnpm e2e` run CLEANED it — the frames of the Stripe
+    checkout, the portal and the success poll are lost; the run's own
+    `report.json` (every rid above) survives verbatim and the frames of the
+    persisted state were re-taken read-only (sessions.md). Original text:
+
+    **MANUAL GATE M-BIL-1 (/R) — the paid path, by the founder, on
     `1.malaky.ai` after the deploy (cannot be automated: no test drives the
     Stripe page).** The plans are Ward's corrected ones as `GET /billing/plans`
     delivers them (Phase 0/R, org 1745, `Docs/api/billing-shapes.md`): the
