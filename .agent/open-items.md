@@ -1056,7 +1056,9 @@ branch; all of it blocks DNS cutover or launch.
     and the step-8 `pnpm e2e` run CLEANED it — the frames of the Stripe
     checkout, the portal and the success poll are lost; the run's own
     `report.json` (every rid above) survives verbatim and the frames of the
-    persisted state were re-taken read-only (sessions.md). Original text:
+    persisted state were re-taken read-only (sessions.md). **The record:
+    `Docs/qa/m-bil-1/`** (moved there on the founder's word, scrubbed of
+    session tokens; state.md trap 24). Original text:
 
     **MANUAL GATE M-BIL-1 (/R) — the paid path, by the founder, on
     `1.malaky.ai` after the deploy (cannot be automated: no test drives the

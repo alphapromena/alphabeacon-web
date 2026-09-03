@@ -4339,11 +4339,11 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   `6f4c379f-213d-47aa-a586-994d4a4e7408`) and their own HAR. **Lost for
   good:** the Stripe checkout frames (both orgs), the portal frame, the
   confirming/active success frames, the two HARs. No step was re-driven
-  and nothing that can bill was retried. The record now sits in
-  `test-results/m-bil-1/` as ordered AND in this session's scratchpad —
-  **move it out of `test-results/` before the next `pnpm e2e`.** Trap for
-  the ledger (state.md): a record must never live in Playwright's
-  outputDir. Also, this session's Bash cwd reset to the top-level folder
+  and nothing that can bill was retried. The record was first put in
+  `test-results/m-bil-1/` as ordered and, on the founder's word the same
+  afternoon, moved to **`Docs/qa/m-bil-1/`** (the next entry) — trap 24 in
+  state.md's ledger: a record must never live in a runner's output
+  directory. Also, this session's Bash cwd reset to the top-level folder
   once more (the known trap) — one copy landed in
   `c:\alphabeacon-web\test-results\` and was removed.
 - Phase: M-BIL-1 (/auto) — steps 1–8 GREEN, step 9 (Ward's "sandbox
@@ -4359,5 +4359,50 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   (`live-funded-run2.log`), the recovery `ok: true` (`recovery.json`).
 - Next: the founder tells Ward **"sandbox verified"** and asks for the
   Stripe-side branding (Malaky logo, `#FF1E57`) before the LIVE flip;
-  HSN-0902/B on item 48; item 47's keys question for Ward stands. Move
-  the M-BIL-1 record out of `test-results/` before the next e2e run.
+  HSN-0902/B on item 48; item 47's keys question for Ward stands. (The
+  record's move out of `test-results/` — done, the next entry.)
+
+### 2026-09-03 13:50 — M-BIL-1 record moved to `Docs/qa/m-bil-1/` on the founder's word, scrubbed, trap 24 in the ledger; `main` + `main:live` pushed (journal + record); the two series branches already on `origin`
+
+- Did: **the founder's word:** "move `test-results/m-bil-1/` to
+  `Docs/qa/m-bil-1/` (a durable path Playwright never touches), update the
+  sessions.md pointer, add the trap to the ledger; push `main` and
+  `main:live` (journal + record only); push `feat/bil-0902` and
+  `feat/hsn-0902` as records if not done." **Moved** — `Docs/qa/m-bil-1/`
+  now holds `report.json`, `run-m-bil-1.mjs`, `run.log` (partial),
+  `live-funded-run2.log`, `recover-m-bil-1.mjs`, `recovery.json`, the five
+  `recovered-*.png`, `recovery-api-calls.json`, `network-recovery.api.har`
+  and a `README.md` that says what each file is and what was lost.
+  **Scrubbed before it entered git** (rule 11; gitleaks in CI): the
+  recovery's HAR carried the session token in 108 `authorization` header
+  values and both `/auth/login` bodies, and `recovery-api-calls.json`
+  carried the two login bodies — `scrub-record.mjs` (session scratchpad)
+  redacted every `authorization`/`cookie` value and every `/auth/` body,
+  kept only the API-origin entries of the HAR (the raw 10 MB file, mostly
+  embedded asset bodies, was deleted from the record and never committed),
+  and truncated the consumed Stripe checkout session id in `report.json` to
+  its prefix (the way `billing-shapes.md` redacts session ids) — noted
+  inside the file as its one edit. A re-scan of the folder finds no
+  token-like value. **The pointers:** the 13:20 entry above now names
+  `Docs/qa/m-bil-1/`; item 45 and the state head point there too.
+  **Trap 24** in state.md's ledger: records never live under a runner's
+  output directory — `test-results/` is cleaned at the start of every
+  `playwright test`, silently; a log redirected there is lost the same
+  way; the durable home is `Docs/qa/<order>/`; and a record is scrubbed of
+  session tokens before it enters git. **The branches:** `origin` already
+  carries `feat/bil-0902` at `5cbda94` and `feat/hsn-0902` at `c5456f1` —
+  both equal to the local branches (`git ls-remote` before the push) — so
+  the 12:50 entry's "never on origin" was stale on both counts; nothing to
+  push there. **The push:** `main` was `68fe38c` (the 13:20 journal) on
+  `463806c` = `origin/main` = `origin/live` — a fast-forward; this commit
+  goes on top and `git push origin main main:live` carries both. The
+  push's result and the deployments are recorded in the close-out lines
+  below this entry.
+- Phase: M-BIL-1 (/auto) — closed; record durable; report-and-stop.
+- Files: `Docs/qa/m-bil-1/*` (new), `.agent/{open-items,sessions,state}.md`.
+- Decisions: none new — the founder's word on the record's home (trap 24
+  records the rule).
+- Verify: docs and a record only — no code changed; the scrub's re-scan
+  clean; `git diff` carries no password and no token.
+- Next: the founder tells Ward "sandbox verified" (item 45 step 9), the
+  Stripe-side branding before the LIVE flip; HSN-0902/B on item 48.

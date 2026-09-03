@@ -1,0 +1,271 @@
+{
+  "RECORD_NOTE": "This is the run's own report.json, byte-for-byte as it was printed at 2026-09-03T13:04Z (after 'M-BIL-1/auto steps 1–8 PASSED'), re-saved after Playwright's step-9 run cleaned test-results/ (its outputDir) and deleted the original together with the screenshots, network-org1.har, network-org2.har, api-calls.json and run.log. Nothing here is edited; the two HARs and api-calls.json could not be reconstructed. Before commit (2026-09-03 13:4xZ, the founder's move to Docs/qa/): step4.sessionIdOnReturn truncated to its prefix — the one edit.",
+  "order": "M-BIL-1/auto",
+  "startedAt": "2026-09-03T13:01:49.919Z",
+  "base": "https://1.malaky.ai",
+  "apiBase": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api",
+  "org1": {
+    "email": "qa+1788440509919@alphapromena.com",
+    "orgName": "QA Funded Org 1788440509919",
+    "orgId": "1813"
+  },
+  "org2": {
+    "email": "qa+1788440509919c@alphapromena.com",
+    "orgName": "QA Cancel Org 1788440509919",
+    "orgId": "1814"
+  },
+  "steps": {
+    "step1": {
+      "ok": true,
+      "orgId": "1813",
+      "meOrgsRequestId": "0f19c3fe-a822-4382-a81c-a88ba67626ca",
+      "signup": {
+        "status": 201,
+        "requestId": "5a4d16b7-cb7b-465b-a7b8-5d1748503616"
+      },
+      "verify": {
+        "status": 200,
+        "requestId": "0cdf7c01-1565-4f06-8dc7-55509f00cfc7"
+      },
+      "createOrg": {
+        "status": 201,
+        "requestId": "31357859-9a2c-4336-815c-75cde4adef4c"
+      },
+      "screenshot": "01-step1-dashboard-fresh-org.png"
+    },
+    "step2": {
+      "ok": true,
+      "plansRequestId": "ffaa696e-1abc-4561-b4cb-9c2b6105d388",
+      "wirePlans": [
+        {
+          "plan": "base",
+          "name": "Malaky Business",
+          "amountCents": 59900,
+          "currency": "usd",
+          "interval": "month"
+        },
+        {
+          "plan": "pro",
+          "name": "Malaky Scale",
+          "amountCents": 89900,
+          "currency": "usd",
+          "interval": "month"
+        }
+      ],
+      "cardsAsRendered": [
+        {
+          "plan": "base",
+          "heading": "Malaky Business",
+          "price": "$599.00 / month",
+          "subscribe": true,
+          "demoLink": null
+        },
+        {
+          "plan": "pro",
+          "heading": "Malaky Scale",
+          "price": "$899.00 / month",
+          "subscribe": true,
+          "demoLink": null
+        },
+        {
+          "plan": "enterprise",
+          "heading": "Enterprise",
+          "price": "Custom",
+          "subscribe": false,
+          "demoLink": "Request a demo"
+        }
+      ],
+      "problems": [],
+      "screenshot": "02-step2-billing-plans.png"
+    },
+    "step3": {
+      "ok": true,
+      "planKey": "base",
+      "checkoutStatus": 201,
+      "checkoutRequestId": "d3b864c7-6263-4d02-b2e8-649e8b016aab",
+      "sessionId": null,
+      "checkoutHost": null,
+      "stripePage": {
+        "url": "https://checkout.stripe.com/c/pay/cs_test_a1eEQ2LyZdTACT64Y8ZysgC30EN7logVYK8UGBoO98R2sFs40VSiuAuQ0X…",
+        "title": "alpha pro mena",
+        "business": "Backalpha pro mena",
+        "productName": "Subscribe to Malaky Business",
+        "total": "US$599.00per month",
+        "description": "For one business that wants Malaky running its core marketing operation.",
+        "testMode": false
+      },
+      "screenshot": "03-step3-stripe-checkout.png"
+    },
+    "step4": {
+      "returnedTo": "https://1.malaky.ai/billing/success?orgId=1813&session_id=cs_test_a1eEQ2LyZdTA…",
+      "orgIdOnReturn": "1813",
+      "sessionIdOnReturn": "cs_test_a1eEQ2LyZdTA…(66 chars, truncated before commit)",
+      "stripeSecondsSubmitToReturn": 8.263,
+      "pollReads": [
+        {
+          "ts": "2026-09-03T13:02:41.736Z",
+          "status": 200,
+          "requestId": "ff851ad8-bc3d-4413-92eb-b169caf344a0",
+          "subscriptionStatus": "active"
+        }
+      ],
+      "firstActive": {
+        "at": "2026-09-03T13:02:41.742Z",
+        "requestId": "ff851ad8-bc3d-4413-92eb-b169caf344a0",
+        "body": {
+          "plan": "base",
+          "status": "active",
+          "currentPeriodStart": "2026-09-03T13:02:33.000Z",
+          "currentPeriodEnd": "2026-10-03T13:02:33.000Z",
+          "cancelAtPeriodEnd": false,
+          "canceledAt": null,
+          "updatedAt": "2026-09-03T13:02:38.261Z"
+        },
+        "secondsAfterLanding": 0.876
+      },
+      "secondsToActive": 0.876,
+      "successHeading": "Your subscription is active",
+      "walletLine": "Wallet: $599.00 available",
+      "ok": true,
+      "screenshot": "05-step4-success-active.png"
+    },
+    "step5": {
+      "ok": true,
+      "wallet": {
+        "status": 200,
+        "requestId": "03d94c55-c64f-4064-b007-27c70e7e3e23",
+        "body": {
+          "cents": 59900,
+          "heldCents": 0,
+          "availableCents": 59900
+        }
+      },
+      "credits": {
+        "status": 200,
+        "requestId": "487952fb-b1a7-487b-a370-37883ac9a5c7",
+        "body": {
+          "items": [
+            {
+              "id": "4",
+              "orgId": "1813",
+              "cents": 59900,
+              "reference": "stripe-invoice-in_1UBaHlKy5r44oOSRSZXHynCY",
+              "stripeInvoiceId": "in_1UBaHlKy5r44oOSRSZXHynCY",
+              "stripeSubscriptionId": "sub_1UBaHnKy5r44oOSRHqWlkYnh",
+              "plan": "base",
+              "createdAt": "2026-09-03T13:02:39.220Z"
+            }
+          ],
+          "total": 1
+        }
+      },
+      "creditRowFields": [
+        "id",
+        "orgId",
+        "cents",
+        "reference",
+        "stripeInvoiceId",
+        "stripeSubscriptionId",
+        "plan",
+        "createdAt"
+      ],
+      "notification": {
+        "status": 200,
+        "requestId": "5ff33653-b2dd-428a-881f-673ba49a19e9",
+        "walletCredited": [
+          {
+            "id": "41",
+            "orgId": "1813",
+            "userId": "2199",
+            "relatedId": null,
+            "relatedType": null,
+            "kind": "billing.wallet_credited",
+            "title": "Wallet credited",
+            "message": "$599.00 was added to your wallet from your base plan payment.",
+            "action": "/billing",
+            "seenAt": null,
+            "createdAt": "2026-09-03T13:02:39.220Z",
+            "updatedAt": "2026-09-03T13:02:39.220Z"
+          }
+        ],
+        "allKinds": [
+          "billing.wallet_credited"
+        ]
+      },
+      "manageBillingShown": true,
+      "subscribeButtons": 0,
+      "historyRowsRendered": 1,
+      "problems": [],
+      "screenshot": "06-step5-billing-manage.png"
+    },
+    "step6": {
+      "ok": true,
+      "status": 409,
+      "requestId": "c083f46c-5b4c-45e3-a2f8-a2a3b660d442",
+      "body": {
+        "error": {
+          "code": "conflict",
+          "message": "This org already has a subscription — change or cancel it in the billing portal",
+          "requestId": "c083f46c-5b4c-45e3-a2f8-a2a3b660d442"
+        }
+      },
+      "pageShowsManageBilling": true,
+      "pageShowsNoSubscribe": true,
+      "screenshot": "07-step6-after-409-manage-billing.png"
+    },
+    "step7": {
+      "portalStatus": 201,
+      "portalRequestId": "c616a80f-bda6-4b34-8474-22aa2892a1f1",
+      "portalHost": "billing.stripe.com",
+      "portalTitle": "alpha pro mena Billing",
+      "portalPlanLine": null,
+      "portalScreenshot": "08-step7-stripe-portal.png",
+      "returnHref": "https://1.malaky.ai/billing?orgId=1813",
+      "returnedTo": "https://1.malaky.ai/billing?orgId=1813",
+      "rereadRequestId": "bc88120b-55c1-41d5-b33c-1467c6a2a536",
+      "rereadStatus": "active",
+      "rereadBody": {
+        "plan": "base",
+        "status": "active",
+        "currentPeriodStart": "2026-09-03T13:02:33.000Z",
+        "currentPeriodEnd": "2026-10-03T13:02:33.000Z",
+        "cancelAtPeriodEnd": false,
+        "canceledAt": null,
+        "updatedAt": "2026-09-03T13:02:38.261Z"
+      },
+      "cleanReturn": true,
+      "ok": true,
+      "screenshot": "09-step7-billing-after-portal.png"
+    },
+    "step8": {
+      "orgId": "1814",
+      "meOrgsRequestId": "db5fd2cc-b13f-486b-97f0-edf74a8d6e38",
+      "checkoutStatus": 201,
+      "checkoutRequestId": "e6001d80-191e-4d19-8dff-55c4cb697012",
+      "stripeScreenshot": "10-step8-stripe-checkout-org2.png",
+      "backHref": "https://1.malaky.ai/billing?orgId=1814&checkout=cancelled",
+      "landedOn": "https://1.malaky.ai/billing?orgId=1814&checkout=cancelled",
+      "subscription": {
+        "status": 200,
+        "requestId": "180380f9-b7d0-4874-a856-b2e7d78ed082",
+        "body": {
+          "plan": null,
+          "status": "none",
+          "currentPeriodStart": null,
+          "currentPeriodEnd": null,
+          "cancelAtPeriodEnd": false,
+          "canceledAt": null,
+          "updatedAt": "2026-09-03T13:03:47.844Z"
+        }
+      },
+      "noteShown": true,
+      "subscribeButtons": 2,
+      "ok": true,
+      "screenshot": "11-step8-billing-cancelled.png"
+    }
+  },
+  "failedStep": null,
+  "error": null,
+  "finishedAt": "2026-09-03T13:03:56.318Z",
+  "result": "PASS — steps 1–8 green"
+}

@@ -1,0 +1,31 @@
+
+> alphabeacon-web@0.0.0 e2e C:\alphabeacon-web\alphabeacon-web
+> playwright test "e2e/live-generate.spec.ts" "e2e/live-wallet.spec.ts" "--workers=1"
+
+[WebServer] (node:21752) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:6132) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+warm-up: waking the API before the suite starts (https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/health)
+warm-up: service awake after 2 probe(s) in 0.8s — last 2: 381ms, 123ms
+warm-up: 12-way fleet warm after 1 burst(s), 1.4s total — slowest 595ms
+
+warm-up: heartbeat started — 4 probes every 5s for the life of the run
+
+
+Running 6 tests using 1 worker
+
+(node:23760) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 [chromium] › e2e\live-generate.spec.ts:49:1 › a fresh owner + org, made through the product (32.9s)
+  ok 2 [chromium] › e2e\live-generate.spec.ts:68:1 › one balanced run returns a draft with its tone and its rationale (1.1m)
+  ok 3 [chromium] › e2e\live-wallet.spec.ts:50:1 › a fresh owner + org, made through the product (16.9s)
+  ok 4 [chromium] › e2e\live-wallet.spec.ts:75:1 › the balance chip shows money — and over a zero wallet, the instruction to subscribe (5.5s)
+  ok 5 [chromium] › e2e\live-wallet.spec.ts:95:1 › H3 is a balance and a real usage read-back, in both allowed grains (6.5s)
+  ok 6 [chromium] › e2e\live-wallet.spec.ts:130:1 › the wallet and usage endpoints answer the shapes the UI is built on (5.6s)
+
+warm-up: heartbeat stopped after 26 beat(s)
+
+  6 passed (2.3m)
+exit=0  

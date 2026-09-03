@@ -1,0 +1,27 @@
+# PARTIAL — reconstructed from the lines read before Playwright's step-9 run
+# cleaned test-results/ and deleted the original run.log. The missing lines
+# between 13:02:04 and 13:02:50 were screenshot/step lines whose facts are in
+# report.json (same folder).
+2026-09-03T13:01:49.920Z M-BIL-1/auto starting — org1 qa+1788440509919@alphapromena.com · org2 qa+1788440509919c@alphapromena.com
+2026-09-03T13:01:51.169Z STEP 1 — sign up the funded QA account
+2026-09-03T13:01:53.510Z api base observed from the wire: https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api
+2026-09-03T13:02:04.626Z screenshot 01-step1-dashboard-fresh-org.png
+2026-09-03T13:02:04.626Z org1 = 1813
+2026-09-03T13:02:04.627Z STEP 2 — /billing plan cards
+2026-09-03T13:02:08.376Z STEP 3 — Subscribe → Business
+2026-09-03T13:02:32.602Z Stripe page: {"url":"https://checkout.stripe.com/c/pay/cs_test_a1eEQ2LyZdTACT64Y8ZysgC30EN7logVYK8UGBoO98R2sFs40VSiuAuQ0X…","title":"alpha pro mena","business":"Backalpha pro mena","productName":"Subscribe to Malaky Business","total":"US$599.00per month","description":"For one business that wants Malaky running its core marketing operation.","testMode":false}
+2026-09-03T13:02:32.603Z STEP 4 — pay with the test card
+2026-09-03T13:02:43.866Z active after 0.876s — rid ff851ad8-bc3d-4413-92eb-b169caf344a0
+2026-09-03T13:02:43.867Z STEP 5 — wallet, credits, notification
+2026-09-03T13:02:50.389Z screenshot 06-step5-billing-manage.png
+2026-09-03T13:02:50.390Z STEP 6 — POST /billing/checkout again → 409
+2026-09-03T13:02:51.330Z screenshot 07-step6-after-409-manage-billing.png
+2026-09-03T13:02:51.331Z STEP 7 — Manage billing → Stripe portal → return
+2026-09-03T13:03:30.018Z screenshot 08-step7-stripe-portal.png
+2026-09-03T13:03:33.539Z screenshot 09-step7-billing-after-portal.png
+2026-09-03T13:03:33.943Z STEP 8 — second fresh org, abandon on the Stripe page
+2026-09-03T13:03:43.948Z org2 = 1814
+2026-09-03T13:03:51.643Z screenshot 10-step8-stripe-checkout-org2.png
+2026-09-03T13:03:55.812Z screenshot 11-step8-billing-cancelled.png
+2026-09-03T13:03:56.319Z M-BIL-1/auto steps 1–8 PASSED
+exit=0

@@ -24,8 +24,10 @@ the ledger: `test-results/` is Playwright's outputDir and `pnpm e2e` CLEANS
 it at the start of every run — the gate's frames and HARs, written there
 as ordered, were deleted by the step-9 run; the runner's `report.json`
 survived and five frames were re-taken read-only. A record must never
-live under `test-results/`; the M-BIL-1 record sits there now AND in the
-session scratchpad — move it before the next e2e run.** Before that, same
+live under `test-results/`; on the founder's word the M-BIL-1 record
+moved to **`Docs/qa/m-bil-1/`** (scrubbed of session tokens before
+commit — its README says what is there and what was lost), and `main` +
+`main:live` carry it.** Before that, same
 day: **ORDER BIL-0902/R MERGED and DEPLOYED on
 the founder's word: `main` fast-forwarded `d645607` → `5cbda94` (eleven
 commits, one linear history), pushed to `origin main` and `main:live` at
@@ -1055,6 +1057,27 @@ These are learned the hard way; each cost a debugging cycle.
     re-run as a RECORDED supplement with the timestamps beside it — the
     two-round law says a red in round 2 is a red, and the supplement is
     how the record says whose.
+
+24. **Records never live under a runner's output directory (2026-09-03,
+    M-BIL-1).** `test-results/` is Playwright's `outputDir`, and
+    `playwright test` CLEANS it at the start of EVERY run — silently:
+    nothing in the run's output says the folder was removed. The founder's
+    billing gate wrote its record there (eleven frames, two HARs of 87 MB,
+    `api-calls.json`, the runner and its log), and the very next `pnpm e2e`
+    — step 9 of the same order, minutes later — deleted all of it; a
+    `pnpm e2e … > test-results/x.log` redirect loses the log the same way
+    (the file is unlinked mid-run and the shell's final append fails). Only
+    what had been printed to the transcript survived (`report.json`, every
+    rid), and five frames of persisted state were re-taken read-only.
+    **The rule:** a one-off runner, a screenshot set, a HAR, a run log —
+    anything meant to outlive a run — goes to the session scratchpad or a
+    durable path (`Docs/qa/<order>/` is the home now), never under
+    `test-results/`, `playwright-report/`, `blob-report/` or any other
+    directory a tool owns and clears; copy INTO such a folder only as a
+    courtesy at the end. And before a record enters git, scrub it: a HAR
+    and a captured `/auth/login` body carry the session token
+    (`authorization` headers, `{ token }`) — rule 11 and gitleaks both
+    stand in the way (`Docs/qa/m-bil-1/README.md` shows the scrub).
 
 20. **A null answer from the wire must never fall through to demo data.**
     INT-8 wrote this for `eventSources` — "an empty list is the honest answer

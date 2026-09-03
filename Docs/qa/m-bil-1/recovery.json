@@ -1,0 +1,104 @@
+{
+  "recoveredAt": "2026-09-03T13:15:08.865Z",
+  "note": "read-only recovery frames; rids are NEW (see report.json for the run's own)",
+  "frames": [
+    "recovered-org1813-dashboard-chip.png",
+    "recovered-org1813-billing-manage-and-history.png",
+    "recovered-org1813-balance.png",
+    "recovered-org1813-bell-wallet-credited.png",
+    "recovered-org1814-billing-cancelled-deeplink.png"
+  ],
+  "reads": {
+    "org1813": {
+      "wallet": {
+        "status": 200,
+        "requestId": "9b06d4b0-18e6-4d8f-9618-7b3c7e3467d4",
+        "body": {
+          "cents": 59900,
+          "heldCents": 0,
+          "availableCents": 59900
+        }
+      },
+      "subscription": {
+        "status": 200,
+        "requestId": "8ff6a3ed-2cf4-46ba-8ae9-9679db5a0974",
+        "body": {
+          "plan": "base",
+          "status": "active",
+          "currentPeriodStart": "2026-09-03T13:02:33.000Z",
+          "currentPeriodEnd": "2026-10-03T13:02:33.000Z",
+          "cancelAtPeriodEnd": false,
+          "canceledAt": null,
+          "updatedAt": "2026-09-03T13:02:38.261Z"
+        }
+      },
+      "credits": {
+        "status": 200,
+        "requestId": "a948e33b-2ad6-401b-ac06-287065cff61d",
+        "body": {
+          "items": [
+            {
+              "id": "4",
+              "orgId": "1813",
+              "cents": 59900,
+              "reference": "stripe-invoice-in_1UBaHlKy5r44oOSRSZXHynCY",
+              "stripeInvoiceId": "in_1UBaHlKy5r44oOSRSZXHynCY",
+              "stripeSubscriptionId": "sub_1UBaHnKy5r44oOSRHqWlkYnh",
+              "plan": "base",
+              "createdAt": "2026-09-03T13:02:39.220Z"
+            }
+          ],
+          "total": 1
+        }
+      },
+      "notifications": {
+        "status": 200,
+        "requestId": "7d9f34f3-6a8c-453b-8977-88bb0116a4bc",
+        "body": {
+          "items": [
+            {
+              "id": "41",
+              "orgId": "1813",
+              "userId": "2199",
+              "relatedId": null,
+              "relatedType": null,
+              "kind": "billing.wallet_credited",
+              "title": "Wallet credited",
+              "message": "$599.00 was added to your wallet from your base plan payment.",
+              "action": "/billing",
+              "seenAt": null,
+              "createdAt": "2026-09-03T13:02:39.220Z",
+              "updatedAt": "2026-09-03T13:02:39.220Z"
+            }
+          ],
+          "total": 1
+        }
+      }
+    },
+    "org1814": {
+      "subscription": {
+        "status": 200,
+        "requestId": "93fdb76b-ce53-4ce4-8b6e-d056c2bc9f92",
+        "body": {
+          "plan": null,
+          "status": "none",
+          "currentPeriodStart": null,
+          "currentPeriodEnd": null,
+          "cancelAtPeriodEnd": false,
+          "canceledAt": null,
+          "updatedAt": "2026-09-03T13:03:47.844Z"
+        }
+      },
+      "wallet": {
+        "status": 200,
+        "requestId": "6f4c379f-213d-47aa-a586-994d4a4e7408",
+        "body": {
+          "cents": 0,
+          "heldCents": 0,
+          "availableCents": 0
+        }
+      }
+    }
+  },
+  "ok": true
+}

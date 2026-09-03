@@ -1,0 +1,698 @@
+[
+  {
+    "ts": "2026-09-03T13:15:12.583Z",
+    "method": "POST",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/auth/login",
+    "status": 200,
+    "requestId": "2b581f6b-d146-4383-9579-359c7348b4ed",
+    "body": "<redacted before commit — a session token travelled here>"
+  },
+  {
+    "ts": "2026-09-03T13:15:13.206Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/me",
+    "status": 200,
+    "requestId": "dbf063c2-8ab1-4518-999f-e496194dc4ad",
+    "body": "{\"id\":\"2199\",\"name\":\"QA Funded Owner\",\"email\":\"qa+1788440509919@alphapromena.com\",\"role\":\"user\",\"status\":\"active\",\"emailVerifiedAt\":\"2026-09-03T13:01:57.367Z\",\"createdAt\":\"2026-09-03T13:01:55.549Z\"}"
+  },
+  {
+    "ts": "2026-09-03T13:15:13.533Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/me/orgs",
+    "status": 200,
+    "requestId": "ce564df4-add1-4c4b-ad46-e2fc40c5378a",
+    "body": "{\"items\":[{\"id\":\"1813\",\"name\":\"QA Funded Org 1788440509919\",\"slug\":\"qa-funded-org-1788440509919\",\"status\":\"active\",\"role\":\"owner\",\"joinedAt\":\"2026-09-03T13:02:00.200Z\"}],\"total\":1}"
+  },
+  {
+    "ts": "2026-09-03T13:15:14.409Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813/invites?limit=100",
+    "status": 200,
+    "requestId": "f2592923-e874-44f9-81e7-f9f7d6828b1d",
+    "body": "{\"items\":[],\"total\":0}"
+  },
+  {
+    "ts": "2026-09-03T13:15:14.429Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813/members?limit=100",
+    "status": 200,
+    "requestId": "02d47003-3b26-42e3-86ff-8319a8e6646a",
+    "body": "{\"items\":[{\"id\":\"2072\",\"userId\":\"2199\",\"name\":\"QA Funded Owner\",\"email\":\"qa+1788440509919@alphapromena.com\",\"role\":\"owner\",\"isActive\":true,\"joinedAt\":\"2026-09-03T13:02:00.200Z\"}],\"total\":1}"
+  },
+  {
+    "ts": "2026-09-03T13:15:14.795Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813/brand/voices?limit=100",
+    "status": 200,
+    "requestId": "9460a4fa-a679-436d-ae66-9c6199d7ea80",
+    "body": "{\"items\":[{\"id\":\"286\",\"orgId\":\"1813\",\"description\":\"QA Funded Org 1788440509919 brand voice\",\"createdAt\":\"2026-09-03T13:12:18.978Z\",\"updatedAt\":\"2026-09-03T13:12:18.978Z\",\"name\":\"Brand voice\",\"rules\":[{\"id\":\"545\",\"kind\":\"do\",\"text\":\"Name the roast date\"}]}],\"total\":1}"
+  },
+  {
+    "ts": "2026-09-03T13:15:14.808Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813/brand/tones?limit=100",
+    "status": 200,
+    "requestId": "ac8736dc-432e-4133-b5f9-cca8c4c0215b",
+    "body": "{\"items\":[{\"id\":\"1993\",\"orgId\":\"1813\",\"name\":\"Roastery floor\",\"preset\":false,\"description\":\"Warm, specific, smells of coffee.\",\"createdAt\":\"2026-09-03T13:12:24.212Z\",\"updatedAt\":\"2026-09-03T13:12:43.420Z\",\"rules\":[{\"id\":\"6099\",\"kind\":\"do\",\"text\":\"Name the roast date\"}]}],\"total\":1}"
+  },
+  {
+    "ts": "2026-09-03T13:15:14.823Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813/brand/sources?limit=100",
+    "status": 200,
+    "requestId": "7c62d0d0-537a-4ba2-be60-0b1bf31ba45b",
+    "body": "{\"items\":[{\"id\":\"206\",\"orgId\":\"1813\",\"url\":\"https://perfectdailygrind.com/feed\",\"title\":\"Perfectdailygrind\",\"createdAt\":\"2026-09-03T13:12:31.566Z\",\"updatedAt\":\"2026-09-03T13:12:31.566Z\"}],\"total\":1}"
+  },
+  {
+    "ts": "2026-09-03T13:15:14.907Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813/brand/topics?limit=100",
+    "status": 200,
+    "requestId": "1f4d2596-f893-43e6-9424-0d9021e5fd5c",
+    "body": "{\"items\":[{\"id\":\"249\",\"orgId\":\"1813\",\"description\":\"single origin\",\"createdAt\":\"2026-09-03T13:12:38.788Z\",\"updatedAt\":\"2026-09-03T13:12:38.788Z\"}],\"total\":1}"
+  },
+  {
+    "ts": "2026-09-03T13:15:15.083Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813/holidays?limit=100&offset=0",
+    "status": 200,
+    "requestId": "3eaa3901-41df-411c-aaf0-c66c6eb6c955",
+    "body": "{\"items\":[],\"total\":0}"
+  },
+  {
+    "ts": "2026-09-03T13:15:15.093Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813/schedules?limit=20",
+    "status": 200,
+    "requestId": "ae32af8a-e614-4f31-b4aa-cb71e2554875",
+    "body": "{\"items\":[],\"total\":0}"
+  },
+  {
+    "ts": "2026-09-03T13:15:15.368Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813/notifications/unread-count",
+    "status": 200,
+    "requestId": "01e2e24a-e789-414a-aec4-50f49eb00629",
+    "body": "{\"unread\":1}"
+  },
+  {
+    "ts": "2026-09-03T13:15:15.375Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813",
+    "status": 200,
+    "requestId": "c01e2cb8-3962-429a-bb56-930e993c6836",
+    "body": "{\"org\":{\"id\":\"1813\",\"name\":\"QA Funded Org 1788440509919\",\"slug\":\"qa-funded-org-1788440509919\",\"status\":\"active\",\"createdAt\":\"2026-09-03T13:02:00.200Z\",\"updatedAt\":\"2026-09-03T13:02:00.200Z\",\"country\":null},\"membership\":{\"id\":\"2072\",\"orgId\":\"1813\",\"userId\":\"2199\",\"role\":\"owner\",\"isActive\":true,\"createdAt\":\"2026-09-03T13:02:00.200Z\",\"updatedAt\":\"2026-09-03T13:02:00.200Z\"}}"
+  },
+  {
+    "ts": "2026-09-03T13:15:15.453Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813/notifications",
+    "status": 200,
+    "requestId": "98560dbd-9c5b-4da8-bf27-76f84e2931e7",
+    "body": "{\"items\":[{\"id\":\"41\",\"orgId\":\"1813\",\"userId\":\"2199\",\"relatedId\":null,\"relatedType\":null,\"kind\":\"billing.wallet_credited\",\"title\":\"Wallet credited\",\"message\":\"$599.00 was added to your wallet from your base plan payment.\",\"action\":\"/billing\",\"seenAt\":null,\"createdAt\":\"2026-09-03T13:02:39.220Z\",\"updatedAt\":\"2026-09-03T13:02:39.220Z\"}],\"total\":1}"
+  },
+  {
+    "ts": "2026-09-03T13:15:15.828Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813/alphastudio/wallet",
+    "status": 200,
+    "requestId": "82d6ec2c-096e-4b7f-bcca-22ab7a7d61bb",
+    "body": "{\"cents\":59900,\"heldCents\":0,\"availableCents\":59900}"
+  },
+  {
+    "ts": "2026-09-03T13:16:14.060Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/me",
+    "status": 200,
+    "requestId": "1b2ade70-2177-4c66-88da-3df74143b18f",
+    "body": "{\"id\":\"2199\",\"name\":\"QA Funded Owner\",\"email\":\"qa+1788440509919@alphapromena.com\",\"role\":\"user\",\"status\":\"active\",\"emailVerifiedAt\":\"2026-09-03T13:01:57.367Z\",\"createdAt\":\"2026-09-03T13:01:55.549Z\"}"
+  },
+  {
+    "ts": "2026-09-03T13:16:14.061Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/me/orgs",
+    "status": 200,
+    "requestId": "d62ec454-b549-44fc-85fa-083e570b0e8b",
+    "body": "{\"items\":[{\"id\":\"1813\",\"name\":\"QA Funded Org 1788440509919\",\"slug\":\"qa-funded-org-1788440509919\",\"status\":\"active\",\"role\":\"owner\",\"joinedAt\":\"2026-09-03T13:02:00.200Z\"}],\"total\":1}"
+  },
+  {
+    "ts": "2026-09-03T13:16:14.680Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813/invites?limit=100",
+    "status": 200,
+    "requestId": "ee2530e4-e02d-4f22-96b5-56784d6ca5ce",
+    "body": "{\"items\":[],\"total\":0}"
+  },
+  {
+    "ts": "2026-09-03T13:16:14.681Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813/members?limit=100",
+    "status": 200,
+    "requestId": "7e8f08a4-fd88-4ef2-a7ba-d515b4270314",
+    "body": "{\"items\":[{\"id\":\"2072\",\"userId\":\"2199\",\"name\":\"QA Funded Owner\",\"email\":\"qa+1788440509919@alphapromena.com\",\"role\":\"owner\",\"isActive\":true,\"joinedAt\":\"2026-09-03T13:02:00.200Z\"}],\"total\":1}"
+  },
+  {
+    "ts": "2026-09-03T13:16:14.688Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813/billing/credits?limit=50&offset=0",
+    "status": 200,
+    "requestId": "d6753c97-a200-4bd5-a680-d895781921de",
+    "body": "{\"items\":[{\"id\":\"4\",\"orgId\":\"1813\",\"cents\":59900,\"reference\":\"stripe-invoice-in_1UBaHlKy5r44oOSRSZXHynCY\",\"stripeInvoiceId\":\"in_1UBaHlKy5r44oOSRSZXHynCY\",\"stripeSubscriptionId\":\"sub_1UBaHnKy5r44oOSRHqWlkYnh\",\"plan\":\"base\",\"createdAt\":\"2026-09-03T13:02:39.220Z\"}],\"total\":1}"
+  },
+  {
+    "ts": "2026-09-03T13:16:14.693Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813/billing/plans",
+    "status": 200,
+    "requestId": "80549c44-1140-4761-8813-cc97ebde7618",
+    "body": "{\"items\":[{\"plan\":\"base\",\"name\":\"Malaky Business\",\"amountCents\":59900,\"currency\":\"usd\",\"interval\":\"month\"},{\"plan\":\"pro\",\"name\":\"Malaky Scale\",\"amountCents\":89900,\"currency\":\"usd\",\"interval\":\"month\"}],\"total\":2}"
+  },
+  {
+    "ts": "2026-09-03T13:16:14.751Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813/billing/subscription",
+    "status": 200,
+    "requestId": "6b5a5e7a-cbba-4f85-9dcb-a4654148045f",
+    "body": "{\"plan\":\"base\",\"status\":\"active\",\"currentPeriodStart\":\"2026-09-03T13:02:33.000Z\",\"currentPeriodEnd\":\"2026-10-03T13:02:33.000Z\",\"cancelAtPeriodEnd\":false,\"canceledAt\":null,\"updatedAt\":\"2026-09-03T13:02:38.261Z\"}"
+  },
+  {
+    "ts": "2026-09-03T13:16:15.088Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813/brand/tones?limit=100",
+    "status": 200,
+    "requestId": "890a48c7-ab33-42c4-81e3-a02b186b2b81",
+    "body": "{\"items\":[{\"id\":\"1993\",\"orgId\":\"1813\",\"name\":\"Roastery floor\",\"preset\":false,\"description\":\"Warm, specific, smells of coffee.\",\"createdAt\":\"2026-09-03T13:12:24.212Z\",\"updatedAt\":\"2026-09-03T13:12:43.420Z\",\"rules\":[{\"id\":\"6099\",\"kind\":\"do\",\"text\":\"Name the roast date\"}]}],\"total\":1}"
+  },
+  {
+    "ts": "2026-09-03T13:16:15.333Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813/brand/topics?limit=100",
+    "status": 200,
+    "requestId": "aeaa6b6a-886e-447c-94c6-9b6e487ffe70",
+    "body": "{\"items\":[{\"id\":\"249\",\"orgId\":\"1813\",\"description\":\"single origin\",\"createdAt\":\"2026-09-03T13:12:38.788Z\",\"updatedAt\":\"2026-09-03T13:12:38.788Z\"}],\"total\":1}"
+  },
+  {
+    "ts": "2026-09-03T13:16:15.344Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813/brand/sources?limit=100",
+    "status": 200,
+    "requestId": "e6e1ff27-956e-4063-8da1-c2174a226c4a",
+    "body": "{\"items\":[{\"id\":\"206\",\"orgId\":\"1813\",\"url\":\"https://perfectdailygrind.com/feed\",\"title\":\"Perfectdailygrind\",\"createdAt\":\"2026-09-03T13:12:31.566Z\",\"updatedAt\":\"2026-09-03T13:12:31.566Z\"}],\"total\":1}"
+  },
+  {
+    "ts": "2026-09-03T13:16:15.353Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813/brand/voices?limit=100",
+    "status": 200,
+    "requestId": "69cb34ed-0d2b-41d6-9cc2-7ac6c5eda02a",
+    "body": "{\"items\":[{\"id\":\"286\",\"orgId\":\"1813\",\"description\":\"QA Funded Org 1788440509919 brand voice\",\"createdAt\":\"2026-09-03T13:12:18.978Z\",\"updatedAt\":\"2026-09-03T13:12:18.978Z\",\"name\":\"Brand voice\",\"rules\":[{\"id\":\"545\",\"kind\":\"do\",\"text\":\"Name the roast date\"}]}],\"total\":1}"
+  },
+  {
+    "ts": "2026-09-03T13:16:15.381Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813/schedules?limit=20",
+    "status": 200,
+    "requestId": "550673f9-bf2c-4890-b8f0-0ba086428b1c",
+    "body": "{\"items\":[],\"total\":0}"
+  },
+  {
+    "ts": "2026-09-03T13:16:15.436Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813/holidays?limit=100&offset=0",
+    "status": 200,
+    "requestId": "4eac66be-5e1d-4449-80fd-af517fef5311",
+    "body": "{\"items\":[],\"total\":0}"
+  },
+  {
+    "ts": "2026-09-03T13:16:15.763Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813/notifications",
+    "status": 200,
+    "requestId": "75f6bb67-04f5-4bbd-b408-2705719c4f0a",
+    "body": "{\"items\":[{\"id\":\"41\",\"orgId\":\"1813\",\"userId\":\"2199\",\"relatedId\":null,\"relatedType\":null,\"kind\":\"billing.wallet_credited\",\"title\":\"Wallet credited\",\"message\":\"$599.00 was added to your wallet from your base plan payment.\",\"action\":\"/billing\",\"seenAt\":null,\"createdAt\":\"2026-09-03T13:02:39.220Z\",\"updatedAt\":\"2026-09-03T13:02:39.220Z\"}],\"total\":1}"
+  },
+  {
+    "ts": "2026-09-03T13:16:15.841Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813",
+    "status": 200,
+    "requestId": "9317a94d-7de9-4503-98e4-10efd254d513",
+    "body": "{\"org\":{\"id\":\"1813\",\"name\":\"QA Funded Org 1788440509919\",\"slug\":\"qa-funded-org-1788440509919\",\"status\":\"active\",\"createdAt\":\"2026-09-03T13:02:00.200Z\",\"updatedAt\":\"2026-09-03T13:02:00.200Z\",\"country\":null},\"membership\":{\"id\":\"2072\",\"orgId\":\"1813\",\"userId\":\"2199\",\"role\":\"owner\",\"isActive\":true,\"createdAt\":\"2026-09-03T13:02:00.200Z\",\"updatedAt\":\"2026-09-03T13:02:00.200Z\"}}"
+  },
+  {
+    "ts": "2026-09-03T13:16:15.928Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813/notifications/unread-count",
+    "status": 200,
+    "requestId": "28913f2f-a03c-4602-914a-a82abc1ab2f5",
+    "body": "{\"unread\":1}"
+  },
+  {
+    "ts": "2026-09-03T13:16:16.200Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813/alphastudio/wallet",
+    "status": 200,
+    "requestId": "19bbf524-e14e-4170-a072-a537bc734a92",
+    "body": "{\"cents\":59900,\"heldCents\":0,\"availableCents\":59900}"
+  },
+  {
+    "ts": "2026-09-03T13:16:16.887Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/me/orgs",
+    "status": 200,
+    "requestId": "fb192fe4-a87e-4f1f-bd65-2761ba53d400",
+    "body": "{\"items\":[{\"id\":\"1813\",\"name\":\"QA Funded Org 1788440509919\",\"slug\":\"qa-funded-org-1788440509919\",\"status\":\"active\",\"role\":\"owner\",\"joinedAt\":\"2026-09-03T13:02:00.200Z\"}],\"total\":1}"
+  },
+  {
+    "ts": "2026-09-03T13:16:16.894Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/me",
+    "status": 200,
+    "requestId": "78efe83a-8d4b-4be5-b0c0-87dcf2411056",
+    "body": "{\"id\":\"2199\",\"name\":\"QA Funded Owner\",\"email\":\"qa+1788440509919@alphapromena.com\",\"role\":\"user\",\"status\":\"active\",\"emailVerifiedAt\":\"2026-09-03T13:01:57.367Z\",\"createdAt\":\"2026-09-03T13:01:55.549Z\"}"
+  },
+  {
+    "ts": "2026-09-03T13:16:17.479Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813/invites?limit=100",
+    "status": 200,
+    "requestId": "bb35734d-515d-4c8b-956b-d940bd491657",
+    "body": "{\"items\":[],\"total\":0}"
+  },
+  {
+    "ts": "2026-09-03T13:16:17.496Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813/members?limit=100",
+    "status": 200,
+    "requestId": "a8a772ec-4d74-4f9a-b3a0-6bd08a32ed45",
+    "body": "{\"items\":[{\"id\":\"2072\",\"userId\":\"2199\",\"name\":\"QA Funded Owner\",\"email\":\"qa+1788440509919@alphapromena.com\",\"role\":\"owner\",\"isActive\":true,\"joinedAt\":\"2026-09-03T13:02:00.200Z\"}],\"total\":1}"
+  },
+  {
+    "ts": "2026-09-03T13:16:17.558Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813/brand/tones?limit=100",
+    "status": 200,
+    "requestId": "38f35833-c019-40a9-a78c-676655347bd6",
+    "body": "{\"items\":[{\"id\":\"1993\",\"orgId\":\"1813\",\"name\":\"Roastery floor\",\"preset\":false,\"description\":\"Warm, specific, smells of coffee.\",\"createdAt\":\"2026-09-03T13:12:24.212Z\",\"updatedAt\":\"2026-09-03T13:12:43.420Z\",\"rules\":[{\"id\":\"6099\",\"kind\":\"do\",\"text\":\"Name the roast date\"}]}],\"total\":1}"
+  },
+  {
+    "ts": "2026-09-03T13:16:17.572Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813/brand/sources?limit=100",
+    "status": 200,
+    "requestId": "925e7a85-22dd-4c69-998f-fad1b36a1580",
+    "body": "{\"items\":[{\"id\":\"206\",\"orgId\":\"1813\",\"url\":\"https://perfectdailygrind.com/feed\",\"title\":\"Perfectdailygrind\",\"createdAt\":\"2026-09-03T13:12:31.566Z\",\"updatedAt\":\"2026-09-03T13:12:31.566Z\"}],\"total\":1}"
+  },
+  {
+    "ts": "2026-09-03T13:16:17.573Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813/brand/voices?limit=100",
+    "status": 200,
+    "requestId": "7d2f2bfc-eab6-4f69-80a4-ce0c60ea970f",
+    "body": "{\"items\":[{\"id\":\"286\",\"orgId\":\"1813\",\"description\":\"QA Funded Org 1788440509919 brand voice\",\"createdAt\":\"2026-09-03T13:12:18.978Z\",\"updatedAt\":\"2026-09-03T13:12:18.978Z\",\"name\":\"Brand voice\",\"rules\":[{\"id\":\"545\",\"kind\":\"do\",\"text\":\"Name the roast date\"}]}],\"total\":1}"
+  },
+  {
+    "ts": "2026-09-03T13:16:17.705Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813/alphastudio/usage?from=2026-08-05&to=2026-09-03&group_by=capability",
+    "status": 200,
+    "requestId": "575abc51-191d-45ba-840a-86a3f835f858",
+    "body": "{\"from\":\"2026-08-05\",\"to\":\"2026-09-03\",\"groupBy\":\"capability\",\"groups\":[{\"key\":\"social-posts.generate\",\"unit\":\"guardrail_text_units\",\"qty\":2,\"costUsdEstimate\":\"0.000300000000\"},{\"key\":\"social-posts.generate\",\"unit\":\"input_tokens\",\"qty\":6778,\"costUsdEstimate\":\"0.006046600000\"},{\"key\":\"social-posts.generate\",\"unit\":\"output_tokens\",\"qty\":523,\"costUsdEstimate\":\"0.002372000000\"},{\"key\":\"social-posts.generate\",\"unit\":\"tokens\",\"qty\":6011,\"costUsdEstimate\":\"0.000721320000\"}],\"days\":[{\"day\":\"2026-09-03\",\"unit\":\"guardrail_text_units\",\"qty\":2,\"costUsdEstimate\":\"0.000300000000\"},{\"day\":\"2026-09-03\",\"unit\":\"input_tokens\",\"qty\":6778,\"costUsdEstimate\":\"0.006046600000\"},{\"day\":\"2026-09-03\",\"unit\":\"output_tokens\",\"qty\":523,\"costUsdEstimate\":\"0.002372000000\"},{\"day\":\"2026-09-03\",\"unit\":\"tokens\",\"qty\":6011,\"costUsdEstimate\":\"0.000721320000\"}]}"
+  },
+  {
+    "ts": "2026-09-03T13:16:18.140Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813/brand/topics?limit=100",
+    "status": 200,
+    "requestId": "f3e28245-ca56-4689-912e-2838b8ceed80",
+    "body": "{\"items\":[{\"id\":\"249\",\"orgId\":\"1813\",\"description\":\"single origin\",\"createdAt\":\"2026-09-03T13:12:38.788Z\",\"updatedAt\":\"2026-09-03T13:12:38.788Z\"}],\"total\":1}"
+  },
+  {
+    "ts": "2026-09-03T13:16:18.141Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813/schedules?limit=20",
+    "status": 200,
+    "requestId": "b1c77c78-df56-4e49-b55c-b86d223cd953",
+    "body": "{\"items\":[],\"total\":0}"
+  },
+  {
+    "ts": "2026-09-03T13:16:18.147Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813/notifications/unread-count",
+    "status": 200,
+    "requestId": "d340c8a8-b240-499a-8291-0ec339ffd2af",
+    "body": "{\"unread\":1}"
+  },
+  {
+    "ts": "2026-09-03T13:16:18.194Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813",
+    "status": 200,
+    "requestId": "cb294758-fbb1-4760-a084-e16c6efc7b06",
+    "body": "(unavailable)"
+  },
+  {
+    "ts": "2026-09-03T13:16:18.213Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813/holidays?limit=100&offset=0",
+    "status": 200,
+    "requestId": "79862045-18ec-415a-86d0-f0c54935e29b",
+    "body": "(unavailable)"
+  },
+  {
+    "ts": "2026-09-03T13:16:18.263Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813/notifications",
+    "status": 200,
+    "requestId": "c828d774-0a39-4f8d-8a8f-979c1dc297f8",
+    "body": "(unavailable)"
+  },
+  {
+    "ts": "2026-09-03T13:16:18.855Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/me/orgs",
+    "status": 200,
+    "requestId": "65296811-b044-4ba0-be51-c91f6e3d4e21",
+    "body": "{\"items\":[{\"id\":\"1813\",\"name\":\"QA Funded Org 1788440509919\",\"slug\":\"qa-funded-org-1788440509919\",\"status\":\"active\",\"role\":\"owner\",\"joinedAt\":\"2026-09-03T13:02:00.200Z\"}],\"total\":1}"
+  },
+  {
+    "ts": "2026-09-03T13:16:18.861Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/me",
+    "status": 200,
+    "requestId": "d7703685-fbe3-444c-acf8-8a4b45e2d4b8",
+    "body": "{\"id\":\"2199\",\"name\":\"QA Funded Owner\",\"email\":\"qa+1788440509919@alphapromena.com\",\"role\":\"user\",\"status\":\"active\",\"emailVerifiedAt\":\"2026-09-03T13:01:57.367Z\",\"createdAt\":\"2026-09-03T13:01:55.549Z\"}"
+  },
+  {
+    "ts": "2026-09-03T13:16:19.444Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813/invites?limit=100",
+    "status": 200,
+    "requestId": "7e69d2a6-a658-47ec-abe6-302a5961c8f0",
+    "body": "{\"items\":[],\"total\":0}"
+  },
+  {
+    "ts": "2026-09-03T13:16:19.445Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813/members?limit=100",
+    "status": 200,
+    "requestId": "31288562-8050-404f-8b40-771b9e5ce09e",
+    "body": "{\"items\":[{\"id\":\"2072\",\"userId\":\"2199\",\"name\":\"QA Funded Owner\",\"email\":\"qa+1788440509919@alphapromena.com\",\"role\":\"owner\",\"isActive\":true,\"joinedAt\":\"2026-09-03T13:02:00.200Z\"}],\"total\":1}"
+  },
+  {
+    "ts": "2026-09-03T13:16:19.550Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813/brand/voices?limit=100",
+    "status": 200,
+    "requestId": "f33400ca-a059-442c-b501-dcbf81952abf",
+    "body": "{\"items\":[{\"id\":\"286\",\"orgId\":\"1813\",\"description\":\"QA Funded Org 1788440509919 brand voice\",\"createdAt\":\"2026-09-03T13:12:18.978Z\",\"updatedAt\":\"2026-09-03T13:12:18.978Z\",\"name\":\"Brand voice\",\"rules\":[{\"id\":\"545\",\"kind\":\"do\",\"text\":\"Name the roast date\"}]}],\"total\":1}"
+  },
+  {
+    "ts": "2026-09-03T13:16:19.551Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813/brand/tones?limit=100",
+    "status": 200,
+    "requestId": "0cc7b4de-5678-4e8e-bbc9-dec35c264797",
+    "body": "{\"items\":[{\"id\":\"1993\",\"orgId\":\"1813\",\"name\":\"Roastery floor\",\"preset\":false,\"description\":\"Warm, specific, smells of coffee.\",\"createdAt\":\"2026-09-03T13:12:24.212Z\",\"updatedAt\":\"2026-09-03T13:12:43.420Z\",\"rules\":[{\"id\":\"6099\",\"kind\":\"do\",\"text\":\"Name the roast date\"}]}],\"total\":1}"
+  },
+  {
+    "ts": "2026-09-03T13:16:19.552Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813/brand/sources?limit=100",
+    "status": 200,
+    "requestId": "cced91e6-2e54-494b-a85d-a209f7896176",
+    "body": "{\"items\":[{\"id\":\"206\",\"orgId\":\"1813\",\"url\":\"https://perfectdailygrind.com/feed\",\"title\":\"Perfectdailygrind\",\"createdAt\":\"2026-09-03T13:12:31.566Z\",\"updatedAt\":\"2026-09-03T13:12:31.566Z\"}],\"total\":1}"
+  },
+  {
+    "ts": "2026-09-03T13:16:19.948Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813/brand/topics?limit=100",
+    "status": 200,
+    "requestId": "2c2c6dab-a062-4985-a5bb-d771c36eb8a9",
+    "body": "{\"items\":[{\"id\":\"249\",\"orgId\":\"1813\",\"description\":\"single origin\",\"createdAt\":\"2026-09-03T13:12:38.788Z\",\"updatedAt\":\"2026-09-03T13:12:38.788Z\"}],\"total\":1}"
+  },
+  {
+    "ts": "2026-09-03T13:16:20.106Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813/schedules?limit=20",
+    "status": 200,
+    "requestId": "52f67faa-10d0-4d34-87e2-8c17bec6bf73",
+    "body": "{\"items\":[],\"total\":0}"
+  },
+  {
+    "ts": "2026-09-03T13:16:20.110Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813/holidays?limit=100&offset=0",
+    "status": 200,
+    "requestId": "7be2ca8d-18af-447d-ac90-959c10659e90",
+    "body": "{\"items\":[],\"total\":0}"
+  },
+  {
+    "ts": "2026-09-03T13:16:20.113Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813/notifications/unread-count",
+    "status": 200,
+    "requestId": "bd1584ab-5de5-4ea0-bb7c-f818c837529b",
+    "body": "{\"unread\":1}"
+  },
+  {
+    "ts": "2026-09-03T13:16:20.229Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813/notifications",
+    "status": 200,
+    "requestId": "5bfdf98d-4f64-423c-87d7-9608bf89923c",
+    "body": "{\"items\":[{\"id\":\"41\",\"orgId\":\"1813\",\"userId\":\"2199\",\"relatedId\":null,\"relatedType\":null,\"kind\":\"billing.wallet_credited\",\"title\":\"Wallet credited\",\"message\":\"$599.00 was added to your wallet from your base plan payment.\",\"action\":\"/billing\",\"seenAt\":null,\"createdAt\":\"2026-09-03T13:02:39.220Z\",\"updatedAt\":\"2026-09-03T13:02:39.220Z\"}],\"total\":1}"
+  },
+  {
+    "ts": "2026-09-03T13:16:20.327Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813/alphastudio/wallet",
+    "status": 200,
+    "requestId": "e88fdcd8-5950-4536-ae58-4d1416dba21c",
+    "body": "{\"cents\":59900,\"heldCents\":0,\"availableCents\":59900}"
+  },
+  {
+    "ts": "2026-09-03T13:16:20.413Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813",
+    "status": 200,
+    "requestId": "129095b1-ef52-4d8c-85f5-ca23b3f32329",
+    "body": "{\"org\":{\"id\":\"1813\",\"name\":\"QA Funded Org 1788440509919\",\"slug\":\"qa-funded-org-1788440509919\",\"status\":\"active\",\"createdAt\":\"2026-09-03T13:02:00.200Z\",\"updatedAt\":\"2026-09-03T13:02:00.200Z\",\"country\":null},\"membership\":{\"id\":\"2072\",\"orgId\":\"1813\",\"userId\":\"2199\",\"role\":\"owner\",\"isActive\":true,\"createdAt\":\"2026-09-03T13:02:00.200Z\",\"updatedAt\":\"2026-09-03T13:02:00.200Z\"}}"
+  },
+  {
+    "ts": "2026-09-03T13:16:21.632Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813/alphastudio/wallet",
+    "status": 200,
+    "requestId": "9b06d4b0-18e6-4d8f-9618-7b3c7e3467d4",
+    "body": "{\"cents\":59900,\"heldCents\":0,\"availableCents\":59900}"
+  },
+  {
+    "ts": "2026-09-03T13:16:22.504Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813/billing/subscription",
+    "status": 200,
+    "requestId": "8ff6a3ed-2cf4-46ba-8ae9-9679db5a0974",
+    "body": "{\"plan\":\"base\",\"status\":\"active\",\"currentPeriodStart\":\"2026-09-03T13:02:33.000Z\",\"currentPeriodEnd\":\"2026-10-03T13:02:33.000Z\",\"cancelAtPeriodEnd\":false,\"canceledAt\":null,\"updatedAt\":\"2026-09-03T13:02:38.261Z\"}"
+  },
+  {
+    "ts": "2026-09-03T13:16:23.598Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813/billing/credits",
+    "status": 200,
+    "requestId": "a948e33b-2ad6-401b-ac06-287065cff61d",
+    "body": "{\"items\":[{\"id\":\"4\",\"orgId\":\"1813\",\"cents\":59900,\"reference\":\"stripe-invoice-in_1UBaHlKy5r44oOSRSZXHynCY\",\"stripeInvoiceId\":\"in_1UBaHlKy5r44oOSRSZXHynCY\",\"stripeSubscriptionId\":\"sub_1UBaHnKy5r44oOSRHqWlkYnh\",\"plan\":\"base\",\"createdAt\":\"2026-09-03T13:02:39.220Z\"}],\"total\":1}"
+  },
+  {
+    "ts": "2026-09-03T13:16:24.554Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1813/notifications",
+    "status": 200,
+    "requestId": "7d9f34f3-6a8c-453b-8977-88bb0116a4bc",
+    "body": "{\"items\":[{\"id\":\"41\",\"orgId\":\"1813\",\"userId\":\"2199\",\"relatedId\":null,\"relatedType\":null,\"kind\":\"billing.wallet_credited\",\"title\":\"Wallet credited\",\"message\":\"$599.00 was added to your wallet from your base plan payment.\",\"action\":\"/billing\",\"seenAt\":null,\"createdAt\":\"2026-09-03T13:02:39.220Z\",\"updatedAt\":\"2026-09-03T13:02:39.220Z\"}],\"total\":1}"
+  },
+  {
+    "ts": "2026-09-03T13:16:26.569Z",
+    "method": "POST",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/auth/login",
+    "status": 200,
+    "requestId": "93a436d6-fc0a-4ba9-9133-98936d039977",
+    "body": "<redacted before commit — a session token travelled here>"
+  },
+  {
+    "ts": "2026-09-03T13:16:26.952Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/me/orgs",
+    "status": 200,
+    "requestId": "3a72bfa6-8757-4ad5-800d-8d1f25c7f447",
+    "body": "{\"items\":[{\"id\":\"1814\",\"name\":\"QA Cancel Org 1788440509919\",\"slug\":\"qa-cancel-org-1788440509919\",\"status\":\"active\",\"role\":\"owner\",\"joinedAt\":\"2026-09-03T13:03:40.385Z\"}],\"total\":1}"
+  },
+  {
+    "ts": "2026-09-03T13:16:26.971Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/me",
+    "status": 200,
+    "requestId": "dd9ddb0b-317a-443c-a509-b72836f27c70",
+    "body": "{\"id\":\"2200\",\"name\":\"QA Cancel Owner\",\"email\":\"qa+1788440509919c@alphapromena.com\",\"role\":\"user\",\"status\":\"active\",\"emailVerifiedAt\":\"2026-09-03T13:03:39.125Z\",\"createdAt\":\"2026-09-03T13:03:37.056Z\"}"
+  },
+  {
+    "ts": "2026-09-03T13:16:28.222Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/me",
+    "status": 200,
+    "requestId": "e05c3323-0169-4c40-ab09-e018ddaeb6f0",
+    "body": "{\"id\":\"2200\",\"name\":\"QA Cancel Owner\",\"email\":\"qa+1788440509919c@alphapromena.com\",\"role\":\"user\",\"status\":\"active\",\"emailVerifiedAt\":\"2026-09-03T13:03:39.125Z\",\"createdAt\":\"2026-09-03T13:03:37.056Z\"}"
+  },
+  {
+    "ts": "2026-09-03T13:16:28.246Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/me/orgs",
+    "status": 200,
+    "requestId": "ec7caf29-f3eb-46f9-a15d-45525f4d511f",
+    "body": "{\"items\":[{\"id\":\"1814\",\"name\":\"QA Cancel Org 1788440509919\",\"slug\":\"qa-cancel-org-1788440509919\",\"status\":\"active\",\"role\":\"owner\",\"joinedAt\":\"2026-09-03T13:03:40.385Z\"}],\"total\":1}"
+  },
+  {
+    "ts": "2026-09-03T13:16:28.332Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1814/billing/subscription",
+    "status": 200,
+    "requestId": "10b572c6-b68c-4106-b10c-aec5d2d6da19",
+    "body": "{\"plan\":null,\"status\":\"none\",\"currentPeriodStart\":null,\"currentPeriodEnd\":null,\"cancelAtPeriodEnd\":false,\"canceledAt\":null,\"updatedAt\":\"2026-09-03T13:03:47.844Z\"}"
+  },
+  {
+    "ts": "2026-09-03T13:16:28.536Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1814/billing/credits?limit=50&offset=0",
+    "status": 200,
+    "requestId": "27d58b9f-5159-43ea-9f5b-890642119664",
+    "body": "{\"items\":[],\"total\":0}"
+  },
+  {
+    "ts": "2026-09-03T13:16:28.563Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1814/billing/plans",
+    "status": 200,
+    "requestId": "03aeb0bf-8a17-4836-beef-a74ff047c59b",
+    "body": "{\"items\":[{\"plan\":\"base\",\"name\":\"Malaky Business\",\"amountCents\":59900,\"currency\":\"usd\",\"interval\":\"month\"},{\"plan\":\"pro\",\"name\":\"Malaky Scale\",\"amountCents\":89900,\"currency\":\"usd\",\"interval\":\"month\"}],\"total\":2}"
+  },
+  {
+    "ts": "2026-09-03T13:16:28.819Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1814/members?limit=100",
+    "status": 200,
+    "requestId": "aeb3601d-cdae-4635-aebc-aa80858e811f",
+    "body": "{\"items\":[{\"id\":\"2073\",\"userId\":\"2200\",\"name\":\"QA Cancel Owner\",\"email\":\"qa+1788440509919c@alphapromena.com\",\"role\":\"owner\",\"isActive\":true,\"joinedAt\":\"2026-09-03T13:03:40.385Z\"}],\"total\":1}"
+  },
+  {
+    "ts": "2026-09-03T13:16:28.834Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1814/invites?limit=100",
+    "status": 200,
+    "requestId": "c09e5bfe-5052-4a16-b199-89dc661cd208",
+    "body": "{\"items\":[],\"total\":0}"
+  },
+  {
+    "ts": "2026-09-03T13:16:29.023Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1814/brand/tones?limit=100",
+    "status": 200,
+    "requestId": "197a777e-9b05-4525-a482-dbf507caa11c",
+    "body": "{\"items\":[],\"total\":0}"
+  },
+  {
+    "ts": "2026-09-03T13:16:29.064Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1814/brand/voices?limit=100",
+    "status": 200,
+    "requestId": "cf675442-5086-48f3-b40c-784a1667883d",
+    "body": "{\"items\":[],\"total\":0}"
+  },
+  {
+    "ts": "2026-09-03T13:16:29.210Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1814/brand/sources?limit=100",
+    "status": 200,
+    "requestId": "a9cfbc4e-0f4c-4a43-8e05-967beaab7dde",
+    "body": "{\"items\":[],\"total\":0}"
+  },
+  {
+    "ts": "2026-09-03T13:16:29.211Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1814/brand/topics?limit=100",
+    "status": 200,
+    "requestId": "81ea161d-f811-4631-9752-bd909a5fc167",
+    "body": "{\"items\":[],\"total\":0}"
+  },
+  {
+    "ts": "2026-09-03T13:16:29.486Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1814/schedules?limit=20",
+    "status": 200,
+    "requestId": "804ca062-0ac5-41dd-93f9-b7c56da38f7f",
+    "body": "{\"items\":[],\"total\":0}"
+  },
+  {
+    "ts": "2026-09-03T13:16:29.506Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1814/holidays?limit=100&offset=0",
+    "status": 200,
+    "requestId": "982b6a7e-c90b-4d9e-a9de-03923f4b765f",
+    "body": "{\"items\":[],\"total\":0}"
+  },
+  {
+    "ts": "2026-09-03T13:16:29.638Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1814/notifications/unread-count",
+    "status": 200,
+    "requestId": "caaa0532-00f5-4612-bec7-ff418062e570",
+    "body": "{\"unread\":0}"
+  },
+  {
+    "ts": "2026-09-03T13:16:29.688Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1814/notifications",
+    "status": 200,
+    "requestId": "28800c8c-586f-4b55-9b1f-71a8bb6d7cff",
+    "body": "{\"items\":[],\"total\":0}"
+  },
+  {
+    "ts": "2026-09-03T13:16:29.693Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1814",
+    "status": 200,
+    "requestId": "14cbe3bb-1573-441b-a8cb-7cc410d6cdab",
+    "body": "{\"org\":{\"id\":\"1814\",\"name\":\"QA Cancel Org 1788440509919\",\"slug\":\"qa-cancel-org-1788440509919\",\"status\":\"active\",\"createdAt\":\"2026-09-03T13:03:40.385Z\",\"updatedAt\":\"2026-09-03T13:03:40.385Z\",\"country\":null},\"membership\":{\"id\":\"2073\",\"orgId\":\"1814\",\"userId\":\"2200\",\"role\":\"owner\",\"isActive\":true,\"createdAt\":\"2026-09-03T13:03:40.385Z\",\"updatedAt\":\"2026-09-03T13:03:40.385Z\"}}"
+  },
+  {
+    "ts": "2026-09-03T13:16:29.990Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1814/alphastudio/wallet",
+    "status": 200,
+    "requestId": "b94328b0-a63c-4902-b3fc-5118de1a80d2",
+    "body": "{\"cents\":0,\"heldCents\":0,\"availableCents\":0}"
+  },
+  {
+    "ts": "2026-09-03T13:16:30.717Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1814/billing/subscription",
+    "status": 200,
+    "requestId": "93fdb76b-ce53-4ce4-8b6e-d056c2bc9f92",
+    "body": "{\"plan\":null,\"status\":\"none\",\"currentPeriodStart\":null,\"currentPeriodEnd\":null,\"cancelAtPeriodEnd\":false,\"canceledAt\":null,\"updatedAt\":\"2026-09-03T13:03:47.844Z\"}"
+  },
+  {
+    "ts": "2026-09-03T13:16:31.287Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1814/billing/subscription",
+    "status": 200,
+    "requestId": "27cafff9-a446-44be-85d2-327cee0b1306",
+    "body": "{\"plan\":null,\"status\":\"none\",\"currentPeriodStart\":null,\"currentPeriodEnd\":null,\"cancelAtPeriodEnd\":false,\"canceledAt\":null,\"updatedAt\":\"2026-09-03T13:03:47.844Z\"}"
+  },
+  {
+    "ts": "2026-09-03T13:16:31.834Z",
+    "method": "GET",
+    "url": "https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/orgs/1814/alphastudio/wallet",
+    "status": 200,
+    "requestId": "6f4c379f-213d-47aa-a586-994d4a4e7408",
+    "body": "{\"cents\":0,\"heldCents\":0,\"availableCents\":0}"
+  }
+]
