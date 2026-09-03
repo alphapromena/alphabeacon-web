@@ -5,8 +5,10 @@ without reconstructing it from the session log. **Update this file at the end
 of any turn that finishes a phase or changes the plan.** `sessions.md` is the
 chronological record; this is the current picture.
 
-_Last updated: 2026-09-02, after **ORDER BIL-0902/R — billing on Ward's
-corrected plans — REBASED, RE-PROBED, RE-TARGETED and GATED on
+_Last updated: 2026-09-03, after **the founder's supplement for BIL-0902/R
+(the seven unjudged live files, wallet first) STOPPED before its first file
+on a dead link — nothing ran, nothing to classify; ORDER BIL-0902/R —
+billing on Ward's corrected plans — REBASED, RE-PROBED, RE-TARGETED and GATED on
 `feat/bil-0902`; report-and-stop for the founder's word.** The branch sits on
 `main` = `d645607` (HSN-0902 merged and deployed): the held WIP `df14989`
 replayed as `492fc45`, then the /R commits; **NOT pushed, NOT merged.**
@@ -35,10 +37,10 @@ the 402 (the HSN duplicate left `live-generate`). Open-item 46 CLOSED by
 the ruling; 45 = M-BIL-1 (/R); 47 re-scoped (the keys question for Ward).
 **The gate (final tree):** lint · typecheck · prettier · guard-static 345 ·
 unit **601 / 53** · static e2e **111 passed / 82 skipped / 0 failed** ·
-`verify:w00`–`w06` **all PASS** · **live round 1 18/19 clean** (billing
+`verify:w00`–`w06` **all PASS** · **live round 1 19/20 clean** (billing
 7/7; the one red, `live-wallet`, never ran — the global warm-up refused it
 on THIS HOST'S LINK) · **live round 2:** the 18:25Z attempt stopped on a dead link (and its loop had to be ended by
-command line); the CLEAN round (18:48–19:22Z) judged 8/19 files — **billing
+command line); the CLEAN round (18:48–19:22Z) judged 10/20 files — **billing
 7/7**, brand-kit 3/3, brand-rules 4 + 1, country 4/4, create-visual 3
 skipped, generate 1 + 1 — with four reds of one shape (a login or an upload
 not within its rung: auth, brand, invite-org, knowledge; none in this
@@ -48,11 +50,19 @@ again inside it: auth 7/7, invite-org, media-upload, onboarding,
 schedule-repair, studio and video-duration green; brand, knowledge,
 notifications, proposals and scheduling red on the same login/sync-latency
 class, team and wallet refused at warm-up.** So the gate is **PARTIAL,
-closed: static green throughout, round 1 18/19, round 2 + supplement 13/19
-green (this series' own surfaces 7/7 in every run), and 6 files — brand,
+closed: static green throughout, round 1 19/20, round 2 + supplement 13/20
+green (this series' own surfaces 7/7 in every run), and 7 files — brand,
 knowledge, notifications, proposals, scheduling, team, wallet — unjudged by
 this host's network; none carries this series' code. The founder's call:
-merge on it, or re-run the six when the link is fixed. **This host's
+merge on it, or re-run the seven when the link is fixed. **The founder
+ordered the seven re-run (2026-09-03: wallet first, steady link, host held
+awake, stop on a drop rather than re-run blind): the runner STOPPED before
+its first file at 06:11Z — the link never held four consecutive 12-way
+`/health` bursts in 10 minutes (3 answers in 24 tries; gateway 192.168.1.1
+and 1.1.1.1 100 % loss, the API `/health` timing out at 8 s) — nothing
+ran; the seven stay unjudged, waiting on a steady link or the founder's
+word.** (The 19-file totals in this head were off by one — the suite is 20
+files — and are corrected in place.) **This host's
 link dropped four times this evening** (17:12–17:39Z, 18:23Z, ~18:5xZ,
 19:0xZ–…; gateway 192.168.1.1 unreachable, DNS timing out) — the reds it
 left are the harness's, classified per file in sessions.md; and **trap 22

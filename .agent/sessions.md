@@ -3964,7 +3964,7 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   guard-static 345 · unit **601 / 53** · static e2e **111 passed / 82
   skipped / 0 failed** (first pass, no re-run needed) · `verify:w00`–`w06`
   **all PASS** in one chained pipeline (each 111/81/0) · **live round 1**
-  (18:05–18:25Z, host held awake): **18/19 clean** — auth 7/7, **billing
+  (18:05–18:25Z, host held awake): **19/20 clean** — auth 7/7, **billing
   7/7**, brand-kit 3/3, brand-rules 4 + 1 skipped, brand 5/5, country 4/4,
   create-visual 3 skipped, generate 1 + 1 skipped, invite-org 3/3, knowledge
   3/3, media-upload 3/3, notifications 1/1, onboarding 5 + 1 skipped,
@@ -3983,7 +3983,7 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   iterating, interleaved with a 18:48Z restart on the same port and log, until
   all 18 harness processes (two scripts, two Playwright runs, the Vite server,
   headless Chromium) were ended by command line. **The CLEAN round
-  (18:48–19:22Z) judged 8 of 19 files:** **billing 7/7**, brand-kit 3/3,
+  (18:48–19:22Z) judged 10 of 20 files (6 green, 4 red):** **billing 7/7**, brand-kit 3/3,
   brand-rules 4 + 1 skipped, country 4/4, create-visual 3 skipped, generate 1 +
   1 skipped — and four reds of ONE shape, none in this series' own files:
   auth 2 + 1 failed + 4 not run (the login → verify redirect not within 20 s),
@@ -4002,7 +4002,7 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   surfaces — billing, the Enterprise card, the 402 pointing at Billing — are
   7/7 in BOTH rounds.
 - Phase: BIL-0902/R — BUILT; gate PARTIAL (static + verify green, live
-  round 1 18/19, round 2 judged 8/19 on a link that then died; the 14-file
+  round 1 19/20, round 2 judged 10/20 on a link that then died; the 14-file
   supplement pending the link); report-and-stop for the founder's word. M-BIL-1 (item 45, /R) is the founder's, on production.
 - Files: `scripts/probe-billing.ts`, `Docs/api/{billing-shapes,billing-frontend}.md`,
   `src/api/types.ts`, `src/data/{billing,billing.test}.ts`,
@@ -4038,16 +4038,16 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   1 + 1 (`aria-busy` not clear within 40 s after a reload), **team and
   wallet REFUSED at warm-up** (every probe `fetch failed`). **The whole
   gate, judged:** static suite 111/82/0 · verify w00–w06 PASS · unit 601/53
-  · live round 1 18/19 · live round 2 + supplement **13/19 green** —
+  · live round 1 19/20 · live round 2 + supplement **13/20 green** —
   billing 7/7 (twice), brand-kit, brand-rules, country, create-visual,
   generate, auth, invite-org, media-upload, onboarding, schedule-repair,
-  studio, video-duration — and **6 files unjudged by this host's network:
+  studio, video-duration — and **7 files unjudged by this host's network:
   brand, knowledge, notifications, proposals, scheduling, team, wallet**
-  (wallet never once got past the warm-up tonight). None of the six carries
+  (wallet never once got past the warm-up tonight). None of the seven carries
   this series' code; the 20 s login waits they fail on are the suite's
   older default, not the re-clocked rung — a clock question for the standing
   law, not this order's. **The founder's call:** merge on this partial gate
-  (this series' own surfaces are green in every run), or order the six
+  (this series' own surfaces are green in every run), or order the seven
   files re-run when the link is fixed — the runner takes a file list.
 - Phase: BIL-0902/R — gate PARTIAL, closed; report-and-stop.
 - Files: `.agent/{state,sessions}.md`.
@@ -4057,3 +4057,51 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   mints the funded QA org; HSN-0902/B on item 48. For the ledger: this
   host's Wi-Fi link dropped at 17:12, 18:23, ~18:50, 19:00 and 20:4xZ —
   the gate needs a wired or otherwise steady link before the next series.
+
+### 2026-09-03 06:20 — BIL-0902/R: the founder's supplement (wallet first) STOPPED before its first file — the link never held; and a count corrected (20 live files, not 19)
+
+- Did: on the founder's word — "re-run the unjudged files as a recorded
+  supplement on a steady link, host held awake, no other load on the
+  network; wallet first; if the link drops again, stop and say so rather
+  than re-running blind" — the runner `gate-live-supplement3.sh` (this
+  session's scratchpad) was built with three stop rules: the link must hold
+  **four consecutive 12-way `/health` bursts, all 200, under 4 s** before
+  the first file (waited up to 10 minutes); **one burst before EACH file**,
+  a failed burst stops the run; **a warm-up refused by the fleet** ("API
+  fleet never warmed") stops the run. Launched 05:57:38Z: tree clean at
+  `29fdbdd`, port 5199 free, no harness children, host held awake, nothing
+  else on the network, order wallet · brand · knowledge · notifications ·
+  proposals · scheduling · team. **It STOPPED before the first file at
+  06:11:15Z: of 24 bursts in 13 minutes only 3 answered (449, 436 and
+  682 ms — never more than two in a row); the other 21 timed out at 8 s on
+  all 12 calls.** Diagnosed at 06:12Z so the stop says WHY: gateway
+  192.168.1.1 **100 % loss**, 1.1.1.1 **100 % loss**, Cloudflare
+  `ENOTFOUND`, the API `/health` timing out at 8 s three times, the API's
+  name still resolving from the local cache (6 ms) — **the host's link,
+  down; not the API.** Nothing ran, so there is nothing to classify; not
+  re-run. Keep-awake released; no harness process survives.
+- **A count corrected, from the wire:** the live suite is **20 files**, not
+  19 — `gate-live.summary` carries 20 `round 1 ·` lines and 20 distinct
+  files across round 2 + its supplement, and `e2e/live-*.spec.ts` counts
+  20. So the two entries above this one, and the state head, were off by
+  one and are fixed in place: round 1 **19/20** (wallet the one refusal),
+  the clean round 2 **judged 10 of 20** (6 green, 4 red; 10 refused), round
+  2 + supplement **13/20 green**, and **SEVEN files unjudged — brand,
+  knowledge, notifications, proposals, scheduling, team, wallet** (my
+  close-out said six; the founder's word echoed it while naming all seven).
+  The per-file results were right; only the totals were wrong.
+- Phase: BIL-0902/R — gate PARTIAL, closed; the founder's supplement
+  stopped on the link before its first file; report-and-stop for the merge
+  word.
+- Files: `.agent/{state,sessions}.md`.
+- Decisions: none new.
+- Verify: `gate-live.summary` (the `supplement 3` block),
+  `gate-live-sup3-link.log` (24 bursts), the 06:12Z diagnostic — all in
+  this session's scratchpad.
+- Next: the founder's word — merge on the partial gate, or the seven on a
+  steady link (the runner takes a file list, needs four bursts to hold
+  first, and stops itself on a drop). Then M-BIL-1 (/R) on `1.malaky.ai`,
+  step 8 mints the funded QA org; HSN-0902/B on item 48. For the ledger:
+  the link was down 05:57–06:12Z on 09-03, after 09-02's drops at 17:12,
+  18:23, ~18:50, 19:00 and 20:4xZ — a wired or otherwise steady link
+  before the next series.
