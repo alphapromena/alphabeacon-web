@@ -6,8 +6,8 @@ of any turn that finishes a phase or changes the plan.** `sessions.md` is the
 chronological record; this is the current picture.
 
 _Last updated: 2026-09-03, after **the founder's supplement for BIL-0902/R
-(the seven unjudged live files, wallet first) STOPPED before its first file
-on a dead link — nothing ran, nothing to classify; ORDER BIL-0902/R —
+(the seven unjudged live files, wallet first) RAN on a steady link — five
+green, the two reds spec defects, fixed and re-run: wallet 4/4, team 6/6, the live suite 20/20 on its latest runs; ORDER BIL-0902/R —
 billing on Ward's corrected plans — REBASED, RE-PROBED, RE-TARGETED and GATED on
 `feat/bil-0902`; report-and-stop for the founder's word.** The branch sits on
 `main` = `d645607` (HSN-0902 merged and deployed): the held WIP `df14989`
@@ -52,17 +52,20 @@ notifications, proposals and scheduling red on the same login/sync-latency
 class, team and wallet refused at warm-up.** So the gate is **PARTIAL,
 closed: static green throughout, round 1 19/20, round 2 + supplement 13/20
 green (this series' own surfaces 7/7 in every run), and 7 files — brand,
-knowledge, notifications, proposals, scheduling, team, wallet — unjudged by
-this host's network; none carries this series' code. The founder's call:
-merge on it, or re-run the seven when the link is fixed. **The founder
-ordered the seven re-run (2026-09-03: wallet first, steady link, host held
-awake, stop on a drop rather than re-run blind): the runner STOPPED before
-its first file at 06:11Z — the link never held four consecutive 12-way
-`/health` bursts in 10 minutes (3 answers in 24 tries; gateway 192.168.1.1
-and 1.1.1.1 100 % loss, the API `/health` timing out at 8 s) — nothing
-ran; the seven stay unjudged, waiting on a steady link or the founder's
-word.** (The 19-file totals in this head were off by one — the suite is 20
-files — and are corrected in place.) **This host's
+knowledge, notifications, proposals, scheduling, team, wallet — left
+unjudged by this host's network. **The founder's supplement (2026-09-03,
+wallet first, host held awake, stop on any drop) first STOPPED at 06:11Z on
+a dead link (nothing ran; gateway and 1.1.1.1 100 % loss), then RAN
+12:02–12:10Z on a steady link that held every burst: brand 5/5, knowledge
+3/3, notifications 1/1, proposals 1 + 4 skipped and scheduling 2 + 1
+skipped (both by design, as in round 1), wallet 2 + 1 failed and team 4 +
+1 failed — both reds SPEC defects, not the product, not the link: wallet's
+`getByText('$0.00')` matched three usage cells by substring (this series'
+own re-target; fixed with `exact: true` and a 20 s wait), team's Remove
+click raced the demotion's PATCH (a missing one-line wait, the file's own
+pattern; fixed). Re-run on the fixes (supplement 4b): the link held, wallet 4/4 (50 s), team 6/6 (1.7 m). Every one of the 20 live files is green on its latest run of the final tree's spec (no single round ran all 20 on one link); the gate is CLOSED — static suite, verify, unit, guard, live — for the founder's merge word.**
+(The 19-file totals in this head were off by one — the suite is 20 files —
+and are corrected in place.) **This host's
 link dropped four times this evening** (17:12–17:39Z, 18:23Z, ~18:5xZ,
 19:0xZ–…; gateway 192.168.1.1 unreachable, DNS timing out) — the reds it
 left are the harness's, classified per file in sessions.md; and **trap 22

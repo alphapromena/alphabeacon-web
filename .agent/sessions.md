@@ -4105,3 +4105,60 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   the link was down 05:57–06:12Z on 09-03, after 09-02's drops at 17:12,
   18:23, ~18:50, 19:00 and 20:4xZ — a wired or otherwise steady link
   before the next series.
+
+### 2026-09-03 12:45 — BIL-0902/R: the founder's supplement RAN on a steady link — five of seven green, both reds SPEC defects (wallet's is this series' own), fixed and re-run
+
+- Did: the link came back (founder's word: "the link is up"). Pre-flight
+  clean at `8f1803f`, port 5199 free, no harness children, host held awake,
+  nothing else on the network. The runner (`gate-live-supplement4.sh`) kept
+  the three stop rules, with one reading corrected from the wire before the
+  start: a 12-way `/health` burst now draws one or two `429`s at random,
+  and a 429 is the API answering, not a drop — so a burst is OK when every
+  call is ANSWERED (200 or 429) under 4 s (the fleet warm-up, which wants
+  twelve 200s, retries and warmed in ONE burst for every file tonight).
+  **The link held: four consecutive bursts by 12:02:29Z, every pre-file
+  burst OK (385–487 ms, all 12 answered), the run 12:02–12:10Z, no drop, no
+  refusal.** The seven, wallet first: **wallet 2 + 1 failed + 1 not run** ·
+  **brand 5/5** · **knowledge 3/3** · **notifications 1/1** · **proposals
+  1 + 4 skipped** (the zero-wallet self-skip by design — the file opts out
+  of the funded-org switch, `STAY_ON_THIS_ORG`; the same shape as round 1)
+  · **scheduling 2 + 1 skipped** ("ingestion has not produced slots for
+  this org yet", by design; the same as round 1) · **team 4 + 1 failed + 1
+  not run** (3.3 m). **Classified — both reds are SPEC defects; neither is
+  the product, neither is the link:** (1) **wallet, H3.** This series' own
+  re-target changed `getByText('$50.00')` to `getByText('$0.00')` scoped to
+  main — but `getByText` matches by SUBSTRING, and every usage cell below
+  begins "$0.00…" ($0.0044, $0.0028, $0.0072 total), so strict mode tripped
+  on three cells: a defect that could never pass once rows exist, in a
+  re-targeted spec that had never run to completion before tonight (refused
+  at warm-up in every earlier round). The product's zero state is right —
+  the header chip "No balance yet — subscribe" and the tile "Available
+  balance $0.00" PASSED in the same file, and the balance page renders
+  `formatCents(0)` = "$0.00" in its own paragraph. **Fix:** `{ exact: true
+  }` plus the table's own 20 s wait (the wallet read is its own request).
+  (2) **team, "inviting an EXISTING user … the role ladder holds".** After
+  confirming "Change to member" the spec clicked the row's Remove WITHOUT
+  waiting for that PATCH's round-trip — unlike every other step of the same
+  test ("One PATCH round-trip — live-red-2026-08-23") — and the click raced
+  the row's re-render: the snapshot at the 150 s timeout shows the row at
+  "Member" with Remove offered and no confirm open. Round 1 passed it 6/6
+  because the PATCH came back before the click. **Fix:** the missing
+  one-line wait for "is now a member" at `ONE_CALL`, the file's own
+  pattern. Both fixes are test-only; prettier and eslint clean. **Re-run of
+  the two fixed files (supplement 4b — same rules, wallet first, host held
+  awake):** the link held (four bursts by 12:33:18Z, both pre-file bursts OK), **wallet 4/4 (50 s)** and **team 6/6 (1.7 m)**. So the seven stand judged, and every one of the 20 live files is green on its latest run of the final tree's spec — across the clean round 2 and its supplements, since no single round ever ran all 20 on one link; billing 7/7 in every run.
+- Phase: BIL-0902/R — gate CLOSED — static suite 111/82/0 · verify w00–w06 PASS · unit 601/53 · guard 345 · live 20/20 files green on their latest run (round 1 19/20; round 2 + supplements 20/20, none of them a single unbroken round); report-and-stop for the merge word.
+- Files: `e2e/live-wallet.spec.ts`, `e2e/live-team.spec.ts`,
+  `.agent/{state,sessions}.md`.
+- Decisions: none new. Two observations for the ledger, not this order's:
+  a 12-way `/health` burst now draws one or two `429`s at random (no
+  earlier round's warm-up line ever named one; the warm-up copes by
+  retrying); and a Remove clicked inside a demotion's round-trip on the team
+  screen left no confirm open — whether it never opened or closed on the
+  re-render is not measured, and a human would have to click within the
+  PATCH's flight to see it.
+- Verify: `gate-live.summary` (`supplement 4` and `supplement 4b` blocks),
+  `gate-live-sup4-link.log`, `gate-live-sup4-<file>.log`,
+  `gate-live-sup4b-<file>.log` — this session's scratchpad.
+- Next: the founder's merge word. Then M-BIL-1 (/R) on `1.malaky.ai`, step
+  8 mints the funded QA org; HSN-0902/B on item 48.
