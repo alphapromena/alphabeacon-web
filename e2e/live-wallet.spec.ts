@@ -98,8 +98,13 @@ test('H3 is a balance and a real usage read-back, in both allowed grains', async
   await expect(page.locator('[aria-busy="true"]')).toHaveCount(0)
 
   await expect(page.getByRole('heading', { name: 'Available' })).toBeVisible()
-  // Scoped to main: a zero wallet reads as $0.00 plus the instruction.
-  await expect(page.getByRole('main').getByText('$0.00')).toBeVisible()
+  // Scoped to main and EXACT: a zero wallet reads as $0.00 plus the instruction,
+  // and every usage cell below also begins "$0.00…" — substring matching tripped
+  // strict mode the first time this re-targeted spec ran (2026-09-03). The
+  // wallet read is its own request, so it gets the same wait as the table.
+  await expect(page.getByRole('main').getByText('$0.00', { exact: true })).toBeVisible({
+    timeout: 20_000,
+  })
   await expect(page.getByText(/Your wallet is empty\. Subscribe to a plan/)).toBeVisible()
   // The 402's instruction lives here too: the plan is the only funding.
   await expect(page.getByText(/funded by your plan/i)).toBeVisible()
