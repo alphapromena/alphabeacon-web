@@ -4872,3 +4872,25 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
 - Next: M-HSN-2 on production on the founder's word (item 56); the DNS
   cutover by the founder's hand; the messages to Hasan (51, 57, 58) and
   Ward (52, 53); /B when Hasan names the door.
+
+### 2026-09-10 14:20 — M-HSN-2 PASSED on production (the founder): the grid, the Logos and Image edit composers, one balanced logos render (wallet −3 cents), the org id in Settings — item 56 CLOSED; stop
+
+- Did: **The founder's manual gate M-HSN-2 (item 56) on production** — the
+  deployment at `83fc942` (production
+  `dpl_4HmK6thTkPezvYMHSQuuhwputwtc`, bundle `index-Ckpi_DKM.js`), by the
+  founder's own hand and eye, 2026-09-10: (1) the Studio grid shows the
+  capability cards; (2) the Logos (`logos.generate`) and Image edit
+  (`images.edit`) composers open and take their inputs; (3) one balanced
+  logos render succeeded and the wallet moved **−3 cents** — exactly the
+  catalog's `0.03` balanced price, the same figure the funded proof metered
+  on org 1813 in Phase 0; (4) the organization id at the top of Settings
+  with Copy. **Item 56 CLOSED on the founder's word.** This session touched
+  no org and sent no request; the record is the founder's report.
+- Phase: HSN-0910 /A, /C, /D **MERGED, DEPLOYED and MANUALLY GATED**; /B
+  HELD (item 51). **STOP.**
+- Files: `.agent/{sessions,state,open-items}.md`.
+- Decisions: none.
+- Verify: the founder's report; nothing to run.
+- Next: the messages to Hasan (51, 57, 58) and Ward (52, 53) — the founder
+  sends; the DNS cutover by the founder's hand (the records in item 19's DNS
+  entry); /B when Hasan names the door.

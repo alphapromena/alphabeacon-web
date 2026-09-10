@@ -1281,7 +1281,7 @@ Numbering continues from 50. The record: `Docs/qa/hsn-0910/phase0/` and the
     blocker): the own-model rows carry `plan: null` on the plain catalog
     read — the `?plan=` read is the only mapping.
 
-56. **MANUAL GATE M-HSN-2 (founder, after the merge, on production).** (1)
+56. **CLOSED 2026-09-10 — M-HSN-2 PASSED on production (the founder): the grid, the Logos and Image edit composers, one balanced logos render (wallet −3 cents, the catalog's $0.03), the org id in Settings; the sign-off's org id and job id were not given and the pass stands on the founder's word. Original text:** MANUAL GATE M-HSN-2 (founder, after the merge, on production). (1)
     Studio → the grid shows the 13 cards the catalog grants, none "coming
     soon"; (2) one cheap render — `logos.generate` balanced ×1 ($0.03) —
     from its card to a `succeeded` job whose asset opens; (3) ~~the State
