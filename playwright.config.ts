@@ -3,6 +3,15 @@ import { defineConfig, devices } from '@playwright/test'
 export default defineConfig({
   testDir: './e2e',
   /**
+   * Playwright's default also matches `*.test.ts`, which is vitest's suffix:
+   * the harness's own unit tests (`e2e/global-setup.test.ts`, HSN-0910/D)
+   * live beside the specs and must never be run as one — a vitest import
+   * inside a Playwright worker dies with "Vitest failed to access its
+   * internal state", which is exactly what the verify chain saw on
+   * 2026-09-10. `*.spec.ts` is the whole suite; `*.test.ts` is vitest's.
+   */
+  testMatch: /.*\.spec\.ts$/,
+  /**
    * LIVE RUNS ONLY: wake the API before any test budget starts.
    *
    * The gate is the environment variable, not a project — `e2e/global-setup.ts`
