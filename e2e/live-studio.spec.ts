@@ -58,10 +58,15 @@ test('E1 is built from the catalog: the granted capabilities, real prices, no ve
 
   // A real decimal-string price, rendered as money — the wire's, not a table's.
   await expect(page.getByText(/from \$0\.03 per image/).first()).toBeVisible()
-  // The composer names the row the wire resolved the plan to.
+  // The readiness gate reaches the capability composers (D-ONB-D): on this
+  // fresh org a card opens onto the checklist, never onto a form. The
+  // composer itself, fed from the wire, is proven in live-media-capabilities
+  // after a brand setup.
   await page.getByRole('main').getByRole('link', { name: 'Generate', exact: true }).click()
-  await expect(page.getByText(/Rendering on Balanced image/)).toBeVisible({ timeout: 30_000 })
-  await page.getByRole('link', { name: 'Back to the studio' }).click()
+  await expect(page.getByRole('heading', { name: 'Finish your brand setup first' })).toBeVisible({
+    timeout: 30_000,
+  })
+  await page.getByRole('link', { name: 'Studio', exact: true }).first().click()
 
   // No vendor name may ever appear — the catalog speaks only in app aliases.
   await expect(

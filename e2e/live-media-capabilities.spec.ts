@@ -21,7 +21,8 @@
  */
 import type { APIRequestContext, Page } from '@playwright/test'
 import { expect, test } from './fixtures'
-import { readWallet, signUpAndEnter } from './live-setup'
+import { SCREEN_SYNC } from './live-clocks'
+import { completeBrandSetup, readWallet, signUpAndEnter } from './live-setup'
 
 const API_BASE = process.env.VITE_API_BASE_URL
 const RUN = Date.now()
@@ -411,8 +412,24 @@ test('every granted capability: the document’s example stops at the wallet (40
 test('the Studio grid lists what the catalog grants, by name, with the catalog’s price', async ({
   page,
 }) => {
-  test.setTimeout(120_000)
+  test.setTimeout(300_000)
   await login(page)
+  // The readiness gate reaches the capability composers too (D-ONB-D): a
+  // fresh org opens a card onto "finish your brand setup first", so the
+  // composer is only reachable once the four brand entities exist.
+  await completeBrandSetup(page, {
+    toneName: 'Roastery floor',
+    toneDescription: 'Warm, specific, smells of coffee.',
+    doRule: 'Name the roast date',
+  })
+  // A fresh load after the setup (live-create-visual starts a new test for
+  // the same reason): the readiness gate reads the synced brand state, which
+  // a reload settles. Not `login()` — a signed-in `/login` redirects home
+  // before the form exists, and the fill waits for the whole test budget.
+  await page.goto('/')
+  await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible({
+    timeout: SCREEN_SYNC,
+  })
   await page.getByRole('link', { name: 'Studio', exact: true }).first().click()
   await expect(page.getByRole('heading', { name: 'Studio', level: 1 })).toBeVisible()
   await expect(
@@ -429,8 +446,20 @@ test('the Studio grid lists what the catalog grants, by name, with the catalog�
   for (const vendor of ['openai', 'gpt', 'bedrock', 'replicate', 'fal', 'runware', 'nano banana']) {
     expect(body.toLowerCase()).not.toContain(vendor)
   }
-  // The composer reads the catalog: the approved voices are in the select.
-  await page.getByRole('link', { name: 'Voiceover', exact: true }).click()
-  await expect(page.getByLabel('Voice')).toBeVisible({ timeout: 40_000 })
-  await expect(page.getByLabel('Voice').locator('option', { hasText: 'Rachel' })).toHaveCount(1)
+  // The composer reads the catalog: the approved voices are in the select,
+  // and the row the plan resolved to is named — both from the wire.
+  await page.getByRole('main').getByRole('link', { name: 'Voiceover', exact: true }).click()
+  // The composer, not the gate: its own heading first, so a blocked org fails
+  // with the reason rather than on a control that was never rendered.
+  await expect(page.getByRole('heading', { name: 'Voiceover', level: 2 })).toBeVisible({
+    timeout: SCREEN_SYNC,
+  })
+  // The select's accessible name carries the required marker ("Voice
+  // (required)"), so it is found by role and a prefix, never by an exact label.
+  const voice = page.getByRole('combobox', { name: /^Voice/ })
+  await expect(voice).toBeVisible({ timeout: SCREEN_SYNC })
+  await expect(voice.locator('option', { hasText: 'Rachel' })).toHaveCount(1, {
+    timeout: SCREEN_SYNC,
+  })
+  await expect(page.getByText(/Rendering on Voice \(fast\)/)).toBeVisible({ timeout: SCREEN_SYNC })
 })
