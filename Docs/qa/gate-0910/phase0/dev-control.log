@@ -1,0 +1,88 @@
+=== DEV-SERVER CONTROL · start 2026-09-10T11:38:18Z · spec e2e/live-auth.spec.ts · E2E_API_ENV=dev · Playwright starts pnpm dev on 5199 itself · keep-awake pid 22481
+
+> alphabeacon-web@0.0.0 e2e C:\alphabeacon-web\alphabeacon-web
+> playwright test "e2e/live-auth.spec.ts" "--workers=1"
+
+
+warm-up: waking the API before the suite starts (https://<api-host>/health)
+warm-up: service awake after 2 probe(s) in 0.6s — last 2: 299ms, 81ms
+warm-up: burst 1 — slowest of 12 was 200 in 273ms — fleet not warm yet
+warm-up: burst 2 — slowest of 12 was 200 in 81ms — fleet not warm yet
+warm-up: burst 3 — slowest of 12 was 200 in 83ms — fleet not warm yet
+warm-up: burst 4 — slowest of 12 was 200 in 81ms — fleet not warm yet
+warm-up: burst 5 — slowest of 12 was 200 in 78ms — fleet not warm yet
+warm-up: burst 6 — slowest of 12 was 200 in 79ms — fleet not warm yet
+warm-up: burst 7 — slowest of 12 was 200 in 83ms — fleet not warm yet
+warm-up: burst 8 — slowest of 12 was 200 in 80ms — fleet not warm yet
+warm-up: burst 9 — slowest of 12 was 200 in 79ms — fleet not warm yet
+warm-up: burst 10 — slowest of 12 was 200 in 83ms — fleet not warm yet
+warm-up: burst 11 — slowest of 12 was 200 in 81ms — fleet not warm yet
+warm-up: burst 12 — slowest of 12 was 200 in 78ms — fleet not warm yet
+warm-up: burst 13 — slowest of 12 was 200 in 83ms — fleet not warm yet
+warm-up: burst 14 — slowest of 12 was 200 in 81ms — fleet not warm yet
+warm-up: burst 15 — slowest of 12 was 200 in 87ms — fleet not warm yet
+warm-up: burst 16 — slowest of 12 was 200 in 79ms — fleet not warm yet
+warm-up: burst 17 — slowest of 12 was 200 in 84ms — fleet not warm yet
+warm-up: burst 18 — slowest of 12 was 200 in 79ms — fleet not warm yet
+warm-up: burst 19 — slowest of 12 was 200 in 85ms — fleet not warm yet
+warm-up: burst 20 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 21 — slowest of 12 was 200 in 83ms — fleet not warm yet
+warm-up: burst 22 — slowest of 12 was 200 in 84ms — fleet not warm yet
+warm-up: burst 23 — slowest of 12 was 200 in 79ms — fleet not warm yet
+warm-up: burst 24 — slowest of 12 was 200 in 81ms — fleet not warm yet
+warm-up: burst 25 — slowest of 12 was 200 in 88ms — fleet not warm yet
+warm-up: burst 26 — slowest of 12 was 200 in 82ms — fleet not warm yet
+warm-up: burst 27 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 28 — slowest of 12 was 200 in 80ms — fleet not warm yet
+warm-up: burst 29 — slowest of 12 was 200 in 84ms — fleet not warm yet
+warm-up: burst 30 — slowest of 12 was 200 in 84ms — fleet not warm yet
+warm-up: burst 31 — slowest of 12 was 200 in 83ms — fleet not warm yet
+warm-up: burst 32 — slowest of 12 was 200 in 81ms — fleet not warm yet
+warm-up: burst 33 — slowest of 12 was 200 in 93ms — fleet not warm yet
+warm-up: burst 34 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 35 — slowest of 12 was 200 in 83ms — fleet not warm yet
+warm-up: burst 36 — slowest of 12 was 200 in 82ms — fleet not warm yet
+warm-up: burst 37 — slowest of 12 was 429 in 83ms — fleet not warm yet
+warm-up: burst 38 — slowest of 12 was 200 in 86ms — fleet not warm yet
+warm-up: burst 39 — slowest of 12 was 200 in 84ms — fleet not warm yet
+warm-up: burst 40 — slowest of 12 was 200 in 81ms — fleet not warm yet
+warm-up: burst 41 — slowest of 12 was 200 in 88ms — fleet not warm yet
+warm-up: burst 42 — slowest of 12 was 200 in 78ms — fleet not warm yet
+warm-up: burst 43 — slowest of 12 was 200 in 80ms — fleet not warm yet
+warm-up: burst 44 — slowest of 12 was 200 in 78ms — fleet not warm yet
+warm-up: burst 45 — slowest of 12 was 200 in 92ms — fleet not warm yet
+warm-up: burst 46 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 47 — slowest of 12 was 200 in 78ms — fleet not warm yet
+warm-up: burst 48 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 49 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 50 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 51 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 52 — slowest of 12 was 200 in 78ms — fleet not warm yet
+warm-up: burst 53 — slowest of 12 was 200 in 82ms — fleet not warm yet
+warm-up: burst 54 — slowest of 12 was 200 in 78ms — fleet not warm yet
+warm-up: burst 55 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 56 — slowest of 12 was 200 in 83ms — fleet not warm yet
+warm-up: burst 57 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 58 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 59 — slowest of 12 was 200 in 80ms — fleet not warm yet
+warm-up: burst 60 — slowest of 12 was 200 in 79ms — fleet not warm yet
+warm-up: 12-way fleet warm after 61 burst(s), 21.3s total — slowest 91ms
+
+warm-up: heartbeat started — 4 probes every 5s for the life of the run
+
+
+Running 7 tests using 1 worker
+
+  ok 1 [chromium] › e2e\live-auth.spec.ts:86:1 › signup -> verify with the emailed code -> logged in, WITH a workspace, in the app (7.2s)
+  ok 2 [chromium] › e2e\live-auth.spec.ts:105:1 › a second signup: resend immediately proves the 429 countdown, wrong password proves the vague 401 (4.9s)
+  ok 3 [chromium] › e2e\live-auth.spec.ts:125:1 › correct password + unverified email routes to the verify screen, which finishes the job (5.6s)
+  ok 4 [chromium] › e2e\live-auth.spec.ts:144:1 › forgot â†’ reset via the documented deep link revokes everything; only the new password works (7.1s)
+  ok 5 [chromium] › e2e\live-auth.spec.ts:182:1 › the shell appears; sign out and logout-all both really revoke (7.7s)
+  ok 6 [chromium] › e2e\live-auth.spec.ts:237:1 › a new user accepts an invite through the documented deep link and lands in the workspace (6.4s)
+  ok 7 [chromium] › e2e\live-auth.spec.ts:281:1 › a token-carrying 401 purges the session and lands on login with the toast (4.2s)
+
+warm-up: heartbeat stopped after 9 beat(s)
+
+  7 passed (1.2m)
+--- e2e/live-auth.spec.ts · exit 0 · 75 s
+=== DEV-SERVER CONTROL · end 2026-09-10T11:39:33Z

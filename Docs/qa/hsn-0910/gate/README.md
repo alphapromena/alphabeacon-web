@@ -71,7 +71,7 @@ Green: auth 7/7, billing 7/7, brand-kit 3/3, **brand-rules 5/5** (round 1's
 red did not recur — the API's weather, classified environmental), brand 5/5,
 country 4/4, generate 2/2, invite-org 3/3, knowledge 3/3, media-upload 3/3,
 notifications 1/1, onboarding 6/6, schedule-repair 3/3, team 6/6,
-video-duration 3/3, wallet 4/4, **studio 3 + 1 skipped** and
+video-duration 2 + 1 skipped (test 3 self-skips on the expected 402), wallet 4/4, **studio 3 + 1 skipped** and
 **live-media-capabilities' grid test green**; scheduling 2 + 1 skipped and
 proposals 1 + 4 skipped by design; create-visual 3 skipped (`LIVE_MEDIA` off).
 The API was warm on every file; no refusal, no cold start, no wrong-mode

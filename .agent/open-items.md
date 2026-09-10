@@ -1316,3 +1316,29 @@ Numbering continues from 50. The record: `Docs/qa/hsn-0910/phase0/` and the
     instead of validating, so a user who could send five would be told to
     "try again later" for a body that can never succeed. The app enforces
     the 1–4 range client-side; asked of Hasan: a 400 that names the limit.
+
+59. **live-auth test 3 encodes a dev-server artefact; the production build is
+    the honest one (GATE-0910 Phase 0, 2026-09-10).** `DEFAULT_DATASET_ID`
+    is `active` in dev and `visitor` in a production build; the verify
+    screen creates the workspace from `org.name`; on the login-unverified
+    path the pending state carries only the email — so the dev server has
+    been creating a workspace named **"Atlas Roasters"** (the demo org) and
+    landing on the Dashboard, while the production build (the one users
+    get) lands on N3 "Name your workspace". Measured: `vite preview` runs 1
+    and 2 red on that test identically, the dev-server control 7/7 minutes
+    later (`Docs/qa/gate-0910/phase0/preview-probe.md`). Two fixes for the
+    founder's word: (a) the spec expects N3 and finishes through it — the
+    walk production actually has; (b) the app never takes a workspace name
+    from the demo world, only from this flow's pending signup — a dev-mode
+    leak with no production effect, but the dev server must not lie to the
+    suite. Until (a) lands, a preview-served live round carries one known,
+    classified red.
+
+60. **Nine live tests are dormant as written since fresh orgs stopped being
+    funded (BIL-0902).** live-proposals 2–5 (skip on a $0 wallet, never
+    switch by design), live-scheduling 3 (no slots on a fresh org),
+    live-studio 4 (a `LIVE_MEDIA` render on a $0 org can only reach the gate
+    or 402), live-create-visual 3 (reads the fresh org after test 2 ran on
+    the funded org; can only pass on a funded fresh org). For a ruling:
+    re-target to the funded org under the one-mechanism rule, or delete.
+    Found by the Phase 0 read (`Docs/qa/gate-0910/phase0/live-spec-lanes.md`).

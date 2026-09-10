@@ -4894,3 +4894,55 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
 - Next: the messages to Hasan (51, 57, 58) and Ward (52, 53) — the founder
   sends; the DNS cutover by the founder's hand (the records in item 19's DNS
   entry); /B when Hasan names the door.
+
+### 2026-09-10 15:00 — GATE-0910 Phase 0: the 21 live specs measured and laned, the seven verifies read (six suite runs ×7 = the 19 min), the `vite preview` probe NOT identical — one dev-mode artefact found (item 59); report-and-stop
+
+- Did: ORDER GATE-0910 (the gate from ~60 min to ≤30, proving the same
+  things) and ORDER HSN-0910/B arrived together; GATE-0910 runs first by its
+  own text and /B bases on `main` after it merges, so /B waits. Branch
+  **`feat/gate-0910`** off `main` = `4d98942` (the M-HSN-2 close-out), local
+  only. **§2.1** (`Docs/qa/gate-0910/phase0/live-spec-lanes.md`): per file,
+  the durations from the HSN-0910 rounds, spend, shared state, fresh-or-reads
+  and the lane — **lane A (parallel) 15 files, 717 s serial; lane B (serial)
+  6 files, 387 s** (brand-rules, generate, onboarding and create-visual write
+  the funded org 1813 and spend; billing creates a Stripe test-mode session;
+  wallet only by the rule's word — the first candidate to move). Projected
+  round **~10–11 min** against 17.2 measured; end to end **~25 min** against
+  ~60. What a parallel lane must respect: `RUN = Date.now()` suffixes reused
+  across files (same-millisecond collisions — salt per file), the per-email
+  send limit two files count on, the short waits below the rungs, the one
+  funded org (serial), and **nine dormant tests** (item 60). **§2.2**
+  (`verify-conditions.md`): every verify runs the same six suite steps —
+  lint, typecheck, unit, guard-static, build, the static e2e — 152–202 s
+  each, 19.0 min for the seven on one unchanged tree; their **33 own
+  assertions** read the tree (seconds, kept) and their manual lists are
+  printed (kept). **§2.3** (`preview-probe.md`): `pnpm build` with the API
+  base inlined (11 s of vite after `tsc -b`), `preview-probe.sh` owning
+  `vite preview` on 5199 by pid, live-auth as the probe file — **run 1: 2
+  passed, 1 failed, 4 not run; run 2 identical; the dev-server control 7/7
+  minutes later.** The red is the app's, read from the code:
+  `DEFAULT_DATASET_ID` is `visitor` in a production build and `active` in
+  dev; the verify screen creates the workspace from `org.name`; the
+  login-unverified path carries only the email — so the dev server creates a
+  workspace named **"Atlas Roasters"** (the demo org) and lands on the
+  Dashboard, while the production build honestly lands on N3 "Name your
+  workspace". The spec encodes the dev artefact (item 59). Also measured:
+  the SPA fallback holds on the preview; **the trap-22 tripwire is blind on
+  a preview server** (`/src/api/config.ts` answers 200 `text/html`, the
+  guard returns without a verdict) — §3.3's runner owns the port by pid and
+  reads the served entry chunk for the inlined host instead. Zero spend
+  throughout: fresh QA orgs only, `LIVE_MEDIA` unset, org 1813 untouched,
+  `E2E_API_ENV=dev` on every invocation, the host held awake for the probes.
+- Phase: GATE-0910 **Phase 0 DONE — report-and-stop** (the order's §2). The
+  build (§3) and the proof (§4) wait for the founder's word, with two
+  rulings asked: the lane rule as applied (own-org writes are lane A;
+  wallet/billing by the rule's word or by their measured behaviour) and
+  item 59's two fixes. HSN-0910/B waits for GATE-0910's merge by its base
+  clause.
+- Files: `Docs/qa/gate-0910/phase0/**` (new), `.agent/{sessions,state,open-items}.md`.
+- Decisions: none — Phase 0 measures; the rulings are the founder's.
+- Verify: the probe runs above; nothing else run.
+- Next: the founder's word on GATE-0910 §3 (and the two rulings); then /B.
+- Correction to the gate record: 'video-duration 3/3' was 2 passed + 1
+  skipped by design (test 3 self-skips on the expected 402); the gate README
+  is corrected in this commit.

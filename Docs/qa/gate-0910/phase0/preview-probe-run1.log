@@ -1,0 +1,63 @@
+=== PREVIEW PROBE · start 2026-09-10T11:34:35Z · spec e2e/live-auth.spec.ts · E2E_API_ENV=dev · funded creds: present · preview pid 22065 · keep-awake pid 22064
+served entry: assets/index-DH91FgkU.js
+api host inlined in the served entry: 1 time(s)
+/src/api/config.ts from the preview (the trap-22 tripwire's probe): http 200 text/html
+a deep route from the preview (SPA fallback): http 200 text/html
+
+> alphabeacon-web@0.0.0 e2e C:\alphabeacon-web\alphabeacon-web
+> playwright test "e2e/live-auth.spec.ts" "--workers=1"
+
+
+warm-up: waking the API before the suite starts (https://<api-host>/health)
+warm-up: probe 1 — 200 in 1146ms — not warm yet
+warm-up: service awake after 3 probe(s) in 1.9s — last 2: 94ms, 96ms
+warm-up: 12-way fleet warm after 1 burst(s), 2.2s total — slowest 307ms
+
+warm-up: heartbeat started — 4 probes every 5s for the life of the run
+
+
+Running 7 tests using 1 worker
+
+  ok 1 [chromium] › e2e\live-auth.spec.ts:86:1 › signup -> verify with the emailed code -> logged in, WITH a workspace, in the app (11.1s)
+  ok 2 [chromium] › e2e\live-auth.spec.ts:105:1 › a second signup: resend immediately proves the 429 countdown, wrong password proves the vague 401 (4.5s)
+  x  3 [chromium] › e2e\live-auth.spec.ts:125:1 › correct password + unverified email routes to the verify screen, which finishes the job (41.9s)
+  -  4 [chromium] › e2e\live-auth.spec.ts:144:1 › forgot â†’ reset via the documented deep link revokes everything; only the new password works
+  -  5 [chromium] › e2e\live-auth.spec.ts:182:1 › the shell appears; sign out and logout-all both really revoke
+  -  6 [chromium] › e2e\live-auth.spec.ts:237:1 › a new user accepts an invite through the documented deep link and lands in the workspace
+  -  7 [chromium] › e2e\live-auth.spec.ts:281:1 › a token-carrying 401 purges the session and lands on login with the toast
+
+warm-up: heartbeat stopped after 12 beat(s)
+
+
+  1) [chromium] › e2e\live-auth.spec.ts:125:1 › correct password + unverified email routes to the verify screen, which finishes the job 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('heading', { name: 'Dashboard', level: 1 })
+    Expected: visible
+    Timeout: 40000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 40000ms
+      - waiting for getByRole('heading', { name: 'Dashboard', level: 1 })
+
+
+      137 |   await enterCode(page, CODE)
+      138 |   // Same as above: verifying creates the workspace and lands in the app.
+    > 139 |   await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible({
+          |                                                                            ^
+      140 |     timeout: SCREEN_SYNC,
+      141 |   })
+      142 | })
+        at C:\alphabeacon-web\alphabeacon-web\e2e\live-auth.spec.ts:139:76
+
+    Error Context: test-results\live-auth-correct-password-6baf4-reen-which-finishes-the-job-chromium\error-context.md
+
+  1 failed
+    [chromium] › e2e\live-auth.spec.ts:125:1 › correct password + unverified email routes to the verify screen, which finishes the job 
+  4 did not run
+  2 passed (1.0m)
+ ELIFECYCLE  Command failed with exit code 1.
+--- e2e/live-auth.spec.ts · exit 1 · 65 s
+=== PREVIEW PROBE · end 2026-09-10T11:35:41Z
