@@ -1,0 +1,100 @@
+{
+  "series": "gate-0910",
+  "run": "20260910-133645",
+  "commit": "8a4b52c",
+  "dirty": true,
+  "startedAt": "2026-09-10T13:36:45.054Z",
+  "totalSeconds": 71.61,
+  "options": {
+    "series": "gate-0910",
+    "workers": 1,
+    "rounds": 1,
+    "lanes": [
+      "A"
+    ],
+    "only": [
+      "live-auth"
+    ],
+    "skipStatic": true,
+    "skipLive": false,
+    "funded": false,
+    "media": false,
+    "pool": false,
+    "port": 5199,
+    "legacyVerify": false
+  },
+  "static": null,
+  "rounds": [
+    [
+      {
+        "file": "live-auth",
+        "lane": "A",
+        "round": 1,
+        "attempt": 1,
+        "exit": 0,
+        "seconds": 45.165,
+        "summary": {
+          "passed": 7,
+          "failed": 0,
+          "skipped": 0,
+          "flaky": 0,
+          "tests": [
+            {
+              "title": "signup -> verify with the emailed code -> logged in, WITH a workspace, in the app",
+              "file": "live-auth.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 7199
+            },
+            {
+              "title": "a second signup: resend immediately proves the 429 countdown, wrong password proves the vague 401",
+              "file": "live-auth.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 4591
+            },
+            {
+              "title": "correct password + unverified email routes to the verify screen, and N3 names the workspace",
+              "file": "live-auth.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 6712
+            },
+            {
+              "title": "forgot â†’ reset via the documented deep link revokes everything; only the new password works",
+              "file": "live-auth.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 6646
+            },
+            {
+              "title": "the shell appears; sign out and logout-all both really revoke",
+              "file": "live-auth.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 7525
+            },
+            {
+              "title": "a new user accepts an invite through the documented deep link and lands in the workspace",
+              "file": "live-auth.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 6408
+            },
+            {
+              "title": "a token-carrying 401 purges the session and lands on login with the toast",
+              "file": "live-auth.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 2964
+            }
+          ]
+        },
+        "log": "round-1/live-auth.log",
+        "startedAt": "2026-09-10T13:37:11.150Z",
+        "classification": "green"
+      }
+    ]
+  ],
+  "verdict": "GREEN"
+}

@@ -28,17 +28,19 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useAccountActions } from '@/data/account'
-import { useOrg } from '@/data/provider'
+import { useSession } from '@/data/provider'
 import { errorReference } from '@/lib/error-reference'
 import { MESSAGES } from '@/lib/messages'
 
 export function EmptyOrgScreen() {
-  const org = useOrg()
+  const session = useSession()
   const account = useAccountActions()
 
-  // The name from signup when it survived; empty when it did not, and then
-  // the field below is the only thing this screen asks for.
-  const recovered = org.name.trim()
+  // The name from THIS browser's signup when it survived (held on the
+  // session, GATE-0910 item 59 — never the world's org, whose name on a dev
+  // server is the demo's); empty when it did not, and then the field below
+  // is the only thing this screen asks for.
+  const recovered = (session.pendingOrgName ?? '').trim()
   const [name, setName] = useState(recovered)
   const [creating, setCreating] = useState(false)
 

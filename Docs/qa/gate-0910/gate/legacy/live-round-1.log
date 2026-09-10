@@ -1,0 +1,35 @@
+=== LEGACY LIVE ROUND 1 · start 2026-09-10T13:28:06Z · E2E_API_ENV=dev · funded creds: present · keep-awake pid 26802
+
+--- e2e/live-auth.spec.ts · 13:28:06Z
+warm-up: service awake after 3 probe(s) in 2.1s — last 2: 95ms, 100ms
+warm-up: heartbeat started — 4 probes every 5s for the life of the run
+  ok 1 [chromium] › e2e\live-auth.spec.ts:87:1 › signup -> verify with the emailed code -> logged in, WITH a workspace, in the app (10.4s)
+  ok 2 [chromium] › e2e\live-auth.spec.ts:106:1 › a second signup: resend immediately proves the 429 countdown, wrong password proves the vague 401 (4.8s)
+  x  3 [chromium] › e2e\live-auth.spec.ts:126:1 › correct password + unverified email routes to the verify screen, and N3 names the workspace (42.1s)
+  -  4 [chromium] › e2e\live-auth.spec.ts:157:1 › forgot â†’ reset via the documented deep link revokes everything; only the new password works
+  -  5 [chromium] › e2e\live-auth.spec.ts:195:1 › the shell appears; sign out and logout-all both really revoke
+  -  6 [chromium] › e2e\live-auth.spec.ts:247:1 › a new user accepts an invite through the documented deep link and lands in the workspace
+  -  7 [chromium] › e2e\live-auth.spec.ts:291:1 › a token-carrying 401 purges the session and lands on login with the toast
+warm-up: heartbeat stopped after 11 beat(s)
+    Error: expect(locator).toBeVisible() failed
+    Error: element(s) not found
+      - Expect "toBeVisible" with timeout 40000ms
+      - waiting for getByRole('heading', { name: 'Name your workspace and we will finish setting it up.', level: 1 })
+  1 failed
+  2 passed (1.1m)
+ ELIFECYCLE  Command failed with exit code 1.
+--- e2e/live-auth.spec.ts · 1 · 68 s
+
+--- e2e/live-billing.spec.ts · 13:29:14Z
+warm-up: service awake after 2 probe(s) in 0.6s — last 2: 270ms, 75ms
+warm-up: heartbeat started — 4 probes every 5s for the life of the run
+  ok 1 [chromium] › e2e\live-billing.spec.ts:62:1 › a fresh owner + org, made through the product (7.8s)
+  ok 2 [chromium] › e2e\live-billing.spec.ts:78:1 › the five endpoints answer the shapes the UI is built on — and the checkout url is never opened (8.5s)
+  ok 3 [chromium] › e2e\live-billing.spec.ts:152:1 › /billing renders the plans FROM THE WIRE, Subscribe for the owner, and the honest empty history (6.0s)
+  ok 4 [chromium] › e2e\live-billing.spec.ts:204:1 › the abandoned-checkout return shows the plans plus the note (5.5s)
+  ok 5 [chromium] › e2e\live-billing.spec.ts:214:1 › the success route polls, shows the wire’s status every tick, and gives up honestly on an unpaid org (1.1m)
+  ok 6 [chromium] › e2e\live-billing.spec.ts:252:1 › a member cannot start checkout: 403 forbidden, and any member reads (6.9s)
+ ELIFECYCLE  Command failed with exit code 4294967295.
+  ok 7 [chromium] › e2e\live-billing.spec.ts:289:1 › a generation on the unfunded org is refused with 402, and the refusal points at Billing (25.0s)
+warm-up: heartbeat stopped after 25 beat(s)
+  7 passed (2.2m)

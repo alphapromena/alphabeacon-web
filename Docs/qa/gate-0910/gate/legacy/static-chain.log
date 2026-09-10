@@ -1,0 +1,31 @@
+=== LEGACY CHAIN · start 2026-09-10T13:08:27Z · tree 8a4b52c
+=== unit 13:08:27Z
+[2m Test Files [22m [1m[32m58 passed[39m[22m[90m (58)[39m
+[2m      Tests [22m [1m[32m656 passed[39m[22m[90m (656)[39m
+--- unit · 20 s
+=== static e2e 13:08:47Z
+  84 skipped
+  115 passed (1.4m)
+--- static e2e · 85 s
+=== verify:w00 --rerun 13:10:12Z
+RESULT: PASS (automated steps)
+--- verify:w00 · 177 s
+=== verify:w01 --rerun 13:13:09Z
+RESULT: PASS (automated steps)
+--- verify:w01 · 153 s
+=== verify:w02 --rerun 13:15:42Z
+RESULT: PASS (automated steps)
+--- verify:w02 · 150 s
+=== verify:w03 --rerun 13:18:12Z
+RESULT: PASS (automated steps)
+--- verify:w03 · 149 s
+=== verify:w04 --rerun 13:20:41Z
+RESULT: PASS (automated steps)
+--- verify:w04 · 147 s
+=== verify:w05 --rerun 13:23:08Z
+RESULT: PASS (automated steps)
+--- verify:w05 · 150 s
+=== verify:w06 --rerun 13:25:38Z
+RESULT: PASS (automated steps)
+--- verify:w06 · 147 s
+=== LEGACY CHAIN · static end 2026-09-10T13:28:05Z

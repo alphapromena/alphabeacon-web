@@ -10,3 +10,4 @@ One line per run; each run's own README carries the table.
 - `20260910-124809` — STOPPED, 0.3 min, tree ``, workers 4, rounds 1, lanes A → [README](20260910-124809/README.md)
 - `20260910-125038` — RED, 7.7 min, tree `6c10e04`, workers 3, rounds 1, lanes A → [README](20260910-125038/README.md)
 - `20260910-125952` — RED, 6.4 min, tree `cdfb0ef`+, workers 2, rounds 1, lanes A → [README](20260910-125952/README.md)
+- `20260910-133645` — GREEN, 1.2 min, tree `8a4b52c`+, workers 1, rounds 1, lanes A · only live-auth → [README](20260910-133645/README.md)

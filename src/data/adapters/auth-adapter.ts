@@ -69,10 +69,13 @@ export function graftAuthSession(
     },
     org: {
       ...world.org,
-      ...(org ? { id: org.id, name: org.name } : {}),
       // Trap 20: a wire answer of "no orgs" must NOT leave the demo world's
       // workspace standing. `false` is the honest answer, and it is what
-      // routes the user to the org-creation retry surface.
+      // routes the user to the org-creation retry surface. Nor may the demo's
+      // NAME stand (GATE-0910, item 59): on a dev server the boot world is
+      // "Atlas Roasters", and N3 would offer to create a workspace by that
+      // name in one press. No org, no name — N3 asks.
+      ...(org ? { id: org.id, name: org.name } : { name: '' }),
       exists: Boolean(org),
     },
   }

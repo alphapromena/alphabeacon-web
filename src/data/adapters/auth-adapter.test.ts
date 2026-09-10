@@ -1,12 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import type { AuthSession } from '@/api/types'
 import { buildDataset } from '@/data/datasets'
-import {
-  apiUserToUser,
-  clearAuthSession,
-  collapseOrgRole,
-  graftAuthSession,
-} from './auth-adapter'
+import { apiUserToUser, clearAuthSession, collapseOrgRole, graftAuthSession } from './auth-adapter'
 
 const auth = (overrides: Partial<AuthSession> = {}): AuthSession => ({
   token: 'tok',
@@ -79,6 +74,9 @@ describe('graftAuthSession', () => {
     const next = graftAuthSession(buildDataset('active'), auth({ orgs: [] }), null)
     expect(next.org.exists).toBe(false)
     expect(next.session.signedIn).toBe(true)
+    // GATE-0910 item 59: nor does the demo's NAME stand — "Atlas Roasters"
+    // must never be the one-press default on N3.
+    expect(next.org.name).toBe('')
   })
 
   it('an unverified email stays visibly unverified', () => {
