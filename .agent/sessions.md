@@ -4799,3 +4799,76 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
 - Next: the founder's merge word; after the merge, M-HSN-2 (item 56) on
   production (the grid, one cheap render, the org id); the messages to Hasan
   (51, 57, 58) and Ward (52, 53); /B when Hasan names the door.
+
+### 2026-09-10 14:05 — HSN-0910 MERGED and DEPLOYED on the founder's word: `main` and `live` at `83fc942`, both deployments READY, the bundle `index-Ckpi_DKM.js` on both hosts; the Vercel step measured ALREADY DONE by hand; the DNS records for the founder's GoDaddy hand; STOP before M-HSN-2
+
+- Did: **The merge word** (2026-09-10 ~13:50 local): `git merge --ff-only
+  feat/hsn-0910` on `main` — `1772734` → **`83fc942`**, ten commits, a pure
+  fast-forward — and `git push origin main` (10:53:50Z). **`git push origin
+  main:live` went through** (`463806c` → `83fc942`): the auto-mode
+  classifier that refused the same push on 2026-09-03 did not refuse it
+  today, so the founder's hand was not needed. `feat/hsn-0910` stays on
+  origin at `83fc942` as the record. **Vercel** (project `alphabeacon-web`,
+  `prj_q9zh0CfBI5ByLlLbDKwRLQ5tbcWV`, production branch `main`):
+  production **`dpl_4HmK6thTkPezvYMHSQuuhwputwtc`** (target production, ref
+  `main`, sha `83fc942`, created 10:53:52Z, **READY**, the project's current
+  production target, `isRollbackCandidate`); the `live` preview
+  **`dpl_BvXcdyDLNdeRVikHriArxYaWFmMD`** (ref `live`, 10:55:16Z, **READY**);
+  the branch preview `dpl_GyAi91FaPGsiDTEFm3oggyyBtsTT` (ref
+  `feat/hsn-0910`, 10:48:25Z). **The bundle:** `index-DUHITzRc.js` →
+  **`index-Ckpi_DKM.js`** on `1.malaky.ai` (10:56:58Z) AND on
+  `alphabeacon-web.vercel.app` (10:56:55Z, read from Vercel's own side
+  through the MCP fetch — the first time the production bundle was measured
+  at all; an identical Vite content hash is identical content). The entry
+  chunk carries the API host exactly once (LIVE mode); the lazy chunks carry
+  the order's strings ("Copy the organization ID" in
+  `organization-screen-B1ohqwXs.js`, "Motion transfer" and "Product
+  photoshoot" in `studio-Bzej-Yum.js`); the card art is served
+  (`/studio/cards/avatar.generate.webp` → 200 `image/webp`, 55 590 B, the
+  local file's size, `Cache-Control: public, max-age=86400` from the new
+  `vercel.json` group). **Rollback candidate:** the `1772734` pair —
+  production `dpl_231WHducztuK5ZpYho8abm21Ygjf` and the `live` preview
+  `dpl_7Do9vv6tEkPN25W313k1arfmsViT` (`463806c`).
+  **The Vercel step — measured ALREADY DONE by hand before the merge word**
+  (the project's own record through `vercel api`, keys and scopes only):
+  `VITE_API_BASE_URL` exists in the **Production** scope, created
+  **10:51:50Z** — two minutes before the push of `main`; the Preview-scope
+  value for branch `live` dates from 2026-08-19. The identical bundle hash
+  on production and the `live` preview proves the same value: **the dev API
+  base.** So production `main` is **LIVE against the dev API**, not the
+  STATIC build the record assumed (item 53's line, never measured, is
+  corrected). The production deployment at the merge commit was built at
+  10:53:52Z, after the variable — **no redeploy needed, none made** (a
+  redeploy would rebuild the identical bundle and move the rollback
+  candidate). **Domains on the project:** `malaky.ai` (since 2026-08-11
+  12:10Z, verified), **`www.malaky.ai` (added 10:43:24Z today, verified, a
+  308 redirect to the apex)**, `1.malaky.ai` (branch `live`, configured by
+  CNAME), `alphabeacon-web.vercel.app`. Nothing to add. **DNS, the
+  founder's hand at GoDaddy** (nameservers `ns05`/`ns06.domaincontrol.com`,
+  kept): today the apex answers `A 76.223.105.230` and `A 13.248.243.5` (the
+  GoDaddy site builder) and `www` is a CNAME to the apex; Vercel's intended
+  records — **`A malaky.ai 216.198.79.1` and `A malaky.ai 64.29.17.1`**
+  (rank 1; `76.76.21.21` is the rank-2 classic), replacing BOTH GoDaddy A
+  records; **`CNAME www.malaky.ai c61f41105463f8af.vercel-dns-017.com.`**
+  (rank 1 — the same target `1.malaky.ai` already uses;
+  `cname.vercel-dns.com.` rank 2); no TXT — both names are verified. When
+  the cutover lands, the apex serves the production deployment = **the dev
+  API in public**, test-mode Stripe, and Stripe's three returns still on
+  `DASHBOARD_URL = https://1.malaky.ai` (item 53) — the founder's call.
+  **Tooling, proven today:** the Vercel CLI 54.20.1 is installed and logged
+  in (`alphapromena`) despite the plugin hook's claim; `vercel api` (beta)
+  reads env keys/scopes and project domains — under Git Bash
+  `MSYS_NO_PATHCONV=1` is mandatory or `/v9/...` becomes a Windows path
+  ("Use an API path starting with /"); the MCP `web_fetch_vercel_url` reads
+  `*.vercel.app` from Vercel's side, around this host's TLS reset.
+- Phase: HSN-0910 /A, /C, /D **MERGED and DEPLOYED**; /B HELD (item 51).
+  **STOP before M-HSN-2 (item 56) — the founder's word.**
+- Files: `.agent/{sessions,state,open-items}.md`,
+  `Docs/api/environments.md`.
+- Decisions: none new — the founder's merge word executed as given.
+- Verify: Vercel's own deployment record (READY at the sha), the served
+  index on both hosts, the entry chunk's inlined host, the lazy chunks'
+  strings, the card art's bytes and header.
+- Next: M-HSN-2 on production on the founder's word (item 56); the DNS
+  cutover by the founder's hand; the messages to Hasan (51, 57, 58) and
+  Ward (52, 53); /B when Hasan names the door.

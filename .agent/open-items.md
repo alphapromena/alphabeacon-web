@@ -798,6 +798,15 @@ New for the Malaky M1 (2026-08-08):
       `1.malaky.ai` and `alphabeacon-web.vercel.app`. Someone with GoDaddy
       DNS access must point the apex + www at Vercel (per the Vercel
       domains panel) before the canonical/OG URLs on malaky.ai are real.
+      **2026-09-10:** `www.malaky.ai` is on the project (added 10:43:24Z,
+      verified, 308 → the apex); both names verified, no TXT needed.
+      Vercel's intended records, for the GoDaddy panel (nameservers stay):
+      `A malaky.ai 216.198.79.1` and `A malaky.ai 64.29.17.1` replacing BOTH
+      site-builder A records (`76.76.21.21` is the older single-address
+      form); `CNAME www.malaky.ai c61f41105463f8af.vercel-dns-017.com.`
+      (`cname.vercel-dns.com.` also accepted). When it lands the apex serves
+      the production deployment = the dev API in public with test-mode
+      Stripe and Stripe's returns on `1.malaky.ai` (item 53).
 
 ## 19. Founder-supplied reference posts (2026-08-11)
 
@@ -1227,8 +1236,11 @@ Numbering continues from 50. The record: `Docs/qa/hsn-0910/phase0/` and the
     site-builder page, not this project (the 2026-08-11 DNS item);
     `alphabeacon-web.vercel.app` (production, `main`) is unreachable from
     the dev host (a TLS reset on `*.vercel.app`), so its mode was not
-    measured — the record says STATIC (no `VITE_API_BASE_URL` in the
-    production scope). Asked of Ward: (1) a separate production environment
+    measured then — **measured 2026-09-10 from Vercel's side: production
+    serves the SAME bundle as the `live` preview (`index-Ckpi_DKM.js`, the
+    API host inlined once) because `VITE_API_BASE_URL` was set in the
+    Production scope by hand at 10:51:50Z = the dev base; production `main`
+    is LIVE on the dev API, and the earlier STATIC record was wrong.** Asked of Ward: (1) a separate production environment
     for the main API and Hasan's AlphaStudio tenant (2–3 tenants, no QA
     orgs), with its base URL; (2) `DASHBOARD_URL` per environment — the
     three Stripe return routes (`/billing/success?orgId&session_id`,

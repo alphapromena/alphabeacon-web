@@ -9,17 +9,17 @@ it says "pending Ward".
 
 ## The map
 
-| Facet                             | Dev (today's only API)                                                                               | Production                                                                                                    |
-| --------------------------------- | ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| API base                          | the Lambda URL in `.env.local` (`VITE_API_BASE_URL`; never committed)                                | **pending Ward** — a second deployment of the main API                                                        |
-| AlphaStudio tenant (Hasan's side) | the dev tenant: 1000+ orgs, largely our QA orgs                                                      | **pending Ward/Hasan** — a fresh tenant with the real customers only                                          |
-| Environment name on the wire      | **none** — `/health` is `{"ok":true}`, `/openapi` has no `servers`, the org root carries no such key | **asked of Ward** (item 53): a name on `/health` or the org root, so a harness can refuse the wrong one       |
-| Web deployment                    | `1.malaky.ai` = the `live` branch preview on Vercel, built WITH `VITE_API_BASE_URL` → LIVE mode      | the apex `malaky.ai` on `main` — today it still serves a GoDaddy site-builder page (DNS not cut over)         |
-| `VITE_API_BASE_URL` on Vercel     | set for the `live` branch's Preview scope (the `1.malaky.ai` bundle inlines the dev host)            | **the founder's hand step**: set the production API base in the Production scope once Ward names it           |
-| Stripe                            | TEST mode keys; card `4242 4242 4242 4242`; every paid invoice credits the org's real dev wallet     | **LIVE keys only here** (asked of Ward, item 53); test mode stays on dev                                      |
-| `DASHBOARD_URL` (Ward's constant) | `https://1.malaky.ai` — the three Stripe return routes come back here                                | must be the apex — `/billing/success?orgId&session_id`, `/billing?orgId&checkout=cancelled`, `/billing?orgId` |
-| QA orgs                           | minted by every live e2e run and probe (`qa+<stamp>…@alphapromena.com`)                              | **never** — the harness guard below refuses to run against it                                                 |
-| The funded QA org                 | org 1813 (`QA_FUNDED_EMAIL` / `QA_FUNDED_PASSWORD` in the QA-creds store)                            | none                                                                                                          |
+| Facet                             | Dev (today's only API)                                                                               | Production                                                                                                                                                                                                                                |
+| --------------------------------- | ---------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| API base                          | the Lambda URL in `.env.local` (`VITE_API_BASE_URL`; never committed)                                | **pending Ward** — a second deployment of the main API                                                                                                                                                                                    |
+| AlphaStudio tenant (Hasan's side) | the dev tenant: 1000+ orgs, largely our QA orgs                                                      | **pending Ward/Hasan** — a fresh tenant with the real customers only                                                                                                                                                                      |
+| Environment name on the wire      | **none** — `/health` is `{"ok":true}`, `/openapi` has no `servers`, the org root carries no such key | **asked of Ward** (item 53): a name on `/health` or the org root, so a harness can refuse the wrong one                                                                                                                                   |
+| Web deployment                    | `1.malaky.ai` = the `live` branch preview on Vercel, built WITH `VITE_API_BASE_URL` → LIVE mode      | the apex `malaky.ai` on `main` — built WITH `VITE_API_BASE_URL` = the dev base since 2026-09-10 (LIVE on the dev API until Ward's base exists); DNS not cut over — today a GoDaddy site-builder page; the records are in the switch below |
+| `VITE_API_BASE_URL` on Vercel     | set for the `live` branch's Preview scope (the `1.malaky.ai` bundle inlines the dev host)            | set in the Production scope by hand 2026-09-10 10:51Z = **the dev base for now** (proven: production and the `live` preview build the identical bundle); when Ward names the production base, change the VALUE and redeploy `main`        |
+| Stripe                            | TEST mode keys; card `4242 4242 4242 4242`; every paid invoice credits the org's real dev wallet     | **LIVE keys only here** (asked of Ward, item 53); test mode stays on dev                                                                                                                                                                  |
+| `DASHBOARD_URL` (Ward's constant) | `https://1.malaky.ai` — the three Stripe return routes come back here                                | must be the apex — `/billing/success?orgId&session_id`, `/billing?orgId&checkout=cancelled`, `/billing?orgId`                                                                                                                             |
+| QA orgs                           | minted by every live e2e run and probe (`qa+<stamp>…@alphapromena.com`)                              | **never** — the harness guard below refuses to run against it                                                                                                                                                                             |
+| The funded QA org                 | org 1813 (`QA_FUNDED_EMAIL` / `QA_FUNDED_PASSWORD` in the QA-creds store)                            | none                                                                                                                                                                                                                                      |
 
 ## The harness guard (our side, built)
 
@@ -51,12 +51,19 @@ request and asks for nothing.
 When Ward names the production API base:
 
 1. Vercel → the project → Environment Variables → `VITE_API_BASE_URL` in the
-   **Production** scope = the production base. The `live` branch's Preview
-   scope keeps the dev base.
+   **Production** scope — it exists since 2026-09-10 and holds the dev base;
+   change its VALUE to the production base and redeploy `main`. The `live`
+   branch's Preview scope keeps the dev base.
 2. Ward sets `DASHBOARD_URL` per environment (the apex on production,
    `1.malaky.ai` on dev) and moves Stripe to LIVE keys on production only.
 3. The apex DNS cutover (the 2026-08-11 open item) so `malaky.ai` serves the
-   `main` deployment.
+   `main` deployment — at GoDaddy, nameservers unchanged: `A malaky.ai
+216.198.79.1` and `A malaky.ai 64.29.17.1` replacing the site builder's two
+   A records (`76.76.21.21` is the older single-address form), and `CNAME
+www.malaky.ai c61f41105463f8af.vercel-dns-017.com.`; both names are on the
+   project and verified (www is a 308 to the apex), no TXT needed. Order
+   matters: if the cutover lands before step 1's value changes, the apex
+   serves the dev API in public.
 4. Set `PROD_API_BASE_URL` in the QA-creds store on the dev machine, so the
    harness refuses it by value as well as by name.
 
