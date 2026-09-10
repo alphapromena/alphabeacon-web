@@ -1,0 +1,38 @@
+{
+  "title": "funded · media/jobs — images-edit",
+  "method": "POST",
+  "path": "/orgs/:id/alphastudio/media/jobs",
+  "status": 202,
+  "ms": 1195,
+  "requestId": "46722d47-fab7-49a0-a3b5-a472b821d238",
+  "note": "OUR read-presigned url as the one reference: image-reference $0.06; the A3 proof",
+  "request": {
+    "capability": "images.edit",
+    "instruction": "replace the background with a plain deep-navy studio backdrop",
+    "params": {
+      "referenceImages": [
+        "<redacted url: 1627 chars>"
+      ],
+      "aspectRatio": "16:9",
+      "outputFormat": "png"
+    },
+    "origin": {
+      "kind": "standalone",
+      "ref": "hsn-0910-funded-images-edit"
+    }
+  },
+  "response": {
+    "jobId": "mjob_deed21e0f9608090deff880f",
+    "status": "queued",
+    "capability": "images.edit",
+    "plan": null,
+    "modelAlias": "image-reference",
+    "origin": {
+      "kind": "standalone",
+      "ref": "hsn-0910-funded-images-edit"
+    },
+    "assets": [],
+    "createdAt": "2026-09-10T08:39:35.968Z",
+    "updatedAt": "2026-09-10T08:39:35.968Z"
+  }
+}

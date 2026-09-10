@@ -1,0 +1,18 @@
+{
+  "title": "asset input · media/assets/presign — image/png",
+  "method": "POST",
+  "path": "/orgs/:id/alphastudio/media/assets/presign",
+  "status": 201,
+  "ms": 950,
+  "requestId": "a5efac95-73ee-4edf-926a-19857411f7a8",
+  "request": {
+    "mediaType": "image/png",
+    "desc": "HSN-0910 funded proof — the images.edit input"
+  },
+  "response": {
+    "assetId": "masset_f620748f36f24060d957497b",
+    "uploadUrl": "<redacted url: 1667 chars>",
+    "expiresAt": "2026-09-10T08:54:29.610Z",
+    "mediaType": "image/png"
+  }
+}

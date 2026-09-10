@@ -1,0 +1,71 @@
+{
+  "title": "funded · usage — today, by capability",
+  "method": "GET",
+  "path": "/orgs/:id/alphastudio/usage?from=2026-09-10&to=2026-09-10&group_by=capability",
+  "status": 200,
+  "ms": 965,
+  "requestId": "15f646f1-14e2-4584-b802-e0d412b0a2fb",
+  "response": {
+    "from": "2026-09-10",
+    "to": "2026-09-10",
+    "groupBy": "capability",
+    "groups": [
+      {
+        "key": "images.edit",
+        "unit": "guardrail_text_units",
+        "qty": 1,
+        "costUsdEstimate": "0.000150000000"
+      },
+      {
+        "key": "images.edit",
+        "unit": "images",
+        "qty": 1,
+        "costUsdEstimate": "0.060000000000"
+      },
+      {
+        "key": "logos.generate",
+        "unit": "guardrail_text_units",
+        "qty": 1,
+        "costUsdEstimate": "0.000150000000"
+      },
+      {
+        "key": "logos.generate",
+        "unit": "images",
+        "qty": 1,
+        "costUsdEstimate": "0.030000000000"
+      },
+      {
+        "key": "voice.speak",
+        "unit": "audio_text_units",
+        "qty": 1,
+        "costUsdEstimate": "0.050000000000"
+      },
+      {
+        "key": "voice.speak",
+        "unit": "guardrail_text_units",
+        "qty": 1,
+        "costUsdEstimate": "0.000150000000"
+      }
+    ],
+    "days": [
+      {
+        "day": "2026-09-10",
+        "unit": "audio_text_units",
+        "qty": 1,
+        "costUsdEstimate": "0.050000000000"
+      },
+      {
+        "day": "2026-09-10",
+        "unit": "guardrail_text_units",
+        "qty": 3,
+        "costUsdEstimate": "0.000450000000"
+      },
+      {
+        "day": "2026-09-10",
+        "unit": "images",
+        "qty": 2,
+        "costUsdEstimate": "0.090000000000"
+      }
+    ]
+  }
+}

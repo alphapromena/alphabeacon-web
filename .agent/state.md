@@ -24,9 +24,7 @@ Country: `state` DROPPED by `PUT /orgs/:id/country` and by the event source,
 no state list anywhere → /B HELD** (item 51); org 1813 has no media job
 (§3.4 unmeasured); the API exposes no environment name; `1.malaky.ai` is LIVE
 (the `live` preview), the apex `malaky.ai` is still a GoDaddy page,
-`*.vercel.app` is unreachable from this host (item 53). Assumptions A1–A3 and
-the §3.6 funded proofs (`logos.generate` balanced $0.03, `voice.speak`
-balanced $0.05, `images.edit` $0.06 — on org 1813) await the founder. **Next:
+`*.vercel.app` is unreachable from this host (item 53). **Phase 0 ACCEPTED (the founder, 2026-09-10): A1 confirmed, A2 amended to Higgsfield card art (fetched, 13 WebPs under `public/studio/cards/`), A3 PROVEN by the funded proofs on org 1813 (`--funded-proofs`, 14 cents: logos, voice with its audio + document envelope, images.edit fetching OUR url); items 57/58 filed for Hasan; the branch pushed to origin as the record.** **Next:
 the founder's word, then /A (the 13-card grid on one table), /C (the org id
 in Settings), /D (the harness guard, the env map, Ward's message) on this
 branch; /B when Hasan names the door. Never push, never merge.** No new trap;

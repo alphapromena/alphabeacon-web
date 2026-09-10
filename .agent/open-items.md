@@ -1239,7 +1239,7 @@ Numbering continues from 50. The record: `Docs/qa/hsn-0910/phase0/` and the
     harness guard's best anchor. The draft message is in the Phase 0 report
     (sessions.md, 2026-09-10).
 
-54. **A3 ASSUMED until the funded render: does Hasan's door fetch OUR
+54. **CLOSED 2026-09-10 — A3 PROVEN by the funded `images.edit` on org 1813 (job `mjob_deed21e0f9608090deff880f`, request `46722d47-fab7-49a0-a3b5-a472b821d238`): the output is the input with its background replaced, so the door fetched our read-presigned url; the voice envelope (audio + timestamps document) measured on `mjob_e68d75567f364c34ab574b15`; 14 cents spent, the record under `Docs/qa/hsn-0910/phase0/funded/`. Original text:** A3 ASSUMED until the funded render: does Hasan's door fetch OUR
     read-presigned url (`referenceImages` / `imageUrl`) and our `masset_…`
     ids (`film.generate` references and character, `motion.generate` image /
     video)?** Phase 0 proved only that the door accepts them at intake (402
@@ -1256,7 +1256,7 @@ Numbering continues from 50. The record: `Docs/qa/hsn-0910/phase0/` and the
     answers 400 `bad_request` "The media service rejected the request —
     check the body against the capability's schema" with no `details` and
     no field (18 of 19 on org 1824; the request-ids are in `summary.json`).
-    New: (1) **`motion.generate` refuses `lang: "ar"`** — the document's
+    New (filed as their own items 57 and 58 on the founder's word): (1) **`motion.generate` refuses `lang: "ar"`** — the document's
     only meaningful value (`3f76fcab-6426-4620-8b02-609f8ffed5d0`, the
     supplement) — while `lang: "en"` and no `lang` clear
     (`cc87be93-4c03-4213-8ce7-f326ad15610c`,
@@ -1276,3 +1276,31 @@ Numbering continues from 50. The record: `Docs/qa/hsn-0910/phase0/` and the
     selector~~ — /B HELD on item 51, nothing to check; (4) Settings shows
     the organization id at the top and Copy copies it. Sign off with the org
     id and the job id.
+
+57. **FOR HASAN — `motion.generate` refuses `lang: "ar"`, and the same body
+    passes without it (contradicts the document).** Filed on the founder's
+    word, 2026-09-10 (the fact was first noted under item 55). The document
+    says `lang` is a two-letter code and "only `ar` does anything — it buys
+    an Arabic lip repair pass". Measured on org 1824 (the motion supplement,
+    `Docs/qa/hsn-0910/phase0/supplement-motion/`), one variable per rung:
+    the required keys alone → 402 at the wallet
+    (`5de44fd0-8731-437e-a3dd-db8723454c7e`); `lang: "en"` → 402
+    (`cc87be93-4c03-4213-8ce7-f326ad15610c`); **`lang: "ar"` → 400
+    `bad_request`** (`3f76fcab-6426-4620-8b02-609f8ffed5d0`), the generic
+    sentence, no field named. The question: which key and value buy the
+    Arabic lip repair on `motion.generate`, and is the document's `lang`
+    the intended key? Until answered the composer sends no `lang` on motion
+    and shows no Arabic option there.
+
+58. **FOR HASAN — `photoshoot.generate` answers 502 on five
+    `referenceImages`, not 400.** Filed on the founder's word, 2026-09-10
+    (first noted under item 55). The document says 1 to 4 urls. Measured on
+    org 1824: four references → 402 at the wallet
+    (`06a8212a-b28e-4121-b681-5a46821cd0f5`); five → **502 `bad_gateway`
+    "The media service is unavailable — try again later" in ~445 ms, twice**
+    (`2b59e0ce-9a2e-40ab-b0ba-cff566220b1f`,
+    `b81bb7bd-1161-4572-bd10-e28cd98e61e0`; run 1 on org 1823
+    `8584b2b6-18bf-41f7-95d8-e657cd08df20`). Above four the upstream fails
+    instead of validating, so a user who could send five would be told to
+    "try again later" for a body that can never succeed. The app enforces
+    the 1–4 range client-side; asked of Hasan: a 400 that names the limit.

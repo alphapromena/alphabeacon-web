@@ -4584,3 +4584,70 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
 - Next: the founder's word on the Phase 0 report — A1–A3, the §3.6 funded
   proofs, items 51–53 to Hasan/Ward — then /A, /C, /D on this branch; /B
   when Hasan names the door. Never push; never merge.
+
+### 2026-09-10 11:45 — HSN-0910: Phase 0 accepted; A2 card art fetched; the funded proofs ran on org 1813 (A3 PROVEN, the voice envelope measured); items 57/58 filed; the branch pushed as the record
+
+- Did: **The founder's word on the Phase 0 report:** A1 confirmed (the
+  grid is Hasan's 13; `social-posts.media` stays on Create Visual, no
+  card); A2 AMENDED — card art is AI-generated on Higgsfield (the addendum
+  "HSN-0910-addendum-A2-card-art"); A3 accepted as ASSUMED until the
+  funded `images.edit`; the three funded proofs approved on org 1813 under
+  `LIVE_MEDIA=1`; two new open items for Hasan; push this branch only.
+  **A2 — the card art (commit `74f2c82`):** the 13 CloudFront links fetched
+  (13 × 200, PNG 1344×752, 1.05–1.67 MB), converted with ffmpeg libwebp to
+  1280 px wide at quality 82 (25–66 KB each, 532 KB in all) into
+  `public/studio/cards/<capability>.webp`; the PNGs never entered the
+  repo; provenance (model `gpt_image_2`, the 13 Higgsfield job ids, no
+  urls) in `Docs/qa/hsn-0910/card-art.md`; `vercel.json` gives
+  `/studio/(.*)` the one-day cache of `/brand/(.*)`. One image checked by
+  eye against the brand law (a charcoal card, one gold mark, no text).
+  **The funded proofs (`pnpm probe:hsn-0910 -- --funded-proofs`, a fourth
+  mode of the script, refused without `LIVE_MEDIA=1`), 08:39Z, org 1813,
+  wallet `{59900,0,59900}` before (`64005f8b-38e3-47c9-8238-99a0477cc64a`):**
+  the `images.edit` card art uploaded as the input
+  (`masset_f620748f36f24060d957497b`, presign
+  `a5efac95-73ee-4edf-926a-19857411f7a8`, PUT 200) and read-presigned
+  (`8666915d-a693-4a74-83ca-403e4681afd4`); three 202s —
+  `logos.generate` balanced ×1 `mjob_e0000dbadb535107bc16d584`
+  (`4a844db9-e029-4ec7-b4bf-bc811e58b74d`), `voice.speak` balanced one unit
+  `mjob_e68d75567f364c34ab574b15` (`932c83bc-de6c-4bd4-83d8-bf4271a91b4a`),
+  `images.edit` with OUR presigned url as the only reference
+  `mjob_deed21e0f9608090deff880f` (`46722d47-fab7-49a0-a3b5-a472b821d238`).
+  **All three `succeeded`:** logos after 27 s on `image-balanced`, one
+  1024×1024 image (`masset_5018051a8c763055a409f60c`, the presigned url
+  answers 200 image/png 618 813 bytes); voice on the first poll on
+  `voice-turbo`, **two assets — `audio` (`durationS` 3.158, audio/mpeg
+  51 036 bytes) and `document` (application/json 1 360 bytes: a
+  `characters` / `startSeconds` / `endSeconds` table) — the §3.4 envelope,
+  measured**; **`images.edit` on the first poll on `image-reference`, `plan:
+  null`, one image (`masset_10acdf69fdd0cfc09960c425`, 1 175 094 bytes) —
+  and the output is the input's vase and table with the background
+  replaced by the deep-navy backdrop the instruction asked for: Hasan's
+  door FETCHED our read-presigned url. A3 is PROVEN (item 54 closes).**
+  Wallet after `{59886,0,59886}` (`014fcb01-f5fc-4b68-9386-b4e098e99e89`) —
+  **14 cents, exactly the catalog's 0.03 + 0.05 + 0.06**; the usage read by
+  capability (`15f646f1-14e2-4584-b802-e0d412b0a2fb`) carries those three
+  lines plus a `guardrail_text_units` line of $0.00015 per job that the
+  document does not mention (no blocker; below the cent). The record:
+  `Docs/qa/hsn-0910/phase0/funded/` (captures, the terminal envelopes,
+  downscaled `.webp` copies of the input and both image outputs, the voice
+  timestamps document verbatim; nothing deleted on the org) and the
+  "Funded proofs" sub-section of the shapes doc. **The supplement AGREES
+  with the document** on every claim it makes (the prices, the pinned
+  `plan: null`, the two-asset voice envelope) — so the build goes on to
+  the gate.
+  **Items 57 and 58** filed for Hasan on the founder's word (`lang: "ar"`
+  refused on motion; five references → 502), item 55 points at them.
+  **The push:** `git push -u origin feat/hsn-0910` at ~08:36Z — this branch
+  only; `main` `1772734` and `live` `463806c` untouched on origin.
+- Phase: HSN-0910 Phase 0 — accepted and supplemented; /A, /C, /D begin on
+  this branch; /B HELD (item 51).
+- Files: `public/studio/cards/*.webp` (13, new), `Docs/qa/hsn-0910/card-art.md`
+  (new), `vercel.json`, `scripts/probe-hsn-0910.ts` (`--funded-proofs`),
+  `Docs/qa/hsn-0910/phase0/funded/**` (new), `Docs/api/alphastudio-shapes.md`
+  (the funded sub-section), `.agent/{open-items,sessions,state}.md`.
+- Decisions: see decisions.md — HSN-0910 Phase 0 (the funded addendum).
+- Verify: `pnpm eslint scripts/probe-hsn-0910.ts` clean · `pnpm typecheck`
+  green; no app code changed yet.
+- Next: /A (the table, the grid, the composers), /C (the org id), /D (the
+  guard, the env map), then the gate.

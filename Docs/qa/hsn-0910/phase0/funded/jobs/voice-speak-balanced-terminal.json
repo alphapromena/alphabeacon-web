@@ -1,0 +1,41 @@
+{
+  "title": "voice-speak-balanced",
+  "status": 200,
+  "requestId": "2e9894e3-b432-4cac-904e-21e7f17bf58c",
+  "polls": 1,
+  "seconds": 0.8,
+  "response": {
+    "jobId": "mjob_e68d75567f364c34ab574b15",
+    "status": "succeeded",
+    "capability": "voice.speak",
+    "plan": "balanced",
+    "modelAlias": "voice-turbo",
+    "origin": {
+      "kind": "standalone",
+      "ref": "hsn-0910-funded-voice"
+    },
+    "assets": [
+      {
+        "assetId": "masset_ed5baaaadec5b34bad9b22b5",
+        "kind": "audio",
+        "url": "<redacted url: 1619 chars>",
+        "expiresAt": "2026-09-10T09:40:05.284Z",
+        "meta": {
+          "durationS": 3.158,
+          "synthetic": true
+        }
+      },
+      {
+        "assetId": "masset_fff1395bc96bc98ae70e7282",
+        "kind": "document",
+        "url": "<redacted url: 1620 chars>",
+        "expiresAt": "2026-09-10T09:40:05.284Z",
+        "meta": {
+          "synthetic": true
+        }
+      }
+    ],
+    "createdAt": "2026-09-10T08:39:34.770Z",
+    "updatedAt": "2026-09-10T08:39:38.913Z"
+  }
+}

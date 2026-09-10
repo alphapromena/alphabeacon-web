@@ -1,0 +1,514 @@
+{
+  "run": "2026-09-10T08:39:25.491Z",
+  "orgId": "1813",
+  "owner": "qa+1788440509919@alphapromena.com",
+  "captures": [
+    {
+      "seq": 1,
+      "section": "funded",
+      "title": "funded · GET /me/orgs — the funded owner’s orgs",
+      "method": "GET",
+      "path": "/me/orgs",
+      "status": 200,
+      "ms": 481,
+      "requestId": "b87ddd1b-f8f1-472d-a3ea-2f8503e282cf",
+      "response": {
+        "items": [
+          {
+            "id": "1813",
+            "name": "QA Funded Org 1788440509919",
+            "slug": "qa-funded-org-1788440509919",
+            "status": "active",
+            "role": "owner",
+            "joinedAt": "2026-09-03T13:02:00.200Z"
+          }
+        ],
+        "total": 1
+      },
+      "file": "setup/me-orgs.json"
+    },
+    {
+      "seq": 2,
+      "section": "funded",
+      "title": "funded · wallet — before",
+      "method": "GET",
+      "path": "/orgs/:id/alphastudio/wallet",
+      "status": 200,
+      "ms": 847,
+      "requestId": "64005f8b-38e3-47c9-8238-99a0477cc64a",
+      "response": {
+        "cents": 59900,
+        "heldCents": 0,
+        "availableCents": 59900
+      },
+      "file": "setup/wallet-before.json"
+    },
+    {
+      "seq": 3,
+      "section": "setup",
+      "title": "asset input · media/assets/presign — image/png",
+      "method": "POST",
+      "path": "/orgs/:id/alphastudio/media/assets/presign",
+      "status": 201,
+      "ms": 950,
+      "requestId": "a5efac95-73ee-4edf-926a-19857411f7a8",
+      "request": {
+        "mediaType": "image/png",
+        "desc": "HSN-0910 funded proof — the images.edit input"
+      },
+      "response": {
+        "assetId": "masset_f620748f36f24060d957497b",
+        "uploadUrl": "<redacted url: 1667 chars>",
+        "expiresAt": "2026-09-10T08:54:29.610Z",
+        "mediaType": "image/png"
+      },
+      "file": "setup/presign-input.json"
+    },
+    {
+      "seq": 4,
+      "section": "setup",
+      "title": "asset input · PUT 1265034 bytes to the presigned url (from Node)",
+      "method": "PUT",
+      "path": "(presigned storage url — not our API)",
+      "status": 200,
+      "ms": 1469
+    },
+    {
+      "seq": 5,
+      "section": "funded",
+      "title": "funded · media/assets/:id/presign — the input’s read url",
+      "method": "POST",
+      "path": "/orgs/:id/alphastudio/media/assets/masset_f620748f36f24060d957497b/presign",
+      "status": 200,
+      "ms": 1086,
+      "requestId": "8666915d-a693-4a74-83ca-403e4681afd4",
+      "response": {
+        "assetId": "masset_f620748f36f24060d957497b",
+        "url": "<redacted url: 1627 chars>",
+        "expiresAt": "2026-09-10T09:39:32.263Z"
+      },
+      "file": "setup/read-presign-input.json"
+    },
+    {
+      "seq": 6,
+      "section": "funded",
+      "title": "funded · media/jobs — logos-generate-balanced",
+      "method": "POST",
+      "path": "/orgs/:id/alphastudio/media/jobs",
+      "status": 202,
+      "ms": 1438,
+      "requestId": "4a844db9-e029-4ec7-b4bf-bc811e58b74d",
+      "note": "the cheapest render on the catalog: image-balanced $0.03 per image",
+      "request": {
+        "capability": "logos.generate",
+        "plan": "balanced",
+        "params": {
+          "count": 1,
+          "aspectRatio": "1:1",
+          "outputFormat": "png"
+        },
+        "guidance": [
+          {
+            "role": "headline",
+            "text": "Alpha Pro MENA"
+          },
+          {
+            "role": "subject",
+            "text": "a data-lineage platform; three aligned nodes joined by one line"
+          },
+          {
+            "role": "style",
+            "text": "flat, geometric — a working mark for a browser tab and a slide master"
+          },
+          {
+            "role": "palette",
+            "text": "deep navy on warm off-white, one teal accent"
+          }
+        ],
+        "origin": {
+          "kind": "standalone",
+          "ref": "hsn-0910-funded-logos"
+        }
+      },
+      "response": {
+        "jobId": "mjob_e0000dbadb535107bc16d584",
+        "status": "queued",
+        "capability": "logos.generate",
+        "plan": "balanced",
+        "modelAlias": "image-balanced",
+        "origin": {
+          "kind": "standalone",
+          "ref": "hsn-0910-funded-logos"
+        },
+        "assets": [],
+        "createdAt": "2026-09-10T08:39:33.580Z",
+        "updatedAt": "2026-09-10T08:39:33.580Z"
+      },
+      "file": "jobs/logos-generate-balanced-receipt.json"
+    },
+    {
+      "seq": 7,
+      "section": "funded",
+      "title": "funded · media/jobs — voice-speak-balanced",
+      "method": "POST",
+      "path": "/orgs/:id/alphastudio/media/jobs",
+      "status": 202,
+      "ms": 1110,
+      "requestId": "932c83bc-de6c-4bd4-83d8-bf4271a91b4a",
+      "note": "one unit (52 characters, under 1000): voice-turbo $0.05; the §3.4 multi-asset envelope",
+      "request": {
+        "capability": "voice.speak",
+        "plan": "balanced",
+        "prompt": "Welcome to Alpha Pro. Here is what changed this week.",
+        "params": {
+          "voice": "Rachel",
+          "lang": "en",
+          "stability": 0.5,
+          "similarity": 0.75,
+          "speed": 1
+        },
+        "origin": {
+          "kind": "standalone",
+          "ref": "hsn-0910-funded-voice"
+        }
+      },
+      "response": {
+        "jobId": "mjob_e68d75567f364c34ab574b15",
+        "status": "queued",
+        "capability": "voice.speak",
+        "plan": "balanced",
+        "modelAlias": "voice-turbo",
+        "origin": {
+          "kind": "standalone",
+          "ref": "hsn-0910-funded-voice"
+        },
+        "assets": [],
+        "createdAt": "2026-09-10T08:39:34.770Z",
+        "updatedAt": "2026-09-10T08:39:34.770Z"
+      },
+      "file": "jobs/voice-speak-balanced-receipt.json"
+    },
+    {
+      "seq": 8,
+      "section": "funded",
+      "title": "funded · media/jobs — images-edit",
+      "method": "POST",
+      "path": "/orgs/:id/alphastudio/media/jobs",
+      "status": 202,
+      "ms": 1195,
+      "requestId": "46722d47-fab7-49a0-a3b5-a472b821d238",
+      "note": "OUR read-presigned url as the one reference: image-reference $0.06; the A3 proof",
+      "request": {
+        "capability": "images.edit",
+        "instruction": "replace the background with a plain deep-navy studio backdrop",
+        "params": {
+          "referenceImages": [
+            "<redacted url: 1627 chars>"
+          ],
+          "aspectRatio": "16:9",
+          "outputFormat": "png"
+        },
+        "origin": {
+          "kind": "standalone",
+          "ref": "hsn-0910-funded-images-edit"
+        }
+      },
+      "response": {
+        "jobId": "mjob_deed21e0f9608090deff880f",
+        "status": "queued",
+        "capability": "images.edit",
+        "plan": null,
+        "modelAlias": "image-reference",
+        "origin": {
+          "kind": "standalone",
+          "ref": "hsn-0910-funded-images-edit"
+        },
+        "assets": [],
+        "createdAt": "2026-09-10T08:39:35.968Z",
+        "updatedAt": "2026-09-10T08:39:35.968Z"
+      },
+      "file": "jobs/images-edit-receipt.json"
+    },
+    {
+      "seq": 9,
+      "section": "funded",
+      "title": "funded · media/jobs/mjob_e0000dbadb535107bc16d584 — terminal read after 8 poll(s), 27.4 s (logos-generate-balanced)",
+      "method": "GET",
+      "path": "/orgs/:id/alphastudio/media/jobs/mjob_e0000dbadb535107bc16d584",
+      "status": 200,
+      "ms": 757,
+      "requestId": "5a4cf37d-d809-4951-83ea-dc6e0f3ac512",
+      "response": {
+        "jobId": "mjob_e0000dbadb535107bc16d584",
+        "status": "succeeded",
+        "capability": "logos.generate",
+        "plan": "balanced",
+        "modelAlias": "image-balanced",
+        "origin": {
+          "kind": "standalone",
+          "ref": "hsn-0910-funded-logos"
+        },
+        "assets": [
+          {
+            "assetId": "masset_5018051a8c763055a409f60c",
+            "kind": "image",
+            "url": "<redacted url: 1619 chars>",
+            "expiresAt": "2026-09-10T09:40:03.414Z",
+            "meta": {
+              "width": 1024,
+              "height": 1024,
+              "synthetic": true
+            }
+          }
+        ],
+        "createdAt": "2026-09-10T08:39:33.580Z",
+        "updatedAt": "2026-09-10T08:40:01.246Z"
+      },
+      "file": "jobs/logos-generate-balanced-terminal.json"
+    },
+    {
+      "seq": 10,
+      "section": "funded",
+      "title": "funded · GET the presigned url of masset_5018051a8c763055a409f60c (image) — from Node",
+      "method": "GET",
+      "path": "(presigned storage url — not our API)",
+      "status": 200,
+      "ms": 1020,
+      "response": {
+        "contentType": "image/png",
+        "bytes": 618813,
+        "kept": "output-logos-generate-balanced.webp"
+      }
+    },
+    {
+      "seq": 11,
+      "section": "funded",
+      "title": "funded · media/jobs/mjob_e68d75567f364c34ab574b15 — terminal read after 1 poll(s), 0.8 s (voice-speak-balanced)",
+      "method": "GET",
+      "path": "/orgs/:id/alphastudio/media/jobs/mjob_e68d75567f364c34ab574b15",
+      "status": 200,
+      "ms": 760,
+      "requestId": "2e9894e3-b432-4cac-904e-21e7f17bf58c",
+      "response": {
+        "jobId": "mjob_e68d75567f364c34ab574b15",
+        "status": "succeeded",
+        "capability": "voice.speak",
+        "plan": "balanced",
+        "modelAlias": "voice-turbo",
+        "origin": {
+          "kind": "standalone",
+          "ref": "hsn-0910-funded-voice"
+        },
+        "assets": [
+          {
+            "assetId": "masset_ed5baaaadec5b34bad9b22b5",
+            "kind": "audio",
+            "url": "<redacted url: 1619 chars>",
+            "expiresAt": "2026-09-10T09:40:05.284Z",
+            "meta": {
+              "durationS": 3.158,
+              "synthetic": true
+            }
+          },
+          {
+            "assetId": "masset_fff1395bc96bc98ae70e7282",
+            "kind": "document",
+            "url": "<redacted url: 1620 chars>",
+            "expiresAt": "2026-09-10T09:40:05.284Z",
+            "meta": {
+              "synthetic": true
+            }
+          }
+        ],
+        "createdAt": "2026-09-10T08:39:34.770Z",
+        "updatedAt": "2026-09-10T08:39:38.913Z"
+      },
+      "file": "jobs/voice-speak-balanced-terminal.json"
+    },
+    {
+      "seq": 12,
+      "section": "funded",
+      "title": "funded · GET the presigned url of masset_ed5baaaadec5b34bad9b22b5 (audio) — from Node",
+      "method": "GET",
+      "path": "(presigned storage url — not our API)",
+      "status": 200,
+      "ms": 236,
+      "response": {
+        "contentType": "audio/mpeg",
+        "bytes": 51036,
+        "kept": null
+      }
+    },
+    {
+      "seq": 13,
+      "section": "funded",
+      "title": "funded · GET the presigned url of masset_fff1395bc96bc98ae70e7282 (document) — from Node",
+      "method": "GET",
+      "path": "(presigned storage url — not our API)",
+      "status": 200,
+      "ms": 480,
+      "response": {
+        "contentType": "application/json",
+        "bytes": 1360,
+        "kept": "voice-speak-balanced-document.json"
+      }
+    },
+    {
+      "seq": 14,
+      "section": "funded",
+      "title": "funded · media/jobs/mjob_deed21e0f9608090deff880f — terminal read after 1 poll(s), 0.8 s (images-edit)",
+      "method": "GET",
+      "path": "/orgs/:id/alphastudio/media/jobs/mjob_deed21e0f9608090deff880f",
+      "status": 200,
+      "ms": 752,
+      "requestId": "df384eee-2b0c-4f17-80ac-2528d0b7d810",
+      "response": {
+        "jobId": "mjob_deed21e0f9608090deff880f",
+        "status": "succeeded",
+        "capability": "images.edit",
+        "plan": null,
+        "modelAlias": "image-reference",
+        "origin": {
+          "kind": "standalone",
+          "ref": "hsn-0910-funded-images-edit"
+        },
+        "assets": [
+          {
+            "assetId": "masset_10acdf69fdd0cfc09960c425",
+            "kind": "image",
+            "url": "<redacted url: 1619 chars>",
+            "expiresAt": "2026-09-10T09:40:06.755Z",
+            "meta": {
+              "synthetic": true
+            }
+          }
+        ],
+        "createdAt": "2026-09-10T08:39:35.968Z",
+        "updatedAt": "2026-09-10T08:40:00.047Z"
+      },
+      "file": "jobs/images-edit-terminal.json"
+    },
+    {
+      "seq": 15,
+      "section": "funded",
+      "title": "funded · GET the presigned url of masset_10acdf69fdd0cfc09960c425 (image) — from Node",
+      "method": "GET",
+      "path": "(presigned storage url — not our API)",
+      "status": 200,
+      "ms": 329,
+      "response": {
+        "contentType": "image/png",
+        "bytes": 1175094,
+        "kept": "output-images-edit.webp"
+      }
+    },
+    {
+      "seq": 16,
+      "section": "funded",
+      "title": "funded · wallet — after",
+      "method": "GET",
+      "path": "/orgs/:id/alphastudio/wallet",
+      "status": 200,
+      "ms": 737,
+      "requestId": "014fcb01-f5fc-4b68-9386-b4e098e99e89",
+      "response": {
+        "cents": 59886,
+        "heldCents": 0,
+        "availableCents": 59886
+      },
+      "file": "after/wallet.json"
+    },
+    {
+      "seq": 17,
+      "section": "funded",
+      "title": "funded · usage — today, by capability",
+      "method": "GET",
+      "path": "/orgs/:id/alphastudio/usage?from=2026-09-10&to=2026-09-10&group_by=capability",
+      "status": 200,
+      "ms": 965,
+      "requestId": "15f646f1-14e2-4584-b802-e0d412b0a2fb",
+      "response": {
+        "from": "2026-09-10",
+        "to": "2026-09-10",
+        "groupBy": "capability",
+        "groups": [
+          {
+            "key": "images.edit",
+            "unit": "guardrail_text_units",
+            "qty": 1,
+            "costUsdEstimate": "0.000150000000"
+          },
+          {
+            "key": "images.edit",
+            "unit": "images",
+            "qty": 1,
+            "costUsdEstimate": "0.060000000000"
+          },
+          {
+            "key": "logos.generate",
+            "unit": "guardrail_text_units",
+            "qty": 1,
+            "costUsdEstimate": "0.000150000000"
+          },
+          {
+            "key": "logos.generate",
+            "unit": "images",
+            "qty": 1,
+            "costUsdEstimate": "0.030000000000"
+          },
+          {
+            "key": "voice.speak",
+            "unit": "audio_text_units",
+            "qty": 1,
+            "costUsdEstimate": "0.050000000000"
+          },
+          {
+            "key": "voice.speak",
+            "unit": "guardrail_text_units",
+            "qty": 1,
+            "costUsdEstimate": "0.000150000000"
+          }
+        ],
+        "days": [
+          {
+            "day": "2026-09-10",
+            "unit": "audio_text_units",
+            "qty": 1,
+            "costUsdEstimate": "0.050000000000"
+          },
+          {
+            "day": "2026-09-10",
+            "unit": "guardrail_text_units",
+            "qty": 3,
+            "costUsdEstimate": "0.000450000000"
+          },
+          {
+            "day": "2026-09-10",
+            "unit": "images",
+            "qty": 2,
+            "costUsdEstimate": "0.090000000000"
+          }
+        ]
+      },
+      "file": "after/usage-by-capability.json"
+    }
+  ],
+  "findings": [
+    "Funded proofs on org 1813 (\"QA Funded Org 1788440509919\"), LIVE_MEDIA=1, on the founder's word.",
+    "Wallet before: {\"cents\":59900,\"heldCents\":0,\"availableCents\":59900}.",
+    "asset input (image/png): presign 201 → masset_f620748f36f24060d957497b; PUT 200.",
+    "images.edit input: the file given with --image (1265034 bytes); asset masset_f620748f36f24060d957497b; a downscaled copy kept as input-images-edit.webp.",
+    "logos-generate-balanced: 202 job mjob_e0000dbadb535107bc16d584, status queued.",
+    "voice-speak-balanced: 202 job mjob_e68d75567f364c34ab574b15, status queued.",
+    "images-edit: 202 job mjob_deed21e0f9608090deff880f, status queued.",
+    "logos-generate-balanced: succeeded after 8 poll(s) (27.4 s); modelAlias \"image-balanced\"; plan \"balanced\"; 1 asset(s): masset_5018051a8c763055a409f60c image meta {\"width\":1024,\"height\":1024,\"synthetic\":true}.",
+    "logos-generate-balanced · masset_5018051a8c763055a409f60c (image): the presigned url answers 200 image/png 618813 bytes; kept as output-logos-generate-balanced.webp.",
+    "voice-speak-balanced: succeeded after 1 poll(s) (0.8 s); modelAlias \"voice-turbo\"; plan \"balanced\"; 2 asset(s): masset_ed5baaaadec5b34bad9b22b5 audio meta {\"durationS\":3.158,\"synthetic\":true} · masset_fff1395bc96bc98ae70e7282 document meta {\"synthetic\":true}.",
+    "voice-speak-balanced · masset_ed5baaaadec5b34bad9b22b5 (audio): the presigned url answers 200 audio/mpeg 51036 bytes.",
+    "voice-speak-balanced · masset_fff1395bc96bc98ae70e7282 (document): the presigned url answers 200 application/json 1360 bytes; kept as voice-speak-balanced-document.json.",
+    "images-edit: succeeded after 1 poll(s) (0.8 s); modelAlias \"image-reference\"; plan null; 1 asset(s): masset_10acdf69fdd0cfc09960c425 image meta {\"synthetic\":true}.",
+    "images-edit · masset_10acdf69fdd0cfc09960c425 (image): the presigned url answers 200 image/png 1175094 bytes; kept as output-images-edit.webp.",
+    "Wallet after: {\"cents\":59886,\"heldCents\":0,\"availableCents\":59886} — 14 cents spent.",
+    "Usage today by capability: 200 [{\"key\":\"images.edit\",\"unit\":\"guardrail_text_units\",\"qty\":1,\"costUsdEstimate\":\"0.000150000000\"},{\"key\":\"images.edit\",\"unit\":\"images\",\"qty\":1,\"costUsdEstimate\":\"0.060000000000\"},{\"key\":\"logos.generate\",\"unit\":\"guardrail_text_units\",\"qty\":1,\"costUsdEstimate\":\"0.000150000000\"},{\"key\":\"logos.generate\",\"unit\":\"images\",\"qty\":1,\"costUsdEstimate\":\"0.030000000000\"},{\"key\":\"voice.speak\",\"unit\":\"audio_text_units\",\"qty\":1,\"costUsdEstimate\":\"0.050000000000\"},{\"key\":\"voice.speak\",\"unit\":\"guardrail_text_units\",\"qty\":1,\"costUsdEstimate\":\"0.000150000000\"}]."
+  ]
+}

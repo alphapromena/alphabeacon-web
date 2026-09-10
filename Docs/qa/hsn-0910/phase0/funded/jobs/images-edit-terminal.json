@@ -1,0 +1,31 @@
+{
+  "title": "images-edit",
+  "status": 200,
+  "requestId": "df384eee-2b0c-4f17-80ac-2528d0b7d810",
+  "polls": 1,
+  "seconds": 0.8,
+  "response": {
+    "jobId": "mjob_deed21e0f9608090deff880f",
+    "status": "succeeded",
+    "capability": "images.edit",
+    "plan": null,
+    "modelAlias": "image-reference",
+    "origin": {
+      "kind": "standalone",
+      "ref": "hsn-0910-funded-images-edit"
+    },
+    "assets": [
+      {
+        "assetId": "masset_10acdf69fdd0cfc09960c425",
+        "kind": "image",
+        "url": "<redacted url: 1619 chars>",
+        "expiresAt": "2026-09-10T09:40:06.755Z",
+        "meta": {
+          "synthetic": true
+        }
+      }
+    ],
+    "createdAt": "2026-09-10T08:39:35.968Z",
+    "updatedAt": "2026-09-10T08:40:00.047Z"
+  }
+}

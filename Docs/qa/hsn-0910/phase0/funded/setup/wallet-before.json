@@ -1,0 +1,13 @@
+{
+  "title": "funded · wallet — before",
+  "method": "GET",
+  "path": "/orgs/:id/alphastudio/wallet",
+  "status": 200,
+  "ms": 847,
+  "requestId": "64005f8b-38e3-47c9-8238-99a0477cc64a",
+  "response": {
+    "cents": 59900,
+    "heldCents": 0,
+    "availableCents": 59900
+  }
+}

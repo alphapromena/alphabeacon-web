@@ -1,0 +1,33 @@
+{
+  "title": "logos-generate-balanced",
+  "status": 200,
+  "requestId": "5a4cf37d-d809-4951-83ea-dc6e0f3ac512",
+  "polls": 8,
+  "seconds": 27.4,
+  "response": {
+    "jobId": "mjob_e0000dbadb535107bc16d584",
+    "status": "succeeded",
+    "capability": "logos.generate",
+    "plan": "balanced",
+    "modelAlias": "image-balanced",
+    "origin": {
+      "kind": "standalone",
+      "ref": "hsn-0910-funded-logos"
+    },
+    "assets": [
+      {
+        "assetId": "masset_5018051a8c763055a409f60c",
+        "kind": "image",
+        "url": "<redacted url: 1619 chars>",
+        "expiresAt": "2026-09-10T09:40:03.414Z",
+        "meta": {
+          "width": 1024,
+          "height": 1024,
+          "synthetic": true
+        }
+      }
+    ],
+    "createdAt": "2026-09-10T08:39:33.580Z",
+    "updatedAt": "2026-09-10T08:40:01.246Z"
+  }
+}

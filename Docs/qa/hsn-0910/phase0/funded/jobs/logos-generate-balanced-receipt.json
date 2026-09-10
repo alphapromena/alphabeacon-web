@@ -1,0 +1,54 @@
+{
+  "title": "funded · media/jobs — logos-generate-balanced",
+  "method": "POST",
+  "path": "/orgs/:id/alphastudio/media/jobs",
+  "status": 202,
+  "ms": 1438,
+  "requestId": "4a844db9-e029-4ec7-b4bf-bc811e58b74d",
+  "note": "the cheapest render on the catalog: image-balanced $0.03 per image",
+  "request": {
+    "capability": "logos.generate",
+    "plan": "balanced",
+    "params": {
+      "count": 1,
+      "aspectRatio": "1:1",
+      "outputFormat": "png"
+    },
+    "guidance": [
+      {
+        "role": "headline",
+        "text": "Alpha Pro MENA"
+      },
+      {
+        "role": "subject",
+        "text": "a data-lineage platform; three aligned nodes joined by one line"
+      },
+      {
+        "role": "style",
+        "text": "flat, geometric — a working mark for a browser tab and a slide master"
+      },
+      {
+        "role": "palette",
+        "text": "deep navy on warm off-white, one teal accent"
+      }
+    ],
+    "origin": {
+      "kind": "standalone",
+      "ref": "hsn-0910-funded-logos"
+    }
+  },
+  "response": {
+    "jobId": "mjob_e0000dbadb535107bc16d584",
+    "status": "queued",
+    "capability": "logos.generate",
+    "plan": "balanced",
+    "modelAlias": "image-balanced",
+    "origin": {
+      "kind": "standalone",
+      "ref": "hsn-0910-funded-logos"
+    },
+    "assets": [],
+    "createdAt": "2026-09-10T08:39:33.580Z",
+    "updatedAt": "2026-09-10T08:39:33.580Z"
+  }
+}

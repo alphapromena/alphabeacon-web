@@ -1,0 +1,21 @@
+{
+  "title": "funded · GET /me/orgs — the funded owner’s orgs",
+  "method": "GET",
+  "path": "/me/orgs",
+  "status": 200,
+  "ms": 481,
+  "requestId": "b87ddd1b-f8f1-472d-a3ea-2f8503e282cf",
+  "response": {
+    "items": [
+      {
+        "id": "1813",
+        "name": "QA Funded Org 1788440509919",
+        "slug": "qa-funded-org-1788440509919",
+        "status": "active",
+        "role": "owner",
+        "joinedAt": "2026-09-03T13:02:00.200Z"
+      }
+    ],
+    "total": 1
+  }
+}

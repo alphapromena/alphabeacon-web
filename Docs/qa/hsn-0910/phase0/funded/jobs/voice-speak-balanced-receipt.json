@@ -1,0 +1,39 @@
+{
+  "title": "funded · media/jobs — voice-speak-balanced",
+  "method": "POST",
+  "path": "/orgs/:id/alphastudio/media/jobs",
+  "status": 202,
+  "ms": 1110,
+  "requestId": "932c83bc-de6c-4bd4-83d8-bf4271a91b4a",
+  "note": "one unit (52 characters, under 1000): voice-turbo $0.05; the §3.4 multi-asset envelope",
+  "request": {
+    "capability": "voice.speak",
+    "plan": "balanced",
+    "prompt": "Welcome to Alpha Pro. Here is what changed this week.",
+    "params": {
+      "voice": "Rachel",
+      "lang": "en",
+      "stability": 0.5,
+      "similarity": 0.75,
+      "speed": 1
+    },
+    "origin": {
+      "kind": "standalone",
+      "ref": "hsn-0910-funded-voice"
+    }
+  },
+  "response": {
+    "jobId": "mjob_e68d75567f364c34ab574b15",
+    "status": "queued",
+    "capability": "voice.speak",
+    "plan": "balanced",
+    "modelAlias": "voice-turbo",
+    "origin": {
+      "kind": "standalone",
+      "ref": "hsn-0910-funded-voice"
+    },
+    "assets": [],
+    "createdAt": "2026-09-10T08:39:34.770Z",
+    "updatedAt": "2026-09-10T08:39:34.770Z"
+  }
+}
