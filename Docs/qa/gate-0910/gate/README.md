@@ -8,3 +8,4 @@ One line per run; each run's own README carries the table.
 - `20260910-123157` — GREEN, 1.0 min, tree `e155055`+, workers 2, rounds 1, lanes A · only live-notifications+live-wallet → [README](20260910-123157/README.md)
 - `20260910-123443` — RED, 13.4 min, tree `a3755d3`, workers 3, rounds 1, lanes A → [README](20260910-123443/README.md)
 - `20260910-124809` — STOPPED, 0.3 min, tree ``, workers 4, rounds 1, lanes A → [README](20260910-124809/README.md)
+- `20260910-125038` — RED, 7.7 min, tree `6c10e04`, workers 3, rounds 1, lanes A → [README](20260910-125038/README.md)

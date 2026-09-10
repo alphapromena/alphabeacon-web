@@ -414,12 +414,15 @@ class Gate {
       await sleep(250)
     }
     this.heartbeat = setInterval(() => {
-      void Promise.all(Array.from({ length: 4 }, () => probe())).catch(() => {})
+      // ONE probe: under the dev function's concurrency limit (429
+      // ConcurrentInvocationLimitExceeded, measured 2026-09-10) a wide heartbeat
+      // competes with the files it is meant to serve; one keeps the service warm.
+      void probe().catch(() => {})
     }, 5000)
     this.heartbeat.unref?.()
     this.liveEnv.E2E_WARMED_BY_RUNNER = '1'
     this.say(
-      'heartbeat: 4 probes every 5 s for the round; the files stand down from their own warm-ups',
+      'heartbeat: one probe every 5 s for the round; the files stand down from their own warm-ups',
     )
   }
 

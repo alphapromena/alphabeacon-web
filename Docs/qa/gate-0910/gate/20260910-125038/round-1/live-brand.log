@@ -1,0 +1,42 @@
+warm-up: skipped — the runner warmed the fleet and keeps the heartbeat (GATE-0910 §3.2)
+
+Running 5 tests using 1 worker
+
+  x  1 [chromium] › e2e\live-brand.spec.ts:57:1 › a fresh owner + org, made through the product (1.0m)
+  -  2 [chromium] › e2e\live-brand.spec.ts:66:1 › a custom tone: created under the adapter, edited, and it survives a reload
+  -  3 [chromium] › e2e\live-brand.spec.ts:100:1 › voice rules: the flat live list persists through the API
+  -  4 [chromium] › e2e\live-brand.spec.ts:119:1 › sources and topics: scheme-less display, real persistence
+  -  5 [chromium] › e2e\live-brand.spec.ts:150:1 › deleting a tone reflects in the schedules that referenced it
+
+
+  1) [chromium] › e2e\live-brand.spec.ts:57:1 › a fresh owner + org, made through the product ──────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('heading', { name: 'Dashboard', level: 1 })
+    Expected: visible
+    Timeout: 60000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 60000ms
+      - waiting for getByRole('heading', { name: 'Dashboard', level: 1 })
+
+
+       at live-setup.ts:318
+
+      316 |
+      317 |   // No wizard in between: the next thing on screen is the product.
+    > 318 |   await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible({
+          |                                                                            ^
+      319 |     timeout: WORKSPACE_READY,
+      320 |   })
+      321 | }
+        at signUpAndEnter (C:\alphabeacon-web\alphabeacon-web\e2e\live-setup.ts:318:76)
+        at C:\alphabeacon-web\alphabeacon-web\e2e\live-brand.spec.ts:58:3
+
+    Error Context: .gate\artifacts\20260910-125038\round-1\live-brand\live-brand-a-fresh-owner-org-made-through-the-product-chromium\error-context.md
+
+  1 failed
+    [chromium] › e2e\live-brand.spec.ts:57:1 › a fresh owner + org, made through the product ───────
+  4 did not run

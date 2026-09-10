@@ -1,0 +1,29 @@
+warm-up: skipped — the runner warmed the fleet and keeps the heartbeat (GATE-0910 §3.2)
+
+Running 1 test using 1 worker
+
+  x  1 [chromium] › e2e\live-notifications.spec.ts:33:1 › the inbox endpoints hold their contract, and the bell tells the truth (5.9s)
+
+
+  1) [chromium] › e2e\live-notifications.spec.ts:33:1 › the inbox endpoints hold their contract, and the bell tells the truth 
+
+    Error: GET /me/orgs → 429 {"Reason":"ConcurrentInvocationLimitExceeded","Type":"User","message":"Rate Exceeded."}
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 429
+
+      58 |     orgsRes.status(),
+      59 |     `GET /me/orgs → ${orgsRes.status()} ${(await orgsRes.text()).slice(0, 200)}`,
+    > 60 |   ).toBe(200)
+         |     ^
+      61 |   const orgs = (await orgsRes.json()) as { items: { id: string }[] }
+      62 |   const orgId = orgs.items[0].id
+      63 |
+        at C:\alphabeacon-web\alphabeacon-web\e2e\live-notifications.spec.ts:60:5
+
+    Error Context: .gate\artifacts\20260910-125038\round-1\live-notifications\live-notifications-the-inb-f0987-nd-the-bell-tells-the-truth-chromium\error-context.md
+
+  1 failed
+    [chromium] › e2e\live-notifications.spec.ts:33:1 › the inbox endpoints hold their contract, and the bell tells the truth 

@@ -1,0 +1,10 @@
+warm-up: skipped — the runner warmed the fleet and keeps the heartbeat (GATE-0910 §3.2)
+
+Running 3 tests using 1 worker
+
+  ok 1 [chromium] › e2e\live-video-duration.spec.ts:76:1 › a fresh owner + org, made through the product (5.5s)
+  ok 2 [chromium] › e2e\live-video-duration.spec.ts:86:1 › a bad durationS is refused with 400 BEFORE the wallet check — the field is known, a maximum is enforced (6.7s)
+  -  3 [chromium] › e2e\live-video-duration.spec.ts:109:1 › the valid video body clears validation — and self-skips on 402, the positive proof riding on LIVE_MEDIA=1
+
+  1 skipped
+  2 passed (18.1s)
