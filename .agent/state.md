@@ -5,7 +5,34 @@ without reconstructing it from the session log. **Update this file at the end
 of any turn that finishes a phase or changes the plan.** `sessions.md` is the
 chronological record; this is the current picture.
 
-_Last updated: 2026-09-03, after **M-BIL-1 (/auto) RAN GREEN on
+_Last updated: 2026-09-10, after **ORDER HSN-0910 Phase 0 — Hasan's
+2026-09-09 meeting (the 13 media capabilities in Studio, State under Country,
+the org id in Settings, the dev/prod split) — PROBED at zero spend and HELD at
+stop point 1 (report-and-stop).** Branch **`feat/hsn-0910`** off `main` =
+`1772734`, local only, NOT pushed. Hasan's document verbatim at
+`Docs/api/media-capabilities.md`. `pnpm probe:hsn-0910` on fresh QA orgs
+**1823** (run 1) and **1824** (run 2 = the record, `Docs/qa/hsn-0910/phase0/`,
+plus its motion supplement on the SAME org): **13/13 granted**, `selectable`
+exactly as the document (8 selectable, 5 pinned), the per-plan prices and
+aliases from `?plan=` (the plain read carries `plan: null` on the own-model
+rows), the approved voice enum `["g3YpdjT1OTh9cunaumJs","Rachel"]`; **every
+document example clears validation to 402 at the wallet** — except
+`motion.generate`'s `lang: "ar"`, refused on its own (item 55); **18 of 19
+traps → the generic 400** (item 49 stands), five `referenceImages` → **502,
+twice**; the approve door **404, not proxied** (item 52); **State under
+Country: `state` DROPPED by `PUT /orgs/:id/country` and by the event source,
+no state list anywhere → /B HELD** (item 51); org 1813 has no media job
+(§3.4 unmeasured); the API exposes no environment name; `1.malaky.ai` is LIVE
+(the `live` preview), the apex `malaky.ai` is still a GoDaddy page,
+`*.vercel.app` is unreachable from this host (item 53). Assumptions A1–A3 and
+the §3.6 funded proofs (`logos.generate` balanced $0.03, `voice.speak`
+balanced $0.05, `images.edit` $0.06 — on org 1813) await the founder. **Next:
+the founder's word, then /A (the 13-card grid on one table), /C (the org id
+in Settings), /D (the harness guard, the env map, Ward's message) on this
+branch; /B when Hasan names the door. Never push, never merge.** No new trap;
+traps 22 and 23 stand for the live gate, trap 24 for the record.
+
+Before that, 2026-09-03: **M-BIL-1 (/auto) RAN GREEN on
 `1.malaky.ai`: the founder's billing gate, steps 1–8 by a headed Chromium
 session, recorded (sessions.md "M-BIL-1 on production") — org **1813**
 funded by ONE test-mode checkout (Malaky Business, invoice
@@ -506,6 +533,7 @@ below).
 | `feat/bil-0902` | **BIL-0902 → BIL-0902/R, 2026-09-02/03 — branched off `main` (`9adb47c`), held by the founder's stop order, then REBASED onto `d645607`, re-probed, re-targeted and gated 20/20; MERGED as a fast-forward on 2026-09-03 (`main` → `5cbda94`) and DEPLOYED (production `dpl_3QpLH1SqJ5BrGbptusyp6TG5gZWs`, `live` `dpl_EjY9KcdJVFBqtR4NG7tx5m7SFUUn`); kept as the record, local only.** Billing on the Stripe sandbox: Ward's guide verbatim, the Phase-0 probe record (org 1670 — SUPERSEDED, old base/pro yearly contract), the seam, `/billing` + `/billing/success`, the 402/notification/chip reactions, the demo's H1/H2/H4 redirecting live. Gate closed 20/20 (sessions.md, 2026-09-03). **BIL-0902/R** delivered the re-target: Malaky Business / Malaky Scale monthly on the wire's own keys, the Enterprise card, `DASHBOARD_URL`, `skipUnlessFunded` as the one funded-QA-org mechanism; M-BIL-1 (/R) is the founder's, on `1.malaky.ai` (item 45) |
 | `feat/med-0831` | **MED-0831 + /R, 2026-08-31 — branched off `main` (`7b7222d`), REBASED onto `feat/cut-0831` (`aa6162e`) by the founder's stack ruling, MERGED and SHIPPED the same day on his fast-path ruling; kept on `origin` as the per-order record.** Phase 0 probed the media door in full (all eight types presign 201 with `desc`; the lifecycle clean; `GET …/media/assets` answers 200 — Ward item 4 apparently fixed; rows minted at presign time). Phase 1 `uploadMediaAsset` (no retry; a failed PUT deletes its own mint and reports the id). Phase 2 the Knowledge door split (H1) + the wire-only Files section (H2 re-ruled: no sidecar ever). Phase 3 the wire's org logo (H3; delete-then-upload replace; conflict shown, never picked), H5 `collection:{use:true}`, "logo" reserved. /R: `role: "logo"` on the presign per Hasan's ASSUMED A1–A4. Gate: verify w00–w06 ALL PASS, static 102/67/0, live rounds ABORTED by the founder (auth 7/7 · brand-rules 5/5 · country 4/4 stand) |
 | `feat/hsn-0902` | **HSN-0902, 2026-09-02 — branched off `main` (`9adb47c`), MERGED as a fast-forward the same day (`main` → `c5456f1`) and DEPLOYED (production `dpl_8f1MyYrEhAhq1FUGJKNxmpR2iwnt`, live `dpl_8Stid97fok9wb7wA5wCZHJ45VuGQ`); kept on `origin` as the per-order record.** Phase 0 probed three doors on org 1692, zero spend (`pnpm probe:hsn-0902`): the brand-kit presign 201 with `role` ECHOED by the list — A2 answered; `params.durationS` validated BEFORE the wallet (400 on a bad value, 402 on the valid one); NO door for `whatYouOffer`/`whatSetsYouApart` → Phase 3 carved out as HSN-0902/B (item 48). Phases 1+2: the Brand kit kind (PDF only, the closed `{desc,role}` pair from one function, no description asked, listed under Files with the badge from the echoed role, "brandkit" reserved) and `params.durationS` video-only with the one-place per-plan table in seconds (10/20/30, default 8; a type union keeps `params` off image bodies). Phase 4: static + live specs, the 402 self-skip rule (`skipUnlessFunded`; `live-generate` the one asserting spec), the gate-found Knowledge lazy-collection fix, the knowledge spec's SCREEN_SYNC rung. Gate: unit 537/48 · static 106/75/0 · verify w00–w06 PASS · live rounds 16/18 + 16/18 with both reds judged (the host's 51-minute sleep; the MED-0831 race) and cleared by recorded supplements |
+| `feat/hsn-0910` | **HSN-0910, 2026-09-10 — branched off `main` (`1772734`), LOCAL ONLY (never pushed), Phase 0 DONE at zero spend on QA orgs 1823/1824 and HELD at stop point 1 awaiting the founder: Hasan's document verbatim (`Docs/api/media-capabilities.md`), `scripts/probe-hsn-0910.ts` (`pnpm probe:hsn-0910`), the record under `Docs/qa/hsn-0910/phase0/` and the shapes section. /A, /C, /D not started; /B held on item 51.** |
 | `feat/cut-0831` | **CUT-0831, 2026-08-31 — branched off `main` (`7b7222d`). SHIPPED 2026-08-31 with MED-0831 (the first of the two ff steps; its own round-2 gate was 16/16; the eye-pass waived by the founder's fast-path ruling); kept on `origin` as the per-order record.** The steering box and the page-level Language picker deleted; per-tone language is the tone's own (`RunnableTone`, disabled dashed chips otherwise); the preset concept removed (`Tone.kind` gone, one list on I3, every tone deletable, wire bodies frozen in `brand-wire.test.ts`); the live suite performs the per-context language backfill (`ensureToneLanguage`). Probe: preset create 201 / DELETE 204 on org 1485 |
 | `probe/int13` | The PROBE-INT13 media probe (2026-08-26/27), branched off `main` (`fd84173`) — **PUSHED 2026-08-28**, not merged, so its open-items 34/35 do NOT exist on the ONB stack. Phase B is still blocked on Ward |
 | `probe/assets-0826` | The assets-endpoint probe (2026-08-26), docs-only — **PUSHED 2026-08-28** so the Ward message's file pointers resolve on GitHub |

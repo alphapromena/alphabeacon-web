@@ -4442,3 +4442,145 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
 - Next: the founder pushes `main:live`; tells Ward "sandbox verified"
   (item 45 step 9) and asks for the Stripe-side branding before the LIVE
   flip; HSN-0902/B on item 48.
+
+### 2026-09-10 08:25 — ORDER HSN-0910 Phase 0: the 13 capabilities, the approve door, State under Country and the environment probed on QA orgs 1823/1824 at zero spend; /B HELD; report-and-stop
+
+- Did: **Phase 0 only, by the order's stop point 1.** Branch `feat/hsn-0910` off
+  `main` = `1772734`, local, NOT pushed. Hasan's document committed verbatim as
+  `Docs/api/media-capabilities.md` (`6366c90`, byte-identical to the file he
+  sent — the copy pasted into the chat carried a UTF-8/Latin-1 artifact; the
+  disk copy did not). New `scripts/probe-hsn-0910.ts` (`pnpm probe:hsn-0910`;
+  `-- --render` re-renders the findings and the shapes section from the raw
+  record; `-- --motion-supplement --owner <email>` runs the motion ladder on
+  an EXISTING zero-wallet org). **Two full runs and one supplement**, org 619
+  untouched, the funded org 1813 read only: run 1 on org **1823** (07:46Z,
+  kept as `run1-org1823-findings.md` — its motion example carried a 1×1
+  still and a 3.0 s clip and the ladder that explains its 400 did not exist
+  yet), run 2 on org **1824** (07:55Z, THE record:
+  `Docs/qa/hsn-0910/phase0/` + the shapes section), the motion supplement on
+  1824 again (08:03Z — no third org; the crowded dev tenant is Hasan's first
+  point). Wallet `{0,0,0}` before (`703cf37f-d615-445a-8ac4-2337a6e37252`),
+  re-read as the shield immediately before the first body
+  (`cd47534b-733e-4e8e-9639-6b7645d7bd91`), `{0,0,0}` after every body
+  (`29fe6be9-e17c-4657-b253-e1d554f7f009`), jobs listed 0 — nothing minted,
+  nothing held; every asset deleted (5 + 4), both lists re-read
+  `{"assets":[]}`.
+  **§3.1 — 13/13 GRANTED (200).** `selectable` exactly as the document:
+  true (`field: "plan"`) on media.generate, logos.generate, logos.redesign,
+  avatar.generate, video-ads.generate, voice.speak, film.generate,
+  motion.generate; false (`field: null`) on images.edit, photoshoot.generate,
+  brand-assets.generate, avatars.generate, avatars.imagine. The 24 per-plan
+  reads resolve what the plain read hides (`plan: null` on the own-model
+  rows): logos.generate 0.03 / 0.06 / 0.211 per image (image-balanced /
+  image-reference / image-top; the balanced read also lists
+  image-reference-lite 0.05), logos.redesign 0.05 / 0.06 / 0.211,
+  avatar.generate 0.03 / 0.06 / 0.211 (seedream rows on balanced), video-ads
+  0.042 / 0.07 / 0.112 per second (video-image-core / -balanced / -super),
+  voice.speak 0.05 / 0.10 / 0.10 per `audio_text_units` (voice-turbo /
+  -multilingual / -expressive; the approved voice enum is
+  `["g3YpdjT1OTh9cunaumJs","Rachel"]` on all three plans, `lang` pattern
+  `^[a-z]{2}$`), film 0.14 / 0.3034 / 0.473 per second (video-scene-core /
+  -plus / -top; plus and top carry `video_seconds_by_resolution` — plus:
+  480p 0.1415 · 720p 0.3034 · 1080p 0.6827 · 4k 2.7306; top: 480p 0.2205 ·
+  720p 0.473 · 1080p 1.0643), motion 0.07 / 0.112 / 0.126 per second; the
+  pinned five: images.edit and photoshoot image-reference 0.06,
+  brand-assets image-design 0.05, avatars.generate image-reference-top
+  0.211, avatars.imagine image-top 0.211. Decimal strings, as ever.
+  **§3.2 — 402 `wallet_insufficient` at the wallet on every document
+  example but one:** 12 of 13 (request-ids in `summary.json`, e.g.
+  media.generate `819e1a08-2e16-40f0-9278-addc08fd0697`, voice.speak
+  `7c7b99af-747e-4363-91f0-8e4bff4beb9f`, film
+  `ae3434e6-6c1a-4115-88de-450a48955798`), plus `media.generate` with
+  `origin` (`96be7711-9e65-4ba4-9672-52b59f9fa7d8`), `film.generate` with
+  our own uploaded asset id as a scene reference AND the character source
+  (`46012f19-4b3c-453d-8ed7-74805651e99c` — accepted at intake; whether it
+  is fetched is A3's funded question), `photoshoot.generate` with FOUR
+  references (`06a8212a-b28e-4121-b681-5a46821cd0f5`, the document's
+  maximum). **The one 400: `motion.generate`'s example as written**
+  (`06e3b44c-7e9f-4c07-91eb-ecd36516cbd4`; run 1
+  `6e95803b-c1c3-4831-804a-81f175a21d88`). **The supplement pins it to
+  `lang: "ar"`:** the required keys only, a 512 px still and a 5 s clip →
+  402 (`5de44fd0-8731-437e-a3dd-db8723454c7e`); a 1×1 still → 402
+  (`bcc4fae0-1e48-4234-b744-a2cf3fe08769`); a 3.0 s clip → 402
+  (`0ae7a7e2-fdce-4750-92b0-b3ebc88079ad`); both small → 402
+  (`d88d58b7-3c45-415c-b786-84385e78ec07`); `orientation: "video"` → 402
+  (`45c0807d-01d4-47f5-bd61-70a00ff5a3d5`); `keepSound` + `prompt` → 402
+  (`52a830bd-f0de-4939-b1b5-da0c37318cd0`); `keepSound: false` → 402
+  (`b8f58226-9442-4d51-afd2-86e673578965`); `lang: "en"` → 402
+  (`cc87be93-4c03-4213-8ce7-f326ad15610c`); **`lang: "ar"` → 400**
+  (`3f76fcab-6426-4620-8b02-609f8ffed5d0`). So the door checks neither the
+  still's 340 px floor nor the clip's 3 s floor before the wallet, accepts
+  every optional key the document names, and refuses the document's only
+  meaningful `lang` value.
+  **§3.3 — 18 of 19 traps → 400 `bad_request` BEFORE the wallet**, the one
+  generic sentence every time ("The media service rejected the request —
+  check the body against the capability's schema"), no `details`, no field
+  named — item 49 stands with 20 more samples. **The exception: five
+  `referenceImages` on `photoshoot.generate` → 502 `bad_gateway` in ~445 ms,
+  twice** (`2b59e0ce-9a2e-40ab-b0ba-cff566220b1f`,
+  `b81bb7bd-1161-4572-bd10-e28cd98e61e0`; run 1
+  `8584b2b6-18bf-41f7-95d8-e657cd08df20`): above four the upstream fails
+  instead of validating, so the 1–4 ceiling is the client's to enforce.
+  **§3.5 — the approve door is NOT proxied:** `POST
+  …/media/assets/:id/approve` on our own asset → 404 `not_found`
+  (`ecca3ba8-2e5f-4435-8a19-126e26e1a1b1`). Item 52 for Ward.
+  **§3.7 — no door carries a state: /B HELD.** (a) `GET
+  …/event-sources/countries` → 249 rows of exactly `{code, name}`
+  (`2f9f27b1-bf9a-4971-86b4-07e12f3caaf9`), the US row
+  `{"code":"US","name":"United States"}`, no state-like key anywhere; (b)
+  `PUT /orgs/:id/country {country:"US", state:"CA"}` → **200, `state`
+  DROPPED** (`79ffe011-947b-4ad2-938a-d139a0e48a0d`, 20 s, holidaysCount 10,
+  reloaded true), the org record's keys unchanged `[id, name, slug, status,
+  createdAt, updatedAt, country]` on the read-back
+  (`cec29cdc-ce2b-4743-bf9e-a41d36d8ea4d`); (c) `POST …/event-sources
+  {kind:"holidays", country:"US", state:"CA"}` → **201, `state` DROPPED**
+  (`efc30c5b-ef94-4495-afc8-8292122cc393`, row keys `[id, orgId, kind,
+  country, createdAt, updatedAt]`; deleted after, 204); (d) the holiday rows
+  keep today's shape PLUS a new key `processed: false`
+  (`4fbc1b3f-902d-4cc1-81f2-be67aff23b21`; not in `ApiHoliday`); the
+  read-first sweep of six candidate state-list paths → 404 / 400
+  (`4fd2b54a-301d-4f7e-b01c-d7390a31ccf3`,
+  `c7968a74-4974-4918-be71-eb60857bd935`,
+  `cb971b13-5b3d-40da-9791-bc0258e74ebf`, …). Hasan's "ready by tomorrow"
+  door is not on the wire today. Item 51.
+  **§3.4 — unmeasured:** org 1813 lists 0 jobs
+  (`bd52cb81-1d9e-44fa-84e5-4e290d9f2236`); the gallery renders `audio` /
+  `document` kinds defensively.
+  **§3.8 — the environment facts.** `/health` → `{"ok":true}` with
+  `x-amzn-requestid` / `x-amzn-trace-id` / `x-request-id` (a Lambda URL;
+  `0f7a4173-1334-4d45-81b8-b51862e6ca44`); `/openapi` info version `0.1.0`,
+  no `servers`, no environment-like key; the org root carries none either
+  (`696b88ff-3205-49ff-9b0d-073f9daa3f0a`) — **the API exposes no
+  environment name**. The apex **`malaky.ai` is NOT this project's
+  deployment**: its HTML is a GoDaddy site-builder page (`img1.wsimg.com`
+  scripts), no Vite bundle — the 2026-08-11 DNS-cutover item is still open.
+  **`1.malaky.ai` serves `index-DUHITzRc.js` with the API host inlined =
+  LIVE mode** (the `live` branch preview, `dpl_7Do9vv6tEkPN25W313k1arfmsViT`
+  at `463806c`). **`alphabeacon-web.vercel.app` (the production alias,
+  `main`, `dpl_231WHducztuK5ZpYho8abm21Ygjf` at `1772734`) is UNREACHABLE
+  from this host** (a TLS reset on every `*.vercel.app`), so the `main`
+  bundle's mode was not measured here (state.md's record: the STATIC build,
+  no `VITE_API_BASE_URL` in the production scope). Stripe's three return
+  routes are hard-coded on `DASHBOARD_URL = https://1.malaky.ai`
+  (`billing-frontend.md`). Item 53.
+  **Probe discipline, kept and sharpened:** the zero-wallet shield before
+  every body; a 429 would be honoured once (none came); every url redacted
+  to its shape and the record scrubbed (no API host, no signature, no token
+  — checked twice; the repo is public); **and one lesson — a diagnostic
+  ladder varies ONE thing per rung:** run 2's asset rungs all carried
+  `lang: "ar"` and so measured nothing but that key; the supplement, on the
+  same org, is what answered.
+- Phase: HSN-0910 Phase 0 — DONE. /A, /C, /D NOT started (stop point 1:
+  report, wait); /B HELD (item 51).
+- Files: `Docs/api/media-capabilities.md` (new, verbatim),
+  `scripts/probe-hsn-0910.ts` (new), `package.json` (`probe:hsn-0910`),
+  `Docs/api/alphastudio-shapes.md` (appended section + supplement),
+  `Docs/qa/hsn-0910/phase0/**` (new: the record, its README, run 1's
+  findings), `.agent/{state,sessions,decisions,open-items,stack}.md`.
+- Decisions: see decisions.md — HSN-0910 Phase 0.
+- Verify: `pnpm eslint scripts/probe-hsn-0910.ts` clean · `pnpm typecheck`
+  green · prettier on the new script; no app code changed, so no unit or
+  e2e run (nothing to gate).
+- Next: the founder's word on the Phase 0 report — A1–A3, the §3.6 funded
+  proofs, items 51–53 to Hasan/Ward — then /A, /C, /D on this branch; /B
+  when Hasan names the door. Never push; never merge.

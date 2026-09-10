@@ -1187,3 +1187,92 @@ series counts from 48 so the two merge without a collision.
        echoes `durationS` (record the job id and the request-id; item 49
        asks Hasan to name the limit on the wire).
     Sign off with the org id, the brand-kit asset id and the video job id.
+
+### HSN-0910 — Hasan's 2026-09-09 meeting (2026-09-10) — HELD at the end of Phase 0 (report-and-stop)
+
+Numbering continues from 50. The record: `Docs/qa/hsn-0910/phase0/` and the
+"HSN-0910 Phase 0" section of `Docs/api/alphastudio-shapes.md`.
+
+51. **FOR HASAN — /B (State under Country) HELD: which field, on which door,
+    and where does the state list come from?** Measured 2026-09-10 on fresh
+    org 1824: `GET …/event-sources/countries` rows are exactly `{code, name}`
+    (249 rows, request `2f9f27b1-bf9a-4971-86b4-07e12f3caaf9`); `PUT
+    /orgs/:id/country {country:"US", state:"CA"}` → 200 with `state`
+    DROPPED (`79ffe011-947b-4ad2-938a-d139a0e48a0d`; holidaysCount 10) and
+    the org record unchanged on the read-back
+    (`cec29cdc-ce2b-4743-bf9e-a41d36d8ea4d`); `POST …/event-sources
+    {kind:"holidays", country:"US", state:"CA"}` → 201 with `state` DROPPED
+    (`efc30c5b-ef94-4495-afc8-8292122cc393`; deleted after); six read-first
+    candidate paths → 404/400. The holiday rows keep today's shape plus a
+    new key `processed: false` (`4fbc1b3f-902d-4cc1-81f2-be67aff23b21`).
+    The one-line question for the founder to send: "State under Country —
+    which field carries it (`state`? `subdivision`?), on which door (`PUT
+    /orgs/:id/country`, the event source, or a new one), and where does the
+    app read the state list for a country (a new endpoint, or a static list
+    per country)?" No UI is built on a guessed field.
+
+52. **For Ward: is `POST /orgs/:id/alphastudio/media/assets/:assetId/approve`
+    to be proxied?** Hasan's document says an approved `avatar.generate`
+    sheet "joins your collection". Measured 2026-09-10: 404 `not_found` on an
+    asset we own (`ecca3ba8-2e5f-4435-8a19-126e26e1a1b1`). Until it is
+    proxied no "Approve" is built; a sheet can only be opened and
+    downloaded.
+
+53. **For Ward: the production environment (Hasan's point 1).** Facts
+    measured 2026-09-10 (`Docs/qa/hsn-0910/phase0/environment/`): the API
+    exposes no environment name (`/health` → `{"ok":true}`, `/openapi` info
+    0.1.0 with no `servers`, the org root carries none); `1.malaky.ai`
+    serves the `live` branch preview in LIVE mode (the API host inlined in
+    `index-DUHITzRc.js`); the apex `malaky.ai` still serves a GoDaddy
+    site-builder page, not this project (the 2026-08-11 DNS item);
+    `alphabeacon-web.vercel.app` (production, `main`) is unreachable from
+    the dev host (a TLS reset on `*.vercel.app`), so its mode was not
+    measured — the record says STATIC (no `VITE_API_BASE_URL` in the
+    production scope). Asked of Ward: (1) a separate production environment
+    for the main API and Hasan's AlphaStudio tenant (2–3 tenants, no QA
+    orgs), with its base URL; (2) `DASHBOARD_URL` per environment — the
+    three Stripe return routes (`/billing/success?orgId&session_id`,
+    `/billing?orgId&checkout=cancelled`, `/billing?orgId`) must return to
+    the apex on production and to `1.malaky.ai` on dev; (3) Stripe LIVE keys
+    only on production, test mode stays on dev; (4) a measurable "which
+    environment am I on" — a name on `/health` or the org root — the
+    harness guard's best anchor. The draft message is in the Phase 0 report
+    (sessions.md, 2026-09-10).
+
+54. **A3 ASSUMED until the funded render: does Hasan's door fetch OUR
+    read-presigned url (`referenceImages` / `imageUrl`) and our `masset_…`
+    ids (`film.generate` references and character, `motion.generate` image /
+    video)?** Phase 0 proved only that the door accepts them at intake (402
+    at the wallet, not 400): `images.edit`
+    `85b2a2ee-f28f-41db-a522-72807f15f78e`, `photoshoot.generate` with four
+    `06a8212a-b28e-4121-b681-5a46821cd0f5`, `film.generate` with references
+    + character `46012f19-4b3c-453d-8ed7-74805651e99c`, `motion.generate`
+    required keys `5de44fd0-8731-437e-a3dd-db8723454c7e` (the supplement).
+    The proof is §3.6's funded `images.edit` on org 1813 — the founder's
+    word.
+
+55. **Item 49 after §3.3 — still one generic sentence, 20 more samples; and
+    two new facts for Hasan.** Every trap from the document's own refusals
+    answers 400 `bad_request` "The media service rejected the request —
+    check the body against the capability's schema" with no `details` and
+    no field (18 of 19 on org 1824; the request-ids are in `summary.json`).
+    New: (1) **`motion.generate` refuses `lang: "ar"`** — the document's
+    only meaningful value (`3f76fcab-6426-4620-8b02-609f8ffed5d0`, the
+    supplement) — while `lang: "en"` and no `lang` clear
+    (`cc87be93-4c03-4213-8ce7-f326ad15610c`,
+    `5de44fd0-8731-437e-a3dd-db8723454c7e`): which key buys the Arabic lip
+    repair? (2) **five `referenceImages` on `photoshoot.generate` → 502
+    `bad_gateway`, twice** (`2b59e0ce-9a2e-40ab-b0ba-cff566220b1f`,
+    `b81bb7bd-1161-4572-bd10-e28cd98e61e0`) — the upstream fails above four
+    instead of validating; and the door checks neither the motion still's
+    340 px floor nor the clip's 3 s floor at intake. Also for Hasan (no
+    blocker): the own-model rows carry `plan: null` on the plain catalog
+    read — the `?plan=` read is the only mapping.
+
+56. **MANUAL GATE M-HSN-2 (founder, after the merge, on production).** (1)
+    Studio → the grid shows the 13 cards the catalog grants, none "coming
+    soon"; (2) one cheap render — `logos.generate` balanced ×1 ($0.03) —
+    from its card to a `succeeded` job whose asset opens; (3) ~~the State
+    selector~~ — /B HELD on item 51, nothing to check; (4) Settings shows
+    the organization id at the top and Copy copies it. Sign off with the org
+    id and the job id.

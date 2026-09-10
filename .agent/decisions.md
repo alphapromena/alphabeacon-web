@@ -3223,3 +3223,48 @@ Closes open-item 38, which ONB-0827 created and the live suite caught.
   cannot succeed is the disabled-teasing the design law forbids); or
   renaming the keys to `business`/`scale` because the order expected them
   (the wire is the record, and it said `base`/`pro`).
+
+### 2026-09-10 — HSN-0910 Phase 0: the 13 capabilities measured on orgs 1823/1824, the ladder lesson, and the series HOLDS at stop point 1
+
+- **The stop is the order's own (§3, §7.1):** report Phase 0 and wait;
+  nothing of /A–/D is built until the founder answers A1–A3 and the
+  funded-proof question. /B is HELD exactly like HSN-0902/B — no UI on a
+  guessed field: `state` is DROPPED by both doors that took it (`PUT
+  /orgs/:id/country` → 200 without it, the event source → 201 without it)
+  and no state list exists (item 51). A 200 that drops the key is a no, not
+  a yes.
+- **What Phase 0 pinned for the build, when the word comes:** (1) all 13
+  are granted and `selectable` matches the document exactly (8 selectable,
+  5 pinned) — the grid is 13 cards, none "coming soon" on grant grounds;
+  (2) the plain catalog read carries `plan: null` on the own-model rows, so
+  the per-plan price and alias come from `?plan=<plan>` — the table and the
+  cost line read those, never the plain rows; (3) every document example
+  clears validation to 402 at the wallet — the shapes are wire-true —
+  except `motion.generate`'s `lang: "ar"`, which the door refuses on its
+  own (the supplement, one variable per rung); the still's 340 px floor and
+  the clip's 3 s floor are NOT checked at intake, so they are client-side
+  ceilings from the document, HSN-04's precedent; (4) the 400 is still one
+  generic sentence (item 49, 20 more samples) — the UI refuses what the
+  document refuses and renders a 400 as itself; (5) above four
+  `referenceImages` the upstream answers 502, not 400 — the 1–4 range is
+  the client's to enforce, and a 502 there is not "try again later"; (6)
+  the approve door is not proxied (404) — no "Approve" is built (item 52);
+  (7) org 1813 has no media job — `audio` / `document` asset kinds render
+  defensively (row + Open, no player claims).
+- **A diagnostic ladder varies ONE thing per rung.** Run 2's four asset
+  rungs each also carried `lang: "ar"` and so measured nothing but that
+  key; the correction ran as a supplement on the SAME org rather than a
+  third fresh one, because Hasan's first point in the meeting was the
+  crowded dev tenant. `--motion-supplement --owner <email>` and `--render`
+  are the script's two extra modes so the correction is reproducible and
+  the shapes section can be rebuilt from the raw record without the wire.
+- **The record's home** is `Docs/qa/hsn-0910/phase0/` (trap 24), with the
+  shapes section as the readable twin; the 249-row countries list is
+  summarised in the section and verbatim in the raw file; every url is
+  redacted to its shape; the repo is public.
+- Instead of: reading run 1's motion 400 as "our assets were too small"
+  (the door does not look at them); a third QA org for the correction;
+  building /B on `state` because the doors answered 200/201; sending a body
+  on the funded org to see the multi-asset envelope (upstream compute is
+  Hasan's money — §3.6 is the founder's word); or pasting 249 country rows
+  into the shapes doc.
