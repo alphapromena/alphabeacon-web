@@ -5017,3 +5017,53 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
 - Decisions: the GATE-0910 entry in decisions.md (the law with the runner as its instrument, verify-once, the lanes, one server, the pool off, items 59/60).
 - Verify: lint · typecheck · guard-static 352 · unit **656 / 58** · `verify:all` + the seven checks **170 s** · the runner smoked live four times (zero spend).
 - Next: the worker measurement, then §4 — the legacy chain and `pnpm gate` side by side, then `pnpm gate` twice; report-and-stop.
+
+### 2026-09-10 — GATE-0910 §3.2 measured: three files in flight with per-process warm-ups tripped the API's limiter; the runner now warms once and keeps the one heartbeat; the worker count re-measured
+
+- Did: **The first lane-A measurement at 3 in flight** (`20260910-123443`,
+  16 files, the runner as built): 7 green, 6 UNCLASSIFIED reds (timeouts
+  and `toBeVisible` failures clustered in eight minutes across auth,
+  brand-kit, country, media-capabilities, proposals, scheduling, team) and 3
+  files "network-lost" at exactly 91 s — knowledge, notifications,
+  schedule-repair — whose logs show the per-process fleet warm-up looping
+  "slowest of 12 was 200 in 73 ms — fleet not warm yet" until its 90 s cap:
+  the burst prints only its slowest probe, and what kept it from "all 200"
+  was the API's limiter answering some of three simultaneous 12-way bursts
+  with non-200. Round 778 s with the automatic re-runs. **The fix is the
+  order's own §3.2 sentence — "warm-up first, unchanged; then the lanes":**
+  the runner warms the fleet ONCE per round (wake, then 12-way bursts until
+  every probe answers within a second — a 429 is an answer), keeps ONE
+  heartbeat (one probe every 5 s, narrowed from four) for the round, and tells every Playwright
+  process to stand down from its own burst (`E2E_WARMED_BY_RUNNER=1`; the
+  tripwire and the production guard still run in each); worker starts are
+  staggered 4 s so no two files sign up and load a dashboard in the same
+  second (`6c10e04`). The limiter itself turned out to be the dev function's Lambda concurrency
+  cap — below.
+  **Re-measured at 3 in flight with the runner's warm-up** (`20260910-125038`):
+  no network-lost — the per-process bursts were the 91 s deaths — but **9 green
+  / 7 UNCLASSIFIED**, and this time the status assertion named the cause in the
+  API's own words: `GET /me/orgs → 429 {"Reason":"ConcurrentInvocationLimitExceeded",
+  "Type":"User","message":"Rate Exceeded."}` — the dev function's Lambda
+  concurrency cap, with the six other reds the same throttle reaching the app as
+  timeouts. A capacity fact for Ward (item 61), not the runner's. The round's
+  heartbeat narrowed to one probe so it stops competing for that concurrency
+  (`cdfb0ef`); 4 and 6 in flight were not measured — under a concurrency cap
+  they can only be worse, and each costs sixteen QA orgs — and the lane was
+  measured at 2 instead.
+  **Measured at 2 in flight** (`20260910-125952`, the heartbeat one probe):
+  **10 green / 6 UNCLASSIFIED** — brand, country (a wire read answered a non-list:
+  `TypeError … reading 'length'`), knowledge (the browser upload timed out),
+  schedule-repair, scheduling, team (its page at failure carries the throttle's
+  own "Rate Exceeded" text) — the same cap, two files at a time, on files that
+  were all green one at a time this morning. **So lane A runs at ONE in flight**
+  until Ward raises the function's concurrency (item 61): the runner's default is
+  `--workers 1`, its lanes and its parallel machinery stay, and the count is
+  re-measured in one command when the cap moves. What the fast gate still
+  removes at 1: the seven re-runs of the suites (19 min → 20 s), the per-file
+  dev-server starts, the drains and the human gaps between rounds.
+- Phase: GATE-0910 §3.2 MEASURED; **§4 the proof next** on this commit —
+  the old chain and `pnpm gate` side by side once, then `pnpm gate` twice.
+- Files: `scripts/gate/gate.ts` (the runner's warm-up and heartbeat, the default), `e2e/global-setup.ts` (stands down under the runner), `e2e/live-notifications.spec.ts` + `e2e/live-setup.ts` (the status before the shape), `.agent/{open-items,sessions,state,decisions}.md`; records `Docs/qa/gate-0910/gate/20260910-{123443,125038,125952}/`.
+- Decisions: the measured count and item 61, appended to the GATE-0910 entry.
+- Verify: lint · typecheck · the script tests · three measurement rounds (48 QA orgs, zero spend).
+- Next: §4.

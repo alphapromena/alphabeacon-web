@@ -1,0 +1,38 @@
+warm-up: skipped — the runner warmed the fleet and keeps the heartbeat (GATE-0910 §3.2)
+
+Running 3 tests using 1 worker
+
+  ok 1 [chromium] › e2e\live-schedule-repair.spec.ts:45:1 › a live org in the 619 shape: tones seeded, no schedule (6.7s)
+  x  2 [chromium] › e2e\live-schedule-repair.spec.ts:85:1 › C1 creates the missing schedule through the POST fallback, with the exact tones picked (23.1s)
+  -  3 [chromium] › e2e\live-schedule-repair.spec.ts:138:1 › and it survives a reload, still clean
+
+
+  1) [chromium] › e2e\live-schedule-repair.spec.ts:85:1 › C1 creates the missing schedule through the POST fallback, with the exact tones picked 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('group', { name: 'Tones' }).getByRole('button', { name: 'Provocative', exact: true })
+    Expected: visible
+    Timeout: 20000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 20000ms
+      - waiting for getByRole('group', { name: 'Tones' }).getByRole('button', { name: 'Provocative', exact: true })
+
+
+       99 |   // the shell's h1 cannot prove that, and trap 14 says a count cannot either).
+      100 |   const tones = page.getByRole('group', { name: 'Tones' })
+    > 101 |   await expect(tones.getByRole('button', { name: 'Provocative', exact: true })).toBeVisible({
+          |                                                                                 ^
+      102 |     timeout: 20_000,
+      103 |   })
+      104 |
+        at C:\alphabeacon-web\alphabeacon-web\e2e\live-schedule-repair.spec.ts:101:81
+
+    Error Context: .gate\artifacts\20260910-125952\round-1\live-schedule-repair\live-schedule-repair-C1-cr-0e286-with-the-exact-tones-picked-chromium\error-context.md
+
+  1 failed
+    [chromium] › e2e\live-schedule-repair.spec.ts:85:1 › C1 creates the missing schedule through the POST fallback, with the exact tones picked 
+  1 did not run
+  1 passed (31.9s)

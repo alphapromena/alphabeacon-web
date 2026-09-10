@@ -1342,3 +1342,19 @@ Numbering continues from 50. The record: `Docs/qa/hsn-0910/phase0/` and the
     the funded org; can only pass on a funded fresh org). For a ruling:
     re-target to the funded org under the one-mechanism rule, or delete.
     Found by the Phase 0 read (`Docs/qa/gate-0910/phase0/live-spec-lanes.md`).
+
+61. **For Ward: the dev function's concurrency limit — `429
+    ConcurrentInvocationLimitExceeded` under three parallel live files
+    (GATE-0910 §3.2, measured 2026-09-10).** With the runner warming the fleet
+    once and three files in flight, `GET /me/orgs` answered `429
+    {"Reason":"ConcurrentInvocationLimitExceeded","Type":"User","message":"Rate
+    Exceeded."}` (record `Docs/qa/gate-0910/gate/20260910-125038/`), and six
+    more files timed out on the same throttle reaching the app. This is the
+    Lambda's concurrent-execution cap, not a rate limit on a route: a
+    dashboard load fires fourteen requests at once, so two or three real users
+    opening the product together would meet it exactly as the lane did. Asked
+    of Ward: the function's reserved/provisioned concurrency on dev (and the
+    number for production, item 53). Until then the gate's lane A runs at the
+    widest count that stays green 3/3 (the record says which), and the app's
+    own handling of a 429 (no retry today — the walk times out) is a product
+    question for a later order, not this one's.

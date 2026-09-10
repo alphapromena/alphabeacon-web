@@ -1,0 +1,40 @@
+warm-up: skipped — the runner warmed the fleet and keeps the heartbeat (GATE-0910 §3.2)
+
+Running 5 tests using 1 worker
+
+  ok 1 [chromium] › e2e\live-brand.spec.ts:57:1 › a fresh owner + org, made through the product (5.6s)
+  ok 2 [chromium] › e2e\live-brand.spec.ts:66:1 › a custom tone: created under the adapter, edited, and it survives a reload (8.0s)
+  ok 3 [chromium] › e2e\live-brand.spec.ts:100:1 › voice rules: the flat live list persists through the API (9.5s)
+  x  4 [chromium] › e2e\live-brand.spec.ts:119:1 › sources and topics: scheme-less display, real persistence (11.0s)
+  -  5 [chromium] › e2e\live-brand.spec.ts:150:1 › deleting a tone reflects in the schedules that referenced it
+
+
+  1) [chromium] › e2e\live-brand.spec.ts:119:1 › sources and topics: scheme-less display, real persistence 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText('perfectdailygrind.com/feed')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for getByText('perfectdailygrind.com/feed')
+
+
+      125 |   // One POST round-trip — live-red-2026-08-23.
+      126 |   await expect(page.getByText('Source added')).toBeVisible({ timeout: ONE_CALL })
+    > 127 |   await expect(page.getByText('perfectdailygrind.com/feed')).toBeVisible()
+          |                                                              ^
+      128 |
+      129 |   await page.getByLabel('Add a topic').fill('single origin')
+      130 |   await page.keyboard.press('Enter')
+        at C:\alphabeacon-web\alphabeacon-web\e2e\live-brand.spec.ts:127:62
+
+    Error Context: .gate\artifacts\20260910-125952\round-1\live-brand\live-brand-sources-and-top-2e964-ss-display-real-persistence-chromium\error-context.md
+
+  1 failed
+    [chromium] › e2e\live-brand.spec.ts:119:1 › sources and topics: scheme-less display, real persistence 
+  1 did not run
+  3 passed (35.0s)

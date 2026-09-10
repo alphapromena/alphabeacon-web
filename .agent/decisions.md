@@ -3403,3 +3403,12 @@ OFF: the runner mints one org at round start, and only a file that opted in
 (`{ pool: true }` — live-notifications today) signs into it. It is the
 answer to Hasan's crowded dev tenant, not a speed trick, and it stays off
 until the founder rules on it.
+
+**The worker count, measured (2026-09-10, after the build):** with each
+Playwright process firing its own 12-way warm-up, three in flight killed three
+setups at the 90 s cap; with the runner warming once, three and then two in
+flight were red on the dev function's own concurrency cap — `429
+ConcurrentInvocationLimitExceeded` in the API's words (item 61, for Ward).
+**Lane A runs at one in flight until that cap moves;** the runner keeps its
+lanes, its `--workers`, and the one-command measurement, and the fast gate's
+gain at one is verify-once, one server per round, and no gaps.

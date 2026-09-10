@@ -1,0 +1,32 @@
+warm-up: skipped — the runner warmed the fleet and keeps the heartbeat (GATE-0910 §3.2)
+
+Running 3 tests using 1 worker
+
+  ok 1 [chromium] › e2e\live-knowledge.spec.ts:36:1 › a fresh owner + org, made through the product (5.6s)
+  ok 2 [chromium] › e2e\live-knowledge.spec.ts:46:1 › pasted text becomes a Ready source, and removing it removes it (13.7s)
+  x  3 [chromium] › e2e\live-knowledge.spec.ts:76:1 › a FILE uploads straight to storage from the browser (open-item 24) (2.5m)
+
+
+  1) [chromium] › e2e\live-knowledge.spec.ts:76:1 › a FILE uploads straight to storage from the browser (open-item 24) 
+
+    Test timeout of 150000ms exceeded.
+
+    Error: locator.click: Test timeout of 150000ms exceeded.
+    Call log:
+      - waiting for getByRole('radio', { name: 'Document' })
+
+
+      88 |   // leaves the browser — the description rides on the presign as `desc`
+      89 |   // (probe P2 at the HSN-FINAL gate: the RAG door answers 201 with it).
+    > 90 |   await page.getByRole('radio', { name: 'Document' }).click()
+         |                                                       ^
+      91 |   await page.getByLabel('What is it?', { exact: true }).fill('Roasting notes for the Guji lot')
+      92 |
+      93 |   // The collection is created lazily, so wait until the surface is ready.
+        at C:\alphabeacon-web\alphabeacon-web\e2e\live-knowledge.spec.ts:90:55
+
+    Error Context: .gate\artifacts\20260910-125952\round-1\live-knowledge\live-knowledge-a-FILE-uplo-244de-m-the-browser-open-item-24--chromium\error-context.md
+
+  1 failed
+    [chromium] › e2e\live-knowledge.spec.ts:76:1 › a FILE uploads straight to storage from the browser (open-item 24) 
+  2 passed (2.9m)

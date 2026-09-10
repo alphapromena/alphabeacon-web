@@ -1,0 +1,9 @@
+warm-up: skipped — the runner warmed the fleet and keeps the heartbeat (GATE-0910 §3.2)
+
+Running 3 tests using 1 worker
+
+  ok 1 [chromium] › e2e\live-media-capabilities.spec.ts:328:1 › a fresh owner + org, made through the product (6.1s)
+  ok 2 [chromium] › e2e\live-media-capabilities.spec.ts:338:1 › every granted capability: the document’s example stops at the wallet (402), its trap before it (400) — zero spend (44.5s)
+  ok 3 [chromium] › e2e\live-media-capabilities.spec.ts:413:1 › the Studio grid lists what the catalog grants, by name, with the catalog’s price (25.6s)
+
+  3 passed (1.3m)

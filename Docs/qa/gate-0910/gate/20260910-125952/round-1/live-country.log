@@ -1,0 +1,29 @@
+warm-up: skipped — the runner warmed the fleet and keeps the heartbeat (GATE-0910 §3.2)
+
+Running 4 tests using 1 worker
+
+  ok 1 [chromium] › e2e\live-country.spec.ts:55:1 › a fresh workspace has NO country, and I1 is where one is set (16.8s)
+  x  2 [chromium] › e2e\live-country.spec.ts:104:1 › the calendar carries real holidays, each with the rules for that day (2.3s)
+  -  3 [chromium] › e2e\live-country.spec.ts:153:1 › re-saving the same country is a quiet no-op, not a fake reload
+  -  4 [chromium] › e2e\live-country.spec.ts:183:1 › C2 no longer offers an event source it cannot create
+
+
+  1) [chromium] › e2e\live-country.spec.ts:104:1 › the calendar carries real holidays, each with the rules for that day 
+
+    TypeError: Cannot read properties of undefined (reading 'length')
+
+      118 |   // The country really did load a calendar — that is this file's first claim,
+      119 |   // and it is asserted on the wire before anything is looked for on screen.
+    > 120 |   expect(holidays.items.length).toBeGreaterThan(0)
+          |                         ^
+      121 |   const target = holidays.items[0]
+      122 |   const targetTitle = new Intl.DateTimeFormat('en-US', {
+      123 |     month: 'long',
+        at C:\alphabeacon-web\alphabeacon-web\e2e\live-country.spec.ts:120:25
+
+    Error Context: .gate\artifacts\20260910-125952\round-1\live-country\live-country-the-calendar--567cd-with-the-rules-for-that-day-chromium\error-context.md
+
+  1 failed
+    [chromium] › e2e\live-country.spec.ts:104:1 › the calendar carries real holidays, each with the rules for that day 
+  2 did not run
+  1 passed (21.2s)

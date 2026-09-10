@@ -22,7 +22,7 @@
  * 25 (Playwright runs *.spec.ts only — playwright.config.ts).
  *
  * Usage:
- *   pnpm gate [--series <name>] [--workers 4] [--rounds 2] [--lanes A,B]
+ *   pnpm gate [--series <name>] [--workers 1] [--rounds 2] [--lanes A,B]
  *             [--only live-auth,live-team] [--skip-static] [--skip-live]
  *             [--funded] [--media] [--pool] [--port 5199] [--legacy-verify]
  */
@@ -86,7 +86,10 @@ function parseArgs(argv: string[]): Options {
     .filter((l): l is Lane => l === 'A' || l === 'B')
   return {
     series: get('--series') ?? defaultSeries,
-    workers: Number(get('--workers') ?? 4),
+    // ONE in flight by default: 3 and 2 were measured red on the dev function's
+    // concurrency cap (429 ConcurrentInvocationLimitExceeded, 2026-09-10, item 61).
+    // Re-measure with --workers once Ward raises it; the runner does not change.
+    workers: Number(get('--workers') ?? 1),
     rounds: Number(get('--rounds') ?? 2),
     lanes,
     only:

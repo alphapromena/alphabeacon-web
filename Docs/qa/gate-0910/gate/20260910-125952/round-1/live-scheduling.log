@@ -1,0 +1,42 @@
+warm-up: skipped — the runner warmed the fleet and keeps the heartbeat (GATE-0910 §3.2)
+
+Running 3 tests using 1 worker
+
+  ok 1 [chromium] › e2e\live-scheduling.spec.ts:57:1 › signup creates the workspace and NOTHING else (7.7s)
+  x  2 [chromium] › e2e\live-scheduling.spec.ts:93:1 › C1 creates the schedule on first save, then PATCHes it — and it survives a reload (30.0s)
+  -  3 [chromium] › e2e\live-scheduling.spec.ts:180:1 › slots, if ingestion produced any, honour skip/un-skip and never offer approve
+
+
+  1) [chromium] › e2e\live-scheduling.spec.ts:93:1 › C1 creates the schedule on first save, then PATCHes it — and it survives a reload 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator:  getByText('You have unsaved changes.')
+    Expected: 0
+    Received: 1
+
+    Call log:
+      - Expect "toHaveCount" with timeout 40000ms
+      - waiting for getByText('You have unsaved changes.')
+        52 × locator resolved to 1 element
+           - unexpected value "1"
+      - Test timeout of 30000ms exceeded.
+
+
+      135 |   // in B9 — the wizard used to create the row and no longer does.
+      136 |   await page.getByRole('button', { name: 'Save changes' }).click()
+    > 137 |   await expect(page.getByText('You have unsaved changes.')).toHaveCount(0, { timeout: SCREEN_SYNC })
+          |                                                             ^
+      138 |
+      139 |   // The reload reads the server back through the sync: the row is really there.
+      140 |   await page.goto('/calendar/settings')
+        at C:\alphabeacon-web\alphabeacon-web\e2e\live-scheduling.spec.ts:137:61
+
+    Error Context: .gate\artifacts\20260910-125952\round-1\live-scheduling\live-scheduling-C1-creates-701a0--—-and-it-survives-a-reload-chromium\error-context.md
+
+  1 failed
+    [chromium] › e2e\live-scheduling.spec.ts:93:1 › C1 creates the schedule on first save, then PATCHes it — and it survives a reload 
+  1 did not run
+  1 passed (39.8s)
