@@ -1,0 +1,29 @@
+{
+  "title": "§3.2 · media/jobs — avatar.generate · document-example",
+  "method": "POST",
+  "path": "/orgs/:id/alphastudio/media/jobs",
+  "status": 402,
+  "ms": 648,
+  "requestId": "bc9c3042-dd29-45e0-90dc-a6cbbc1c7f3d",
+  "note": "the document’s example; 402 expected on the zero wallet",
+  "request": {
+    "capability": "avatar.generate",
+    "plan": "balanced",
+    "instruction": "a man in his forties with a short grey beard, in a dark blazer",
+    "params": {
+      "count": 2,
+      "referenceImages": [
+        "<redacted url: 1621 chars>"
+      ],
+      "aspectRatio": "3:2"
+    },
+    "guidance": []
+  },
+  "response": {
+    "error": {
+      "code": "wallet_insufficient",
+      "message": "The org's wallet cannot cover this request — not enough credits",
+      "requestId": "bc9c3042-dd29-45e0-90dc-a6cbbc1c7f3d"
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "title": "supplement · GET /me/orgs — the owner’s org",
+  "method": "GET",
+  "path": "/me/orgs",
+  "status": 200,
+  "ms": 502,
+  "requestId": "1ceca18a-13bf-4183-92b9-e85cdbc7212d",
+  "response": {
+    "items": [
+      {
+        "id": "1824",
+        "name": "QA HSN-0910 Org 1789026912812",
+        "slug": "qa-hsn-0910-org-1789026912812",
+        "status": "active",
+        "role": "owner",
+        "joinedAt": "2026-09-10T07:55:21.368Z"
+      }
+    ],
+    "total": 1
+  }
+}

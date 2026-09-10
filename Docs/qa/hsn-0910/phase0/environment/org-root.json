@@ -1,0 +1,28 @@
+{
+  "title": "§3.8 · GET /orgs/:id — the org root (an environment name anywhere?)",
+  "method": "GET",
+  "path": "/orgs/:id",
+  "status": 200,
+  "ms": 448,
+  "requestId": "696b88ff-3205-49ff-9b0d-073f9daa3f0a",
+  "response": {
+    "org": {
+      "id": "1824",
+      "name": "QA HSN-0910 Org 1789026912812",
+      "slug": "qa-hsn-0910-org-1789026912812",
+      "status": "active",
+      "createdAt": "2026-09-10T07:55:21.368Z",
+      "updatedAt": "2026-09-10T07:55:21.368Z",
+      "country": null
+    },
+    "membership": {
+      "id": "2083",
+      "orgId": "1824",
+      "userId": "2210",
+      "role": "owner",
+      "isActive": true,
+      "createdAt": "2026-09-10T07:55:21.368Z",
+      "updatedAt": "2026-09-10T07:55:21.368Z"
+    }
+  }
+}

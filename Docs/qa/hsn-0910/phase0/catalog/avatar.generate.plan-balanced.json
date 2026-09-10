@@ -1,0 +1,113 @@
+{
+  "title": "§3.1 · catalog — avatar.generate?plan=balanced",
+  "method": "GET",
+  "path": "/orgs/:id/alphastudio/catalog/capabilities/avatar.generate?plan=balanced",
+  "status": 200,
+  "ms": 782,
+  "requestId": "4615c7a5-de4b-43ef-8d9a-0972e1d56b34",
+  "response": {
+    "capability": "avatar.generate",
+    "selectable": true,
+    "field": "plan",
+    "plan": "balanced",
+    "models": [
+      {
+        "alias": "image-balanced-seedream",
+        "kind": "image",
+        "plan": null,
+        "displayHint": "Balanced image (Seedream)",
+        "capabilitySchema": {
+          "type": "object",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "properties": {
+            "seed": {
+              "type": "integer",
+              "maximum": 4294967295,
+              "minimum": 0
+            },
+            "count": {
+              "type": "integer",
+              "maximum": 20,
+              "minimum": 1
+            },
+            "aspectRatio": {
+              "enum": [
+                "1:1",
+                "16:9",
+                "9:16",
+                "4:3",
+                "3:4",
+                "3:2",
+                "2:3"
+              ],
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "capabilities": [
+          "avatar.generate"
+        ],
+        "cost": {
+          "images": "0.03"
+        },
+        "appMetadata": {
+          "min_plan": "pro"
+        }
+      },
+      {
+        "alias": "image-reference-seedream",
+        "kind": "image",
+        "plan": null,
+        "displayHint": "Image from a reference (Seedream)",
+        "capabilitySchema": {
+          "type": "object",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "properties": {
+            "seed": {
+              "type": "integer",
+              "maximum": 4294967295,
+              "minimum": 0
+            },
+            "count": {
+              "type": "integer",
+              "maximum": 20,
+              "minimum": 1
+            },
+            "aspectRatio": {
+              "enum": [
+                "1:1",
+                "16:9",
+                "9:16",
+                "4:3",
+                "3:4",
+                "3:2",
+                "2:3"
+              ],
+              "type": "string"
+            },
+            "referenceImages": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uri"
+              },
+              "maxItems": 4,
+              "minItems": 1
+            }
+          },
+          "additionalProperties": false
+        },
+        "capabilities": [
+          "avatar.generate"
+        ],
+        "cost": {
+          "images": "0.03"
+        },
+        "appMetadata": {
+          "min_plan": "pro"
+        }
+      }
+    ]
+  }
+}

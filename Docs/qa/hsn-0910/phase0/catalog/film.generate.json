@@ -1,0 +1,218 @@
+{
+  "title": "§3.1 · catalog — film.generate",
+  "method": "GET",
+  "path": "/orgs/:id/alphastudio/catalog/capabilities/film.generate",
+  "status": 200,
+  "ms": 766,
+  "requestId": "ce3fb74d-0a79-4811-aa17-3f5da1ae2dc8",
+  "response": {
+    "capability": "film.generate",
+    "selectable": true,
+    "field": "plan",
+    "plan": null,
+    "models": [
+      {
+        "alias": "video-scene-core",
+        "kind": "video",
+        "plan": null,
+        "displayHint": "Scene film (silent)",
+        "capabilitySchema": {
+          "type": "object",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "properties": {
+            "shots": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "prompt",
+                  "seconds"
+                ],
+                "properties": {
+                  "prompt": {
+                    "type": "string",
+                    "maxLength": 2500,
+                    "minLength": 1
+                  },
+                  "seconds": {
+                    "type": "integer",
+                    "maximum": 15,
+                    "minimum": 1
+                  }
+                },
+                "additionalProperties": false
+              },
+              "maxItems": 6,
+              "minItems": 1
+            },
+            "durationS": {
+              "type": "integer",
+              "maximum": 15,
+              "minimum": 3
+            },
+            "aspectRatio": {
+              "enum": [
+                "16:9",
+                "9:16",
+                "1:1"
+              ],
+              "type": "string"
+            },
+            "generateAudio": {
+              "type": "boolean"
+            },
+            "referenceImages": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uri"
+              },
+              "maxItems": 7,
+              "minItems": 1
+            }
+          },
+          "additionalProperties": false
+        },
+        "capabilities": [
+          "film.generate"
+        ],
+        "cost": {
+          "video_seconds": "0.14"
+        },
+        "appMetadata": {
+          "min_plan": "pro"
+        }
+      },
+      {
+        "alias": "video-scene-plus",
+        "kind": "video",
+        "plan": null,
+        "displayHint": "Scene film",
+        "capabilitySchema": {
+          "type": "object",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "properties": {
+            "audioUrl": {
+              "type": "string",
+              "format": "uri"
+            },
+            "durationS": {
+              "type": "integer",
+              "maximum": 15,
+              "minimum": 4
+            },
+            "resolution": {
+              "enum": [
+                "480p",
+                "720p",
+                "1080p",
+                "4k"
+              ],
+              "type": "string"
+            },
+            "aspectRatio": {
+              "enum": [
+                "16:9",
+                "9:16",
+                "1:1"
+              ],
+              "type": "string"
+            },
+            "generateAudio": {
+              "type": "boolean"
+            },
+            "referenceImages": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uri"
+              },
+              "maxItems": 9,
+              "minItems": 1
+            }
+          },
+          "additionalProperties": false
+        },
+        "capabilities": [
+          "film.generate"
+        ],
+        "cost": {
+          "video_seconds": "0.3034",
+          "video_seconds_by_resolution": {
+            "4k": "2.7306",
+            "480p": "0.1415",
+            "720p": "0.3034",
+            "1080p": "0.6827"
+          }
+        },
+        "appMetadata": {
+          "min_plan": "pro"
+        }
+      },
+      {
+        "alias": "video-scene-top",
+        "kind": "video",
+        "plan": null,
+        "displayHint": "Scene film (top)",
+        "capabilitySchema": {
+          "type": "object",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "properties": {
+            "audioUrl": {
+              "type": "string",
+              "format": "uri"
+            },
+            "durationS": {
+              "type": "integer",
+              "maximum": 30,
+              "minimum": 4
+            },
+            "resolution": {
+              "enum": [
+                "480p",
+                "720p",
+                "1080p"
+              ],
+              "type": "string"
+            },
+            "aspectRatio": {
+              "enum": [
+                "16:9",
+                "9:16",
+                "1:1"
+              ],
+              "type": "string"
+            },
+            "generateAudio": {
+              "type": "boolean"
+            },
+            "referenceImages": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uri"
+              },
+              "maxItems": 12,
+              "minItems": 1
+            }
+          },
+          "additionalProperties": false
+        },
+        "capabilities": [
+          "film.generate"
+        ],
+        "cost": {
+          "video_seconds": "0.473",
+          "video_seconds_by_resolution": {
+            "480p": "0.2205",
+            "720p": "0.473",
+            "1080p": "1.0643"
+          }
+        },
+        "appMetadata": {
+          "min_plan": "pro"
+        }
+      }
+    ]
+  }
+}

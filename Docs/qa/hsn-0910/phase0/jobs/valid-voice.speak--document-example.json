@@ -1,0 +1,28 @@
+{
+  "title": "§3.2 · media/jobs — voice.speak · document-example",
+  "method": "POST",
+  "path": "/orgs/:id/alphastudio/media/jobs",
+  "status": 402,
+  "ms": 805,
+  "requestId": "7c7b99af-747e-4363-91f0-8e4bff4beb9f",
+  "note": "the document’s example; 402 expected on the zero wallet",
+  "request": {
+    "capability": "voice.speak",
+    "plan": "balanced",
+    "prompt": "Welcome to Alpha Pro. Here is what changed this week.",
+    "params": {
+      "voice": "Rachel",
+      "lang": "en",
+      "stability": 0.5,
+      "similarity": 0.75,
+      "speed": 1
+    }
+  },
+  "response": {
+    "error": {
+      "code": "wallet_insufficient",
+      "message": "The org's wallet cannot cover this request — not enough credits",
+      "requestId": "7c7b99af-747e-4363-91f0-8e4bff4beb9f"
+    }
+  }
+}

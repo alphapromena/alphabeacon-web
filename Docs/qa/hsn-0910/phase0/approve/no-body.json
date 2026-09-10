@@ -1,0 +1,14 @@
+{
+  "title": "§3.5 · POST media/assets/:id/approve — no body",
+  "method": "POST",
+  "path": "/orgs/:id/alphastudio/media/assets/masset_b24afbaa6bcb30f68af48c8e/approve",
+  "status": 404,
+  "ms": 436,
+  "requestId": "ecca3ba8-2e5f-4435-8a19-126e26e1a1b1",
+  "response": {
+    "error": {
+      "code": "not_found",
+      "message": "Not found"
+    }
+  }
+}

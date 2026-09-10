@@ -1,0 +1,18 @@
+{
+  "title": "asset V · media/assets/presign — video/mp4",
+  "method": "POST",
+  "path": "/orgs/:id/alphastudio/media/assets/presign",
+  "status": 201,
+  "ms": 748,
+  "requestId": "302ada6a-8d8d-424a-97c2-4f5c99d16eb3",
+  "request": {
+    "mediaType": "video/mp4",
+    "desc": "HSN-0910 Phase 0 probe — a 3-second motion clip"
+  },
+  "response": {
+    "assetId": "masset_8ea12cc8634160529ee6834c",
+    "uploadUrl": "<redacted url: 1661 chars>",
+    "expiresAt": "2026-09-10T08:10:28.665Z",
+    "mediaType": "video/mp4"
+  }
+}

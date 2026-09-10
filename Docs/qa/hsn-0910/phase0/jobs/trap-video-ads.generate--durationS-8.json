@@ -1,0 +1,30 @@
+{
+  "title": "§3.3 · media/jobs — video-ads.generate · durationS-8",
+  "method": "POST",
+  "path": "/orgs/:id/alphastudio/media/jobs",
+  "status": 400,
+  "ms": 748,
+  "requestId": "cc29eb5d-c41c-4725-80e1-12d37b0f248d",
+  "note": "the document’s refusal; 400 expected BEFORE the wallet",
+  "request": {
+    "capability": "video-ads.generate",
+    "plan": "balanced",
+    "params": {
+      "imageUrl": "<redacted url: 1621 chars>",
+      "durationS": 8
+    },
+    "guidance": [
+      {
+        "role": "motion",
+        "text": "slow push-in, the product turning once, ending centred"
+      }
+    ]
+  },
+  "response": {
+    "error": {
+      "code": "bad_request",
+      "message": "The media service rejected the request — check the body against the capability's schema",
+      "requestId": "cc29eb5d-c41c-4725-80e1-12d37b0f248d"
+    }
+  }
+}

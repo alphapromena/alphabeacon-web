@@ -1,0 +1,27 @@
+{
+  "title": "§3.2 · media/jobs — images.edit · document-example",
+  "method": "POST",
+  "path": "/orgs/:id/alphastudio/media/jobs",
+  "status": 402,
+  "ms": 816,
+  "requestId": "85b2a2ee-f28f-41db-a522-72807f15f78e",
+  "note": "the document’s example; 402 expected on the zero wallet",
+  "request": {
+    "capability": "images.edit",
+    "instruction": "replace the background with a plain deep-navy studio backdrop",
+    "params": {
+      "referenceImages": [
+        "<redacted url: 1621 chars>"
+      ],
+      "aspectRatio": "1:1",
+      "outputFormat": "png"
+    }
+  },
+  "response": {
+    "error": {
+      "code": "wallet_insufficient",
+      "message": "The org's wallet cannot cover this request — not enough credits",
+      "requestId": "85b2a2ee-f28f-41db-a522-72807f15f78e"
+    }
+  }
+}

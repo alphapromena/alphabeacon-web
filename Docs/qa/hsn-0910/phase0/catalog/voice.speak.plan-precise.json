@@ -1,0 +1,54 @@
+{
+  "title": "§3.1 · catalog — voice.speak?plan=precise",
+  "method": "GET",
+  "path": "/orgs/:id/alphastudio/catalog/capabilities/voice.speak?plan=precise",
+  "status": 200,
+  "ms": 595,
+  "requestId": "3a0f6a3b-aca5-4971-9c96-1aa843c9ee16",
+  "response": {
+    "capability": "voice.speak",
+    "selectable": true,
+    "field": "plan",
+    "plan": "precise",
+    "models": [
+      {
+        "alias": "voice-expressive",
+        "kind": "audio",
+        "plan": null,
+        "displayHint": "Voice (expressive)",
+        "capabilitySchema": {
+          "type": "object",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "properties": {
+            "lang": {
+              "type": "string",
+              "pattern": "^[a-z]{2}$"
+            },
+            "voice": {
+              "enum": [
+                "g3YpdjT1OTh9cunaumJs",
+                "Rachel"
+              ],
+              "type": "string"
+            },
+            "stability": {
+              "type": "number",
+              "maximum": 1,
+              "minimum": 0
+            }
+          },
+          "additionalProperties": false
+        },
+        "capabilities": [
+          "voice.speak"
+        ],
+        "cost": {
+          "audio_text_units": "0.1"
+        },
+        "appMetadata": {
+          "min_plan": "pro"
+        }
+      }
+    ]
+  }
+}

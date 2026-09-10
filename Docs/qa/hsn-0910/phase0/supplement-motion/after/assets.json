@@ -1,0 +1,11 @@
+{
+  "title": "supplement · cleanup · media/assets — list re-read",
+  "method": "GET",
+  "path": "/orgs/:id/alphastudio/media/assets",
+  "status": 200,
+  "ms": 728,
+  "requestId": "14be3218-2b8c-469e-bd9c-72a8ecff653a",
+  "response": {
+    "assets": []
+  }
+}

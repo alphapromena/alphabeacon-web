@@ -1,0 +1,41 @@
+{
+  "title": "§3.2 · media/jobs — film.generate · with-references-and-character",
+  "method": "POST",
+  "path": "/orgs/:id/alphastudio/media/jobs",
+  "status": 402,
+  "ms": 1041,
+  "requestId": "46012f19-4b3c-453d-8ed7-74805651e99c",
+  "note": "our own uploaded asset id as a scene reference and as the character source (A3); 402 expected",
+  "request": {
+    "capability": "film.generate",
+    "plan": "balanced",
+    "sec": 3,
+    "aspect": "9:16",
+    "audio": true,
+    "scenes": [
+      {
+        "sec": 2,
+        "speak": "none",
+        "references": [
+          "masset_b24afbaa6bcb30f68af48c8e"
+        ],
+        "camera": "wide establishing shot of a sunlit café, morning light"
+      },
+      {
+        "sec": 1,
+        "camera": "slow push toward a coffee cup, steam rising"
+      }
+    ],
+    "character": {
+      "source": "masset_b24afbaa6bcb30f68af48c8e",
+      "desc": "a woman in her thirties, business-casual"
+    }
+  },
+  "response": {
+    "error": {
+      "code": "wallet_insufficient",
+      "message": "The org's wallet cannot cover this request — not enough credits",
+      "requestId": "46012f19-4b3c-453d-8ed7-74805651e99c"
+    }
+  }
+}

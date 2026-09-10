@@ -1,0 +1,23 @@
+{
+  "title": "supplement · media/jobs — motion.generate · ladder-512-still-3s-clip",
+  "method": "POST",
+  "path": "/orgs/:id/alphastudio/media/jobs",
+  "status": 402,
+  "ms": 848,
+  "requestId": "0ae7a7e2-fdce-4750-92b0-b3ebc88079ad",
+  "note": "required keys; the 512 px still and the 3.0 s clip (at the 3 s floor)",
+  "request": {
+    "capability": "motion.generate",
+    "plan": "balanced",
+    "image": "masset_d9783f9d465e4018b0c911ad",
+    "video": "masset_9ad934f231c04048092769cb",
+    "orientation": "image"
+  },
+  "response": {
+    "error": {
+      "code": "wallet_insufficient",
+      "message": "The org's wallet cannot cover this request — not enough credits",
+      "requestId": "0ae7a7e2-fdce-4750-92b0-b3ebc88079ad"
+    }
+  }
+}

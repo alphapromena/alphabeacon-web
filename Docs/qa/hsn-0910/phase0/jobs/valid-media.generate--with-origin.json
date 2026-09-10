@@ -1,0 +1,44 @@
+{
+  "title": "§3.2 · media/jobs — media.generate · with-origin",
+  "method": "POST",
+  "path": "/orgs/:id/alphastudio/media/jobs",
+  "status": 402,
+  "ms": 840,
+  "requestId": "96be7711-9e65-4ba4-9672-52b59f9fa7d8",
+  "note": "the shared `origin` keys of the document’s “Read this first”; 402 expected",
+  "request": {
+    "capability": "media.generate",
+    "plan": "balanced",
+    "kind": "image",
+    "prompt": "a flat-vector report cover, deep navy, generous negative space",
+    "params": {
+      "aspectRatio": "1:1",
+      "outputFormat": "png"
+    },
+    "guidance": [
+      {
+        "role": "headline",
+        "text": "Poor data quality costs $12.9M a year"
+      },
+      {
+        "role": "palette",
+        "text": "deep navy, slate grey, one teal accent"
+      }
+    ],
+    "collection": {
+      "use": true,
+      "hint": "our mark and the product shot"
+    },
+    "origin": {
+      "kind": "standalone",
+      "ref": "hsn-0910-phase0"
+    }
+  },
+  "response": {
+    "error": {
+      "code": "wallet_insufficient",
+      "message": "The org's wallet cannot cover this request — not enough credits",
+      "requestId": "96be7711-9e65-4ba4-9672-52b59f9fa7d8"
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "status": 200,
+  "requestId": "598e4fdd-61a8-49f7-94d5-9ea63b49a81d",
+  "keys": [
+    "openapi",
+    "info",
+    "components",
+    "paths"
+  ],
+  "info": {
+    "title": "AlphaStudio API",
+    "description": "Conventions (match the implementation exactly):\n- Success responses are bare resource JSON (no envelope). Lists are `{ items, total }`.\n- Errors are `{ error: { code, message, details?, requestId? } }`; `code` is machine-readable and part of the contract.\n- IDs are Postgres bigints serialized as decimal strings.\n- Timestamps are ISO 8601.\n- Every response carries `x-request-id` (echoes an inbound one).\n- Auth is `Authorization: Bearer <opaque session token>`.",
+    "version": "0.1.0"
+  },
+  "envLikeKeys": []
+}

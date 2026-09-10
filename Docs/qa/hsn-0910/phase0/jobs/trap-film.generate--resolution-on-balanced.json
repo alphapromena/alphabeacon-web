@@ -1,0 +1,35 @@
+{
+  "title": "§3.3 · media/jobs — film.generate · resolution-on-balanced",
+  "method": "POST",
+  "path": "/orgs/:id/alphastudio/media/jobs",
+  "status": 400,
+  "ms": 777,
+  "requestId": "2182114e-e2ec-47f0-b77b-c7c570c1dd19",
+  "note": "the document’s refusal; 400 expected BEFORE the wallet",
+  "request": {
+    "capability": "film.generate",
+    "plan": "balanced",
+    "sec": 3,
+    "aspect": "9:16",
+    "audio": true,
+    "scenes": [
+      {
+        "sec": 2,
+        "speak": "none",
+        "camera": "wide establishing shot of a sunlit café, morning light"
+      },
+      {
+        "sec": 1,
+        "camera": "slow push toward a coffee cup, steam rising"
+      }
+    ],
+    "resolution": "720p"
+  },
+  "response": {
+    "error": {
+      "code": "bad_request",
+      "message": "The media service rejected the request — check the body against the capability's schema",
+      "requestId": "2182114e-e2ec-47f0-b77b-c7c570c1dd19"
+    }
+  }
+}

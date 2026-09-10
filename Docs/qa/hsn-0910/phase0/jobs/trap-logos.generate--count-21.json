@@ -1,0 +1,43 @@
+{
+  "title": "§3.3 · media/jobs — logos.generate · count-21",
+  "method": "POST",
+  "path": "/orgs/:id/alphastudio/media/jobs",
+  "status": 400,
+  "ms": 752,
+  "requestId": "a957d534-defc-43aa-9c0b-f9798842f2c5",
+  "note": "the document’s refusal; 400 expected BEFORE the wallet",
+  "request": {
+    "capability": "logos.generate",
+    "plan": "balanced",
+    "params": {
+      "count": 21,
+      "aspectRatio": "1:1",
+      "outputFormat": "png"
+    },
+    "guidance": [
+      {
+        "role": "headline",
+        "text": "Alpha Pro MENA"
+      },
+      {
+        "role": "subject",
+        "text": "a data-lineage platform; three aligned nodes joined by one line"
+      },
+      {
+        "role": "style",
+        "text": "flat, geometric — a working mark for a browser tab and a slide master"
+      },
+      {
+        "role": "palette",
+        "text": "deep navy on warm off-white, one teal accent"
+      }
+    ]
+  },
+  "response": {
+    "error": {
+      "code": "bad_request",
+      "message": "The media service rejected the request — check the body against the capability's schema",
+      "requestId": "a957d534-defc-43aa-9c0b-f9798842f2c5"
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "title": "supplement · media/jobs — motion.generate · ladder-required-keys-only",
+  "method": "POST",
+  "path": "/orgs/:id/alphastudio/media/jobs",
+  "status": 402,
+  "ms": 1191,
+  "requestId": "5de44fd0-8731-437e-a3dd-db8723454c7e",
+  "note": "only capability, plan, image, video, orientation — the 512 px still and the 5 s clip; the control",
+  "request": {
+    "capability": "motion.generate",
+    "plan": "balanced",
+    "image": "masset_d9783f9d465e4018b0c911ad",
+    "video": "masset_418045b037f735053254ec4c",
+    "orientation": "image"
+  },
+  "response": {
+    "error": {
+      "code": "wallet_insufficient",
+      "message": "The org's wallet cannot cover this request — not enough credits",
+      "requestId": "5de44fd0-8731-437e-a3dd-db8723454c7e"
+    }
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "title": "§3.1 · catalog — avatars.imagine",
+  "method": "GET",
+  "path": "/orgs/:id/alphastudio/catalog/capabilities/avatars.imagine",
+  "status": 200,
+  "ms": 760,
+  "requestId": "8f048013-c296-4810-8b2c-a89b7a3a963e",
+  "response": {
+    "capability": "avatars.imagine",
+    "selectable": false,
+    "field": null,
+    "plan": null,
+    "models": [
+      {
+        "alias": "image-top",
+        "kind": "image",
+        "plan": "precise",
+        "displayHint": "Top image",
+        "capabilitySchema": {
+          "type": "object",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "properties": {
+            "count": {
+              "type": "integer",
+              "maximum": 20,
+              "minimum": 1
+            },
+            "aspectRatio": {
+              "enum": [
+                "1:1",
+                "16:9",
+                "9:16",
+                "4:3",
+                "3:4",
+                "3:2",
+                "2:3"
+              ],
+              "type": "string"
+            },
+            "outputFormat": {
+              "enum": [
+                "png",
+                "jpeg",
+                "webp"
+              ],
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "capabilities": [
+          "avatar.generate",
+          "avatars.imagine",
+          "logos.generate",
+          "media.generate",
+          "social-posts.media"
+        ],
+        "cost": {
+          "images": "0.211"
+        },
+        "appMetadata": {
+          "min_plan": "pro"
+        }
+      }
+    ]
+  }
+}

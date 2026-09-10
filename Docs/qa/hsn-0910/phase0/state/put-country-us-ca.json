@@ -1,0 +1,26 @@
+{
+  "title": "§3.7b · PUT /orgs/:id/country — {country:\"US\", state:\"CA\"}",
+  "method": "PUT",
+  "path": "/orgs/:id/country",
+  "status": 200,
+  "ms": 20391,
+  "requestId": "79ffe011-947b-4ad2-938a-d139a0e48a0d",
+  "note": "accepted, dropped, or 400? (~10 s: it loads a calendar)",
+  "request": {
+    "country": "US",
+    "state": "CA"
+  },
+  "response": {
+    "org": {
+      "id": "1824",
+      "name": "QA HSN-0910 Org 1789026912812",
+      "slug": "qa-hsn-0910-org-1789026912812",
+      "status": "active",
+      "createdAt": "2026-09-10T07:55:21.368Z",
+      "updatedAt": "2026-09-10T07:57:13.226Z",
+      "country": "US"
+    },
+    "holidaysCount": 10,
+    "reloaded": true
+  }
+}

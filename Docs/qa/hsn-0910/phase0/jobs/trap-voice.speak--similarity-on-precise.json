@@ -1,0 +1,27 @@
+{
+  "title": "§3.3 · media/jobs — voice.speak · similarity-on-precise",
+  "method": "POST",
+  "path": "/orgs/:id/alphastudio/media/jobs",
+  "status": 400,
+  "ms": 787,
+  "requestId": "4c26ec82-af6e-4ad4-b6a0-53198f12523a",
+  "note": "the document’s refusal; 400 expected BEFORE the wallet",
+  "request": {
+    "capability": "voice.speak",
+    "plan": "precise",
+    "prompt": "Welcome to Alpha Pro. Here is what changed this week.",
+    "params": {
+      "voice": "Rachel",
+      "lang": "en",
+      "stability": 0.5,
+      "similarity": 0.75
+    }
+  },
+  "response": {
+    "error": {
+      "code": "bad_request",
+      "message": "The media service rejected the request — check the body against the capability's schema",
+      "requestId": "4c26ec82-af6e-4ad4-b6a0-53198f12523a"
+    }
+  }
+}

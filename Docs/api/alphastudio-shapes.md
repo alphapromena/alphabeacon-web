@@ -5473,3 +5473,4735 @@ envelope's `requestId` on an error). Run stamp: `2026-09-02T12:06:43.187Z`.
 }
 ```
 
+
+
+## HSN-0910 Phase 0 — the 13 capabilities, the approve door, State under Country, the environment (2026-09-10)
+
+Captured by `pnpm probe:hsn-0910` against the deployed SANDBOX API on one fresh QA org —
+**1824** (`qa+1789026912812hsn0910@alphapromena.com`) — org 619 untouched; the funded QA org read ONLY
+(a job list, never a POST). Zero spend: catalog reads, five presigns with five free Node
+PUTs, read-presigns, and every generation body sent ONLY behind the zero-wallet shield (a
+valid body answers 402 at the wallet check, an invalid one 400 before it; the wallet and the
+job list are re-read after). Bodies verbatim; presigned urls, the API base and every token
+redacted. Request-ids are the server's `x-request-id` (or the envelope's `requestId`).
+The durable raw copy is `Docs/qa/hsn-0910/phase0/` (this file is overwritten wholesale by
+`pnpm smoke:alphastudio`). The catalog bodies are summarised here and verbatim there
+(`catalog/<capability>.json`, `catalog/<capability>.plan-<plan>.json`). Run stamp: `2026-09-10T07:55:12.812Z`.
+
+### Capability × catalog × 402 × 400 trap
+
+| Capability | Catalog | Valid body (§3.2) | Traps (§3.3) |
+| --- | --- | --- | --- |
+| `media.generate` | 200 · selectable true · field "plan" · rows: image-balanced (balanced: images 0.03); image-reference (creative: images 0.06); image-reference-lite (balanced: images 0.05); image-reference-top (precise: images 0.211); image-super (creative: images 0.06); image-top (precise: images 0.211); video-reference-core (balanced: video_seconds 0.068); video-reference-plus (creative: video_seconds 0.14); video-reference-top (precise: video_seconds 0.28) · per plan: balanced = image-balanced (balanced: images 0.03); image-reference-lite (balanced: images 0.05); video-reference-core (balanced: video_seconds 0.068); creative = image-reference (creative: images 0.06); image-super (creative: images 0.06); video-reference-plus (creative: video_seconds 0.14); precise = image-reference-top (precise: images 0.211); image-top (precise: images 0.211); video-reference-top (precise: video_seconds 0.28) | document-example: **402** wallet_insufficient<br>with-origin: **402** wallet_insufficient | unknown-param-key: **400** bad_request (names field: no) |
+| `images.edit` | 200 · selectable false · field null · rows: image-reference (creative: images 0.06) | document-example: **402** wallet_insufficient | two-referenceImages: **400** bad_request (names field: no) |
+| `photoshoot.generate` | 200 · selectable false · field null · rows: image-reference (creative: images 0.06) | document-example: **402** wallet_insufficient<br>four-referenceImages: **402** wallet_insufficient | five-referenceImages: **502** bad_gateway (names field: no)<br>five-referenceImages-again: **502** bad_gateway (names field: no) |
+| `brand-assets.generate` | 200 · selectable false · field null · rows: image-design (plan null: images 0.05) | document-example: **402** wallet_insufficient | count-1: **400** bad_request (names field: no) |
+| `logos.generate` | 200 · selectable true · field "plan" · rows: image-balanced (balanced: images 0.03); image-reference (creative: images 0.06); image-reference-lite (balanced: images 0.05); image-reference-top (precise: images 0.211); image-super (creative: images 0.06); image-top (precise: images 0.211) · per plan: balanced = image-balanced (balanced: images 0.03); image-reference-lite (balanced: images 0.05); creative = image-reference (creative: images 0.06); image-super (creative: images 0.06); precise = image-reference-top (precise: images 0.211); image-top (precise: images 0.211) | document-example: **402** wallet_insufficient | count-21: **400** bad_request (names field: no) |
+| `logos.redesign` | 200 · selectable true · field "plan" · rows: image-reference (creative: images 0.06); image-reference-lite (balanced: images 0.05); image-reference-top (precise: images 0.211) · per plan: balanced = image-reference-lite (balanced: images 0.05); creative = image-reference (creative: images 0.06); precise = image-reference-top (precise: images 0.211) | document-example: **402** wallet_insufficient | no-referenceImages: **400** bad_request (names field: no) |
+| `avatars.generate` | 200 · selectable false · field null · rows: image-reference-top (precise: images 0.211) | document-example: **402** wallet_insufficient | count-9: **400** bad_request (names field: no) |
+| `avatars.imagine` | 200 · selectable false · field null · rows: image-top (precise: images 0.211) | document-example: **402** wallet_insufficient | instruction-601-chars: **400** bad_request (names field: no) |
+| `avatar.generate` | 200 · selectable true · field "plan" · rows: image-balanced-seedream (plan null: images 0.03); image-reference (creative: images 0.06); image-reference-seedream (plan null: images 0.03); image-reference-top (precise: images 0.211); image-super (creative: images 0.06); image-top (precise: images 0.211) · per plan: balanced = image-balanced-seedream (plan null: images 0.03); image-reference-seedream (plan null: images 0.03); creative = image-reference (creative: images 0.06); image-super (creative: images 0.06); precise = image-reference-top (precise: images 0.211); image-top (precise: images 0.211) | document-example: **402** wallet_insufficient | count-9: **400** bad_request (names field: no) |
+| `video-ads.generate` | 200 · selectable true · field "plan" · rows: video-image-balanced (plan null: video_seconds 0.07); video-image-core (plan null: video_seconds 0.042); video-image-super (plan null: video_seconds 0.112) · per plan: balanced = video-image-core (plan null: video_seconds 0.042); creative = video-image-balanced (plan null: video_seconds 0.07); precise = video-image-super (plan null: video_seconds 0.112) | document-example: **402** wallet_insufficient | aspectRatio: **400** bad_request (names field: no)<br>generateAudio-true: **400** bad_request (names field: no)<br>durationS-8: **400** bad_request (names field: no) |
+| `voice.speak` | 200 · selectable true · field "plan" · rows: voice-expressive (plan null: audio_text_units 0.1); voice-multilingual (plan null: audio_text_units 0.1); voice-turbo (plan null: audio_text_units 0.05) · per plan: balanced = voice-turbo (plan null: audio_text_units 0.05); creative = voice-multilingual (plan null: audio_text_units 0.1); precise = voice-expressive (plan null: audio_text_units 0.1) | document-example: **402** wallet_insufficient | unapproved-voice: **400** bad_request (names field: no)<br>similarity-on-precise: **400** bad_request (names field: no) |
+| `film.generate` | 200 · selectable true · field "plan" · rows: video-scene-core (plan null: video_seconds 0.14); video-scene-plus (plan null: video_seconds 0.3034, video_seconds_by_resolution {"4k":"2.7306","480p":"0.1415","720p":"0.3034","1080p":"0.6827"}); video-scene-top (plan null: video_seconds 0.473, video_seconds_by_resolution {"480p":"0.2205","720p":"0.473","1080p":"1.0643"}) · per plan: balanced = video-scene-core (plan null: video_seconds 0.14); creative = video-scene-plus (plan null: video_seconds 0.3034, video_seconds_by_resolution {"4k":"2.7306","480p":"0.1415","720p":"0.3034","1080p":"0.6827"}); precise = video-scene-top (plan null: video_seconds 0.473, video_seconds_by_resolution {"480p":"0.2205","720p":"0.473","1080p":"1.0643"}) | document-example: **402** wallet_insufficient<br>with-references-and-character: **402** wallet_insufficient | resolution-on-balanced: **400** bad_request (names field: no)<br>talking-on-balanced: **400** bad_request (names field: no)<br>scenes-do-not-sum: **400** bad_request (names field: no) |
+| `motion.generate` | 200 · selectable true · field "plan" · rows: video-motion-core (plan null: video_seconds 0.07); video-motion-plus (plan null: video_seconds 0.112); video-motion-top (plan null: video_seconds 0.126) · per plan: balanced = video-motion-core (plan null: video_seconds 0.07); creative = video-motion-plus (plan null: video_seconds 0.112); precise = video-motion-top (plan null: video_seconds 0.126) | document-example: **400** bad_request<br>ladder-1x1-still-5s-clip: **400** bad_request<br>ladder-512-still-3s-clip: **400** bad_request<br>ladder-1x1-still-3s-clip: **400** bad_request<br>ladder-required-keys-only: **402** wallet_insufficient<br>ladder-plus-keepSound-prompt: **402** wallet_insufficient<br>ladder-plus-lang-ar: **400** bad_request<br>ladder-orientation-video: **400** bad_request | no-orientation: **400** bad_request (names field: no) |
+
+### What this run established
+
+- §3.8 /health: 200 {"ok":true}; header names [connection, content-length, content-type, date, x-amzn-requestid, x-amzn-trace-id, x-request-id].
+- §3.8 /openapi: 200; info={"title":"AlphaStudio API","description":"Conventions (match the implementation exactly):\n- Success responses are bare resource JSON (no envelope). Lists are `{ items, total }`.\n- Errors are `{ error: { code, message, details?, requestId? } }`; `code` is machine-readable and part of the contract.\n- IDs are Postgres bigints serialized as decimal strings.\n- Timestamps are ISO 8601.\n- Every response carries `x-request-id` (echoes an inbound one).\n- Auth is `Authorization: Bearer <opaque session token>`.","version":"0.1.0"}; servers=undefined; environment-like top-level keys: none.
+- §3.8 https://malaky.ai: html 200; bundles [none]; NOT A VITE BUILD — no /assets/*.js; script hosts [img1.wsimg.com].
+- §3.8 https://1.malaky.ai: html 200; bundles [index-DUHITzRc.js]; LIVE (the API host is inlined in index-DUHITzRc.js).
+- §3.8 https://alphabeacon-web.vercel.app: html 0; bundles [none]; UNREACHABLE from this host (transport error — not measured here).
+- Fresh QA org: id 1824 ("QA HSN-0910 Org 1789026912812"); org record keys [id, name, slug, status, createdAt, updatedAt, country].
+- §3.8 org root keys [org, membership]; org keys [id, name, slug, status, createdAt, updatedAt, country] — no environment-like key.
+- Wallet on the fresh org: 200 {"cents":0,"heldCents":0,"availableCents":0}.
+- asset A (image/png): presign 201 → masset_b24afbaa6bcb30f68af48c8e; PUT 200.
+- asset B (image/png): presign 201 → masset_392d87c15f41bfe946854a38; PUT 200.
+- 3 s MP4 source: ffmpeg lavfi colour source, 3 s, 64×64, 2384 bytes.
+- asset V (video/mp4): presign 201 → masset_8ea12cc8634160529ee6834c; PUT 200.
+- 512 px PNG source: ffmpeg lavfi colour source, 512×512, 1900 bytes.
+- asset C (image/png): presign 201 → masset_1508fa6f5391e767f91d2df2; PUT 200.
+- 5 s MP4 source: ffmpeg lavfi colour source, 5 s, 64×64, 2914 bytes.
+- asset W (video/mp4): presign 201 → masset_f8737222c97ea8030669bb3b; PUT 200.
+- Read urls: A minted, B minted; video assets V masset_8ea12cc8634160529ee6834c, W masset_f8737222c97ea8030669bb3b; still C masset_1508fa6f5391e767f91d2df2.
+- §3.1 media.generate: 200 · selectable=true · field="plan" · models: image-balanced [balanced, image, cost {"images":"0.03"}] · image-reference [creative, image, cost {"images":"0.06"}] · image-reference-lite [balanced, image, cost {"images":"0.05"}] · image-reference-top [precise, image, cost {"images":"0.211"}] · image-super [creative, image, cost {"images":"0.06"}] · image-top [precise, image, cost {"images":"0.211"}] · video-reference-core [balanced, video, cost {"video_seconds":"0.068"}] · video-reference-plus [creative, video, cost {"video_seconds":"0.14"}] · video-reference-top [precise, video, cost {"video_seconds":"0.28"}].
+- §3.1 images.edit: 200 · selectable=false · field=null · models: image-reference [creative, image, cost {"images":"0.06"}].
+- §3.1 photoshoot.generate: 200 · selectable=false · field=null · models: image-reference [creative, image, cost {"images":"0.06"}].
+- §3.1 brand-assets.generate: 200 · selectable=false · field=null · models: image-design [null, image, cost {"images":"0.05"}].
+- §3.1 logos.generate: 200 · selectable=true · field="plan" · models: image-balanced [balanced, image, cost {"images":"0.03"}] · image-reference [creative, image, cost {"images":"0.06"}] · image-reference-lite [balanced, image, cost {"images":"0.05"}] · image-reference-top [precise, image, cost {"images":"0.211"}] · image-super [creative, image, cost {"images":"0.06"}] · image-top [precise, image, cost {"images":"0.211"}].
+- §3.1 logos.redesign: 200 · selectable=true · field="plan" · models: image-reference [creative, image, cost {"images":"0.06"}] · image-reference-lite [balanced, image, cost {"images":"0.05"}] · image-reference-top [precise, image, cost {"images":"0.211"}].
+- §3.1 avatars.generate: 200 · selectable=false · field=null · models: image-reference-top [precise, image, cost {"images":"0.211"}].
+- §3.1 avatars.imagine: 200 · selectable=false · field=null · models: image-top [precise, image, cost {"images":"0.211"}].
+- §3.1 avatar.generate: 200 · selectable=true · field="plan" · models: image-balanced-seedream [null, image, cost {"images":"0.03"}] · image-reference [creative, image, cost {"images":"0.06"}] · image-reference-seedream [null, image, cost {"images":"0.03"}] · image-reference-top [precise, image, cost {"images":"0.211"}] · image-super [creative, image, cost {"images":"0.06"}] · image-top [precise, image, cost {"images":"0.211"}].
+- §3.1 video-ads.generate: 200 · selectable=true · field="plan" · models: video-image-balanced [null, video, cost {"video_seconds":"0.07"}] · video-image-core [null, video, cost {"video_seconds":"0.042"}] · video-image-super [null, video, cost {"video_seconds":"0.112"}].
+- §3.1 voice.speak: 200 · selectable=true · field="plan" · models: voice-expressive [null, audio, cost {"audio_text_units":"0.1"}] · voice-multilingual [null, audio, cost {"audio_text_units":"0.1"}] · voice-turbo [null, audio, cost {"audio_text_units":"0.05"}].
+- §3.1 film.generate: 200 · selectable=true · field="plan" · models: video-scene-core [null, video, cost {"video_seconds":"0.14"}] · video-scene-plus [null, video, cost {"video_seconds":"0.3034","video_seconds_by_resolution":{"4k":"2.7306","480p":"0.1415","720p":"0.3034","1080p":"0.6827"}}] · video-scene-top [null, video, cost {"video_seconds":"0.473","video_seconds_by_resolution":{"480p":"0.2205","720p":"0.473","1080p":"1.0643"}}].
+- §3.1 motion.generate: 200 · selectable=true · field="plan" · models: video-motion-core [null, video, cost {"video_seconds":"0.07"}] · video-motion-plus [null, video, cost {"video_seconds":"0.112"}] · video-motion-top [null, video, cost {"video_seconds":"0.126"}].
+- §3.1 media.generate per plan: balanced → image-balanced {"images":"0.03"} | image-reference-lite {"images":"0.05"} | video-reference-core {"video_seconds":"0.068"} · creative → image-reference {"images":"0.06"} | image-super {"images":"0.06"} | video-reference-plus {"video_seconds":"0.14"} · precise → image-reference-top {"images":"0.211"} | image-top {"images":"0.211"} | video-reference-top {"video_seconds":"0.28"}.
+- §3.1 logos.generate per plan: balanced → image-balanced {"images":"0.03"} | image-reference-lite {"images":"0.05"} · creative → image-reference {"images":"0.06"} | image-super {"images":"0.06"} · precise → image-reference-top {"images":"0.211"} | image-top {"images":"0.211"}.
+- §3.1 logos.redesign per plan: balanced → image-reference-lite {"images":"0.05"} · creative → image-reference {"images":"0.06"} · precise → image-reference-top {"images":"0.211"}.
+- §3.1 avatar.generate per plan: balanced → image-balanced-seedream {"images":"0.03"} | image-reference-seedream {"images":"0.03"} · creative → image-reference {"images":"0.06"} | image-super {"images":"0.06"} · precise → image-reference-top {"images":"0.211"} | image-top {"images":"0.211"}.
+- §3.1 video-ads.generate per plan: balanced → video-image-core {"video_seconds":"0.042"} · creative → video-image-balanced {"video_seconds":"0.07"} · precise → video-image-super {"video_seconds":"0.112"}.
+- §3.1 voice.speak?plan=balanced: 200; voice schema per model: [{"alias":"voice-turbo","voice":{"enum":["g3YpdjT1OTh9cunaumJs","Rachel"],"type":"string"},"lang":{"type":"string","pattern":"^[a-z]{2}$"},"appMetadata":{"min_plan":"pro"}}].
+- §3.1 voice.speak?plan=creative: 200; voice schema per model: [{"alias":"voice-multilingual","voice":{"enum":["g3YpdjT1OTh9cunaumJs","Rachel"],"type":"string"},"lang":{"type":"string","pattern":"^[a-z]{2}$"},"appMetadata":{"min_plan":"pro"}}].
+- §3.1 voice.speak?plan=precise: 200; voice schema per model: [{"alias":"voice-expressive","voice":{"enum":["g3YpdjT1OTh9cunaumJs","Rachel"],"type":"string"},"lang":{"type":"string","pattern":"^[a-z]{2}$"},"appMetadata":{"min_plan":"pro"}}].
+- §3.1 voice.speak per plan: balanced → voice-turbo {"audio_text_units":"0.05"} · creative → voice-multilingual {"audio_text_units":"0.1"} · precise → voice-expressive {"audio_text_units":"0.1"}.
+- §3.1 film.generate per plan: balanced → video-scene-core {"video_seconds":"0.14"} · creative → video-scene-plus {"video_seconds":"0.3034","video_seconds_by_resolution":{"4k":"2.7306","480p":"0.1415","720p":"0.3034","1080p":"0.6827"}} · precise → video-scene-top {"video_seconds":"0.473","video_seconds_by_resolution":{"480p":"0.2205","720p":"0.473","1080p":"1.0643"}}.
+- §3.1 motion.generate per plan: balanced → video-motion-core {"video_seconds":"0.07"} · creative → video-motion-plus {"video_seconds":"0.112"} · precise → video-motion-top {"video_seconds":"0.126"}.
+- §3.1 avatar.generate own models: 6 row(s) on the plain read [image-balanced-seedream/plan null, image-reference/creative, image-reference-seedream/plan null, image-reference-top/precise, image-super/creative, image-top/precise]; per plan balanced=image-balanced-seedream+image-reference-seedream, creative=image-reference+image-super, precise=image-reference-top+image-top.
+- §3.1 film.generate own models: 3 row(s) on the plain read [video-scene-core/plan null, video-scene-plus/plan null, video-scene-top/plan null]; per plan balanced=video-scene-core, creative=video-scene-plus, precise=video-scene-top.
+- §3.1 motion.generate own models: 3 row(s) on the plain read [video-motion-core/plan null, video-motion-plus/plan null, video-motion-top/plan null]; per plan balanced=video-motion-core, creative=video-motion-plus, precise=video-motion-top.
+- §3.5 approve door: 404 not_found — NOT proxied by Ward.
+- §3.2 media.generate · document-example: 402 code=wallet_insufficient "The org's wallet cannot cover this request — not enough credits".
+- §3.2 images.edit · document-example: 402 code=wallet_insufficient "The org's wallet cannot cover this request — not enough credits".
+- §3.2 photoshoot.generate · document-example: 402 code=wallet_insufficient "The org's wallet cannot cover this request — not enough credits".
+- §3.2 brand-assets.generate · document-example: 402 code=wallet_insufficient "The org's wallet cannot cover this request — not enough credits".
+- §3.2 logos.generate · document-example: 402 code=wallet_insufficient "The org's wallet cannot cover this request — not enough credits".
+- §3.2 logos.redesign · document-example: 402 code=wallet_insufficient "The org's wallet cannot cover this request — not enough credits".
+- §3.2 avatars.generate · document-example: 402 code=wallet_insufficient "The org's wallet cannot cover this request — not enough credits".
+- §3.2 avatars.imagine · document-example: 402 code=wallet_insufficient "The org's wallet cannot cover this request — not enough credits".
+- §3.2 avatar.generate · document-example: 402 code=wallet_insufficient "The org's wallet cannot cover this request — not enough credits".
+- §3.2 video-ads.generate · document-example: 402 code=wallet_insufficient "The org's wallet cannot cover this request — not enough credits".
+- §3.2 voice.speak · document-example: 402 code=wallet_insufficient "The org's wallet cannot cover this request — not enough credits".
+- §3.2 film.generate · document-example: 402 code=wallet_insufficient "The org's wallet cannot cover this request — not enough credits".
+- §3.2 motion.generate · document-example: 400 code=bad_request "The media service rejected the request — check the body against the capability's schema".
+- §3.2 media.generate · with-origin: 402 code=wallet_insufficient "The org's wallet cannot cover this request — not enough credits".
+- §3.2 film.generate · with-references-and-character: 402 code=wallet_insufficient "The org's wallet cannot cover this request — not enough credits".
+- §3.2 photoshoot.generate · four-referenceImages: 402 code=wallet_insufficient "The org's wallet cannot cover this request — not enough credits".
+- §3.2 motion.generate · ladder-1x1-still-5s-clip: 400 code=bad_request "The media service rejected the request — check the body against the capability's schema".
+- §3.2 motion.generate · ladder-512-still-3s-clip: 400 code=bad_request "The media service rejected the request — check the body against the capability's schema".
+- §3.2 motion.generate · ladder-1x1-still-3s-clip: 400 code=bad_request "The media service rejected the request — check the body against the capability's schema".
+- §3.2 motion.generate · ladder-required-keys-only: 402 code=wallet_insufficient "The org's wallet cannot cover this request — not enough credits".
+- §3.2 motion.generate · ladder-plus-keepSound-prompt: 402 code=wallet_insufficient "The org's wallet cannot cover this request — not enough credits".
+- §3.2 motion.generate · ladder-plus-lang-ar: 400 code=bad_request "The media service rejected the request — check the body against the capability's schema".
+- §3.2 motion.generate · ladder-orientation-video: 400 code=bad_request "The media service rejected the request — check the body against the capability's schema".
+- §3.3 images.edit · two-referenceImages: 400 code=bad_request "The media service rejected the request — check the body against the capability's schema" · names the field? no.
+- §3.3 photoshoot.generate · five-referenceImages: 502 code=bad_gateway "The media service is unavailable — try again later" · names the field? no.
+- §3.3 photoshoot.generate · five-referenceImages-again: 502 code=bad_gateway "The media service is unavailable — try again later" · names the field? no.
+- §3.3 brand-assets.generate · count-1: 400 code=bad_request "The media service rejected the request — check the body against the capability's schema" · names the field? no.
+- §3.3 logos.generate · count-21: 400 code=bad_request "The media service rejected the request — check the body against the capability's schema" · names the field? no.
+- §3.3 logos.redesign · no-referenceImages: 400 code=bad_request "The media service rejected the request — check the body against the capability's schema" · names the field? no.
+- §3.3 avatars.generate · count-9: 400 code=bad_request "The media service rejected the request — check the body against the capability's schema" · names the field? no.
+- §3.3 avatars.imagine · instruction-601-chars: 400 code=bad_request "The media service rejected the request — check the body against the capability's schema" · names the field? no.
+- §3.3 avatar.generate · count-9: 400 code=bad_request "The media service rejected the request — check the body against the capability's schema" · names the field? no.
+- §3.3 video-ads.generate · aspectRatio: 400 code=bad_request "The media service rejected the request — check the body against the capability's schema" · names the field? no.
+- §3.3 video-ads.generate · generateAudio-true: 400 code=bad_request "The media service rejected the request — check the body against the capability's schema" · names the field? no.
+- §3.3 video-ads.generate · durationS-8: 400 code=bad_request "The media service rejected the request — check the body against the capability's schema" · names the field? no.
+- §3.3 voice.speak · unapproved-voice: 400 code=bad_request "The media service rejected the request — check the body against the capability's schema" · names the field? no.
+- §3.3 voice.speak · similarity-on-precise: 400 code=bad_request "The media service rejected the request — check the body against the capability's schema" · names the field? no.
+- §3.3 film.generate · resolution-on-balanced: 400 code=bad_request "The media service rejected the request — check the body against the capability's schema" · names the field? no.
+- §3.3 film.generate · talking-on-balanced: 400 code=bad_request "The media service rejected the request — check the body against the capability's schema" · names the field? no.
+- §3.3 film.generate · scenes-do-not-sum: 400 code=bad_request "The media service rejected the request — check the body against the capability's schema" · names the field? no.
+- §3.3 motion.generate · no-orientation: 400 code=bad_request "The media service rejected the request — check the body against the capability's schema" · names the field? no.
+- §3.3 media.generate · unknown-param-key: 400 code=bad_request "The media service rejected the request — check the body against the capability's schema" · names the field? no.
+- After the bodies: wallet {"cents":0,"heldCents":0,"availableCents":0}; jobs listed: 0.
+- §3.7a countries: 200; total=249; row keys across the list [code, name]; US row {"code":"US","name":"United States"}; NO state-like key on any row.
+- §3.7b PUT country with state: 200; holidaysCount=10 reloaded=true; org keys [id, name, slug, status, createdAt, updatedAt, country]; state DROPPED (not on the org record).
+- §3.7b org after: country="US"; keys [id, name, slug, status, createdAt, updatedAt, country]; no `state` key.
+- §3.7d holidays: 200; total=10; row keys [id, orgId, date, event, rules, createdAt, processed]; first {"id":"864","orgId":"1824","date":"2026-10-12","event":"Columbus Day","rules":[{"kind":"do","text":"Acknowledge the federal holiday and the growing recognition of Indigenous Peoples' Day alongside it, reflecting the dual conversation many Americans are having."},{"kind":"dont","text":"Don't frame it as a straightforward celebration of exploration — the contested history means a one-sided tone will alienate a significant portion of your audience."}],"createdAt":"2026-09-10T07:57:13.226Z","processed":false}.
+- §3.7c event-source with state: 201; row keys [id, orgId, kind, country, createdAt, updatedAt]; state DROPPED.
+- §3.7 state-list sweep (read-only): /orgs/:id/event-sources/countries/US → 404 · /orgs/:id/event-sources/countries/US/states → 404 · /orgs/:id/event-sources/states?country=US → 400 · /orgs/:id/event-sources/subdivisions?country=US → 400 · /orgs/:id/countries/US/states → 404 · /orgs/:id/states?country=US → 404.
+- §3.4 funded org 1813: 0 job(s) listed []; multi-kind or audio/document jobs: 0.
+- §3.4 UNMEASURED: no multi-asset job exists on the funded org — the gallery renders `audio`/`document` kinds defensively (row + Open, no player claims).
+- cleanup masset_b24afbaa6bcb30f68af48c8e (image/png): 204.
+- cleanup masset_392d87c15f41bfe946854a38 (image/png): 204.
+- cleanup masset_8ea12cc8634160529ee6834c (video/mp4): 204.
+- cleanup masset_1508fa6f5391e767f91d2df2 (image/png): 204.
+- cleanup masset_f8737222c97ea8030669bb3b (video/mp4): 204.
+- cleanup list re-read: 200 {"assets":[]}.
+
+### Captured exchanges, in order (catalog bodies summarised — raw in `Docs/qa/hsn-0910/phase0/catalog/`)
+
+#### 1. §3.8 · GET /health — the liveness body and its headers
+
+`GET /health` → **200** · request-id `0f7a4173-1334-4d45-81b8-b51862e6ca44` · 1140 ms · raw `environment/health.json`
+
+```json
+{
+  "connection": "keep-alive",
+  "content-length": "11",
+  "content-type": "application/json",
+  "date": "Thu, 10 Sep 2026 07:55:13 GMT",
+  "x-amzn-requestid": "4aa555f6-19fb-4f71-a3a8-b3578bdf4069",
+  "x-amzn-trace-id": "Root=1-6aa26260-230d64910ba642c77bd30759;Parent=3605f0d96eab1e60;Sampled=0;Lineage=1:b360ccf9:0",
+  "x-request-id": "0f7a4173-1334-4d45-81b8-b51862e6ca44"
+}
+```
+
+```json
+{
+  "ok": true
+}
+```
+
+#### 2. §3.8 · GET /openapi — top-level keys, info, servers
+
+`GET /openapi` → **200** · request-id `598e4fdd-61a8-49f7-94d5-9ea63b49a81d` · 671 ms · raw `environment/openapi.json`
+
+```json
+{
+  "status": 200,
+  "requestId": "598e4fdd-61a8-49f7-94d5-9ea63b49a81d",
+  "keys": [
+    "openapi",
+    "info",
+    "components",
+    "paths"
+  ],
+  "info": {
+    "title": "AlphaStudio API",
+    "description": "Conventions (match the implementation exactly):\n- Success responses are bare resource JSON (no envelope). Lists are `{ items, total }`.\n- Errors are `{ error: { code, message, details?, requestId? } }`; `code` is machine-readable and part of the contract.\n- IDs are Postgres bigints serialized as decimal strings.\n- Timestamps are ISO 8601.\n- Every response carries `x-request-id` (echoes an inbound one).\n- Auth is `Authorization: Bearer <opaque session token>`.",
+    "version": "0.1.0"
+  },
+  "envLikeKeys": []
+}
+```
+
+#### 3. §3.8 · GET https://malaky.ai/ — the entry html
+
+`GET <redacted url: 18 chars>` → **200** · request-id `none` · 265 ms
+
+```json
+{
+  "cache-control": "max-age=30",
+  "connection": "keep-alive",
+  "content-encoding": "br",
+  "content-length": "15336",
+  "content-security-policy": "frame-ancestors 'self' godaddy.com *.godaddy.com dev-godaddy.com *.dev-godaddy.com test-godaddy.com *.test-godaddy.com",
+  "content-type": "text/html;charset=utf-8",
+  "date": "Thu, 10 Sep 2026 07:55:14 GMT",
+  "etag": "125a93258a20b104faaec8c3eae8525d",
+  "keep-alive": "timeout=5",
+  "link": "<//img1.wsimg.com/ceph-p3-01/website-builder-data-prod/static/widgets/UX.4.51.22.js>; rel=preload; as=script; crossorigin,<https://img1.wsimg.com/gfonts/s/playfairdisplay/v40/nuFiD-vYSZviVYUb_rj3ij__anPXDTzYgA.woff2>; rel=preload; as=font; crossorigin,<https://img1.wsimg.com/gfonts/s/sourcesanspro/v23/6xKwdSBYKcSV-LCoeQqfX1RYOo3qPZZMkids18Q.woff2>; rel=preload; as=font; crossorigin,<https://img1.wsimg.com/gfonts/s/sourcesanspro/v23/6xK1dSBYKcSV-LCoeQqfX1RYOo3qPZ7nsDI.woff2>; rel=preload; as=font; crossorigin,<https://img1.wsimg.com/gfonts/s/sourcesanspro/v23/6xKwdSBYKcSV-LCoeQqfX1RYOo3qPZZclSds18Q.woff2>; rel=preload; as=font; crossorigin,<https://img1.wsimg.com/gfonts/s/sourcesanspro/v23/6xKydSBYKcSV-LCoeQqfX1RYOo3ik4zwlxdu.woff2>; rel=preload; as=font; crossorigin,<https://img1.wsimg.com/gfonts/s/sourcesanspro/v23/6xK3dSBYKcSV-LCoeQqfX1RYOo3qOK7l.woff2>; rel=preload; as=font; crossorigin,<https://img1.wsimg.com/gfonts/s/sourcesanspro/v23/6xKydSBYKcSV-LCoeQqfX1RYOo3ig4vwlxdu.woff2>; rel=preload; as=font; crossorigin,<https://img1.wsimg.com/gfonts/s/montserrat/v31/JTUSjIg1_i6t8kCHKm459Wlhyw.woff2>; rel=preload; as=font; crossorigin,<https://fonts.googleapis.com>; rel=preconnect; crossorigin,<https://fonts.gstatic.com>; rel=preconnect; crossorigin,<https://img1.wsimg.com>; rel=preconnect; crossorigin,<https://isteam.wsimg.com>; rel=preconnect; crossorigin",
+  "server": "DPS/2.0.0+sha-9ac0622",
+  "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+  "vary": "Accept-Encoding",
+  "x-siteid": "ap-south-1",
+  "x-version": "9ac0622"
+}
+```
+
+```json
+{
+  "origin": "<redacted url: 17 chars>",
+  "htmlStatus": 200,
+  "bundles": [],
+  "scriptHosts": [
+    "img1.wsimg.com"
+  ],
+  "mode": "NOT A VITE BUILD — no /assets/*.js; script hosts [img1.wsimg.com]"
+}
+```
+
+#### 4. §3.8 · GET https://1.malaky.ai/ — the entry html
+
+`GET <redacted url: 20 chars>` → **200** · request-id `none` · 317 ms
+
+```json
+{
+  "access-control-allow-origin": "*",
+  "age": "504",
+  "cache-control": "public, max-age=0, must-revalidate",
+  "content-disposition": "inline",
+  "content-encoding": "br",
+  "content-type": "text/html; charset=utf-8",
+  "date": "Thu, 10 Sep 2026 07:55:15 GMT",
+  "etag": "W/\"c4aeade946ddad0eca4d45e38ea93616\"",
+  "last-modified": "Thu, 10 Sep 2026 07:46:50 GMT",
+  "server": "Vercel",
+  "strict-transport-security": "max-age=63072000",
+  "transfer-encoding": "chunked",
+  "x-vercel-cache": "HIT",
+  "x-vercel-id": "bom1::tp9l7-1789026915055-05e2daba6a3b"
+}
+```
+
+```json
+{
+  "origin": "<redacted url: 19 chars>",
+  "htmlStatus": 200,
+  "bundles": [
+    "index-DUHITzRc.js"
+  ],
+  "scriptHosts": [],
+  "mode": "LIVE (the API host is inlined in index-DUHITzRc.js)",
+  "vercelId": "bom1::tp9l7-1789026915055-05e2daba6a3b",
+  "cacheHeader": "HIT"
+}
+```
+
+#### 5. §3.8 · GET https://1.malaky.ai/assets/index-DUHITzRc.js — a bundle
+
+`GET <redacted url: 44 chars>` → **200** · request-id `none` · 176 ms
+
+```json
+{
+  "textPreview": "",
+  "length": 683225
+}
+```
+
+#### 6. §3.8 · GET https://alphabeacon-web.vercel.app/ — the entry html
+
+`GET <redacted url: 35 chars>` → **0** · request-id `none` · 62 ms
+
+```json
+{}
+```
+
+```json
+{
+  "origin": "<redacted url: 34 chars>",
+  "htmlStatus": 0,
+  "bundles": [],
+  "scriptHosts": [],
+  "mode": "UNREACHABLE from this host (transport error — not measured here)",
+  "transport": {
+    "transportError": "TypeError: fetch failed"
+  }
+}
+```
+
+#### 7. create org
+
+`POST /orgs` → **201** · request-id `b9cc78ba-583e-4e08-b627-01c6b69693e7` · 739 ms · raw `setup/create-org.json`
+> the fresh QA org every probe below runs on
+
+```json
+{
+  "request": {
+    "name": "QA HSN-0910 Org 1789026912812"
+  }
+}
+```
+
+```json
+{
+  "org": {
+    "id": "1824",
+    "name": "QA HSN-0910 Org 1789026912812",
+    "slug": "qa-hsn-0910-org-1789026912812",
+    "status": "active",
+    "createdAt": "2026-09-10T07:55:21.368Z",
+    "updatedAt": "2026-09-10T07:55:21.368Z",
+    "country": null
+  },
+  "membership": {
+    "id": "2083",
+    "orgId": "1824",
+    "userId": "2210",
+    "role": "owner",
+    "isActive": true,
+    "createdAt": "2026-09-10T07:55:21.368Z",
+    "updatedAt": "2026-09-10T07:55:21.368Z"
+  }
+}
+```
+
+#### 8. §3.8 · GET /orgs/:id — the org root (an environment name anywhere?)
+
+`GET /orgs/:id` → **200** · request-id `696b88ff-3205-49ff-9b0d-073f9daa3f0a` · 448 ms · raw `environment/org-root.json`
+
+```json
+{
+  "org": {
+    "id": "1824",
+    "name": "QA HSN-0910 Org 1789026912812",
+    "slug": "qa-hsn-0910-org-1789026912812",
+    "status": "active",
+    "createdAt": "2026-09-10T07:55:21.368Z",
+    "updatedAt": "2026-09-10T07:55:21.368Z",
+    "country": null
+  },
+  "membership": {
+    "id": "2083",
+    "orgId": "1824",
+    "userId": "2210",
+    "role": "owner",
+    "isActive": true,
+    "createdAt": "2026-09-10T07:55:21.368Z",
+    "updatedAt": "2026-09-10T07:55:21.368Z"
+  }
+}
+```
+
+#### 9. wallet — the fresh org (the 402 shield)
+
+`GET /orgs/:id/alphastudio/wallet` → **200** · request-id `703cf37f-d615-445a-8ac4-2337a6e37252` · 3354 ms · raw `setup/wallet-before.json`
+
+```json
+{
+  "cents": 0,
+  "heldCents": 0,
+  "availableCents": 0
+}
+```
+
+#### 10. asset A · media/assets/presign — image/png
+
+`POST /orgs/:id/alphastudio/media/assets/presign` → **201** · request-id `2ce1216b-570f-44ab-a5d3-fd60cca41fa0` · 650 ms · raw `setup/presign-A.json`
+
+```json
+{
+  "request": {
+    "mediaType": "image/png",
+    "desc": "HSN-0910 Phase 0 probe — reference image A"
+  }
+}
+```
+
+```json
+{
+  "assetId": "masset_b24afbaa6bcb30f68af48c8e",
+  "uploadUrl": "<redacted url: 1661 chars>",
+  "expiresAt": "2026-09-10T08:10:26.204Z",
+  "mediaType": "image/png"
+}
+```
+
+#### 11. asset A · PUT 70 bytes to the presigned url (from Node)
+
+`PUT (presigned storage url — not our API)` → **200** · request-id `none` · 581 ms
+
+#### 12. asset B · media/assets/presign — image/png
+
+`POST /orgs/:id/alphastudio/media/assets/presign` → **201** · request-id `bce19b13-6533-4d97-ad4d-90886dda5be3` · 911 ms · raw `setup/presign-B.json`
+
+```json
+{
+  "request": {
+    "mediaType": "image/png",
+    "desc": "HSN-0910 Phase 0 probe — reference image B"
+  }
+}
+```
+
+```json
+{
+  "assetId": "masset_392d87c15f41bfe946854a38",
+  "uploadUrl": "<redacted url: 1661 chars>",
+  "expiresAt": "2026-09-10T08:10:27.702Z",
+  "mediaType": "image/png"
+}
+```
+
+#### 13. asset B · PUT 70 bytes to the presigned url (from Node)
+
+`PUT (presigned storage url — not our API)` → **200** · request-id `none` · 162 ms
+
+#### 14. asset V · media/assets/presign — video/mp4
+
+`POST /orgs/:id/alphastudio/media/assets/presign` → **201** · request-id `302ada6a-8d8d-424a-97c2-4f5c99d16eb3` · 748 ms · raw `setup/presign-V.json`
+
+```json
+{
+  "request": {
+    "mediaType": "video/mp4",
+    "desc": "HSN-0910 Phase 0 probe — a 3-second motion clip"
+  }
+}
+```
+
+```json
+{
+  "assetId": "masset_8ea12cc8634160529ee6834c",
+  "uploadUrl": "<redacted url: 1661 chars>",
+  "expiresAt": "2026-09-10T08:10:28.665Z",
+  "mediaType": "video/mp4"
+}
+```
+
+#### 15. asset V · PUT 2384 bytes to the presigned url (from Node)
+
+`PUT (presigned storage url — not our API)` → **200** · request-id `none` · 164 ms
+
+#### 16. asset C · media/assets/presign — image/png
+
+`POST /orgs/:id/alphastudio/media/assets/presign` → **201** · request-id `8a7abaae-98b7-4efd-b247-a03eacc48dbc` · 2430 ms · raw `setup/presign-C.json`
+
+```json
+{
+  "request": {
+    "mediaType": "image/png",
+    "desc": "HSN-0910 Phase 0 probe — a 512×512 motion still (the document’s 340 px floor honoured)"
+  }
+}
+```
+
+```json
+{
+  "assetId": "masset_1508fa6f5391e767f91d2df2",
+  "uploadUrl": "<redacted url: 1661 chars>",
+  "expiresAt": "2026-09-10T08:10:31.326Z",
+  "mediaType": "image/png"
+}
+```
+
+#### 17. asset C · PUT 1900 bytes to the presigned url (from Node)
+
+`PUT (presigned storage url — not our API)` → **200** · request-id `none` · 167 ms
+
+#### 18. asset W · media/assets/presign — video/mp4
+
+`POST /orgs/:id/alphastudio/media/assets/presign` → **201** · request-id `c0201380-2902-4a95-a11b-4589d185a615` · 1433 ms · raw `setup/presign-W.json`
+
+```json
+{
+  "request": {
+    "mediaType": "video/mp4",
+    "desc": "HSN-0910 Phase 0 probe — a 5-second motion clip (inside the document’s 3–30 s)"
+  }
+}
+```
+
+```json
+{
+  "assetId": "masset_f8737222c97ea8030669bb3b",
+  "uploadUrl": "<redacted url: 1661 chars>",
+  "expiresAt": "2026-09-10T08:10:32.979Z",
+  "mediaType": "video/mp4"
+}
+```
+
+#### 19. asset W · PUT 2914 bytes to the presigned url (from Node)
+
+`PUT (presigned storage url — not our API)` → **200** · request-id `none` · 165 ms
+
+#### 20. asset A · media/assets/:id/presign — the read url
+
+`POST /orgs/:id/alphastudio/media/assets/masset_b24afbaa6bcb30f68af48c8e/presign` → **200** · request-id `2b0804e9-db7b-454a-bb8e-71bc4329a1ac` · 774 ms · raw `setup/read-presign-A.json`
+
+```json
+{
+  "assetId": "masset_b24afbaa6bcb30f68af48c8e",
+  "url": "<redacted url: 1621 chars>",
+  "expiresAt": "2026-09-10T08:55:33.918Z"
+}
+```
+
+#### 21. asset B · media/assets/:id/presign — the read url
+
+`POST /orgs/:id/alphastudio/media/assets/masset_392d87c15f41bfe946854a38/presign` → **200** · request-id `44d61dd6-c375-45cf-bc45-2c95b02fe547` · 880 ms · raw `setup/read-presign-B.json`
+
+```json
+{
+  "assetId": "masset_392d87c15f41bfe946854a38",
+  "url": "<redacted url: 1621 chars>",
+  "expiresAt": "2026-09-10T08:55:34.800Z"
+}
+```
+
+#### 22. §3.1 · catalog — media.generate
+
+`GET /orgs/:id/alphastudio/catalog/capabilities/media.generate` → **200** · request-id `17fd5d47-7130-486f-a38e-ca4ee4e4484d` · 656 ms · raw `catalog/media.generate.json`
+
+```json
+{
+  "summarised": true,
+  "selectable": true,
+  "field": "plan",
+  "plan": null,
+  "models": [
+    {
+      "alias": "image-balanced",
+      "kind": "image",
+      "plan": "balanced",
+      "cost": {
+        "images": "0.03"
+      },
+      "schemaKeys": [
+        "seed",
+        "count",
+        "aspectRatio",
+        "outputFormat",
+        "negativePrompt"
+      ]
+    },
+    {
+      "alias": "image-reference",
+      "kind": "image",
+      "plan": "creative",
+      "cost": {
+        "images": "0.06"
+      },
+      "schemaKeys": [
+        "seed",
+        "count",
+        "aspectRatio",
+        "outputFormat",
+        "negativePrompt",
+        "referenceImages"
+      ]
+    },
+    {
+      "alias": "image-reference-lite",
+      "kind": "image",
+      "plan": "balanced",
+      "cost": {
+        "images": "0.05"
+      },
+      "schemaKeys": [
+        "seed",
+        "count",
+        "aspectRatio",
+        "outputFormat",
+        "referenceImages"
+      ]
+    },
+    {
+      "alias": "image-reference-top",
+      "kind": "image",
+      "plan": "precise",
+      "cost": {
+        "images": "0.211"
+      },
+      "schemaKeys": [
+        "count",
+        "aspectRatio",
+        "outputFormat",
+        "referenceImages"
+      ]
+    },
+    {
+      "alias": "image-super",
+      "kind": "image",
+      "plan": "creative",
+      "cost": {
+        "images": "0.06"
+      },
+      "schemaKeys": [
+        "seed",
+        "count",
+        "aspectRatio",
+        "outputFormat",
+        "negativePrompt"
+      ]
+    },
+    {
+      "alias": "image-top",
+      "kind": "image",
+      "plan": "precise",
+      "cost": {
+        "images": "0.211"
+      },
+      "schemaKeys": [
+        "count",
+        "aspectRatio",
+        "outputFormat"
+      ]
+    },
+    {
+      "alias": "video-reference-core",
+      "kind": "video",
+      "plan": "balanced",
+      "cost": {
+        "video_seconds": "0.068"
+      },
+      "schemaKeys": [
+        "audio",
+        "durationS",
+        "resolution",
+        "aspectRatio",
+        "referenceImages"
+      ]
+    },
+    {
+      "alias": "video-reference-plus",
+      "kind": "video",
+      "plan": "creative",
+      "cost": {
+        "video_seconds": "0.14"
+      },
+      "schemaKeys": [
+        "audio",
+        "durationS",
+        "resolution",
+        "aspectRatio",
+        "referenceImages"
+      ]
+    },
+    {
+      "alias": "video-reference-top",
+      "kind": "video",
+      "plan": "precise",
+      "cost": {
+        "video_seconds": "0.28"
+      },
+      "schemaKeys": [
+        "audio",
+        "durationS",
+        "resolution",
+        "aspectRatio",
+        "referenceImages"
+      ]
+    }
+  ]
+}
+```
+
+#### 23. §3.1 · catalog — images.edit
+
+`GET /orgs/:id/alphastudio/catalog/capabilities/images.edit` → **200** · request-id `359f770b-3a99-4dc2-ab65-7c2b696695dc` · 757 ms · raw `catalog/images.edit.json`
+
+```json
+{
+  "summarised": true,
+  "selectable": false,
+  "field": null,
+  "plan": null,
+  "models": [
+    {
+      "alias": "image-reference",
+      "kind": "image",
+      "plan": "creative",
+      "cost": {
+        "images": "0.06"
+      },
+      "schemaKeys": [
+        "seed",
+        "count",
+        "aspectRatio",
+        "outputFormat",
+        "negativePrompt",
+        "referenceImages"
+      ]
+    }
+  ]
+}
+```
+
+#### 24. §3.1 · catalog — photoshoot.generate
+
+`GET /orgs/:id/alphastudio/catalog/capabilities/photoshoot.generate` → **200** · request-id `9ca26c16-8a11-4782-85e8-6f5304fe5e3c` · 748 ms · raw `catalog/photoshoot.generate.json`
+
+```json
+{
+  "summarised": true,
+  "selectable": false,
+  "field": null,
+  "plan": null,
+  "models": [
+    {
+      "alias": "image-reference",
+      "kind": "image",
+      "plan": "creative",
+      "cost": {
+        "images": "0.06"
+      },
+      "schemaKeys": [
+        "seed",
+        "count",
+        "aspectRatio",
+        "outputFormat",
+        "negativePrompt",
+        "referenceImages"
+      ]
+    }
+  ]
+}
+```
+
+#### 25. §3.1 · catalog — brand-assets.generate
+
+`GET /orgs/:id/alphastudio/catalog/capabilities/brand-assets.generate` → **200** · request-id `1d2d737a-e8f4-4e60-9bab-1f48cf3bea7b` · 2327 ms · raw `catalog/brand-assets.generate.json`
+
+```json
+{
+  "summarised": true,
+  "selectable": false,
+  "field": null,
+  "plan": null,
+  "models": [
+    {
+      "alias": "image-design",
+      "kind": "image",
+      "plan": null,
+      "cost": {
+        "images": "0.05"
+      },
+      "schemaKeys": [
+        "seed",
+        "count",
+        "aspectRatio",
+        "outputFormat",
+        "negativePrompt"
+      ]
+    }
+  ]
+}
+```
+
+#### 26. §3.1 · catalog — logos.generate
+
+`GET /orgs/:id/alphastudio/catalog/capabilities/logos.generate` → **200** · request-id `a8399996-a162-449d-8f4b-094ce2183fc6` · 612 ms · raw `catalog/logos.generate.json`
+
+```json
+{
+  "summarised": true,
+  "selectable": true,
+  "field": "plan",
+  "plan": null,
+  "models": [
+    {
+      "alias": "image-balanced",
+      "kind": "image",
+      "plan": "balanced",
+      "cost": {
+        "images": "0.03"
+      },
+      "schemaKeys": [
+        "seed",
+        "count",
+        "aspectRatio",
+        "outputFormat",
+        "negativePrompt"
+      ]
+    },
+    {
+      "alias": "image-reference",
+      "kind": "image",
+      "plan": "creative",
+      "cost": {
+        "images": "0.06"
+      },
+      "schemaKeys": [
+        "seed",
+        "count",
+        "aspectRatio",
+        "outputFormat",
+        "negativePrompt",
+        "referenceImages"
+      ]
+    },
+    {
+      "alias": "image-reference-lite",
+      "kind": "image",
+      "plan": "balanced",
+      "cost": {
+        "images": "0.05"
+      },
+      "schemaKeys": [
+        "seed",
+        "count",
+        "aspectRatio",
+        "outputFormat",
+        "referenceImages"
+      ]
+    },
+    {
+      "alias": "image-reference-top",
+      "kind": "image",
+      "plan": "precise",
+      "cost": {
+        "images": "0.211"
+      },
+      "schemaKeys": [
+        "count",
+        "aspectRatio",
+        "outputFormat",
+        "referenceImages"
+      ]
+    },
+    {
+      "alias": "image-super",
+      "kind": "image",
+      "plan": "creative",
+      "cost": {
+        "images": "0.06"
+      },
+      "schemaKeys": [
+        "seed",
+        "count",
+        "aspectRatio",
+        "outputFormat",
+        "negativePrompt"
+      ]
+    },
+    {
+      "alias": "image-top",
+      "kind": "image",
+      "plan": "precise",
+      "cost": {
+        "images": "0.211"
+      },
+      "schemaKeys": [
+        "count",
+        "aspectRatio",
+        "outputFormat"
+      ]
+    }
+  ]
+}
+```
+
+#### 27. §3.1 · catalog — logos.redesign
+
+`GET /orgs/:id/alphastudio/catalog/capabilities/logos.redesign` → **200** · request-id `7e22d499-a17e-4b90-8bf5-d3b5672a097b` · 756 ms · raw `catalog/logos.redesign.json`
+
+```json
+{
+  "summarised": true,
+  "selectable": true,
+  "field": "plan",
+  "plan": null,
+  "models": [
+    {
+      "alias": "image-reference",
+      "kind": "image",
+      "plan": "creative",
+      "cost": {
+        "images": "0.06"
+      },
+      "schemaKeys": [
+        "seed",
+        "count",
+        "aspectRatio",
+        "outputFormat",
+        "negativePrompt",
+        "referenceImages"
+      ]
+    },
+    {
+      "alias": "image-reference-lite",
+      "kind": "image",
+      "plan": "balanced",
+      "cost": {
+        "images": "0.05"
+      },
+      "schemaKeys": [
+        "seed",
+        "count",
+        "aspectRatio",
+        "outputFormat",
+        "referenceImages"
+      ]
+    },
+    {
+      "alias": "image-reference-top",
+      "kind": "image",
+      "plan": "precise",
+      "cost": {
+        "images": "0.211"
+      },
+      "schemaKeys": [
+        "count",
+        "aspectRatio",
+        "outputFormat",
+        "referenceImages"
+      ]
+    }
+  ]
+}
+```
+
+#### 28. §3.1 · catalog — avatars.generate
+
+`GET /orgs/:id/alphastudio/catalog/capabilities/avatars.generate` → **200** · request-id `2bd8e82f-2a70-4e67-89a5-282d31995610` · 768 ms · raw `catalog/avatars.generate.json`
+
+```json
+{
+  "summarised": true,
+  "selectable": false,
+  "field": null,
+  "plan": null,
+  "models": [
+    {
+      "alias": "image-reference-top",
+      "kind": "image",
+      "plan": "precise",
+      "cost": {
+        "images": "0.211"
+      },
+      "schemaKeys": [
+        "count",
+        "aspectRatio",
+        "outputFormat",
+        "referenceImages"
+      ]
+    }
+  ]
+}
+```
+
+#### 29. §3.1 · catalog — avatars.imagine
+
+`GET /orgs/:id/alphastudio/catalog/capabilities/avatars.imagine` → **200** · request-id `8f048013-c296-4810-8b2c-a89b7a3a963e` · 760 ms · raw `catalog/avatars.imagine.json`
+
+```json
+{
+  "summarised": true,
+  "selectable": false,
+  "field": null,
+  "plan": null,
+  "models": [
+    {
+      "alias": "image-top",
+      "kind": "image",
+      "plan": "precise",
+      "cost": {
+        "images": "0.211"
+      },
+      "schemaKeys": [
+        "count",
+        "aspectRatio",
+        "outputFormat"
+      ]
+    }
+  ]
+}
+```
+
+#### 30. §3.1 · catalog — avatar.generate
+
+`GET /orgs/:id/alphastudio/catalog/capabilities/avatar.generate` → **200** · request-id `e6e4c3f4-27e9-4405-a57a-419e2bf113e2` · 754 ms · raw `catalog/avatar.generate.json`
+
+```json
+{
+  "summarised": true,
+  "selectable": true,
+  "field": "plan",
+  "plan": null,
+  "models": [
+    {
+      "alias": "image-balanced-seedream",
+      "kind": "image",
+      "plan": null,
+      "cost": {
+        "images": "0.03"
+      },
+      "schemaKeys": [
+        "seed",
+        "count",
+        "aspectRatio"
+      ]
+    },
+    {
+      "alias": "image-reference",
+      "kind": "image",
+      "plan": "creative",
+      "cost": {
+        "images": "0.06"
+      },
+      "schemaKeys": [
+        "seed",
+        "count",
+        "aspectRatio",
+        "outputFormat",
+        "negativePrompt",
+        "referenceImages"
+      ]
+    },
+    {
+      "alias": "image-reference-seedream",
+      "kind": "image",
+      "plan": null,
+      "cost": {
+        "images": "0.03"
+      },
+      "schemaKeys": [
+        "seed",
+        "count",
+        "aspectRatio",
+        "referenceImages"
+      ]
+    },
+    {
+      "alias": "image-reference-top",
+      "kind": "image",
+      "plan": "precise",
+      "cost": {
+        "images": "0.211"
+      },
+      "schemaKeys": [
+        "count",
+        "aspectRatio",
+        "outputFormat",
+        "referenceImages"
+      ]
+    },
+    {
+      "alias": "image-super",
+      "kind": "image",
+      "plan": "creative",
+      "cost": {
+        "images": "0.06"
+      },
+      "schemaKeys": [
+        "seed",
+        "count",
+        "aspectRatio",
+        "outputFormat",
+        "negativePrompt"
+      ]
+    },
+    {
+      "alias": "image-top",
+      "kind": "image",
+      "plan": "precise",
+      "cost": {
+        "images": "0.211"
+      },
+      "schemaKeys": [
+        "count",
+        "aspectRatio",
+        "outputFormat"
+      ]
+    }
+  ]
+}
+```
+
+#### 31. §3.1 · catalog — video-ads.generate
+
+`GET /orgs/:id/alphastudio/catalog/capabilities/video-ads.generate` → **200** · request-id `85455614-bcf6-4a1a-a521-fb63b5be84a5` · 757 ms · raw `catalog/video-ads.generate.json`
+
+```json
+{
+  "summarised": true,
+  "selectable": true,
+  "field": "plan",
+  "plan": null,
+  "models": [
+    {
+      "alias": "video-image-balanced",
+      "kind": "video",
+      "plan": null,
+      "cost": {
+        "video_seconds": "0.07"
+      },
+      "schemaKeys": [
+        "seed",
+        "imageUrl",
+        "durationS",
+        "negativePrompt"
+      ]
+    },
+    {
+      "alias": "video-image-core",
+      "kind": "video",
+      "plan": null,
+      "cost": {
+        "video_seconds": "0.042"
+      },
+      "schemaKeys": [
+        "seed",
+        "imageUrl",
+        "durationS",
+        "negativePrompt"
+      ]
+    },
+    {
+      "alias": "video-image-super",
+      "kind": "video",
+      "plan": null,
+      "cost": {
+        "video_seconds": "0.112"
+      },
+      "schemaKeys": [
+        "seed",
+        "imageUrl",
+        "durationS",
+        "negativePrompt"
+      ]
+    }
+  ]
+}
+```
+
+#### 32. §3.1 · catalog — voice.speak
+
+`GET /orgs/:id/alphastudio/catalog/capabilities/voice.speak` → **200** · request-id `779626f7-a5f8-41ef-acc6-08523c19ebff` · 758 ms · raw `catalog/voice.speak.json`
+
+```json
+{
+  "summarised": true,
+  "selectable": true,
+  "field": "plan",
+  "plan": null,
+  "models": [
+    {
+      "alias": "voice-expressive",
+      "kind": "audio",
+      "plan": null,
+      "cost": {
+        "audio_text_units": "0.1"
+      },
+      "schemaKeys": [
+        "lang",
+        "voice",
+        "stability"
+      ]
+    },
+    {
+      "alias": "voice-multilingual",
+      "kind": "audio",
+      "plan": null,
+      "cost": {
+        "audio_text_units": "0.1"
+      },
+      "schemaKeys": [
+        "lang",
+        "speed",
+        "voice",
+        "stability",
+        "similarity"
+      ]
+    },
+    {
+      "alias": "voice-turbo",
+      "kind": "audio",
+      "plan": null,
+      "cost": {
+        "audio_text_units": "0.05"
+      },
+      "schemaKeys": [
+        "lang",
+        "speed",
+        "voice",
+        "stability",
+        "similarity"
+      ]
+    }
+  ]
+}
+```
+
+#### 33. §3.1 · catalog — film.generate
+
+`GET /orgs/:id/alphastudio/catalog/capabilities/film.generate` → **200** · request-id `ce3fb74d-0a79-4811-aa17-3f5da1ae2dc8` · 766 ms · raw `catalog/film.generate.json`
+
+```json
+{
+  "summarised": true,
+  "selectable": true,
+  "field": "plan",
+  "plan": null,
+  "models": [
+    {
+      "alias": "video-scene-core",
+      "kind": "video",
+      "plan": null,
+      "cost": {
+        "video_seconds": "0.14"
+      },
+      "schemaKeys": [
+        "shots",
+        "durationS",
+        "aspectRatio",
+        "generateAudio",
+        "referenceImages"
+      ]
+    },
+    {
+      "alias": "video-scene-plus",
+      "kind": "video",
+      "plan": null,
+      "cost": {
+        "video_seconds": "0.3034",
+        "video_seconds_by_resolution": {
+          "4k": "2.7306",
+          "480p": "0.1415",
+          "720p": "0.3034",
+          "1080p": "0.6827"
+        }
+      },
+      "schemaKeys": [
+        "audioUrl",
+        "durationS",
+        "resolution",
+        "aspectRatio",
+        "generateAudio",
+        "referenceImages"
+      ]
+    },
+    {
+      "alias": "video-scene-top",
+      "kind": "video",
+      "plan": null,
+      "cost": {
+        "video_seconds": "0.473",
+        "video_seconds_by_resolution": {
+          "480p": "0.2205",
+          "720p": "0.473",
+          "1080p": "1.0643"
+        }
+      },
+      "schemaKeys": [
+        "audioUrl",
+        "durationS",
+        "resolution",
+        "aspectRatio",
+        "generateAudio",
+        "referenceImages"
+      ]
+    }
+  ]
+}
+```
+
+#### 34. §3.1 · catalog — motion.generate
+
+`GET /orgs/:id/alphastudio/catalog/capabilities/motion.generate` → **200** · request-id `e2fe6044-0ecf-4211-8960-14c24e19b937` · 757 ms · raw `catalog/motion.generate.json`
+
+```json
+{
+  "summarised": true,
+  "selectable": true,
+  "field": "plan",
+  "plan": null,
+  "models": [
+    {
+      "alias": "video-motion-core",
+      "kind": "video",
+      "plan": null,
+      "cost": {
+        "video_seconds": "0.07"
+      },
+      "schemaKeys": [
+        "imageUrl",
+        "videoUrl",
+        "keepSound",
+        "orientation"
+      ]
+    },
+    {
+      "alias": "video-motion-plus",
+      "kind": "video",
+      "plan": null,
+      "cost": {
+        "video_seconds": "0.112"
+      },
+      "schemaKeys": [
+        "imageUrl",
+        "videoUrl",
+        "keepSound",
+        "orientation"
+      ]
+    },
+    {
+      "alias": "video-motion-top",
+      "kind": "video",
+      "plan": null,
+      "cost": {
+        "video_seconds": "0.126"
+      },
+      "schemaKeys": [
+        "imageUrl",
+        "videoUrl",
+        "keepSound",
+        "orientation"
+      ]
+    }
+  ]
+}
+```
+
+#### 35. §3.1 · catalog — media.generate?plan=balanced
+
+`GET /orgs/:id/alphastudio/catalog/capabilities/media.generate?plan=balanced` → **200** · request-id `93d0f5d3-fc80-4a45-b6cf-4925031a9229` · 789 ms · raw `catalog/media.generate.plan-balanced.json`
+
+```json
+{
+  "summarised": true,
+  "selectable": true,
+  "field": "plan",
+  "plan": "balanced",
+  "models": [
+    {
+      "alias": "image-balanced",
+      "kind": "image",
+      "plan": "balanced",
+      "cost": {
+        "images": "0.03"
+      },
+      "schemaKeys": [
+        "seed",
+        "count",
+        "aspectRatio",
+        "outputFormat",
+        "negativePrompt"
+      ]
+    },
+    {
+      "alias": "image-reference-lite",
+      "kind": "image",
+      "plan": "balanced",
+      "cost": {
+        "images": "0.05"
+      },
+      "schemaKeys": [
+        "seed",
+        "count",
+        "aspectRatio",
+        "outputFormat",
+        "referenceImages"
+      ]
+    },
+    {
+      "alias": "video-reference-core",
+      "kind": "video",
+      "plan": "balanced",
+      "cost": {
+        "video_seconds": "0.068"
+      },
+      "schemaKeys": [
+        "audio",
+        "durationS",
+        "resolution",
+        "aspectRatio",
+        "referenceImages"
+      ]
+    }
+  ]
+}
+```
+
+#### 36. §3.1 · catalog — media.generate?plan=creative
+
+`GET /orgs/:id/alphastudio/catalog/capabilities/media.generate?plan=creative` → **200** · request-id `13ac2655-e602-4b74-8f5d-22cabb110d4f` · 613 ms · raw `catalog/media.generate.plan-creative.json`
+
+```json
+{
+  "summarised": true,
+  "selectable": true,
+  "field": "plan",
+  "plan": "creative",
+  "models": [
+    {
+      "alias": "image-reference",
+      "kind": "image",
+      "plan": "creative",
+      "cost": {
+        "images": "0.06"
+      },
+      "schemaKeys": [
+        "seed",
+        "count",
+        "aspectRatio",
+        "outputFormat",
+        "negativePrompt",
+        "referenceImages"
+      ]
+    },
+    {
+      "alias": "image-super",
+      "kind": "image",
+      "plan": "creative",
+      "cost": {
+        "images": "0.06"
+      },
+      "schemaKeys": [
+        "seed",
+        "count",
+        "aspectRatio",
+        "outputFormat",
+        "negativePrompt"
+      ]
+    },
+    {
+      "alias": "video-reference-plus",
+      "kind": "video",
+      "plan": "creative",
+      "cost": {
+        "video_seconds": "0.14"
+      },
+      "schemaKeys": [
+        "audio",
+        "durationS",
+        "resolution",
+        "aspectRatio",
+        "referenceImages"
+      ]
+    }
+  ]
+}
+```
+
+#### 37. §3.1 · catalog — media.generate?plan=precise
+
+`GET /orgs/:id/alphastudio/catalog/capabilities/media.generate?plan=precise` → **200** · request-id `6120ef54-2a34-4a17-b76a-4fdcd51e6190` · 755 ms · raw `catalog/media.generate.plan-precise.json`
+
+```json
+{
+  "summarised": true,
+  "selectable": true,
+  "field": "plan",
+  "plan": "precise",
+  "models": [
+    {
+      "alias": "image-reference-top",
+      "kind": "image",
+      "plan": "precise",
+      "cost": {
+        "images": "0.211"
+      },
+      "schemaKeys": [
+        "count",
+        "aspectRatio",
+        "outputFormat",
+        "referenceImages"
+      ]
+    },
+    {
+      "alias": "image-top",
+      "kind": "image",
+      "plan": "precise",
+      "cost": {
+        "images": "0.211"
+      },
+      "schemaKeys": [
+        "count",
+        "aspectRatio",
+        "outputFormat"
+      ]
+    },
+    {
+      "alias": "video-reference-top",
+      "kind": "video",
+      "plan": "precise",
+      "cost": {
+        "video_seconds": "0.28"
+      },
+      "schemaKeys": [
+        "audio",
+        "durationS",
+        "resolution",
+        "aspectRatio",
+        "referenceImages"
+      ]
+    }
+  ]
+}
+```
+
+#### 38. §3.1 · catalog — logos.generate?plan=balanced
+
+`GET /orgs/:id/alphastudio/catalog/capabilities/logos.generate?plan=balanced` → **200** · request-id `c8b6bd79-3ac1-40ac-ad2f-f21f0007fe11` · 745 ms · raw `catalog/logos.generate.plan-balanced.json`
+
+```json
+{
+  "summarised": true,
+  "selectable": true,
+  "field": "plan",
+  "plan": "balanced",
+  "models": [
+    {
+      "alias": "image-balanced",
+      "kind": "image",
+      "plan": "balanced",
+      "cost": {
+        "images": "0.03"
+      },
+      "schemaKeys": [
+        "seed",
+        "count",
+        "aspectRatio",
+        "outputFormat",
+        "negativePrompt"
+      ]
+    },
+    {
+      "alias": "image-reference-lite",
+      "kind": "image",
+      "plan": "balanced",
+      "cost": {
+        "images": "0.05"
+      },
+      "schemaKeys": [
+        "seed",
+        "count",
+        "aspectRatio",
+        "outputFormat",
+        "referenceImages"
+      ]
+    }
+  ]
+}
+```
+
+#### 39. §3.1 · catalog — logos.generate?plan=creative
+
+`GET /orgs/:id/alphastudio/catalog/capabilities/logos.generate?plan=creative` → **200** · request-id `aa097611-483c-4ba7-9aa1-9c8830dcf5eb` · 744 ms · raw `catalog/logos.generate.plan-creative.json`
+
+```json
+{
+  "summarised": true,
+  "selectable": true,
+  "field": "plan",
+  "plan": "creative",
+  "models": [
+    {
+      "alias": "image-reference",
+      "kind": "image",
+      "plan": "creative",
+      "cost": {
+        "images": "0.06"
+      },
+      "schemaKeys": [
+        "seed",
+        "count",
+        "aspectRatio",
+        "outputFormat",
+        "negativePrompt",
+        "referenceImages"
+      ]
+    },
+    {
+      "alias": "image-super",
+      "kind": "image",
+      "plan": "creative",
+      "cost": {
+        "images": "0.06"
+      },
+      "schemaKeys": [
+        "seed",
+        "count",
+        "aspectRatio",
+        "outputFormat",
+        "negativePrompt"
+      ]
+    }
+  ]
+}
+```
+
+#### 40. §3.1 · catalog — logos.generate?plan=precise
+
+`GET /orgs/:id/alphastudio/catalog/capabilities/logos.generate?plan=precise` → **200** · request-id `8386c7ea-86c0-4a1a-a75d-6019979e5f41` · 755 ms · raw `catalog/logos.generate.plan-precise.json`
+
+```json
+{
+  "summarised": true,
+  "selectable": true,
+  "field": "plan",
+  "plan": "precise",
+  "models": [
+    {
+      "alias": "image-reference-top",
+      "kind": "image",
+      "plan": "precise",
+      "cost": {
+        "images": "0.211"
+      },
+      "schemaKeys": [
+        "count",
+        "aspectRatio",
+        "outputFormat",
+        "referenceImages"
+      ]
+    },
+    {
+      "alias": "image-top",
+      "kind": "image",
+      "plan": "precise",
+      "cost": {
+        "images": "0.211"
+      },
+      "schemaKeys": [
+        "count",
+        "aspectRatio",
+        "outputFormat"
+      ]
+    }
+  ]
+}
+```
+
+#### 41. §3.1 · catalog — logos.redesign?plan=balanced
+
+`GET /orgs/:id/alphastudio/catalog/capabilities/logos.redesign?plan=balanced` → **200** · request-id `024cc07a-78e4-4484-afe9-607e46de3629` · 750 ms · raw `catalog/logos.redesign.plan-balanced.json`
+
+```json
+{
+  "summarised": true,
+  "selectable": true,
+  "field": "plan",
+  "plan": "balanced",
+  "models": [
+    {
+      "alias": "image-reference-lite",
+      "kind": "image",
+      "plan": "balanced",
+      "cost": {
+        "images": "0.05"
+      },
+      "schemaKeys": [
+        "seed",
+        "count",
+        "aspectRatio",
+        "outputFormat",
+        "referenceImages"
+      ]
+    }
+  ]
+}
+```
+
+#### 42. §3.1 · catalog — logos.redesign?plan=creative
+
+`GET /orgs/:id/alphastudio/catalog/capabilities/logos.redesign?plan=creative` → **200** · request-id `e9652e28-f915-4544-892f-885c09ce9742` · 602 ms · raw `catalog/logos.redesign.plan-creative.json`
+
+```json
+{
+  "summarised": true,
+  "selectable": true,
+  "field": "plan",
+  "plan": "creative",
+  "models": [
+    {
+      "alias": "image-reference",
+      "kind": "image",
+      "plan": "creative",
+      "cost": {
+        "images": "0.06"
+      },
+      "schemaKeys": [
+        "seed",
+        "count",
+        "aspectRatio",
+        "outputFormat",
+        "negativePrompt",
+        "referenceImages"
+      ]
+    }
+  ]
+}
+```
+
+#### 43. §3.1 · catalog — logos.redesign?plan=precise
+
+`GET /orgs/:id/alphastudio/catalog/capabilities/logos.redesign?plan=precise` → **200** · request-id `dff70c5c-9c32-4272-94eb-43336327dee5` · 595 ms · raw `catalog/logos.redesign.plan-precise.json`
+
+```json
+{
+  "summarised": true,
+  "selectable": true,
+  "field": "plan",
+  "plan": "precise",
+  "models": [
+    {
+      "alias": "image-reference-top",
+      "kind": "image",
+      "plan": "precise",
+      "cost": {
+        "images": "0.211"
+      },
+      "schemaKeys": [
+        "count",
+        "aspectRatio",
+        "outputFormat",
+        "referenceImages"
+      ]
+    }
+  ]
+}
+```
+
+#### 44. §3.1 · catalog — avatar.generate?plan=balanced
+
+`GET /orgs/:id/alphastudio/catalog/capabilities/avatar.generate?plan=balanced` → **200** · request-id `4615c7a5-de4b-43ef-8d9a-0972e1d56b34` · 782 ms · raw `catalog/avatar.generate.plan-balanced.json`
+
+```json
+{
+  "summarised": true,
+  "selectable": true,
+  "field": "plan",
+  "plan": "balanced",
+  "models": [
+    {
+      "alias": "image-balanced-seedream",
+      "kind": "image",
+      "plan": null,
+      "cost": {
+        "images": "0.03"
+      },
+      "schemaKeys": [
+        "seed",
+        "count",
+        "aspectRatio"
+      ]
+    },
+    {
+      "alias": "image-reference-seedream",
+      "kind": "image",
+      "plan": null,
+      "cost": {
+        "images": "0.03"
+      },
+      "schemaKeys": [
+        "seed",
+        "count",
+        "aspectRatio",
+        "referenceImages"
+      ]
+    }
+  ]
+}
+```
+
+#### 45. §3.1 · catalog — avatar.generate?plan=creative
+
+`GET /orgs/:id/alphastudio/catalog/capabilities/avatar.generate?plan=creative` → **200** · request-id `90f75ca3-56e3-40da-97e1-b86ef618c449` · 824 ms · raw `catalog/avatar.generate.plan-creative.json`
+
+```json
+{
+  "summarised": true,
+  "selectable": true,
+  "field": "plan",
+  "plan": "creative",
+  "models": [
+    {
+      "alias": "image-reference",
+      "kind": "image",
+      "plan": "creative",
+      "cost": {
+        "images": "0.06"
+      },
+      "schemaKeys": [
+        "seed",
+        "count",
+        "aspectRatio",
+        "outputFormat",
+        "negativePrompt",
+        "referenceImages"
+      ]
+    },
+    {
+      "alias": "image-super",
+      "kind": "image",
+      "plan": "creative",
+      "cost": {
+        "images": "0.06"
+      },
+      "schemaKeys": [
+        "seed",
+        "count",
+        "aspectRatio",
+        "outputFormat",
+        "negativePrompt"
+      ]
+    }
+  ]
+}
+```
+
+#### 46. §3.1 · catalog — avatar.generate?plan=precise
+
+`GET /orgs/:id/alphastudio/catalog/capabilities/avatar.generate?plan=precise` → **200** · request-id `f839ed30-e4ca-4eb1-b271-4a1538d7bc7b` · 745 ms · raw `catalog/avatar.generate.plan-precise.json`
+
+```json
+{
+  "summarised": true,
+  "selectable": true,
+  "field": "plan",
+  "plan": "precise",
+  "models": [
+    {
+      "alias": "image-reference-top",
+      "kind": "image",
+      "plan": "precise",
+      "cost": {
+        "images": "0.211"
+      },
+      "schemaKeys": [
+        "count",
+        "aspectRatio",
+        "outputFormat",
+        "referenceImages"
+      ]
+    },
+    {
+      "alias": "image-top",
+      "kind": "image",
+      "plan": "precise",
+      "cost": {
+        "images": "0.211"
+      },
+      "schemaKeys": [
+        "count",
+        "aspectRatio",
+        "outputFormat"
+      ]
+    }
+  ]
+}
+```
+
+#### 47. §3.1 · catalog — video-ads.generate?plan=balanced
+
+`GET /orgs/:id/alphastudio/catalog/capabilities/video-ads.generate?plan=balanced` → **200** · request-id `4bb8ab1b-82c0-4184-aa78-74f9d4a8f5e0` · 603 ms · raw `catalog/video-ads.generate.plan-balanced.json`
+
+```json
+{
+  "summarised": true,
+  "selectable": true,
+  "field": "plan",
+  "plan": "balanced",
+  "models": [
+    {
+      "alias": "video-image-core",
+      "kind": "video",
+      "plan": null,
+      "cost": {
+        "video_seconds": "0.042"
+      },
+      "schemaKeys": [
+        "seed",
+        "imageUrl",
+        "durationS",
+        "negativePrompt"
+      ]
+    }
+  ]
+}
+```
+
+#### 48. §3.1 · catalog — video-ads.generate?plan=creative
+
+`GET /orgs/:id/alphastudio/catalog/capabilities/video-ads.generate?plan=creative` → **200** · request-id `86380494-2ff3-44d6-bf9e-fb1783e95d79` · 766 ms · raw `catalog/video-ads.generate.plan-creative.json`
+
+```json
+{
+  "summarised": true,
+  "selectable": true,
+  "field": "plan",
+  "plan": "creative",
+  "models": [
+    {
+      "alias": "video-image-balanced",
+      "kind": "video",
+      "plan": null,
+      "cost": {
+        "video_seconds": "0.07"
+      },
+      "schemaKeys": [
+        "seed",
+        "imageUrl",
+        "durationS",
+        "negativePrompt"
+      ]
+    }
+  ]
+}
+```
+
+#### 49. §3.1 · catalog — video-ads.generate?plan=precise
+
+`GET /orgs/:id/alphastudio/catalog/capabilities/video-ads.generate?plan=precise` → **200** · request-id `82c17eaa-18ed-4b20-a944-582137b8e835` · 758 ms · raw `catalog/video-ads.generate.plan-precise.json`
+
+```json
+{
+  "summarised": true,
+  "selectable": true,
+  "field": "plan",
+  "plan": "precise",
+  "models": [
+    {
+      "alias": "video-image-super",
+      "kind": "video",
+      "plan": null,
+      "cost": {
+        "video_seconds": "0.112"
+      },
+      "schemaKeys": [
+        "seed",
+        "imageUrl",
+        "durationS",
+        "negativePrompt"
+      ]
+    }
+  ]
+}
+```
+
+#### 50. §3.1 · catalog — voice.speak?plan=balanced
+
+`GET /orgs/:id/alphastudio/catalog/capabilities/voice.speak?plan=balanced` → **200** · request-id `5cb738e9-8e95-4976-9df6-6e8f768d89a9` · 745 ms · raw `catalog/voice.speak.plan-balanced.json`
+
+```json
+{
+  "summarised": true,
+  "selectable": true,
+  "field": "plan",
+  "plan": "balanced",
+  "models": [
+    {
+      "alias": "voice-turbo",
+      "kind": "audio",
+      "plan": null,
+      "cost": {
+        "audio_text_units": "0.05"
+      },
+      "schemaKeys": [
+        "lang",
+        "speed",
+        "voice",
+        "stability",
+        "similarity"
+      ]
+    }
+  ]
+}
+```
+
+#### 51. §3.1 · catalog — voice.speak?plan=creative
+
+`GET /orgs/:id/alphastudio/catalog/capabilities/voice.speak?plan=creative` → **200** · request-id `aab599e7-528b-44db-acf3-1661ed91ce76` · 590 ms · raw `catalog/voice.speak.plan-creative.json`
+
+```json
+{
+  "summarised": true,
+  "selectable": true,
+  "field": "plan",
+  "plan": "creative",
+  "models": [
+    {
+      "alias": "voice-multilingual",
+      "kind": "audio",
+      "plan": null,
+      "cost": {
+        "audio_text_units": "0.1"
+      },
+      "schemaKeys": [
+        "lang",
+        "speed",
+        "voice",
+        "stability",
+        "similarity"
+      ]
+    }
+  ]
+}
+```
+
+#### 52. §3.1 · catalog — voice.speak?plan=precise
+
+`GET /orgs/:id/alphastudio/catalog/capabilities/voice.speak?plan=precise` → **200** · request-id `3a0f6a3b-aca5-4971-9c96-1aa843c9ee16` · 595 ms · raw `catalog/voice.speak.plan-precise.json`
+
+```json
+{
+  "summarised": true,
+  "selectable": true,
+  "field": "plan",
+  "plan": "precise",
+  "models": [
+    {
+      "alias": "voice-expressive",
+      "kind": "audio",
+      "plan": null,
+      "cost": {
+        "audio_text_units": "0.1"
+      },
+      "schemaKeys": [
+        "lang",
+        "voice",
+        "stability"
+      ]
+    }
+  ]
+}
+```
+
+#### 53. §3.1 · catalog — film.generate?plan=balanced
+
+`GET /orgs/:id/alphastudio/catalog/capabilities/film.generate?plan=balanced` → **200** · request-id `f59377ed-6fd0-4a7d-b974-bec01cea000e` · 756 ms · raw `catalog/film.generate.plan-balanced.json`
+
+```json
+{
+  "summarised": true,
+  "selectable": true,
+  "field": "plan",
+  "plan": "balanced",
+  "models": [
+    {
+      "alias": "video-scene-core",
+      "kind": "video",
+      "plan": null,
+      "cost": {
+        "video_seconds": "0.14"
+      },
+      "schemaKeys": [
+        "shots",
+        "durationS",
+        "aspectRatio",
+        "generateAudio",
+        "referenceImages"
+      ]
+    }
+  ]
+}
+```
+
+#### 54. §3.1 · catalog — film.generate?plan=creative
+
+`GET /orgs/:id/alphastudio/catalog/capabilities/film.generate?plan=creative` → **200** · request-id `68d2d5db-d5c8-4929-a334-3f8839c93c28` · 746 ms · raw `catalog/film.generate.plan-creative.json`
+
+```json
+{
+  "summarised": true,
+  "selectable": true,
+  "field": "plan",
+  "plan": "creative",
+  "models": [
+    {
+      "alias": "video-scene-plus",
+      "kind": "video",
+      "plan": null,
+      "cost": {
+        "video_seconds": "0.3034",
+        "video_seconds_by_resolution": {
+          "4k": "2.7306",
+          "480p": "0.1415",
+          "720p": "0.3034",
+          "1080p": "0.6827"
+        }
+      },
+      "schemaKeys": [
+        "audioUrl",
+        "durationS",
+        "resolution",
+        "aspectRatio",
+        "generateAudio",
+        "referenceImages"
+      ]
+    }
+  ]
+}
+```
+
+#### 55. §3.1 · catalog — film.generate?plan=precise
+
+`GET /orgs/:id/alphastudio/catalog/capabilities/film.generate?plan=precise` → **200** · request-id `c6f030c5-1ff2-47df-bf8d-8e4c90bed680` · 677 ms · raw `catalog/film.generate.plan-precise.json`
+
+```json
+{
+  "summarised": true,
+  "selectable": true,
+  "field": "plan",
+  "plan": "precise",
+  "models": [
+    {
+      "alias": "video-scene-top",
+      "kind": "video",
+      "plan": null,
+      "cost": {
+        "video_seconds": "0.473",
+        "video_seconds_by_resolution": {
+          "480p": "0.2205",
+          "720p": "0.473",
+          "1080p": "1.0643"
+        }
+      },
+      "schemaKeys": [
+        "audioUrl",
+        "durationS",
+        "resolution",
+        "aspectRatio",
+        "generateAudio",
+        "referenceImages"
+      ]
+    }
+  ]
+}
+```
+
+#### 56. §3.1 · catalog — motion.generate?plan=balanced
+
+`GET /orgs/:id/alphastudio/catalog/capabilities/motion.generate?plan=balanced` → **200** · request-id `8c4470b4-a1c9-4d4a-951f-ef5254b31e40` · 822 ms · raw `catalog/motion.generate.plan-balanced.json`
+
+```json
+{
+  "summarised": true,
+  "selectable": true,
+  "field": "plan",
+  "plan": "balanced",
+  "models": [
+    {
+      "alias": "video-motion-core",
+      "kind": "video",
+      "plan": null,
+      "cost": {
+        "video_seconds": "0.07"
+      },
+      "schemaKeys": [
+        "imageUrl",
+        "videoUrl",
+        "keepSound",
+        "orientation"
+      ]
+    }
+  ]
+}
+```
+
+#### 57. §3.1 · catalog — motion.generate?plan=creative
+
+`GET /orgs/:id/alphastudio/catalog/capabilities/motion.generate?plan=creative` → **200** · request-id `1fffcd4f-56c6-4be0-a118-2fcddf5bf633` · 716 ms · raw `catalog/motion.generate.plan-creative.json`
+
+```json
+{
+  "summarised": true,
+  "selectable": true,
+  "field": "plan",
+  "plan": "creative",
+  "models": [
+    {
+      "alias": "video-motion-plus",
+      "kind": "video",
+      "plan": null,
+      "cost": {
+        "video_seconds": "0.112"
+      },
+      "schemaKeys": [
+        "imageUrl",
+        "videoUrl",
+        "keepSound",
+        "orientation"
+      ]
+    }
+  ]
+}
+```
+
+#### 58. §3.1 · catalog — motion.generate?plan=precise
+
+`GET /orgs/:id/alphastudio/catalog/capabilities/motion.generate?plan=precise` → **200** · request-id `f87ea4e6-8c49-4e75-a76a-3da69ea75680` · 742 ms · raw `catalog/motion.generate.plan-precise.json`
+
+```json
+{
+  "summarised": true,
+  "selectable": true,
+  "field": "plan",
+  "plan": "precise",
+  "models": [
+    {
+      "alias": "video-motion-top",
+      "kind": "video",
+      "plan": null,
+      "cost": {
+        "video_seconds": "0.126"
+      },
+      "schemaKeys": [
+        "imageUrl",
+        "videoUrl",
+        "keepSound",
+        "orientation"
+      ]
+    }
+  ]
+}
+```
+
+#### 59. §3.5 · POST media/assets/:id/approve — no body
+
+`POST /orgs/:id/alphastudio/media/assets/masset_b24afbaa6bcb30f68af48c8e/approve` → **404** · request-id `ecca3ba8-2e5f-4435-8a19-126e26e1a1b1` · 436 ms · raw `approve/no-body.json`
+
+```json
+{
+  "error": {
+    "code": "not_found",
+    "message": "Not found"
+  }
+}
+```
+
+#### 60. wallet — re-read immediately before any job body
+
+`GET /orgs/:id/alphastudio/wallet` → **200** · request-id `cd47534b-733e-4e8e-9639-6b7645d7bd91` · 729 ms · raw `setup/wallet-shield.json`
+
+```json
+{
+  "cents": 0,
+  "heldCents": 0,
+  "availableCents": 0
+}
+```
+
+#### 61. §3.2 · media/jobs — media.generate · document-example
+
+`POST /orgs/:id/alphastudio/media/jobs` → **402** · request-id `819e1a08-2e16-40f0-9278-addc08fd0697` · 1024 ms · raw `jobs/valid-media.generate--document-example.json`
+> the document’s example; 402 expected on the zero wallet
+
+```json
+{
+  "request": {
+    "capability": "media.generate",
+    "plan": "balanced",
+    "kind": "image",
+    "prompt": "a flat-vector report cover, deep navy, generous negative space",
+    "params": {
+      "aspectRatio": "1:1",
+      "outputFormat": "png"
+    },
+    "guidance": [
+      {
+        "role": "headline",
+        "text": "Poor data quality costs $12.9M a year"
+      },
+      {
+        "role": "palette",
+        "text": "deep navy, slate grey, one teal accent"
+      }
+    ],
+    "collection": {
+      "use": true,
+      "hint": "our mark and the product shot"
+    }
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "wallet_insufficient",
+    "message": "The org's wallet cannot cover this request — not enough credits",
+    "requestId": "819e1a08-2e16-40f0-9278-addc08fd0697"
+  }
+}
+```
+
+#### 62. §3.2 · media/jobs — images.edit · document-example
+
+`POST /orgs/:id/alphastudio/media/jobs` → **402** · request-id `85b2a2ee-f28f-41db-a522-72807f15f78e` · 816 ms · raw `jobs/valid-images.edit--document-example.json`
+> the document’s example; 402 expected on the zero wallet
+
+```json
+{
+  "request": {
+    "capability": "images.edit",
+    "instruction": "replace the background with a plain deep-navy studio backdrop",
+    "params": {
+      "referenceImages": [
+        "<redacted url: 1621 chars>"
+      ],
+      "aspectRatio": "1:1",
+      "outputFormat": "png"
+    }
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "wallet_insufficient",
+    "message": "The org's wallet cannot cover this request — not enough credits",
+    "requestId": "85b2a2ee-f28f-41db-a522-72807f15f78e"
+  }
+}
+```
+
+#### 63. §3.2 · media/jobs — photoshoot.generate · document-example
+
+`POST /orgs/:id/alphastudio/media/jobs` → **402** · request-id `44a0a3a6-c0a1-4742-9d75-c4fba2caa7bb` · 645 ms · raw `jobs/valid-photoshoot.generate--document-example.json`
+> the document’s example; 402 expected on the zero wallet
+
+```json
+{
+  "request": {
+    "capability": "photoshoot.generate",
+    "params": {
+      "referenceImages": [
+        "<redacted url: 1621 chars>",
+        "<redacted url: 1621 chars>"
+      ],
+      "aspectRatio": "1:1",
+      "outputFormat": "png"
+    },
+    "guidance": [
+      {
+        "role": "scene",
+        "text": "on a brushed-steel table in a glass-walled briefing room"
+      },
+      {
+        "role": "style",
+        "text": "corporate editorial photography, soft key light"
+      },
+      {
+        "role": "palette",
+        "text": "cool neutrals, deep navy, one teal accent"
+      }
+    ]
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "wallet_insufficient",
+    "message": "The org's wallet cannot cover this request — not enough credits",
+    "requestId": "44a0a3a6-c0a1-4742-9d75-c4fba2caa7bb"
+  }
+}
+```
+
+#### 64. §3.2 · media/jobs — brand-assets.generate · document-example
+
+`POST /orgs/:id/alphastudio/media/jobs` → **402** · request-id `9f2e6a8f-20cb-4024-ad48-fa2a751a3760` · 815 ms · raw `jobs/valid-brand-assets.generate--document-example.json`
+> the document’s example; 402 expected on the zero wallet
+
+```json
+{
+  "request": {
+    "capability": "brand-assets.generate",
+    "params": {
+      "count": 2
+    },
+    "guidance": [
+      {
+        "role": "subject",
+        "text": "a wordmark for 'Alpha Pro MENA' with a compact abstract mark above it"
+      },
+      {
+        "role": "style",
+        "text": "flat, minimal, enterprise-grade — a working mark, not an illustration"
+      },
+      {
+        "role": "palette",
+        "text": "deep navy on warm off-white, one teal accent"
+      }
+    ]
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "wallet_insufficient",
+    "message": "The org's wallet cannot cover this request — not enough credits",
+    "requestId": "9f2e6a8f-20cb-4024-ad48-fa2a751a3760"
+  }
+}
+```
+
+#### 65. §3.2 · media/jobs — logos.generate · document-example
+
+`POST /orgs/:id/alphastudio/media/jobs` → **402** · request-id `67368604-88a8-464a-8aee-92cb1f6fda2c` · 811 ms · raw `jobs/valid-logos.generate--document-example.json`
+> the document’s example; 402 expected on the zero wallet
+
+```json
+{
+  "request": {
+    "capability": "logos.generate",
+    "plan": "balanced",
+    "params": {
+      "count": 1,
+      "aspectRatio": "1:1",
+      "outputFormat": "png"
+    },
+    "guidance": [
+      {
+        "role": "headline",
+        "text": "Alpha Pro MENA"
+      },
+      {
+        "role": "subject",
+        "text": "a data-lineage platform; three aligned nodes joined by one line"
+      },
+      {
+        "role": "style",
+        "text": "flat, geometric — a working mark for a browser tab and a slide master"
+      },
+      {
+        "role": "palette",
+        "text": "deep navy on warm off-white, one teal accent"
+      }
+    ]
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "wallet_insufficient",
+    "message": "The org's wallet cannot cover this request — not enough credits",
+    "requestId": "67368604-88a8-464a-8aee-92cb1f6fda2c"
+  }
+}
+```
+
+#### 66. §3.2 · media/jobs — logos.redesign · document-example
+
+`POST /orgs/:id/alphastudio/media/jobs` → **402** · request-id `9697d8a8-9d6c-4f51-a773-e2dce866e496` · 800 ms · raw `jobs/valid-logos.redesign--document-example.json`
+> the document’s example; 402 expected on the zero wallet
+
+```json
+{
+  "request": {
+    "capability": "logos.redesign",
+    "plan": "balanced",
+    "params": {
+      "referenceImages": [
+        "<redacted url: 1621 chars>"
+      ],
+      "count": 1,
+      "aspectRatio": "1:1",
+      "outputFormat": "png"
+    },
+    "guidance": [
+      {
+        "role": "style",
+        "text": "simpler geometry, more negative space, lighter type; keep it recognisable"
+      }
+    ]
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "wallet_insufficient",
+    "message": "The org's wallet cannot cover this request — not enough credits",
+    "requestId": "9697d8a8-9d6c-4f51-a773-e2dce866e496"
+  }
+}
+```
+
+#### 67. §3.2 · media/jobs — avatars.generate · document-example
+
+`POST /orgs/:id/alphastudio/media/jobs` → **402** · request-id `89869739-c2a2-4619-ada0-0368225cfde2` · 671 ms · raw `jobs/valid-avatars.generate--document-example.json`
+> the document’s example; 402 expected on the zero wallet
+
+```json
+{
+  "request": {
+    "capability": "avatars.generate",
+    "params": {
+      "referenceImages": [
+        "<redacted url: 1621 chars>"
+      ],
+      "count": 1
+    },
+    "guidance": [
+      {
+        "role": "style",
+        "text": "corporate headshot, navy blazer, plain light backdrop"
+      }
+    ]
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "wallet_insufficient",
+    "message": "The org's wallet cannot cover this request — not enough credits",
+    "requestId": "89869739-c2a2-4619-ada0-0368225cfde2"
+  }
+}
+```
+
+#### 68. §3.2 · media/jobs — avatars.imagine · document-example
+
+`POST /orgs/:id/alphastudio/media/jobs` → **402** · request-id `d8a3f8be-5610-4290-9082-279bad3a5efd` · 814 ms · raw `jobs/valid-avatars.imagine--document-example.json`
+> the document’s example; 402 expected on the zero wallet
+
+```json
+{
+  "request": {
+    "capability": "avatars.imagine",
+    "instruction": "an Arabian woman in her thirties wearing a hijab",
+    "params": {
+      "count": 1
+    }
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "wallet_insufficient",
+    "message": "The org's wallet cannot cover this request — not enough credits",
+    "requestId": "d8a3f8be-5610-4290-9082-279bad3a5efd"
+  }
+}
+```
+
+#### 69. §3.2 · media/jobs — avatar.generate · document-example
+
+`POST /orgs/:id/alphastudio/media/jobs` → **402** · request-id `bc9c3042-dd29-45e0-90dc-a6cbbc1c7f3d` · 648 ms · raw `jobs/valid-avatar.generate--document-example.json`
+> the document’s example; 402 expected on the zero wallet
+
+```json
+{
+  "request": {
+    "capability": "avatar.generate",
+    "plan": "balanced",
+    "instruction": "a man in his forties with a short grey beard, in a dark blazer",
+    "params": {
+      "count": 2,
+      "referenceImages": [
+        "<redacted url: 1621 chars>"
+      ],
+      "aspectRatio": "3:2"
+    },
+    "guidance": []
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "wallet_insufficient",
+    "message": "The org's wallet cannot cover this request — not enough credits",
+    "requestId": "bc9c3042-dd29-45e0-90dc-a6cbbc1c7f3d"
+  }
+}
+```
+
+#### 70. §3.2 · media/jobs — video-ads.generate · document-example
+
+`POST /orgs/:id/alphastudio/media/jobs` → **402** · request-id `c3df40e7-8b03-447e-812c-f8f3553fe00b` · 816 ms · raw `jobs/valid-video-ads.generate--document-example.json`
+> the document’s example; 402 expected on the zero wallet
+
+```json
+{
+  "request": {
+    "capability": "video-ads.generate",
+    "plan": "balanced",
+    "params": {
+      "imageUrl": "<redacted url: 1621 chars>",
+      "durationS": 5
+    },
+    "guidance": [
+      {
+        "role": "motion",
+        "text": "slow push-in, the product turning once, ending centred"
+      }
+    ]
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "wallet_insufficient",
+    "message": "The org's wallet cannot cover this request — not enough credits",
+    "requestId": "c3df40e7-8b03-447e-812c-f8f3553fe00b"
+  }
+}
+```
+
+#### 71. §3.2 · media/jobs — voice.speak · document-example
+
+`POST /orgs/:id/alphastudio/media/jobs` → **402** · request-id `7c7b99af-747e-4363-91f0-8e4bff4beb9f` · 805 ms · raw `jobs/valid-voice.speak--document-example.json`
+> the document’s example; 402 expected on the zero wallet
+
+```json
+{
+  "request": {
+    "capability": "voice.speak",
+    "plan": "balanced",
+    "prompt": "Welcome to Alpha Pro. Here is what changed this week.",
+    "params": {
+      "voice": "Rachel",
+      "lang": "en",
+      "stability": 0.5,
+      "similarity": 0.75,
+      "speed": 1
+    }
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "wallet_insufficient",
+    "message": "The org's wallet cannot cover this request — not enough credits",
+    "requestId": "7c7b99af-747e-4363-91f0-8e4bff4beb9f"
+  }
+}
+```
+
+#### 72. §3.2 · media/jobs — film.generate · document-example
+
+`POST /orgs/:id/alphastudio/media/jobs` → **402** · request-id `ae3434e6-6c1a-4115-88de-450a48955798` · 1110 ms · raw `jobs/valid-film.generate--document-example.json`
+> the document’s example; 402 expected on the zero wallet
+
+```json
+{
+  "request": {
+    "capability": "film.generate",
+    "plan": "balanced",
+    "sec": 3,
+    "aspect": "9:16",
+    "audio": true,
+    "scenes": [
+      {
+        "sec": 2,
+        "speak": "none",
+        "camera": "wide establishing shot of a sunlit café, morning light"
+      },
+      {
+        "sec": 1,
+        "camera": "slow push toward a coffee cup, steam rising"
+      }
+    ]
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "wallet_insufficient",
+    "message": "The org's wallet cannot cover this request — not enough credits",
+    "requestId": "ae3434e6-6c1a-4115-88de-450a48955798"
+  }
+}
+```
+
+#### 73. §3.2 · media/jobs — motion.generate · document-example
+
+`POST /orgs/:id/alphastudio/media/jobs` → **400** · request-id `06e3b44c-7e9f-4c07-91eb-ecd36516cbd4` · 740 ms · raw `jobs/valid-motion.generate--document-example.json`
+> the document’s example; 402 expected on the zero wallet
+
+```json
+{
+  "request": {
+    "capability": "motion.generate",
+    "plan": "balanced",
+    "image": "masset_1508fa6f5391e767f91d2df2",
+    "video": "masset_f8737222c97ea8030669bb3b",
+    "orientation": "image",
+    "keepSound": true,
+    "prompt": "she keeps her warm, natural delivery; soft office light",
+    "lang": "ar"
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "bad_request",
+    "message": "The media service rejected the request — check the body against the capability's schema",
+    "requestId": "06e3b44c-7e9f-4c07-91eb-ecd36516cbd4"
+  }
+}
+```
+
+#### 74. §3.2 · media/jobs — media.generate · with-origin
+
+`POST /orgs/:id/alphastudio/media/jobs` → **402** · request-id `96be7711-9e65-4ba4-9672-52b59f9fa7d8` · 840 ms · raw `jobs/valid-media.generate--with-origin.json`
+> the shared `origin` keys of the document’s “Read this first”; 402 expected
+
+```json
+{
+  "request": {
+    "capability": "media.generate",
+    "plan": "balanced",
+    "kind": "image",
+    "prompt": "a flat-vector report cover, deep navy, generous negative space",
+    "params": {
+      "aspectRatio": "1:1",
+      "outputFormat": "png"
+    },
+    "guidance": [
+      {
+        "role": "headline",
+        "text": "Poor data quality costs $12.9M a year"
+      },
+      {
+        "role": "palette",
+        "text": "deep navy, slate grey, one teal accent"
+      }
+    ],
+    "collection": {
+      "use": true,
+      "hint": "our mark and the product shot"
+    },
+    "origin": {
+      "kind": "standalone",
+      "ref": "hsn-0910-phase0"
+    }
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "wallet_insufficient",
+    "message": "The org's wallet cannot cover this request — not enough credits",
+    "requestId": "96be7711-9e65-4ba4-9672-52b59f9fa7d8"
+  }
+}
+```
+
+#### 75. §3.2 · media/jobs — film.generate · with-references-and-character
+
+`POST /orgs/:id/alphastudio/media/jobs` → **402** · request-id `46012f19-4b3c-453d-8ed7-74805651e99c` · 1041 ms · raw `jobs/valid-film.generate--with-references-and-character.json`
+> our own uploaded asset id as a scene reference and as the character source (A3); 402 expected
+
+```json
+{
+  "request": {
+    "capability": "film.generate",
+    "plan": "balanced",
+    "sec": 3,
+    "aspect": "9:16",
+    "audio": true,
+    "scenes": [
+      {
+        "sec": 2,
+        "speak": "none",
+        "references": [
+          "masset_b24afbaa6bcb30f68af48c8e"
+        ],
+        "camera": "wide establishing shot of a sunlit café, morning light"
+      },
+      {
+        "sec": 1,
+        "camera": "slow push toward a coffee cup, steam rising"
+      }
+    ],
+    "character": {
+      "source": "masset_b24afbaa6bcb30f68af48c8e",
+      "desc": "a woman in her thirties, business-casual"
+    }
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "wallet_insufficient",
+    "message": "The org's wallet cannot cover this request — not enough credits",
+    "requestId": "46012f19-4b3c-453d-8ed7-74805651e99c"
+  }
+}
+```
+
+#### 76. §3.2 · media/jobs — photoshoot.generate · four-referenceImages
+
+`POST /orgs/:id/alphastudio/media/jobs` → **402** · request-id `06a8212a-b28e-4121-b681-5a46821cd0f5` · 790 ms · raw `jobs/valid-photoshoot.generate--four-referenceImages.json`
+> the document’s maximum of four reference urls; 402 expected
+
+```json
+{
+  "request": {
+    "capability": "photoshoot.generate",
+    "params": {
+      "referenceImages": [
+        "<redacted url: 1621 chars>",
+        "<redacted url: 1621 chars>",
+        "<redacted url: 1621 chars>",
+        "<redacted url: 1621 chars>"
+      ],
+      "aspectRatio": "1:1",
+      "outputFormat": "png"
+    },
+    "guidance": [
+      {
+        "role": "scene",
+        "text": "on a brushed-steel table in a glass-walled briefing room"
+      },
+      {
+        "role": "style",
+        "text": "corporate editorial photography, soft key light"
+      },
+      {
+        "role": "palette",
+        "text": "cool neutrals, deep navy, one teal accent"
+      }
+    ]
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "wallet_insufficient",
+    "message": "The org's wallet cannot cover this request — not enough credits",
+    "requestId": "06a8212a-b28e-4121-b681-5a46821cd0f5"
+  }
+}
+```
+
+#### 77. §3.2 · media/jobs — motion.generate · ladder-1x1-still-5s-clip
+
+`POST /orgs/:id/alphastudio/media/jobs` → **400** · request-id `0d07350b-ef74-4b15-a020-5870b73406be` · 836 ms · raw `jobs/valid-motion.generate--ladder-1x1-still-5s-clip.json`
+> the example with the 1×1 still and the 5 s clip
+
+```json
+{
+  "request": {
+    "capability": "motion.generate",
+    "plan": "balanced",
+    "image": "masset_b24afbaa6bcb30f68af48c8e",
+    "video": "masset_f8737222c97ea8030669bb3b",
+    "orientation": "image",
+    "keepSound": true,
+    "prompt": "she keeps her warm, natural delivery; soft office light",
+    "lang": "ar"
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "bad_request",
+    "message": "The media service rejected the request — check the body against the capability's schema",
+    "requestId": "0d07350b-ef74-4b15-a020-5870b73406be"
+  }
+}
+```
+
+#### 78. §3.2 · media/jobs — motion.generate · ladder-512-still-3s-clip
+
+`POST /orgs/:id/alphastudio/media/jobs` → **400** · request-id `5fc4499a-2256-4a1d-baf6-fb5cbd1fe166` · 856 ms · raw `jobs/valid-motion.generate--ladder-512-still-3s-clip.json`
+> the example with the 512 px still and the 3.0 s clip
+
+```json
+{
+  "request": {
+    "capability": "motion.generate",
+    "plan": "balanced",
+    "image": "masset_1508fa6f5391e767f91d2df2",
+    "video": "masset_8ea12cc8634160529ee6834c",
+    "orientation": "image",
+    "keepSound": true,
+    "prompt": "she keeps her warm, natural delivery; soft office light",
+    "lang": "ar"
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "bad_request",
+    "message": "The media service rejected the request — check the body against the capability's schema",
+    "requestId": "5fc4499a-2256-4a1d-baf6-fb5cbd1fe166"
+  }
+}
+```
+
+#### 79. §3.2 · media/jobs — motion.generate · ladder-1x1-still-3s-clip
+
+`POST /orgs/:id/alphastudio/media/jobs` → **400** · request-id `b64b2e16-c233-4fea-84c8-ecf718f26805` · 979 ms · raw `jobs/valid-motion.generate--ladder-1x1-still-3s-clip.json`
+> run 1’s body (org 1823): the 1×1 still and the 3.0 s clip
+
+```json
+{
+  "request": {
+    "capability": "motion.generate",
+    "plan": "balanced",
+    "image": "masset_b24afbaa6bcb30f68af48c8e",
+    "video": "masset_8ea12cc8634160529ee6834c",
+    "orientation": "image",
+    "keepSound": true,
+    "prompt": "she keeps her warm, natural delivery; soft office light",
+    "lang": "ar"
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "bad_request",
+    "message": "The media service rejected the request — check the body against the capability's schema",
+    "requestId": "b64b2e16-c233-4fea-84c8-ecf718f26805"
+  }
+}
+```
+
+#### 80. §3.2 · media/jobs — motion.generate · ladder-required-keys-only
+
+`POST /orgs/:id/alphastudio/media/jobs` → **402** · request-id `6be43768-38be-4081-b919-0f62bce58746` · 862 ms · raw `jobs/valid-motion.generate--ladder-required-keys-only.json`
+> only capability, plan, image, video, orientation
+
+```json
+{
+  "request": {
+    "capability": "motion.generate",
+    "plan": "balanced",
+    "image": "masset_1508fa6f5391e767f91d2df2",
+    "video": "masset_f8737222c97ea8030669bb3b",
+    "orientation": "image"
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "wallet_insufficient",
+    "message": "The org's wallet cannot cover this request — not enough credits",
+    "requestId": "6be43768-38be-4081-b919-0f62bce58746"
+  }
+}
+```
+
+#### 81. §3.2 · media/jobs — motion.generate · ladder-plus-keepSound-prompt
+
+`POST /orgs/:id/alphastudio/media/jobs` → **402** · request-id `66fe7703-3f28-4984-b28f-5fa853c574b4` · 1094 ms · raw `jobs/valid-motion.generate--ladder-plus-keepSound-prompt.json`
+> the required keys plus keepSound and prompt
+
+```json
+{
+  "request": {
+    "capability": "motion.generate",
+    "plan": "balanced",
+    "image": "masset_1508fa6f5391e767f91d2df2",
+    "video": "masset_f8737222c97ea8030669bb3b",
+    "orientation": "image",
+    "keepSound": true,
+    "prompt": "she keeps her warm, natural delivery; soft office light"
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "wallet_insufficient",
+    "message": "The org's wallet cannot cover this request — not enough credits",
+    "requestId": "66fe7703-3f28-4984-b28f-5fa853c574b4"
+  }
+}
+```
+
+#### 82. §3.2 · media/jobs — motion.generate · ladder-plus-lang-ar
+
+`POST /orgs/:id/alphastudio/media/jobs` → **400** · request-id `78236865-ab0f-4144-aa6a-01b5e53f2238` · 909 ms · raw `jobs/valid-motion.generate--ladder-plus-lang-ar.json`
+> the required keys plus lang "ar"
+
+```json
+{
+  "request": {
+    "capability": "motion.generate",
+    "plan": "balanced",
+    "image": "masset_1508fa6f5391e767f91d2df2",
+    "video": "masset_f8737222c97ea8030669bb3b",
+    "orientation": "image",
+    "lang": "ar"
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "bad_request",
+    "message": "The media service rejected the request — check the body against the capability's schema",
+    "requestId": "78236865-ab0f-4144-aa6a-01b5e53f2238"
+  }
+}
+```
+
+#### 83. §3.2 · media/jobs — motion.generate · ladder-orientation-video
+
+`POST /orgs/:id/alphastudio/media/jobs` → **400** · request-id `3269bc85-738a-4cdb-b410-6922df4450fa` · 839 ms · raw `jobs/valid-motion.generate--ladder-orientation-video.json`
+> the example with orientation "video"
+
+```json
+{
+  "request": {
+    "capability": "motion.generate",
+    "plan": "balanced",
+    "image": "masset_1508fa6f5391e767f91d2df2",
+    "video": "masset_f8737222c97ea8030669bb3b",
+    "orientation": "video",
+    "keepSound": true,
+    "prompt": "she keeps her warm, natural delivery; soft office light",
+    "lang": "ar"
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "bad_request",
+    "message": "The media service rejected the request — check the body against the capability's schema",
+    "requestId": "3269bc85-738a-4cdb-b410-6922df4450fa"
+  }
+}
+```
+
+#### 84. §3.3 · media/jobs — images.edit · two-referenceImages
+
+`POST /orgs/:id/alphastudio/media/jobs` → **400** · request-id `1df664d7-1b1b-4fed-8b67-31d711530e7c` · 767 ms · raw `jobs/trap-images.edit--two-referenceImages.json`
+> the document’s refusal; 400 expected BEFORE the wallet
+
+```json
+{
+  "request": {
+    "capability": "images.edit",
+    "instruction": "replace the background with a plain deep-navy studio backdrop",
+    "params": {
+      "referenceImages": [
+        "<redacted url: 1621 chars>",
+        "<redacted url: 1621 chars>"
+      ],
+      "aspectRatio": "1:1",
+      "outputFormat": "png"
+    }
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "bad_request",
+    "message": "The media service rejected the request — check the body against the capability's schema",
+    "requestId": "1df664d7-1b1b-4fed-8b67-31d711530e7c"
+  }
+}
+```
+
+#### 85. §3.3 · media/jobs — photoshoot.generate · five-referenceImages
+
+`POST /orgs/:id/alphastudio/media/jobs` → **502** · request-id `2b59e0ce-9a2e-40ab-b0ba-cff566220b1f` · 449 ms · raw `jobs/trap-photoshoot.generate--five-referenceImages.json`
+> the document’s refusal; 400 expected BEFORE the wallet
+
+```json
+{
+  "request": {
+    "capability": "photoshoot.generate",
+    "params": {
+      "referenceImages": [
+        "<redacted url: 1621 chars>",
+        "<redacted url: 1621 chars>",
+        "<redacted url: 1621 chars>",
+        "<redacted url: 1621 chars>",
+        "<redacted url: 1621 chars>"
+      ],
+      "aspectRatio": "1:1",
+      "outputFormat": "png"
+    },
+    "guidance": [
+      {
+        "role": "scene",
+        "text": "on a brushed-steel table in a glass-walled briefing room"
+      },
+      {
+        "role": "style",
+        "text": "corporate editorial photography, soft key light"
+      },
+      {
+        "role": "palette",
+        "text": "cool neutrals, deep navy, one teal accent"
+      }
+    ]
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "bad_gateway",
+    "message": "The media service is unavailable — try again later",
+    "requestId": "2b59e0ce-9a2e-40ab-b0ba-cff566220b1f"
+  }
+}
+```
+
+#### 86. §3.3 · media/jobs — photoshoot.generate · five-referenceImages-again
+
+`POST /orgs/:id/alphastudio/media/jobs` → **502** · request-id `b81bb7bd-1161-4572-bd10-e28cd98e61e0` · 443 ms · raw `jobs/trap-photoshoot.generate--five-referenceImages-again.json`
+> the document’s refusal; 400 expected BEFORE the wallet
+
+```json
+{
+  "request": {
+    "capability": "photoshoot.generate",
+    "params": {
+      "referenceImages": [
+        "<redacted url: 1621 chars>",
+        "<redacted url: 1621 chars>",
+        "<redacted url: 1621 chars>",
+        "<redacted url: 1621 chars>",
+        "<redacted url: 1621 chars>"
+      ],
+      "aspectRatio": "1:1",
+      "outputFormat": "png"
+    },
+    "guidance": [
+      {
+        "role": "scene",
+        "text": "on a brushed-steel table in a glass-walled briefing room"
+      },
+      {
+        "role": "style",
+        "text": "corporate editorial photography, soft key light"
+      },
+      {
+        "role": "palette",
+        "text": "cool neutrals, deep navy, one teal accent"
+      }
+    ]
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "bad_gateway",
+    "message": "The media service is unavailable — try again later",
+    "requestId": "b81bb7bd-1161-4572-bd10-e28cd98e61e0"
+  }
+}
+```
+
+#### 87. §3.3 · media/jobs — brand-assets.generate · count-1
+
+`POST /orgs/:id/alphastudio/media/jobs` → **400** · request-id `5162c97b-2fb2-4e30-adc8-94041fe9f6f0` · 759 ms · raw `jobs/trap-brand-assets.generate--count-1.json`
+> the document’s refusal; 400 expected BEFORE the wallet
+
+```json
+{
+  "request": {
+    "capability": "brand-assets.generate",
+    "params": {
+      "count": 1
+    },
+    "guidance": [
+      {
+        "role": "subject",
+        "text": "a wordmark for 'Alpha Pro MENA' with a compact abstract mark above it"
+      },
+      {
+        "role": "style",
+        "text": "flat, minimal, enterprise-grade — a working mark, not an illustration"
+      },
+      {
+        "role": "palette",
+        "text": "deep navy on warm off-white, one teal accent"
+      }
+    ]
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "bad_request",
+    "message": "The media service rejected the request — check the body against the capability's schema",
+    "requestId": "5162c97b-2fb2-4e30-adc8-94041fe9f6f0"
+  }
+}
+```
+
+#### 88. §3.3 · media/jobs — logos.generate · count-21
+
+`POST /orgs/:id/alphastudio/media/jobs` → **400** · request-id `a957d534-defc-43aa-9c0b-f9798842f2c5` · 752 ms · raw `jobs/trap-logos.generate--count-21.json`
+> the document’s refusal; 400 expected BEFORE the wallet
+
+```json
+{
+  "request": {
+    "capability": "logos.generate",
+    "plan": "balanced",
+    "params": {
+      "count": 21,
+      "aspectRatio": "1:1",
+      "outputFormat": "png"
+    },
+    "guidance": [
+      {
+        "role": "headline",
+        "text": "Alpha Pro MENA"
+      },
+      {
+        "role": "subject",
+        "text": "a data-lineage platform; three aligned nodes joined by one line"
+      },
+      {
+        "role": "style",
+        "text": "flat, geometric — a working mark for a browser tab and a slide master"
+      },
+      {
+        "role": "palette",
+        "text": "deep navy on warm off-white, one teal accent"
+      }
+    ]
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "bad_request",
+    "message": "The media service rejected the request — check the body against the capability's schema",
+    "requestId": "a957d534-defc-43aa-9c0b-f9798842f2c5"
+  }
+}
+```
+
+#### 89. §3.3 · media/jobs — logos.redesign · no-referenceImages
+
+`POST /orgs/:id/alphastudio/media/jobs` → **400** · request-id `27dae99d-7c08-4a03-b147-f30727ccafa0` · 791 ms · raw `jobs/trap-logos.redesign--no-referenceImages.json`
+> the document’s refusal; 400 expected BEFORE the wallet
+
+```json
+{
+  "request": {
+    "capability": "logos.redesign",
+    "plan": "balanced",
+    "params": {
+      "count": 1,
+      "aspectRatio": "1:1",
+      "outputFormat": "png"
+    },
+    "guidance": [
+      {
+        "role": "style",
+        "text": "simpler geometry, more negative space, lighter type; keep it recognisable"
+      }
+    ]
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "bad_request",
+    "message": "The media service rejected the request — check the body against the capability's schema",
+    "requestId": "27dae99d-7c08-4a03-b147-f30727ccafa0"
+  }
+}
+```
+
+#### 90. §3.3 · media/jobs — avatars.generate · count-9
+
+`POST /orgs/:id/alphastudio/media/jobs` → **400** · request-id `54e04f7d-6523-4d15-991f-00b3049b3e3a` · 595 ms · raw `jobs/trap-avatars.generate--count-9.json`
+> the document’s refusal; 400 expected BEFORE the wallet
+
+```json
+{
+  "request": {
+    "capability": "avatars.generate",
+    "params": {
+      "referenceImages": [
+        "<redacted url: 1621 chars>"
+      ],
+      "count": 9
+    },
+    "guidance": [
+      {
+        "role": "style",
+        "text": "corporate headshot, navy blazer, plain light backdrop"
+      }
+    ]
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "bad_request",
+    "message": "The media service rejected the request — check the body against the capability's schema",
+    "requestId": "54e04f7d-6523-4d15-991f-00b3049b3e3a"
+  }
+}
+```
+
+#### 91. §3.3 · media/jobs — avatars.imagine · instruction-601-chars
+
+`POST /orgs/:id/alphastudio/media/jobs` → **400** · request-id `2f7bf8df-d38d-46bd-9b17-e073f31f5245` · 751 ms · raw `jobs/trap-avatars.imagine--instruction-601-chars.json`
+> the document’s refusal; 400 expected BEFORE the wallet
+
+```json
+{
+  "request": {
+    "capability": "avatars.imagine",
+    "instruction": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "params": {
+      "count": 1
+    }
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "bad_request",
+    "message": "The media service rejected the request — check the body against the capability's schema",
+    "requestId": "2f7bf8df-d38d-46bd-9b17-e073f31f5245"
+  }
+}
+```
+
+#### 92. §3.3 · media/jobs — avatar.generate · count-9
+
+`POST /orgs/:id/alphastudio/media/jobs` → **400** · request-id `68d7ff29-a620-4b40-896f-84f084f68de7` · 760 ms · raw `jobs/trap-avatar.generate--count-9.json`
+> the document’s refusal; 400 expected BEFORE the wallet
+
+```json
+{
+  "request": {
+    "capability": "avatar.generate",
+    "plan": "balanced",
+    "instruction": "a man in his forties with a short grey beard, in a dark blazer",
+    "params": {
+      "count": 9,
+      "referenceImages": [
+        "<redacted url: 1621 chars>"
+      ],
+      "aspectRatio": "3:2"
+    },
+    "guidance": []
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "bad_request",
+    "message": "The media service rejected the request — check the body against the capability's schema",
+    "requestId": "68d7ff29-a620-4b40-896f-84f084f68de7"
+  }
+}
+```
+
+#### 93. §3.3 · media/jobs — video-ads.generate · aspectRatio
+
+`POST /orgs/:id/alphastudio/media/jobs` → **400** · request-id `e5409135-c3e2-4982-b819-e7ff27ffc9ad` · 791 ms · raw `jobs/trap-video-ads.generate--aspectRatio.json`
+> the document’s refusal; 400 expected BEFORE the wallet
+
+```json
+{
+  "request": {
+    "capability": "video-ads.generate",
+    "plan": "balanced",
+    "params": {
+      "imageUrl": "<redacted url: 1621 chars>",
+      "durationS": 5,
+      "aspectRatio": "16:9"
+    },
+    "guidance": [
+      {
+        "role": "motion",
+        "text": "slow push-in, the product turning once, ending centred"
+      }
+    ]
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "bad_request",
+    "message": "The media service rejected the request — check the body against the capability's schema",
+    "requestId": "e5409135-c3e2-4982-b819-e7ff27ffc9ad"
+  }
+}
+```
+
+#### 94. §3.3 · media/jobs — video-ads.generate · generateAudio-true
+
+`POST /orgs/:id/alphastudio/media/jobs` → **400** · request-id `fa7f7ff0-238d-44e4-a853-112a8ca3c8c8` · 767 ms · raw `jobs/trap-video-ads.generate--generateAudio-true.json`
+> the document’s refusal; 400 expected BEFORE the wallet
+
+```json
+{
+  "request": {
+    "capability": "video-ads.generate",
+    "plan": "balanced",
+    "params": {
+      "imageUrl": "<redacted url: 1621 chars>",
+      "durationS": 5,
+      "generateAudio": true
+    },
+    "guidance": [
+      {
+        "role": "motion",
+        "text": "slow push-in, the product turning once, ending centred"
+      }
+    ]
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "bad_request",
+    "message": "The media service rejected the request — check the body against the capability's schema",
+    "requestId": "fa7f7ff0-238d-44e4-a853-112a8ca3c8c8"
+  }
+}
+```
+
+#### 95. §3.3 · media/jobs — video-ads.generate · durationS-8
+
+`POST /orgs/:id/alphastudio/media/jobs` → **400** · request-id `cc29eb5d-c41c-4725-80e1-12d37b0f248d` · 748 ms · raw `jobs/trap-video-ads.generate--durationS-8.json`
+> the document’s refusal; 400 expected BEFORE the wallet
+
+```json
+{
+  "request": {
+    "capability": "video-ads.generate",
+    "plan": "balanced",
+    "params": {
+      "imageUrl": "<redacted url: 1621 chars>",
+      "durationS": 8
+    },
+    "guidance": [
+      {
+        "role": "motion",
+        "text": "slow push-in, the product turning once, ending centred"
+      }
+    ]
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "bad_request",
+    "message": "The media service rejected the request — check the body against the capability's schema",
+    "requestId": "cc29eb5d-c41c-4725-80e1-12d37b0f248d"
+  }
+}
+```
+
+#### 96. §3.3 · media/jobs — voice.speak · unapproved-voice
+
+`POST /orgs/:id/alphastudio/media/jobs` → **400** · request-id `35d55872-e0f6-4cb4-a2cb-41dea02bb78d` · 790 ms · raw `jobs/trap-voice.speak--unapproved-voice.json`
+> the document’s refusal; 400 expected BEFORE the wallet
+
+```json
+{
+  "request": {
+    "capability": "voice.speak",
+    "plan": "balanced",
+    "prompt": "Welcome to Alpha Pro. Here is what changed this week.",
+    "params": {
+      "voice": "NotAnApprovedVoice",
+      "lang": "en",
+      "stability": 0.5,
+      "similarity": 0.75,
+      "speed": 1
+    }
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "bad_request",
+    "message": "The media service rejected the request — check the body against the capability's schema",
+    "requestId": "35d55872-e0f6-4cb4-a2cb-41dea02bb78d"
+  }
+}
+```
+
+#### 97. §3.3 · media/jobs — voice.speak · similarity-on-precise
+
+`POST /orgs/:id/alphastudio/media/jobs` → **400** · request-id `4c26ec82-af6e-4ad4-b6a0-53198f12523a` · 787 ms · raw `jobs/trap-voice.speak--similarity-on-precise.json`
+> the document’s refusal; 400 expected BEFORE the wallet
+
+```json
+{
+  "request": {
+    "capability": "voice.speak",
+    "plan": "precise",
+    "prompt": "Welcome to Alpha Pro. Here is what changed this week.",
+    "params": {
+      "voice": "Rachel",
+      "lang": "en",
+      "stability": 0.5,
+      "similarity": 0.75
+    }
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "bad_request",
+    "message": "The media service rejected the request — check the body against the capability's schema",
+    "requestId": "4c26ec82-af6e-4ad4-b6a0-53198f12523a"
+  }
+}
+```
+
+#### 98. §3.3 · media/jobs — film.generate · resolution-on-balanced
+
+`POST /orgs/:id/alphastudio/media/jobs` → **400** · request-id `2182114e-e2ec-47f0-b77b-c7c570c1dd19` · 777 ms · raw `jobs/trap-film.generate--resolution-on-balanced.json`
+> the document’s refusal; 400 expected BEFORE the wallet
+
+```json
+{
+  "request": {
+    "capability": "film.generate",
+    "plan": "balanced",
+    "sec": 3,
+    "aspect": "9:16",
+    "audio": true,
+    "scenes": [
+      {
+        "sec": 2,
+        "speak": "none",
+        "camera": "wide establishing shot of a sunlit café, morning light"
+      },
+      {
+        "sec": 1,
+        "camera": "slow push toward a coffee cup, steam rising"
+      }
+    ],
+    "resolution": "720p"
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "bad_request",
+    "message": "The media service rejected the request — check the body against the capability's schema",
+    "requestId": "2182114e-e2ec-47f0-b77b-c7c570c1dd19"
+  }
+}
+```
+
+#### 99. §3.3 · media/jobs — film.generate · talking-on-balanced
+
+`POST /orgs/:id/alphastudio/media/jobs` → **400** · request-id `5348b5e9-2c30-48e5-b14c-859af17ccf58` · 980 ms · raw `jobs/trap-film.generate--talking-on-balanced.json`
+> the document’s refusal; 400 expected BEFORE the wallet
+
+```json
+{
+  "request": {
+    "capability": "film.generate",
+    "plan": "balanced",
+    "sec": 3,
+    "aspect": "9:16",
+    "audio": true,
+    "scenes": [
+      {
+        "sec": 2,
+        "speak": "talking",
+        "script": "Welcome to Alpha Pro. Here is what changed this week.",
+        "camera": "a presenter at a desk, medium shot"
+      },
+      {
+        "sec": 1,
+        "camera": "slow push toward a coffee cup, steam rising"
+      }
+    ],
+    "lang": "en",
+    "voice": {
+      "id": "Rachel"
+    }
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "bad_request",
+    "message": "The media service rejected the request — check the body against the capability's schema",
+    "requestId": "5348b5e9-2c30-48e5-b14c-859af17ccf58"
+  }
+}
+```
+
+#### 100. §3.3 · media/jobs — film.generate · scenes-do-not-sum
+
+`POST /orgs/:id/alphastudio/media/jobs` → **400** · request-id `f95e33be-02c4-4d5a-a619-d34434888660` · 747 ms · raw `jobs/trap-film.generate--scenes-do-not-sum.json`
+> the document’s refusal; 400 expected BEFORE the wallet
+
+```json
+{
+  "request": {
+    "capability": "film.generate",
+    "plan": "balanced",
+    "sec": 3,
+    "aspect": "9:16",
+    "audio": true,
+    "scenes": [
+      {
+        "sec": 2,
+        "camera": "wide establishing shot"
+      },
+      {
+        "sec": 2,
+        "camera": "slow push in"
+      }
+    ]
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "bad_request",
+    "message": "The media service rejected the request — check the body against the capability's schema",
+    "requestId": "f95e33be-02c4-4d5a-a619-d34434888660"
+  }
+}
+```
+
+#### 101. §3.3 · media/jobs — motion.generate · no-orientation
+
+`POST /orgs/:id/alphastudio/media/jobs` → **400** · request-id `6e89ef49-30f5-4db3-8960-c942f02d80e3` · 753 ms · raw `jobs/trap-motion.generate--no-orientation.json`
+> the document’s refusal; 400 expected BEFORE the wallet
+
+```json
+{
+  "request": {
+    "capability": "motion.generate",
+    "plan": "balanced",
+    "image": "masset_b24afbaa6bcb30f68af48c8e",
+    "video": "masset_8ea12cc8634160529ee6834c",
+    "keepSound": true,
+    "prompt": "she keeps her warm, natural delivery"
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "bad_request",
+    "message": "The media service rejected the request — check the body against the capability's schema",
+    "requestId": "6e89ef49-30f5-4db3-8960-c942f02d80e3"
+  }
+}
+```
+
+#### 102. §3.3 · media/jobs — media.generate · unknown-param-key
+
+`POST /orgs/:id/alphastudio/media/jobs` → **400** · request-id `cf3a7e0a-3a26-47a0-9155-253a9fc61fd3` · 819 ms · raw `jobs/trap-media.generate--unknown-param-key.json`
+> the document’s refusal; 400 expected BEFORE the wallet
+
+```json
+{
+  "request": {
+    "capability": "media.generate",
+    "plan": "balanced",
+    "kind": "image",
+    "prompt": "a flat-vector report cover, deep navy, generous negative space",
+    "params": {
+      "aspectRatio": "1:1",
+      "outputFormat": "png",
+      "foo": "bar"
+    },
+    "guidance": [
+      {
+        "role": "headline",
+        "text": "Poor data quality costs $12.9M a year"
+      },
+      {
+        "role": "palette",
+        "text": "deep navy, slate grey, one teal accent"
+      }
+    ],
+    "collection": {
+      "use": true,
+      "hint": "our mark and the product shot"
+    }
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "bad_request",
+    "message": "The media service rejected the request — check the body against the capability's schema",
+    "requestId": "cf3a7e0a-3a26-47a0-9155-253a9fc61fd3"
+  }
+}
+```
+
+#### 103. wallet — after every refused body
+
+`GET /orgs/:id/alphastudio/wallet` → **200** · request-id `29fe6be9-e17c-4657-b253-e1d554f7f009` · 900 ms · raw `after/wallet.json`
+
+```json
+{
+  "cents": 0,
+  "heldCents": 0,
+  "availableCents": 0
+}
+```
+
+#### 104. media/jobs — list after (no job may exist)
+
+`GET /orgs/:id/alphastudio/media/jobs` → **200** · request-id `6eb52963-f7d6-4c30-98c8-acfcf8554db6` · 995 ms · raw `after/jobs.json`
+
+```json
+{
+  "jobs": []
+}
+```
+
+#### 105. §3.7a · GET event-sources/countries — does a row carry states?
+
+`GET /orgs/:id/event-sources/countries` → **200** · request-id `2f9f27b1-bf9a-4971-86b4-07e12f3caaf9` · 539 ms · raw `state/countries.json`
+
+```json
+{
+  "summarised": true,
+  "total": 249,
+  "rowKeys": [
+    "code",
+    "name"
+  ],
+  "first": [
+    {
+      "code": "AF",
+      "name": "Afghanistan"
+    },
+    {
+      "code": "AX",
+      "name": "Åland Islands"
+    },
+    {
+      "code": "AL",
+      "name": "Albania"
+    },
+    {
+      "code": "DZ",
+      "name": "Algeria"
+    },
+    {
+      "code": "AS",
+      "name": "American Samoa"
+    }
+  ],
+  "note": "249 rows verbatim in the raw file"
+}
+```
+
+#### 106. §3.7b · PUT /orgs/:id/country — {country:"US", state:"CA"}
+
+`PUT /orgs/:id/country` → **200** · request-id `79ffe011-947b-4ad2-938a-d139a0e48a0d` · 20391 ms · raw `state/put-country-us-ca.json`
+> accepted, dropped, or 400? (~10 s: it loads a calendar)
+
+```json
+{
+  "request": {
+    "country": "US",
+    "state": "CA"
+  }
+}
+```
+
+```json
+{
+  "org": {
+    "id": "1824",
+    "name": "QA HSN-0910 Org 1789026912812",
+    "slug": "qa-hsn-0910-org-1789026912812",
+    "status": "active",
+    "createdAt": "2026-09-10T07:55:21.368Z",
+    "updatedAt": "2026-09-10T07:57:13.226Z",
+    "country": "US"
+  },
+  "holidaysCount": 10,
+  "reloaded": true
+}
+```
+
+#### 107. §3.7b · GET /orgs/:id — read back (does the org carry a state?)
+
+`GET /orgs/:id` → **200** · request-id `cec29cdc-ce2b-4743-bf9e-a41d36d8ea4d` · 578 ms · raw `state/org-after-put.json`
+
+```json
+{
+  "org": {
+    "id": "1824",
+    "name": "QA HSN-0910 Org 1789026912812",
+    "slug": "qa-hsn-0910-org-1789026912812",
+    "status": "active",
+    "createdAt": "2026-09-10T07:55:21.368Z",
+    "updatedAt": "2026-09-10T07:57:13.226Z",
+    "country": "US"
+  },
+  "membership": {
+    "id": "2083",
+    "orgId": "1824",
+    "userId": "2210",
+    "role": "owner",
+    "isActive": true,
+    "createdAt": "2026-09-10T07:55:21.368Z",
+    "updatedAt": "2026-09-10T07:55:21.368Z"
+  }
+}
+```
+
+#### 108. §3.7d · GET /orgs/:id/holidays?limit=100 — the rows’ shape
+
+`GET /orgs/:id/holidays?limit=100` → **200** · request-id `4fbc1b3f-902d-4cc1-81f2-be67aff23b21` · 635 ms · raw `state/holidays.json`
+
+```json
+{
+  "items": [
+    {
+      "id": "864",
+      "orgId": "1824",
+      "date": "2026-10-12",
+      "event": "Columbus Day",
+      "rules": [
+        {
+          "kind": "do",
+          "text": "Acknowledge the federal holiday and the growing recognition of Indigenous Peoples' Day alongside it, reflecting the dual conversation many Americans are having."
+        },
+        {
+          "kind": "dont",
+          "text": "Don't frame it as a straightforward celebration of exploration — the contested history means a one-sided tone will alienate a significant portion of your audience."
+        }
+      ],
+      "createdAt": "2026-09-10T07:57:13.226Z",
+      "processed": false
+    },
+    {
+      "id": "865",
+      "orgId": "1824",
+      "date": "2026-10-31",
+      "event": "Halloween",
+      "rules": [
+        {
+          "kind": "do",
+          "text": "Lean into playful, lighthearted creative — costumes, candy, and seasonal imagery resonate broadly and invite audience participation."
+        },
+        {
+          "kind": "dont",
+          "text": "Avoid costumes or imagery that appropriate cultural or religious identities, as these reliably draw backlash."
+        }
+      ],
+      "createdAt": "2026-09-10T07:57:13.226Z",
+      "processed": false
+    },
+    {
+      "id": "866",
+      "orgId": "1824",
+      "date": "2026-11-01",
+      "event": "Daylight Saving Time ends",
+      "rules": [
+        {
+          "kind": "do",
+          "text": "Use the 'extra hour' framing as a light, relatable hook — it's a shared moment that works well for casual engagement content."
+        },
+        {
+          "kind": "dont",
+          "text": "Don't build time-sensitive campaigns around this date without accounting for the clock change affecting scheduled posts and notifications."
+        }
+      ],
+      "createdAt": "2026-09-10T07:57:13.226Z",
+      "processed": false
+    },
+    {
+      "id": "867",
+      "orgId": "1824",
+      "date": "2026-11-03",
+      "event": "Election Day",
+      "rules": [
+        {
+          "kind": "do",
+          "text": "Encourage civic participation with a nonpartisan 'go vote' message — this is broadly welcomed and low-risk for most brands."
+        },
+        {
+          "kind": "dont",
+          "text": "Don't express support for any candidate, party, or ballot position, as political endorsements carry serious reputational and legal risk."
+        },
+        {
+          "kind": "dont",
+          "text": "Avoid launching major promotional campaigns on this day, as they can read as tone-deaf against the weight of a national election."
+        }
+      ],
+      "createdAt": "2026-09-10T07:57:13.226Z",
+      "processed": false
+    },
+    {
+      "id": "868",
+      "orgId": "1824",
+      "date": "2026-11-11",
+      "event": "Veterans Day",
+      "rules": [
+        {
+          "kind": "do",
+          "text": "Express genuine gratitude to veterans and active service members — specific, sincere acknowledgment lands far better than generic patriotic copy."
+        },
+        {
+          "kind": "dont",
+          "text": "Don't use Veterans Day primarily as a sales hook; promotional framing around this day reads as exploitative and frequently draws criticism."
+        }
+      ],
+      "createdAt": "2026-09-10T07:57:13.226Z",
+      "processed": false
+    },
+    {
+      "id": "869",
+      "orgId": "1824",
+      "date": "2026-11-26",
+      "event": "Thanksgiving Day",
+      "rules": [
+        {
+          "kind": "do",
+          "text": "Focus messaging on gratitude, community, and togetherness — these themes connect across the wide range of ways Americans celebrate the day."
+        },
+        {
+          "kind": "dont",
+          "text": "Avoid romanticized colonial imagery or the traditional Pilgrim-and-Native narrative, which many audiences now find reductive or offensive."
+        }
+      ],
+      "createdAt": "2026-09-10T07:57:13.226Z",
+      "processed": false
+    },
+    {
+      "id": "870",
+      "orgId": "1824",
+      "date": "2026-11-27",
+      "event": "Black Friday",
+      "rules": [
+        {
+          "kind": "do",
+          "text": "This is one of the highest-intent shopping days of the year — clear, direct promotional messaging with specific offers performs best."
+        },
+        {
+          "kind": "dont",
+          "text": "Don't ignore the counter-narrative around consumerism; if your brand values sustainability or mindful spending, acknowledge it rather than pretending Black Friday is uncomplicated."
+        }
+      ],
+      "createdAt": "2026-09-10T07:57:13.226Z",
+      "processed": false
+    },
+    {
+      "id": "871",
+      "orgId": "1824",
+      "date": "2026-12-24",
+      "event": "Christmas Eve",
+      "rules": [
+        {
+          "kind": "do",
+          "text": "Warm, family-oriented content works well — this is a moment of anticipation and togetherness for the large share of your audience celebrating."
+        },
+        {
+          "kind": "dont",
+          "text": "Don't assume your entire audience celebrates Christmas; inclusive seasonal language keeps the message welcoming to those observing other holidays or none."
+        }
+      ],
+      "createdAt": "2026-09-10T07:57:13.226Z",
+      "processed": false
+    },
+    {
+      "id": "872",
+      "orgId": "1824",
+      "date": "2026-12-25",
+      "event": "Christmas Day",
+      "rules": [
+        {
+          "kind": "do",
+          "text": "A brief, warm acknowledgment is appropriate — most audiences expect brands to mark the day, and a simple message of goodwill is well received."
+        },
+        {
+          "kind": "dont",
+          "text": "Avoid heavy promotional content on Christmas Day itself; audiences are with family and sales-first messaging feels intrusive."
+        }
+      ],
+      "createdAt": "2026-09-10T07:57:13.226Z",
+      "processed": false
+    },
+    {
+      "id": "873",
+      "orgId": "1824",
+      "date": "2026-12-31",
+      "event": "New Year's Eve",
+      "rules": [
+        {
+          "kind": "do",
+          "text": "Reflective, forward-looking content — celebrating the year and welcoming the next — resonates widely and gives your brand a natural, positive close to the calendar."
+        },
+        {
+          "kind": "dont",
+          "text": "Don't schedule posts for midnight without confirming time-zone targeting; a New Year's message arriving at 3 a.m. local time loses its impact entirely."
+        }
+      ],
+      "createdAt": "2026-09-10T07:57:13.226Z",
+      "processed": false
+    }
+  ],
+  "total": 10
+}
+```
+
+#### 109. §3.7c · POST event-sources — {kind:"holidays", country:"US", state:"CA"}
+
+`POST /orgs/:id/event-sources` → **201** · request-id `efc30c5b-ef94-4495-afc8-8292122cc393` · 918 ms · raw `state/post-event-source-us-ca.json`
+
+```json
+{
+  "request": {
+    "kind": "holidays",
+    "country": "US",
+    "state": "CA"
+  }
+}
+```
+
+```json
+{
+  "id": "111",
+  "orgId": "1824",
+  "kind": "holidays",
+  "country": "US",
+  "createdAt": "2026-09-10T07:57:15.459Z",
+  "updatedAt": "2026-09-10T07:57:15.459Z"
+}
+```
+
+#### 110. §3.7c · DELETE event-sources/:id — cleanup (with-state)
+
+`DELETE /orgs/:id/event-sources/111` → **204** · request-id `0f855e40-9b04-441c-b81a-63a5a0944448` · 821 ms · raw `state/delete-event-source-with-state.json`
+
+#### 111. §3.7 · GET /orgs/:id/event-sources/countries/US
+
+`GET /orgs/:id/event-sources/countries/US` → **404** · request-id `4fd2b54a-301d-4f7e-b01c-d7390a31ccf3` · 444 ms
+
+```json
+{
+  "error": {
+    "code": "not_found",
+    "message": "Not found"
+  }
+}
+```
+
+#### 112. §3.7 · GET /orgs/:id/event-sources/countries/US/states
+
+`GET /orgs/:id/event-sources/countries/US/states` → **404** · request-id `c7968a74-4974-4918-be71-eb60857bd935` · 452 ms
+
+```json
+{
+  "error": {
+    "code": "not_found",
+    "message": "Not found"
+  }
+}
+```
+
+#### 113. §3.7 · GET /orgs/:id/event-sources/states?country=US
+
+`GET /orgs/:id/event-sources/states?country=US` → **400** · request-id `49ef6f4d-8df8-4b84-8fc3-20e9f5cace68` · 449 ms
+
+```json
+{
+  "error": {
+    "code": "validation_failed",
+    "message": "Validation failed",
+    "details": [
+      {
+        "field": "id",
+        "message": "must be a numeric id"
+      }
+    ],
+    "requestId": "49ef6f4d-8df8-4b84-8fc3-20e9f5cace68"
+  }
+}
+```
+
+#### 114. §3.7 · GET /orgs/:id/event-sources/subdivisions?country=US
+
+`GET /orgs/:id/event-sources/subdivisions?country=US` → **400** · request-id `ab47a511-6c62-4c12-9dca-1c7e7deac901` · 442 ms
+
+```json
+{
+  "error": {
+    "code": "validation_failed",
+    "message": "Validation failed",
+    "details": [
+      {
+        "field": "id",
+        "message": "must be a numeric id"
+      }
+    ],
+    "requestId": "ab47a511-6c62-4c12-9dca-1c7e7deac901"
+  }
+}
+```
+
+#### 115. §3.7 · GET /orgs/:id/countries/US/states
+
+`GET /orgs/:id/countries/US/states` → **404** · request-id `cb971b13-5b3d-40da-9791-bc0258e74ebf` · 443 ms
+
+```json
+{
+  "error": {
+    "code": "not_found",
+    "message": "Not found"
+  }
+}
+```
+
+#### 116. §3.7 · GET /orgs/:id/states?country=US
+
+`GET /orgs/:id/states?country=US` → **404** · request-id `7df12630-cc04-4ff5-b8f5-54ee62c335d9` · 543 ms
+
+```json
+{
+  "error": {
+    "code": "not_found",
+    "message": "Not found"
+  }
+}
+```
+
+#### 117. §3.4 · GET /me/orgs — the funded owner’s orgs
+
+`GET /me/orgs` → **200** · request-id `311fbe97-20c4-4849-854a-286072a5b02f` · 466 ms · raw `multi-asset/me-orgs.json`
+
+```json
+{
+  "items": [
+    {
+      "id": "1813",
+      "name": "QA Funded Org 1788440509919",
+      "slug": "qa-funded-org-1788440509919",
+      "status": "active",
+      "role": "owner",
+      "joinedAt": "2026-09-03T13:02:00.200Z"
+    }
+  ],
+  "total": 1
+}
+```
+
+#### 118. §3.4 · GET /orgs/1813/alphastudio/media/jobs — READ ONLY
+
+`GET /orgs/1813/alphastudio/media/jobs` → **200** · request-id `bd52cb81-1d9e-44fa-84e5-4e290d9f2236` · 857 ms · raw `multi-asset/jobs-list.json`
+> a list read on the funded org; never a POST there
+
+```json
+{
+  "jobs": []
+}
+```
+
+#### 119. cleanup · DELETE media/assets/masset_b24afbaa6bcb30f68af48c8e
+
+`DELETE /orgs/:id/alphastudio/media/assets/masset_b24afbaa6bcb30f68af48c8e` → **204** · request-id `fc8b51c6-1cad-491f-a112-cd4053842d81` · 799 ms
+
+#### 120. cleanup · DELETE media/assets/masset_392d87c15f41bfe946854a38
+
+`DELETE /orgs/:id/alphastudio/media/assets/masset_392d87c15f41bfe946854a38` → **204** · request-id `e8637c87-72cd-4ed8-b410-7e5a4a3e1daf` · 786 ms
+
+#### 121. cleanup · DELETE media/assets/masset_8ea12cc8634160529ee6834c
+
+`DELETE /orgs/:id/alphastudio/media/assets/masset_8ea12cc8634160529ee6834c` → **204** · request-id `28a39329-5f74-4fe9-9d0d-910c0fff1a2d` · 781 ms
+
+#### 122. cleanup · DELETE media/assets/masset_1508fa6f5391e767f91d2df2
+
+`DELETE /orgs/:id/alphastudio/media/assets/masset_1508fa6f5391e767f91d2df2` → **204** · request-id `e845d3af-4cfa-48c4-a21a-0a0d2a45708c` · 794 ms
+
+#### 123. cleanup · DELETE media/assets/masset_f8737222c97ea8030669bb3b
+
+`DELETE /orgs/:id/alphastudio/media/assets/masset_f8737222c97ea8030669bb3b` → **204** · request-id `f22f6ae7-626a-46d3-815a-3976f103ec4d` · 816 ms
+
+#### 124. cleanup · media/assets — list re-read
+
+`GET /orgs/:id/alphastudio/media/assets` → **200** · request-id `f9da841a-ab85-409d-9b05-522fdd37bad8` · 761 ms · raw `after/assets.json`
+
+```json
+{
+  "assets": []
+}
+```
+
+
+### Motion supplement — the ladder one variable at a time, on org 1824 (2026-09-10)
+
+Captured by `pnpm probe:hsn-0910 -- --motion-supplement --owner …` on an EXISTING zero-wallet
+QA org (`qa+1789026912812hsn0910@alphapromena.com`) — no new org. Zero spend: four presigns with four free Node PUTs,
+the rungs behind the zero-wallet shield (the wallet read 0 first), the wallet and the job
+list re-read after, every asset deleted. Raw copy:
+`Docs/qa/hsn-0910/phase0/supplement-motion/`. Run stamp: `2026-09-10T08:03:42.407Z`.
+
+#### What the supplement established
+
+- Supplement on the EXISTING QA org 1824 (qa+1789026912812hsn0910@alphapromena.com) — no new org.
+- Wallet: 200 {"cents":0,"heldCents":0,"availableCents":0}.
+- asset A (image/png): presign 201 → masset_13aa9b474ccb762af89220b5; PUT 200.
+- 512 px PNG source: ffmpeg lavfi colour source, 512×512, 1900 bytes.
+- asset C (image/png): presign 201 → masset_d9783f9d465e4018b0c911ad; PUT 200.
+- 3 s MP4 source: ffmpeg lavfi colour source, 3 s, 64×64, 2384 bytes.
+- asset V (video/mp4): presign 201 → masset_9ad934f231c04048092769cb; PUT 200.
+- 5 s MP4 source: ffmpeg lavfi colour source, 5 s, 64×64, 2914 bytes.
+- asset W (video/mp4): presign 201 → masset_418045b037f735053254ec4c; PUT 200.
+- motion.generate · ladder-required-keys-only: 402 code=wallet_insufficient "The org's wallet cannot cover this request — not enough credits".
+- motion.generate · ladder-1x1-still-5s-clip: 402 code=wallet_insufficient "The org's wallet cannot cover this request — not enough credits".
+- motion.generate · ladder-512-still-3s-clip: 402 code=wallet_insufficient "The org's wallet cannot cover this request — not enough credits".
+- motion.generate · ladder-1x1-still-3s-clip: 402 code=wallet_insufficient "The org's wallet cannot cover this request — not enough credits".
+- motion.generate · ladder-orientation-video: 402 code=wallet_insufficient "The org's wallet cannot cover this request — not enough credits".
+- motion.generate · ladder-plus-keepSound-prompt: 402 code=wallet_insufficient "The org's wallet cannot cover this request — not enough credits".
+- motion.generate · ladder-plus-keepSound-false: 402 code=wallet_insufficient "The org's wallet cannot cover this request — not enough credits".
+- motion.generate · ladder-plus-lang-en: 402 code=wallet_insufficient "The org's wallet cannot cover this request — not enough credits".
+- motion.generate · ladder-plus-lang-ar: 400 code=bad_request "The media service rejected the request — check the body against the capability's schema".
+- After the rungs: wallet {"cents":0,"heldCents":0,"availableCents":0}; jobs listed: 0.
+- cleanup masset_13aa9b474ccb762af89220b5 (image/png): 204.
+- cleanup masset_d9783f9d465e4018b0c911ad (image/png): 204.
+- cleanup masset_9ad934f231c04048092769cb (video/mp4): 204.
+- cleanup masset_418045b037f735053254ec4c (video/mp4): 204.
+- cleanup list re-read: 200 {"assets":[]}.
+
+#### Captured exchanges, in order
+
+#### 1. supplement · GET /me/orgs — the owner’s org
+
+`GET /me/orgs` → **200** · request-id `1ceca18a-13bf-4183-92b9-e85cdbc7212d` · 502 ms · raw `setup/me-orgs.json`
+
+```json
+{
+  "items": [
+    {
+      "id": "1824",
+      "name": "QA HSN-0910 Org 1789026912812",
+      "slug": "qa-hsn-0910-org-1789026912812",
+      "status": "active",
+      "role": "owner",
+      "joinedAt": "2026-09-10T07:55:21.368Z"
+    }
+  ],
+  "total": 1
+}
+```
+
+#### 2. supplement · wallet — the 402 shield
+
+`GET /orgs/:id/alphastudio/wallet` → **200** · request-id `e45c694b-5466-4437-ba49-8d1ea26cddb1` · 3233 ms · raw `setup/wallet-shield.json`
+
+```json
+{
+  "cents": 0,
+  "heldCents": 0,
+  "availableCents": 0
+}
+```
+
+#### 3. asset A · media/assets/presign — image/png
+
+`POST /orgs/:id/alphastudio/media/assets/presign` → **201** · request-id `6071d26e-169c-40ef-b01a-7d8018956323` · 817 ms · raw `setup/presign-A.json`
+
+```json
+{
+  "request": {
+    "mediaType": "image/png",
+    "desc": "HSN-0910 motion supplement — a 1×1 still"
+  }
+}
+```
+
+```json
+{
+  "assetId": "masset_13aa9b474ccb762af89220b5",
+  "uploadUrl": "<redacted url: 1673 chars>",
+  "expiresAt": "2026-09-10T08:18:50.153Z",
+  "mediaType": "image/png"
+}
+```
+
+#### 4. asset A · PUT 70 bytes to the presigned url (from Node)
+
+`PUT (presigned storage url — not our API)` → **200** · request-id `none` · 548 ms
+
+#### 5. asset C · media/assets/presign — image/png
+
+`POST /orgs/:id/alphastudio/media/assets/presign` → **201** · request-id `866b54f9-0193-4763-b8aa-41b4d1882dcf` · 781 ms · raw `setup/presign-C.json`
+
+```json
+{
+  "request": {
+    "mediaType": "image/png",
+    "desc": "HSN-0910 motion supplement — a 512×512 still"
+  }
+}
+```
+
+```json
+{
+  "assetId": "masset_d9783f9d465e4018b0c911ad",
+  "uploadUrl": "<redacted url: 1673 chars>",
+  "expiresAt": "2026-09-10T08:18:51.548Z",
+  "mediaType": "image/png"
+}
+```
+
+#### 6. asset C · PUT 1900 bytes to the presigned url (from Node)
+
+`PUT (presigned storage url — not our API)` → **200** · request-id `none` · 171 ms
+
+#### 7. asset V · media/assets/presign — video/mp4
+
+`POST /orgs/:id/alphastudio/media/assets/presign` → **201** · request-id `dbd5718e-088d-47ef-811e-d294c6e0143a` · 749 ms · raw `setup/presign-V.json`
+
+```json
+{
+  "request": {
+    "mediaType": "video/mp4",
+    "desc": "HSN-0910 motion supplement — a 3-second clip"
+  }
+}
+```
+
+```json
+{
+  "assetId": "masset_9ad934f231c04048092769cb",
+  "uploadUrl": "<redacted url: 1673 chars>",
+  "expiresAt": "2026-09-10T08:18:52.523Z",
+  "mediaType": "video/mp4"
+}
+```
+
+#### 8. asset V · PUT 2384 bytes to the presigned url (from Node)
+
+`PUT (presigned storage url — not our API)` → **200** · request-id `none` · 176 ms
+
+#### 9. asset W · media/assets/presign — video/mp4
+
+`POST /orgs/:id/alphastudio/media/assets/presign` → **201** · request-id `d8958827-58b1-4d9b-8c11-fa7fbf04d628` · 735 ms · raw `setup/presign-W.json`
+
+```json
+{
+  "request": {
+    "mediaType": "video/mp4",
+    "desc": "HSN-0910 motion supplement — a 5-second clip"
+  }
+}
+```
+
+```json
+{
+  "assetId": "masset_418045b037f735053254ec4c",
+  "uploadUrl": "<redacted url: 1673 chars>",
+  "expiresAt": "2026-09-10T08:18:53.488Z",
+  "mediaType": "video/mp4"
+}
+```
+
+#### 10. asset W · PUT 2914 bytes to the presigned url (from Node)
+
+`PUT (presigned storage url — not our API)` → **200** · request-id `none` · 180 ms
+
+#### 11. supplement · media/jobs — motion.generate · ladder-required-keys-only
+
+`POST /orgs/:id/alphastudio/media/jobs` → **402** · request-id `5de44fd0-8731-437e-a3dd-db8723454c7e` · 1191 ms · raw `jobs/ladder-required-keys-only.json`
+> only capability, plan, image, video, orientation — the 512 px still and the 5 s clip; the control
+
+```json
+{
+  "request": {
+    "capability": "motion.generate",
+    "plan": "balanced",
+    "image": "masset_d9783f9d465e4018b0c911ad",
+    "video": "masset_418045b037f735053254ec4c",
+    "orientation": "image"
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "wallet_insufficient",
+    "message": "The org's wallet cannot cover this request — not enough credits",
+    "requestId": "5de44fd0-8731-437e-a3dd-db8723454c7e"
+  }
+}
+```
+
+#### 12. supplement · media/jobs — motion.generate · ladder-1x1-still-5s-clip
+
+`POST /orgs/:id/alphastudio/media/jobs` → **402** · request-id `bcc4fae0-1e48-4234-b744-a2cf3fe08769` · 863 ms · raw `jobs/ladder-1x1-still-5s-clip.json`
+> required keys; the 1×1 still (under the 340 px floor) and the 5 s clip
+
+```json
+{
+  "request": {
+    "capability": "motion.generate",
+    "plan": "balanced",
+    "image": "masset_13aa9b474ccb762af89220b5",
+    "video": "masset_418045b037f735053254ec4c",
+    "orientation": "image"
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "wallet_insufficient",
+    "message": "The org's wallet cannot cover this request — not enough credits",
+    "requestId": "bcc4fae0-1e48-4234-b744-a2cf3fe08769"
+  }
+}
+```
+
+#### 13. supplement · media/jobs — motion.generate · ladder-512-still-3s-clip
+
+`POST /orgs/:id/alphastudio/media/jobs` → **402** · request-id `0ae7a7e2-fdce-4750-92b0-b3ebc88079ad` · 848 ms · raw `jobs/ladder-512-still-3s-clip.json`
+> required keys; the 512 px still and the 3.0 s clip (at the 3 s floor)
+
+```json
+{
+  "request": {
+    "capability": "motion.generate",
+    "plan": "balanced",
+    "image": "masset_d9783f9d465e4018b0c911ad",
+    "video": "masset_9ad934f231c04048092769cb",
+    "orientation": "image"
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "wallet_insufficient",
+    "message": "The org's wallet cannot cover this request — not enough credits",
+    "requestId": "0ae7a7e2-fdce-4750-92b0-b3ebc88079ad"
+  }
+}
+```
+
+#### 14. supplement · media/jobs — motion.generate · ladder-1x1-still-3s-clip
+
+`POST /orgs/:id/alphastudio/media/jobs` → **402** · request-id `d88d58b7-3c45-415c-b786-84385e78ec07` · 835 ms · raw `jobs/ladder-1x1-still-3s-clip.json`
+> required keys; run 1’s pair (org 1823): the 1×1 still and the 3.0 s clip
+
+```json
+{
+  "request": {
+    "capability": "motion.generate",
+    "plan": "balanced",
+    "image": "masset_13aa9b474ccb762af89220b5",
+    "video": "masset_9ad934f231c04048092769cb",
+    "orientation": "image"
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "wallet_insufficient",
+    "message": "The org's wallet cannot cover this request — not enough credits",
+    "requestId": "d88d58b7-3c45-415c-b786-84385e78ec07"
+  }
+}
+```
+
+#### 15. supplement · media/jobs — motion.generate · ladder-orientation-video
+
+`POST /orgs/:id/alphastudio/media/jobs` → **402** · request-id `45c0807d-01d4-47f5-bd61-70a00ff5a3d5` · 684 ms · raw `jobs/ladder-orientation-video.json`
+> required keys with orientation "video"
+
+```json
+{
+  "request": {
+    "capability": "motion.generate",
+    "plan": "balanced",
+    "image": "masset_d9783f9d465e4018b0c911ad",
+    "video": "masset_418045b037f735053254ec4c",
+    "orientation": "video"
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "wallet_insufficient",
+    "message": "The org's wallet cannot cover this request — not enough credits",
+    "requestId": "45c0807d-01d4-47f5-bd61-70a00ff5a3d5"
+  }
+}
+```
+
+#### 16. supplement · media/jobs — motion.generate · ladder-plus-keepSound-prompt
+
+`POST /orgs/:id/alphastudio/media/jobs` → **402** · request-id `52a830bd-f0de-4939-b1b5-da0c37318cd0` · 1159 ms · raw `jobs/ladder-plus-keepSound-prompt.json`
+> required keys plus keepSound true and prompt
+
+```json
+{
+  "request": {
+    "capability": "motion.generate",
+    "plan": "balanced",
+    "image": "masset_d9783f9d465e4018b0c911ad",
+    "video": "masset_418045b037f735053254ec4c",
+    "orientation": "image",
+    "keepSound": true,
+    "prompt": "she keeps her warm, natural delivery; soft office light"
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "wallet_insufficient",
+    "message": "The org's wallet cannot cover this request — not enough credits",
+    "requestId": "52a830bd-f0de-4939-b1b5-da0c37318cd0"
+  }
+}
+```
+
+#### 17. supplement · media/jobs — motion.generate · ladder-plus-keepSound-false
+
+`POST /orgs/:id/alphastudio/media/jobs` → **402** · request-id `b8f58226-9442-4d51-afd2-86e673578965` · 852 ms · raw `jobs/ladder-plus-keepSound-false.json`
+> required keys plus keepSound false
+
+```json
+{
+  "request": {
+    "capability": "motion.generate",
+    "plan": "balanced",
+    "image": "masset_d9783f9d465e4018b0c911ad",
+    "video": "masset_418045b037f735053254ec4c",
+    "orientation": "image",
+    "keepSound": false
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "wallet_insufficient",
+    "message": "The org's wallet cannot cover this request — not enough credits",
+    "requestId": "b8f58226-9442-4d51-afd2-86e673578965"
+  }
+}
+```
+
+#### 18. supplement · media/jobs — motion.generate · ladder-plus-lang-en
+
+`POST /orgs/:id/alphastudio/media/jobs` → **402** · request-id `cc87be93-4c03-4213-8ce7-f326ad15610c` · 692 ms · raw `jobs/ladder-plus-lang-en.json`
+> required keys plus lang "en" — is the key refused, or only "ar"?
+
+```json
+{
+  "request": {
+    "capability": "motion.generate",
+    "plan": "balanced",
+    "image": "masset_d9783f9d465e4018b0c911ad",
+    "video": "masset_418045b037f735053254ec4c",
+    "orientation": "image",
+    "lang": "en"
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "wallet_insufficient",
+    "message": "The org's wallet cannot cover this request — not enough credits",
+    "requestId": "cc87be93-4c03-4213-8ce7-f326ad15610c"
+  }
+}
+```
+
+#### 19. supplement · media/jobs — motion.generate · ladder-plus-lang-ar
+
+`POST /orgs/:id/alphastudio/media/jobs` → **400** · request-id `3f76fcab-6426-4620-8b02-609f8ffed5d0` · 661 ms · raw `jobs/ladder-plus-lang-ar.json`
+> required keys plus lang "ar" — the document’s own value (refused in run 2)
+
+```json
+{
+  "request": {
+    "capability": "motion.generate",
+    "plan": "balanced",
+    "image": "masset_d9783f9d465e4018b0c911ad",
+    "video": "masset_418045b037f735053254ec4c",
+    "orientation": "image",
+    "lang": "ar"
+  }
+}
+```
+
+```json
+{
+  "error": {
+    "code": "bad_request",
+    "message": "The media service rejected the request — check the body against the capability's schema",
+    "requestId": "3f76fcab-6426-4620-8b02-609f8ffed5d0"
+  }
+}
+```
+
+#### 20. supplement · wallet — after the rungs
+
+`GET /orgs/:id/alphastudio/wallet` → **200** · request-id `1a1f8ef9-c34e-4f2b-9293-19af36ec8b44` · 728 ms · raw `after/wallet.json`
+
+```json
+{
+  "cents": 0,
+  "heldCents": 0,
+  "availableCents": 0
+}
+```
+
+#### 21. supplement · media/jobs — list after (no job may exist)
+
+`GET /orgs/:id/alphastudio/media/jobs` → **200** · request-id `a1007ef0-309a-41f2-9b0f-0570837a1533` · 933 ms · raw `after/jobs.json`
+
+```json
+{
+  "jobs": []
+}
+```
+
+#### 22. supplement · cleanup · DELETE media/assets/masset_13aa9b474ccb762af89220b5
+
+`DELETE /orgs/:id/alphastudio/media/assets/masset_13aa9b474ccb762af89220b5` → **204** · request-id `a7083215-9373-40c9-b97b-cb71647ae62c` · 768 ms
+
+#### 23. supplement · cleanup · DELETE media/assets/masset_d9783f9d465e4018b0c911ad
+
+`DELETE /orgs/:id/alphastudio/media/assets/masset_d9783f9d465e4018b0c911ad` → **204** · request-id `f772ba8f-1bc3-4925-ba39-c12b4e3f5e21` · 756 ms
+
+#### 24. supplement · cleanup · DELETE media/assets/masset_9ad934f231c04048092769cb
+
+`DELETE /orgs/:id/alphastudio/media/assets/masset_9ad934f231c04048092769cb` → **204** · request-id `3e3e2c42-7c4e-4667-a0c0-4afabde21d40` · 762 ms
+
+#### 25. supplement · cleanup · DELETE media/assets/masset_418045b037f735053254ec4c
+
+`DELETE /orgs/:id/alphastudio/media/assets/masset_418045b037f735053254ec4c` → **204** · request-id `4689fc22-f4ef-4856-a086-3066e4e2f4c6` · 757 ms
+
+#### 26. supplement · cleanup · media/assets — list re-read
+
+`GET /orgs/:id/alphastudio/media/assets` → **200** · request-id `14be3218-2b8c-469e-bd9c-72a8ecff653a` · 728 ms · raw `after/assets.json`
+
+```json
+{
+  "assets": []
+}
+```
+

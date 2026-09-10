@@ -1,0 +1,64 @@
+{
+  "title": "§3.1 · catalog — voice.speak?plan=balanced",
+  "method": "GET",
+  "path": "/orgs/:id/alphastudio/catalog/capabilities/voice.speak?plan=balanced",
+  "status": 200,
+  "ms": 745,
+  "requestId": "5cb738e9-8e95-4976-9df6-6e8f768d89a9",
+  "response": {
+    "capability": "voice.speak",
+    "selectable": true,
+    "field": "plan",
+    "plan": "balanced",
+    "models": [
+      {
+        "alias": "voice-turbo",
+        "kind": "audio",
+        "plan": null,
+        "displayHint": "Voice (fast)",
+        "capabilitySchema": {
+          "type": "object",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "properties": {
+            "lang": {
+              "type": "string",
+              "pattern": "^[a-z]{2}$"
+            },
+            "speed": {
+              "type": "number",
+              "maximum": 1.2,
+              "minimum": 0.7
+            },
+            "voice": {
+              "enum": [
+                "g3YpdjT1OTh9cunaumJs",
+                "Rachel"
+              ],
+              "type": "string"
+            },
+            "stability": {
+              "type": "number",
+              "maximum": 1,
+              "minimum": 0
+            },
+            "similarity": {
+              "type": "number",
+              "maximum": 1,
+              "minimum": 0
+            }
+          },
+          "additionalProperties": false
+        },
+        "capabilities": [
+          "voice.speak"
+        ],
+        "cost": {
+          "audio_text_units": "0.05"
+        },
+        "appMetadata": {
+          "min_plan": "pro"
+        }
+      }
+    ]
+  }
+}

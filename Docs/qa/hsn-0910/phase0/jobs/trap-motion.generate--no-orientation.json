@@ -1,0 +1,24 @@
+{
+  "title": "§3.3 · media/jobs — motion.generate · no-orientation",
+  "method": "POST",
+  "path": "/orgs/:id/alphastudio/media/jobs",
+  "status": 400,
+  "ms": 753,
+  "requestId": "6e89ef49-30f5-4db3-8960-c942f02d80e3",
+  "note": "the document’s refusal; 400 expected BEFORE the wallet",
+  "request": {
+    "capability": "motion.generate",
+    "plan": "balanced",
+    "image": "masset_b24afbaa6bcb30f68af48c8e",
+    "video": "masset_8ea12cc8634160529ee6834c",
+    "keepSound": true,
+    "prompt": "she keeps her warm, natural delivery"
+  },
+  "response": {
+    "error": {
+      "code": "bad_request",
+      "message": "The media service rejected the request — check the body against the capability's schema",
+      "requestId": "6e89ef49-30f5-4db3-8960-c942f02d80e3"
+    }
+  }
+}

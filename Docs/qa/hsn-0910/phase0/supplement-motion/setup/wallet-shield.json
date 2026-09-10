@@ -1,0 +1,13 @@
+{
+  "title": "supplement · wallet — the 402 shield",
+  "method": "GET",
+  "path": "/orgs/:id/alphastudio/wallet",
+  "status": 200,
+  "ms": 3233,
+  "requestId": "e45c694b-5466-4437-ba49-8d1ea26cddb1",
+  "response": {
+    "cents": 0,
+    "heldCents": 0,
+    "availableCents": 0
+  }
+}

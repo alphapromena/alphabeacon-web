@@ -1,0 +1,211 @@
+{
+  "title": "§3.1 · catalog — logos.redesign",
+  "method": "GET",
+  "path": "/orgs/:id/alphastudio/catalog/capabilities/logos.redesign",
+  "status": 200,
+  "ms": 756,
+  "requestId": "7e22d499-a17e-4b90-8bf5-d3b5672a097b",
+  "response": {
+    "capability": "logos.redesign",
+    "selectable": true,
+    "field": "plan",
+    "plan": null,
+    "models": [
+      {
+        "alias": "image-reference",
+        "kind": "image",
+        "plan": "creative",
+        "displayHint": "Image from a reference",
+        "capabilitySchema": {
+          "type": "object",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "properties": {
+            "seed": {
+              "type": "integer",
+              "maximum": 4294967295,
+              "minimum": 0
+            },
+            "count": {
+              "type": "integer",
+              "maximum": 20,
+              "minimum": 1
+            },
+            "aspectRatio": {
+              "enum": [
+                "1:1",
+                "16:9",
+                "9:16",
+                "4:3",
+                "3:4",
+                "3:2",
+                "2:3"
+              ],
+              "type": "string"
+            },
+            "outputFormat": {
+              "enum": [
+                "png",
+                "jpeg",
+                "webp"
+              ],
+              "type": "string"
+            },
+            "negativePrompt": {
+              "type": "string",
+              "maxLength": 1000
+            },
+            "referenceImages": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uri"
+              },
+              "maxItems": 4,
+              "minItems": 1
+            }
+          },
+          "additionalProperties": false
+        },
+        "capabilities": [
+          "avatar.generate",
+          "images.edit",
+          "logos.generate",
+          "logos.redesign",
+          "media.generate",
+          "photoshoot.generate",
+          "social-posts.media"
+        ],
+        "cost": {
+          "images": "0.06"
+        },
+        "appMetadata": {
+          "min_plan": "pro"
+        }
+      },
+      {
+        "alias": "image-reference-lite",
+        "kind": "image",
+        "plan": "balanced",
+        "displayHint": "Edit from a reference",
+        "capabilitySchema": {
+          "type": "object",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "properties": {
+            "seed": {
+              "type": "integer",
+              "maximum": 4294967295,
+              "minimum": 0
+            },
+            "count": {
+              "type": "integer",
+              "maximum": 20,
+              "minimum": 1
+            },
+            "aspectRatio": {
+              "enum": [
+                "1:1",
+                "16:9",
+                "9:16",
+                "4:3",
+                "3:4",
+                "3:2",
+                "2:3"
+              ],
+              "type": "string"
+            },
+            "outputFormat": {
+              "enum": [
+                "png",
+                "jpeg"
+              ],
+              "type": "string"
+            },
+            "referenceImages": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uri"
+              },
+              "maxItems": 4,
+              "minItems": 1
+            }
+          },
+          "additionalProperties": false
+        },
+        "capabilities": [
+          "logos.generate",
+          "logos.redesign",
+          "media.generate",
+          "social-posts.media"
+        ],
+        "cost": {
+          "images": "0.05"
+        },
+        "appMetadata": {
+          "min_plan": "pro"
+        }
+      },
+      {
+        "alias": "image-reference-top",
+        "kind": "image",
+        "plan": "precise",
+        "displayHint": "Top edit from a reference",
+        "capabilitySchema": {
+          "type": "object",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "properties": {
+            "count": {
+              "type": "integer",
+              "maximum": 20,
+              "minimum": 1
+            },
+            "aspectRatio": {
+              "enum": [
+                "1:1",
+                "16:9",
+                "9:16",
+                "4:3",
+                "3:4",
+                "3:2",
+                "2:3"
+              ],
+              "type": "string"
+            },
+            "outputFormat": {
+              "enum": [
+                "png",
+                "jpeg",
+                "webp"
+              ],
+              "type": "string"
+            },
+            "referenceImages": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uri"
+              },
+              "maxItems": 4,
+              "minItems": 1
+            }
+          },
+          "additionalProperties": false
+        },
+        "capabilities": [
+          "avatar.generate",
+          "avatars.generate",
+          "logos.generate",
+          "logos.redesign",
+          "media.generate",
+          "social-posts.media"
+        ],
+        "cost": {
+          "images": "0.211"
+        },
+        "appMetadata": {
+          "min_plan": "pro"
+        }
+      }
+    ]
+  }
+}

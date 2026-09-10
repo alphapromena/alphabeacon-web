@@ -1,0 +1,28 @@
+{
+  "title": "§3.7b · GET /orgs/:id — read back (does the org carry a state?)",
+  "method": "GET",
+  "path": "/orgs/:id",
+  "status": 200,
+  "ms": 578,
+  "requestId": "cec29cdc-ce2b-4743-bf9e-a41d36d8ea4d",
+  "response": {
+    "org": {
+      "id": "1824",
+      "name": "QA HSN-0910 Org 1789026912812",
+      "slug": "qa-hsn-0910-org-1789026912812",
+      "status": "active",
+      "createdAt": "2026-09-10T07:55:21.368Z",
+      "updatedAt": "2026-09-10T07:57:13.226Z",
+      "country": "US"
+    },
+    "membership": {
+      "id": "2083",
+      "orgId": "1824",
+      "userId": "2210",
+      "role": "owner",
+      "isActive": true,
+      "createdAt": "2026-09-10T07:55:21.368Z",
+      "updatedAt": "2026-09-10T07:55:21.368Z"
+    }
+  }
+}

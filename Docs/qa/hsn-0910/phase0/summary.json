@@ -1,0 +1,1783 @@
+{
+  "run": "2026-09-10T07:55:12.812Z",
+  "orgId": "1824",
+  "owner": "qa+1789026912812hsn0910@alphapromena.com",
+  "capabilities": {
+    "media.generate": {
+      "capability": "media.generate",
+      "catalog": {
+        "status": 200,
+        "requestId": "17fd5d47-7130-486f-a38e-ca4ee4e4484d",
+        "selectable": true,
+        "field": "plan",
+        "models": [
+          {
+            "alias": "image-balanced",
+            "kind": "image",
+            "plan": "balanced",
+            "cost": {
+              "images": "0.03"
+            },
+            "schemaKeys": [
+              "seed",
+              "count",
+              "aspectRatio",
+              "outputFormat",
+              "negativePrompt"
+            ]
+          },
+          {
+            "alias": "image-reference",
+            "kind": "image",
+            "plan": "creative",
+            "cost": {
+              "images": "0.06"
+            },
+            "schemaKeys": [
+              "seed",
+              "count",
+              "aspectRatio",
+              "outputFormat",
+              "negativePrompt",
+              "referenceImages"
+            ]
+          },
+          {
+            "alias": "image-reference-lite",
+            "kind": "image",
+            "plan": "balanced",
+            "cost": {
+              "images": "0.05"
+            },
+            "schemaKeys": [
+              "seed",
+              "count",
+              "aspectRatio",
+              "outputFormat",
+              "referenceImages"
+            ]
+          },
+          {
+            "alias": "image-reference-top",
+            "kind": "image",
+            "plan": "precise",
+            "cost": {
+              "images": "0.211"
+            },
+            "schemaKeys": [
+              "count",
+              "aspectRatio",
+              "outputFormat",
+              "referenceImages"
+            ]
+          },
+          {
+            "alias": "image-super",
+            "kind": "image",
+            "plan": "creative",
+            "cost": {
+              "images": "0.06"
+            },
+            "schemaKeys": [
+              "seed",
+              "count",
+              "aspectRatio",
+              "outputFormat",
+              "negativePrompt"
+            ]
+          },
+          {
+            "alias": "image-top",
+            "kind": "image",
+            "plan": "precise",
+            "cost": {
+              "images": "0.211"
+            },
+            "schemaKeys": [
+              "count",
+              "aspectRatio",
+              "outputFormat"
+            ]
+          },
+          {
+            "alias": "video-reference-core",
+            "kind": "video",
+            "plan": "balanced",
+            "cost": {
+              "video_seconds": "0.068"
+            },
+            "schemaKeys": [
+              "audio",
+              "durationS",
+              "resolution",
+              "aspectRatio",
+              "referenceImages"
+            ]
+          },
+          {
+            "alias": "video-reference-plus",
+            "kind": "video",
+            "plan": "creative",
+            "cost": {
+              "video_seconds": "0.14"
+            },
+            "schemaKeys": [
+              "audio",
+              "durationS",
+              "resolution",
+              "aspectRatio",
+              "referenceImages"
+            ]
+          },
+          {
+            "alias": "video-reference-top",
+            "kind": "video",
+            "plan": "precise",
+            "cost": {
+              "video_seconds": "0.28"
+            },
+            "schemaKeys": [
+              "audio",
+              "durationS",
+              "resolution",
+              "aspectRatio",
+              "referenceImages"
+            ]
+          }
+        ],
+        "plans": {
+          "balanced": {
+            "status": 200,
+            "requestId": "93d0f5d3-fc80-4a45-b6cf-4925031a9229",
+            "echoedPlan": "balanced",
+            "models": [
+              {
+                "alias": "image-balanced",
+                "kind": "image",
+                "plan": "balanced",
+                "cost": {
+                  "images": "0.03"
+                }
+              },
+              {
+                "alias": "image-reference-lite",
+                "kind": "image",
+                "plan": "balanced",
+                "cost": {
+                  "images": "0.05"
+                }
+              },
+              {
+                "alias": "video-reference-core",
+                "kind": "video",
+                "plan": "balanced",
+                "cost": {
+                  "video_seconds": "0.068"
+                }
+              }
+            ]
+          },
+          "creative": {
+            "status": 200,
+            "requestId": "13ac2655-e602-4b74-8f5d-22cabb110d4f",
+            "echoedPlan": "creative",
+            "models": [
+              {
+                "alias": "image-reference",
+                "kind": "image",
+                "plan": "creative",
+                "cost": {
+                  "images": "0.06"
+                }
+              },
+              {
+                "alias": "image-super",
+                "kind": "image",
+                "plan": "creative",
+                "cost": {
+                  "images": "0.06"
+                }
+              },
+              {
+                "alias": "video-reference-plus",
+                "kind": "video",
+                "plan": "creative",
+                "cost": {
+                  "video_seconds": "0.14"
+                }
+              }
+            ]
+          },
+          "precise": {
+            "status": 200,
+            "requestId": "6120ef54-2a34-4a17-b76a-4fdcd51e6190",
+            "echoedPlan": "precise",
+            "models": [
+              {
+                "alias": "image-reference-top",
+                "kind": "image",
+                "plan": "precise",
+                "cost": {
+                  "images": "0.211"
+                }
+              },
+              {
+                "alias": "image-top",
+                "kind": "image",
+                "plan": "precise",
+                "cost": {
+                  "images": "0.211"
+                }
+              },
+              {
+                "alias": "video-reference-top",
+                "kind": "video",
+                "plan": "precise",
+                "cost": {
+                  "video_seconds": "0.28"
+                }
+              }
+            ]
+          }
+        }
+      },
+      "valid": [
+        {
+          "name": "document-example",
+          "status": 402,
+          "code": "wallet_insufficient",
+          "requestId": "819e1a08-2e16-40f0-9278-addc08fd0697",
+          "message": "The org's wallet cannot cover this request — not enough credits"
+        },
+        {
+          "name": "with-origin",
+          "status": 402,
+          "code": "wallet_insufficient",
+          "requestId": "96be7711-9e65-4ba4-9672-52b59f9fa7d8",
+          "message": "The org's wallet cannot cover this request — not enough credits"
+        }
+      ],
+      "traps": [
+        {
+          "name": "unknown-param-key",
+          "status": 400,
+          "code": "bad_request",
+          "requestId": "cf3a7e0a-3a26-47a0-9155-253a9fc61fd3",
+          "message": "The media service rejected the request — check the body against the capability's schema",
+          "namesField": "no"
+        }
+      ]
+    },
+    "images.edit": {
+      "capability": "images.edit",
+      "catalog": {
+        "status": 200,
+        "requestId": "359f770b-3a99-4dc2-ab65-7c2b696695dc",
+        "selectable": false,
+        "field": null,
+        "models": [
+          {
+            "alias": "image-reference",
+            "kind": "image",
+            "plan": "creative",
+            "cost": {
+              "images": "0.06"
+            },
+            "schemaKeys": [
+              "seed",
+              "count",
+              "aspectRatio",
+              "outputFormat",
+              "negativePrompt",
+              "referenceImages"
+            ]
+          }
+        ]
+      },
+      "valid": [
+        {
+          "name": "document-example",
+          "status": 402,
+          "code": "wallet_insufficient",
+          "requestId": "85b2a2ee-f28f-41db-a522-72807f15f78e",
+          "message": "The org's wallet cannot cover this request — not enough credits"
+        }
+      ],
+      "traps": [
+        {
+          "name": "two-referenceImages",
+          "status": 400,
+          "code": "bad_request",
+          "requestId": "1df664d7-1b1b-4fed-8b67-31d711530e7c",
+          "message": "The media service rejected the request — check the body against the capability's schema",
+          "namesField": "no"
+        }
+      ]
+    },
+    "photoshoot.generate": {
+      "capability": "photoshoot.generate",
+      "catalog": {
+        "status": 200,
+        "requestId": "9ca26c16-8a11-4782-85e8-6f5304fe5e3c",
+        "selectable": false,
+        "field": null,
+        "models": [
+          {
+            "alias": "image-reference",
+            "kind": "image",
+            "plan": "creative",
+            "cost": {
+              "images": "0.06"
+            },
+            "schemaKeys": [
+              "seed",
+              "count",
+              "aspectRatio",
+              "outputFormat",
+              "negativePrompt",
+              "referenceImages"
+            ]
+          }
+        ]
+      },
+      "valid": [
+        {
+          "name": "document-example",
+          "status": 402,
+          "code": "wallet_insufficient",
+          "requestId": "44a0a3a6-c0a1-4742-9d75-c4fba2caa7bb",
+          "message": "The org's wallet cannot cover this request — not enough credits"
+        },
+        {
+          "name": "four-referenceImages",
+          "status": 402,
+          "code": "wallet_insufficient",
+          "requestId": "06a8212a-b28e-4121-b681-5a46821cd0f5",
+          "message": "The org's wallet cannot cover this request — not enough credits"
+        }
+      ],
+      "traps": [
+        {
+          "name": "five-referenceImages",
+          "status": 502,
+          "code": "bad_gateway",
+          "requestId": "2b59e0ce-9a2e-40ab-b0ba-cff566220b1f",
+          "message": "The media service is unavailable — try again later",
+          "namesField": "no"
+        },
+        {
+          "name": "five-referenceImages-again",
+          "status": 502,
+          "code": "bad_gateway",
+          "requestId": "b81bb7bd-1161-4572-bd10-e28cd98e61e0",
+          "message": "The media service is unavailable — try again later",
+          "namesField": "no"
+        }
+      ]
+    },
+    "brand-assets.generate": {
+      "capability": "brand-assets.generate",
+      "catalog": {
+        "status": 200,
+        "requestId": "1d2d737a-e8f4-4e60-9bab-1f48cf3bea7b",
+        "selectable": false,
+        "field": null,
+        "models": [
+          {
+            "alias": "image-design",
+            "kind": "image",
+            "plan": null,
+            "cost": {
+              "images": "0.05"
+            },
+            "schemaKeys": [
+              "seed",
+              "count",
+              "aspectRatio",
+              "outputFormat",
+              "negativePrompt"
+            ]
+          }
+        ]
+      },
+      "valid": [
+        {
+          "name": "document-example",
+          "status": 402,
+          "code": "wallet_insufficient",
+          "requestId": "9f2e6a8f-20cb-4024-ad48-fa2a751a3760",
+          "message": "The org's wallet cannot cover this request — not enough credits"
+        }
+      ],
+      "traps": [
+        {
+          "name": "count-1",
+          "status": 400,
+          "code": "bad_request",
+          "requestId": "5162c97b-2fb2-4e30-adc8-94041fe9f6f0",
+          "message": "The media service rejected the request — check the body against the capability's schema",
+          "namesField": "no"
+        }
+      ]
+    },
+    "logos.generate": {
+      "capability": "logos.generate",
+      "catalog": {
+        "status": 200,
+        "requestId": "a8399996-a162-449d-8f4b-094ce2183fc6",
+        "selectable": true,
+        "field": "plan",
+        "models": [
+          {
+            "alias": "image-balanced",
+            "kind": "image",
+            "plan": "balanced",
+            "cost": {
+              "images": "0.03"
+            },
+            "schemaKeys": [
+              "seed",
+              "count",
+              "aspectRatio",
+              "outputFormat",
+              "negativePrompt"
+            ]
+          },
+          {
+            "alias": "image-reference",
+            "kind": "image",
+            "plan": "creative",
+            "cost": {
+              "images": "0.06"
+            },
+            "schemaKeys": [
+              "seed",
+              "count",
+              "aspectRatio",
+              "outputFormat",
+              "negativePrompt",
+              "referenceImages"
+            ]
+          },
+          {
+            "alias": "image-reference-lite",
+            "kind": "image",
+            "plan": "balanced",
+            "cost": {
+              "images": "0.05"
+            },
+            "schemaKeys": [
+              "seed",
+              "count",
+              "aspectRatio",
+              "outputFormat",
+              "referenceImages"
+            ]
+          },
+          {
+            "alias": "image-reference-top",
+            "kind": "image",
+            "plan": "precise",
+            "cost": {
+              "images": "0.211"
+            },
+            "schemaKeys": [
+              "count",
+              "aspectRatio",
+              "outputFormat",
+              "referenceImages"
+            ]
+          },
+          {
+            "alias": "image-super",
+            "kind": "image",
+            "plan": "creative",
+            "cost": {
+              "images": "0.06"
+            },
+            "schemaKeys": [
+              "seed",
+              "count",
+              "aspectRatio",
+              "outputFormat",
+              "negativePrompt"
+            ]
+          },
+          {
+            "alias": "image-top",
+            "kind": "image",
+            "plan": "precise",
+            "cost": {
+              "images": "0.211"
+            },
+            "schemaKeys": [
+              "count",
+              "aspectRatio",
+              "outputFormat"
+            ]
+          }
+        ],
+        "plans": {
+          "balanced": {
+            "status": 200,
+            "requestId": "c8b6bd79-3ac1-40ac-ad2f-f21f0007fe11",
+            "echoedPlan": "balanced",
+            "models": [
+              {
+                "alias": "image-balanced",
+                "kind": "image",
+                "plan": "balanced",
+                "cost": {
+                  "images": "0.03"
+                }
+              },
+              {
+                "alias": "image-reference-lite",
+                "kind": "image",
+                "plan": "balanced",
+                "cost": {
+                  "images": "0.05"
+                }
+              }
+            ]
+          },
+          "creative": {
+            "status": 200,
+            "requestId": "aa097611-483c-4ba7-9aa1-9c8830dcf5eb",
+            "echoedPlan": "creative",
+            "models": [
+              {
+                "alias": "image-reference",
+                "kind": "image",
+                "plan": "creative",
+                "cost": {
+                  "images": "0.06"
+                }
+              },
+              {
+                "alias": "image-super",
+                "kind": "image",
+                "plan": "creative",
+                "cost": {
+                  "images": "0.06"
+                }
+              }
+            ]
+          },
+          "precise": {
+            "status": 200,
+            "requestId": "8386c7ea-86c0-4a1a-a75d-6019979e5f41",
+            "echoedPlan": "precise",
+            "models": [
+              {
+                "alias": "image-reference-top",
+                "kind": "image",
+                "plan": "precise",
+                "cost": {
+                  "images": "0.211"
+                }
+              },
+              {
+                "alias": "image-top",
+                "kind": "image",
+                "plan": "precise",
+                "cost": {
+                  "images": "0.211"
+                }
+              }
+            ]
+          }
+        }
+      },
+      "valid": [
+        {
+          "name": "document-example",
+          "status": 402,
+          "code": "wallet_insufficient",
+          "requestId": "67368604-88a8-464a-8aee-92cb1f6fda2c",
+          "message": "The org's wallet cannot cover this request — not enough credits"
+        }
+      ],
+      "traps": [
+        {
+          "name": "count-21",
+          "status": 400,
+          "code": "bad_request",
+          "requestId": "a957d534-defc-43aa-9c0b-f9798842f2c5",
+          "message": "The media service rejected the request — check the body against the capability's schema",
+          "namesField": "no"
+        }
+      ]
+    },
+    "logos.redesign": {
+      "capability": "logos.redesign",
+      "catalog": {
+        "status": 200,
+        "requestId": "7e22d499-a17e-4b90-8bf5-d3b5672a097b",
+        "selectable": true,
+        "field": "plan",
+        "models": [
+          {
+            "alias": "image-reference",
+            "kind": "image",
+            "plan": "creative",
+            "cost": {
+              "images": "0.06"
+            },
+            "schemaKeys": [
+              "seed",
+              "count",
+              "aspectRatio",
+              "outputFormat",
+              "negativePrompt",
+              "referenceImages"
+            ]
+          },
+          {
+            "alias": "image-reference-lite",
+            "kind": "image",
+            "plan": "balanced",
+            "cost": {
+              "images": "0.05"
+            },
+            "schemaKeys": [
+              "seed",
+              "count",
+              "aspectRatio",
+              "outputFormat",
+              "referenceImages"
+            ]
+          },
+          {
+            "alias": "image-reference-top",
+            "kind": "image",
+            "plan": "precise",
+            "cost": {
+              "images": "0.211"
+            },
+            "schemaKeys": [
+              "count",
+              "aspectRatio",
+              "outputFormat",
+              "referenceImages"
+            ]
+          }
+        ],
+        "plans": {
+          "balanced": {
+            "status": 200,
+            "requestId": "024cc07a-78e4-4484-afe9-607e46de3629",
+            "echoedPlan": "balanced",
+            "models": [
+              {
+                "alias": "image-reference-lite",
+                "kind": "image",
+                "plan": "balanced",
+                "cost": {
+                  "images": "0.05"
+                }
+              }
+            ]
+          },
+          "creative": {
+            "status": 200,
+            "requestId": "e9652e28-f915-4544-892f-885c09ce9742",
+            "echoedPlan": "creative",
+            "models": [
+              {
+                "alias": "image-reference",
+                "kind": "image",
+                "plan": "creative",
+                "cost": {
+                  "images": "0.06"
+                }
+              }
+            ]
+          },
+          "precise": {
+            "status": 200,
+            "requestId": "dff70c5c-9c32-4272-94eb-43336327dee5",
+            "echoedPlan": "precise",
+            "models": [
+              {
+                "alias": "image-reference-top",
+                "kind": "image",
+                "plan": "precise",
+                "cost": {
+                  "images": "0.211"
+                }
+              }
+            ]
+          }
+        }
+      },
+      "valid": [
+        {
+          "name": "document-example",
+          "status": 402,
+          "code": "wallet_insufficient",
+          "requestId": "9697d8a8-9d6c-4f51-a773-e2dce866e496",
+          "message": "The org's wallet cannot cover this request — not enough credits"
+        }
+      ],
+      "traps": [
+        {
+          "name": "no-referenceImages",
+          "status": 400,
+          "code": "bad_request",
+          "requestId": "27dae99d-7c08-4a03-b147-f30727ccafa0",
+          "message": "The media service rejected the request — check the body against the capability's schema",
+          "namesField": "no"
+        }
+      ]
+    },
+    "avatars.generate": {
+      "capability": "avatars.generate",
+      "catalog": {
+        "status": 200,
+        "requestId": "2bd8e82f-2a70-4e67-89a5-282d31995610",
+        "selectable": false,
+        "field": null,
+        "models": [
+          {
+            "alias": "image-reference-top",
+            "kind": "image",
+            "plan": "precise",
+            "cost": {
+              "images": "0.211"
+            },
+            "schemaKeys": [
+              "count",
+              "aspectRatio",
+              "outputFormat",
+              "referenceImages"
+            ]
+          }
+        ]
+      },
+      "valid": [
+        {
+          "name": "document-example",
+          "status": 402,
+          "code": "wallet_insufficient",
+          "requestId": "89869739-c2a2-4619-ada0-0368225cfde2",
+          "message": "The org's wallet cannot cover this request — not enough credits"
+        }
+      ],
+      "traps": [
+        {
+          "name": "count-9",
+          "status": 400,
+          "code": "bad_request",
+          "requestId": "54e04f7d-6523-4d15-991f-00b3049b3e3a",
+          "message": "The media service rejected the request — check the body against the capability's schema",
+          "namesField": "no"
+        }
+      ]
+    },
+    "avatars.imagine": {
+      "capability": "avatars.imagine",
+      "catalog": {
+        "status": 200,
+        "requestId": "8f048013-c296-4810-8b2c-a89b7a3a963e",
+        "selectable": false,
+        "field": null,
+        "models": [
+          {
+            "alias": "image-top",
+            "kind": "image",
+            "plan": "precise",
+            "cost": {
+              "images": "0.211"
+            },
+            "schemaKeys": [
+              "count",
+              "aspectRatio",
+              "outputFormat"
+            ]
+          }
+        ]
+      },
+      "valid": [
+        {
+          "name": "document-example",
+          "status": 402,
+          "code": "wallet_insufficient",
+          "requestId": "d8a3f8be-5610-4290-9082-279bad3a5efd",
+          "message": "The org's wallet cannot cover this request — not enough credits"
+        }
+      ],
+      "traps": [
+        {
+          "name": "instruction-601-chars",
+          "status": 400,
+          "code": "bad_request",
+          "requestId": "2f7bf8df-d38d-46bd-9b17-e073f31f5245",
+          "message": "The media service rejected the request — check the body against the capability's schema",
+          "namesField": "no"
+        }
+      ]
+    },
+    "avatar.generate": {
+      "capability": "avatar.generate",
+      "catalog": {
+        "status": 200,
+        "requestId": "e6e4c3f4-27e9-4405-a57a-419e2bf113e2",
+        "selectable": true,
+        "field": "plan",
+        "models": [
+          {
+            "alias": "image-balanced-seedream",
+            "kind": "image",
+            "plan": null,
+            "cost": {
+              "images": "0.03"
+            },
+            "schemaKeys": [
+              "seed",
+              "count",
+              "aspectRatio"
+            ]
+          },
+          {
+            "alias": "image-reference",
+            "kind": "image",
+            "plan": "creative",
+            "cost": {
+              "images": "0.06"
+            },
+            "schemaKeys": [
+              "seed",
+              "count",
+              "aspectRatio",
+              "outputFormat",
+              "negativePrompt",
+              "referenceImages"
+            ]
+          },
+          {
+            "alias": "image-reference-seedream",
+            "kind": "image",
+            "plan": null,
+            "cost": {
+              "images": "0.03"
+            },
+            "schemaKeys": [
+              "seed",
+              "count",
+              "aspectRatio",
+              "referenceImages"
+            ]
+          },
+          {
+            "alias": "image-reference-top",
+            "kind": "image",
+            "plan": "precise",
+            "cost": {
+              "images": "0.211"
+            },
+            "schemaKeys": [
+              "count",
+              "aspectRatio",
+              "outputFormat",
+              "referenceImages"
+            ]
+          },
+          {
+            "alias": "image-super",
+            "kind": "image",
+            "plan": "creative",
+            "cost": {
+              "images": "0.06"
+            },
+            "schemaKeys": [
+              "seed",
+              "count",
+              "aspectRatio",
+              "outputFormat",
+              "negativePrompt"
+            ]
+          },
+          {
+            "alias": "image-top",
+            "kind": "image",
+            "plan": "precise",
+            "cost": {
+              "images": "0.211"
+            },
+            "schemaKeys": [
+              "count",
+              "aspectRatio",
+              "outputFormat"
+            ]
+          }
+        ],
+        "plans": {
+          "balanced": {
+            "status": 200,
+            "requestId": "4615c7a5-de4b-43ef-8d9a-0972e1d56b34",
+            "echoedPlan": "balanced",
+            "models": [
+              {
+                "alias": "image-balanced-seedream",
+                "kind": "image",
+                "plan": null,
+                "cost": {
+                  "images": "0.03"
+                }
+              },
+              {
+                "alias": "image-reference-seedream",
+                "kind": "image",
+                "plan": null,
+                "cost": {
+                  "images": "0.03"
+                }
+              }
+            ]
+          },
+          "creative": {
+            "status": 200,
+            "requestId": "90f75ca3-56e3-40da-97e1-b86ef618c449",
+            "echoedPlan": "creative",
+            "models": [
+              {
+                "alias": "image-reference",
+                "kind": "image",
+                "plan": "creative",
+                "cost": {
+                  "images": "0.06"
+                }
+              },
+              {
+                "alias": "image-super",
+                "kind": "image",
+                "plan": "creative",
+                "cost": {
+                  "images": "0.06"
+                }
+              }
+            ]
+          },
+          "precise": {
+            "status": 200,
+            "requestId": "f839ed30-e4ca-4eb1-b271-4a1538d7bc7b",
+            "echoedPlan": "precise",
+            "models": [
+              {
+                "alias": "image-reference-top",
+                "kind": "image",
+                "plan": "precise",
+                "cost": {
+                  "images": "0.211"
+                }
+              },
+              {
+                "alias": "image-top",
+                "kind": "image",
+                "plan": "precise",
+                "cost": {
+                  "images": "0.211"
+                }
+              }
+            ]
+          }
+        }
+      },
+      "valid": [
+        {
+          "name": "document-example",
+          "status": 402,
+          "code": "wallet_insufficient",
+          "requestId": "bc9c3042-dd29-45e0-90dc-a6cbbc1c7f3d",
+          "message": "The org's wallet cannot cover this request — not enough credits"
+        }
+      ],
+      "traps": [
+        {
+          "name": "count-9",
+          "status": 400,
+          "code": "bad_request",
+          "requestId": "68d7ff29-a620-4b40-896f-84f084f68de7",
+          "message": "The media service rejected the request — check the body against the capability's schema",
+          "namesField": "no"
+        }
+      ]
+    },
+    "video-ads.generate": {
+      "capability": "video-ads.generate",
+      "catalog": {
+        "status": 200,
+        "requestId": "85455614-bcf6-4a1a-a521-fb63b5be84a5",
+        "selectable": true,
+        "field": "plan",
+        "models": [
+          {
+            "alias": "video-image-balanced",
+            "kind": "video",
+            "plan": null,
+            "cost": {
+              "video_seconds": "0.07"
+            },
+            "schemaKeys": [
+              "seed",
+              "imageUrl",
+              "durationS",
+              "negativePrompt"
+            ]
+          },
+          {
+            "alias": "video-image-core",
+            "kind": "video",
+            "plan": null,
+            "cost": {
+              "video_seconds": "0.042"
+            },
+            "schemaKeys": [
+              "seed",
+              "imageUrl",
+              "durationS",
+              "negativePrompt"
+            ]
+          },
+          {
+            "alias": "video-image-super",
+            "kind": "video",
+            "plan": null,
+            "cost": {
+              "video_seconds": "0.112"
+            },
+            "schemaKeys": [
+              "seed",
+              "imageUrl",
+              "durationS",
+              "negativePrompt"
+            ]
+          }
+        ],
+        "plans": {
+          "balanced": {
+            "status": 200,
+            "requestId": "4bb8ab1b-82c0-4184-aa78-74f9d4a8f5e0",
+            "echoedPlan": "balanced",
+            "models": [
+              {
+                "alias": "video-image-core",
+                "kind": "video",
+                "plan": null,
+                "cost": {
+                  "video_seconds": "0.042"
+                }
+              }
+            ]
+          },
+          "creative": {
+            "status": 200,
+            "requestId": "86380494-2ff3-44d6-bf9e-fb1783e95d79",
+            "echoedPlan": "creative",
+            "models": [
+              {
+                "alias": "video-image-balanced",
+                "kind": "video",
+                "plan": null,
+                "cost": {
+                  "video_seconds": "0.07"
+                }
+              }
+            ]
+          },
+          "precise": {
+            "status": 200,
+            "requestId": "82c17eaa-18ed-4b20-a944-582137b8e835",
+            "echoedPlan": "precise",
+            "models": [
+              {
+                "alias": "video-image-super",
+                "kind": "video",
+                "plan": null,
+                "cost": {
+                  "video_seconds": "0.112"
+                }
+              }
+            ]
+          }
+        }
+      },
+      "valid": [
+        {
+          "name": "document-example",
+          "status": 402,
+          "code": "wallet_insufficient",
+          "requestId": "c3df40e7-8b03-447e-812c-f8f3553fe00b",
+          "message": "The org's wallet cannot cover this request — not enough credits"
+        }
+      ],
+      "traps": [
+        {
+          "name": "aspectRatio",
+          "status": 400,
+          "code": "bad_request",
+          "requestId": "e5409135-c3e2-4982-b819-e7ff27ffc9ad",
+          "message": "The media service rejected the request — check the body against the capability's schema",
+          "namesField": "no"
+        },
+        {
+          "name": "generateAudio-true",
+          "status": 400,
+          "code": "bad_request",
+          "requestId": "fa7f7ff0-238d-44e4-a853-112a8ca3c8c8",
+          "message": "The media service rejected the request — check the body against the capability's schema",
+          "namesField": "no"
+        },
+        {
+          "name": "durationS-8",
+          "status": 400,
+          "code": "bad_request",
+          "requestId": "cc29eb5d-c41c-4725-80e1-12d37b0f248d",
+          "message": "The media service rejected the request — check the body against the capability's schema",
+          "namesField": "no"
+        }
+      ]
+    },
+    "voice.speak": {
+      "capability": "voice.speak",
+      "catalog": {
+        "status": 200,
+        "requestId": "779626f7-a5f8-41ef-acc6-08523c19ebff",
+        "selectable": true,
+        "field": "plan",
+        "models": [
+          {
+            "alias": "voice-expressive",
+            "kind": "audio",
+            "plan": null,
+            "cost": {
+              "audio_text_units": "0.1"
+            },
+            "schemaKeys": [
+              "lang",
+              "voice",
+              "stability"
+            ]
+          },
+          {
+            "alias": "voice-multilingual",
+            "kind": "audio",
+            "plan": null,
+            "cost": {
+              "audio_text_units": "0.1"
+            },
+            "schemaKeys": [
+              "lang",
+              "speed",
+              "voice",
+              "stability",
+              "similarity"
+            ]
+          },
+          {
+            "alias": "voice-turbo",
+            "kind": "audio",
+            "plan": null,
+            "cost": {
+              "audio_text_units": "0.05"
+            },
+            "schemaKeys": [
+              "lang",
+              "speed",
+              "voice",
+              "stability",
+              "similarity"
+            ]
+          }
+        ],
+        "plans": {
+          "balanced": {
+            "status": 200,
+            "requestId": "5cb738e9-8e95-4976-9df6-6e8f768d89a9",
+            "echoedPlan": "balanced",
+            "models": [
+              {
+                "alias": "voice-turbo",
+                "kind": "audio",
+                "plan": null,
+                "cost": {
+                  "audio_text_units": "0.05"
+                }
+              }
+            ]
+          },
+          "creative": {
+            "status": 200,
+            "requestId": "aab599e7-528b-44db-acf3-1661ed91ce76",
+            "echoedPlan": "creative",
+            "models": [
+              {
+                "alias": "voice-multilingual",
+                "kind": "audio",
+                "plan": null,
+                "cost": {
+                  "audio_text_units": "0.1"
+                }
+              }
+            ]
+          },
+          "precise": {
+            "status": 200,
+            "requestId": "3a0f6a3b-aca5-4971-9c96-1aa843c9ee16",
+            "echoedPlan": "precise",
+            "models": [
+              {
+                "alias": "voice-expressive",
+                "kind": "audio",
+                "plan": null,
+                "cost": {
+                  "audio_text_units": "0.1"
+                }
+              }
+            ]
+          }
+        }
+      },
+      "valid": [
+        {
+          "name": "document-example",
+          "status": 402,
+          "code": "wallet_insufficient",
+          "requestId": "7c7b99af-747e-4363-91f0-8e4bff4beb9f",
+          "message": "The org's wallet cannot cover this request — not enough credits"
+        }
+      ],
+      "traps": [
+        {
+          "name": "unapproved-voice",
+          "status": 400,
+          "code": "bad_request",
+          "requestId": "35d55872-e0f6-4cb4-a2cb-41dea02bb78d",
+          "message": "The media service rejected the request — check the body against the capability's schema",
+          "namesField": "no"
+        },
+        {
+          "name": "similarity-on-precise",
+          "status": 400,
+          "code": "bad_request",
+          "requestId": "4c26ec82-af6e-4ad4-b6a0-53198f12523a",
+          "message": "The media service rejected the request — check the body against the capability's schema",
+          "namesField": "no"
+        }
+      ]
+    },
+    "film.generate": {
+      "capability": "film.generate",
+      "catalog": {
+        "status": 200,
+        "requestId": "ce3fb74d-0a79-4811-aa17-3f5da1ae2dc8",
+        "selectable": true,
+        "field": "plan",
+        "models": [
+          {
+            "alias": "video-scene-core",
+            "kind": "video",
+            "plan": null,
+            "cost": {
+              "video_seconds": "0.14"
+            },
+            "schemaKeys": [
+              "shots",
+              "durationS",
+              "aspectRatio",
+              "generateAudio",
+              "referenceImages"
+            ]
+          },
+          {
+            "alias": "video-scene-plus",
+            "kind": "video",
+            "plan": null,
+            "cost": {
+              "video_seconds": "0.3034",
+              "video_seconds_by_resolution": {
+                "4k": "2.7306",
+                "480p": "0.1415",
+                "720p": "0.3034",
+                "1080p": "0.6827"
+              }
+            },
+            "schemaKeys": [
+              "audioUrl",
+              "durationS",
+              "resolution",
+              "aspectRatio",
+              "generateAudio",
+              "referenceImages"
+            ]
+          },
+          {
+            "alias": "video-scene-top",
+            "kind": "video",
+            "plan": null,
+            "cost": {
+              "video_seconds": "0.473",
+              "video_seconds_by_resolution": {
+                "480p": "0.2205",
+                "720p": "0.473",
+                "1080p": "1.0643"
+              }
+            },
+            "schemaKeys": [
+              "audioUrl",
+              "durationS",
+              "resolution",
+              "aspectRatio",
+              "generateAudio",
+              "referenceImages"
+            ]
+          }
+        ],
+        "plans": {
+          "balanced": {
+            "status": 200,
+            "requestId": "f59377ed-6fd0-4a7d-b974-bec01cea000e",
+            "echoedPlan": "balanced",
+            "models": [
+              {
+                "alias": "video-scene-core",
+                "kind": "video",
+                "plan": null,
+                "cost": {
+                  "video_seconds": "0.14"
+                }
+              }
+            ]
+          },
+          "creative": {
+            "status": 200,
+            "requestId": "68d2d5db-d5c8-4929-a334-3f8839c93c28",
+            "echoedPlan": "creative",
+            "models": [
+              {
+                "alias": "video-scene-plus",
+                "kind": "video",
+                "plan": null,
+                "cost": {
+                  "video_seconds": "0.3034",
+                  "video_seconds_by_resolution": {
+                    "4k": "2.7306",
+                    "480p": "0.1415",
+                    "720p": "0.3034",
+                    "1080p": "0.6827"
+                  }
+                }
+              }
+            ]
+          },
+          "precise": {
+            "status": 200,
+            "requestId": "c6f030c5-1ff2-47df-bf8d-8e4c90bed680",
+            "echoedPlan": "precise",
+            "models": [
+              {
+                "alias": "video-scene-top",
+                "kind": "video",
+                "plan": null,
+                "cost": {
+                  "video_seconds": "0.473",
+                  "video_seconds_by_resolution": {
+                    "480p": "0.2205",
+                    "720p": "0.473",
+                    "1080p": "1.0643"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "valid": [
+        {
+          "name": "document-example",
+          "status": 402,
+          "code": "wallet_insufficient",
+          "requestId": "ae3434e6-6c1a-4115-88de-450a48955798",
+          "message": "The org's wallet cannot cover this request — not enough credits"
+        },
+        {
+          "name": "with-references-and-character",
+          "status": 402,
+          "code": "wallet_insufficient",
+          "requestId": "46012f19-4b3c-453d-8ed7-74805651e99c",
+          "message": "The org's wallet cannot cover this request — not enough credits"
+        }
+      ],
+      "traps": [
+        {
+          "name": "resolution-on-balanced",
+          "status": 400,
+          "code": "bad_request",
+          "requestId": "2182114e-e2ec-47f0-b77b-c7c570c1dd19",
+          "message": "The media service rejected the request — check the body against the capability's schema",
+          "namesField": "no"
+        },
+        {
+          "name": "talking-on-balanced",
+          "status": 400,
+          "code": "bad_request",
+          "requestId": "5348b5e9-2c30-48e5-b14c-859af17ccf58",
+          "message": "The media service rejected the request — check the body against the capability's schema",
+          "namesField": "no"
+        },
+        {
+          "name": "scenes-do-not-sum",
+          "status": 400,
+          "code": "bad_request",
+          "requestId": "f95e33be-02c4-4d5a-a619-d34434888660",
+          "message": "The media service rejected the request — check the body against the capability's schema",
+          "namesField": "no"
+        }
+      ]
+    },
+    "motion.generate": {
+      "capability": "motion.generate",
+      "catalog": {
+        "status": 200,
+        "requestId": "e2fe6044-0ecf-4211-8960-14c24e19b937",
+        "selectable": true,
+        "field": "plan",
+        "models": [
+          {
+            "alias": "video-motion-core",
+            "kind": "video",
+            "plan": null,
+            "cost": {
+              "video_seconds": "0.07"
+            },
+            "schemaKeys": [
+              "imageUrl",
+              "videoUrl",
+              "keepSound",
+              "orientation"
+            ]
+          },
+          {
+            "alias": "video-motion-plus",
+            "kind": "video",
+            "plan": null,
+            "cost": {
+              "video_seconds": "0.112"
+            },
+            "schemaKeys": [
+              "imageUrl",
+              "videoUrl",
+              "keepSound",
+              "orientation"
+            ]
+          },
+          {
+            "alias": "video-motion-top",
+            "kind": "video",
+            "plan": null,
+            "cost": {
+              "video_seconds": "0.126"
+            },
+            "schemaKeys": [
+              "imageUrl",
+              "videoUrl",
+              "keepSound",
+              "orientation"
+            ]
+          }
+        ],
+        "plans": {
+          "balanced": {
+            "status": 200,
+            "requestId": "8c4470b4-a1c9-4d4a-951f-ef5254b31e40",
+            "echoedPlan": "balanced",
+            "models": [
+              {
+                "alias": "video-motion-core",
+                "kind": "video",
+                "plan": null,
+                "cost": {
+                  "video_seconds": "0.07"
+                }
+              }
+            ]
+          },
+          "creative": {
+            "status": 200,
+            "requestId": "1fffcd4f-56c6-4be0-a118-2fcddf5bf633",
+            "echoedPlan": "creative",
+            "models": [
+              {
+                "alias": "video-motion-plus",
+                "kind": "video",
+                "plan": null,
+                "cost": {
+                  "video_seconds": "0.112"
+                }
+              }
+            ]
+          },
+          "precise": {
+            "status": 200,
+            "requestId": "f87ea4e6-8c49-4e75-a76a-3da69ea75680",
+            "echoedPlan": "precise",
+            "models": [
+              {
+                "alias": "video-motion-top",
+                "kind": "video",
+                "plan": null,
+                "cost": {
+                  "video_seconds": "0.126"
+                }
+              }
+            ]
+          }
+        }
+      },
+      "valid": [
+        {
+          "name": "document-example",
+          "status": 400,
+          "code": "bad_request",
+          "requestId": "06e3b44c-7e9f-4c07-91eb-ecd36516cbd4",
+          "message": "The media service rejected the request — check the body against the capability's schema"
+        },
+        {
+          "name": "ladder-1x1-still-5s-clip",
+          "status": 400,
+          "code": "bad_request",
+          "requestId": "0d07350b-ef74-4b15-a020-5870b73406be",
+          "message": "The media service rejected the request — check the body against the capability's schema"
+        },
+        {
+          "name": "ladder-512-still-3s-clip",
+          "status": 400,
+          "code": "bad_request",
+          "requestId": "5fc4499a-2256-4a1d-baf6-fb5cbd1fe166",
+          "message": "The media service rejected the request — check the body against the capability's schema"
+        },
+        {
+          "name": "ladder-1x1-still-3s-clip",
+          "status": 400,
+          "code": "bad_request",
+          "requestId": "b64b2e16-c233-4fea-84c8-ecf718f26805",
+          "message": "The media service rejected the request — check the body against the capability's schema"
+        },
+        {
+          "name": "ladder-required-keys-only",
+          "status": 402,
+          "code": "wallet_insufficient",
+          "requestId": "6be43768-38be-4081-b919-0f62bce58746",
+          "message": "The org's wallet cannot cover this request — not enough credits"
+        },
+        {
+          "name": "ladder-plus-keepSound-prompt",
+          "status": 402,
+          "code": "wallet_insufficient",
+          "requestId": "66fe7703-3f28-4984-b28f-5fa853c574b4",
+          "message": "The org's wallet cannot cover this request — not enough credits"
+        },
+        {
+          "name": "ladder-plus-lang-ar",
+          "status": 400,
+          "code": "bad_request",
+          "requestId": "78236865-ab0f-4144-aa6a-01b5e53f2238",
+          "message": "The media service rejected the request — check the body against the capability's schema"
+        },
+        {
+          "name": "ladder-orientation-video",
+          "status": 400,
+          "code": "bad_request",
+          "requestId": "3269bc85-738a-4cdb-b410-6922df4450fa",
+          "message": "The media service rejected the request — check the body against the capability's schema"
+        }
+      ],
+      "traps": [
+        {
+          "name": "no-orientation",
+          "status": 400,
+          "code": "bad_request",
+          "requestId": "6e89ef49-30f5-4db3-8960-c942f02d80e3",
+          "message": "The media service rejected the request — check the body against the capability's schema",
+          "namesField": "no"
+        }
+      ]
+    }
+  },
+  "voiceByPlan": {
+    "balanced": {
+      "status": 200,
+      "echoedPlan": "balanced",
+      "voice": [
+        {
+          "alias": "voice-turbo",
+          "voice": {
+            "enum": [
+              "g3YpdjT1OTh9cunaumJs",
+              "Rachel"
+            ],
+            "type": "string"
+          },
+          "lang": {
+            "type": "string",
+            "pattern": "^[a-z]{2}$"
+          },
+          "appMetadata": {
+            "min_plan": "pro"
+          }
+        }
+      ]
+    },
+    "creative": {
+      "status": 200,
+      "echoedPlan": "creative",
+      "voice": [
+        {
+          "alias": "voice-multilingual",
+          "voice": {
+            "enum": [
+              "g3YpdjT1OTh9cunaumJs",
+              "Rachel"
+            ],
+            "type": "string"
+          },
+          "lang": {
+            "type": "string",
+            "pattern": "^[a-z]{2}$"
+          },
+          "appMetadata": {
+            "min_plan": "pro"
+          }
+        }
+      ]
+    },
+    "precise": {
+      "status": 200,
+      "echoedPlan": "precise",
+      "voice": [
+        {
+          "alias": "voice-expressive",
+          "voice": {
+            "enum": [
+              "g3YpdjT1OTh9cunaumJs",
+              "Rachel"
+            ],
+            "type": "string"
+          },
+          "lang": {
+            "type": "string",
+            "pattern": "^[a-z]{2}$"
+          },
+          "appMetadata": {
+            "min_plan": "pro"
+          }
+        }
+      ]
+    }
+  },
+  "findings": [
+    "§3.8 /health: 200 {\"ok\":true}; header names [connection, content-length, content-type, date, x-amzn-requestid, x-amzn-trace-id, x-request-id].",
+    "§3.8 /openapi: 200; info={\"title\":\"AlphaStudio API\",\"description\":\"Conventions (match the implementation exactly):\\n- Success responses are bare resource JSON (no envelope). Lists are `{ items, total }`.\\n- Errors are `{ error: { code, message, details?, requestId? } }`; `code` is machine-readable and part of the contract.\\n- IDs are Postgres bigints serialized as decimal strings.\\n- Timestamps are ISO 8601.\\n- Every response carries `x-request-id` (echoes an inbound one).\\n- Auth is `Authorization: Bearer <opaque session token>`.\",\"version\":\"0.1.0\"}; servers=undefined; environment-like top-level keys: none.",
+    "§3.8 https://malaky.ai: html 200; bundles [none]; NOT A VITE BUILD — no /assets/*.js; script hosts [img1.wsimg.com].",
+    "§3.8 https://1.malaky.ai: html 200; bundles [index-DUHITzRc.js]; LIVE (the API host is inlined in index-DUHITzRc.js).",
+    "§3.8 https://alphabeacon-web.vercel.app: html 0; bundles [none]; UNREACHABLE from this host (transport error — not measured here).",
+    "Fresh QA org: id 1824 (\"QA HSN-0910 Org 1789026912812\"); org record keys [id, name, slug, status, createdAt, updatedAt, country].",
+    "§3.8 org root keys [org, membership]; org keys [id, name, slug, status, createdAt, updatedAt, country] — no environment-like key.",
+    "Wallet on the fresh org: 200 {\"cents\":0,\"heldCents\":0,\"availableCents\":0}.",
+    "asset A (image/png): presign 201 → masset_b24afbaa6bcb30f68af48c8e; PUT 200.",
+    "asset B (image/png): presign 201 → masset_392d87c15f41bfe946854a38; PUT 200.",
+    "3 s MP4 source: ffmpeg lavfi colour source, 3 s, 64×64, 2384 bytes.",
+    "asset V (video/mp4): presign 201 → masset_8ea12cc8634160529ee6834c; PUT 200.",
+    "512 px PNG source: ffmpeg lavfi colour source, 512×512, 1900 bytes.",
+    "asset C (image/png): presign 201 → masset_1508fa6f5391e767f91d2df2; PUT 200.",
+    "5 s MP4 source: ffmpeg lavfi colour source, 5 s, 64×64, 2914 bytes.",
+    "asset W (video/mp4): presign 201 → masset_f8737222c97ea8030669bb3b; PUT 200.",
+    "Read urls: A minted, B minted; video assets V masset_8ea12cc8634160529ee6834c, W masset_f8737222c97ea8030669bb3b; still C masset_1508fa6f5391e767f91d2df2.",
+    "§3.1 media.generate: 200 · selectable=true · field=\"plan\" · models: image-balanced [balanced, image, cost {\"images\":\"0.03\"}] · image-reference [creative, image, cost {\"images\":\"0.06\"}] · image-reference-lite [balanced, image, cost {\"images\":\"0.05\"}] · image-reference-top [precise, image, cost {\"images\":\"0.211\"}] · image-super [creative, image, cost {\"images\":\"0.06\"}] · image-top [precise, image, cost {\"images\":\"0.211\"}] · video-reference-core [balanced, video, cost {\"video_seconds\":\"0.068\"}] · video-reference-plus [creative, video, cost {\"video_seconds\":\"0.14\"}] · video-reference-top [precise, video, cost {\"video_seconds\":\"0.28\"}].",
+    "§3.1 images.edit: 200 · selectable=false · field=null · models: image-reference [creative, image, cost {\"images\":\"0.06\"}].",
+    "§3.1 photoshoot.generate: 200 · selectable=false · field=null · models: image-reference [creative, image, cost {\"images\":\"0.06\"}].",
+    "§3.1 brand-assets.generate: 200 · selectable=false · field=null · models: image-design [null, image, cost {\"images\":\"0.05\"}].",
+    "§3.1 logos.generate: 200 · selectable=true · field=\"plan\" · models: image-balanced [balanced, image, cost {\"images\":\"0.03\"}] · image-reference [creative, image, cost {\"images\":\"0.06\"}] · image-reference-lite [balanced, image, cost {\"images\":\"0.05\"}] · image-reference-top [precise, image, cost {\"images\":\"0.211\"}] · image-super [creative, image, cost {\"images\":\"0.06\"}] · image-top [precise, image, cost {\"images\":\"0.211\"}].",
+    "§3.1 logos.redesign: 200 · selectable=true · field=\"plan\" · models: image-reference [creative, image, cost {\"images\":\"0.06\"}] · image-reference-lite [balanced, image, cost {\"images\":\"0.05\"}] · image-reference-top [precise, image, cost {\"images\":\"0.211\"}].",
+    "§3.1 avatars.generate: 200 · selectable=false · field=null · models: image-reference-top [precise, image, cost {\"images\":\"0.211\"}].",
+    "§3.1 avatars.imagine: 200 · selectable=false · field=null · models: image-top [precise, image, cost {\"images\":\"0.211\"}].",
+    "§3.1 avatar.generate: 200 · selectable=true · field=\"plan\" · models: image-balanced-seedream [null, image, cost {\"images\":\"0.03\"}] · image-reference [creative, image, cost {\"images\":\"0.06\"}] · image-reference-seedream [null, image, cost {\"images\":\"0.03\"}] · image-reference-top [precise, image, cost {\"images\":\"0.211\"}] · image-super [creative, image, cost {\"images\":\"0.06\"}] · image-top [precise, image, cost {\"images\":\"0.211\"}].",
+    "§3.1 video-ads.generate: 200 · selectable=true · field=\"plan\" · models: video-image-balanced [null, video, cost {\"video_seconds\":\"0.07\"}] · video-image-core [null, video, cost {\"video_seconds\":\"0.042\"}] · video-image-super [null, video, cost {\"video_seconds\":\"0.112\"}].",
+    "§3.1 voice.speak: 200 · selectable=true · field=\"plan\" · models: voice-expressive [null, audio, cost {\"audio_text_units\":\"0.1\"}] · voice-multilingual [null, audio, cost {\"audio_text_units\":\"0.1\"}] · voice-turbo [null, audio, cost {\"audio_text_units\":\"0.05\"}].",
+    "§3.1 film.generate: 200 · selectable=true · field=\"plan\" · models: video-scene-core [null, video, cost {\"video_seconds\":\"0.14\"}] · video-scene-plus [null, video, cost {\"video_seconds\":\"0.3034\",\"video_seconds_by_resolution\":{\"4k\":\"2.7306\",\"480p\":\"0.1415\",\"720p\":\"0.3034\",\"1080p\":\"0.6827\"}}] · video-scene-top [null, video, cost {\"video_seconds\":\"0.473\",\"video_seconds_by_resolution\":{\"480p\":\"0.2205\",\"720p\":\"0.473\",\"1080p\":\"1.0643\"}}].",
+    "§3.1 motion.generate: 200 · selectable=true · field=\"plan\" · models: video-motion-core [null, video, cost {\"video_seconds\":\"0.07\"}] · video-motion-plus [null, video, cost {\"video_seconds\":\"0.112\"}] · video-motion-top [null, video, cost {\"video_seconds\":\"0.126\"}].",
+    "§3.1 media.generate per plan: balanced → image-balanced {\"images\":\"0.03\"} | image-reference-lite {\"images\":\"0.05\"} | video-reference-core {\"video_seconds\":\"0.068\"} · creative → image-reference {\"images\":\"0.06\"} | image-super {\"images\":\"0.06\"} | video-reference-plus {\"video_seconds\":\"0.14\"} · precise → image-reference-top {\"images\":\"0.211\"} | image-top {\"images\":\"0.211\"} | video-reference-top {\"video_seconds\":\"0.28\"}.",
+    "§3.1 logos.generate per plan: balanced → image-balanced {\"images\":\"0.03\"} | image-reference-lite {\"images\":\"0.05\"} · creative → image-reference {\"images\":\"0.06\"} | image-super {\"images\":\"0.06\"} · precise → image-reference-top {\"images\":\"0.211\"} | image-top {\"images\":\"0.211\"}.",
+    "§3.1 logos.redesign per plan: balanced → image-reference-lite {\"images\":\"0.05\"} · creative → image-reference {\"images\":\"0.06\"} · precise → image-reference-top {\"images\":\"0.211\"}.",
+    "§3.1 avatar.generate per plan: balanced → image-balanced-seedream {\"images\":\"0.03\"} | image-reference-seedream {\"images\":\"0.03\"} · creative → image-reference {\"images\":\"0.06\"} | image-super {\"images\":\"0.06\"} · precise → image-reference-top {\"images\":\"0.211\"} | image-top {\"images\":\"0.211\"}.",
+    "§3.1 video-ads.generate per plan: balanced → video-image-core {\"video_seconds\":\"0.042\"} · creative → video-image-balanced {\"video_seconds\":\"0.07\"} · precise → video-image-super {\"video_seconds\":\"0.112\"}.",
+    "§3.1 voice.speak?plan=balanced: 200; voice schema per model: [{\"alias\":\"voice-turbo\",\"voice\":{\"enum\":[\"g3YpdjT1OTh9cunaumJs\",\"Rachel\"],\"type\":\"string\"},\"lang\":{\"type\":\"string\",\"pattern\":\"^[a-z]{2}$\"},\"appMetadata\":{\"min_plan\":\"pro\"}}].",
+    "§3.1 voice.speak?plan=creative: 200; voice schema per model: [{\"alias\":\"voice-multilingual\",\"voice\":{\"enum\":[\"g3YpdjT1OTh9cunaumJs\",\"Rachel\"],\"type\":\"string\"},\"lang\":{\"type\":\"string\",\"pattern\":\"^[a-z]{2}$\"},\"appMetadata\":{\"min_plan\":\"pro\"}}].",
+    "§3.1 voice.speak?plan=precise: 200; voice schema per model: [{\"alias\":\"voice-expressive\",\"voice\":{\"enum\":[\"g3YpdjT1OTh9cunaumJs\",\"Rachel\"],\"type\":\"string\"},\"lang\":{\"type\":\"string\",\"pattern\":\"^[a-z]{2}$\"},\"appMetadata\":{\"min_plan\":\"pro\"}}].",
+    "§3.1 voice.speak per plan: balanced → voice-turbo {\"audio_text_units\":\"0.05\"} · creative → voice-multilingual {\"audio_text_units\":\"0.1\"} · precise → voice-expressive {\"audio_text_units\":\"0.1\"}.",
+    "§3.1 film.generate per plan: balanced → video-scene-core {\"video_seconds\":\"0.14\"} · creative → video-scene-plus {\"video_seconds\":\"0.3034\",\"video_seconds_by_resolution\":{\"4k\":\"2.7306\",\"480p\":\"0.1415\",\"720p\":\"0.3034\",\"1080p\":\"0.6827\"}} · precise → video-scene-top {\"video_seconds\":\"0.473\",\"video_seconds_by_resolution\":{\"480p\":\"0.2205\",\"720p\":\"0.473\",\"1080p\":\"1.0643\"}}.",
+    "§3.1 motion.generate per plan: balanced → video-motion-core {\"video_seconds\":\"0.07\"} · creative → video-motion-plus {\"video_seconds\":\"0.112\"} · precise → video-motion-top {\"video_seconds\":\"0.126\"}.",
+    "§3.1 avatar.generate own models: 6 row(s) on the plain read [image-balanced-seedream/plan null, image-reference/creative, image-reference-seedream/plan null, image-reference-top/precise, image-super/creative, image-top/precise]; per plan balanced=image-balanced-seedream+image-reference-seedream, creative=image-reference+image-super, precise=image-reference-top+image-top.",
+    "§3.1 film.generate own models: 3 row(s) on the plain read [video-scene-core/plan null, video-scene-plus/plan null, video-scene-top/plan null]; per plan balanced=video-scene-core, creative=video-scene-plus, precise=video-scene-top.",
+    "§3.1 motion.generate own models: 3 row(s) on the plain read [video-motion-core/plan null, video-motion-plus/plan null, video-motion-top/plan null]; per plan balanced=video-motion-core, creative=video-motion-plus, precise=video-motion-top.",
+    "§3.5 approve door: 404 not_found — NOT proxied by Ward.",
+    "§3.2 media.generate · document-example: 402 code=wallet_insufficient \"The org's wallet cannot cover this request — not enough credits\".",
+    "§3.2 images.edit · document-example: 402 code=wallet_insufficient \"The org's wallet cannot cover this request — not enough credits\".",
+    "§3.2 photoshoot.generate · document-example: 402 code=wallet_insufficient \"The org's wallet cannot cover this request — not enough credits\".",
+    "§3.2 brand-assets.generate · document-example: 402 code=wallet_insufficient \"The org's wallet cannot cover this request — not enough credits\".",
+    "§3.2 logos.generate · document-example: 402 code=wallet_insufficient \"The org's wallet cannot cover this request — not enough credits\".",
+    "§3.2 logos.redesign · document-example: 402 code=wallet_insufficient \"The org's wallet cannot cover this request — not enough credits\".",
+    "§3.2 avatars.generate · document-example: 402 code=wallet_insufficient \"The org's wallet cannot cover this request — not enough credits\".",
+    "§3.2 avatars.imagine · document-example: 402 code=wallet_insufficient \"The org's wallet cannot cover this request — not enough credits\".",
+    "§3.2 avatar.generate · document-example: 402 code=wallet_insufficient \"The org's wallet cannot cover this request — not enough credits\".",
+    "§3.2 video-ads.generate · document-example: 402 code=wallet_insufficient \"The org's wallet cannot cover this request — not enough credits\".",
+    "§3.2 voice.speak · document-example: 402 code=wallet_insufficient \"The org's wallet cannot cover this request — not enough credits\".",
+    "§3.2 film.generate · document-example: 402 code=wallet_insufficient \"The org's wallet cannot cover this request — not enough credits\".",
+    "§3.2 motion.generate · document-example: 400 code=bad_request \"The media service rejected the request — check the body against the capability's schema\".",
+    "§3.2 media.generate · with-origin: 402 code=wallet_insufficient \"The org's wallet cannot cover this request — not enough credits\".",
+    "§3.2 film.generate · with-references-and-character: 402 code=wallet_insufficient \"The org's wallet cannot cover this request — not enough credits\".",
+    "§3.2 photoshoot.generate · four-referenceImages: 402 code=wallet_insufficient \"The org's wallet cannot cover this request — not enough credits\".",
+    "§3.2 motion.generate · ladder-1x1-still-5s-clip: 400 code=bad_request \"The media service rejected the request — check the body against the capability's schema\".",
+    "§3.2 motion.generate · ladder-512-still-3s-clip: 400 code=bad_request \"The media service rejected the request — check the body against the capability's schema\".",
+    "§3.2 motion.generate · ladder-1x1-still-3s-clip: 400 code=bad_request \"The media service rejected the request — check the body against the capability's schema\".",
+    "§3.2 motion.generate · ladder-required-keys-only: 402 code=wallet_insufficient \"The org's wallet cannot cover this request — not enough credits\".",
+    "§3.2 motion.generate · ladder-plus-keepSound-prompt: 402 code=wallet_insufficient \"The org's wallet cannot cover this request — not enough credits\".",
+    "§3.2 motion.generate · ladder-plus-lang-ar: 400 code=bad_request \"The media service rejected the request — check the body against the capability's schema\".",
+    "§3.2 motion.generate · ladder-orientation-video: 400 code=bad_request \"The media service rejected the request — check the body against the capability's schema\".",
+    "§3.3 images.edit · two-referenceImages: 400 code=bad_request \"The media service rejected the request — check the body against the capability's schema\" · names the field? no.",
+    "§3.3 photoshoot.generate · five-referenceImages: 502 code=bad_gateway \"The media service is unavailable — try again later\" · names the field? no.",
+    "§3.3 photoshoot.generate · five-referenceImages-again: 502 code=bad_gateway \"The media service is unavailable — try again later\" · names the field? no.",
+    "§3.3 brand-assets.generate · count-1: 400 code=bad_request \"The media service rejected the request — check the body against the capability's schema\" · names the field? no.",
+    "§3.3 logos.generate · count-21: 400 code=bad_request \"The media service rejected the request — check the body against the capability's schema\" · names the field? no.",
+    "§3.3 logos.redesign · no-referenceImages: 400 code=bad_request \"The media service rejected the request — check the body against the capability's schema\" · names the field? no.",
+    "§3.3 avatars.generate · count-9: 400 code=bad_request \"The media service rejected the request — check the body against the capability's schema\" · names the field? no.",
+    "§3.3 avatars.imagine · instruction-601-chars: 400 code=bad_request \"The media service rejected the request — check the body against the capability's schema\" · names the field? no.",
+    "§3.3 avatar.generate · count-9: 400 code=bad_request \"The media service rejected the request — check the body against the capability's schema\" · names the field? no.",
+    "§3.3 video-ads.generate · aspectRatio: 400 code=bad_request \"The media service rejected the request — check the body against the capability's schema\" · names the field? no.",
+    "§3.3 video-ads.generate · generateAudio-true: 400 code=bad_request \"The media service rejected the request — check the body against the capability's schema\" · names the field? no.",
+    "§3.3 video-ads.generate · durationS-8: 400 code=bad_request \"The media service rejected the request — check the body against the capability's schema\" · names the field? no.",
+    "§3.3 voice.speak · unapproved-voice: 400 code=bad_request \"The media service rejected the request — check the body against the capability's schema\" · names the field? no.",
+    "§3.3 voice.speak · similarity-on-precise: 400 code=bad_request \"The media service rejected the request — check the body against the capability's schema\" · names the field? no.",
+    "§3.3 film.generate · resolution-on-balanced: 400 code=bad_request \"The media service rejected the request — check the body against the capability's schema\" · names the field? no.",
+    "§3.3 film.generate · talking-on-balanced: 400 code=bad_request \"The media service rejected the request — check the body against the capability's schema\" · names the field? no.",
+    "§3.3 film.generate · scenes-do-not-sum: 400 code=bad_request \"The media service rejected the request — check the body against the capability's schema\" · names the field? no.",
+    "§3.3 motion.generate · no-orientation: 400 code=bad_request \"The media service rejected the request — check the body against the capability's schema\" · names the field? no.",
+    "§3.3 media.generate · unknown-param-key: 400 code=bad_request \"The media service rejected the request — check the body against the capability's schema\" · names the field? no.",
+    "After the bodies: wallet {\"cents\":0,\"heldCents\":0,\"availableCents\":0}; jobs listed: 0.",
+    "§3.7a countries: 200; total=249; row keys across the list [code, name]; US row {\"code\":\"US\",\"name\":\"United States\"}; NO state-like key on any row.",
+    "§3.7b PUT country with state: 200; holidaysCount=10 reloaded=true; org keys [id, name, slug, status, createdAt, updatedAt, country]; state DROPPED (not on the org record).",
+    "§3.7b org after: country=\"US\"; keys [id, name, slug, status, createdAt, updatedAt, country]; no `state` key.",
+    "§3.7d holidays: 200; total=10; row keys [id, orgId, date, event, rules, createdAt, processed]; first {\"id\":\"864\",\"orgId\":\"1824\",\"date\":\"2026-10-12\",\"event\":\"Columbus Day\",\"rules\":[{\"kind\":\"do\",\"text\":\"Acknowledge the federal holiday and the growing recognition of Indigenous Peoples' Day alongside it, reflecting the dual conversation many Americans are having.\"},{\"kind\":\"dont\",\"text\":\"Don't frame it as a straightforward celebration of exploration — the contested history means a one-sided tone will alienate a significant portion of your audience.\"}],\"createdAt\":\"2026-09-10T07:57:13.226Z\",\"processed\":false}.",
+    "§3.7c event-source with state: 201; row keys [id, orgId, kind, country, createdAt, updatedAt]; state DROPPED.",
+    "§3.7 state-list sweep (read-only): /orgs/:id/event-sources/countries/US → 404 · /orgs/:id/event-sources/countries/US/states → 404 · /orgs/:id/event-sources/states?country=US → 400 · /orgs/:id/event-sources/subdivisions?country=US → 400 · /orgs/:id/countries/US/states → 404 · /orgs/:id/states?country=US → 404.",
+    "§3.4 funded org 1813: 0 job(s) listed []; multi-kind or audio/document jobs: 0.",
+    "§3.4 UNMEASURED: no multi-asset job exists on the funded org — the gallery renders `audio`/`document` kinds defensively (row + Open, no player claims).",
+    "cleanup masset_b24afbaa6bcb30f68af48c8e (image/png): 204.",
+    "cleanup masset_392d87c15f41bfe946854a38 (image/png): 204.",
+    "cleanup masset_8ea12cc8634160529ee6834c (video/mp4): 204.",
+    "cleanup masset_1508fa6f5391e767f91d2df2 (image/png): 204.",
+    "cleanup masset_f8737222c97ea8030669bb3b (video/mp4): 204.",
+    "cleanup list re-read: 200 {\"assets\":[]}."
+  ]
+}

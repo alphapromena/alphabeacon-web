@@ -1,0 +1,23 @@
+{
+  "title": "§3.2 · media/jobs — avatars.imagine · document-example",
+  "method": "POST",
+  "path": "/orgs/:id/alphastudio/media/jobs",
+  "status": 402,
+  "ms": 814,
+  "requestId": "d8a3f8be-5610-4290-9082-279bad3a5efd",
+  "note": "the document’s example; 402 expected on the zero wallet",
+  "request": {
+    "capability": "avatars.imagine",
+    "instruction": "an Arabian woman in her thirties wearing a hijab",
+    "params": {
+      "count": 1
+    }
+  },
+  "response": {
+    "error": {
+      "code": "wallet_insufficient",
+      "message": "The org's wallet cannot cover this request — not enough credits",
+      "requestId": "d8a3f8be-5610-4290-9082-279bad3a5efd"
+    }
+  }
+}

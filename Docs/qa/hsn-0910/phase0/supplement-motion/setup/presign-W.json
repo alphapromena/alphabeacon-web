@@ -1,0 +1,18 @@
+{
+  "title": "asset W · media/assets/presign — video/mp4",
+  "method": "POST",
+  "path": "/orgs/:id/alphastudio/media/assets/presign",
+  "status": 201,
+  "ms": 735,
+  "requestId": "d8958827-58b1-4d9b-8c11-fa7fbf04d628",
+  "request": {
+    "mediaType": "video/mp4",
+    "desc": "HSN-0910 motion supplement — a 5-second clip"
+  },
+  "response": {
+    "assetId": "masset_418045b037f735053254ec4c",
+    "uploadUrl": "<redacted url: 1673 chars>",
+    "expiresAt": "2026-09-10T08:18:53.488Z",
+    "mediaType": "video/mp4"
+  }
+}

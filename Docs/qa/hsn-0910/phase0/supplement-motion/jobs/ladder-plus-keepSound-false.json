@@ -1,0 +1,24 @@
+{
+  "title": "supplement · media/jobs — motion.generate · ladder-plus-keepSound-false",
+  "method": "POST",
+  "path": "/orgs/:id/alphastudio/media/jobs",
+  "status": 402,
+  "ms": 852,
+  "requestId": "b8f58226-9442-4d51-afd2-86e673578965",
+  "note": "required keys plus keepSound false",
+  "request": {
+    "capability": "motion.generate",
+    "plan": "balanced",
+    "image": "masset_d9783f9d465e4018b0c911ad",
+    "video": "masset_418045b037f735053254ec4c",
+    "orientation": "image",
+    "keepSound": false
+  },
+  "response": {
+    "error": {
+      "code": "wallet_insufficient",
+      "message": "The org's wallet cannot cover this request — not enough credits",
+      "requestId": "b8f58226-9442-4d51-afd2-86e673578965"
+    }
+  }
+}

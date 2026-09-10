@@ -1,0 +1,8 @@
+{
+  "title": "§3.7c · DELETE event-sources/:id — cleanup (with-state)",
+  "method": "DELETE",
+  "path": "/orgs/:id/event-sources/111",
+  "status": 204,
+  "ms": 821,
+  "requestId": "0f855e40-9b04-441c-b81a-63a5a0944448"
+}

@@ -1,0 +1,197 @@
+{
+  "title": "§3.7d · GET /orgs/:id/holidays?limit=100 — the rows’ shape",
+  "method": "GET",
+  "path": "/orgs/:id/holidays?limit=100",
+  "status": 200,
+  "ms": 635,
+  "requestId": "4fbc1b3f-902d-4cc1-81f2-be67aff23b21",
+  "response": {
+    "items": [
+      {
+        "id": "864",
+        "orgId": "1824",
+        "date": "2026-10-12",
+        "event": "Columbus Day",
+        "rules": [
+          {
+            "kind": "do",
+            "text": "Acknowledge the federal holiday and the growing recognition of Indigenous Peoples' Day alongside it, reflecting the dual conversation many Americans are having."
+          },
+          {
+            "kind": "dont",
+            "text": "Don't frame it as a straightforward celebration of exploration — the contested history means a one-sided tone will alienate a significant portion of your audience."
+          }
+        ],
+        "createdAt": "2026-09-10T07:57:13.226Z",
+        "processed": false
+      },
+      {
+        "id": "865",
+        "orgId": "1824",
+        "date": "2026-10-31",
+        "event": "Halloween",
+        "rules": [
+          {
+            "kind": "do",
+            "text": "Lean into playful, lighthearted creative — costumes, candy, and seasonal imagery resonate broadly and invite audience participation."
+          },
+          {
+            "kind": "dont",
+            "text": "Avoid costumes or imagery that appropriate cultural or religious identities, as these reliably draw backlash."
+          }
+        ],
+        "createdAt": "2026-09-10T07:57:13.226Z",
+        "processed": false
+      },
+      {
+        "id": "866",
+        "orgId": "1824",
+        "date": "2026-11-01",
+        "event": "Daylight Saving Time ends",
+        "rules": [
+          {
+            "kind": "do",
+            "text": "Use the 'extra hour' framing as a light, relatable hook — it's a shared moment that works well for casual engagement content."
+          },
+          {
+            "kind": "dont",
+            "text": "Don't build time-sensitive campaigns around this date without accounting for the clock change affecting scheduled posts and notifications."
+          }
+        ],
+        "createdAt": "2026-09-10T07:57:13.226Z",
+        "processed": false
+      },
+      {
+        "id": "867",
+        "orgId": "1824",
+        "date": "2026-11-03",
+        "event": "Election Day",
+        "rules": [
+          {
+            "kind": "do",
+            "text": "Encourage civic participation with a nonpartisan 'go vote' message — this is broadly welcomed and low-risk for most brands."
+          },
+          {
+            "kind": "dont",
+            "text": "Don't express support for any candidate, party, or ballot position, as political endorsements carry serious reputational and legal risk."
+          },
+          {
+            "kind": "dont",
+            "text": "Avoid launching major promotional campaigns on this day, as they can read as tone-deaf against the weight of a national election."
+          }
+        ],
+        "createdAt": "2026-09-10T07:57:13.226Z",
+        "processed": false
+      },
+      {
+        "id": "868",
+        "orgId": "1824",
+        "date": "2026-11-11",
+        "event": "Veterans Day",
+        "rules": [
+          {
+            "kind": "do",
+            "text": "Express genuine gratitude to veterans and active service members — specific, sincere acknowledgment lands far better than generic patriotic copy."
+          },
+          {
+            "kind": "dont",
+            "text": "Don't use Veterans Day primarily as a sales hook; promotional framing around this day reads as exploitative and frequently draws criticism."
+          }
+        ],
+        "createdAt": "2026-09-10T07:57:13.226Z",
+        "processed": false
+      },
+      {
+        "id": "869",
+        "orgId": "1824",
+        "date": "2026-11-26",
+        "event": "Thanksgiving Day",
+        "rules": [
+          {
+            "kind": "do",
+            "text": "Focus messaging on gratitude, community, and togetherness — these themes connect across the wide range of ways Americans celebrate the day."
+          },
+          {
+            "kind": "dont",
+            "text": "Avoid romanticized colonial imagery or the traditional Pilgrim-and-Native narrative, which many audiences now find reductive or offensive."
+          }
+        ],
+        "createdAt": "2026-09-10T07:57:13.226Z",
+        "processed": false
+      },
+      {
+        "id": "870",
+        "orgId": "1824",
+        "date": "2026-11-27",
+        "event": "Black Friday",
+        "rules": [
+          {
+            "kind": "do",
+            "text": "This is one of the highest-intent shopping days of the year — clear, direct promotional messaging with specific offers performs best."
+          },
+          {
+            "kind": "dont",
+            "text": "Don't ignore the counter-narrative around consumerism; if your brand values sustainability or mindful spending, acknowledge it rather than pretending Black Friday is uncomplicated."
+          }
+        ],
+        "createdAt": "2026-09-10T07:57:13.226Z",
+        "processed": false
+      },
+      {
+        "id": "871",
+        "orgId": "1824",
+        "date": "2026-12-24",
+        "event": "Christmas Eve",
+        "rules": [
+          {
+            "kind": "do",
+            "text": "Warm, family-oriented content works well — this is a moment of anticipation and togetherness for the large share of your audience celebrating."
+          },
+          {
+            "kind": "dont",
+            "text": "Don't assume your entire audience celebrates Christmas; inclusive seasonal language keeps the message welcoming to those observing other holidays or none."
+          }
+        ],
+        "createdAt": "2026-09-10T07:57:13.226Z",
+        "processed": false
+      },
+      {
+        "id": "872",
+        "orgId": "1824",
+        "date": "2026-12-25",
+        "event": "Christmas Day",
+        "rules": [
+          {
+            "kind": "do",
+            "text": "A brief, warm acknowledgment is appropriate — most audiences expect brands to mark the day, and a simple message of goodwill is well received."
+          },
+          {
+            "kind": "dont",
+            "text": "Avoid heavy promotional content on Christmas Day itself; audiences are with family and sales-first messaging feels intrusive."
+          }
+        ],
+        "createdAt": "2026-09-10T07:57:13.226Z",
+        "processed": false
+      },
+      {
+        "id": "873",
+        "orgId": "1824",
+        "date": "2026-12-31",
+        "event": "New Year's Eve",
+        "rules": [
+          {
+            "kind": "do",
+            "text": "Reflective, forward-looking content — celebrating the year and welcoming the next — resonates widely and gives your brand a natural, positive close to the calendar."
+          },
+          {
+            "kind": "dont",
+            "text": "Don't schedule posts for midnight without confirming time-zone targeting; a New Year's message arriving at 3 a.m. local time loses its impact entirely."
+          }
+        ],
+        "createdAt": "2026-09-10T07:57:13.226Z",
+        "processed": false
+      }
+    ],
+    "total": 10
+  }
+}

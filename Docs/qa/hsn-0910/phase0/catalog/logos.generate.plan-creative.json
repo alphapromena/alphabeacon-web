@@ -1,0 +1,146 @@
+{
+  "title": "§3.1 · catalog — logos.generate?plan=creative",
+  "method": "GET",
+  "path": "/orgs/:id/alphastudio/catalog/capabilities/logos.generate?plan=creative",
+  "status": 200,
+  "ms": 744,
+  "requestId": "aa097611-483c-4ba7-9aa1-9c8830dcf5eb",
+  "response": {
+    "capability": "logos.generate",
+    "selectable": true,
+    "field": "plan",
+    "plan": "creative",
+    "models": [
+      {
+        "alias": "image-reference",
+        "kind": "image",
+        "plan": "creative",
+        "displayHint": "Image from a reference",
+        "capabilitySchema": {
+          "type": "object",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "properties": {
+            "seed": {
+              "type": "integer",
+              "maximum": 4294967295,
+              "minimum": 0
+            },
+            "count": {
+              "type": "integer",
+              "maximum": 20,
+              "minimum": 1
+            },
+            "aspectRatio": {
+              "enum": [
+                "1:1",
+                "16:9",
+                "9:16",
+                "4:3",
+                "3:4",
+                "3:2",
+                "2:3"
+              ],
+              "type": "string"
+            },
+            "outputFormat": {
+              "enum": [
+                "png",
+                "jpeg",
+                "webp"
+              ],
+              "type": "string"
+            },
+            "negativePrompt": {
+              "type": "string",
+              "maxLength": 1000
+            },
+            "referenceImages": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uri"
+              },
+              "maxItems": 4,
+              "minItems": 1
+            }
+          },
+          "additionalProperties": false
+        },
+        "capabilities": [
+          "avatar.generate",
+          "images.edit",
+          "logos.generate",
+          "logos.redesign",
+          "media.generate",
+          "photoshoot.generate",
+          "social-posts.media"
+        ],
+        "cost": {
+          "images": "0.06"
+        },
+        "appMetadata": {
+          "min_plan": "pro"
+        }
+      },
+      {
+        "alias": "image-super",
+        "kind": "image",
+        "plan": "creative",
+        "displayHint": "Super image",
+        "capabilitySchema": {
+          "type": "object",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "properties": {
+            "seed": {
+              "type": "integer",
+              "maximum": 4294967295,
+              "minimum": 0
+            },
+            "count": {
+              "type": "integer",
+              "maximum": 20,
+              "minimum": 1
+            },
+            "aspectRatio": {
+              "enum": [
+                "1:1",
+                "16:9",
+                "9:16",
+                "4:3",
+                "3:4",
+                "3:2",
+                "2:3"
+              ],
+              "type": "string"
+            },
+            "outputFormat": {
+              "enum": [
+                "png",
+                "jpeg",
+                "webp"
+              ],
+              "type": "string"
+            },
+            "negativePrompt": {
+              "type": "string",
+              "maxLength": 1000
+            }
+          },
+          "additionalProperties": false
+        },
+        "capabilities": [
+          "avatar.generate",
+          "logos.generate",
+          "media.generate",
+          "social-posts.media"
+        ],
+        "cost": {
+          "images": "0.06"
+        },
+        "appMetadata": {
+          "min_plan": "pro"
+        }
+      }
+    ]
+  }
+}

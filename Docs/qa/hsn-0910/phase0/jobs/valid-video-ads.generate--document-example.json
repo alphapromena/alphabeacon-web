@@ -1,0 +1,30 @@
+{
+  "title": "§3.2 · media/jobs — video-ads.generate · document-example",
+  "method": "POST",
+  "path": "/orgs/:id/alphastudio/media/jobs",
+  "status": 402,
+  "ms": 816,
+  "requestId": "c3df40e7-8b03-447e-812c-f8f3553fe00b",
+  "note": "the document’s example; 402 expected on the zero wallet",
+  "request": {
+    "capability": "video-ads.generate",
+    "plan": "balanced",
+    "params": {
+      "imageUrl": "<redacted url: 1621 chars>",
+      "durationS": 5
+    },
+    "guidance": [
+      {
+        "role": "motion",
+        "text": "slow push-in, the product turning once, ending centred"
+      }
+    ]
+  },
+  "response": {
+    "error": {
+      "code": "wallet_insufficient",
+      "message": "The org's wallet cannot cover this request — not enough credits",
+      "requestId": "c3df40e7-8b03-447e-812c-f8f3553fe00b"
+    }
+  }
+}

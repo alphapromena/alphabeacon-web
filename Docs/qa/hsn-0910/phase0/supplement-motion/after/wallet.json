@@ -1,0 +1,13 @@
+{
+  "title": "supplement · wallet — after the rungs",
+  "method": "GET",
+  "path": "/orgs/:id/alphastudio/wallet",
+  "status": 200,
+  "ms": 728,
+  "requestId": "1a1f8ef9-c34e-4f2b-9293-19af36ec8b44",
+  "response": {
+    "cents": 0,
+    "heldCents": 0,
+    "availableCents": 0
+  }
+}

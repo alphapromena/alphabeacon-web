@@ -1,0 +1,36 @@
+{
+  "title": "§3.3 · media/jobs — brand-assets.generate · count-1",
+  "method": "POST",
+  "path": "/orgs/:id/alphastudio/media/jobs",
+  "status": 400,
+  "ms": 759,
+  "requestId": "5162c97b-2fb2-4e30-adc8-94041fe9f6f0",
+  "note": "the document’s refusal; 400 expected BEFORE the wallet",
+  "request": {
+    "capability": "brand-assets.generate",
+    "params": {
+      "count": 1
+    },
+    "guidance": [
+      {
+        "role": "subject",
+        "text": "a wordmark for 'Alpha Pro MENA' with a compact abstract mark above it"
+      },
+      {
+        "role": "style",
+        "text": "flat, minimal, enterprise-grade — a working mark, not an illustration"
+      },
+      {
+        "role": "palette",
+        "text": "deep navy on warm off-white, one teal accent"
+      }
+    ]
+  },
+  "response": {
+    "error": {
+      "code": "bad_request",
+      "message": "The media service rejected the request — check the body against the capability's schema",
+      "requestId": "5162c97b-2fb2-4e30-adc8-94041fe9f6f0"
+    }
+  }
+}

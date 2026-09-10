@@ -1,0 +1,31 @@
+{
+  "title": "§3.3 · media/jobs — logos.redesign · no-referenceImages",
+  "method": "POST",
+  "path": "/orgs/:id/alphastudio/media/jobs",
+  "status": 400,
+  "ms": 791,
+  "requestId": "27dae99d-7c08-4a03-b147-f30727ccafa0",
+  "note": "the document’s refusal; 400 expected BEFORE the wallet",
+  "request": {
+    "capability": "logos.redesign",
+    "plan": "balanced",
+    "params": {
+      "count": 1,
+      "aspectRatio": "1:1",
+      "outputFormat": "png"
+    },
+    "guidance": [
+      {
+        "role": "style",
+        "text": "simpler geometry, more negative space, lighter type; keep it recognisable"
+      }
+    ]
+  },
+  "response": {
+    "error": {
+      "code": "bad_request",
+      "message": "The media service rejected the request — check the body against the capability's schema",
+      "requestId": "27dae99d-7c08-4a03-b147-f30727ccafa0"
+    }
+  }
+}

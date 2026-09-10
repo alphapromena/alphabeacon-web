@@ -1,0 +1,23 @@
+{
+  "title": "supplement · media/jobs — motion.generate · ladder-orientation-video",
+  "method": "POST",
+  "path": "/orgs/:id/alphastudio/media/jobs",
+  "status": 402,
+  "ms": 684,
+  "requestId": "45c0807d-01d4-47f5-bd61-70a00ff5a3d5",
+  "note": "required keys with orientation \"video\"",
+  "request": {
+    "capability": "motion.generate",
+    "plan": "balanced",
+    "image": "masset_d9783f9d465e4018b0c911ad",
+    "video": "masset_418045b037f735053254ec4c",
+    "orientation": "video"
+  },
+  "response": {
+    "error": {
+      "code": "wallet_insufficient",
+      "message": "The org's wallet cannot cover this request — not enough credits",
+      "requestId": "45c0807d-01d4-47f5-bd61-70a00ff5a3d5"
+    }
+  }
+}

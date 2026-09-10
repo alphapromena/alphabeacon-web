@@ -1,0 +1,63 @@
+{
+  "title": "§3.1 · catalog — video-ads.generate?plan=balanced",
+  "method": "GET",
+  "path": "/orgs/:id/alphastudio/catalog/capabilities/video-ads.generate?plan=balanced",
+  "status": 200,
+  "ms": 603,
+  "requestId": "4bb8ab1b-82c0-4184-aa78-74f9d4a8f5e0",
+  "response": {
+    "capability": "video-ads.generate",
+    "selectable": true,
+    "field": "plan",
+    "plan": "balanced",
+    "models": [
+      {
+        "alias": "video-image-core",
+        "kind": "video",
+        "plan": null,
+        "displayHint": "Image to video",
+        "capabilitySchema": {
+          "type": "object",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "properties": {
+            "seed": {
+              "type": "integer",
+              "maximum": 4294967295,
+              "minimum": 0
+            },
+            "imageUrl": {
+              "type": "string",
+              "format": "uri"
+            },
+            "durationS": {
+              "anyOf": [
+                {
+                  "type": "number",
+                  "const": 5
+                },
+                {
+                  "type": "number",
+                  "const": 10
+                }
+              ]
+            },
+            "negativePrompt": {
+              "type": "string",
+              "maxLength": 1000
+            }
+          },
+          "additionalProperties": false
+        },
+        "capabilities": [
+          "video-ads.generate"
+        ],
+        "cost": {
+          "video_seconds": "0.042"
+        },
+        "appMetadata": {
+          "min_plan": "free"
+        }
+      }
+    ]
+  }
+}

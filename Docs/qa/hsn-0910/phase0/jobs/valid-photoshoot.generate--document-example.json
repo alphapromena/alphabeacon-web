@@ -1,0 +1,41 @@
+{
+  "title": "§3.2 · media/jobs — photoshoot.generate · document-example",
+  "method": "POST",
+  "path": "/orgs/:id/alphastudio/media/jobs",
+  "status": 402,
+  "ms": 645,
+  "requestId": "44a0a3a6-c0a1-4742-9d75-c4fba2caa7bb",
+  "note": "the document’s example; 402 expected on the zero wallet",
+  "request": {
+    "capability": "photoshoot.generate",
+    "params": {
+      "referenceImages": [
+        "<redacted url: 1621 chars>",
+        "<redacted url: 1621 chars>"
+      ],
+      "aspectRatio": "1:1",
+      "outputFormat": "png"
+    },
+    "guidance": [
+      {
+        "role": "scene",
+        "text": "on a brushed-steel table in a glass-walled briefing room"
+      },
+      {
+        "role": "style",
+        "text": "corporate editorial photography, soft key light"
+      },
+      {
+        "role": "palette",
+        "text": "cool neutrals, deep navy, one teal accent"
+      }
+    ]
+  },
+  "response": {
+    "error": {
+      "code": "wallet_insufficient",
+      "message": "The org's wallet cannot cover this request — not enough credits",
+      "requestId": "44a0a3a6-c0a1-4742-9d75-c4fba2caa7bb"
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "title": "§3.3 · media/jobs — video-ads.generate · aspectRatio",
+  "method": "POST",
+  "path": "/orgs/:id/alphastudio/media/jobs",
+  "status": 400,
+  "ms": 791,
+  "requestId": "e5409135-c3e2-4982-b819-e7ff27ffc9ad",
+  "note": "the document’s refusal; 400 expected BEFORE the wallet",
+  "request": {
+    "capability": "video-ads.generate",
+    "plan": "balanced",
+    "params": {
+      "imageUrl": "<redacted url: 1621 chars>",
+      "durationS": 5,
+      "aspectRatio": "16:9"
+    },
+    "guidance": [
+      {
+        "role": "motion",
+        "text": "slow push-in, the product turning once, ending centred"
+      }
+    ]
+  },
+  "response": {
+    "error": {
+      "code": "bad_request",
+      "message": "The media service rejected the request — check the body against the capability's schema",
+      "requestId": "e5409135-c3e2-4982-b819-e7ff27ffc9ad"
+    }
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "title": "§3.3 · media/jobs — film.generate · talking-on-balanced",
+  "method": "POST",
+  "path": "/orgs/:id/alphastudio/media/jobs",
+  "status": 400,
+  "ms": 980,
+  "requestId": "5348b5e9-2c30-48e5-b14c-859af17ccf58",
+  "note": "the document’s refusal; 400 expected BEFORE the wallet",
+  "request": {
+    "capability": "film.generate",
+    "plan": "balanced",
+    "sec": 3,
+    "aspect": "9:16",
+    "audio": true,
+    "scenes": [
+      {
+        "sec": 2,
+        "speak": "talking",
+        "script": "Welcome to Alpha Pro. Here is what changed this week.",
+        "camera": "a presenter at a desk, medium shot"
+      },
+      {
+        "sec": 1,
+        "camera": "slow push toward a coffee cup, steam rising"
+      }
+    ],
+    "lang": "en",
+    "voice": {
+      "id": "Rachel"
+    }
+  },
+  "response": {
+    "error": {
+      "code": "bad_request",
+      "message": "The media service rejected the request — check the body against the capability's schema",
+      "requestId": "5348b5e9-2c30-48e5-b14c-859af17ccf58"
+    }
+  }
+}

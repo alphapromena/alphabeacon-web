@@ -1,0 +1,24 @@
+{
+  "title": "supplement · media/jobs — motion.generate · ladder-plus-lang-ar",
+  "method": "POST",
+  "path": "/orgs/:id/alphastudio/media/jobs",
+  "status": 400,
+  "ms": 661,
+  "requestId": "3f76fcab-6426-4620-8b02-609f8ffed5d0",
+  "note": "required keys plus lang \"ar\" — the document’s own value (refused in run 2)",
+  "request": {
+    "capability": "motion.generate",
+    "plan": "balanced",
+    "image": "masset_d9783f9d465e4018b0c911ad",
+    "video": "masset_418045b037f735053254ec4c",
+    "orientation": "image",
+    "lang": "ar"
+  },
+  "response": {
+    "error": {
+      "code": "bad_request",
+      "message": "The media service rejected the request — check the body against the capability's schema",
+      "requestId": "3f76fcab-6426-4620-8b02-609f8ffed5d0"
+    }
+  }
+}

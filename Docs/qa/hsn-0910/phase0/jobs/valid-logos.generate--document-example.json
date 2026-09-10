@@ -1,0 +1,43 @@
+{
+  "title": "§3.2 · media/jobs — logos.generate · document-example",
+  "method": "POST",
+  "path": "/orgs/:id/alphastudio/media/jobs",
+  "status": 402,
+  "ms": 811,
+  "requestId": "67368604-88a8-464a-8aee-92cb1f6fda2c",
+  "note": "the document’s example; 402 expected on the zero wallet",
+  "request": {
+    "capability": "logos.generate",
+    "plan": "balanced",
+    "params": {
+      "count": 1,
+      "aspectRatio": "1:1",
+      "outputFormat": "png"
+    },
+    "guidance": [
+      {
+        "role": "headline",
+        "text": "Alpha Pro MENA"
+      },
+      {
+        "role": "subject",
+        "text": "a data-lineage platform; three aligned nodes joined by one line"
+      },
+      {
+        "role": "style",
+        "text": "flat, geometric — a working mark for a browser tab and a slide master"
+      },
+      {
+        "role": "palette",
+        "text": "deep navy on warm off-white, one teal accent"
+      }
+    ]
+  },
+  "response": {
+    "error": {
+      "code": "wallet_insufficient",
+      "message": "The org's wallet cannot cover this request — not enough credits",
+      "requestId": "67368604-88a8-464a-8aee-92cb1f6fda2c"
+    }
+  }
+}

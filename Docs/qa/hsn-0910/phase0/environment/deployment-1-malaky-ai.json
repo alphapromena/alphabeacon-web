@@ -1,0 +1,11 @@
+{
+  "origin": "<redacted url: 19 chars>",
+  "htmlStatus": 200,
+  "bundles": [
+    "index-DUHITzRc.js"
+  ],
+  "scriptHosts": [],
+  "mode": "LIVE (the API host is inlined in index-DUHITzRc.js)",
+  "vercelId": "bom1::tp9l7-1789026915055-05e2daba6a3b",
+  "cacheHeader": "HIT"
+}

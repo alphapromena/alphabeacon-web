@@ -1,0 +1,32 @@
+{
+  "title": "create org",
+  "method": "POST",
+  "path": "/orgs",
+  "status": 201,
+  "ms": 739,
+  "requestId": "b9cc78ba-583e-4e08-b627-01c6b69693e7",
+  "note": "the fresh QA org every probe below runs on",
+  "request": {
+    "name": "QA HSN-0910 Org 1789026912812"
+  },
+  "response": {
+    "org": {
+      "id": "1824",
+      "name": "QA HSN-0910 Org 1789026912812",
+      "slug": "qa-hsn-0910-org-1789026912812",
+      "status": "active",
+      "createdAt": "2026-09-10T07:55:21.368Z",
+      "updatedAt": "2026-09-10T07:55:21.368Z",
+      "country": null
+    },
+    "membership": {
+      "id": "2083",
+      "orgId": "1824",
+      "userId": "2210",
+      "role": "owner",
+      "isActive": true,
+      "createdAt": "2026-09-10T07:55:21.368Z",
+      "updatedAt": "2026-09-10T07:55:21.368Z"
+    }
+  }
+}

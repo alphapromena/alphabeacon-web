@@ -1,0 +1,23 @@
+{
+  "title": "supplement · media/jobs — motion.generate · ladder-1x1-still-5s-clip",
+  "method": "POST",
+  "path": "/orgs/:id/alphastudio/media/jobs",
+  "status": 402,
+  "ms": 863,
+  "requestId": "bcc4fae0-1e48-4234-b744-a2cf3fe08769",
+  "note": "required keys; the 1×1 still (under the 340 px floor) and the 5 s clip",
+  "request": {
+    "capability": "motion.generate",
+    "plan": "balanced",
+    "image": "masset_13aa9b474ccb762af89220b5",
+    "video": "masset_418045b037f735053254ec4c",
+    "orientation": "image"
+  },
+  "response": {
+    "error": {
+      "code": "wallet_insufficient",
+      "message": "The org's wallet cannot cover this request — not enough credits",
+      "requestId": "bcc4fae0-1e48-4234-b744-a2cf3fe08769"
+    }
+  }
+}

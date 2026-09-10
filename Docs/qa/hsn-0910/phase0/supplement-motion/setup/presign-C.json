@@ -1,0 +1,18 @@
+{
+  "title": "asset C · media/assets/presign — image/png",
+  "method": "POST",
+  "path": "/orgs/:id/alphastudio/media/assets/presign",
+  "status": 201,
+  "ms": 781,
+  "requestId": "866b54f9-0193-4763-b8aa-41b4d1882dcf",
+  "request": {
+    "mediaType": "image/png",
+    "desc": "HSN-0910 motion supplement — a 512×512 still"
+  },
+  "response": {
+    "assetId": "masset_d9783f9d465e4018b0c911ad",
+    "uploadUrl": "<redacted url: 1673 chars>",
+    "expiresAt": "2026-09-10T08:18:51.548Z",
+    "mediaType": "image/png"
+  }
+}

@@ -1,0 +1,516 @@
+{
+  "run": "2026-09-10T08:03:42.407Z",
+  "orgId": "1824",
+  "owner": "qa+1789026912812hsn0910@alphapromena.com",
+  "captures": [
+    {
+      "seq": 1,
+      "section": "setup",
+      "title": "supplement · GET /me/orgs — the owner’s org",
+      "method": "GET",
+      "path": "/me/orgs",
+      "status": 200,
+      "ms": 502,
+      "requestId": "1ceca18a-13bf-4183-92b9-e85cdbc7212d",
+      "response": {
+        "items": [
+          {
+            "id": "1824",
+            "name": "QA HSN-0910 Org 1789026912812",
+            "slug": "qa-hsn-0910-org-1789026912812",
+            "status": "active",
+            "role": "owner",
+            "joinedAt": "2026-09-10T07:55:21.368Z"
+          }
+        ],
+        "total": 1
+      },
+      "file": "setup/me-orgs.json"
+    },
+    {
+      "seq": 2,
+      "section": "setup",
+      "title": "supplement · wallet — the 402 shield",
+      "method": "GET",
+      "path": "/orgs/:id/alphastudio/wallet",
+      "status": 200,
+      "ms": 3233,
+      "requestId": "e45c694b-5466-4437-ba49-8d1ea26cddb1",
+      "response": {
+        "cents": 0,
+        "heldCents": 0,
+        "availableCents": 0
+      },
+      "file": "setup/wallet-shield.json"
+    },
+    {
+      "seq": 3,
+      "section": "setup",
+      "title": "asset A · media/assets/presign — image/png",
+      "method": "POST",
+      "path": "/orgs/:id/alphastudio/media/assets/presign",
+      "status": 201,
+      "ms": 817,
+      "requestId": "6071d26e-169c-40ef-b01a-7d8018956323",
+      "request": {
+        "mediaType": "image/png",
+        "desc": "HSN-0910 motion supplement — a 1×1 still"
+      },
+      "response": {
+        "assetId": "masset_13aa9b474ccb762af89220b5",
+        "uploadUrl": "<redacted url: 1673 chars>",
+        "expiresAt": "2026-09-10T08:18:50.153Z",
+        "mediaType": "image/png"
+      },
+      "file": "setup/presign-A.json"
+    },
+    {
+      "seq": 4,
+      "section": "setup",
+      "title": "asset A · PUT 70 bytes to the presigned url (from Node)",
+      "method": "PUT",
+      "path": "(presigned storage url — not our API)",
+      "status": 200,
+      "ms": 548
+    },
+    {
+      "seq": 5,
+      "section": "setup",
+      "title": "asset C · media/assets/presign — image/png",
+      "method": "POST",
+      "path": "/orgs/:id/alphastudio/media/assets/presign",
+      "status": 201,
+      "ms": 781,
+      "requestId": "866b54f9-0193-4763-b8aa-41b4d1882dcf",
+      "request": {
+        "mediaType": "image/png",
+        "desc": "HSN-0910 motion supplement — a 512×512 still"
+      },
+      "response": {
+        "assetId": "masset_d9783f9d465e4018b0c911ad",
+        "uploadUrl": "<redacted url: 1673 chars>",
+        "expiresAt": "2026-09-10T08:18:51.548Z",
+        "mediaType": "image/png"
+      },
+      "file": "setup/presign-C.json"
+    },
+    {
+      "seq": 6,
+      "section": "setup",
+      "title": "asset C · PUT 1900 bytes to the presigned url (from Node)",
+      "method": "PUT",
+      "path": "(presigned storage url — not our API)",
+      "status": 200,
+      "ms": 171
+    },
+    {
+      "seq": 7,
+      "section": "setup",
+      "title": "asset V · media/assets/presign — video/mp4",
+      "method": "POST",
+      "path": "/orgs/:id/alphastudio/media/assets/presign",
+      "status": 201,
+      "ms": 749,
+      "requestId": "dbd5718e-088d-47ef-811e-d294c6e0143a",
+      "request": {
+        "mediaType": "video/mp4",
+        "desc": "HSN-0910 motion supplement — a 3-second clip"
+      },
+      "response": {
+        "assetId": "masset_9ad934f231c04048092769cb",
+        "uploadUrl": "<redacted url: 1673 chars>",
+        "expiresAt": "2026-09-10T08:18:52.523Z",
+        "mediaType": "video/mp4"
+      },
+      "file": "setup/presign-V.json"
+    },
+    {
+      "seq": 8,
+      "section": "setup",
+      "title": "asset V · PUT 2384 bytes to the presigned url (from Node)",
+      "method": "PUT",
+      "path": "(presigned storage url — not our API)",
+      "status": 200,
+      "ms": 176
+    },
+    {
+      "seq": 9,
+      "section": "setup",
+      "title": "asset W · media/assets/presign — video/mp4",
+      "method": "POST",
+      "path": "/orgs/:id/alphastudio/media/assets/presign",
+      "status": 201,
+      "ms": 735,
+      "requestId": "d8958827-58b1-4d9b-8c11-fa7fbf04d628",
+      "request": {
+        "mediaType": "video/mp4",
+        "desc": "HSN-0910 motion supplement — a 5-second clip"
+      },
+      "response": {
+        "assetId": "masset_418045b037f735053254ec4c",
+        "uploadUrl": "<redacted url: 1673 chars>",
+        "expiresAt": "2026-09-10T08:18:53.488Z",
+        "mediaType": "video/mp4"
+      },
+      "file": "setup/presign-W.json"
+    },
+    {
+      "seq": 10,
+      "section": "setup",
+      "title": "asset W · PUT 2914 bytes to the presigned url (from Node)",
+      "method": "PUT",
+      "path": "(presigned storage url — not our API)",
+      "status": 200,
+      "ms": 180
+    },
+    {
+      "seq": 11,
+      "section": "valid",
+      "title": "supplement · media/jobs — motion.generate · ladder-required-keys-only",
+      "method": "POST",
+      "path": "/orgs/:id/alphastudio/media/jobs",
+      "status": 402,
+      "ms": 1191,
+      "requestId": "5de44fd0-8731-437e-a3dd-db8723454c7e",
+      "note": "only capability, plan, image, video, orientation — the 512 px still and the 5 s clip; the control",
+      "request": {
+        "capability": "motion.generate",
+        "plan": "balanced",
+        "image": "masset_d9783f9d465e4018b0c911ad",
+        "video": "masset_418045b037f735053254ec4c",
+        "orientation": "image"
+      },
+      "response": {
+        "error": {
+          "code": "wallet_insufficient",
+          "message": "The org's wallet cannot cover this request — not enough credits",
+          "requestId": "5de44fd0-8731-437e-a3dd-db8723454c7e"
+        }
+      },
+      "file": "jobs/ladder-required-keys-only.json"
+    },
+    {
+      "seq": 12,
+      "section": "valid",
+      "title": "supplement · media/jobs — motion.generate · ladder-1x1-still-5s-clip",
+      "method": "POST",
+      "path": "/orgs/:id/alphastudio/media/jobs",
+      "status": 402,
+      "ms": 863,
+      "requestId": "bcc4fae0-1e48-4234-b744-a2cf3fe08769",
+      "note": "required keys; the 1×1 still (under the 340 px floor) and the 5 s clip",
+      "request": {
+        "capability": "motion.generate",
+        "plan": "balanced",
+        "image": "masset_13aa9b474ccb762af89220b5",
+        "video": "masset_418045b037f735053254ec4c",
+        "orientation": "image"
+      },
+      "response": {
+        "error": {
+          "code": "wallet_insufficient",
+          "message": "The org's wallet cannot cover this request — not enough credits",
+          "requestId": "bcc4fae0-1e48-4234-b744-a2cf3fe08769"
+        }
+      },
+      "file": "jobs/ladder-1x1-still-5s-clip.json"
+    },
+    {
+      "seq": 13,
+      "section": "valid",
+      "title": "supplement · media/jobs — motion.generate · ladder-512-still-3s-clip",
+      "method": "POST",
+      "path": "/orgs/:id/alphastudio/media/jobs",
+      "status": 402,
+      "ms": 848,
+      "requestId": "0ae7a7e2-fdce-4750-92b0-b3ebc88079ad",
+      "note": "required keys; the 512 px still and the 3.0 s clip (at the 3 s floor)",
+      "request": {
+        "capability": "motion.generate",
+        "plan": "balanced",
+        "image": "masset_d9783f9d465e4018b0c911ad",
+        "video": "masset_9ad934f231c04048092769cb",
+        "orientation": "image"
+      },
+      "response": {
+        "error": {
+          "code": "wallet_insufficient",
+          "message": "The org's wallet cannot cover this request — not enough credits",
+          "requestId": "0ae7a7e2-fdce-4750-92b0-b3ebc88079ad"
+        }
+      },
+      "file": "jobs/ladder-512-still-3s-clip.json"
+    },
+    {
+      "seq": 14,
+      "section": "valid",
+      "title": "supplement · media/jobs — motion.generate · ladder-1x1-still-3s-clip",
+      "method": "POST",
+      "path": "/orgs/:id/alphastudio/media/jobs",
+      "status": 402,
+      "ms": 835,
+      "requestId": "d88d58b7-3c45-415c-b786-84385e78ec07",
+      "note": "required keys; run 1’s pair (org 1823): the 1×1 still and the 3.0 s clip",
+      "request": {
+        "capability": "motion.generate",
+        "plan": "balanced",
+        "image": "masset_13aa9b474ccb762af89220b5",
+        "video": "masset_9ad934f231c04048092769cb",
+        "orientation": "image"
+      },
+      "response": {
+        "error": {
+          "code": "wallet_insufficient",
+          "message": "The org's wallet cannot cover this request — not enough credits",
+          "requestId": "d88d58b7-3c45-415c-b786-84385e78ec07"
+        }
+      },
+      "file": "jobs/ladder-1x1-still-3s-clip.json"
+    },
+    {
+      "seq": 15,
+      "section": "valid",
+      "title": "supplement · media/jobs — motion.generate · ladder-orientation-video",
+      "method": "POST",
+      "path": "/orgs/:id/alphastudio/media/jobs",
+      "status": 402,
+      "ms": 684,
+      "requestId": "45c0807d-01d4-47f5-bd61-70a00ff5a3d5",
+      "note": "required keys with orientation \"video\"",
+      "request": {
+        "capability": "motion.generate",
+        "plan": "balanced",
+        "image": "masset_d9783f9d465e4018b0c911ad",
+        "video": "masset_418045b037f735053254ec4c",
+        "orientation": "video"
+      },
+      "response": {
+        "error": {
+          "code": "wallet_insufficient",
+          "message": "The org's wallet cannot cover this request — not enough credits",
+          "requestId": "45c0807d-01d4-47f5-bd61-70a00ff5a3d5"
+        }
+      },
+      "file": "jobs/ladder-orientation-video.json"
+    },
+    {
+      "seq": 16,
+      "section": "valid",
+      "title": "supplement · media/jobs — motion.generate · ladder-plus-keepSound-prompt",
+      "method": "POST",
+      "path": "/orgs/:id/alphastudio/media/jobs",
+      "status": 402,
+      "ms": 1159,
+      "requestId": "52a830bd-f0de-4939-b1b5-da0c37318cd0",
+      "note": "required keys plus keepSound true and prompt",
+      "request": {
+        "capability": "motion.generate",
+        "plan": "balanced",
+        "image": "masset_d9783f9d465e4018b0c911ad",
+        "video": "masset_418045b037f735053254ec4c",
+        "orientation": "image",
+        "keepSound": true,
+        "prompt": "she keeps her warm, natural delivery; soft office light"
+      },
+      "response": {
+        "error": {
+          "code": "wallet_insufficient",
+          "message": "The org's wallet cannot cover this request — not enough credits",
+          "requestId": "52a830bd-f0de-4939-b1b5-da0c37318cd0"
+        }
+      },
+      "file": "jobs/ladder-plus-keepSound-prompt.json"
+    },
+    {
+      "seq": 17,
+      "section": "valid",
+      "title": "supplement · media/jobs — motion.generate · ladder-plus-keepSound-false",
+      "method": "POST",
+      "path": "/orgs/:id/alphastudio/media/jobs",
+      "status": 402,
+      "ms": 852,
+      "requestId": "b8f58226-9442-4d51-afd2-86e673578965",
+      "note": "required keys plus keepSound false",
+      "request": {
+        "capability": "motion.generate",
+        "plan": "balanced",
+        "image": "masset_d9783f9d465e4018b0c911ad",
+        "video": "masset_418045b037f735053254ec4c",
+        "orientation": "image",
+        "keepSound": false
+      },
+      "response": {
+        "error": {
+          "code": "wallet_insufficient",
+          "message": "The org's wallet cannot cover this request — not enough credits",
+          "requestId": "b8f58226-9442-4d51-afd2-86e673578965"
+        }
+      },
+      "file": "jobs/ladder-plus-keepSound-false.json"
+    },
+    {
+      "seq": 18,
+      "section": "valid",
+      "title": "supplement · media/jobs — motion.generate · ladder-plus-lang-en",
+      "method": "POST",
+      "path": "/orgs/:id/alphastudio/media/jobs",
+      "status": 402,
+      "ms": 692,
+      "requestId": "cc87be93-4c03-4213-8ce7-f326ad15610c",
+      "note": "required keys plus lang \"en\" — is the key refused, or only \"ar\"?",
+      "request": {
+        "capability": "motion.generate",
+        "plan": "balanced",
+        "image": "masset_d9783f9d465e4018b0c911ad",
+        "video": "masset_418045b037f735053254ec4c",
+        "orientation": "image",
+        "lang": "en"
+      },
+      "response": {
+        "error": {
+          "code": "wallet_insufficient",
+          "message": "The org's wallet cannot cover this request — not enough credits",
+          "requestId": "cc87be93-4c03-4213-8ce7-f326ad15610c"
+        }
+      },
+      "file": "jobs/ladder-plus-lang-en.json"
+    },
+    {
+      "seq": 19,
+      "section": "valid",
+      "title": "supplement · media/jobs — motion.generate · ladder-plus-lang-ar",
+      "method": "POST",
+      "path": "/orgs/:id/alphastudio/media/jobs",
+      "status": 400,
+      "ms": 661,
+      "requestId": "3f76fcab-6426-4620-8b02-609f8ffed5d0",
+      "note": "required keys plus lang \"ar\" — the document’s own value (refused in run 2)",
+      "request": {
+        "capability": "motion.generate",
+        "plan": "balanced",
+        "image": "masset_d9783f9d465e4018b0c911ad",
+        "video": "masset_418045b037f735053254ec4c",
+        "orientation": "image",
+        "lang": "ar"
+      },
+      "response": {
+        "error": {
+          "code": "bad_request",
+          "message": "The media service rejected the request — check the body against the capability's schema",
+          "requestId": "3f76fcab-6426-4620-8b02-609f8ffed5d0"
+        }
+      },
+      "file": "jobs/ladder-plus-lang-ar.json"
+    },
+    {
+      "seq": 20,
+      "section": "after",
+      "title": "supplement · wallet — after the rungs",
+      "method": "GET",
+      "path": "/orgs/:id/alphastudio/wallet",
+      "status": 200,
+      "ms": 728,
+      "requestId": "1a1f8ef9-c34e-4f2b-9293-19af36ec8b44",
+      "response": {
+        "cents": 0,
+        "heldCents": 0,
+        "availableCents": 0
+      },
+      "file": "after/wallet.json"
+    },
+    {
+      "seq": 21,
+      "section": "after",
+      "title": "supplement · media/jobs — list after (no job may exist)",
+      "method": "GET",
+      "path": "/orgs/:id/alphastudio/media/jobs",
+      "status": 200,
+      "ms": 933,
+      "requestId": "a1007ef0-309a-41f2-9b0f-0570837a1533",
+      "response": {
+        "jobs": []
+      },
+      "file": "after/jobs.json"
+    },
+    {
+      "seq": 22,
+      "section": "cleanup",
+      "title": "supplement · cleanup · DELETE media/assets/masset_13aa9b474ccb762af89220b5",
+      "method": "DELETE",
+      "path": "/orgs/:id/alphastudio/media/assets/masset_13aa9b474ccb762af89220b5",
+      "status": 204,
+      "ms": 768,
+      "requestId": "a7083215-9373-40c9-b97b-cb71647ae62c"
+    },
+    {
+      "seq": 23,
+      "section": "cleanup",
+      "title": "supplement · cleanup · DELETE media/assets/masset_d9783f9d465e4018b0c911ad",
+      "method": "DELETE",
+      "path": "/orgs/:id/alphastudio/media/assets/masset_d9783f9d465e4018b0c911ad",
+      "status": 204,
+      "ms": 756,
+      "requestId": "f772ba8f-1bc3-4925-ba39-c12b4e3f5e21"
+    },
+    {
+      "seq": 24,
+      "section": "cleanup",
+      "title": "supplement · cleanup · DELETE media/assets/masset_9ad934f231c04048092769cb",
+      "method": "DELETE",
+      "path": "/orgs/:id/alphastudio/media/assets/masset_9ad934f231c04048092769cb",
+      "status": 204,
+      "ms": 762,
+      "requestId": "3e3e2c42-7c4e-4667-a0c0-4afabde21d40"
+    },
+    {
+      "seq": 25,
+      "section": "cleanup",
+      "title": "supplement · cleanup · DELETE media/assets/masset_418045b037f735053254ec4c",
+      "method": "DELETE",
+      "path": "/orgs/:id/alphastudio/media/assets/masset_418045b037f735053254ec4c",
+      "status": 204,
+      "ms": 757,
+      "requestId": "4689fc22-f4ef-4856-a086-3066e4e2f4c6"
+    },
+    {
+      "seq": 26,
+      "section": "cleanup",
+      "title": "supplement · cleanup · media/assets — list re-read",
+      "method": "GET",
+      "path": "/orgs/:id/alphastudio/media/assets",
+      "status": 200,
+      "ms": 728,
+      "requestId": "14be3218-2b8c-469e-bd9c-72a8ecff653a",
+      "response": {
+        "assets": []
+      },
+      "file": "after/assets.json"
+    }
+  ],
+  "findings": [
+    "Supplement on the EXISTING QA org 1824 (qa+1789026912812hsn0910@alphapromena.com) — no new org.",
+    "Wallet: 200 {\"cents\":0,\"heldCents\":0,\"availableCents\":0}.",
+    "asset A (image/png): presign 201 → masset_13aa9b474ccb762af89220b5; PUT 200.",
+    "512 px PNG source: ffmpeg lavfi colour source, 512×512, 1900 bytes.",
+    "asset C (image/png): presign 201 → masset_d9783f9d465e4018b0c911ad; PUT 200.",
+    "3 s MP4 source: ffmpeg lavfi colour source, 3 s, 64×64, 2384 bytes.",
+    "asset V (video/mp4): presign 201 → masset_9ad934f231c04048092769cb; PUT 200.",
+    "5 s MP4 source: ffmpeg lavfi colour source, 5 s, 64×64, 2914 bytes.",
+    "asset W (video/mp4): presign 201 → masset_418045b037f735053254ec4c; PUT 200.",
+    "motion.generate · ladder-required-keys-only: 402 code=wallet_insufficient \"The org's wallet cannot cover this request — not enough credits\".",
+    "motion.generate · ladder-1x1-still-5s-clip: 402 code=wallet_insufficient \"The org's wallet cannot cover this request — not enough credits\".",
+    "motion.generate · ladder-512-still-3s-clip: 402 code=wallet_insufficient \"The org's wallet cannot cover this request — not enough credits\".",
+    "motion.generate · ladder-1x1-still-3s-clip: 402 code=wallet_insufficient \"The org's wallet cannot cover this request — not enough credits\".",
+    "motion.generate · ladder-orientation-video: 402 code=wallet_insufficient \"The org's wallet cannot cover this request — not enough credits\".",
+    "motion.generate · ladder-plus-keepSound-prompt: 402 code=wallet_insufficient \"The org's wallet cannot cover this request — not enough credits\".",
+    "motion.generate · ladder-plus-keepSound-false: 402 code=wallet_insufficient \"The org's wallet cannot cover this request — not enough credits\".",
+    "motion.generate · ladder-plus-lang-en: 402 code=wallet_insufficient \"The org's wallet cannot cover this request — not enough credits\".",
+    "motion.generate · ladder-plus-lang-ar: 400 code=bad_request \"The media service rejected the request — check the body against the capability's schema\".",
+    "After the rungs: wallet {\"cents\":0,\"heldCents\":0,\"availableCents\":0}; jobs listed: 0.",
+    "cleanup masset_13aa9b474ccb762af89220b5 (image/png): 204.",
+    "cleanup masset_d9783f9d465e4018b0c911ad (image/png): 204.",
+    "cleanup masset_9ad934f231c04048092769cb (video/mp4): 204.",
+    "cleanup masset_418045b037f735053254ec4c (video/mp4): 204.",
+    "cleanup list re-read: 200 {\"assets\":[]}."
+  ]
+}

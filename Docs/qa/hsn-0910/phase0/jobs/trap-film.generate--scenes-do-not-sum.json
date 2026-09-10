@@ -1,0 +1,33 @@
+{
+  "title": "§3.3 · media/jobs — film.generate · scenes-do-not-sum",
+  "method": "POST",
+  "path": "/orgs/:id/alphastudio/media/jobs",
+  "status": 400,
+  "ms": 747,
+  "requestId": "f95e33be-02c4-4d5a-a619-d34434888660",
+  "note": "the document’s refusal; 400 expected BEFORE the wallet",
+  "request": {
+    "capability": "film.generate",
+    "plan": "balanced",
+    "sec": 3,
+    "aspect": "9:16",
+    "audio": true,
+    "scenes": [
+      {
+        "sec": 2,
+        "camera": "wide establishing shot"
+      },
+      {
+        "sec": 2,
+        "camera": "slow push in"
+      }
+    ]
+  },
+  "response": {
+    "error": {
+      "code": "bad_request",
+      "message": "The media service rejected the request — check the body against the capability's schema",
+      "requestId": "f95e33be-02c4-4d5a-a619-d34434888660"
+    }
+  }
+}

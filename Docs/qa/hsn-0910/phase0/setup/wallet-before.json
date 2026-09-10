@@ -1,0 +1,13 @@
+{
+  "title": "wallet — the fresh org (the 402 shield)",
+  "method": "GET",
+  "path": "/orgs/:id/alphastudio/wallet",
+  "status": 200,
+  "ms": 3354,
+  "requestId": "703cf37f-d615-445a-8ac4-2337a6e37252",
+  "response": {
+    "cents": 0,
+    "heldCents": 0,
+    "availableCents": 0
+  }
+}

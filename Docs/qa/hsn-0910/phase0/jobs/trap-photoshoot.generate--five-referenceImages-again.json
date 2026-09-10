@@ -1,0 +1,44 @@
+{
+  "title": "§3.3 · media/jobs — photoshoot.generate · five-referenceImages-again",
+  "method": "POST",
+  "path": "/orgs/:id/alphastudio/media/jobs",
+  "status": 502,
+  "ms": 443,
+  "requestId": "b81bb7bd-1161-4572-bd10-e28cd98e61e0",
+  "note": "the document’s refusal; 400 expected BEFORE the wallet",
+  "request": {
+    "capability": "photoshoot.generate",
+    "params": {
+      "referenceImages": [
+        "<redacted url: 1621 chars>",
+        "<redacted url: 1621 chars>",
+        "<redacted url: 1621 chars>",
+        "<redacted url: 1621 chars>",
+        "<redacted url: 1621 chars>"
+      ],
+      "aspectRatio": "1:1",
+      "outputFormat": "png"
+    },
+    "guidance": [
+      {
+        "role": "scene",
+        "text": "on a brushed-steel table in a glass-walled briefing room"
+      },
+      {
+        "role": "style",
+        "text": "corporate editorial photography, soft key light"
+      },
+      {
+        "role": "palette",
+        "text": "cool neutrals, deep navy, one teal accent"
+      }
+    ]
+  },
+  "response": {
+    "error": {
+      "code": "bad_gateway",
+      "message": "The media service is unavailable — try again later",
+      "requestId": "b81bb7bd-1161-4572-bd10-e28cd98e61e0"
+    }
+  }
+}

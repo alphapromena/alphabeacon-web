@@ -1,0 +1,41 @@
+{
+  "title": "§3.3 · media/jobs — media.generate · unknown-param-key",
+  "method": "POST",
+  "path": "/orgs/:id/alphastudio/media/jobs",
+  "status": 400,
+  "ms": 819,
+  "requestId": "cf3a7e0a-3a26-47a0-9155-253a9fc61fd3",
+  "note": "the document’s refusal; 400 expected BEFORE the wallet",
+  "request": {
+    "capability": "media.generate",
+    "plan": "balanced",
+    "kind": "image",
+    "prompt": "a flat-vector report cover, deep navy, generous negative space",
+    "params": {
+      "aspectRatio": "1:1",
+      "outputFormat": "png",
+      "foo": "bar"
+    },
+    "guidance": [
+      {
+        "role": "headline",
+        "text": "Poor data quality costs $12.9M a year"
+      },
+      {
+        "role": "palette",
+        "text": "deep navy, slate grey, one teal accent"
+      }
+    ],
+    "collection": {
+      "use": true,
+      "hint": "our mark and the product shot"
+    }
+  },
+  "response": {
+    "error": {
+      "code": "bad_request",
+      "message": "The media service rejected the request — check the body against the capability's schema",
+      "requestId": "cf3a7e0a-3a26-47a0-9155-253a9fc61fd3"
+    }
+  }
+}

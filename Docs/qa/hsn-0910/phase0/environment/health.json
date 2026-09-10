@@ -1,0 +1,20 @@
+{
+  "title": "§3.8 · GET /health — the liveness body and its headers",
+  "method": "GET",
+  "path": "/health",
+  "status": 200,
+  "ms": 1140,
+  "requestId": "0f7a4173-1334-4d45-81b8-b51862e6ca44",
+  "response": {
+    "ok": true
+  },
+  "headers": {
+    "connection": "keep-alive",
+    "content-length": "11",
+    "content-type": "application/json",
+    "date": "Thu, 10 Sep 2026 07:55:13 GMT",
+    "x-amzn-requestid": "4aa555f6-19fb-4f71-a3a8-b3578bdf4069",
+    "x-amzn-trace-id": "Root=1-6aa26260-230d64910ba642c77bd30759;Parent=3605f0d96eab1e60;Sampled=0;Lineage=1:b360ccf9:0",
+    "x-request-id": "0f7a4173-1334-4d45-81b8-b51862e6ca44"
+  }
+}

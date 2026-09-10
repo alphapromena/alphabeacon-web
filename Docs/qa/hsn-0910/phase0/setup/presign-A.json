@@ -1,0 +1,18 @@
+{
+  "title": "asset A · media/assets/presign — image/png",
+  "method": "POST",
+  "path": "/orgs/:id/alphastudio/media/assets/presign",
+  "status": 201,
+  "ms": 650,
+  "requestId": "2ce1216b-570f-44ab-a5d3-fd60cca41fa0",
+  "request": {
+    "mediaType": "image/png",
+    "desc": "HSN-0910 Phase 0 probe — reference image A"
+  },
+  "response": {
+    "assetId": "masset_b24afbaa6bcb30f68af48c8e",
+    "uploadUrl": "<redacted url: 1661 chars>",
+    "expiresAt": "2026-09-10T08:10:26.204Z",
+    "mediaType": "image/png"
+  }
+}

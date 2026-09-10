@@ -1,0 +1,64 @@
+{
+  "title": "§3.1 · catalog — voice.speak?plan=creative",
+  "method": "GET",
+  "path": "/orgs/:id/alphastudio/catalog/capabilities/voice.speak?plan=creative",
+  "status": 200,
+  "ms": 590,
+  "requestId": "aab599e7-528b-44db-acf3-1661ed91ce76",
+  "response": {
+    "capability": "voice.speak",
+    "selectable": true,
+    "field": "plan",
+    "plan": "creative",
+    "models": [
+      {
+        "alias": "voice-multilingual",
+        "kind": "audio",
+        "plan": null,
+        "displayHint": "Voice (multilingual)",
+        "capabilitySchema": {
+          "type": "object",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "properties": {
+            "lang": {
+              "type": "string",
+              "pattern": "^[a-z]{2}$"
+            },
+            "speed": {
+              "type": "number",
+              "maximum": 1.2,
+              "minimum": 0.7
+            },
+            "voice": {
+              "enum": [
+                "g3YpdjT1OTh9cunaumJs",
+                "Rachel"
+              ],
+              "type": "string"
+            },
+            "stability": {
+              "type": "number",
+              "maximum": 1,
+              "minimum": 0
+            },
+            "similarity": {
+              "type": "number",
+              "maximum": 1,
+              "minimum": 0
+            }
+          },
+          "additionalProperties": false
+        },
+        "capabilities": [
+          "voice.speak"
+        ],
+        "cost": {
+          "audio_text_units": "0.1"
+        },
+        "appMetadata": {
+          "min_plan": "pro"
+        }
+      }
+    ]
+  }
+}

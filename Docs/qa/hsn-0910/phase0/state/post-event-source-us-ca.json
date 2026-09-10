@@ -1,0 +1,21 @@
+{
+  "title": "§3.7c · POST event-sources — {kind:\"holidays\", country:\"US\", state:\"CA\"}",
+  "method": "POST",
+  "path": "/orgs/:id/event-sources",
+  "status": 201,
+  "ms": 918,
+  "requestId": "efc30c5b-ef94-4495-afc8-8292122cc393",
+  "request": {
+    "kind": "holidays",
+    "country": "US",
+    "state": "CA"
+  },
+  "response": {
+    "id": "111",
+    "orgId": "1824",
+    "kind": "holidays",
+    "country": "US",
+    "createdAt": "2026-09-10T07:57:15.459Z",
+    "updatedAt": "2026-09-10T07:57:15.459Z"
+  }
+}

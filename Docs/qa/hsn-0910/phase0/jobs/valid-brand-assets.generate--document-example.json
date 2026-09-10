@@ -1,0 +1,36 @@
+{
+  "title": "§3.2 · media/jobs — brand-assets.generate · document-example",
+  "method": "POST",
+  "path": "/orgs/:id/alphastudio/media/jobs",
+  "status": 402,
+  "ms": 815,
+  "requestId": "9f2e6a8f-20cb-4024-ad48-fa2a751a3760",
+  "note": "the document’s example; 402 expected on the zero wallet",
+  "request": {
+    "capability": "brand-assets.generate",
+    "params": {
+      "count": 2
+    },
+    "guidance": [
+      {
+        "role": "subject",
+        "text": "a wordmark for 'Alpha Pro MENA' with a compact abstract mark above it"
+      },
+      {
+        "role": "style",
+        "text": "flat, minimal, enterprise-grade — a working mark, not an illustration"
+      },
+      {
+        "role": "palette",
+        "text": "deep navy on warm off-white, one teal accent"
+      }
+    ]
+  },
+  "response": {
+    "error": {
+      "code": "wallet_insufficient",
+      "message": "The org's wallet cannot cover this request — not enough credits",
+      "requestId": "9f2e6a8f-20cb-4024-ad48-fa2a751a3760"
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "title": "§3.3 · media/jobs — avatars.generate · count-9",
+  "method": "POST",
+  "path": "/orgs/:id/alphastudio/media/jobs",
+  "status": 400,
+  "ms": 595,
+  "requestId": "54e04f7d-6523-4d15-991f-00b3049b3e3a",
+  "note": "the document’s refusal; 400 expected BEFORE the wallet",
+  "request": {
+    "capability": "avatars.generate",
+    "params": {
+      "referenceImages": [
+        "<redacted url: 1621 chars>"
+      ],
+      "count": 9
+    },
+    "guidance": [
+      {
+        "role": "style",
+        "text": "corporate headshot, navy blazer, plain light backdrop"
+      }
+    ]
+  },
+  "response": {
+    "error": {
+      "code": "bad_request",
+      "message": "The media service rejected the request — check the body against the capability's schema",
+      "requestId": "54e04f7d-6523-4d15-991f-00b3049b3e3a"
+    }
+  }
+}

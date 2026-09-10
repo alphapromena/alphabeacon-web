@@ -1,0 +1,87 @@
+{
+  "title": "§3.1 · catalog — logos.redesign?plan=creative",
+  "method": "GET",
+  "path": "/orgs/:id/alphastudio/catalog/capabilities/logos.redesign?plan=creative",
+  "status": 200,
+  "ms": 602,
+  "requestId": "e9652e28-f915-4544-892f-885c09ce9742",
+  "response": {
+    "capability": "logos.redesign",
+    "selectable": true,
+    "field": "plan",
+    "plan": "creative",
+    "models": [
+      {
+        "alias": "image-reference",
+        "kind": "image",
+        "plan": "creative",
+        "displayHint": "Image from a reference",
+        "capabilitySchema": {
+          "type": "object",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "properties": {
+            "seed": {
+              "type": "integer",
+              "maximum": 4294967295,
+              "minimum": 0
+            },
+            "count": {
+              "type": "integer",
+              "maximum": 20,
+              "minimum": 1
+            },
+            "aspectRatio": {
+              "enum": [
+                "1:1",
+                "16:9",
+                "9:16",
+                "4:3",
+                "3:4",
+                "3:2",
+                "2:3"
+              ],
+              "type": "string"
+            },
+            "outputFormat": {
+              "enum": [
+                "png",
+                "jpeg",
+                "webp"
+              ],
+              "type": "string"
+            },
+            "negativePrompt": {
+              "type": "string",
+              "maxLength": 1000
+            },
+            "referenceImages": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uri"
+              },
+              "maxItems": 4,
+              "minItems": 1
+            }
+          },
+          "additionalProperties": false
+        },
+        "capabilities": [
+          "avatar.generate",
+          "images.edit",
+          "logos.generate",
+          "logos.redesign",
+          "media.generate",
+          "photoshoot.generate",
+          "social-posts.media"
+        ],
+        "cost": {
+          "images": "0.06"
+        },
+        "appMetadata": {
+          "min_plan": "pro"
+        }
+      }
+    ]
+  }
+}

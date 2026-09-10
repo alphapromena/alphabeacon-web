@@ -1,0 +1,34 @@
+{
+  "title": "§3.2 · media/jobs — film.generate · document-example",
+  "method": "POST",
+  "path": "/orgs/:id/alphastudio/media/jobs",
+  "status": 402,
+  "ms": 1110,
+  "requestId": "ae3434e6-6c1a-4115-88de-450a48955798",
+  "note": "the document’s example; 402 expected on the zero wallet",
+  "request": {
+    "capability": "film.generate",
+    "plan": "balanced",
+    "sec": 3,
+    "aspect": "9:16",
+    "audio": true,
+    "scenes": [
+      {
+        "sec": 2,
+        "speak": "none",
+        "camera": "wide establishing shot of a sunlit café, morning light"
+      },
+      {
+        "sec": 1,
+        "camera": "slow push toward a coffee cup, steam rising"
+      }
+    ]
+  },
+  "response": {
+    "error": {
+      "code": "wallet_insufficient",
+      "message": "The org's wallet cannot cover this request — not enough credits",
+      "requestId": "ae3434e6-6c1a-4115-88de-450a48955798"
+    }
+  }
+}

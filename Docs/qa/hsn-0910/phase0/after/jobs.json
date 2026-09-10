@@ -1,0 +1,11 @@
+{
+  "title": "media/jobs — list after (no job may exist)",
+  "method": "GET",
+  "path": "/orgs/:id/alphastudio/media/jobs",
+  "status": 200,
+  "ms": 995,
+  "requestId": "6eb52963-f7d6-4c30-98c8-acfcf8554db6",
+  "response": {
+    "jobs": []
+  }
+}

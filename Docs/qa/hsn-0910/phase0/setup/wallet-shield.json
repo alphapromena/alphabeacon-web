@@ -1,0 +1,13 @@
+{
+  "title": "wallet — re-read immediately before any job body",
+  "method": "GET",
+  "path": "/orgs/:id/alphastudio/wallet",
+  "status": 200,
+  "ms": 729,
+  "requestId": "cd47534b-733e-4e8e-9639-6b7645d7bd91",
+  "response": {
+    "cents": 0,
+    "heldCents": 0,
+    "availableCents": 0
+  }
+}

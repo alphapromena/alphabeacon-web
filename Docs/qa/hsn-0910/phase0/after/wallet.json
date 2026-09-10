@@ -1,0 +1,13 @@
+{
+  "title": "wallet — after every refused body",
+  "method": "GET",
+  "path": "/orgs/:id/alphastudio/wallet",
+  "status": 200,
+  "ms": 900,
+  "requestId": "29fe6be9-e17c-4657-b253-e1d554f7f009",
+  "response": {
+    "cents": 0,
+    "heldCents": 0,
+    "availableCents": 0
+  }
+}

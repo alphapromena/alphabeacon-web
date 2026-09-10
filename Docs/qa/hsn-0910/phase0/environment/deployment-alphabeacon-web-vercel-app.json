@@ -1,0 +1,10 @@
+{
+  "origin": "<redacted url: 34 chars>",
+  "htmlStatus": 0,
+  "bundles": [],
+  "scriptHosts": [],
+  "mode": "UNREACHABLE from this host (transport error — not measured here)",
+  "transport": {
+    "transportError": "TypeError: fetch failed"
+  }
+}

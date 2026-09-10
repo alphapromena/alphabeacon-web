@@ -1,0 +1,25 @@
+{
+  "title": "supplement · media/jobs — motion.generate · ladder-plus-keepSound-prompt",
+  "method": "POST",
+  "path": "/orgs/:id/alphastudio/media/jobs",
+  "status": 402,
+  "ms": 1159,
+  "requestId": "52a830bd-f0de-4939-b1b5-da0c37318cd0",
+  "note": "required keys plus keepSound true and prompt",
+  "request": {
+    "capability": "motion.generate",
+    "plan": "balanced",
+    "image": "masset_d9783f9d465e4018b0c911ad",
+    "video": "masset_418045b037f735053254ec4c",
+    "orientation": "image",
+    "keepSound": true,
+    "prompt": "she keeps her warm, natural delivery; soft office light"
+  },
+  "response": {
+    "error": {
+      "code": "wallet_insufficient",
+      "message": "The org's wallet cannot cover this request — not enough credits",
+      "requestId": "52a830bd-f0de-4939-b1b5-da0c37318cd0"
+    }
+  }
+}

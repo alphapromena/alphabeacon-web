@@ -1,0 +1,26 @@
+{
+  "title": "§3.2 · media/jobs — motion.generate · ladder-512-still-3s-clip",
+  "method": "POST",
+  "path": "/orgs/:id/alphastudio/media/jobs",
+  "status": 400,
+  "ms": 856,
+  "requestId": "5fc4499a-2256-4a1d-baf6-fb5cbd1fe166",
+  "note": "the example with the 512 px still and the 3.0 s clip",
+  "request": {
+    "capability": "motion.generate",
+    "plan": "balanced",
+    "image": "masset_1508fa6f5391e767f91d2df2",
+    "video": "masset_8ea12cc8634160529ee6834c",
+    "orientation": "image",
+    "keepSound": true,
+    "prompt": "she keeps her warm, natural delivery; soft office light",
+    "lang": "ar"
+  },
+  "response": {
+    "error": {
+      "code": "bad_request",
+      "message": "The media service rejected the request — check the body against the capability's schema",
+      "requestId": "5fc4499a-2256-4a1d-baf6-fb5cbd1fe166"
+    }
+  }
+}

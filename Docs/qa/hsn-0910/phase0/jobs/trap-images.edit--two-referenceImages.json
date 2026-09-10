@@ -1,0 +1,28 @@
+{
+  "title": "§3.3 · media/jobs — images.edit · two-referenceImages",
+  "method": "POST",
+  "path": "/orgs/:id/alphastudio/media/jobs",
+  "status": 400,
+  "ms": 767,
+  "requestId": "1df664d7-1b1b-4fed-8b67-31d711530e7c",
+  "note": "the document’s refusal; 400 expected BEFORE the wallet",
+  "request": {
+    "capability": "images.edit",
+    "instruction": "replace the background with a plain deep-navy studio backdrop",
+    "params": {
+      "referenceImages": [
+        "<redacted url: 1621 chars>",
+        "<redacted url: 1621 chars>"
+      ],
+      "aspectRatio": "1:1",
+      "outputFormat": "png"
+    }
+  },
+  "response": {
+    "error": {
+      "code": "bad_request",
+      "message": "The media service rejected the request — check the body against the capability's schema",
+      "requestId": "1df664d7-1b1b-4fed-8b67-31d711530e7c"
+    }
+  }
+}

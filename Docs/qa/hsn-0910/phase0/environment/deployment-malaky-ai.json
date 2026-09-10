@@ -1,0 +1,9 @@
+{
+  "origin": "<redacted url: 17 chars>",
+  "htmlStatus": 200,
+  "bundles": [],
+  "scriptHosts": [
+    "img1.wsimg.com"
+  ],
+  "mode": "NOT A VITE BUILD — no /assets/*.js; script hosts [img1.wsimg.com]"
+}

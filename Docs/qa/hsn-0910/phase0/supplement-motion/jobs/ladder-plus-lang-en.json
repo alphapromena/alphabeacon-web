@@ -1,0 +1,24 @@
+{
+  "title": "supplement · media/jobs — motion.generate · ladder-plus-lang-en",
+  "method": "POST",
+  "path": "/orgs/:id/alphastudio/media/jobs",
+  "status": 402,
+  "ms": 692,
+  "requestId": "cc87be93-4c03-4213-8ce7-f326ad15610c",
+  "note": "required keys plus lang \"en\" — is the key refused, or only \"ar\"?",
+  "request": {
+    "capability": "motion.generate",
+    "plan": "balanced",
+    "image": "masset_d9783f9d465e4018b0c911ad",
+    "video": "masset_418045b037f735053254ec4c",
+    "orientation": "image",
+    "lang": "en"
+  },
+  "response": {
+    "error": {
+      "code": "wallet_insufficient",
+      "message": "The org's wallet cannot cover this request — not enough credits",
+      "requestId": "cc87be93-4c03-4213-8ce7-f326ad15610c"
+    }
+  }
+}

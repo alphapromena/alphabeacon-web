@@ -1,0 +1,26 @@
+{
+  "title": "§3.2 · media/jobs — motion.generate · document-example",
+  "method": "POST",
+  "path": "/orgs/:id/alphastudio/media/jobs",
+  "status": 400,
+  "ms": 740,
+  "requestId": "06e3b44c-7e9f-4c07-91eb-ecd36516cbd4",
+  "note": "the document’s example; 402 expected on the zero wallet",
+  "request": {
+    "capability": "motion.generate",
+    "plan": "balanced",
+    "image": "masset_1508fa6f5391e767f91d2df2",
+    "video": "masset_f8737222c97ea8030669bb3b",
+    "orientation": "image",
+    "keepSound": true,
+    "prompt": "she keeps her warm, natural delivery; soft office light",
+    "lang": "ar"
+  },
+  "response": {
+    "error": {
+      "code": "bad_request",
+      "message": "The media service rejected the request — check the body against the capability's schema",
+      "requestId": "06e3b44c-7e9f-4c07-91eb-ecd36516cbd4"
+    }
+  }
+}

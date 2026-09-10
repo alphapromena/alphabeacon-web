@@ -1,0 +1,12 @@
+{
+  "title": "§3.4 · GET /orgs/1813/alphastudio/media/jobs — READ ONLY",
+  "method": "GET",
+  "path": "/orgs/1813/alphastudio/media/jobs",
+  "status": 200,
+  "ms": 857,
+  "requestId": "bd52cb81-1d9e-44fa-84e5-4e290d9f2236",
+  "note": "a list read on the funded org; never a POST there",
+  "response": {
+    "jobs": []
+  }
+}

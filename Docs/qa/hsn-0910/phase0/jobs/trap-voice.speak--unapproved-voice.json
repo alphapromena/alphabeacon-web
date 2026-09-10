@@ -1,0 +1,28 @@
+{
+  "title": "§3.3 · media/jobs — voice.speak · unapproved-voice",
+  "method": "POST",
+  "path": "/orgs/:id/alphastudio/media/jobs",
+  "status": 400,
+  "ms": 790,
+  "requestId": "35d55872-e0f6-4cb4-a2cb-41dea02bb78d",
+  "note": "the document’s refusal; 400 expected BEFORE the wallet",
+  "request": {
+    "capability": "voice.speak",
+    "plan": "balanced",
+    "prompt": "Welcome to Alpha Pro. Here is what changed this week.",
+    "params": {
+      "voice": "NotAnApprovedVoice",
+      "lang": "en",
+      "stability": 0.5,
+      "similarity": 0.75,
+      "speed": 1
+    }
+  },
+  "response": {
+    "error": {
+      "code": "bad_request",
+      "message": "The media service rejected the request — check the body against the capability's schema",
+      "requestId": "35d55872-e0f6-4cb4-a2cb-41dea02bb78d"
+    }
+  }
+}

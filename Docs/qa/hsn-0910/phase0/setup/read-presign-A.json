@@ -1,0 +1,13 @@
+{
+  "title": "asset A · media/assets/:id/presign — the read url",
+  "method": "POST",
+  "path": "/orgs/:id/alphastudio/media/assets/masset_b24afbaa6bcb30f68af48c8e/presign",
+  "status": 200,
+  "ms": 774,
+  "requestId": "2b0804e9-db7b-454a-bb8e-71bc4329a1ac",
+  "response": {
+    "assetId": "masset_b24afbaa6bcb30f68af48c8e",
+    "url": "<redacted url: 1621 chars>",
+    "expiresAt": "2026-09-10T08:55:33.918Z"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "title": "asset C · media/assets/presign — image/png",
+  "method": "POST",
+  "path": "/orgs/:id/alphastudio/media/assets/presign",
+  "status": 201,
+  "ms": 2430,
+  "requestId": "8a7abaae-98b7-4efd-b247-a03eacc48dbc",
+  "request": {
+    "mediaType": "image/png",
+    "desc": "HSN-0910 Phase 0 probe — a 512×512 motion still (the document’s 340 px floor honoured)"
+  },
+  "response": {
+    "assetId": "masset_1508fa6f5391e767f91d2df2",
+    "uploadUrl": "<redacted url: 1661 chars>",
+    "expiresAt": "2026-09-10T08:10:31.326Z",
+    "mediaType": "image/png"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "title": "§3.2 · media/jobs — logos.redesign · document-example",
+  "method": "POST",
+  "path": "/orgs/:id/alphastudio/media/jobs",
+  "status": 402,
+  "ms": 800,
+  "requestId": "9697d8a8-9d6c-4f51-a773-e2dce866e496",
+  "note": "the document’s example; 402 expected on the zero wallet",
+  "request": {
+    "capability": "logos.redesign",
+    "plan": "balanced",
+    "params": {
+      "referenceImages": [
+        "<redacted url: 1621 chars>"
+      ],
+      "count": 1,
+      "aspectRatio": "1:1",
+      "outputFormat": "png"
+    },
+    "guidance": [
+      {
+        "role": "style",
+        "text": "simpler geometry, more negative space, lighter type; keep it recognisable"
+      }
+    ]
+  },
+  "response": {
+    "error": {
+      "code": "wallet_insufficient",
+      "message": "The org's wallet cannot cover this request — not enough credits",
+      "requestId": "9697d8a8-9d6c-4f51-a773-e2dce866e496"
+    }
+  }
+}

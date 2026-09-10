@@ -1,0 +1,189 @@
+{
+  "title": "§3.1 · catalog — media.generate?plan=balanced",
+  "method": "GET",
+  "path": "/orgs/:id/alphastudio/catalog/capabilities/media.generate?plan=balanced",
+  "status": 200,
+  "ms": 789,
+  "requestId": "93d0f5d3-fc80-4a45-b6cf-4925031a9229",
+  "response": {
+    "capability": "media.generate",
+    "selectable": true,
+    "field": "plan",
+    "plan": "balanced",
+    "models": [
+      {
+        "alias": "image-balanced",
+        "kind": "image",
+        "plan": "balanced",
+        "displayHint": "Balanced image",
+        "capabilitySchema": {
+          "type": "object",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "properties": {
+            "seed": {
+              "type": "integer",
+              "maximum": 4294967295,
+              "minimum": 0
+            },
+            "count": {
+              "type": "integer",
+              "maximum": 20,
+              "minimum": 1
+            },
+            "aspectRatio": {
+              "enum": [
+                "1:1",
+                "16:9",
+                "9:16",
+                "4:3",
+                "3:4",
+                "3:2",
+                "2:3"
+              ],
+              "type": "string"
+            },
+            "outputFormat": {
+              "enum": [
+                "png",
+                "jpeg",
+                "webp"
+              ],
+              "type": "string"
+            },
+            "negativePrompt": {
+              "type": "string",
+              "maxLength": 1000
+            }
+          },
+          "additionalProperties": false
+        },
+        "capabilities": [
+          "logos.generate",
+          "media.generate",
+          "social-posts.media"
+        ],
+        "cost": {
+          "images": "0.03"
+        },
+        "appMetadata": {
+          "min_plan": "pro"
+        }
+      },
+      {
+        "alias": "image-reference-lite",
+        "kind": "image",
+        "plan": "balanced",
+        "displayHint": "Edit from a reference",
+        "capabilitySchema": {
+          "type": "object",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "properties": {
+            "seed": {
+              "type": "integer",
+              "maximum": 4294967295,
+              "minimum": 0
+            },
+            "count": {
+              "type": "integer",
+              "maximum": 20,
+              "minimum": 1
+            },
+            "aspectRatio": {
+              "enum": [
+                "1:1",
+                "16:9",
+                "9:16",
+                "4:3",
+                "3:4",
+                "3:2",
+                "2:3"
+              ],
+              "type": "string"
+            },
+            "outputFormat": {
+              "enum": [
+                "png",
+                "jpeg"
+              ],
+              "type": "string"
+            },
+            "referenceImages": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uri"
+              },
+              "maxItems": 4,
+              "minItems": 1
+            }
+          },
+          "additionalProperties": false
+        },
+        "capabilities": [
+          "logos.generate",
+          "logos.redesign",
+          "media.generate",
+          "social-posts.media"
+        ],
+        "cost": {
+          "images": "0.05"
+        },
+        "appMetadata": {
+          "min_plan": "pro"
+        }
+      },
+      {
+        "alias": "video-reference-core",
+        "kind": "video",
+        "plan": "balanced",
+        "displayHint": "Reference to video",
+        "capabilitySchema": {
+          "type": "object",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "properties": {
+            "audio": {
+              "type": "boolean"
+            },
+            "durationS": {
+              "type": "integer",
+              "maximum": 10,
+              "minimum": 2
+            },
+            "resolution": {
+              "type": "string",
+              "const": "480p"
+            },
+            "aspectRatio": {
+              "enum": [
+                "16:9",
+                "9:16",
+                "1:1"
+              ],
+              "type": "string"
+            },
+            "referenceImages": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uri"
+              },
+              "maxItems": 4,
+              "minItems": 1
+            }
+          },
+          "additionalProperties": false
+        },
+        "capabilities": [
+          "media.generate",
+          "social-posts.media"
+        ],
+        "cost": {
+          "video_seconds": "0.068"
+        },
+        "appMetadata": {
+          "min_plan": "free"
+        }
+      }
+    ]
+  }
+}

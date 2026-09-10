@@ -1,0 +1,11 @@
+{
+  "title": "cleanup · media/assets — list re-read",
+  "method": "GET",
+  "path": "/orgs/:id/alphastudio/media/assets",
+  "status": 200,
+  "ms": 761,
+  "requestId": "f9da841a-ab85-409d-9b05-522fdd37bad8",
+  "response": {
+    "assets": []
+  }
+}
