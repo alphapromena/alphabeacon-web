@@ -76,8 +76,8 @@ test('the checklist links reach the screens that complete each item', async ({ p
 
 test('the Studio composer is gated too — no media job before setup', async ({ page }) => {
   await open(page, 'Studio', 'Fresh org')
-  // Every model card offers the composer; the gate meets the user there.
-  await page.getByRole('link', { name: 'Use this model' }).first().click()
+  // Every capability card opens its composer (HSN-0910); the gate meets the user there.
+  await page.getByRole('main').getByRole('link', { name: 'Generate', exact: true }).click()
 
   await expect(page.getByRole('heading', { name: 'Finish your brand setup first' })).toBeVisible()
 })

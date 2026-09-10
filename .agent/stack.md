@@ -40,6 +40,7 @@ dependencies are public — no private registry, no token.
 | install the AI skill (once, committed)     | `pnpm dlx skills add shadcn/ui`                                                                     |
 | test — all / single                        | `pnpm test` / `pnpm test <path>`                                                                    |
 | e2e — state specs / goldens / axe          | `pnpm e2e` / `pnpm e2e --grep @golden` / `pnpm e2e --grep @axe`                                     |
+| e2e — a LIVE round (HSN-0910/D)            | `$env:VITE_API_BASE_URL="<dev base>"; $env:E2E_API_ENV="dev"; pnpm e2e --grep live-` (refused without `E2E_API_ENV=dev`) |
 | lint / format / typecheck                  | `pnpm lint` / `pnpm format` / `pnpm typecheck`                                                      |
 | static guard (also in CI)                  | `pnpm guard:static`                                                                                 |
 | observe the live proxy shapes (INT-6)      | `pnpm smoke:alphastudio` (needs `VITE_API_BASE_URL`; `LIVE_MEDIA=1` adds one paid render)            |
@@ -70,7 +71,9 @@ Exactly **one** reaches the app, and it is the mode switch:
 | Variable            | Where                     | Effect                                                                 |
 | ------------------- | ------------------------- | ---------------------------------------------------------------------- |
 | `VITE_API_BASE_URL` | `.env.local` (gitignored) | present → live mode for API-covered entities; absent → fully static |
-| `LIVE_MEDIA`        | shell, dev machine only   | `1` lets `smoke:alphastudio` and the live studio spec spend on ONE real render (D-INT-I). Never read by app code. |
+| `LIVE_MEDIA`        | shell, dev machine only   | `1` lets `smoke:alphastudio`, the live studio spec and `probe:hsn-0910 -- --funded-proofs` spend on real renders (D-INT-I). Never read by app code. |
+| `E2E_API_ENV`       | shell, per LIVE run       | REQUIRED for a live run, and `dev` is the only value accepted: `e2e/global-setup.ts` and `signUpAndEnter` refuse to mint QA companies anywhere else (HSN-0910/D, `Docs/api/environments.md`). Never read by app code. |
+| `PROD_API_BASE_URL` | the QA-creds store (User-scope env var), optional | When set, a live run whose `VITE_API_BASE_URL` equals it is refused whatever `E2E_API_ENV` says. No URL literal in source. Never read by app code. |
 | `QA_FUNDED_EMAIL` · `QA_FUNDED_PASSWORD` | **the QA-creds store** = this dev machine's USER-scope environment variables, set once with `[Environment]::SetEnvironmentVariable('<name>', '<value>', 'User')` in PowerShell (a shell opened afterwards inherits them; for one run, export both to the `pnpm e2e` process). Never in `.env.local`, never committed. | The designated FUNDED QA org's owner sign-in — MINTED 2026-09-03 at M-BIL-1 (/auto): org **1813**, `qa+1788440509919@alphapromena.com`, funded by ONE real test-mode checkout (card 4242, Stripe invoice `in_1UBaHlKy5r44oOSRSZXHynCY`; BIL-0902/R §4). When both are set, the generating TEXT specs run there instead of self-skipping on a zero wallet (`skipUnlessFunded` in `e2e/live-setup.ts`). Media renders stay behind `LIVE_MEDIA`. `probe:hsn-0910` reads them from the User scope itself for its read-only §3.4 walk (a shell opened before they were set does not inherit them). Never read by app code. |
 
 Read in exactly one file (`src/api/config.ts`). Never hardcoded, never

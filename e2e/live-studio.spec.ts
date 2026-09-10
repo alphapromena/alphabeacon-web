@@ -43,30 +43,40 @@ test('a fresh owner + org, made through the product', async ({ page }) => {
   })
 })
 
-test('E1 is built from the catalog: friendly names, real prices, no vendors', async ({ page }) => {
+test('E1 is built from the catalog: the granted capabilities, real prices, no vendors', async ({
+  page,
+}) => {
   test.setTimeout(120_000)
   await login(page)
   await page.getByRole('link', { name: 'Studio', exact: true }).first().click()
-  await expect(page.getByText('media.generate')).toBeVisible({ timeout: 30_000 })
+  // HSN-0910: one card per capability the catalog GRANTS, named by the table.
+  await expect(
+    page.getByRole('main').getByRole('link', { name: 'Generate', exact: true }),
+  ).toBeVisible({
+    timeout: 30_000,
+  })
 
-  // The wire's own display label, which no static table could have supplied.
-  await expect(page.getByText('Balanced image').first()).toBeVisible()
-  // A real decimal-string price, rendered as money.
-  await expect(page.getByText(/\$0\.03 per image/).first()).toBeVisible()
-
-  // Composable capabilities get a Create; the rest say so honestly.
-  await expect(page.getByRole('link', { name: 'Create' }).first()).toBeVisible()
-  await expect(page.getByText(/arrives in a later phase/).first()).toBeVisible()
+  // A real decimal-string price, rendered as money — the wire's, not a table's.
+  await expect(page.getByText(/from \$0\.03 per image/).first()).toBeVisible()
+  // The composer names the row the wire resolved the plan to.
+  await page.getByRole('main').getByRole('link', { name: 'Generate', exact: true }).click()
+  await expect(page.getByText(/Rendering on Balanced image/)).toBeVisible({ timeout: 30_000 })
+  await page.getByRole('link', { name: 'Back to the studio' }).click()
 
   // No vendor name may ever appear — the catalog speaks only in app aliases.
+  await expect(
+    page.getByRole('main').getByRole('link', { name: 'Generate', exact: true }),
+  ).toBeVisible({
+    timeout: 30_000,
+  })
   const body = (await page.getByRole('main').textContent()) ?? ''
   for (const vendor of ['openai', 'gpt', 'bedrock', 'replicate', 'fal', 'runware', 'nano banana']) {
     expect(body.toLowerCase()).not.toContain(vendor)
   }
 
-  // The kind filter is driven by the models the catalog reported.
+  // The kind filter follows the table's output kinds.
   await page.getByRole('button', { name: 'video' }).click()
-  await expect(page.getByText('video-ads.generate')).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Video ad from a still', exact: true })).toBeVisible()
 })
 
 test('E3 lists renders, and is honest when there are none', async ({ page }) => {

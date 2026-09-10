@@ -256,6 +256,17 @@ _Framing: Studio is **the center where the user creates everything the company n
 
 ### E1 — Model gallery · `/studio`
 
+> **Amended 2026-09-10 (ORDER HSN-0910, Hasan's meeting of 2026-09-09):** E1 is a
+> **feature grid — one card per capability the catalog grants**, thirteen today
+> (`Docs/api/media-capabilities.md`), each an image with the feature's name on it,
+> click → that capability's own screen with only its fields. The cards, the
+> fields, the refusals and the cost rules come from ONE table
+> (`src/data/media-capabilities.ts`); the prices and whether a plan is selectable
+> come from the wire's catalog (the demo catalog stands in statically). The
+> credit-balance chip, the plan-tier filter and the per-model credit costs below
+> are the W5 demo's and are gone from E1; the W5 model composer survives only
+> for D4 and for E4's "Generate similar" on a demo asset.
+
 **Purpose:** the higgsfield-style browsing entry point for standalone generation.
 **Layout:** filter bar (kind: Image/Video, plan-tier) + a responsive card grid (3–4 columns desktop).
 **Contains, per model card:** representative thumbnail/sample · friendly model name (never the raw vendor id) · kind badge · credit cost (mono) · plan-gate badge if above tier · click → E2, pre-selected.
@@ -263,6 +274,14 @@ _Framing: Studio is **the center where the user creates everything the company n
 **States:** loading (skeleton cards) · populated · filtered-empty ("No models match these filters").
 
 ### E2 — Composer · `/studio/new` (standalone) or the same component in draft-scoped mode (D4)
+
+> **Amended 2026-09-10 (HSN-0910):** `/studio/new?capability=<id>` is that
+> capability's screen — only its fields (reference uploads and pickers, guidance
+> lines, the film's scenes, the voice's approved voices), its plan selector only
+> when the catalog says `selectable`, its cost line from the catalog's price, the
+> wallet 402 as the Billing CTA, and the document's refusals refused before any
+> round-trip; a 400 that still arrives renders as itself. The demo renders a
+> demo asset and sends nothing.
 
 **Purpose:** configure and submit a generation.
 **Layout:** two-column — left: schema-driven form; right: a live preview area (model sample/thumbnail + running cost estimate). **In draft-scoped mode**, a pinned context bar above the form shows the draft's copy snippet, and the final step skips the separate "attach" action from E4 since the target is already set.

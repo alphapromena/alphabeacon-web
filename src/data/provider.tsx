@@ -204,6 +204,19 @@ export type DataAction =
     }
   | { type: 'media/succeed'; jobId: string; assetId: string }
   | { type: 'media/fail'; jobId: string; reason: string }
+  /**
+   * HSN-0910: the static demo's capability render — a finished job and its
+   * asset land at once, no credits held (the 13 capabilities are priced in
+   * the catalog's money, and the demo never invents an exchange rate).
+   */
+  | {
+      type: 'studio/demoRender'
+      jobId: string
+      capability: string
+      kind: 'image' | 'video'
+      prompt: string
+      assetId: string
+    }
   | { type: 'draft/schedule'; draftId: string; scheduledFor: string; platforms: Platform[] }
   | { type: 'draft/publish'; draftId: string }
   // --- calendar + connections (C1-C4, B1-B3) --------------------------------
@@ -722,6 +735,36 @@ export function dataReducer(state: DataState, action: DataAction): DataState {
               ref: { kind: 'job', id: job.id },
             },
           ],
+        },
+      }
+    }
+
+    case 'studio/demoRender': {
+      const at = new Date().toISOString()
+      const job: StudioJob = {
+        id: action.jobId,
+        modelId: action.capability,
+        kind: action.kind,
+        prompt: action.prompt,
+        credits: 0,
+        status: 'succeeded',
+        origin: { type: 'standalone' },
+        assetId: action.assetId,
+        createdAt: at,
+      }
+      const asset: Asset = {
+        id: action.assetId,
+        jobId: job.id,
+        kind: action.kind,
+        label: action.prompt.slice(0, 60),
+        createdAt: at,
+      }
+      return {
+        ...state,
+        world: {
+          ...state.world,
+          jobs: [job, ...state.world.jobs],
+          assets: [asset, ...state.world.assets],
         },
       }
     }

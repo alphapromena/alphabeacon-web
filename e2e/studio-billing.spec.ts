@@ -20,37 +20,47 @@ async function open(page: Page, rail: string, dataset = 'Active org') {
   await expect(page.locator('[aria-busy="true"]')).toHaveCount(0)
 }
 
-test('the gallery filters by kind and by what the plan reaches', async ({ page }) => {
-  await open(page, 'Studio')
-  await expect(page.getByRole('heading', { name: 'Creative Studio', level: 1 })).toBeVisible()
-
-  // Pro plan: the studio-tier model is visible but gated, not hidden.
-  await expect(page.getByText('Cinema')).toBeVisible()
-  await expect(page.getByText('Needs the studio plan')).toBeVisible()
-
-  await page.getByRole('radio', { name: 'On my plan' }).click()
-  await expect(page.getByText('Needs the studio plan')).toHaveCount(0)
-
-  await page.getByRole('radio', { name: 'Video' }).click()
-  await expect(page.getByText('Spark')).toHaveCount(0)
-})
-
-test('@golden the composer renders each model’s own parameters and spends credits', async ({
+/**
+ * Since ORDER HSN-0910 the Studio's E1 is the 13-capability grid in BOTH modes
+ * (`studio-capabilities.spec.ts` covers it and the capability composers). The
+ * W5 model composer survives for the draft-scoped D4 and for E4's "Generate
+ * similar" on a demo model's asset — which is how it is reached here, in-app.
+ */
+test('the studio opens on the capability grid, and a demo asset still reaches the W5 composer', async ({
   page,
 }) => {
   await open(page, 'Studio')
-  await page.getByRole('link', { name: 'Use this model' }).first().click()
+  await expect(page.getByRole('heading', { name: 'Studio', level: 1 })).toBeVisible()
+  await expect(
+    page.getByRole('main').getByRole('link', { name: 'Generate', exact: true }),
+  ).toBeVisible()
+
+  await page.getByRole('link', { name: 'Your renders →' }).click()
+  await expect(page.getByRole('heading', { name: 'My jobs', level: 1 })).toBeVisible()
+  await page.getByRole('link', { name: 'Open' }).first().click()
+  await expect(page.getByRole('heading', { name: 'Asset', level: 1 })).toBeVisible()
+  await page.getByRole('link', { name: 'Generate similar' }).click()
+  await expect(page.getByRole('heading', { name: 'New generation', level: 1 })).toBeVisible()
+})
+
+test('@golden the W5 composer renders each model’s own parameters and spends credits', async ({
+  page,
+}) => {
+  await open(page, 'Studio')
+  await page.getByRole('link', { name: 'Your renders →' }).click()
+  await page.getByRole('link', { name: 'Open' }).first().click()
+  await page.getByRole('link', { name: 'Generate similar' }).click()
   await expect(page.getByRole('heading', { name: 'New generation', level: 1 })).toBeVisible()
 
-  // Spark publishes two enums — both rendered as pickers, from the schema.
+  // Prism publishes an enum and two bounded numbers — all rendered from the schema.
   await expect(page.getByLabel('Aspect ratio')).toBeVisible()
-  await expect(page.getByLabel('Style')).toBeVisible()
+  await expect(page.getByLabel('Seed')).toBeVisible()
 
   // Switching to a video model swaps the whole params form for that model's.
   await page.getByRole('radio', { name: 'Video' }).click()
   await expect(page.getByLabel('Duration seconds')).toBeVisible()
   await expect(page.getByLabel('Loop seamlessly')).toBeVisible()
-  await expect(page.getByLabel('Style')).toHaveCount(0)
+  await expect(page.getByLabel('Seed')).toHaveCount(0)
 
   await page.getByLabel('Prompt').fill('Steam rising from a fresh pour-over, macro')
   await page.getByRole('button', { name: 'Generate' }).click()
@@ -65,7 +75,7 @@ test('@golden the composer renders each model’s own parameters and spends cred
 
 test('a standalone asset attaches only to a draft that has earned media', async ({ page }) => {
   await open(page, 'Studio')
-  await page.getByRole('link', { name: 'My jobs →' }).click()
+  await page.getByRole('link', { name: 'Your renders →' }).click()
   await expect(page.getByRole('heading', { name: 'My jobs', level: 1 })).toBeVisible()
 
   // The origin tag is how the two modes are told apart at a glance.
@@ -106,12 +116,14 @@ test('past due gates the product, not just the billing screen', async ({ page })
   const banner = page.getByRole('alert').filter({ hasText: 'Your payment failed' })
   await expect(banner).toBeVisible()
 
-  // And generation is actually refused, with the reason where the button is.
-  await page.getByRole('link', { name: 'Use this model' }).first().click()
+  // And generation is actually refused, with the reason where the button is —
+  // on a capability composer too (HSN-0910), because past_due gates the
+  // product, not a screen.
+  await page.getByRole('link', { name: 'New logo', exact: true }).click()
   await expect(
     page.getByText('Generation is paused while your payment is unresolved.'),
   ).toBeVisible()
-  await expect(page.getByRole('button', { name: 'Generate' })).toBeDisabled()
+  await expect(page.getByRole('button', { name: 'Render' })).toBeDisabled()
 
   // Resolving it lifts the gate in the same session.
   await page.getByRole('link', { name: 'Update payment method' }).first().click()
@@ -119,15 +131,13 @@ test('past due gates the product, not just the billing screen', async ({ page })
   await expect(page.getByRole('alert').filter({ hasText: 'Your payment failed' })).toHaveCount(0)
 })
 
-test('an insufficient balance refuses the run and keeps the work', async ({ page }) => {
-  await open(page, 'Studio', 'Low credits')
-  await page.getByRole('link', { name: 'Use this model' }).first().click()
-
-  await page.getByLabel('Prompt').fill('A prompt worth keeping')
-  await expect(page.getByRole('alert').filter({ hasText: 'Not enough credits' })).toBeVisible()
-  await expect(page.getByRole('button', { name: 'Generate' })).toBeDisabled()
-  await expect(page.getByLabel('Prompt')).toHaveValue('A prompt worth keeping')
-})
+/**
+ * The insufficient-credits state with the prompt preserved is D4's, proven in
+ * `today-queue.spec.ts` ("a short balance refuses the run and keeps the
+ * prompt"). The Studio's capability composers are priced in the catalog's
+ * money and refuse through the wallet's 402 in live mode (`live-billing`);
+ * the demo never invents an exchange rate between the two (D-INT-E).
+ */
 
 test('changing plan states its consequence and grants through the ledger', async ({ page }) => {
   await openDemoSubscription(page)

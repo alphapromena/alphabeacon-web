@@ -34,8 +34,6 @@ import {
   knowledgeUploadMarkers,
   reservedMediaDesc,
   BRAND_KIT_ASSET_DESC,
-  COMPOSABLE_CAPABILITIES,
-  GALLERY_CAPABILITIES,
   KNOWLEDGE_UPLOAD_KINDS,
   LOGO_ASSET_DESC,
   MAX_VISUAL_GUIDANCE,
@@ -54,6 +52,9 @@ vi.mock('@/api/client', async (importOriginal) => ({
   api: vi.fn(),
 }))
 vi.mock('@/api/upload', () => ({ uploadToPresignedUrl: vi.fn() }))
+// The mode is pinned STATIC, as CI has it: this machine's .env.local would
+// otherwise boot the provider live (state.md — the vitest/.env.local trap).
+vi.mock('@/api/config', () => ({ isLiveMode: () => false, apiBaseUrl: () => null }))
 import { api } from '@/api/client'
 import { uploadToPresignedUrl } from '@/api/upload'
 const apiMock = vi.mocked(api)
@@ -82,21 +83,23 @@ describe('isJobTerminal', () => {
   })
 })
 
-describe('the gallery/composer split (amendment 6)', () => {
-  it('offers a composer only for capabilities whose body shape is known', () => {
-    // Everything else is listed honestly rather than given a guessed form.
-    expect([...COMPOSABLE_CAPABILITIES]).toEqual([
-      'media.generate',
-      'social-posts.media',
-      'images.edit',
+describe('the catalog read (HSN-0910)', () => {
+  it('answers from the demo catalog in static mode — the plain read, and the row a plan resolves to', async () => {
+    const { result } = renderHook(() => useStudioActions(), { wrapper })
+    const plain = await result.current.catalog('voice.speak')
+    expect(plain?.selectable).toBe(true)
+    expect(plain?.models.map((model) => model.alias)).toEqual([
+      'voice-turbo',
+      'voice-multilingual',
+      'voice-expressive',
     ])
-  })
-
-  it('still PROBES every capability, because granted-ness is discovered', () => {
-    for (const capability of COMPOSABLE_CAPABILITIES) {
-      expect(GALLERY_CAPABILITIES).toContain(capability)
-    }
-    expect(GALLERY_CAPABILITIES.length).toBeGreaterThan(COMPOSABLE_CAPABILITIES.length)
+    const balanced = await result.current.catalog('voice.speak', 'balanced')
+    expect(balanced?.plan).toBe('balanced')
+    expect(balanced?.models.map((model) => model.alias)).toEqual(['voice-turbo'])
+    // Not one of the 13, so not in the demo catalog either (A1).
+    expect(await result.current.catalog('social-posts.media')).toBeNull()
+    // Nothing touched the wire.
+    expect(apiMock).not.toHaveBeenCalled()
   })
 })
 

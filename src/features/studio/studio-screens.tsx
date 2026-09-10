@@ -16,11 +16,10 @@ import { EmptyState } from '@/components/ab/empty-state'
 import { ErrorState } from '@/components/ab/error-state'
 import { MonoNumber } from '@/components/ab/mono-number'
 import { BeaconDot } from '@/components/ab/motion'
-import { SkeletonCardGrid, SkeletonList } from '@/components/ab/skeletons'
+import { SkeletonList } from '@/components/ab/skeletons'
 import { JobStatusBadge } from '@/components/ab/status-badge'
 import { toastSuccess } from '@/components/ab/toast'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
 import {
   Dialog,
   DialogContent,
@@ -31,10 +30,10 @@ import {
 } from '@/components/ui/dialog'
 import { Separator } from '@/components/ui/separator'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
+import { isMediaCapabilityId, mediaCapability } from '@/data/media-capabilities'
 import {
   useAssets,
   useBilling,
-  useCreditBalance,
   useDataDispatch,
   useDrafts,
   useJobs,
@@ -43,172 +42,36 @@ import {
   useStudioModels,
 } from '@/data/provider'
 import { useReadiness } from '@/data/readiness'
-import { LiveComposer } from './live-composer'
-import { LiveGallery } from './live-gallery'
+import type { StudioModel } from '@/data/types'
+import { CapabilityComposer } from './capability-composer'
+import { CapabilityGrid } from './capability-grid'
 import { LiveJobs } from './live-jobs'
 import { canTransition } from '@/lib/draft-status'
 import { relativeTime } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import { ComposerBody, ComposerSubmit } from './composer'
-import { useComposer, TIER_RANK } from './use-composer'
+import { useComposer } from './use-composer'
+
+/**
+ * A job's model, by name: the demo's model record, or — since HSN-0910 — the
+ * capability's own name when the job is a capability render.
+ */
+function modelName(models: StudioModel[], modelId: string): string {
+  const model = models.find((entry) => entry.id === modelId)
+  if (model) return model.name
+  return isMediaCapabilityId(modelId) ? mediaCapability(modelId).name : modelId
+}
 
 // ---------------------------------------------------------------------------
-// E1 — Model gallery
+// E1 — The capability grid (ORDER HSN-0910/A): the same 13 cards in both
+// modes — the wire's catalog decides which are granted in live mode, the
+// demo catalog answers in static mode.
 // ---------------------------------------------------------------------------
 
 export function StudioGalleryScreen() {
-  const live = useLiveMode()
-  // LIVE: the gallery is the CATALOG (INT-11). Nothing about which models
-  // exist is knowable statically, so the live half reads them rather than
-  // rendering the demo's model records.
-  if (live) {
-    return (
-      <AppShell title="Studio" context="What your workspace can render">
-        <LiveGallery />
-      </AppShell>
-    )
-  }
-  return <StaticStudioGalleryScreen />
-}
-
-function StaticStudioGalleryScreen() {
-  const models = useStudioModels()
-  const billing = useBilling()
-  const balance = useCreditBalance()
-  const dispatch = useDataDispatch()
-  const phase = useScreenPhase()
-  const [kind, setKind] = useState<'all' | 'image' | 'video'>('all')
-  const [tier, setTier] = useState<'all' | 'available'>('all')
-
-  const visible = models
-    .filter((model) => kind === 'all' || model.kind === kind)
-    .filter((model) => tier === 'all' || TIER_RANK[model.tier] <= TIER_RANK[billing.planId])
-
   return (
-    <AppShell title="Creative Studio" context="Images and video for anything your company needs">
-      {phase === 'loading' ? (
-        <SkeletonCardGrid cards={4} columns={3} label="Loading models" />
-      ) : phase === 'error' ? (
-        <ErrorState
-          message="We could not load the model gallery. Try again in a moment."
-          onRetry={() => dispatch({ type: 'dev/force', mode: 'none' })}
-        />
-      ) : (
-        <div className="flex flex-col gap-6">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="flex flex-wrap items-center gap-2">
-              <ToggleGroup
-                type="single"
-                value={kind}
-                onValueChange={(next) => next && setKind(next as typeof kind)}
-                aria-label="Filter by kind"
-              >
-                <ToggleGroupItem value="all" className="text-xs">
-                  All
-                </ToggleGroupItem>
-                <ToggleGroupItem value="image" className="text-xs">
-                  Image
-                </ToggleGroupItem>
-                <ToggleGroupItem value="video" className="text-xs">
-                  Video
-                </ToggleGroupItem>
-              </ToggleGroup>
-              <ToggleGroup
-                type="single"
-                value={tier}
-                onValueChange={(next) => next && setTier(next as typeof tier)}
-                aria-label="Filter by plan"
-              >
-                <ToggleGroupItem value="all" className="text-xs">
-                  Every model
-                </ToggleGroupItem>
-                <ToggleGroupItem value="available" className="text-xs">
-                  On my plan
-                </ToggleGroupItem>
-              </ToggleGroup>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <span className="rounded-full border border-border px-3 py-1 text-xs">
-                <MonoNumber value={balance} /> credits
-              </span>
-              <Button asChild variant="ghost" size="sm">
-                <Link to="/studio/jobs">My jobs →</Link>
-              </Button>
-            </div>
-          </div>
-
-          {visible.length === 0 ? (
-            <EmptyState
-              icon={Sparkles}
-              title="No models match these filters"
-              description="Widen the filters, or upgrade to reach the models above your plan."
-              action={
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setKind('all')
-                    setTier('all')
-                  }}
-                >
-                  Clear filters
-                </Button>
-              }
-            />
-          ) : (
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {visible.map((model) => {
-                const locked = TIER_RANK[model.tier] > TIER_RANK[billing.planId]
-                return (
-                  <Card key={model.id}>
-                    <CardContent className="flex flex-col gap-3">
-                      {/* A rendered sample, not a stock image: the gradient is
-                          the brand's, and it never pretends to be output. */}
-                      <span
-                        aria-hidden
-                        className="flex h-28 items-center justify-center rounded-lg bg-brand text-primary-foreground"
-                      >
-                        {model.kind === 'video' ? (
-                          <Video className="size-8 opacity-80" />
-                        ) : (
-                          <ImageIcon className="size-8 opacity-80" />
-                        )}
-                      </span>
-
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="flex flex-col gap-0.5">
-                          <span className="font-medium">{model.name}</span>
-                          <span className="text-xs text-muted-foreground capitalize">
-                            {model.kind}
-                          </span>
-                        </div>
-                        <span className="text-sm">
-                          <MonoNumber value={model.credits} /> cr
-                        </span>
-                      </div>
-
-                      {locked ? (
-                        <div className="flex flex-col gap-2">
-                          <span className="text-xs text-muted-foreground">
-                            Needs the {model.tier} plan
-                          </span>
-                          <Button asChild size="sm" variant="outline">
-                            <Link to="/billing/plans">See plans</Link>
-                          </Button>
-                        </div>
-                      ) : (
-                        <Button asChild size="sm">
-                          <Link to={`/studio/new?model=${model.id}`}>Use this model</Link>
-                        </Button>
-                      )}
-                    </CardContent>
-                  </Card>
-                )
-              })}
-            </div>
-          )}
-        </div>
-      )}
+    <AppShell title="Studio" context="What your workspace can make">
+      <CapabilityGrid />
     </AppShell>
   )
 }
@@ -220,6 +83,17 @@ function StaticStudioGalleryScreen() {
 export function StudioComposerScreen() {
   const live = useLiveMode()
   const readiness = useReadiness()
+  const [params] = useState(() => new URLSearchParams(window.location.search))
+  // `?capability=` names one of the 13 (HSN-0910); a live composer with none
+  // named is the plain generate; the demo's `?model=` keeps the W5 composer
+  // for the draft-scoped D4 and E4's "Generate similar".
+  const requested = params.get('capability')
+  const capability =
+    requested && isMediaCapabilityId(requested)
+      ? mediaCapability(requested)
+      : live
+        ? mediaCapability('media.generate')
+        : null
 
   // The gate reaches the Studio composers too (ORDER ONB-0827, D-ONB-D):
   // Hasan's ruling is that NO generation job runs before brand setup is
@@ -235,10 +109,10 @@ export function StudioComposerScreen() {
     )
   }
 
-  if (live) {
+  if (capability) {
     return (
-      <AppShell title="Create" context="A visual, on demand">
-        <LiveComposer />
+      <AppShell title="Create" context={capability.name}>
+        <CapabilityComposer capability={capability} />
       </AppShell>
     )
   }
@@ -344,7 +218,6 @@ function StaticStudioJobsScreen() {
           ) : (
             <ul className="flex flex-col divide-y divide-border rounded-xl border border-border">
               {visible.map((job) => {
-                const model = models.find((m) => m.id === job.modelId)
                 const origin = job.origin
                 const draft =
                   origin.type === 'draft' ? drafts.find((d) => d.id === origin.draftId) : undefined
@@ -369,7 +242,9 @@ function StaticStudioJobsScreen() {
 
                     <div className="flex min-w-0 flex-1 flex-col gap-1">
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className="text-sm font-medium">{model?.name ?? job.modelId}</span>
+                        <span className="text-sm font-medium">
+                          {modelName(models, job.modelId)}
+                        </span>
                         <JobStatusBadge status={job.status} />
                         {/* The origin tag is how a user tells the two modes
                             apart at a glance (screens4.md E3). */}
@@ -427,7 +302,12 @@ export function StudioAssetScreen() {
 
   const asset = assets.find((a) => a.id === id)
   const job = jobs.find((j) => j.id === asset?.jobId)
-  const model = models.find((m) => m.id === job?.modelId)
+  const modelLabel = job ? modelName(models, job.modelId) : undefined
+  // A capability render's "similar" is its own screen; a demo model's is W5's composer.
+  const similarTo =
+    job && isMediaCapabilityId(job.modelId)
+      ? `/studio/new?capability=${job.modelId}`
+      : `/studio/new?model=${job?.modelId ?? ''}`
 
   if (!asset) {
     return (
@@ -445,7 +325,7 @@ export function StudioAssetScreen() {
   const attachable = drafts.filter((draft) => canTransition(draft.status, 'media_ready'))
 
   return (
-    <AppShell title="Asset" context={model?.name}>
+    <AppShell title="Asset" context={modelLabel}>
       <div className="flex flex-col gap-6">
         <Button asChild variant="ghost" size="sm" className="-ml-2 self-start">
           <Link to="/studio/jobs">
@@ -468,7 +348,7 @@ export function StudioAssetScreen() {
 
           <aside className="flex flex-col gap-4">
             <dl className="flex flex-col gap-3 rounded-xl border border-border p-4 text-sm">
-              <Meta label="Model" value={model?.name ?? '—'} />
+              <Meta label="Model" value={modelLabel ?? '—'} />
               <Meta label="Credits" value={<MonoNumber value={job?.credits ?? 0} />} />
               <Meta label="Created" value={<MonoNumber value={relativeTime(asset.createdAt)} />} />
               <Meta label="Origin" value={standalone ? 'Standalone' : 'For a draft'} />
@@ -499,7 +379,7 @@ export function StudioAssetScreen() {
                 </Button>
               )}
               <Button asChild variant="outline">
-                <Link to={`/studio/new?model=${job?.modelId ?? ''}`}>Generate similar</Link>
+                <Link to={similarTo}>Generate similar</Link>
               </Button>
               <ConfirmDialog
                 trigger={

@@ -217,6 +217,25 @@ export const MESSAGES = {
     /** Static demo only: the Studio simulation refuses a short credit balance. */
     visualCreditsShort:
       'Not enough credits for this visual. Your settings are kept — top up and come back to it.',
+
+    // The Studio's 13 capabilities (ORDER HSN-0910). The wire's 400 renders
+    // as ITSELF — its sentence names no field (open-item 49) — so these are
+    // only our words for the states the wire leaves to us.
+    /** The catalog answered 404 for a capability the table names: unknown or not granted, identically. */
+    studioNotGranted: 'This is not available to your workspace yet.',
+    /** A read url for a chosen reference could not be minted at submit. */
+    studioReferenceUnavailable:
+      'A reference could not be prepared — its download link was refused. Pick it again, or upload it afresh.',
+    /**
+     * film.generate's named failures (the document): the voice track already
+     * paid for is delivered in every case, and each message says so.
+     */
+    filmReferenceRefused:
+      'A reference was refused by the likeness gate. Choose another, or none — the voice track you paid for is kept.',
+    filmOutputRefused:
+      "The platform's own screen refused the film it made. Change the direction and try again — the voice track you paid for is kept.",
+    filmScriptUnfit:
+      'The script speaks for longer than the film lasts. Shorten it, or make the film longer — the voice track you paid for is kept.',
   },
   empty: {
     dashboardFresh: 'Your pipeline has not started yet — finish setup to see drafts here.',
@@ -247,6 +266,10 @@ export const MESSAGES = {
     // MED-0831: the Knowledge "Files" section (media uploads, wire-listed).
     noMediaFiles: 'No files yet — images and videos you upload appear here.',
     noCapabilities: 'Nothing in the studio is available to this workspace yet.',
+    /** HSN-0910: the grid's kind filter found nothing of that kind. */
+    noCapabilitiesOfKind: 'Nothing of that kind is available — try another filter.',
+    /** HSN-0910: the reference picker's list, by kind. */
+    noStudioAssets: 'No files of this kind yet — upload one here, or in Settings › Knowledge.',
     noJobs: 'Nothing rendered yet — create something and it shows up here.',
     noReview: 'Nothing waiting for review — generate posts to start.',
     noApproved: 'Nothing approved yet.',
@@ -421,9 +444,12 @@ export const MESSAGES = {
     /** D5/B1-B3 stay static in live mode. */
     publishingComingSoon:
       'Publishing and channel connections are not wired up yet. Approving records the post; copying it is how it goes out.',
-    // Studio, live mode (INT-11).
+    // Studio, live mode (INT-11). `capabilityComingSoon` — "the form for it
+    // arrives in a later phase" — went with HSN-0910: every granted
+    // capability has its screen now.
     chargedToBalance: 'charged to your balance',
-    capabilityComingSoon: 'Available to your workspace — the form for it arrives in a later phase.',
+    /** Static mode: the Studio's demo render, named as such (D-ONB-E spirit). */
+    studioDemoRender: 'Simulated in the demo — nothing was sent anywhere and nothing was charged.',
     knowledgeUploadBlocked:
       'Uploading a file from the browser is not available yet. Paste the text or add a link instead.',
     /** Static mode: the Knowledge upload simulation, named as such (HSN-04). */

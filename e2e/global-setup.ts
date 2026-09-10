@@ -243,6 +243,44 @@ function startHeartbeat(url: string): () => void {
   }
 }
 
+/**
+ * Refuse to run a LIVE suite against anything but dev (ORDER HSN-0910/D,
+ * Hasan's point 1: no testing companies on production, ever).
+ *
+ * Two rules, both from the environment — no URL literal lives in source:
+ * - a live run must SAY which environment it means: `E2E_API_ENV=dev` is
+ *   required, and `dev` is the only accepted value;
+ * - when `PROD_API_BASE_URL` is set, a base equal to it is refused whatever
+ *   the first variable claims.
+ *
+ * Every live spec mints its QA org through `signUpAndEnter`, which sits
+ * behind the same rule (`e2e/live-setup.ts`), so a spec run outside this
+ * setup cannot create a company on production either. Static runs (no
+ * `VITE_API_BASE_URL`) are never asked for anything. The map of which
+ * deployment points where is `Docs/api/environments.md`.
+ */
+export function assertNotProduction(env: NodeJS.ProcessEnv = process.env): void {
+  const base = env.VITE_API_BASE_URL?.trim()
+  if (!base) return
+  const declared = env.E2E_API_ENV?.trim()
+  if (declared !== 'dev') {
+    throw new Error(
+      `Refusing the live run: E2E_API_ENV must be "dev" for a run with VITE_API_BASE_URL set ` +
+        `(it is ${declared ? `"${declared}"` : 'unset'}). Every live spec creates QA companies on ` +
+        `the API it is pointed at, and none may ever exist on production (HSN-0910/D, ` +
+        `Docs/api/environments.md).`,
+    )
+  }
+  const production = env.PROD_API_BASE_URL?.trim().replace(/\/+$/, '')
+  if (production && base.replace(/\/+$/, '') === production) {
+    throw new Error(
+      `Refusing the live run: VITE_API_BASE_URL is the PRODUCTION API base (it equals ` +
+        `PROD_API_BASE_URL). QA companies are never created there (HSN-0910/D, ` +
+        `Docs/api/environments.md).`,
+    )
+  }
+}
+
 export default async function globalSetup(config: FullConfig): Promise<(() => void) | void> {
   const base = process.env.VITE_API_BASE_URL?.trim()
 
@@ -254,6 +292,9 @@ export default async function globalSetup(config: FullConfig): Promise<(() => vo
     // The static suite. Nothing to warm, and nothing may be requested.
     return
   }
+
+  // And is it the API we are allowed to mint QA companies on? (HSN-0910/D)
+  assertNotProduction()
 
   const url = `${base.replace(/\/+$/, '')}/health`
   const startedAt = Date.now()

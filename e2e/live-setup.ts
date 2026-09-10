@@ -16,6 +16,7 @@
  * tone to exist calls in here.
  */
 import { expect, test, type APIRequestContext, type Page } from '@playwright/test'
+import { assertNotProduction } from './global-setup'
 import { SCREEN_SYNC } from './live-clocks'
 
 /** Every dev verification code is `000000` (api.md, Auth). */
@@ -234,6 +235,10 @@ export async function signUpAndEnter(
   page: Page,
   account: { name: string; email: string; password: string; orgName: string },
 ) {
+  // HSN-0910/D: this is the ONE place a spec creates a company, so it refuses
+  // to do that anywhere but dev — the same rule `global-setup.ts` applies
+  // before the run, kept here for a spec run outside it.
+  assertNotProduction()
   await page.goto('/signup')
   await page.getByLabel('Full name').fill(account.name)
   await page.getByLabel('Work email').fill(account.email)

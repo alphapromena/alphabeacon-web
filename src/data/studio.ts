@@ -18,6 +18,7 @@ import { api } from '@/api/client'
 import { isLiveMode } from '@/api/config'
 import { isApiError } from '@/api/errors'
 import { uploadToPresignedUrl } from '@/api/upload'
+import { demoMediaCatalog } from '@/data/entities/media-catalog'
 import type {
   ApiCapabilityCatalog,
   ApiMediaAsset,
@@ -54,29 +55,10 @@ export type {
   ApiPlan as MediaPlan,
 } from '@/api/types'
 
-/**
- * The capabilities E1 offers a COMPOSER for — the ones whose body shape is
- * fully known from `capabilitySchema` plus the upstream collection. Everything
- * else the catalog grants is listed honestly as coming soon rather than given
- * a form built on a guessed body (the founder's amendment 6, 2026-08-17).
- */
-export const COMPOSABLE_CAPABILITIES = [
-  'media.generate',
-  'social-posts.media',
-  'images.edit',
-] as const
-
-/** Every capability E1 probes. Granted-ness is discovered, never assumed. */
-export const GALLERY_CAPABILITIES = [
-  'media.generate',
-  'images.edit',
-  'social-posts.media',
-  'photoshoot.generate',
-  'brand-assets.generate',
-  'logos.generate',
-  'logos.redesign',
-  'video-ads.generate',
-] as const
+// The gallery's capability lists (`GALLERY_CAPABILITIES`, `COMPOSABLE_CAPABILITIES`,
+// the founder's amendment 6 of 2026-08-17) are gone with ORDER HSN-0910: the
+// grid and every composer read `src/data/media-capabilities.ts` — the one
+// table of Hasan's 13 — and granted-ness is still discovered on the wire.
 
 /** The one collection this app keeps, created lazily on first use. */
 export const KNOWLEDGE_COLLECTION = 'knowledge'
@@ -491,11 +473,22 @@ export function useStudioActions() {
      * What one capability can run on. A 404 means unknown OR not granted — the
      * upstream answers both identically so the roadmap does not leak — so the
      * gallery treats null as "not ours" and simply does not list it.
+     *
+     * With a `plan` (HSN-0910): the `?plan=` read — the row that grade resolves
+     * to, with its price. The plain read carries `plan: null` on the own-model
+     * rows (voice, film, motion, video ads, the character sheet), so this is
+     * the ONLY mapping from a plan to a price. Static mode answers from the
+     * demo catalog, transcribed from the wire (`entities/media-catalog.ts`).
      */
-    async catalog(capability: string): Promise<ApiCapabilityCatalog | null> {
-      if (!live || !orgId) return null
+    async catalog(capability: string, plan?: ApiPlan): Promise<ApiCapabilityCatalog | null> {
+      if (!live) return demoMediaCatalog(capability, plan)
+      if (!orgId) return null
       try {
-        return await api<ApiCapabilityCatalog>('GET', studio(`/catalog/capabilities/${capability}`))
+        return await api<ApiCapabilityCatalog>(
+          'GET',
+          studio(`/catalog/capabilities/${capability}`),
+          plan ? { query: { plan } } : undefined,
+        )
       } catch {
         return null
       }

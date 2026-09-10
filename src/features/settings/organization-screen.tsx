@@ -14,7 +14,7 @@
  * data URL: nothing is uploaded anywhere, but the preview, the replace and
  * the remove are all real, which is the part the design is about.
  */
-import { Trash2, Upload } from 'lucide-react'
+import { Copy, Trash2, Upload } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { CountryPicker } from '@/components/ab/country-picker'
 import { SaveBar } from '@/components/ab/save-bar'
@@ -24,7 +24,13 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { useDataDispatch, useLiveMode, useOrg, useSchedule } from '@/data/provider'
+import {
+  useDataDispatch,
+  useLiveMode,
+  useLiveWorkingOrgId,
+  useOrg,
+  useSchedule,
+} from '@/data/provider'
 import { SetupChecklist } from '@/components/ab/setup-checklist'
 import { useAccountActions } from '@/data/account'
 import { MESSAGES } from '@/lib/messages'
@@ -32,6 +38,50 @@ import { TIMEZONES, zoneAbbreviation } from '@/lib/timezone'
 import { AccountSection } from './account-section'
 import { TagInput } from './field-editors'
 import { OrgLogoLive } from './org-logo-live'
+
+/**
+ * The organization's id, labelled, with a copy affordance. Shown verbatim —
+ * the wire's id is an opaque decimal string, never a number to format.
+ */
+function OrganizationId() {
+  const live = useLiveMode()
+  const liveId = useLiveWorkingOrgId()
+  const org = useOrg()
+  const id = live ? liveId : org.id
+  if (!id) return null
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(id)
+      toastSuccess('Organization ID copied')
+    } catch {
+      toastError(MESSAGES.errors.generic)
+    }
+  }
+  return (
+    <div className="flex flex-wrap items-center gap-3 rounded-lg border border-border px-3 py-2 text-sm">
+      <span id="org-id-label" className="text-muted-foreground">
+        Organization ID
+      </span>
+      <span
+        aria-labelledby="org-id-label"
+        className="font-mono font-medium tabular-nums select-all"
+      >
+        {id}
+      </span>
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        className="ml-auto"
+        aria-label="Copy the organization ID"
+        onClick={() => void copy()}
+      >
+        <Copy aria-hidden />
+        Copy
+      </Button>
+    </div>
+  )
+}
 
 export function OrganizationScreen() {
   const org = useOrg()
@@ -87,6 +137,13 @@ export function OrganizationScreen() {
        * it a reference list rather than a nag.
        */}
       <SetupChecklist heading="Brand setup" />
+
+      {/*
+       * HSN-0910/C (Hasan's point 5): the workspace's id at the top of
+       * Settings, so a customer's screenshot tells support which tenant it
+       * is. Live: the wire's own opaque decimal id; the demo: its dataset's.
+       */}
+      <OrganizationId />
 
       <section className="flex flex-col gap-5">
         {live ? (
