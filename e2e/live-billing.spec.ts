@@ -26,9 +26,10 @@ import type { Page } from '@playwright/test'
 import { expect, test } from './fixtures'
 import { SCREEN_SYNC } from './live-clocks'
 import { completeBrandSetup, signUpAndEnter } from './live-setup'
+import { runStamp } from './live-setup'
 
 const API_BASE = process.env.VITE_API_BASE_URL
-const RUN = Date.now()
+const RUN = runStamp()
 const PASSWORD = 'Roasted2Order!'
 const owner = `qa+${RUN}bl@alphapromena.com`
 const member = `qa+${RUN}blm@alphapromena.com`

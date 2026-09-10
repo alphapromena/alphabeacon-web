@@ -26,3 +26,6 @@ cdk.out/
 # secrets) IS committed; the environment never is.
 alphaprostudio.environment.json
 *.environment.json
+
+# GATE-0910: the suite reports and the live rounds' artifacts (verify-once, pnpm gate) — the record itself lives under Docs/qa/
+.gate/

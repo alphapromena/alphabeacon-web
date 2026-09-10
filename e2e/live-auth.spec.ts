@@ -20,9 +20,10 @@
 import type { APIRequestContext, Page } from '@playwright/test'
 import { expect, test } from './fixtures'
 import { ONE_CALL, SCREEN_SYNC } from './live-clocks'
+import { runStamp } from './live-setup'
 
 const API_BASE = process.env.VITE_API_BASE_URL
-const RUN = Date.now()
+const RUN = runStamp()
 const PASSWORD = 'Roasted2Order!'
 const NEW_PASSWORD = 'FreshlyGround3!'
 const CODE = '000000'
@@ -122,7 +123,7 @@ test('a second signup: resend immediately proves the 429 countdown, wrong passwo
   })
 })
 
-test('correct password + unverified email routes to the verify screen, which finishes the job', async ({
+test('correct password + unverified email routes to the verify screen, and N3 names the workspace', async ({
   page,
 }) => {
   await loginViaUi(page, emailB, PASSWORD)
@@ -135,7 +136,19 @@ test('correct password + unverified email routes to the verify screen, which fin
   await expect(page.getByText(`We sent a 6-digit code to ${emailB}`)).toBeVisible()
 
   await enterCode(page, CODE)
-  // Same as above: verifying creates the workspace and lands in the app.
+  // This walk carries no org name: the signup's name lives in the browser
+  // that typed it, and this is a fresh one. So verifying creates nothing and
+  // N3 asks (GATE-0910, item 59) — the walk production actually has. The dev
+  // server used to skip N3 by naming the workspace after its demo world.
+  await expect(
+    page.getByRole('heading', {
+      name: 'Name your workspace and we will finish setting it up.',
+      level: 1,
+    }),
+  ).toBeVisible({ timeout: SCREEN_SYNC })
+  await page.getByLabel('Organization name').fill('QA Roasters')
+  await page.getByRole('button', { name: 'Create my workspace' }).click()
+  // POST /orgs and the resync, then the product.
   await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible({
     timeout: SCREEN_SYNC,
   })
@@ -179,10 +192,7 @@ test('forgot â†’ reset via the documented deep link revokes everything; onl
   })
 })
 
-test('the shell appears; sign out and logout-all both really revoke', async ({
-  page,
-  request,
-}) => {
+test('the shell appears; sign out and logout-all both really revoke', async ({ page, request }) => {
   // No harness org any more: this account got its workspace from verifying
   // (ONB-0827, D-ONB-C), which is what the product does for every account.
   await loginViaUi(page, emailA, NEW_PASSWORD)

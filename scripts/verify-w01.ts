@@ -9,6 +9,7 @@
 // check makes a missing ab/ composition fail the phase instead of passing silently.
 
 import { spawnSync } from 'node:child_process'
+import { suiteRowsFromReport, wantsRerun } from './verify-lib'
 import { existsSync, mkdirSync, rmSync, rmdirSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -142,18 +143,43 @@ function main(): void {
     console.log('--skip-e2e ignored: CI never skips e2e')
   }
 
+  // GATE-0910 §3.1 — verify-once: the six suite steps come from the report
+  // `pnpm verify:all` wrote for THIS tree; nothing is re-run here. `--rerun`
+  // keeps the legacy chain until the founder retires it.
+  const rerun = wantsRerun()
+  const suiteSteps: { name: string; exec: () => boolean; skip?: boolean }[] = rerun
+    ? [
+        { name: 'lint', exec: () => run('pnpm lint') === 0 },
+        { name: 'typecheck', exec: () => run('pnpm typecheck') === 0 },
+        { name: 'unit tests', exec: () => run('pnpm test') === 0 },
+        { name: 'guard-static', exec: () => run('pnpm guard:static') === 0 },
+        { name: 'build', exec: () => run('pnpm build') === 0 },
+        {
+          name: 'e2e (kitchen-sink axe both themes, reduced-motion)',
+          exec: () => run('pnpm exec playwright install chromium') === 0 && run('pnpm e2e') === 0,
+          skip: skipE2e,
+        },
+      ]
+    : (() => {
+        const suite = suiteRowsFromReport({
+          e2eLabel: 'e2e (kitchen-sink axe both themes, reduced-motion)',
+          needE2e: !skipE2e,
+          e2eMustPass: [/kitchen/i],
+        })
+        return suite.rows.map((row) => ({
+          name: row.name,
+          exec: () => {
+            if (row.detail) console.log(row.detail)
+            if (!suite.ok && suite.reason) console.log(suite.reason)
+            return row.outcome === 'PASS'
+          },
+          skip: row.outcome === 'SKIP',
+        }))
+      })()
+
   const steps: { name: string; exec: () => boolean; skip?: boolean }[] = [
-    { name: 'lint', exec: () => run('pnpm lint') === 0 },
-    { name: 'typecheck', exec: () => run('pnpm typecheck') === 0 },
-    { name: 'unit tests', exec: () => run('pnpm test') === 0 },
-    { name: 'guard-static', exec: () => run('pnpm guard:static') === 0 },
-    { name: 'build', exec: () => run('pnpm build') === 0 },
+    ...suiteSteps,
     { name: 'canary: raw color in ab/ fails lint', exec: canaryRawColorInAb },
-    {
-      name: 'e2e (kitchen-sink axe both themes, reduced-motion)',
-      exec: () => run('pnpm exec playwright install chromium') === 0 && run('pnpm e2e') === 0,
-      skip: skipE2e,
-    },
     { name: 'W1 deliverables exist', exec: checkDeliverables },
   ]
 

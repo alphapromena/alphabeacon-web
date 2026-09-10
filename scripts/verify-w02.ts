@@ -17,6 +17,7 @@
 //   "axe + reduced-motion clean" -> the Playwright @axe / @reduced-motion specs
 
 import { spawnSync } from 'node:child_process'
+import { suiteRowsFromReport, wantsRerun } from './verify-lib'
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -362,7 +363,9 @@ function marketingLawsHold(): boolean {
   const revealBlock =
     memoryCss.split('}').find((block) => /\.draft,\s*\.learned,\s*\.future\s*\{/.test(block)) ?? ''
   if (!revealBlock) {
-    failures.push('concept/sections/memory.module.css: the shared reveal block moved — re-point 11d')
+    failures.push(
+      'concept/sections/memory.module.css: the shared reveal block moved — re-point 11d',
+    )
   } else if (/opacity:/.test(revealBlock)) {
     failures.push(
       'concept/sections/memory.module.css: the reveal dims real text with opacity again — it may move, it may not fade (D-M2-F-r2)',
@@ -583,17 +586,37 @@ function deliverablesExist(): boolean {
 function main(): void {
   let failed = false
 
-  for (const [name, cmd] of [
-    ['lint', 'pnpm lint'],
-    ['typecheck', 'pnpm typecheck'],
-    ['unit tests', 'pnpm test'],
-    ['guard-static', 'pnpm guard:static'],
-    ['build', 'pnpm build'],
-  ] as const) {
-    if (!step(name, cmd)) {
+  // GATE-0910 §3.1 — verify-once: the six suite steps are read from the report
+  // `pnpm verify:all` wrote for THIS tree; nothing is re-run here. `--rerun`
+  // keeps the legacy chain until the founder retires it.
+  const rerun = wantsRerun()
+  if (rerun) {
+    for (const [name, cmd] of [
+      ['lint', 'pnpm lint'],
+      ['typecheck', 'pnpm typecheck'],
+      ['unit tests', 'pnpm test'],
+      ['guard-static', 'pnpm guard:static'],
+      ['build', 'pnpm build'],
+    ] as const) {
+      if (!step(name, cmd)) {
+        failed = true
+        console.log(`step failed: ${name} -- remaining steps skipped`)
+        break
+      }
+    }
+  } else {
+    const suite = suiteRowsFromReport({
+      e2eLabel: 'e2e (@golden walk, marketing + auth axe)',
+      needE2e: !skipE2e,
+      e2eMustPass: [/@golden/],
+    })
+    for (const row of suite.rows) {
+      results.push({ name: row.name, outcome: row.outcome })
+      console.log(`${row.outcome}  ${row.name}${row.detail ? ` — ${row.detail}` : ''}`)
+    }
+    if (!suite.ok) {
       failed = true
-      console.log(`step failed: ${name} -- remaining steps skipped`)
-      break
+      console.log(`suite report: ${suite.reason ?? 'a suite step is red in the report'}`)
     }
   }
 
@@ -603,7 +626,9 @@ function main(): void {
     if (!marketingLawsHold()) failed = true
     if (!deliverablesExist()) failed = true
 
-    if (skipE2e) {
+    if (!rerun) {
+      // the e2e row is already in the results, from the report
+    } else if (skipE2e) {
       skip('e2e (@golden walk, marketing + auth axe)')
       console.log('\ne2e skipped (--skip-e2e)')
     } else {

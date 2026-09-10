@@ -22,9 +22,10 @@
  */
 import type { Page } from '@playwright/test'
 import { expect, test } from './fixtures'
+import { runStamp } from './live-setup'
 
 const API_BASE = process.env.VITE_API_BASE_URL
-const RUN = Date.now()
+const RUN = runStamp()
 const PASSWORD = 'Roasted2Order!'
 const CODE = '000000'
 const owner = `qa+${RUN}r@alphapromena.com`

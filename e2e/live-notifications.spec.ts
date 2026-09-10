@@ -10,9 +10,10 @@
 import type { Page } from '@playwright/test'
 import { expect, test } from './fixtures'
 import { signUpAndEnter } from './live-setup'
+import { runStamp } from './live-setup'
 
 const API_BASE = process.env.VITE_API_BASE_URL
-const RUN = Date.now()
+const RUN = runStamp()
 const PASSWORD = 'Roasted2Order!'
 const owner = `qa+${RUN}n@alphapromena.com`
 const ORG_NAME = `QA Inbox Org ${RUN}`
@@ -39,18 +40,25 @@ test('the inbox endpoints hold their contract, and the bell tells the truth', as
   // tones and its schedules before writing anything.
   test.setTimeout(150_000)
   // A fresh owner with a workspace, made the way the product makes one.
-  await signUpAndEnter(page, {
-    name: 'QA Inbox Owner',
-    email: owner,
-    password: PASSWORD,
-    orgName: ORG_NAME,
-  })
+  // GATE-0910 §3.4: this file reads an inbox and marks it read, which holds
+  // on a used org too — so it opts into the org pool when a run turns it on.
+  await signUpAndEnter(
+    page,
+    { name: 'QA Inbox Owner', email: owner, password: PASSWORD, orgName: ORG_NAME },
+    { pool: true },
+  )
 
   const token = await sessionToken(page)
   const auth = { authorization: `Bearer ${token}` }
-  const orgs = (await (await request.get(`${API_BASE}/me/orgs`, { headers: auth })).json()) as {
-    items: { id: string }[]
-  }
+  const orgsRes = await request.get(`${API_BASE}/me/orgs`, { headers: auth })
+  // The status before the shape: a limiter's 429 or a cold 5xx then reads as
+  // itself, not as a TypeError on `items` — which is how the first parallel
+  // smoke of `pnpm gate` lost this file (GATE-0910 §3.2).
+  expect(
+    orgsRes.status(),
+    `GET /me/orgs → ${orgsRes.status()} ${(await orgsRes.text()).slice(0, 200)}`,
+  ).toBe(200)
+  const orgs = (await orgsRes.json()) as { items: { id: string }[] }
   const orgId = orgs.items[0].id
 
   // The three endpoints, verbatim from the contract.

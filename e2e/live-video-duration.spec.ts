@@ -23,9 +23,10 @@
 import type { Page } from '@playwright/test'
 import { expect, test } from './fixtures'
 import { readWallet, signUpAndEnter } from './live-setup'
+import { runStamp } from './live-setup'
 
 const API_BASE = process.env.VITE_API_BASE_URL
-const RUN = Date.now()
+const RUN = runStamp()
 const PASSWORD = 'Roasted2Order!'
 const owner = `qa+${RUN}vd@alphapromena.com`
 const ORG_NAME = `QA Video Duration Org ${RUN}`

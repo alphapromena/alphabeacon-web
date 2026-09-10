@@ -20,12 +20,14 @@ import { SCREEN_SYNC } from './live-clocks'
 import {
   completeBrandSetup,
   ensureToneLanguage,
+  fundedRunsRequested,
   signUpAndEnter,
   skipUnlessFunded,
 } from './live-setup'
+import { runStamp } from './live-setup'
 
 const API_BASE = process.env.VITE_API_BASE_URL
-const RUN = Date.now()
+const RUN = runStamp()
 const PASSWORD = 'Roasted2Order!'
 const owner = `qa+${RUN}pr@alphapromena.com`
 const ORG_NAME = `QA Proposals Org ${RUN}`
@@ -66,9 +68,22 @@ test('a fresh owner + org, with its brand set up', async ({ page }) => {
  * NOT on the funded QA org (BIL-0902/R §4): every assertion below counts a
  * FRESH org's queue — "1 needs review", then "0 need review" — and a shared
  * funded org carries the queues of every run before it. These four skip on
- * a zero wallet until fresh orgs are funded again; they never switch.
+ * a zero wallet until fresh orgs are funded again — unless the run carries
+ * the founder's word (`pnpm gate --funded`, item 60), which puts them on the
+ * funded org for that run; the counts below are relative so they hold there.
  */
-const STAY_ON_THIS_ORG = { switchToFundedOrg: false } as const
+const STAY_ON_THIS_ORG = { switchToFundedOrg: fundedRunsRequested() } as const
+
+/** "1 needs review" / "N need review" — Today's own words for the pending count. */
+const reviewLabel = (n: number) => (n === 1 ? '1 needs review' : `${n} need review`)
+
+async function pendingCount(page: Page): Promise<number> {
+  const text = await page
+    .getByText(/\d+ needs? review/)
+    .first()
+    .textContent()
+  return Number(/(\d+) needs? review/.exec(text ?? '')?.[1] ?? '0')
+}
 
 test('one balanced run — the drafts it produces become the proposals under test', async ({
   page,
@@ -94,7 +109,9 @@ test('after a RELOAD, Today shows the draft from the ledger', async ({ page, req
   await page.goto('/today')
   await expect(page.locator('[aria-busy="true"]')).toHaveCount(0, { timeout: SCREEN_SYNC })
 
-  await expect(page.getByText(/1 needs review/)).toBeVisible({ timeout: 60_000 })
+  // At least the run's draft is pending: exactly one on a fresh org, one more
+  // than before on the funded org.
+  await expect(page.getByText(/[1-9]\d* needs? review/).first()).toBeVisible({ timeout: 60_000 })
   // Scoped to main: the sidebar is a list of listitems too.
   const card = page.getByRole('main').getByRole('listitem').first()
   await expect(card).toContainText('Why it wrote this:')
@@ -115,6 +132,7 @@ test('approving records it as posted, and the decision survives a reload', async
   await expect(page.getByRole('main').getByRole('listitem').first()).toBeVisible({
     timeout: 60_000,
   })
+  const pendingBefore = await pendingCount(page)
 
   // A confirm precedes it, because the published record is permanent.
   // `exact` matters: getByRole name matching is SUBSTRING, so a plain
@@ -133,8 +151,11 @@ test('approving records it as posted, and the decision survives a reload', async
   await page.getByRole('alertdialog').getByRole('button', { name: 'Approve', exact: true }).click()
   await expect(page.getByText('Recorded as posted').first()).toBeVisible({ timeout: 30_000 })
 
-  // The queue empties, and the Approved tab carries it with its date.
-  await expect(page.getByText(/0 need review/)).toBeVisible({ timeout: 30_000 })
+  // One fewer pending — the queue empties on a fresh org and is one shorter
+  // on the funded one — and the Approved tab carries it with its date.
+  await expect(page.getByText(reviewLabel(pendingBefore - 1)).first()).toBeVisible({
+    timeout: 30_000,
+  })
   await page.getByRole('button', { name: 'Approved', exact: true }).click()
   await expect(page.getByRole('main').getByRole('listitem').first()).toContainText(
     'Recorded as posted',

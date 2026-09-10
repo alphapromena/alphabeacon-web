@@ -25,10 +25,11 @@ import type { Page } from '@playwright/test'
 import { expect, test } from './fixtures'
 import { SCREEN_SYNC } from './live-clocks'
 import { completeBrandSetup, signUpAndEnter, skipUnlessFunded } from './live-setup'
+import { runStamp } from './live-setup'
 
 const API_BASE = process.env.VITE_API_BASE_URL
 const WITH_MEDIA = process.env.LIVE_MEDIA === '1'
-const RUN = Date.now()
+const RUN = runStamp()
 const PASSWORD = 'Roasted2Order!'
 const owner = `qa+${RUN}cv@alphapromena.com`
 const ORG_NAME = `QA Create Visual Org ${RUN}`
@@ -104,12 +105,16 @@ test('one run, then Create visual on its result renders ONE image and attaches n
 
 test('Today offers the same button on the ledger row, and the Studio lists the job', async ({
   page,
+  request,
 }) => {
   test.setTimeout(180_000)
   await login(page)
+  // The run and the render happened on the funded org (the one mechanism),
+  // so this reads THERE — on a fresh $0 org there is nothing to read (item 60).
+  await skipUnlessFunded(page, request, 'the ledger this read depends on')
   await page.goto('/today')
   await expect(page.locator('[aria-busy="true"]')).toHaveCount(0, { timeout: SCREEN_SYNC })
-  await expect(page.getByText(/1 needs review/)).toBeVisible({ timeout: 60_000 })
+  await expect(page.getByText(/[1-9]\d* needs? review/).first()).toBeVisible({ timeout: 60_000 })
 
   // Attached nothing: the proposal is still pending, and the second entry
   // point is there. Opened, NOT submitted — one render is the budget.

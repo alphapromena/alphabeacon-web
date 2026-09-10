@@ -20,7 +20,7 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp
 import { Label } from '@/components/ui/label'
 import { useAccountActions } from '@/data/account'
 import { useAuthActions } from '@/data/auth'
-import { useLiveMode, useOrg, useSession } from '@/data/provider'
+import { useLiveMode, useSession } from '@/data/provider'
 import { VERIFY_RESEND_COOLDOWN_MS } from '@/data/types'
 import { MESSAGES } from '@/lib/messages'
 import { AuthErrorAlert, type AuthFailure } from './auth-error'
@@ -35,7 +35,6 @@ export function VerifyEmailScreen() {
   const account = useAccountActions()
   const live = useLiveMode()
   const session = useSession()
-  const org = useOrg()
   const navigate = useNavigate()
   const [params] = useSearchParams()
   const expired = params.get('state') === 'expired'
@@ -77,6 +76,11 @@ export function VerifyEmailScreen() {
   const verify = async () => {
     setVerifying(true)
     setFailure(null)
+    // The name comes from THIS flow's signup and from nowhere else (GATE-0910,
+    // item 59): the world's org is the boot dataset, whose name on a dev
+    // server is the demo's. A login-then-verify walk carries no name, so
+    // nothing is created here and N3 asks for one — the walk production has.
+    const pendingOrgName = session.pendingOrgName
     const result = await auth.verifyEmail({ email, code })
     if (!result.ok) {
       setVerifying(false)
@@ -84,7 +88,7 @@ export function VerifyEmailScreen() {
       setCode('')
       return
     }
-    const workspaceName = org.name.trim()
+    const workspaceName = (pendingOrgName ?? '').trim()
     if (workspaceName) await account.createWorkspace(workspaceName)
     setVerifying(false)
     // Verified, signed in, and — if that landed — with a workspace. RootGate
@@ -155,11 +159,7 @@ export function VerifyEmailScreen() {
         )}
 
         <div className="flex flex-col gap-3">
-          <Button
-            variant="outline"
-            disabled={secondsLeft > 0}
-            onClick={() => void resend()}
-          >
+          <Button variant="outline" disabled={secondsLeft > 0} onClick={() => void resend()}>
             {secondsLeft > 0 ? (
               <>
                 Resend in <MonoNumber value={formatCountdown(secondsLeft)} />

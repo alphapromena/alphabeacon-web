@@ -10,9 +10,10 @@ import type { Page } from '@playwright/test'
 import { expect, test } from './fixtures'
 import { signUpAndEnter } from './live-setup'
 import { ONE_CALL, SCREEN_SYNC } from './live-clocks'
+import { runStamp } from './live-setup'
 
 const API_BASE = process.env.VITE_API_BASE_URL
-const RUN = Date.now()
+const RUN = runStamp()
 const PASSWORD = 'Roasted2Order!'
 const owner = `qa+${RUN}b@alphapromena.com`
 const ORG_NAME = `QA Brand Org ${RUN}`
@@ -146,10 +147,7 @@ test('sources and topics: scheme-less display, real persistence', async ({ page 
   await expect(page.getByText('perfectdailygrind.com/feed')).toHaveCount(0)
 })
 
-test('deleting a tone reflects in the schedules that referenced it', async ({
-  page,
-  request,
-}) => {
+test('deleting a tone reflects in the schedules that referenced it', async ({ page, request }) => {
   await login(page, owner, PASSWORD)
   // First wait after login — the dashboard's whole sync — live-red-2026-08-23.
   await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible({

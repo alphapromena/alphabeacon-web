@@ -13,6 +13,7 @@
 //   "axe" -> the Playwright @axe specs
 
 import { spawnSync } from 'node:child_process'
+import { suiteRowsFromReport, wantsRerun } from './verify-lib'
 import { existsSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -190,17 +191,37 @@ function deliverablesExist(): boolean {
 function main(): void {
   let failed = false
 
-  for (const [name, cmd] of [
-    ['lint', 'pnpm lint'],
-    ['typecheck', 'pnpm typecheck'],
-    ['unit tests', 'pnpm test'],
-    ['guard-static', 'pnpm guard:static'],
-    ['build', 'pnpm build'],
-  ] as const) {
-    if (!step(name, cmd)) {
+  // GATE-0910 §3.1 — verify-once: the six suite steps are read from the report
+  // `pnpm verify:all` wrote for THIS tree; nothing is re-run here. `--rerun`
+  // keeps the legacy chain until the founder retires it.
+  const rerun = wantsRerun()
+  if (rerun) {
+    for (const [name, cmd] of [
+      ['lint', 'pnpm lint'],
+      ['typecheck', 'pnpm typecheck'],
+      ['unit tests', 'pnpm test'],
+      ['guard-static', 'pnpm guard:static'],
+      ['build', 'pnpm build'],
+    ] as const) {
+      if (!step(name, cmd)) {
+        failed = true
+        console.log(`step failed: ${name} -- remaining steps skipped`)
+        break
+      }
+    }
+  } else {
+    const suite = suiteRowsFromReport({
+      e2eLabel: 'e2e (studio, billing, axe)',
+      needE2e: !skipE2e,
+      e2eMustPass: [/studio/i, /billing/i],
+    })
+    for (const row of suite.rows) {
+      results.push({ name: row.name, outcome: row.outcome })
+      console.log(`${row.outcome}  ${row.name}${row.detail ? ` — ${row.detail}` : ''}`)
+    }
+    if (!suite.ok) {
       failed = true
-      console.log(`step failed: ${name} -- remaining steps skipped`)
-      break
+      console.log(`suite report: ${suite.reason ?? 'a suite step is red in the report'}`)
     }
   }
 
@@ -212,7 +233,9 @@ function main(): void {
     if (!e2eNavigationRuleHolds()) failed = true
     if (!deliverablesExist()) failed = true
 
-    if (skipE2e) {
+    if (!rerun) {
+      // the e2e row is already in the results, from the report
+    } else if (skipE2e) {
       results.push({ name: 'e2e (studio, billing, axe)', outcome: 'SKIP' })
       console.log('\ne2e skipped (--skip-e2e)')
     } else {

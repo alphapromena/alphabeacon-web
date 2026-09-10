@@ -47,6 +47,46 @@ describe('signup (A1)', () => {
   })
 })
 
+describe('the workspace name comes only from this flow (GATE-0910, item 59)', () => {
+  it("a live signup holds the typed name on the session and leaves the world's org alone", () => {
+    const before = visitor()
+    const next = dataReducer(before, {
+      type: 'live/pendingVerification',
+      email: 'lena@nova.example',
+      orgName: 'Nova Skincare',
+    })
+    expect(next.world.session.pendingOrgName).toBe('Nova Skincare')
+    expect(next.world.session.pendingEmail).toBe('lena@nova.example')
+    expect(next.world.org.name).toBe(before.world.org.name)
+  })
+
+  it('a login that lands on the verify screen carries no name, so nothing can be named after the demo', () => {
+    const active: DataState = {
+      datasetId: 'active',
+      world: buildDataset('active'),
+      devForce: 'none',
+      connectivity: 'auto',
+    }
+    const next = dataReducer(active, {
+      type: 'live/pendingVerification',
+      email: 'lena@nova.example',
+    })
+    expect(next.world.session.pendingOrgName).toBeUndefined()
+    // "Atlas Roasters" stays the demo's, and is never a workspace's.
+    expect(next.world.org.name).toBe(active.world.org.name)
+  })
+
+  it('the static signup holds its name the same way', () => {
+    const next = dataReducer(visitor(), {
+      type: 'auth/signUp',
+      name: 'Lena Park',
+      email: 'lena@nova.example',
+      orgName: 'Nova Skincare',
+    })
+    expect(next.world.session.pendingOrgName).toBe('Nova Skincare')
+  })
+})
+
 describe('sign-in lockout (A2)', () => {
   it('locks out only after the limit, and says when it ends', () => {
     let state = visitor()

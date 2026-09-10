@@ -1,0 +1,58 @@
+{
+  "series": "gate-0910",
+  "run": "20260910-122833",
+  "commit": "e155055",
+  "dirty": true,
+  "startedAt": "2026-09-10T12:28:33.676Z",
+  "totalSeconds": 42.959,
+  "options": {
+    "series": "gate-0910",
+    "workers": 1,
+    "rounds": 1,
+    "lanes": [
+      "A"
+    ],
+    "only": [
+      "live-notifications"
+    ],
+    "skipStatic": true,
+    "skipLive": false,
+    "funded": false,
+    "media": false,
+    "pool": false,
+    "port": 5199,
+    "legacyVerify": false
+  },
+  "static": null,
+  "rounds": [
+    [
+      {
+        "file": "live-notifications",
+        "lane": "A",
+        "round": 1,
+        "attempt": 1,
+        "exit": 0,
+        "seconds": 16.564,
+        "summary": {
+          "passed": 1,
+          "failed": 0,
+          "skipped": 0,
+          "flaky": 0,
+          "tests": [
+            {
+              "title": "the inbox endpoints hold their contract, and the bell tells the truth",
+              "file": "live-notifications.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 10646
+            }
+          ]
+        },
+        "log": "round-1/live-notifications.log",
+        "startedAt": "2026-09-10T12:28:59.644Z",
+        "classification": "green"
+      }
+    ]
+  ],
+  "verdict": "GREEN"
+}

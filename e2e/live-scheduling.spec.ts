@@ -12,11 +12,12 @@
  */
 import type { Page } from '@playwright/test'
 import { expect, test } from './fixtures'
-import { signUpAndEnter } from './live-setup'
+import { fundedRunsRequested, signUpAndEnter, skipUnlessFunded } from './live-setup'
 import { SCREEN_SYNC } from './live-clocks'
+import { runStamp } from './live-setup'
 
 const API_BASE = process.env.VITE_API_BASE_URL
-const RUN = Date.now()
+const RUN = runStamp()
 const PASSWORD = 'Roasted2Order!'
 const owner = `qa+${RUN}s@alphapromena.com`
 const ORG_NAME = `QA Sched Org ${RUN}`
@@ -181,6 +182,9 @@ test('slots, if ingestion produced any, honour skip/un-skip and never offer appr
   request,
 }) => {
   await login(page, owner, PASSWORD)
+  // --funded (item 60): the walk runs on the funded org, which has slots only
+  // if ingestion ran there; a fresh org never has any and this skips.
+  if (fundedRunsRequested()) await skipUnlessFunded(page, request, 'the slot walk')
   // First wait after login — the dashboard's whole sync — live-red-2026-08-23.
   await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible({
     timeout: SCREEN_SYNC,

@@ -11,11 +11,12 @@
  */
 import type { Page } from '@playwright/test'
 import { expect, test } from './fixtures'
-import { signUpAndEnter } from './live-setup'
+import { signUpAndEnter, skipUnlessFunded } from './live-setup'
+import { runStamp } from './live-setup'
 
 const API_BASE = process.env.VITE_API_BASE_URL
 const WITH_MEDIA = process.env.LIVE_MEDIA === '1'
-const RUN = Date.now()
+const RUN = runStamp()
 const PASSWORD = 'Roasted2Order!'
 const owner = `qa+${RUN}s@alphapromena.com`
 const ORG_NAME = `QA Studio Org ${RUN}`
@@ -95,11 +96,15 @@ test('E3 lists renders, and is honest when there are none', async ({ page }) => 
   }
 })
 
-test('E2 renders for real, and E4 opens the asset it made', async ({ page }) => {
+test('E2 renders for real, and E4 opens the asset it made', async ({ page, request }) => {
   // A render costs money, so it is gated (D-INT-I). Everything above is free.
   test.skip(!WITH_MEDIA, 'set LIVE_MEDIA=1 to spend on one real render')
   test.setTimeout(400_000)
   await login(page)
+  // The one mechanism (BIL-0902/R §4): a $0 fresh org switches to the funded
+  // QA org or skips with the reason — a render never runs on an empty wallet
+  // (item 60: this test was dormant on a fresh org's $0).
+  await skipUnlessFunded(page, request, 'one real render')
   await page.goto('/studio/new?capability=media.generate')
 
   // The params come from the model's own capabilitySchema.

@@ -1,0 +1,38 @@
+
+warm-up: waking the API before the suite starts (https://<api-host>/health)
+warm-up: service awake after 2 probe(s) in 0.6s — last 2: 258ms, 87ms
+warm-up: burst 1 — slowest of 12 was 200 in 411ms — fleet not warm yet
+warm-up: burst 2 — slowest of 12 was 200 in 498ms — fleet not warm yet
+warm-up: burst 3 — slowest of 12 was 200 in 79ms — fleet not warm yet
+warm-up: burst 4 — slowest of 12 was 200 in 79ms — fleet not warm yet
+warm-up: burst 5 — slowest of 12 was 200 in 79ms — fleet not warm yet
+warm-up: burst 6 — slowest of 12 was 200 in 82ms — fleet not warm yet
+warm-up: 12-way fleet warm after 7 burst(s), 3.5s total — slowest 86ms
+
+warm-up: heartbeat started — 4 probes every 5s for the life of the run
+
+
+Running 1 test using 1 worker
+
+  x  1 [chromium] › e2e\live-notifications.spec.ts:33:1 › the inbox endpoints hold their contract, and the bell tells the truth (10.5s)
+
+warm-up: heartbeat stopped after 2 beat(s)
+
+
+  1) [chromium] › e2e\live-notifications.spec.ts:33:1 › the inbox endpoints hold their contract, and the bell tells the truth 
+
+    TypeError: Cannot read properties of undefined (reading '0')
+
+      54 |     items: { id: string }[]
+      55 |   }
+    > 56 |   const orgId = orgs.items[0].id
+         |                           ^
+      57 |
+      58 |   // The three endpoints, verbatim from the contract.
+      59 |   const list = (await (
+        at C:\alphabeacon-web\alphabeacon-web\e2e\live-notifications.spec.ts:56:27
+
+    Error Context: .gate\artifacts\20260910-122521\round-1\live-notifications\live-notifications-the-inb-f0987-nd-the-bell-tells-the-truth-chromium\error-context.md
+
+  1 failed
+    [chromium] › e2e\live-notifications.spec.ts:33:1 › the inbox endpoints hold their contract, and the bell tells the truth 

@@ -394,17 +394,21 @@ export function dataReducer(state: DataState, action: DataAction): DataState {
       // Signed up, not yet verified: the verify screen needs the address, and
       // nothing may pretend to be signed in yet. The org NAME is held too —
       // the API takes no org at signup, and verifying is what creates the
-      // workspace from it (ORDER ONB-0827, D-ONB-C).
+      // workspace from it (ORDER ONB-0827, D-ONB-C). It is held on the
+      // SESSION and never written onto the world's org (GATE-0910, item 59):
+      // the world is the boot dataset, and its org name — "Atlas Roasters"
+      // on a dev server — must never become a real workspace's name. The
+      // login path dispatches this with no name, and N3 asks for one.
       return {
         ...state,
         world: {
           ...state.world,
-          ...(action.orgName ? { org: { ...state.world.org, name: action.orgName } } : {}),
           session: {
             ...state.world.session,
             signedIn: false,
             emailVerified: false,
             pendingEmail: action.email,
+            pendingOrgName: action.orgName,
           },
         },
       }
@@ -477,6 +481,7 @@ export function dataReducer(state: DataState, action: DataAction): DataState {
             ...state.world.session,
             signedIn: true,
             pendingEmail: action.email,
+            pendingOrgName: action.orgName,
             emailVerified: false,
           },
         },

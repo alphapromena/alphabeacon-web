@@ -4946,3 +4946,74 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
 - Correction to the gate record: 'video-duration 3/3' was 2 passed + 1
   skipped by design (test 3 self-skips on the expected 402); the gate README
   is corrected in this commit.
+
+### 2026-09-10 16:10 — GATE-0910 §3 BUILT on the founder's word: verify-once (the static half 21 min → 170 s), the two lanes and one server per round in `pnpm gate`, the org pool behind its flag, item 59 fixed both ways, item 60's skips counted and `--funded`; the first live smoke of the runner
+
+- Did: **The word** (2026-09-10): Phase 0 accepted; build §3; item 59 both
+  fixes as GATE-0910's one product change through the standard gate too;
+  billing stays in B, wallet moves to A; item 60: the nine stay skipped on
+  unfunded orgs, every skip counted with its reason, `pnpm gate --funded`
+  runs them on org 1813 on the founder's word per run; `feat/gate-0910`
+  pushed as the record (branch only); then §4. **§3.1 verify-once:**
+  `scripts/verify-lib.ts` (the tree hash = HEAD + every change against it +
+  every untracked non-ignored file; the report shape; `suiteRowsFromReport`;
+  the two reporters read) and `scripts/verify-all.ts` (the six suite steps
+  once, the STATIC e2e pinned static by an explicit empty
+  `VITE_API_BASE_URL`, reports under the ignored `.gate/reports/`); the seven
+  `verify-wNN.ts` assert over the report — a missing or stale report FAILS
+  with "run `pnpm verify:all`" — and keep their 33 own assertions and manual
+  lists; `--rerun` is the legacy chain. **Measured:** `verify:all` 151 s
+  (lint 7, typecheck 15, guard 1, unit 21, build 24, static e2e 81), the
+  seven checks 19 s — **170 s against 21 min**; and the rule proved itself
+  on the first try: a report made before four more files were written was
+  refused as stale by all seven in 26 s. **§3.2 the lanes:**
+  `scripts/gate/lanes.ts` (A 16 files incl. wallet; B billing + the four
+  funded-org files) with `lanes.test.ts` proving every live file on disk is
+  laned once; `runStamp()` salts every file's QA emails (21 specs). **§3.3
+  one server per round:** the runner builds once with the base and owns a
+  `vite preview` by pid, refuses a busy port, and reads the served entry
+  chunk for the inlined host; `assertServerMode` gained
+  `assertBuiltServerMode` — a LIVE run needs its host in the served chunk, a
+  STATIC run refuses any built server (trap 22 for the preview age). **§3.4
+  the org pool:** `poolOrgCredentials()`, `signUpAndEnter(…, { pool: true })`
+  (live-notifications opts in), the runner mints the org under `--pool`;
+  OFF by default. **§3.5 `pnpm gate`** (`scripts/gate/gate.ts`, the rule in
+  `classify.ts` with its tests): keep-awake → `verify:all` → the seven
+  checks → build → preview → warm → round 1 (lane A N-wide, lane B serial)
+  → round 2 → network-lost files re-run solo 3/3 → every skip listed with
+  its reason → the record under `Docs/qa/<series>/gate/<run>/` (worked
+  under `.gate/runs/`, published in one copy at the end so nothing written
+  mid-run moves the tree hash the checks compare) with a one-table README
+  and `summary.json`; `--funded` / `--media` are the per-run words;
+  `--legacy-verify`, `--only`, `--lanes`, `--rounds`, `--workers`,
+  `--skip-static/--skip-live`. **Item 59, both fixes:** the org name typed
+  at signup is held on the session (`pendingOrgName`) and the verify screen
+  creates the workspace from that alone (three reducer tests); live-auth
+  test 3 expects N3 and finishes through it. **Item 60:** live-proposals'
+  counts relative and its opt-out lifted under `--funded`; live-scheduling 3
+  switches under `--funded`; live-studio 4 and live-create-visual 3 go
+  through the one mechanism. Unit **656 / 58 files**; lint, typecheck,
+  guard clean. **The first live smoke of the runner** (`--skip-static
+  --rounds 1 --lanes A --only live-notifications,live-wallet --workers 2`):
+  build 25 s, the preview served with the host inlined once, wallet 4/4 in
+  40 s, and one red — live-notifications' own `/me/orgs` read answered
+  without `items` 17 s in, `TypeError` at the spec's `items[0]`, the page at
+  failure the signed-in shell — recorded UNCLASSIFIED by the runner exactly
+  as the law says, its error context saved out of the wiped folder.
+- Then, the runner on the pair again: solo green 1/1 (17 s); paired red again
+  (the same `items` TypeError, 11 s in), then paired GREEN (36 s wall for the
+  two files) — an intermittent answer without `items` from `/me/orgs` under two
+  signups at once, solo never. Both reads (the spec's and `readWallet`'s) now
+  assert the status before the shape, so the next occurrence records its code;
+  the worker measurement watches for it. The runner's copied error contexts are
+  redacted like its logs.
+- Phase: GATE-0910 **§3 BUILT**; the measurement (3/4/6) and §4's proof next.
+- Files: `scripts/verify-lib.ts`, `scripts/verify-all.ts`, `scripts/verify-w0[0-6].ts`,
+  `scripts/gate/{gate,lanes,classify,keep-awake.ps1}` (+ tests), `e2e/live-setup.ts`,
+  `e2e/global-setup.ts`, the 21 live specs (`runStamp`), `e2e/live-{auth,proposals,scheduling,studio,create-visual,notifications}.spec.ts`,
+  `src/data/{types.ts,provider.tsx,auth-flow.test.ts}`, `src/features/auth/verify-email-screen.tsx`,
+  `package.json` (`verify:all`, `gate`), `.gitignore` (`.gate/`), `.agent/{stack,decisions,state}.md`,
+  `Docs/qa/gate-0910/gate/` (the legacy scripts, the smoke records).
+- Decisions: the GATE-0910 entry in decisions.md (the law with the runner as its instrument, verify-once, the lanes, one server, the pool off, items 59/60).
+- Verify: lint · typecheck · guard-static 352 · unit **656 / 58** · `verify:all` + the seven checks **170 s** · the runner smoked live four times (zero spend).
+- Next: the worker measurement, then §4 — the legacy chain and `pnpm gate` side by side, then `pnpm gate` twice; report-and-stop.

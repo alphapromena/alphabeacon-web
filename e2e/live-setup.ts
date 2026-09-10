@@ -25,6 +25,44 @@ const CODE = '000000'
 const API_BASE = process.env.VITE_API_BASE_URL
 
 /**
+ * The run's own stamp for QA emails and org names — the clock plus a salt.
+ * `Date.now()` alone named every file's addresses, and the suffixes repeat
+ * across files (`a`, `b`, `c`, `r`, `s`, `o`), which was fine one file at
+ * a time and collides the moment a lane runs files in parallel and two load
+ * in the same millisecond (GATE-0910 §3.2). Digits only, so the address keeps
+ * the `qa+<stamp><suffix>@` shape every record and rate-limit note expects.
+ */
+export function runStamp(): string {
+  return `${Date.now()}${Math.floor(Math.random() * 1000)
+    .toString()
+    .padStart(3, '0')}`
+}
+
+/**
+ * `pnpm gate --funded` (GATE-0910, the founder's ruling on item 60): the
+ * tests that stay skipped on an unfunded fresh org may run on the funded QA
+ * org for THIS run, on the founder's word. Off by default; the runner sets
+ * it, a spec only asks.
+ */
+export function fundedRunsRequested(): boolean {
+  return process.env.E2E_FUNDED_RUNS === '1'
+}
+
+/**
+ * The org pool (GATE-0910 §3.4, behind `E2E_ORG_POOL=1`, OFF by default —
+ * the answer to Hasan's crowded dev tenant, not a speed trick). The runner
+ * mints one org at round start and hands its owner here; a file that can
+ * live on a used org opts in with `{ pool: true }`, and everything else
+ * keeps minting its own.
+ */
+export function poolOrgCredentials(): { email: string; password: string } | null {
+  if (process.env.E2E_ORG_POOL !== '1') return null
+  const email = process.env.E2E_POOL_EMAIL?.trim()
+  const password = process.env.E2E_POOL_PASSWORD
+  return email && password ? { email, password } : null
+}
+
+/**
  * The session token the app stored (`src/api/session.ts`, tab-scoped first,
  * remembered second) — for a spec's OWN reads with the same Bearer. It is
  * used, never printed.
@@ -49,9 +87,14 @@ export interface WalletRead {
 export async function readWallet(page: Page, request: APIRequestContext): Promise<WalletRead> {
   const token = await sessionToken(page)
   const auth = { authorization: `Bearer ${token}` }
-  const orgs = (await (await request.get(`${API_BASE}/me/orgs`, { headers: auth })).json()) as {
-    items: { id: string }[]
-  }
+  const orgsRes = await request.get(`${API_BASE}/me/orgs`, { headers: auth })
+  // The status before the shape (GATE-0910 §3.2): under a parallel lane a
+  // limiter's 429 must read as a 429, never as a TypeError on `items`.
+  expect(
+    orgsRes.status(),
+    `GET /me/orgs → ${orgsRes.status()} ${(await orgsRes.text()).slice(0, 200)}`,
+  ).toBe(200)
+  const orgs = (await orgsRes.json()) as { items: { id: string }[] }
   const orgId = orgs.items[0].id
   const wallet = (await (
     await request.get(`${API_BASE}/orgs/${orgId}/alphastudio/wallet`, { headers: auth })
@@ -201,7 +244,11 @@ export async function skipUnlessFunded(
   const wallet = await readWallet(page, request)
   if (wallet.availableCents > 0) return wallet
 
-  const funded = options.switchToFundedOrg === false ? null : fundedOrgCredentials()
+  // A spec that opts out of the switch stays out — unless this run carries
+  // the founder's word (`pnpm gate --funded`), which is what puts the dormant
+  // tests on the funded org for one run (item 60).
+  const maySwitch = options.switchToFundedOrg !== false || fundedRunsRequested()
+  const funded = maySwitch ? fundedOrgCredentials() : null
   if (funded) {
     await signInAsFundedOwner(page, funded)
     const fundedWallet = await readWallet(page, request)
@@ -234,11 +281,25 @@ export async function skipUnlessFunded(
 export async function signUpAndEnter(
   page: Page,
   account: { name: string; email: string; password: string; orgName: string },
+  options: { pool?: boolean } = {},
 ) {
   // HSN-0910/D: this is the ONE place a spec creates a company, so it refuses
   // to do that anywhere but dev — the same rule `global-setup.ts` applies
   // before the run, kept here for a spec run outside it.
   assertNotProduction()
+  // GATE-0910 §3.4: a file that opted into the org pool signs into the
+  // round's shared org instead of minting one — only when the pool is on.
+  const pool = options.pool ? poolOrgCredentials() : null
+  if (pool) {
+    await page.goto('/login')
+    await page.getByLabel('Work email').fill(pool.email)
+    await page.getByLabel('Password', { exact: true }).fill(pool.password)
+    await page.getByRole('button', { name: 'Sign in' }).click()
+    await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible({
+      timeout: SCREEN_SYNC,
+    })
+    return
+  }
   await page.goto('/signup')
   await page.getByLabel('Full name').fill(account.name)
   await page.getByLabel('Work email').fill(account.email)

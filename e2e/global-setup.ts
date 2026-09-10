@@ -187,20 +187,27 @@ async function assertServerMode(baseURL: string | undefined, expectLive: boolean
   if (!baseURL) return
 
   let served: string
+  let contentType = ''
   try {
     const response = await fetch(new URL('/src/api/config.ts', baseURL), {
       signal: AbortSignal.timeout(10_000),
     })
-    // A preview or production build serves no source modules. Not this guard's
-    // business, and not a reason to fail anyone's run.
+    // Not served at all: nothing to read, not a reason to fail anyone's run.
     if (!response.ok) return
+    contentType = response.headers.get('content-type') ?? ''
     served = await response.text()
   } catch {
     return
   }
 
   const inlined = /"VITE_API_BASE_URL"\s*:\s*"([^"]*)"/.exec(served)
-  if (!inlined) return
+  if (!inlined) {
+    // Not the dev server's module. A BUILT server (`vite preview`, GATE-0910
+    // §3.3) answers this path with the SPA's index.html, so the mode is read
+    // from what it actually serves instead.
+    if (/text\/html/i.test(contentType)) await assertBuiltServerMode(baseURL, expectLive)
+    return
+  }
   const serverIsLive = inlined[1].length > 0
   if (serverIsLive === expectLive) return
 
@@ -213,6 +220,44 @@ async function assertServerMode(baseURL: string | undefined, expectLive: boolean
       `silently — and a live server under the static suite fails ~63 specs on "waiting for ` +
       `heading Dashboard", which reads exactly like a regression. Stop whatever is on that ` +
       `port and run again. (state.md trap 22.)`,
+  )
+}
+
+/**
+ * The tripwire for a BUILT server (GATE-0910 §3.3): `vite preview` serves no
+ * source modules, so the mode is read from the served entry chunk. A LIVE run
+ * needs its API host inlined there; a STATIC run never runs against a built
+ * server at all — its webServer is the dev server — so a built server on the
+ * port is a leftover from a gate run and is refused, not adopted (trap 22).
+ */
+async function assertBuiltServerMode(baseURL: string, expectLive: boolean): Promise<void> {
+  if (!expectLive) {
+    throw new Error(
+      `Wrong server: this is a STATIC-mode run, but a BUILT app (a preview server) is already ` +
+        `listening on ${baseURL}. The static suite runs on the dev server only; stop the preview ` +
+        `and run again. (state.md trap 22; GATE-0910 §3.3.)`,
+    )
+  }
+  const base = process.env.VITE_API_BASE_URL?.trim().replace(/\/+$/, '')
+  if (!base) return
+  const host = base.replace(/^https?:\/\//, '')
+  try {
+    const index = await (
+      await fetch(new URL('/', baseURL), { signal: AbortSignal.timeout(10_000) })
+    ).text()
+    const entry = /assets\/index-[A-Za-z0-9_-]+\.js/.exec(index)?.[0]
+    if (!entry) return
+    const chunk = await (
+      await fetch(new URL(`/${entry}`, baseURL), { signal: AbortSignal.timeout(20_000) })
+    ).text()
+    if (chunk.includes(host)) return
+  } catch {
+    return
+  }
+  throw new Error(
+    `Wrong server: this is a LIVE-mode run, but the built app listening on ${baseURL} does not ` +
+      `inline this run's API host — a STATIC build, or a build for another environment. Rebuild ` +
+      `with VITE_API_BASE_URL and serve that. (state.md trap 22; GATE-0910 §3.3.)`,
   )
 }
 

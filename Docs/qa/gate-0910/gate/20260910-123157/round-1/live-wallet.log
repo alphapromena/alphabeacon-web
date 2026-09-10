@@ -1,0 +1,18 @@
+
+warm-up: waking the API before the suite starts (https://<api-host>/health)
+warm-up: service awake after 2 probe(s) in 0.6s — last 2: 219ms, 102ms
+warm-up: 12-way fleet warm after 1 burst(s), 1.2s total — slowest 584ms
+
+warm-up: heartbeat started — 4 probes every 5s for the life of the run
+
+
+Running 4 tests using 1 worker
+
+  ok 1 [chromium] › e2e\live-wallet.spec.ts:51:1 › a fresh owner + org, made through the product (16.9s)
+  ok 2 [chromium] › e2e\live-wallet.spec.ts:76:1 › the balance chip shows money — and over a zero wallet, the instruction to subscribe (4.3s)
+  ok 3 [chromium] › e2e\live-wallet.spec.ts:96:1 › H3 is a balance and a real usage read-back, in both allowed grains (5.2s)
+  ok 4 [chromium] › e2e\live-wallet.spec.ts:131:1 › the wallet and usage endpoints answer the shapes the UI is built on (4.2s)
+
+warm-up: heartbeat stopped after 6 beat(s)
+
+  4 passed (33.8s)

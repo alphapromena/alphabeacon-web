@@ -26,9 +26,10 @@ import {
   signUpAndEnter,
   skipUnlessFunded,
 } from './live-setup'
+import { runStamp } from './live-setup'
 
 const API_BASE = process.env.VITE_API_BASE_URL
-const RUN = Date.now()
+const RUN = runStamp()
 const PASSWORD = 'Roasted2Order!'
 const owner = `qa+${RUN}g@alphapromena.com`
 const ORG_NAME = `QA Generate Org ${RUN}`

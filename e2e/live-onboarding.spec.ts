@@ -21,9 +21,10 @@ import type { Page } from '@playwright/test'
 import { expect, test } from './fixtures'
 import { SCREEN_SYNC } from './live-clocks'
 import { ensureToneLanguage, openSettingsTab, signUpAndEnter, skipUnlessFunded } from './live-setup'
+import { runStamp } from './live-setup'
 
 const API_BASE = process.env.VITE_API_BASE_URL
-const RUN = Date.now()
+const RUN = runStamp()
 const PASSWORD = 'Roasted2Order!'
 const owner = `qa+${RUN}o@alphapromena.com`
 const ORG_NAME = `QA Onboarding Org ${RUN}`

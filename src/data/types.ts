@@ -105,6 +105,12 @@ export interface Session {
   userId: string
   /** Set by signup; A3 verifies it before the workspace is created. */
   pendingEmail?: string
+  /**
+   * The org name typed at signup, held here until A3 creates the workspace
+   * from it — and from nowhere else (GATE-0910, item 59): the world's own org
+   * is the boot dataset, whose name on a dev server is the demo's.
+   */
+  pendingOrgName?: string
   emailVerified: boolean
   /** Consecutive failed sign-ins — A2 locks out after MAX_SIGN_IN_ATTEMPTS. */
   failedSignIns: number

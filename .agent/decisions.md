@@ -3340,3 +3340,66 @@ Closes open-item 38, which ONB-0827 created and the live suite caught.
   instead); deleting the W5 composer (D4 and E4 still need it); a credit gate
   on the capability composers (no exchange rate exists); a URL literal for
   production in the guard (both rules read env).
+
+### 2026-09-10 — GATE-0910: the gate's law restated with a runner as its instrument; verify-once; two lanes; one server per round; the org pool behind a flag; the workspace name never from the demo world
+
+**The law did not change (§0).** The gate still proves lint, typecheck and
+guard-static clean, every unit test, every static e2e with zero network, the
+seven verify conditions, every live spec twice against a cold-then-warm API
+with round 2 as the gate, every red classified before any fix, and the record
+under `Docs/qa/<series>/gate/`. What changed is who enforces it: **`pnpm
+gate` (`scripts/gate/gate.ts`) is the instrument**, and the four traps that
+used to live in memory are its code — 22 (a busy port is refused, never
+adopted; the preview server is owned by pid; the tripwire reads a built
+server's entry chunk), 23 (the host is held awake for the run), 24 (every
+Playwright process gets its own `--output` under `.gate/`; nothing of the
+record lives under `test-results/`), 25 (`*.spec.ts` only, the config).
+
+**Verify-once (§3.1).** `pnpm verify:all` runs the six suite steps once and
+writes `.gate/reports/verify.json` with the hash of the tree it ran on; each
+`verify:wNN` asserts over that report — the six rows, the named facts its
+e2e step wanted (the @golden walk, the axe specs, by title) — and keeps its
+own 33 tree assertions and its printed manual list untouched. **A verify
+never re-runs a suite that already ran on the same tree hash;** a missing or
+stale report is a FAIL with the one instruction that fixes it. Measured: the
+seven verifies were 19.0 min of the same 633 + 115 tests; the static half is
+now `verify:all` ≈ 2.5 min plus the seven checks in ≈ 20 s. `--rerun` keeps
+the old chain until the founder retires it after the merge.
+
+**Two lanes (§3.2), on the founder's rulings.** Lane A runs in parallel:
+the sixteen files that mint their own org(s) and touch nothing outside them —
+own-org writes included, the fan-out rule's premise; **live-wallet moved to A
+on its measured behaviour** (its own fresh org's wallet and usage). Lane B
+runs serially after A: the four files that spend on or write the one funded
+org (brand-rules, generate, onboarding, create-visual) and **live-billing,
+which stays in B** for the real Stripe test-mode session it creates each
+run. The table is `scripts/gate/lanes.ts` and `lanes.test.ts` proves every
+live file on disk is laned exactly once. Every file's run stamp is now the
+clock plus a salt (`runStamp()`), because the suffixes repeat across files
+and a parallel lane can load two in one millisecond.
+
+**One server per round (§3.3).** The runner builds once with the round's
+API base and serves it with `vite preview` on a port it owns by pid; no
+per-file dev server. The Phase 0 probe found the preview NOT identical to
+the dev server on one test, and the difference was the app's (item 59), so
+the order's fallback — a dev server per round — was not taken: it would have
+kept proving a behaviour production does not have.
+
+**Item 59, both fixes (the founder's word):** the app never takes a
+workspace name from the demo world — the name typed at signup is held on the
+session (`pendingOrgName`) and the verify screen creates the workspace from
+that alone; the login-then-verify walk carries none and N3 asks. The live
+spec expects N3 and finishes through it. GATE-0910's one product change,
+gated by both chains.
+
+**Item 60 (the founder's word):** the nine dormant tests stay skipped on an
+unfunded fresh org, the gate report counts every skip with its reason, and
+`pnpm gate --funded` puts them on the funded QA org for that run only —
+live-proposals' counts are relative so they hold there. `--media` is the
+separate word for a paid render, as before.
+
+**The org pool (§3.4)** exists behind `--pool` / `E2E_ORG_POOL=1` and is
+OFF: the runner mints one org at round start, and only a file that opted in
+(`{ pool: true }` — live-notifications today) signs into it. It is the
+answer to Hasan's crowded dev tenant, not a speed trick, and it stays off
+until the founder rules on it.
