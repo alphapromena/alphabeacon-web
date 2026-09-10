@@ -1,0 +1,51 @@
+
+warm-up: waking the API before the suite starts (https://<api-host>/health)
+warm-up: service awake after 2 probe(s) in 0.6s — last 2: 232ms, 77ms
+warm-up: burst 1 — slowest of 12 was 200 in 227ms — fleet not warm yet
+warm-up: burst 2 — slowest of 12 was 200 in 78ms — fleet not warm yet
+warm-up: burst 3 — slowest of 12 was 200 in 83ms — fleet not warm yet
+warm-up: burst 4 — slowest of 12 was 200 in 80ms — fleet not warm yet
+warm-up: burst 5 — slowest of 12 was 200 in 82ms — fleet not warm yet
+warm-up: burst 6 — slowest of 12 was 200 in 86ms — fleet not warm yet
+warm-up: 12-way fleet warm after 7 burst(s), 2.9s total — slowest 87ms
+
+warm-up: heartbeat started — 4 probes every 5s for the life of the run
+
+
+Running 3 tests using 1 worker
+
+  ok 1 [chromium] › e2e\live-brand-kit.spec.ts:61:1 › a fresh owner + org, made through the product (6.7s)
+  ok 2 [chromium] › e2e\live-brand-kit.spec.ts:71:1 › the wire, from Node (NOT browser truth): presign the closed pair, PUT a tiny PDF, read the row back under Files, Delete, re-read (11.1s)
+  x  3 [chromium] › e2e\live-brand-kit.spec.ts:130:1 › browser truth: the Brand kit type sends a PDF from Chromium with nothing typed, it lists, and Delete removes it (42.7s)
+
+warm-up: heartbeat stopped after 12 beat(s)
+
+
+  1) [chromium] › e2e\live-brand-kit.spec.ts:130:1 › browser truth: the Brand kit type sends a PDF from Chromium with nothing typed, it lists, and Delete removes it 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('region', { name: 'Files' }).getByText(/No files yet/)
+    Expected: visible
+    Timeout: 40000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 40000ms
+      - waiting for getByRole('region', { name: 'Files' }).getByText(/No files yet/)
+
+
+      136 |
+      137 |   const files = page.getByRole('region', { name: 'Files' })
+    > 138 |   await expect(files.getByText(/No files yet/)).toBeVisible({ timeout: SCREEN_SYNC })
+          |                                                 ^
+      139 |
+      140 |   // No description field for the brand kit; the picker is ready at once.
+      141 |   await page.getByRole('radio', { name: 'Brand kit' }).click()
+        at C:\alphabeacon-web\alphabeacon-web\e2e\live-brand-kit.spec.ts:138:49
+
+    Error Context: .gate\artifacts\20260910-123443\round-1\live-brand-kit\live-brand-kit-browser-tru-bb2be-lists-and-Delete-removes-it-chromium\error-context.md
+
+  1 failed
+    [chromium] › e2e\live-brand-kit.spec.ts:130:1 › browser truth: the Brand kit type sends a PDF from Chromium with nothing typed, it lists, and Delete removes it 
+  2 passed (1.1m)

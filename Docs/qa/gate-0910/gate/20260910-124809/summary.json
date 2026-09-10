@@ -1,0 +1,28 @@
+{
+  "series": "gate-0910",
+  "run": "20260910-124809",
+  "commit": "",
+  "dirty": false,
+  "startedAt": "2026-09-10T12:48:09.493Z",
+  "totalSeconds": 15.8,
+  "options": {
+    "series": "gate-0910",
+    "workers": 4,
+    "rounds": 1,
+    "lanes": [
+      "A"
+    ],
+    "only": null,
+    "skipStatic": true,
+    "skipLive": false,
+    "funded": false,
+    "media": false,
+    "pool": false,
+    "port": 5199,
+    "legacyVerify": false
+  },
+  "static": null,
+  "rounds": [],
+  "verdict": "STOPPED",
+  "error": "the live build failed — see .gate\\runs\\20260910-124809\\build.log"
+}

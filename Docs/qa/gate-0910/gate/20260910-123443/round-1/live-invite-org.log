@@ -1,0 +1,31 @@
+
+warm-up: waking the API before the suite starts (https://<api-host>/health)
+warm-up: service awake after 2 probe(s) in 0.6s — last 2: 227ms, 80ms
+warm-up: burst 1 — slowest of 12 was 200 in 220ms — fleet not warm yet
+warm-up: burst 2 — slowest of 12 was 200 in 91ms — fleet not warm yet
+warm-up: burst 3 — slowest of 12 was 200 in 75ms — fleet not warm yet
+warm-up: burst 4 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 5 — slowest of 12 was 200 in 75ms — fleet not warm yet
+warm-up: burst 6 — slowest of 12 was 200 in 85ms — fleet not warm yet
+warm-up: burst 7 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 8 — slowest of 12 was 200 in 75ms — fleet not warm yet
+warm-up: burst 9 — slowest of 12 was 200 in 75ms — fleet not warm yet
+warm-up: burst 10 — slowest of 12 was 200 in 103ms — fleet not warm yet
+warm-up: burst 11 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 12 — slowest of 12 was 200 in 89ms — fleet not warm yet
+warm-up: burst 13 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 14 — slowest of 12 was 200 in 78ms — fleet not warm yet
+warm-up: 12-way fleet warm after 15 burst(s), 5.6s total — slowest 89ms
+
+warm-up: heartbeat started — 4 probes every 5s for the life of the run
+
+
+Running 3 tests using 1 worker
+
+  ok 1 [chromium] › e2e\live-invite-org.spec.ts:84:1 › two accounts, each owning a workspace (13.5s)
+  ok 2 [chromium] › e2e\live-invite-org.spec.ts:106:1 › an invited existing user can REACH the inviting workspace, and a reload keeps it (13.7s)
+  ok 3 [chromium] › e2e\live-invite-org.spec.ts:165:1 › losing membership falls back honestly, and never to a dead screen (9.0s)
+
+warm-up: heartbeat stopped after 7 beat(s)
+
+  3 passed (43.9s)

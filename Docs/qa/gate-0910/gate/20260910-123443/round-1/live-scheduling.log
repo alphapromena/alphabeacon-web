@@ -1,0 +1,192 @@
+
+warm-up: waking the API before the suite starts (https://<api-host>/health)
+warm-up: service awake after 2 probe(s) in 0.6s — last 2: 216ms, 78ms
+warm-up: burst 1 — slowest of 12 was 200 in 223ms — fleet not warm yet
+warm-up: burst 2 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 3 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 4 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 5 — slowest of 12 was 200 in 78ms — fleet not warm yet
+warm-up: burst 6 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 7 — slowest of 12 was 200 in 78ms — fleet not warm yet
+warm-up: burst 8 — slowest of 12 was 429 in 76ms — fleet not warm yet
+warm-up: burst 9 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 10 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 11 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 12 — slowest of 12 was 200 in 78ms — fleet not warm yet
+warm-up: burst 13 — slowest of 12 was 200 in 78ms — fleet not warm yet
+warm-up: burst 14 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 15 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 16 — slowest of 12 was 200 in 90ms — fleet not warm yet
+warm-up: burst 17 — slowest of 12 was 200 in 82ms — fleet not warm yet
+warm-up: burst 18 — slowest of 12 was 200 in 79ms — fleet not warm yet
+warm-up: burst 19 — slowest of 12 was 200 in 81ms — fleet not warm yet
+warm-up: burst 20 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 21 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 22 — slowest of 12 was 200 in 78ms — fleet not warm yet
+warm-up: burst 23 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 24 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 25 — slowest of 12 was 200 in 75ms — fleet not warm yet
+warm-up: burst 26 — slowest of 12 was 200 in 75ms — fleet not warm yet
+warm-up: burst 27 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 28 — slowest of 12 was 200 in 88ms — fleet not warm yet
+warm-up: burst 29 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 30 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 31 — slowest of 12 was 200 in 80ms — fleet not warm yet
+warm-up: burst 32 — slowest of 12 was 200 in 78ms — fleet not warm yet
+warm-up: burst 33 — slowest of 12 was 200 in 75ms — fleet not warm yet
+warm-up: burst 34 — slowest of 12 was 200 in 78ms — fleet not warm yet
+warm-up: burst 35 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 36 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 37 — slowest of 12 was 200 in 75ms — fleet not warm yet
+warm-up: burst 38 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 39 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 40 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 41 — slowest of 12 was 200 in 78ms — fleet not warm yet
+warm-up: burst 42 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 43 — slowest of 12 was 200 in 79ms — fleet not warm yet
+warm-up: burst 44 — slowest of 12 was 200 in 78ms — fleet not warm yet
+warm-up: burst 45 — slowest of 12 was 200 in 83ms — fleet not warm yet
+warm-up: burst 46 — slowest of 12 was 200 in 81ms — fleet not warm yet
+warm-up: burst 47 — slowest of 12 was 200 in 75ms — fleet not warm yet
+warm-up: burst 48 — slowest of 12 was 200 in 75ms — fleet not warm yet
+warm-up: burst 49 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 50 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 51 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 52 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 53 — slowest of 12 was 200 in 78ms — fleet not warm yet
+warm-up: burst 54 — slowest of 12 was 200 in 78ms — fleet not warm yet
+warm-up: burst 55 — slowest of 12 was 200 in 80ms — fleet not warm yet
+warm-up: burst 56 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 57 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 58 — slowest of 12 was 200 in 85ms — fleet not warm yet
+warm-up: burst 59 — slowest of 12 was 200 in 78ms — fleet not warm yet
+warm-up: burst 60 — slowest of 12 was 200 in 75ms — fleet not warm yet
+warm-up: burst 61 — slowest of 12 was 200 in 81ms — fleet not warm yet
+warm-up: burst 62 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 63 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 64 — slowest of 12 was 200 in 84ms — fleet not warm yet
+warm-up: burst 65 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 66 — slowest of 12 was 200 in 81ms — fleet not warm yet
+warm-up: burst 67 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 68 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 69 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 70 — slowest of 12 was 200 in 78ms — fleet not warm yet
+warm-up: burst 71 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 72 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 73 — slowest of 12 was 200 in 79ms — fleet not warm yet
+warm-up: burst 74 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 75 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 76 — slowest of 12 was 200 in 78ms — fleet not warm yet
+warm-up: burst 77 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 78 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 79 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 80 — slowest of 12 was 200 in 80ms — fleet not warm yet
+warm-up: burst 81 — slowest of 12 was 200 in 80ms — fleet not warm yet
+warm-up: burst 82 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 83 — slowest of 12 was 200 in 81ms — fleet not warm yet
+warm-up: burst 84 — slowest of 12 was 200 in 79ms — fleet not warm yet
+warm-up: burst 85 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 86 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 87 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 88 — slowest of 12 was 200 in 78ms — fleet not warm yet
+warm-up: burst 89 — slowest of 12 was 200 in 78ms — fleet not warm yet
+warm-up: burst 90 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 91 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 92 — slowest of 12 was 200 in 79ms — fleet not warm yet
+warm-up: burst 93 — slowest of 12 was 200 in 75ms — fleet not warm yet
+warm-up: burst 94 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 95 — slowest of 12 was 200 in 83ms — fleet not warm yet
+warm-up: burst 96 — slowest of 12 was 200 in 82ms — fleet not warm yet
+warm-up: burst 97 — slowest of 12 was 200 in 84ms — fleet not warm yet
+warm-up: burst 98 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 99 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 100 — slowest of 12 was 200 in 82ms — fleet not warm yet
+warm-up: burst 101 — slowest of 12 was 200 in 79ms — fleet not warm yet
+warm-up: burst 102 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 103 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 104 — slowest of 12 was 200 in 85ms — fleet not warm yet
+warm-up: burst 105 — slowest of 12 was 200 in 78ms — fleet not warm yet
+warm-up: burst 106 — slowest of 12 was 200 in 80ms — fleet not warm yet
+warm-up: burst 107 — slowest of 12 was 200 in 79ms — fleet not warm yet
+warm-up: burst 108 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 109 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 110 — slowest of 12 was 200 in 78ms — fleet not warm yet
+warm-up: burst 111 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 112 — slowest of 12 was 200 in 75ms — fleet not warm yet
+warm-up: burst 113 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 114 — slowest of 12 was 200 in 75ms — fleet not warm yet
+warm-up: burst 115 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 116 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 117 — slowest of 12 was 429 in 76ms — fleet not warm yet
+warm-up: burst 118 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 119 — slowest of 12 was 200 in 78ms — fleet not warm yet
+warm-up: burst 120 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 121 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 122 — slowest of 12 was 200 in 75ms — fleet not warm yet
+warm-up: burst 123 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 124 — slowest of 12 was 200 in 83ms — fleet not warm yet
+warm-up: burst 125 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 126 — slowest of 12 was 429 in 77ms — fleet not warm yet
+warm-up: burst 127 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 128 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 129 — slowest of 12 was 200 in 79ms — fleet not warm yet
+warm-up: burst 130 — slowest of 12 was 200 in 80ms — fleet not warm yet
+warm-up: burst 131 — slowest of 12 was 200 in 82ms — fleet not warm yet
+warm-up: burst 132 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 133 — slowest of 12 was 200 in 79ms — fleet not warm yet
+warm-up: burst 134 — slowest of 12 was 200 in 78ms — fleet not warm yet
+warm-up: burst 135 — slowest of 12 was 200 in 75ms — fleet not warm yet
+warm-up: burst 136 — slowest of 12 was 200 in 79ms — fleet not warm yet
+warm-up: burst 137 — slowest of 12 was 200 in 81ms — fleet not warm yet
+warm-up: burst 138 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 139 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 140 — slowest of 12 was 200 in 78ms — fleet not warm yet
+warm-up: burst 141 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 142 — slowest of 12 was 200 in 78ms — fleet not warm yet
+warm-up: 12-way fleet warm after 143 burst(s), 48.4s total — slowest 83ms
+
+warm-up: heartbeat started — 4 probes every 5s for the life of the run
+
+
+Running 3 tests using 1 worker
+
+  ok 1 [chromium] › e2e\live-scheduling.spec.ts:57:1 › signup creates the workspace and NOTHING else (9.6s)
+  x  2 [chromium] › e2e\live-scheduling.spec.ts:93:1 › C1 creates the schedule on first save, then PATCHes it — and it survives a reload (30.0s)
+  -  3 [chromium] › e2e\live-scheduling.spec.ts:180:1 › slots, if ingestion produced any, honour skip/un-skip and never offer approve
+
+warm-up: heartbeat stopped after 8 beat(s)
+
+
+  1) [chromium] › e2e\live-scheduling.spec.ts:93:1 › C1 creates the schedule on first save, then PATCHes it — and it survives a reload 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator:  getByText('You have unsaved changes.')
+    Expected: 0
+    Received: 1
+
+    Call log:
+      - Expect "toHaveCount" with timeout 40000ms
+      - waiting for getByText('You have unsaved changes.')
+        52 × locator resolved to 1 element
+           - unexpected value "1"
+      - Test timeout of 30000ms exceeded.
+
+
+      135 |   // in B9 — the wizard used to create the row and no longer does.
+      136 |   await page.getByRole('button', { name: 'Save changes' }).click()
+    > 137 |   await expect(page.getByText('You have unsaved changes.')).toHaveCount(0, { timeout: SCREEN_SYNC })
+          |                                                             ^
+      138 |
+      139 |   // The reload reads the server back through the sync: the row is really there.
+      140 |   await page.goto('/calendar/settings')
+        at C:\alphabeacon-web\alphabeacon-web\e2e\live-scheduling.spec.ts:137:61
+
+    Error Context: .gate\artifacts\20260910-123443\round-1\live-scheduling\live-scheduling-C1-creates-701a0--—-and-it-survives-a-reload-chromium\error-context.md
+
+  1 failed
+    [chromium] › e2e\live-scheduling.spec.ts:93:1 › C1 creates the schedule on first save, then PATCHes it — and it survives a reload 
+  1 did not run
+  1 passed (1.5m)

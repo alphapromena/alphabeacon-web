@@ -1,0 +1,5 @@
+
+> alphabeacon-web@0.0.0 build C:\alphabeacon-web\alphabeacon-web
+> tsc -b && vite build
+
+ ELIFECYCLE  Command failed with exit code 3221225794.

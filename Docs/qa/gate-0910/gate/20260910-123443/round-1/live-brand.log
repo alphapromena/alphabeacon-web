@@ -1,0 +1,44 @@
+
+warm-up: waking the API before the suite starts (https://<api-host>/health)
+warm-up: service awake after 2 probe(s) in 0.5s — last 2: 215ms, 78ms
+warm-up: burst 1 — slowest of 12 was 200 in 219ms — fleet not warm yet
+warm-up: burst 2 — slowest of 12 was 200 in 80ms — fleet not warm yet
+warm-up: burst 3 — slowest of 12 was 200 in 78ms — fleet not warm yet
+warm-up: burst 4 — slowest of 12 was 200 in 89ms — fleet not warm yet
+warm-up: burst 5 — slowest of 12 was 200 in 79ms — fleet not warm yet
+warm-up: burst 6 — slowest of 12 was 200 in 83ms — fleet not warm yet
+warm-up: burst 7 — slowest of 12 was 200 in 80ms — fleet not warm yet
+warm-up: burst 8 — slowest of 12 was 200 in 81ms — fleet not warm yet
+warm-up: burst 9 — slowest of 12 was 200 in 78ms — fleet not warm yet
+warm-up: burst 10 — slowest of 12 was 200 in 80ms — fleet not warm yet
+warm-up: burst 11 — slowest of 12 was 200 in 84ms — fleet not warm yet
+warm-up: burst 12 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 13 — slowest of 12 was 200 in 78ms — fleet not warm yet
+warm-up: burst 14 — slowest of 12 was 200 in 83ms — fleet not warm yet
+warm-up: burst 15 — slowest of 12 was 200 in 78ms — fleet not warm yet
+warm-up: burst 16 — slowest of 12 was 200 in 84ms — fleet not warm yet
+warm-up: burst 17 — slowest of 12 was 200 in 81ms — fleet not warm yet
+warm-up: burst 18 — slowest of 12 was 429 in 76ms — fleet not warm yet
+warm-up: burst 19 — slowest of 12 was 200 in 78ms — fleet not warm yet
+warm-up: burst 20 — slowest of 12 was 200 in 87ms — fleet not warm yet
+warm-up: burst 21 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 22 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 23 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 24 — slowest of 12 was 200 in 83ms — fleet not warm yet
+warm-up: burst 25 — slowest of 12 was 200 in 80ms — fleet not warm yet
+warm-up: 12-way fleet warm after 26 burst(s), 9.3s total — slowest 81ms
+
+warm-up: heartbeat started — 4 probes every 5s for the life of the run
+
+
+Running 5 tests using 1 worker
+
+  ok 1 [chromium] › e2e\live-brand.spec.ts:57:1 › a fresh owner + org, made through the product (6.2s)
+  ok 2 [chromium] › e2e\live-brand.spec.ts:66:1 › a custom tone: created under the adapter, edited, and it survives a reload (8.0s)
+  ok 3 [chromium] › e2e\live-brand.spec.ts:100:1 › voice rules: the flat live list persists through the API (8.9s)
+  ok 4 [chromium] › e2e\live-brand.spec.ts:119:1 › sources and topics: scheme-less display, real persistence (12.0s)
+  ok 5 [chromium] › e2e\live-brand.spec.ts:150:1 › deleting a tone reflects in the schedules that referenced it (7.2s)
+
+warm-up: heartbeat stopped after 8 beat(s)
+
+  5 passed (53.7s)

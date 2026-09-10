@@ -1,0 +1,54 @@
+
+warm-up: waking the API before the suite starts (https://<api-host>/health)
+warm-up: service awake after 2 probe(s) in 0.6s — last 2: 244ms, 88ms
+warm-up: burst 1 — slowest of 12 was 200 in 238ms — fleet not warm yet
+warm-up: burst 2 — slowest of 12 was 200 in 84ms — fleet not warm yet
+warm-up: burst 3 — slowest of 12 was 429 in 86ms — fleet not warm yet
+warm-up: burst 4 — slowest of 12 was 429 in 85ms — fleet not warm yet
+warm-up: burst 5 — slowest of 12 was 200 in 81ms — fleet not warm yet
+warm-up: burst 6 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 7 — slowest of 12 was 200 in 81ms — fleet not warm yet
+warm-up: burst 8 — slowest of 12 was 200 in 83ms — fleet not warm yet
+warm-up: burst 9 — slowest of 12 was 200 in 86ms — fleet not warm yet
+warm-up: burst 10 — slowest of 12 was 200 in 92ms — fleet not warm yet
+warm-up: burst 11 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 12 — slowest of 12 was 200 in 91ms — fleet not warm yet
+warm-up: burst 13 — slowest of 12 was 200 in 78ms — fleet not warm yet
+warm-up: 12-way fleet warm after 14 burst(s), 5.3s total — slowest 86ms
+
+warm-up: heartbeat started — 4 probes every 5s for the life of the run
+
+
+Running 4 tests using 1 worker
+
+  x  1 [chromium] › e2e\live-country.spec.ts:55:1 › a fresh workspace has NO country, and I1 is where one is set (3.0m)
+  -  2 [chromium] › e2e\live-country.spec.ts:104:1 › the calendar carries real holidays, each with the rules for that day
+  -  3 [chromium] › e2e\live-country.spec.ts:153:1 › re-saving the same country is a quiet no-op, not a fake reload
+  -  4 [chromium] › e2e\live-country.spec.ts:183:1 › C2 no longer offers an event source it cannot create
+
+warm-up: heartbeat stopped after 36 beat(s)
+
+
+  1) [chromium] › e2e\live-country.spec.ts:55:1 › a fresh workspace has NO country, and I1 is where one is set 
+
+    Test timeout of 180000ms exceeded.
+
+    Error: locator.selectOption: Test timeout of 180000ms exceeded.
+    Call log:
+      - waiting for locator('#i1-country')
+
+
+      79 |   await page.getByRole('link', { name: 'Settings' }).first().click()
+      80 |   await expect(page.locator('[aria-busy="true"]')).toHaveCount(0, { timeout: SCREEN_SYNC })
+    > 81 |   await page.locator('#i1-country').selectOption('JO')
+         |                                     ^
+      82 |   await page.getByRole('button', { name: 'Save country' }).click()
+      83 |   await expect(page.getByText(/public holidays loaded for the year/)).toBeVisible({
+      84 |     timeout: AFTER_COUNTRY,
+        at C:\alphabeacon-web\alphabeacon-web\e2e\live-country.spec.ts:81:37
+
+    Error Context: .gate\artifacts\20260910-123443\round-1\live-country\live-country-a-fresh-works-01c96--and-I1-is-where-one-is-set-chromium\error-context.md
+
+  1 failed
+    [chromium] › e2e\live-country.spec.ts:55:1 › a fresh workspace has NO country, and I1 is where one is set 
+  3 did not run

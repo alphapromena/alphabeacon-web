@@ -341,6 +341,19 @@ export default async function globalSetup(config: FullConfig): Promise<(() => vo
   // And is it the API we are allowed to mint QA companies on? (HSN-0910/D)
   assertNotProduction()
 
+  // GATE-0910 §3.2: under `pnpm gate` the RUNNER warmed the fleet once for the
+  // round and keeps the one heartbeat. A lane of parallel files each firing
+  // its own 12-way burst is what trips the API's limiter — measured 2026-09-10
+  // with three in flight: the burst never read "all 200" for 90 s and the
+  // setup died before a test ran. The tripwire and the guard above still run
+  // in every process; only the traffic stands down.
+  if (process.env.E2E_WARMED_BY_RUNNER === '1') {
+    console.log(
+      'warm-up: skipped — the runner warmed the fleet and keeps the heartbeat (GATE-0910 §3.2)',
+    )
+    return
+  }
+
   const url = `${base.replace(/\/+$/, '')}/health`
   const startedAt = Date.now()
   const elapsed = () => Date.now() - startedAt

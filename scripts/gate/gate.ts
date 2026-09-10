@@ -226,6 +226,7 @@ class Gate {
   readonly log: string[] = []
   private awake: ChildProcess | null = null
   private preview: ChildProcess | null = null
+  private heartbeat: NodeJS.Timeout | null = null
   readonly liveEnv: NodeJS.ProcessEnv
 
   constructor(opts: Options) {
@@ -273,6 +274,10 @@ class Gate {
   }
 
   release(): void {
+    if (this.heartbeat) {
+      clearInterval(this.heartbeat)
+      this.heartbeat = null
+    }
     if (this.preview) {
       killTree(this.preview)
       this.preview = null
@@ -359,24 +364,63 @@ class Gate {
     )
   }
 
+  /**
+   * The round's warm-up, ONCE, by the runner (§3.2): wake the service, then
+   * provision the fleet with 12-way bursts until every probe answers within a
+   * second — a 429 is an answer — then keep one heartbeat for the round. The
+   * Playwright processes are told to stand down from their own bursts
+   * (E2E_WARMED_BY_RUNNER=1): three of them bursting at once is what tripped
+   * the API's limiter on 2026-09-10.
+   */
   async warm(): Promise<void> {
     const url = `${this.base}/health`
-    const started = Date.now()
-    for (;;) {
+    const probe = async (): Promise<{ ms: number; status: number | 'error' }> => {
+      const t = Date.now()
       try {
-        const t = Date.now()
         const res = await fetch(url, { signal: AbortSignal.timeout(20000) })
         await res.text()
-        if (res.status === 200 || res.status === 429) {
-          this.say(`API answers /health ${res.status} in ${Date.now() - t} ms (a 429 is an answer)`)
-          return
-        }
+        return { ms: Date.now() - t, status: res.status }
       } catch {
-        // cold or unreachable — keep probing inside the cap
+        return { ms: Date.now() - t, status: 'error' }
       }
-      if (seconds(started) > 90) throw new Error('the API did not answer /health within 90 s')
-      await sleep(1000)
     }
+    const started = Date.now()
+    let fast = 0
+    while (fast < 2) {
+      const p = await probe()
+      if ((p.status === 200 || p.status === 429) && p.ms < 1000) fast += 1
+      else fast = 0
+      if (seconds(started) > 90) throw new Error('the API did not wake within 90 s')
+      if (fast < 2) await sleep(250)
+    }
+    let bursts = 0
+    for (;;) {
+      bursts += 1
+      const results = await Promise.all(Array.from({ length: 12 }, () => probe()))
+      const slowest = results.reduce((w, r) => (r.ms > w.ms ? r : w))
+      const answered = results.filter(
+        (r) => (r.status === 200 || r.status === 429) && r.ms < 1000,
+      ).length
+      if (answered === results.length) {
+        this.say(
+          `warm-up: 12-way fleet warm after ${bursts} burst(s) in ${seconds(started).toFixed(1)} s — slowest ${slowest.ms} ms (a 429 is an answer)`,
+        )
+        break
+      }
+      if (seconds(started) > 90)
+        throw new Error(
+          `the API fleet never warmed: ${bursts} bursts, ${answered}/12 answered fast in the last`,
+        )
+      await sleep(250)
+    }
+    this.heartbeat = setInterval(() => {
+      void Promise.all(Array.from({ length: 4 }, () => probe())).catch(() => {})
+    }, 5000)
+    this.heartbeat.unref?.()
+    this.liveEnv.E2E_WARMED_BY_RUNNER = '1'
+    this.say(
+      'heartbeat: 4 probes every 5 s for the round; the files stand down from their own warm-ups',
+    )
   }
 
   // ----- the org pool (§3.4, behind --pool, off by default)
@@ -479,7 +523,8 @@ class Gate {
   async pool<T>(items: T[], n: number, fn: (item: T) => Promise<void>): Promise<void> {
     const queue = [...items]
     const workers = Array.from({ length: Math.max(1, n) }, async (_, i) => {
-      await sleep(i * 700)
+      // Staggered starts: no two files sign up and load a dashboard in the same second.
+      await sleep(i * 4000)
       while (queue.length) {
         const item = queue.shift()!
         await fn(item)

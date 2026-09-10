@@ -1,0 +1,83 @@
+
+warm-up: waking the API before the suite starts (https://<api-host>/health)
+warm-up: service awake after 2 probe(s) in 0.6s — last 2: 221ms, 83ms
+warm-up: burst 1 — slowest of 12 was 200 in 216ms — fleet not warm yet
+warm-up: burst 2 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 3 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 4 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 5 — slowest of 12 was 200 in 78ms — fleet not warm yet
+warm-up: burst 6 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 7 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 8 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 9 — slowest of 12 was 200 in 75ms — fleet not warm yet
+warm-up: burst 10 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 11 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 12 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 13 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 14 — slowest of 12 was 200 in 79ms — fleet not warm yet
+warm-up: burst 15 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 16 — slowest of 12 was 200 in 78ms — fleet not warm yet
+warm-up: burst 17 — slowest of 12 was 200 in 84ms — fleet not warm yet
+warm-up: burst 18 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 19 — slowest of 12 was 200 in 81ms — fleet not warm yet
+warm-up: burst 20 — slowest of 12 was 200 in 84ms — fleet not warm yet
+warm-up: burst 21 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 22 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 23 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 24 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 25 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 26 — slowest of 12 was 200 in 78ms — fleet not warm yet
+warm-up: burst 27 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 28 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 29 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 30 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 31 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 32 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 33 — slowest of 12 was 200 in 80ms — fleet not warm yet
+warm-up: burst 34 — slowest of 12 was 200 in 81ms — fleet not warm yet
+warm-up: burst 35 — slowest of 12 was 200 in 82ms — fleet not warm yet
+warm-up: burst 36 — slowest of 12 was 200 in 81ms — fleet not warm yet
+warm-up: burst 37 — slowest of 12 was 200 in 75ms — fleet not warm yet
+warm-up: burst 38 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 39 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 40 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 41 — slowest of 12 was 200 in 81ms — fleet not warm yet
+warm-up: burst 42 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 43 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 44 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 45 — slowest of 12 was 200 in 81ms — fleet not warm yet
+warm-up: burst 46 — slowest of 12 was 200 in 75ms — fleet not warm yet
+warm-up: burst 47 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 48 — slowest of 12 was 200 in 79ms — fleet not warm yet
+warm-up: burst 49 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 50 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 51 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 52 — slowest of 12 was 200 in 78ms — fleet not warm yet
+warm-up: burst 53 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 54 — slowest of 12 was 200 in 78ms — fleet not warm yet
+warm-up: burst 55 — slowest of 12 was 200 in 79ms — fleet not warm yet
+warm-up: burst 56 — slowest of 12 was 429 in 77ms — fleet not warm yet
+warm-up: burst 57 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 58 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 59 — slowest of 12 was 200 in 78ms — fleet not warm yet
+warm-up: burst 60 — slowest of 12 was 200 in 79ms — fleet not warm yet
+warm-up: burst 61 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 62 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 63 — slowest of 12 was 200 in 75ms — fleet not warm yet
+warm-up: burst 64 — slowest of 12 was 200 in 78ms — fleet not warm yet
+warm-up: burst 65 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 66 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: 12-way fleet warm after 67 burst(s), 23.0s total — slowest 82ms
+
+warm-up: heartbeat started — 4 probes every 5s for the life of the run
+
+
+Running 3 tests using 1 worker
+
+  ok 1 [chromium] › e2e\live-media-upload.spec.ts:48:1 › a fresh owner + org, made through the product (7.2s)
+  ok 2 [chromium] › e2e\live-media-upload.spec.ts:58:1 › an image upload becomes a WIRE-listed Files row, and Delete removes it from the wire (10.3s)
+  ok 3 [chromium] › e2e\live-media-upload.spec.ts:97:1 › the logo uploads with desc "logo", shows as the logo, stays out of Files, and removes (11.6s)
+
+warm-up: heartbeat stopped after 6 beat(s)
+
+  3 passed (53.5s)
