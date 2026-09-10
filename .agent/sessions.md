@@ -4651,3 +4651,82 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   green; no app code changed yet.
 - Next: /A (the table, the grid, the composers), /C (the org id), /D (the
   guard, the env map), then the gate.
+
+### 2026-09-10 14:10 — ORDER HSN-0910 /A, /C, /D BUILT on `feat/hsn-0910`: the 13-capability grid and composers on one table, the org id in Settings, the no-production guard; /B held
+
+- Did: **/A — the Studio.** `src/data/media-capabilities.ts` is the ONE
+  table for Hasan's 13 (the fields with their ranges and enums, the plans
+  that hide a field, the reference inputs — urls or asset ids, how many —
+  the guidance rules 0–6 × 1–2000, the output kinds, the pricing rule, the
+  document's trap per capability); `validateCapabilityInput` (the document's
+  refusals, before any round-trip), `buildCapabilityBody` (each field at its
+  path, empty optionals omitted, `origin` on every body, `plan` only when
+  the catalog said `selectable`), `estimateCost` (count × price,
+  ceil(chars/1000) × price, seconds × price, motion at the clip's length or
+  the framing's cap — exact decimal-string arithmetic, never a float).
+  `entities/media-catalog.ts` is the demo catalog transcribed from the
+  Phase 0 record; `useStudioActions().catalog(capability, plan?)` answers it
+  statically and sends `?plan=` on the wire. `capability-grid.tsx` — one card
+  per capability the catalog grants, the Higgsfield art under the name
+  (`aria-hidden`, the name is the label), the price line from the catalog
+  ("from $0.03 per image"), a kind filter on the table's output kinds.
+  `capability-composer.tsx` + `use-capability-composer.ts` — only that
+  capability's fields, the plan chips (with each plan's price) only when
+  `selectable`, enums narrowed by the resolved row's schema (the rows that
+  drop `webp`, the approved voices), the cost line, the note (the film's
+  silent lane, the motion pricing trap), the issues, the wire's failure with
+  its request-id, `InsufficientBalance` on 402, past_due gating, the demo
+  render (`studio/demoRender`). `asset-picker.tsx` — upload through
+  `uploadMediaAsset` or pick from the org's assets by kind; `guidance-editor`,
+  `scenes-editor` (the running sum, the silent lane's disabled options).
+  `live-jobs.tsx` — capability names, `image` shows / `video` plays /
+  `audio` and `document` open (defensively), the film's named failures.
+  `studio-screens.tsx` — E1 is the grid in both modes; `/studio/new
+  ?capability=` is the capability screen; `?model=` keeps the W5 composer
+  for D4 and E4's "Generate similar". `live-gallery.tsx` and
+  `live-composer.tsx` retired; `GALLERY_/COMPOSABLE_CAPABILITIES` gone;
+  `capabilityComingSoon` gone from the catalogue (every granted capability
+  has its screen), new messages for the film's failures, the reference
+  picker and the demo render.
+  **/C** — `OrganizationId` at the top of Settings › Organization: the wire's
+  id (live) or the dataset's (demo), verbatim, with Copy (clipboard + toast).
+  **/D** — `assertNotProduction()` in `e2e/global-setup.ts` (a live run must
+  declare `E2E_API_ENV=dev`; a base equal to `PROD_API_BASE_URL` is refused;
+  no URL literal), `signUpAndEnter` behind it; `Docs/api/environments.md`
+  (the map, the guard, the founder's hand step, the message for Ward);
+  `stack.md` rows for the two variables and the live-round command.
+  **Tests.** `media-capabilities.test.ts` (29: the 13, one trap each, the
+  scene sum, the silent lane, the per-plan length, the hidden fields, the
+  bodies of the document's examples, the cost rules); `studio.test.ts` —
+  the demo catalog read (the amendment-6 block retired), the mode pinned
+  static. `e2e/studio-capabilities.spec.ts` (static: the 13 cards with empty
+  alt, a composer's own fields and the demo render, every trap — where the
+  control's own cap is the refusal the cap is asserted — the org id, axe on
+  the grid and one composer, zero network); `e2e/live-media-capabilities.spec.ts`
+  (per granted capability the 402 on the document's body and the 400 on its
+  trap at zero spend, the 502 above four references asserted as measured,
+  `lang: "ar"` asserted refused, the grid and the voice select from the
+  wire); `live-studio` E1 re-targeted to the grid; `studio-billing`'s three
+  gallery tests re-pointed (the W5 composer reached through E4), the
+  low-credits test retired there (D4's law, `today-queue.spec.ts`);
+  `compose-analytics-settings`' readiness walk re-pointed to a card.
+  `screens4.md` E1/E2 amended. Card art committed earlier (`74f2c82`).
+  **Fixes the specs found:** the card links needed an explicit accessible
+  name (the whole card was the name); the rail's "Generate" link collides
+  with the card's, so card lookups are scoped to `main`; the video-ad
+  length is an enum held as a string, so the cost estimator reads it as one.
+- Phase: HSN-0910 /A, /C, /D built; /B HELD (item 51). The gate follows.
+- Files: `src/data/{media-capabilities,media-capabilities.test,studio,studio.test,provider}.ts*`,
+  `src/data/entities/media-catalog.ts`, `src/features/studio/{capability-grid,capability-composer,use-capability-composer,asset-picker,guidance-editor,scenes-editor,live-jobs,studio-screens}.ts*`
+  (`live-gallery.tsx`, `live-composer.tsx` deleted), `src/features/settings/organization-screen.tsx`,
+  `src/lib/messages.ts`, `e2e/{global-setup,live-setup}.ts`,
+  `e2e/{studio-capabilities,live-media-capabilities,live-studio,studio-billing,compose-analytics-settings}.spec.ts`,
+  `Docs/api/environments.md`, `screens4.md`, `.agent/{stack,decisions,sessions,state}.md`.
+- Decisions: see decisions.md — HSN-0910/A, /C, /D built.
+- Verify: lint clean · typecheck green · guard-static 352 clean · unit 629
+  (the table's 29 among them) · `studio-capabilities` 5/5,
+  `studio-billing` 7/7, `compose-analytics-settings` and `design-layer` green
+  solo; the full gate is the next entry.
+- Next: the gate — unit, the full static suite, `verify:w00`–`w06`, two live
+  rounds with `E2E_API_ENV=dev` and the host held awake — then the report,
+  and stop for the merge word.

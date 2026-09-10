@@ -3268,3 +3268,75 @@ Closes open-item 38, which ONB-0827 created and the live suite caught.
   on the funded org to see the multi-asset envelope (upstream compute is
   Hasan's money — §3.6 is the founder's word); or pasting 249 country rows
   into the shapes doc.
+
+### 2026-09-10 — HSN-0910/A, /C, /D built: one table for the 13, the grid and its composers, the org id, the no-production guard — /B held
+
+- **A capability's shape lives in ONE table** (`src/data/media-capabilities.ts`):
+  the fields and their ranges, the enums, which plans hide a field, the
+  reference inputs (urls vs asset ids, how many), the guidance rules, the
+  output kinds, the pricing rule and the document's trap. The grid, the
+  composer, the validation, the body builder, the cost line, the demo catalog
+  and the e2e specs all read it, so they cannot disagree. Two things are
+  deliberately NOT in it: whether `plan` is selectable — the catalog's
+  `selectable`, read on the wire, never hardcoded — and the prices, the
+  catalog's decimal strings. The per-plan price and alias come from the
+  `?plan=` read (`catalog(capability, plan)`), because the plain read carries
+  `plan: null` on every own-model row (Phase 0).
+- **The UI refuses what the document refuses; the wire remains the judge.**
+  `validateCapabilityInput` enforces every refusal the document states, so a
+  user never pays a round-trip for a known 400 — and where a control's own
+  cap IS the refusal (a 600-character description, a two-letter language,
+  a picker that stops at four), the cap is the check. A 400 that still
+  arrives renders as itself with its request-id, because the wire's sentence
+  names no field (item 49). Above four references the upstream answers 502
+  (item 58) — the 1–4 range is the client's to hold.
+- **Where Phase 0 disagreed with the document, the wire won:**
+  `motion.generate` carries no `lang` field (item 57); the still's 340 px
+  floor and the clip's 3 s floor are copy, not checks the door makes; the
+  video ad's length is 5 or 10 and nothing else; `resolution` and any
+  speaking scene never reach a balanced film.
+- **The reference inputs go through the ONE media uploader** — presign → PUT
+  → done, a failed PUT deleting its own phantom row (ruling H1) — or pick an
+  asset the org already holds, by kind. A `url` field mints its read urls at
+  SUBMIT (the hour starts then); an `id` field sends `masset_…` ids. The
+  static picker keeps a local record and lists it under Files, as MED-0831's
+  demo upload does; nothing leaves the browser.
+- **The demo catalog is transcribed from the wire, and the demo render is
+  named as such.** `entities/media-catalog.ts` carries the 13 as measured
+  (aliases, kinds, display hints, prices, the enums the composer reads —
+  including the rows that drop `webp`); the static composer's Render is a
+  timer and a demo asset (`studio/demoRender`), no credits held, "Simulated in
+  the demo" on screen. The demo's credits and the catalog's money never meet
+  (D-INT-E), so the capability composers carry no credit gate; the
+  insufficient-credits law is D4's, still proven in `today-queue.spec.ts`.
+- **The W5 model composer is not deleted.** It still serves the draft-scoped
+  D4 (`media-panel.tsx`) and E4's "Generate similar" on a demo model's asset
+  (`/studio/new?model=`), which keeps `verify:w05`'s "D4 and E2 share one
+  composer" law true; `/studio/new?capability=` is the capability screen, and
+  a live composer with nothing named is the plain generate.
+- **Audio and document assets render defensively** (a row with Open and
+  Download, no player claims) until their envelopes are seen more than once;
+  a voice job's audio + timestamps document was measured exactly once (the
+  funded proof). The film's named failures (`reference_refused`,
+  `output_refused`, `script_unfit`) render as their own messages, each saying
+  the voice track already paid for is kept.
+- **No QA org on production, ever** (/D): `assertNotProduction` in
+  `global-setup.ts` refuses a live run unless `E2E_API_ENV=dev` is declared,
+  and refuses a base equal to `PROD_API_BASE_URL` whatever is declared; both
+  from the environment, no URL literal in source. `signUpAndEnter` — the one
+  place a spec mints a company — sits behind the same rule. The switch itself
+  (the production base in Vercel's Production scope) is the founder's hand
+  step; the map is `Docs/api/environments.md`, with the production column
+  reading "pending Ward" rather than a guessed value.
+- **/B stays HELD** on item 51: no State UI on a field both doors drop.
+- **The org id is shown verbatim** — the wire's opaque decimal string, never
+  formatted as a number — with a Copy control; the demo shows its dataset's.
+- Instead of: a params form generated from the catalog's `capabilitySchema`
+  for all 13 (the schema is the underlying MODEL's params, not the
+  capability's body — a film is `sec/aspect/scenes`, not `shots/durationS`);
+  a per-capability component each (thirteen forms to drift); hardcoding
+  `selectable` from the document (the catalog says it, and said the same);
+  parsing prices into floats to multiply (exact decimal-string arithmetic
+  instead); deleting the W5 composer (D4 and E4 still need it); a credit gate
+  on the capability composers (no exchange rate exists); a URL literal for
+  production in the guard (both rules read env).

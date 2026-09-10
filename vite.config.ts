@@ -14,7 +14,9 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
-    include: ['src/**/*.test.{ts,tsx}', 'scripts/**/*.test.ts'],
+    // `e2e/*.test.ts` are unit tests of the harness itself (HSN-0910/D's
+    // no-production guard); the Playwright specs are `*.spec.ts` and untouched.
+    include: ['src/**/*.test.{ts,tsx}', 'scripts/**/*.test.ts', 'e2e/**/*.test.ts'],
     css: false,
   },
 })

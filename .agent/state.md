@@ -24,10 +24,7 @@ Country: `state` DROPPED by `PUT /orgs/:id/country` and by the event source,
 no state list anywhere → /B HELD** (item 51); org 1813 has no media job
 (§3.4 unmeasured); the API exposes no environment name; `1.malaky.ai` is LIVE
 (the `live` preview), the apex `malaky.ai` is still a GoDaddy page,
-`*.vercel.app` is unreachable from this host (item 53). **Phase 0 ACCEPTED (the founder, 2026-09-10): A1 confirmed, A2 amended to Higgsfield card art (fetched, 13 WebPs under `public/studio/cards/`), A3 PROVEN by the funded proofs on org 1813 (`--funded-proofs`, 14 cents: logos, voice with its audio + document envelope, images.edit fetching OUR url); items 57/58 filed for Hasan; the branch pushed to origin as the record.** **Next:
-the founder's word, then /A (the 13-card grid on one table), /C (the org id
-in Settings), /D (the harness guard, the env map, Ward's message) on this
-branch; /B when Hasan names the door. Never push, never merge.** No new trap;
+`*.vercel.app` is unreachable from this host (item 53). **Phase 0 ACCEPTED (the founder, 2026-09-10): A1 confirmed, A2 amended to Higgsfield card art (fetched, 13 WebPs under `public/studio/cards/`), A3 PROVEN by the funded proofs on org 1813 (`--funded-proofs`, 14 cents: logos, voice with its audio + document envelope, images.edit fetching OUR url); items 57/58 filed for Hasan; the branch pushed to origin as the record.** **/A, /C and /D are BUILT on this branch (`37e8fa8`, pushed as the record): the one table `src/data/media-capabilities.ts`, the grid and the capability composers, the org id in Settings, `assertNotProduction` in the harness with `E2E_API_ENV=dev` required and `Docs/api/environments.md`; the W5 model composer kept for D4 and E4 only. THE GATE IS RUNNING: unit · the full static suite · verify w00–w06 · two live rounds (`E2E_API_ENV=dev`, `LIVE_MEDIA` off — the funded proofs already ran on the founder's word). Next: the gate report, then STOP for the merge word; /B when Hasan names the door. Never merge, never deploy.** No new trap;
 traps 22 and 23 stand for the live gate, trap 24 for the record.
 
 Before that, 2026-09-03: **M-BIL-1 (/auto) RAN GREEN on
