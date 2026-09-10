@@ -1,0 +1,246 @@
+=== LIVE ROUND 2 · start 2026-09-10T10:22:30Z · E2E_API_ENV=dev · funded creds: present · keep-awake pid 17236
+
+--- e2e/live-auth.spec.ts · 10:22:30Z
+warm-up: service awake after 2 probe(s) in 0.6s — last 2: 216ms, 94ms
+warm-up: heartbeat started — 4 probes every 5s for the life of the run
+  ok 1 [chromium] › e2e\live-auth.spec.ts:86:1 › signup -> verify with the emailed code -> logged in, WITH a workspace, in the app (6.8s)
+  ok 2 [chromium] › e2e\live-auth.spec.ts:105:1 › a second signup: resend immediately proves the 429 countdown, wrong password proves the vague 401 (4.8s)
+  ok 3 [chromium] › e2e\live-auth.spec.ts:125:1 › correct password + unverified email routes to the verify screen, which finishes the job (5.0s)
+  ok 4 [chromium] › e2e\live-auth.spec.ts:144:1 › forgot â†’ reset via the documented deep link revokes everything; only the new password works (7.1s)
+  ok 5 [chromium] › e2e\live-auth.spec.ts:182:1 › the shell appears; sign out and logout-all both really revoke (7.7s)
+  ok 6 [chromium] › e2e\live-auth.spec.ts:237:1 › a new user accepts an invite through the documented deep link and lands in the workspace (6.8s)
+  ok 7 [chromium] › e2e\live-auth.spec.ts:281:1 › a token-carrying 401 purges the session and lands on login with the toast (3.4s)
+warm-up: heartbeat stopped after 8 beat(s)
+  7 passed (48.3s)
+--- e2e/live-auth.spec.ts · 0 · 50 s
+
+--- e2e/live-billing.spec.ts · 10:23:20Z
+warm-up: service awake after 2 probe(s) in 0.6s — last 2: 217ms, 75ms
+warm-up: heartbeat started — 4 probes every 5s for the life of the run
+  ok 1 [chromium] › e2e\live-billing.spec.ts:61:1 › a fresh owner + org, made through the product (7.7s)
+  ok 2 [chromium] › e2e\live-billing.spec.ts:77:1 › the five endpoints answer the shapes the UI is built on — and the checkout url is never opened (6.8s)
+  ok 3 [chromium] › e2e\live-billing.spec.ts:151:1 › /billing renders the plans FROM THE WIRE, Subscribe for the owner, and the honest empty history (6.7s)
+  ok 4 [chromium] › e2e\live-billing.spec.ts:203:1 › the abandoned-checkout return shows the plans plus the note (5.5s)
+  ok 5 [chromium] › e2e\live-billing.spec.ts:213:1 › the success route polls, shows the wire’s status every tick, and gives up honestly on an unpaid org (1.0m)
+  ok 6 [chromium] › e2e\live-billing.spec.ts:251:1 › a member cannot start checkout: 403 forbidden, and any member reads (6.1s)
+  ok 7 [chromium] › e2e\live-billing.spec.ts:288:1 › a generation on the unfunded org is refused with 402, and the refusal points at Billing (23.3s)
+warm-up: heartbeat stopped after 24 beat(s)
+  7 passed (2.1m)
+--- e2e/live-billing.spec.ts · 0 · 126 s
+
+--- e2e/live-brand-kit.spec.ts · 10:25:26Z
+warm-up: service awake after 2 probe(s) in 0.5s — last 2: 217ms, 76ms
+warm-up: heartbeat started — 4 probes every 5s for the life of the run
+  ok 1 [chromium] › e2e\live-brand-kit.spec.ts:60:1 › a fresh owner + org, made through the product (6.8s)
+  ok 2 [chromium] › e2e\live-brand-kit.spec.ts:70:1 › the wire, from Node (NOT browser truth): presign the closed pair, PUT a tiny PDF, read the row back under Files, Delete, re-read (11.4s)
+  ok 3 [chromium] › e2e\live-brand-kit.spec.ts:129:1 › browser truth: the Brand kit type sends a PDF from Chromium with nothing typed, it lists, and Delete removes it (10.0s)
+warm-up: heartbeat stopped after 6 beat(s)
+  3 passed (35.7s)
+--- e2e/live-brand-kit.spec.ts · 0 · 37 s
+
+--- e2e/live-brand-rules.spec.ts · 10:26:04Z
+warm-up: service awake after 2 probe(s) in 0.6s — last 2: 220ms, 75ms
+warm-up: heartbeat started — 4 probes every 5s for the life of the run
+  ok 1 [chromium] › e2e\live-brand-rules.spec.ts:71:1 › a fresh owner + org, made through the product (6.8s)
+  ok 2 [chromium] › e2e\live-brand-rules.spec.ts:89:1 › a fresh org has no tones at all, and the screen says what that costs (4.3s)
+  ok 3 [chromium] › e2e\live-brand-rules.spec.ts:109:1 › a tone keeps its rules, and a PATCH replaces the whole list (14.3s)
+  ok 4 [chromium] › e2e\live-brand-rules.spec.ts:151:1 › the brand voice writes to one row, and an edit does not reorder it (17.0s)
+  ok 5 [chromium] › e2e\live-brand-rules.spec.ts:191:1 › Preview this tone returns a real sample from the platform (14.1s)
+warm-up: heartbeat stopped after 11 beat(s)
+  5 passed (1.1m)
+--- e2e/live-brand-rules.spec.ts · 0 · 65 s
+
+--- e2e/live-brand.spec.ts · 10:27:10Z
+warm-up: service awake after 2 probe(s) in 0.5s — last 2: 213ms, 77ms
+warm-up: heartbeat started — 4 probes every 5s for the life of the run
+  ok 1 [chromium] › e2e\live-brand.spec.ts:56:1 › a fresh owner + org, made through the product (6.3s)
+  ok 2 [chromium] › e2e\live-brand.spec.ts:65:1 › a custom tone: created under the adapter, edited, and it survives a reload (9.0s)
+  ok 3 [chromium] › e2e\live-brand.spec.ts:99:1 › voice rules: the flat live list persists through the API (10.4s)
+  ok 4 [chromium] › e2e\live-brand.spec.ts:118:1 › sources and topics: scheme-less display, real persistence (12.8s)
+  ok 5 [chromium] › e2e\live-brand.spec.ts:149:1 › deleting a tone reflects in the schedules that referenced it (7.3s)
+warm-up: heartbeat stopped after 9 beat(s)
+  5 passed (54.1s)
+--- e2e/live-brand.spec.ts · 0 · 55 s
+
+--- e2e/live-country.spec.ts · 10:28:05Z
+warm-up: service awake after 2 probe(s) in 0.6s — last 2: 217ms, 78ms
+warm-up: heartbeat started — 4 probes every 5s for the life of the run
+  ok 1 [chromium] › e2e\live-country.spec.ts:54:1 › a fresh workspace has NO country, and I1 is where one is set (17.7s)
+  ok 2 [chromium] › e2e\live-country.spec.ts:103:1 › the calendar carries real holidays, each with the rules for that day (5.0s)
+  ok 3 [chromium] › e2e\live-country.spec.ts:152:1 › re-saving the same country is a quiet no-op, not a fake reload (17.4s)
+  ok 4 [chromium] › e2e\live-country.spec.ts:182:1 › C2 no longer offers an event source it cannot create (5.6s)
+warm-up: heartbeat stopped after 9 beat(s)
+  4 passed (50.9s)
+--- e2e/live-country.spec.ts · 0 · 53 s
+
+--- e2e/live-create-visual.spec.ts · 10:28:58Z
+warm-up: service awake after 2 probe(s) in 0.6s — last 2: 308ms, 77ms
+warm-up: heartbeat started — 4 probes every 5s for the life of the run
+  -  1 [chromium] › e2e\live-create-visual.spec.ts:52:1 › a fresh owner + org with its brand set up
+  -  2 [chromium] › e2e\live-create-visual.spec.ts:68:1 › one run, then Create visual on its result renders ONE image and attaches nothing
+  -  3 [chromium] › e2e\live-create-visual.spec.ts:105:1 › Today offers the same button on the ledger row, and the Studio lists the job
+warm-up: heartbeat stopped after 0 beat(s)
+  3 skipped
+--- e2e/live-create-visual.spec.ts · 0 · 6 s
+
+--- e2e/live-generate.spec.ts · 10:29:04Z
+warm-up: service awake after 2 probe(s) in 0.6s — last 2: 215ms, 79ms
+warm-up: heartbeat started — 4 probes every 5s for the life of the run
+  ok 1 [chromium] › e2e\live-generate.spec.ts:49:1 › a fresh owner + org, made through the product (23.3s)
+  ok 2 [chromium] › e2e\live-generate.spec.ts:68:1 › one balanced run returns a draft with its tone and its rationale (34.7s)
+warm-up: heartbeat stopped after 11 beat(s)
+  2 passed (1.1m)
+--- e2e/live-generate.spec.ts · 0 · 66 s
+
+--- e2e/live-invite-org.spec.ts · 10:30:11Z
+warm-up: service awake after 2 probe(s) in 0.5s — last 2: 212ms, 77ms
+warm-up: heartbeat started — 4 probes every 5s for the life of the run
+  ok 1 [chromium] › e2e\live-invite-org.spec.ts:83:1 › two accounts, each owning a workspace (14.8s)
+  ok 2 [chromium] › e2e\live-invite-org.spec.ts:105:1 › an invited existing user can REACH the inviting workspace, and a reload keeps it (14.1s)
+  ok 3 [chromium] › e2e\live-invite-org.spec.ts:164:1 › losing membership falls back honestly, and never to a dead screen (9.6s)
+warm-up: heartbeat stopped after 8 beat(s)
+  3 passed (44.3s)
+--- e2e/live-invite-org.spec.ts · 0 · 45 s
+
+--- e2e/live-knowledge.spec.ts · 10:30:57Z
+warm-up: service awake after 2 probe(s) in 0.6s — last 2: 219ms, 78ms
+warm-up: heartbeat started — 4 probes every 5s for the life of the run
+  ok 1 [chromium] › e2e\live-knowledge.spec.ts:35:1 › a fresh owner + org, made through the product (6.8s)
+  ok 2 [chromium] › e2e\live-knowledge.spec.ts:45:1 › pasted text becomes a Ready source, and removing it removes it (15.1s)
+  ok 3 [chromium] › e2e\live-knowledge.spec.ts:75:1 › a FILE uploads straight to storage from the browser (open-item 24) (17.1s)
+warm-up: heartbeat stopped after 8 beat(s)
+  3 passed (44.6s)
+--- e2e/live-knowledge.spec.ts · 0 · 46 s
+
+--- e2e/live-media-capabilities.spec.ts · 10:31:43Z
+warm-up: service awake after 2 probe(s) in 0.6s — last 2: 216ms, 83ms
+warm-up: heartbeat started — 4 probes every 5s for the life of the run
+  ok 1 [chromium] › e2e\live-media-capabilities.spec.ts:327:1 › a fresh owner + org, made through the product (6.8s)
+  x  2 [chromium] › e2e\live-media-capabilities.spec.ts:337:1 › every granted capability: the document’s example stops at the wallet (402), its trap before it (400) — zero spend (4.4s)
+  -  3 [chromium] › e2e\live-media-capabilities.spec.ts:412:1 › the Studio grid lists what the catalog grants, by name, with the catalog’s price
+warm-up: heartbeat stopped after 2 beat(s)
+    Error: apiRequestContext.put: read ECONNRESET
+      - → PUT <redacted url: 1667 chars>
+        - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.7922.34 Safari/537.36
+        - accept: */*
+        - accept-encoding: gzip,deflate,br
+        - content-type: image/png
+        - content-length: 70
+  1 failed
+  1 passed (21.5s)
+ ELIFECYCLE  Command failed with exit code 1.
+--- e2e/live-media-capabilities.spec.ts · 1 · 23 s
+
+--- e2e/live-media-upload.spec.ts · 10:32:06Z
+warm-up: service awake after 2 probe(s) in 0.6s — last 2: 286ms, 81ms
+warm-up: heartbeat started — 4 probes every 5s for the life of the run
+  ok 1 [chromium] › e2e\live-media-upload.spec.ts:47:1 › a fresh owner + org, made through the product (7.2s)
+  ok 2 [chromium] › e2e\live-media-upload.spec.ts:57:1 › an image upload becomes a WIRE-listed Files row, and Delete removes it from the wire (10.0s)
+  ok 3 [chromium] › e2e\live-media-upload.spec.ts:96:1 › the logo uploads with desc "logo", shows as the logo, stays out of Files, and removes (11.9s)
+warm-up: heartbeat stopped after 6 beat(s)
+  3 passed (36.2s)
+--- e2e/live-media-upload.spec.ts · 0 · 38 s
+
+--- e2e/live-notifications.spec.ts · 10:32:44Z
+warm-up: service awake after 2 probe(s) in 0.5s — last 2: 211ms, 77ms
+warm-up: heartbeat started — 4 probes every 5s for the life of the run
+  ok 1 [chromium] › e2e\live-notifications.spec.ts:32:1 › the inbox endpoints hold their contract, and the bell tells the truth (12.2s)
+warm-up: heartbeat stopped after 2 beat(s)
+  1 passed (22.6s)
+--- e2e/live-notifications.spec.ts · 0 · 24 s
+
+--- e2e/live-onboarding.spec.ts · 10:33:08Z
+warm-up: service awake after 2 probe(s) in 0.6s — last 2: 292ms, 87ms
+warm-up: heartbeat started — 4 probes every 5s for the life of the run
+  ok 1 [chromium] › e2e\live-onboarding.spec.ts:49:1 › signup → verify → the app: no wizard, and the workspace is real (6.2s)
+  ok 2 [chromium] › e2e\live-onboarding.spec.ts:62:1 › a fresh live org has no tones, and the screen says what that costs (4.3s)
+  ok 3 [chromium] › e2e\live-onboarding.spec.ts:88:1 › generation is locked, and the checklist names all four (5.5s)
+  ok 4 [chromium] › e2e\live-onboarding.spec.ts:115:1 › the Studio composer is locked by the same gate (2.5s)
+  ok 5 [chromium] › e2e\live-onboarding.spec.ts:123:1 › completing the four brand entities unlocks generation (22.9s)
+  ok 6 [chromium] › e2e\live-onboarding.spec.ts:183:1 › the unlocked run really runs — one balanced draft (28.0s)
+warm-up: heartbeat stopped after 14 beat(s)
+  6 passed (1.3m)
+--- e2e/live-onboarding.spec.ts · 0 · 82 s
+
+--- e2e/live-proposals.spec.ts · 10:34:30Z
+warm-up: service awake after 2 probe(s) in 0.5s — last 2: 214ms, 76ms
+warm-up: heartbeat started — 4 probes every 5s for the life of the run
+  ok 1 [chromium] › e2e\live-proposals.spec.ts:46:1 › a fresh owner + org, with its brand set up (23.8s)
+  -  2 [chromium] › e2e\live-proposals.spec.ts:73:1 › one balanced run — the drafts it produces become the proposals under test
+  -  3 [chromium] › e2e\live-proposals.spec.ts:88:1 › after a RELOAD, Today shows the draft from the ledger
+  -  4 [chromium] › e2e\live-proposals.spec.ts:106:1 › approving records it as posted, and the decision survives a reload
+  -  5 [chromium] › e2e\live-proposals.spec.ts:152:1 › declining asks why, keeps the row, and is reversible
+warm-up: heartbeat stopped after 7 beat(s)
+  4 skipped
+  1 passed (46.3s)
+--- e2e/live-proposals.spec.ts · 0 · 48 s
+
+--- e2e/live-schedule-repair.spec.ts · 10:35:18Z
+warm-up: service awake after 2 probe(s) in 0.6s — last 2: 284ms, 74ms
+warm-up: heartbeat started — 4 probes every 5s for the life of the run
+  ok 1 [chromium] › e2e\live-schedule-repair.spec.ts:44:1 › a live org in the 619 shape: tones seeded, no schedule (6.3s)
+  ok 2 [chromium] › e2e\live-schedule-repair.spec.ts:84:1 › C1 creates the missing schedule through the POST fallback, with the exact tones picked (8.5s)
+  ok 3 [chromium] › e2e\live-schedule-repair.spec.ts:137:1 › and it survives a reload, still clean (5.2s)
+warm-up: heartbeat stopped after 4 beat(s)
+  3 passed (25.9s)
+--- e2e/live-schedule-repair.spec.ts · 0 · 28 s
+
+--- e2e/live-scheduling.spec.ts · 10:35:46Z
+warm-up: service awake after 2 probe(s) in 0.6s — last 2: 221ms, 76ms
+warm-up: heartbeat started — 4 probes every 5s for the life of the run
+  ok 1 [chromium] › e2e\live-scheduling.spec.ts:56:1 › signup creates the workspace and NOTHING else (9.2s)
+  ok 2 [chromium] › e2e\live-scheduling.spec.ts:92:1 › C1 creates the schedule on first save, then PATCHes it — and it survives a reload (12.1s)
+  -  3 [chromium] › e2e\live-scheduling.spec.ts:179:1 › slots, if ingestion produced any, honour skip/un-skip and never offer approve
+warm-up: heartbeat stopped after 5 beat(s)
+  1 skipped
+  2 passed (31.1s)
+--- e2e/live-scheduling.spec.ts · 0 · 33 s
+
+--- e2e/live-studio.spec.ts · 10:36:19Z
+warm-up: service awake after 2 probe(s) in 0.6s — last 2: 261ms, 74ms
+warm-up: heartbeat started — 4 probes every 5s for the life of the run
+  ok 1 [chromium] › e2e\live-studio.spec.ts:36:1 › a fresh owner + org, made through the product (6.7s)
+  ok 2 [chromium] › e2e\live-studio.spec.ts:46:1 › E1 is built from the catalog: the granted capabilities, real prices, no vendors (12.2s)
+  ok 3 [chromium] › e2e\live-studio.spec.ts:87:1 › E3 lists renders, and is honest when there are none (3.5s)
+  -  4 [chromium] › e2e\live-studio.spec.ts:98:1 › E2 renders for real, and E4 opens the asset it made
+warm-up: heartbeat stopped after 4 beat(s)
+  1 skipped
+  3 passed (28.5s)
+--- e2e/live-studio.spec.ts · 0 · 30 s
+
+--- e2e/live-team.spec.ts · 10:36:49Z
+warm-up: service awake after 2 probe(s) in 0.5s — last 2: 216ms, 76ms
+warm-up: heartbeat started — 4 probes every 5s for the life of the run
+  ok 1 [chromium] › e2e\live-team.spec.ts:74:1 › verifying creates the org LIVE; the dashboard follows immediately (6.7s)
+  ok 2 [chromium] › e2e\live-team.spec.ts:86:1 › I1 renames the org through PATCH, and the name survives a reload (8.4s)
+  ok 3 [chromium] › e2e\live-team.spec.ts:111:1 › change-password keeps this session and only the new password works after (10.9s)
+  ok 4 [chromium] › e2e\live-team.spec.ts:137:1 › inviting a NEW user: coded email, resend rate-limits honestly, cancel removes (10.5s)
+  ok 5 [chromium] › e2e\live-team.spec.ts:161:1 › inviting an EXISTING user adds them immediately, and the role ladder holds (29.0s)
+  ok 6 [chromium] › e2e\live-team.spec.ts:246:1 › an ADMIN viewing a team with an owner: no remove on the owner, no role selects at all (22.5s)
+warm-up: heartbeat stopped after 17 beat(s)
+  6 passed (1.6m)
+--- e2e/live-team.spec.ts · 0 · 98 s
+
+--- e2e/live-video-duration.spec.ts · 10:38:27Z
+warm-up: service awake after 2 probe(s) in 0.6s — last 2: 298ms, 86ms
+warm-up: heartbeat started — 4 probes every 5s for the life of the run
+  ok 1 [chromium] › e2e\live-video-duration.spec.ts:75:1 › a fresh owner + org, made through the product (6.7s)
+  ok 2 [chromium] › e2e\live-video-duration.spec.ts:85:1 › a bad durationS is refused with 400 BEFORE the wallet check — the field is known, a maximum is enforced (7.3s)
+  -  3 [chromium] › e2e\live-video-duration.spec.ts:108:1 › the valid video body clears validation — and self-skips on 402, the positive proof riding on LIVE_MEDIA=1
+warm-up: heartbeat stopped after 3 beat(s)
+  1 skipped
+  2 passed (32.3s)
+--- e2e/live-video-duration.spec.ts · 0 · 34 s
+
+--- e2e/live-wallet.spec.ts · 10:39:01Z
+warm-up: service awake after 2 probe(s) in 0.6s — last 2: 215ms, 75ms
+warm-up: heartbeat started — 4 probes every 5s for the life of the run
+  ok 1 [chromium] › e2e\live-wallet.spec.ts:50:1 › a fresh owner + org, made through the product (16.9s)
+  ok 2 [chromium] › e2e\live-wallet.spec.ts:75:1 › the balance chip shows money — and over a zero wallet, the instruction to subscribe (4.5s)
+  ok 3 [chromium] › e2e\live-wallet.spec.ts:95:1 › H3 is a balance and a real usage read-back, in both allowed grains (5.7s)
+  ok 4 [chromium] › e2e\live-wallet.spec.ts:130:1 › the wallet and usage endpoints answer the shapes the UI is built on (4.6s)
+warm-up: heartbeat stopped after 6 beat(s)
+  4 passed (40.5s)
+--- e2e/live-wallet.spec.ts · 0 · 42 s
+
+=== LIVE ROUND 2 · end 2026-09-10T10:39:43Z

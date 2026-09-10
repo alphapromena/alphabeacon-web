@@ -1,0 +1,50 @@
+
+> alphabeacon-web@0.0.0 e2e C:\alphabeacon-web\alphabeacon-web
+> playwright test "e2e/live-media-capabilities.spec.ts" "--workers=1"
+
+
+warm-up: waking the API before the suite starts (https://<api-host>/api/health)
+warm-up: service awake after 2 probe(s) in 0.6s — last 2: 286ms, 77ms
+warm-up: 12-way fleet warm after 1 burst(s), 0.9s total — slowest 232ms
+
+warm-up: heartbeat started — 4 probes every 5s for the life of the run
+
+
+Running 3 tests using 1 worker
+
+  ok 1 [chromium] › e2e\live-media-capabilities.spec.ts:327:1 › a fresh owner + org, made through the product (6.3s)
+  ok 2 [chromium] › e2e\live-media-capabilities.spec.ts:337:1 › every granted capability: the document’s example stops at the wallet (402), its trap before it (400) — zero spend (45.9s)
+  x  3 [chromium] › e2e\live-media-capabilities.spec.ts:412:1 › the Studio grid lists what the catalog grants, by name, with the catalog’s price (1.1m)
+
+warm-up: heartbeat stopped after 23 beat(s)
+
+
+  1) [chromium] › e2e\live-media-capabilities.spec.ts:412:1 › the Studio grid lists what the catalog grants, by name, with the catalog’s price 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByLabel('Voice', { exact: true })
+    Expected: visible
+    Timeout: 40000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 40000ms
+      - waiting for getByLabel('Voice', { exact: true })
+
+
+      442 |   // and the row the plan resolved to is named — both from the wire.
+      443 |   await page.getByRole('main').getByRole('link', { name: 'Voiceover', exact: true }).click()
+    > 444 |   await expect(page.getByLabel('Voice', { exact: true })).toBeVisible({ timeout: SCREEN_SYNC })
+          |                                                           ^
+      445 |   await expect(
+      446 |     page.getByLabel('Voice', { exact: true }).locator('option', { hasText: 'Rachel' }),
+      447 |   ).toHaveCount(1, { timeout: SCREEN_SYNC })
+        at C:\alphabeacon-web\alphabeacon-web\e2e\live-media-capabilities.spec.ts:444:59
+
+    Error Context: test-results\live-media-capabilities-th-59f90-me-with-the-catalog’s-price-chromium\error-context.md
+
+  1 failed
+    [chromium] › e2e\live-media-capabilities.spec.ts:412:1 › the Studio grid lists what the catalog grants, by name, with the catalog’s price 
+  2 passed (2.0m)
+ ELIFECYCLE  Command failed with exit code 1.

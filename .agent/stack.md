@@ -40,7 +40,7 @@ dependencies are public — no private registry, no token.
 | install the AI skill (once, committed)     | `pnpm dlx skills add shadcn/ui`                                                                     |
 | test — all / single                        | `pnpm test` / `pnpm test <path>`                                                                    |
 | e2e — state specs / goldens / axe          | `pnpm e2e` / `pnpm e2e --grep @golden` / `pnpm e2e --grep @axe`                                     |
-| e2e — a LIVE round (HSN-0910/D)            | `$env:VITE_API_BASE_URL="<dev base>"; $env:E2E_API_ENV="dev"; pnpm e2e --grep live-` (refused without `E2E_API_ENV=dev`) |
+| e2e — a LIVE round (HSN-0910/D)            | `$env:VITE_API_BASE_URL="<dev base>"; $env:E2E_API_ENV="dev"; pnpm e2e --grep live-` (refused without `E2E_API_ENV=dev`); the scripted two-round procedure — one file at a time, the host held awake, the funded creds from the QA-creds store — is `bash Docs/qa/hsn-0910/gate/live-round.sh <round>` (Git Bash) |
 | lint / format / typecheck                  | `pnpm lint` / `pnpm format` / `pnpm typecheck`                                                      |
 | static guard (also in CI)                  | `pnpm guard:static`                                                                                 |
 | observe the live proxy shapes (INT-6)      | `pnpm smoke:alphastudio` (needs `VITE_API_BASE_URL`; `LIVE_MEDIA=1` adds one paid render)            |

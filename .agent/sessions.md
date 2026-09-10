@@ -4730,3 +4730,72 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
 - Next: the gate — unit, the full static suite, `verify:w00`–`w06`, two live
   rounds with `E2E_API_ENV=dev` and the host held awake — then the report,
   and stop for the merge word.
+
+### 2026-09-10 13:50 — HSN-0910 GATE: static green, verify w00–w06 PASS, live round 1 18/21 (two spec defects fixed, one API red), round 2 20/21 with the one red a storage-PUT ECONNRESET re-run green — the gate CLOSES; report-and-stop for the merge word
+
+- Did: **The static half** (`Docs/qa/hsn-0910/gate/gate-static.log`): lint
+  clean · typecheck green · prettier on every new file · guard-static 352
+  clean · unit **633 / 55 files** · the full static suite **115 / 84 skipped
+  / 0** inside every one of the six verify runs and on a solo run (09:42Z);
+  the chain's own bare run had one red (114 + 1) that no solo run and no
+  verify run reproduced — the first Playwright run straight after vitest,
+  trap 22's fifth-sighting class · `verify:w00`–`w06` **all PASS**
+  (09:22Z–09:42Z). One real defect the first chain found, fixed before the
+  rounds (`2b88b62`, trap 25): Playwright's default `testMatch` took the
+  guard's vitest file (`e2e/global-setup.test.ts`) as a spec, and every
+  verify failed its e2e step on "Vitest failed to access its internal
+  state"; `testMatch` is now `*.spec.ts`. **Live round 1** (09:44Z–10:05Z,
+  `live-round.sh`, one file at a time, `E2E_API_ENV=dev`, `LIVE_MEDIA` off,
+  the funded creds from the QA-creds store, the host held awake — pid 15580,
+  durations matching the wall clock): **18/21**. Two reds were THIS SERIES'
+  SPEC DEFECTS with one cause — a fresh QA org opens a capability card onto
+  the readiness gate (D-ONB-D), never onto the composer — reproduced solo and
+  fixed in `8fed147` (the media spec completes the brand setup first,
+  reloads, asserts the composer's own heading and finds the voice select by
+  role with a prefix because its accessible name carries the required
+  marker; live-studio E1 asserts the gate itself); supplements live-studio
+  3 + 1 skipped (10:11Z), live-media-capabilities 3/3 (10:20Z). The third,
+  `live-brand-rules` "Preview this tone" after 2.5 min, a surface this
+  series never touched, was 5/5 in round 2 — the API's weather. **Live
+  round 2 — the gate** (10:22Z–10:39Z, on `8fed147`, keep-awake pid 17236):
+  **20/21 green** — auth 7/7, billing 7/7, brand-kit 3/3, brand-rules 5/5,
+  brand 5/5, country 4/4, generate 2/2, invite-org 3/3, knowledge 3/3,
+  media-upload 3/3, notifications 1/1, onboarding 6/6, schedule-repair 3/3,
+  team 6/6, video-duration 3/3, wallet 4/4, studio 3 + 1 skipped, scheduling
+  2 + 1 and proposals 1 + 4 skipped by design, create-visual 3 skipped
+  (`LIVE_MEDIA` off). **The one red: `live-media-capabilities`' zero-spend
+  proof, 4.4 s, `apiRequestContext.put: read ECONNRESET`** — the storage
+  bucket reset the presigned PUT of the first reference before any body
+  reached our API; not our API, not the spec, not the product: NETWORK-LOST,
+  re-run not waived — the recorded supplement at 10:40Z is **3/3**
+  (`solo-round2-live-media-capabilities.log`: 13 examples at 402, every trap
+  at 400, the five-reference photoshoot at 502 as measured, the wallet
+  `{0,0,0}` and the job list empty after). Every log is under
+  `Docs/qa/hsn-0910/gate/` with the API host redacted (trap 24); the runner
+  and the keep-awake helper are there too. **Deployment-free:** nothing
+  deployed, `main` `1772734` and `live` `463806c` untouched; the branch is on
+  origin as the record.
+  **Phase-0-vs-built diff (§7.2):** where the measurement disagreed with the
+  document the wire won — (1) `motion.generate` carries no `lang` (the
+  document's `"ar"` is refused, item 57); (2) above four `referenceImages`
+  the upstream answers 502, so the 1–4 range is the client's (item 58); (3)
+  the plain catalog read carries `plan: null` on every own-model row, so the
+  per-plan price comes from `?plan=`; (4) some rows drop `webp`, so the
+  format enum comes from the resolved row's schema; (5) the funded proofs
+  metered a `guardrail_text_units` line of $0.00015 per job the document
+  does not mention (below the cent; noted, no blocker); (6) the readiness
+  gate reaches the capability composers (D-ONB-D), which the live specs now
+  honour; (7) A3 is PROVEN, no longer assumed — the door fetched our
+  presigned url.
+  **Ledger deltas:** decisions — Phase 0, the funded addendum, the build;
+  open items 51 (Hasan, /B HELD), 52 (Ward, the approve door), 53 (Ward, the
+  production environment), 54 CLOSED (A3 proven), 55 (item 49 status), 56
+  (M-HSN-2), 57 (`lang: "ar"`), 58 (the 502); traps 25; the state head.
+- Phase: HSN-0910 /A, /C, /D GATED; /B HELD (item 51). **STOP for the merge
+  word (§7.3): never push `main`/`live`, never merge, never deploy.**
+- Files: `Docs/qa/hsn-0910/gate/**` (new), `.agent/{sessions,state}.md`.
+- Decisions: none new at the gate — the build's entry stands.
+- Verify: the gate itself, as recorded above.
+- Next: the founder's merge word; after the merge, M-HSN-2 (item 56) on
+  production (the grid, one cheap render, the org id); the messages to Hasan
+  (51, 57, 58) and Ward (52, 53); /B when Hasan names the door.

@@ -1,0 +1,69 @@
+
+> alphabeacon-web@0.0.0 e2e C:\alphabeacon-web\alphabeacon-web
+> playwright test "e2e/live-media-capabilities.spec.ts" "--workers=1"
+
+
+warm-up: waking the API before the suite starts (https://<api-host>/api/health)
+warm-up: service awake after 2 probe(s) in 0.6s — last 2: 277ms, 79ms
+warm-up: burst 1 — slowest of 12 was 200 in 220ms — fleet not warm yet
+warm-up: burst 2 — slowest of 12 was 200 in 82ms — fleet not warm yet
+warm-up: burst 3 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 4 — slowest of 12 was 200 in 86ms — fleet not warm yet
+warm-up: burst 5 — slowest of 12 was 200 in 80ms — fleet not warm yet
+warm-up: burst 6 — slowest of 12 was 200 in 80ms — fleet not warm yet
+warm-up: burst 7 — slowest of 12 was 200 in 80ms — fleet not warm yet
+warm-up: burst 8 — slowest of 12 was 200 in 85ms — fleet not warm yet
+warm-up: burst 9 — slowest of 12 was 429 in 78ms — fleet not warm yet
+warm-up: burst 10 — slowest of 12 was 200 in 76ms — fleet not warm yet
+warm-up: burst 11 — slowest of 12 was 200 in 78ms — fleet not warm yet
+warm-up: burst 12 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 13 — slowest of 12 was 200 in 86ms — fleet not warm yet
+warm-up: burst 14 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 15 — slowest of 12 was 200 in 82ms — fleet not warm yet
+warm-up: burst 16 — slowest of 12 was 200 in 89ms — fleet not warm yet
+warm-up: burst 17 — slowest of 12 was 200 in 79ms — fleet not warm yet
+warm-up: burst 18 — slowest of 12 was 200 in 79ms — fleet not warm yet
+warm-up: 12-way fleet warm after 19 burst(s), 7.0s total — slowest 83ms
+
+warm-up: heartbeat started — 4 probes every 5s for the life of the run
+
+
+Running 3 tests using 1 worker
+
+  ok 1 [chromium] › e2e\live-media-capabilities.spec.ts:326:1 › a fresh owner + org, made through the product (6.7s)
+  ok 2 [chromium] › e2e\live-media-capabilities.spec.ts:336:1 › every granted capability: the document’s example stops at the wallet (402), its trap before it (400) — zero spend (44.9s)
+  x  3 [chromium] › e2e\live-media-capabilities.spec.ts:411:1 › the Studio grid lists what the catalog grants, by name, with the catalog’s price (13.5s)
+
+warm-up: heartbeat stopped after 13 beat(s)
+
+
+  1) [chromium] › e2e\live-media-capabilities.spec.ts:411:1 › the Studio grid lists what the catalog grants, by name, with the catalog’s price 
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator:  getByLabel('Voice').locator('option').filter({ hasText: 'Rachel' })
+    Expected: 1
+    Received: 0
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveCount" with timeout 5000ms
+      - waiting for getByLabel('Voice').locator('option').filter({ hasText: 'Rachel' })
+        14 × locator resolved to 0 elements
+           - unexpected value "0"
+
+
+      433 |   await page.getByRole('link', { name: 'Voiceover', exact: true }).click()
+      434 |   await expect(page.getByLabel('Voice')).toBeVisible({ timeout: 40_000 })
+    > 435 |   await expect(page.getByLabel('Voice').locator('option', { hasText: 'Rachel' })).toHaveCount(1)
+          |                                                                                   ^
+      436 | })
+      437 |
+        at C:\alphabeacon-web\alphabeacon-web\e2e\live-media-capabilities.spec.ts:435:83
+
+    Error Context: test-results\live-media-capabilities-th-59f90-me-with-the-catalog’s-price-chromium\error-context.md
+
+  1 failed
+    [chromium] › e2e\live-media-capabilities.spec.ts:411:1 › the Studio grid lists what the catalog grants, by name, with the catalog’s price 
+  2 passed (1.3m)
+ ELIFECYCLE  Command failed with exit code 1.

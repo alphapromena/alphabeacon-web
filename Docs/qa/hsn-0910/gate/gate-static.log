@@ -1,0 +1,75 @@
+=== START (restart after the testMatch fix) 2026-09-10T09:20:59Z
+=== unit
+ [32m✓[39m src/data/adapters/notification-adapter.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32m✓[39m src/data/proposals.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m55 passed[39m[22m[90m (55)[39m
+[2m      Tests [22m [1m[32m633 passed[39m[22m[90m (633)[39m
+[2m   Start at [22m 12:21:01
+[2m   Duration [22m 19.43s[2m (transform 4.15s, setup 42.24s, collect 34.13s, tests 7.31s, environment 84.37s, prepare 14.97s)[22m
+
+=== static e2e 09:21:20Z
+  x   22 [chromium] › e2e\compose-analytics-settings.spec.ts:97:1 › @axe the checklist card and the blocked generate state scan clean (8.1s)
+    Error: expect(locator).toBeVisible() failed
+    Error: element(s) not found
+  1 failed
+  84 skipped
+  114 passed (1.6m)
+ ELIFECYCLE  Command failed with exit code 1.
+=== verify:w00 09:22:59Z
+[2m Test Files [22m [1m[32m55 passed[39m[22m[90m (55)[39m
+[2m      Tests [22m [1m[32m633 passed[39m[22m[90m (633)[39m
+  -  122 [chromium] › e2e\live-schedule-repair.spec.ts:84:1 › C1 creates the missing schedule through the POST fallback, with the exact tones picked
+  ok 168 [chromium] › e2e\settings-a11y.spec.ts:62:1 › dismissing the unsaved-changes guard returns focus to the field you were in (3.6s)
+  84 skipped
+  115 passed (1.4m)
+RESULT: PASS (automated steps)
+=== verify:w01 09:25:41Z
+[2m Test Files [22m [1m[32m55 passed[39m[22m[90m (55)[39m
+[2m      Tests [22m [1m[32m633 passed[39m[22m[90m (633)[39m
+  -  122 [chromium] › e2e\live-schedule-repair.spec.ts:84:1 › C1 creates the missing schedule through the POST fallback, with the exact tones picked
+  ok 168 [chromium] › e2e\settings-a11y.spec.ts:62:1 › dismissing the unsaved-changes guard returns focus to the field you were in (3.4s)
+  84 skipped
+  115 passed (1.4m)
+RESULT: PASS (automated steps)
+=== verify:w02 09:29:03Z
+[2m Test Files [22m [1m[32m55 passed[39m[22m[90m (55)[39m
+[2m      Tests [22m [1m[32m633 passed[39m[22m[90m (633)[39m
+  -  122 [chromium] › e2e\live-schedule-repair.spec.ts:84:1 › C1 creates the missing schedule through the POST fallback, with the exact tones picked
+  ok 168 [chromium] › e2e\settings-a11y.spec.ts:62:1 › dismissing the unsaved-changes guard returns focus to the field you were in (3.6s)
+  84 skipped
+  115 passed (1.4m)
+RESULT: PASS (automated steps)
+=== verify:w03 09:31:36Z
+[2m Test Files [22m [1m[32m55 passed[39m[22m[90m (55)[39m
+[2m      Tests [22m [1m[32m633 passed[39m[22m[90m (633)[39m
+  -  122 [chromium] › e2e\live-schedule-repair.spec.ts:84:1 › C1 creates the missing schedule through the POST fallback, with the exact tones picked
+  ok 168 [chromium] › e2e\settings-a11y.spec.ts:62:1 › dismissing the unsaved-changes guard returns focus to the field you were in (3.3s)
+  84 skipped
+  115 passed (1.4m)
+RESULT: PASS (automated steps)
+=== verify:w04 09:34:10Z
+[2m Test Files [22m [1m[32m55 passed[39m[22m[90m (55)[39m
+[2m      Tests [22m [1m[32m633 passed[39m[22m[90m (633)[39m
+  -  122 [chromium] › e2e\live-schedule-repair.spec.ts:84:1 › C1 creates the missing schedule through the POST fallback, with the exact tones picked
+  ok 168 [chromium] › e2e\settings-a11y.spec.ts:62:1 › dismissing the unsaved-changes guard returns focus to the field you were in (3.4s)
+  84 skipped
+  115 passed (1.4m)
+RESULT: PASS (automated steps)
+=== verify:w05 09:36:46Z
+[2m Test Files [22m [1m[32m55 passed[39m[22m[90m (55)[39m
+[2m      Tests [22m [1m[32m633 passed[39m[22m[90m (633)[39m
+  -  122 [chromium] › e2e\live-schedule-repair.spec.ts:84:1 › C1 creates the missing schedule through the POST fallback, with the exact tones picked
+  ok 168 [chromium] › e2e\settings-a11y.spec.ts:62:1 › dismissing the unsaved-changes guard returns focus to the field you were in (3.4s)
+  84 skipped
+  115 passed (1.4m)
+RESULT: PASS (automated steps)
+=== verify:w06 09:39:18Z
+[2m Test Files [22m [1m[32m55 passed[39m[22m[90m (55)[39m
+[2m      Tests [22m [1m[32m633 passed[39m[22m[90m (633)[39m
+  -  122 [chromium] › e2e\live-schedule-repair.spec.ts:84:1 › C1 creates the missing schedule through the POST fallback, with the exact tones picked
+  ok 168 [chromium] › e2e\settings-a11y.spec.ts:62:1 › dismissing the unsaved-changes guard returns focus to the field you were in (3.9s)
+  84 skipped
+  115 passed (1.5m)
+RESULT: PASS (automated steps)
+=== END 2026-09-10T09:42:01Z

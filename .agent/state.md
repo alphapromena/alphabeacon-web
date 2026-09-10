@@ -24,7 +24,7 @@ Country: `state` DROPPED by `PUT /orgs/:id/country` and by the event source,
 no state list anywhere → /B HELD** (item 51); org 1813 has no media job
 (§3.4 unmeasured); the API exposes no environment name; `1.malaky.ai` is LIVE
 (the `live` preview), the apex `malaky.ai` is still a GoDaddy page,
-`*.vercel.app` is unreachable from this host (item 53). **Phase 0 ACCEPTED (the founder, 2026-09-10): A1 confirmed, A2 amended to Higgsfield card art (fetched, 13 WebPs under `public/studio/cards/`), A3 PROVEN by the funded proofs on org 1813 (`--funded-proofs`, 14 cents: logos, voice with its audio + document envelope, images.edit fetching OUR url); items 57/58 filed for Hasan; the branch pushed to origin as the record.** **/A, /C and /D are BUILT on this branch (`37e8fa8`, pushed as the record): the one table `src/data/media-capabilities.ts`, the grid and the capability composers, the org id in Settings, `assertNotProduction` in the harness with `E2E_API_ENV=dev` required and `Docs/api/environments.md`; the W5 model composer kept for D4 and E4 only. THE GATE IS RUNNING: unit · the full static suite · verify w00–w06 · two live rounds (`E2E_API_ENV=dev`, `LIVE_MEDIA` off — the funded proofs already ran on the founder's word). Next: the gate report, then STOP for the merge word; /B when Hasan names the door. Never merge, never deploy.** No new trap;
+`*.vercel.app` is unreachable from this host (item 53). **Phase 0 ACCEPTED (the founder, 2026-09-10): A1 confirmed, A2 amended to Higgsfield card art (fetched, 13 WebPs under `public/studio/cards/`), A3 PROVEN by the funded proofs on org 1813 (`--funded-proofs`, 14 cents: logos, voice with its audio + document envelope, images.edit fetching OUR url); items 57/58 filed for Hasan; the branch pushed to origin as the record.** **/A, /C and /D are BUILT on this branch (`37e8fa8`, pushed as the record): the one table `src/data/media-capabilities.ts`, the grid and the capability composers, the org id in Settings, `assertNotProduction` in the harness with `E2E_API_ENV=dev` required and `Docs/api/environments.md`; the W5 model composer kept for D4 and E4 only. THE GATE IS CLOSED (2026-09-10, tip `8fed147` + the journal): lint · typecheck · guard-static 352 · unit **633 / 55** · static e2e **115 / 84 skipped / 0** (six verify runs and a solo run; the chain's bare-run red was the harness's) · `verify:w00`–`w06` **all PASS** · live round 1 **18/21** (two spec defects of this series, fixed and re-run green; one API red on brand-rules) · **live round 2 — the gate — 20/21 green, the one red a storage-PUT `ECONNRESET` (network-lost, re-run 3/3 as a recorded supplement)**; the host held awake both rounds; `E2E_API_ENV=dev` on every file. Record: `Docs/qa/hsn-0910/gate/`. NOTHING DEPLOYED. Next: the founder's MERGE WORD (§7.3); after the merge M-HSN-2 (item 56) on production; items 51, 57, 58 to Hasan and 52, 53 to Ward; /B when Hasan names the door. Never merge, never deploy.** No new trap;
 traps 22 and 23 stand for the live gate, trap 24 for the record.
 
 Before that, 2026-09-03: **M-BIL-1 (/auto) RAN GREEN on
@@ -1106,6 +1106,21 @@ These are learned the hard way; each cost a debugging cycle.
     and a captured `/auth/login` body carry the session token
     (`authorization` headers, `{ token }`) — rule 11 and gitleaks both
     stand in the way (`Docs/qa/m-bil-1/README.md` shows the scrub).
+
+25. **Playwright's default `testMatch` takes `*.test.ts` too (2026-09-10,
+    HSN-0910/D).** A vitest unit test placed beside the specs
+    (`e2e/global-setup.test.ts`, the no-production guard's tests) was picked
+    up by `playwright test` as a spec and died inside a Playwright worker on
+    its vitest import — "Vitest failed to access its internal state" — which
+    failed `verify:w00`'s e2e step and would have failed every verify after
+    it, on a tree whose specs were all green minutes earlier. The fix is a
+    boundary stated once: `playwright.config.ts` now sets
+    `testMatch: /.*\.spec\.ts$/` (the whole suite has always been `*.spec.ts`)
+    and vitest's include names `e2e/**/*.test.ts` explicitly. **The tell:** a
+    verify red on "e2e" with a vitest error in it, from a file that is not a
+    spec. When a harness folder gains a second kind of test, name the
+    boundary in BOTH configs before the first run.
+
 
 20. **A null answer from the wire must never fall through to demo data.**
     INT-8 wrote this for `eventSources` — "an empty list is the honest answer

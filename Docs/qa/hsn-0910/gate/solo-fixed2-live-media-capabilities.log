@@ -1,0 +1,57 @@
+
+> alphabeacon-web@0.0.0 e2e C:\alphabeacon-web\alphabeacon-web
+> playwright test "e2e/live-media-capabilities.spec.ts" "--workers=1"
+
+
+warm-up: waking the API before the suite starts (https://<api-host>/api/health)
+warm-up: service awake after 2 probe(s) in 0.6s — last 2: 287ms, 81ms
+warm-up: burst 1 — slowest of 12 was 200 in 239ms — fleet not warm yet
+warm-up: burst 2 — slowest of 12 was 200 in 90ms — fleet not warm yet
+warm-up: burst 3 — slowest of 12 was 200 in 78ms — fleet not warm yet
+warm-up: burst 4 — slowest of 12 was 200 in 86ms — fleet not warm yet
+warm-up: burst 5 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 6 — slowest of 12 was 200 in 77ms — fleet not warm yet
+warm-up: burst 7 — slowest of 12 was 200 in 80ms — fleet not warm yet
+warm-up: burst 8 — slowest of 12 was 200 in 78ms — fleet not warm yet
+warm-up: burst 9 — slowest of 12 was 200 in 78ms — fleet not warm yet
+warm-up: 12-way fleet warm after 10 burst(s), 3.9s total — slowest 82ms
+
+warm-up: heartbeat started — 4 probes every 5s for the life of the run
+
+
+Running 3 tests using 1 worker
+
+  ok 1 [chromium] › e2e\live-media-capabilities.spec.ts:327:1 › a fresh owner + org, made through the product (6.2s)
+  ok 2 [chromium] › e2e\live-media-capabilities.spec.ts:337:1 › every granted capability: the document’s example stops at the wallet (402), its trap before it (400) — zero spend (44.8s)
+  x  3 [chromium] › e2e\live-media-capabilities.spec.ts:412:1 › the Studio grid lists what the catalog grants, by name, with the catalog’s price (5.0m)
+
+warm-up: heartbeat stopped after 70 beat(s)
+
+
+  1) [chromium] › e2e\live-media-capabilities.spec.ts:412:1 › the Studio grid lists what the catalog grants, by name, with the catalog’s price 
+
+    Test timeout of 300000ms exceeded.
+
+    Error: locator.fill: Test timeout of 300000ms exceeded.
+    Call log:
+      - waiting for getByLabel('Work email')
+
+
+      45 | async function login(page: Page) {
+      46 |   await page.goto('/login')
+    > 47 |   await page.getByLabel('Work email').fill(owner)
+         |                                       ^
+      48 |   await page.getByLabel('Password', { exact: true }).fill(PASSWORD)
+      49 |   await page.getByRole('button', { name: 'Sign in' }).click()
+      50 |   await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible({
+        at login (C:\alphabeacon-web\alphabeacon-web\e2e\live-media-capabilities.spec.ts:47:39)
+        at C:\alphabeacon-web\alphabeacon-web\e2e\live-media-capabilities.spec.ts:427:3
+
+    Error Context: test-results\live-media-capabilities-th-59f90-me-with-the-catalog’s-price-chromium\error-context.md
+
+  Slow test file: [chromium] › e2e\live-media-capabilities.spec.ts (5.9m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  1 failed
+    [chromium] › e2e\live-media-capabilities.spec.ts:412:1 › the Studio grid lists what the catalog grants, by name, with the catalog’s price 
+  2 passed (6.0m)
+ ELIFECYCLE  Command failed with exit code 1.
