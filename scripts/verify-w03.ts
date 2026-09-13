@@ -13,8 +13,7 @@
 //   "approving in D2 moves the card and updates D1 within the session" -> @golden
 //   "axe" -> the Playwright @axe specs
 
-import { spawnSync } from 'node:child_process'
-import { suiteRowsFromReport, wantsRerun } from './verify-lib'
+import { suiteRowsFromReport } from './verify-lib'
 import { existsSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -24,18 +23,6 @@ const root = fileURLToPath(new URL('..', import.meta.url))
 type Outcome = 'PASS' | 'FAIL' | 'SKIP'
 const results: { name: string; outcome: Outcome }[] = []
 const skipE2e = process.argv.includes('--skip-e2e')
-
-function run(cmd: string): number {
-  console.log(`\n> ${cmd}`)
-  return spawnSync(cmd, { shell: true, stdio: 'inherit', cwd: root }).status ?? 1
-}
-
-function step(name: string, cmd: string): boolean {
-  console.log(`\n=== ${name} ===`)
-  const ok = run(cmd) === 0
-  results.push({ name, outcome: ok ? 'PASS' : 'FAIL' })
-  return ok
-}
 
 /**
  * The approval gate is the phase's headline rule, and the way it breaks is not
@@ -129,54 +116,28 @@ function deliverablesExist(): boolean {
 function main(): void {
   let failed = false
 
-  // GATE-0910 §3.1 — verify-once: the six suite steps are read from the report
-  // `pnpm verify:all` wrote for THIS tree; nothing is re-run here. `--rerun`
-  // keeps the legacy chain until the founder retires it.
-  const rerun = wantsRerun()
-  if (rerun) {
-    for (const [name, cmd] of [
-      ['lint', 'pnpm lint'],
-      ['typecheck', 'pnpm typecheck'],
-      ['unit tests', 'pnpm test'],
-      ['guard-static', 'pnpm guard:static'],
-      ['build', 'pnpm build'],
-    ] as const) {
-      if (!step(name, cmd)) {
-        failed = true
-        console.log(`step failed: ${name} -- remaining steps skipped`)
-        break
-      }
-    }
-  } else {
-    const suite = suiteRowsFromReport({
-      e2eLabel: 'e2e (@golden approve walk, queue axe)',
-      needE2e: !skipE2e,
-      e2eMustPass: [/@golden/, /today-queue|queue/i],
-    })
-    for (const row of suite.rows) {
-      results.push({ name: row.name, outcome: row.outcome })
-      console.log(`${row.outcome}  ${row.name}${row.detail ? ` — ${row.detail}` : ''}`)
-    }
-    if (!suite.ok) {
-      failed = true
-      console.log(`suite report: ${suite.reason ?? 'a suite step is red in the report'}`)
-    }
+  // GATE-0910 §3.1 — verify-once. The old chain was RETIRED on the founder's
+  // word (2026-09-13): the six suite steps are read from the report
+  // `pnpm verify:all` wrote for THIS tree, nothing is re-run here, and no flag
+  // can make it. The gate itself is `pnpm gate`.
+  const suite = suiteRowsFromReport({
+    e2eLabel: 'e2e (@golden approve walk, queue axe)',
+    needE2e: !skipE2e,
+    e2eMustPass: [/@golden/, /today-queue|queue/i],
+  })
+  for (const row of suite.rows) {
+    results.push({ name: row.name, outcome: row.outcome })
+    console.log(`${row.outcome}  ${row.name}${row.detail ? ` — ${row.detail}` : ''}`)
+  }
+  if (!suite.ok) {
+    failed = true
+    console.log(`suite report: ${suite.reason ?? 'a suite step is red in the report'}`)
   }
 
   if (!failed) {
     if (!approvalGateIsStructural()) failed = true
     if (!e2eNavigationRuleHolds()) failed = true
     if (!deliverablesExist()) failed = true
-
-    if (!rerun) {
-      // the e2e row is already in the results, from the report
-    } else if (skipE2e) {
-      results.push({ name: 'e2e (@golden approve walk, queue axe)', outcome: 'SKIP' })
-      console.log('\ne2e skipped (--skip-e2e)')
-    } else {
-      run('pnpm exec playwright install chromium')
-      if (!step('e2e (@golden approve walk, queue axe)', 'pnpm e2e')) failed = true
-    }
   } else {
     for (const name of [
       'approval gate is structural',

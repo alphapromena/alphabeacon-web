@@ -10,8 +10,9 @@
  * suite that already ran on the same tree hash.
  *
  * The scripts keep their own assertions over the tree and their manual
- * checklists untouched; only the re-running goes. `--rerun` keeps the old
- * six-step chain reachable until the founder retires it.
+ * checklists untouched; only the re-running goes. The old six-step chain was
+ * RETIRED on the founder's word (2026-09-13): no flag re-runs a suite, and the
+ * gate is `pnpm gate`.
  */
 import { createHash } from 'node:crypto'
 import { execFileSync } from 'node:child_process'
@@ -225,11 +226,6 @@ export function suiteRowsFromReport(
     (missing.length ? `; not proven green: ${missing.map(String).join(', ')}` : '')
   rows.push({ name: facts.e2eLabel, outcome: pass ? 'PASS' : 'FAIL', detail })
   return { rows, ok: ok && pass }
-}
-
-/** `--rerun` on a verify script: the legacy six-step chain, kept until retired. */
-export function wantsRerun(argv = process.argv): boolean {
-  return argv.includes('--rerun') || process.env.VERIFY_LEGACY === '1'
 }
 
 /** Vitest's JSON reporter (Jest-shaped) → the summary the report keeps. */

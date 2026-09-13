@@ -3,7 +3,7 @@
 // --skip-e2e skips the Playwright step for fast local runs; it is ignored in CI.
 
 import { spawnSync } from 'node:child_process'
-import { suiteRowsFromReport, wantsRerun } from './verify-lib'
+import { suiteRowsFromReport } from './verify-lib'
 import { existsSync, mkdirSync, rmSync, rmdirSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -18,12 +18,6 @@ interface Result {
 }
 
 const results: Result[] = []
-
-function run(cmd: string): number {
-  console.log(`\n> ${cmd}`)
-  const child = spawnSync(cmd, { shell: true, stdio: 'inherit', cwd: root })
-  return child.status ?? 1
-}
 
 function runQuiet(cmd: string): { status: number; stdout: string; stderr: string } {
   const child = spawnSync(cmd, { shell: true, stdio: 'pipe', encoding: 'utf8', cwd: root })
@@ -126,38 +120,25 @@ function main(): void {
     console.log('--skip-e2e ignored: CI never skips e2e')
   }
 
-  // GATE-0910 §3.1 — verify-once: the six suite steps come from the report
-  // `pnpm verify:all` wrote for THIS tree; nothing is re-run here. `--rerun`
-  // keeps the legacy chain until the founder retires it.
-  const rerun = wantsRerun()
-  const suiteSteps: { name: string; exec: () => boolean; skip?: boolean }[] = rerun
-    ? [
-        { name: 'lint', exec: () => run('pnpm lint') === 0 },
-        { name: 'typecheck', exec: () => run('pnpm typecheck') === 0 },
-        { name: 'unit tests', exec: () => run('pnpm test') === 0 },
-        { name: 'guard-static', exec: () => run('pnpm guard:static') === 0 },
-        { name: 'build', exec: () => run('pnpm build') === 0 },
-        {
-          name: 'e2e (Playwright smoke, zero-network assert)',
-          exec: () => run('pnpm exec playwright install chromium') === 0 && run('pnpm e2e') === 0,
-          skip: skipE2e,
-        },
-      ]
-    : (() => {
-        const suite = suiteRowsFromReport({
-          e2eLabel: 'e2e (Playwright smoke, zero-network assert)',
-          needE2e: !skipE2e,
-        })
-        return suite.rows.map((row) => ({
-          name: row.name,
-          exec: () => {
-            if (row.detail) console.log(row.detail)
-            if (!suite.ok && suite.reason) console.log(suite.reason)
-            return row.outcome === 'PASS'
-          },
-          skip: row.outcome === 'SKIP',
-        }))
-      })()
+  // GATE-0910 §3.1 — verify-once. The old chain was RETIRED on the founder's
+  // word (2026-09-13): the six suite steps are read from the report
+  // `pnpm verify:all` wrote for THIS tree, nothing is re-run here, and no flag
+  // can make it. The gate itself is `pnpm gate`.
+  const suite = suiteRowsFromReport({
+    e2eLabel: 'e2e (Playwright smoke, zero-network assert)',
+    needE2e: !skipE2e,
+  })
+  const suiteSteps: { name: string; exec: () => boolean; skip?: boolean }[] = suite.rows.map(
+    (row) => ({
+      name: row.name,
+      exec: () => {
+        if (row.detail) console.log(row.detail)
+        if (!suite.ok && suite.reason) console.log(suite.reason)
+        return row.outcome === 'PASS'
+      },
+      skip: row.outcome === 'SKIP',
+    }),
+  )
 
   const steps: { name: string; exec: () => boolean; skip?: boolean }[] = [
     { name: 'shadcn config (info + committed skill)', exec: checkShadcnConfig },

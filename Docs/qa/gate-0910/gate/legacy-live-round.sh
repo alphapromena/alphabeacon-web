@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+# ============================ RETIRED 2026-09-13 ============================
+# The old chain is retired: GATE-0910 merged and `pnpm gate` is the gate. This
+# script is kept ONLY as the §4 proof's record — it is what the 61.8-minute
+# side-by-side actually ran. Do not run it again; there is no fourth re-proof.
+# ===========================================================================
 # The HSN-0910 live-round runner, copied verbatim in procedure for GATE-0910
 # §4's side-by-side: one file at a time, a dev server started per file, the
 # global warm-up per invocation, round 2 the gate. Writes legacy/live-round-<n>.log

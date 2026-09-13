@@ -24,7 +24,7 @@
  * Usage:
  *   pnpm gate [--series <name>] [--workers 1] [--rounds 2] [--lanes A,B]
  *             [--only live-auth,live-team] [--skip-static] [--skip-live]
- *             [--funded] [--media] [--pool] [--port 5199] [--legacy-verify]
+ *             [--funded] [--media] [--pool] [--port 5199]
  */
 import { spawn, spawnSync, type ChildProcess } from 'node:child_process'
 import {
@@ -63,7 +63,6 @@ interface Options {
   media: boolean
   pool: boolean
   port: number
-  legacyVerify: boolean
 }
 
 function parseArgs(argv: string[]): Options {
@@ -107,7 +106,6 @@ function parseArgs(argv: string[]): Options {
     media: has('--media'),
     pool: has('--pool'),
     port: Number(get('--port') ?? 5199),
-    legacyVerify: has('--legacy-verify'),
   }
 }
 
@@ -311,7 +309,7 @@ class Gate {
     }
     let ok = all.ok
     for (const n of ['00', '01', '02', '03', '04', '05', '06']) {
-      const cmd = `pnpm verify:w${n}${this.opts.legacyVerify ? ' --rerun' : ''}`
+      const cmd = `pnpm verify:w${n}`
       const r = sh(cmd, staticEnv, join(dir, `verify-w${n}.log`))
       rows.push({ name: `verify:w${n}`, outcome: r.ok ? 'PASS' : 'FAIL', seconds: r.seconds })
       this.say(`verify:w${n} ${r.ok ? 'PASS' : 'FAIL'} in ${r.seconds.toFixed(0)} s`)
@@ -632,7 +630,7 @@ class Gate {
         : 'unfunded (the nine skip with their reasons)',
       this.opts.media ? '--media (paid renders)' : 'no paid render',
       this.opts.pool ? '--pool' : 'no org pool',
-      this.opts.legacyVerify ? '--legacy-verify' : 'verify-once',
+      'verify-once',
     ]
     lines.push(`# ${this.opts.series} — \`pnpm gate\` ${basename(this.runDir)}`, '')
     lines.push(

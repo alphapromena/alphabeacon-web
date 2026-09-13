@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+# ============================ RETIRED 2026-09-13 ============================
+# The old chain is retired: GATE-0910 merged and `pnpm gate` is the gate. This
+# script is kept ONLY as the §4 proof's record — it is what the 61.8-minute
+# side-by-side actually ran. Do not run it again; there is no fourth re-proof.
+# ===========================================================================
 # GATE-0910 §4 — THE OLD CHAIN, run once side by side with `pnpm gate` on the
 # same tree, so the proof compares like with like: unit → the static suite →
 # verify:w00–w06 with --rerun (each re-running the six suite steps, as they

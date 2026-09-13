@@ -40,7 +40,7 @@ dependencies are public — no private registry, no token.
 | install the AI skill (once, committed)     | `pnpm dlx skills add shadcn/ui`                                                                     |
 | test — all / single                        | `pnpm test` / `pnpm test <path>`                                                                    |
 | e2e — state specs / goldens / axe          | `pnpm e2e` / `pnpm e2e --grep @golden` / `pnpm e2e --grep @axe`                                     |
-| e2e — a LIVE round (HSN-0910/D)            | `$env:VITE_API_BASE_URL="<dev base>"; $env:E2E_API_ENV="dev"; pnpm e2e --grep live-` (refused without `E2E_API_ENV=dev`) — one file, by hand. The two-round gate itself is `pnpm gate` (below); the retired per-file serial runner is kept only as `Docs/qa/gate-0910/gate/legacy-live-round.sh` for the §4 side-by-side |
+| e2e — a LIVE round                         | **Only inside a testing session the founder asks for by name** (the standing rule, 2026-09-13). The gate is `pnpm gate`; one file by hand is `$env:VITE_API_BASE_URL="<dev base>"; $env:E2E_API_ENV="dev"; pnpm e2e e2e/live-<x>.spec.ts` (refused without `E2E_API_ENV=dev`). **THE OLD CHAIN IS RETIRED** (merged 2026-09-13): the per-file serial runners under `Docs/qa/gate-0910/gate/legacy-*.sh` and `Docs/qa/hsn-0910/gate/live-round.sh` are the §4 proof's RECORD and are never run again; no verify re-runs a suite and no flag makes it |
 | **THE GATE (GATE-0910)**                   | `pnpm gate` — keep-awake → `verify:all` → the seven checks over the report → one production build served by one `vite preview` the runner owns by pid → round 1 (lane A in parallel, lane B serial) → round 2, the gate → every red classified (network-lost re-run 3/3) → the record under `Docs/qa/<series>/gate/<run>/` (series = the branch name minus `feat/`; `--series <name>`). Flags: `--workers 4` · `--rounds 2` · `--lanes A,B` · `--only <files>` · `--skip-static` / `--skip-live` · **`--funded`** (the nine dormant tests on the funded QA org — the founder's word, per run) · **`--media`** (paid renders — the founder's word, per run) · `--pool` (§3.4, the shared lane-A org; off) · `--legacy-verify` (the old six-step verifies). Reads `VITE_API_BASE_URL` from `.env.local` and the funded creds from the QA-creds store itself; sets `E2E_API_ENV=dev` and runs `assertNotProduction` in front of every live step |
 | lint / format / typecheck                  | `pnpm lint` / `pnpm format` / `pnpm typecheck`                                                      |
 | static guard (also in CI)                  | `pnpm guard:static`                                                                                 |
@@ -48,15 +48,19 @@ dependencies are public — no private registry, no token.
 | probe HSN-0902's three doors (Phase 0)     | `pnpm probe:hsn-0902` (needs `VITE_API_BASE_URL`; zero spend; APPENDS to `Docs/api/alphastudio-shapes.md`) |
 | probe HSN-0910's five doors (Phase 0)      | `pnpm probe:hsn-0910` (needs `VITE_API_BASE_URL`; zero spend; writes `Docs/qa/hsn-0910/phase0/` and APPENDS to `Docs/api/alphastudio-shapes.md`; `-- --render` re-renders from the record; `-- --motion-supplement --owner <email>` reuses an EXISTING zero-wallet org) |
 | observe the billing shapes (BIL-0902)      | `pnpm probe:billing` (needs `VITE_API_BASE_URL`; zero spend; writes `Docs/api/billing-shapes.md`)   |
+| probe item 63 (durationS vs the wallet)    | `pnpm probe:item-63` (needs `VITE_API_BASE_URL` + `E2E_API_ENV=dev`; zero spend; one fresh QA org; writes `Docs/qa/gate-0910/item-63/` with every `x-request-id`) |
 | lighthouse budgets                         | `pnpm lh`                                                                                           |
 | build                                      | `pnpm build`                                                                                        |
 | deploy                                     | `pnpm run deploy --stage <dev\|staging\|prod>` (plain `pnpm deploy` is shadowed by a pnpm built-in) |
 | the suites once (GATE-0910 §3.1)           | `pnpm verify:all [--skip-e2e]` — lint, typecheck, guard-static, unit, build, the STATIC e2e, each once; writes `.gate/reports/verify.json` (+ `unit.json`, `e2e.json`) with the tree hash |
-| phase verify                               | `pnpm verify:w<NN>` — asserts over `.gate/reports/verify.json` for THIS tree (a missing or stale report FAILS with "run `pnpm verify:all`"; nothing is re-run), then its own tree assertions and its manual list; `--rerun` (or `VERIFY_LEGACY=1`) is the old six-step chain, kept until retired |
+| phase verify                               | `pnpm verify:w<NN>` — asserts over `.gate/reports/verify.json` for THIS tree (a missing or stale report FAILS with "run `pnpm verify:all`"), then its own tree assertions and its manual list. It spawns nothing: the old six-step re-run was retired with the chain |
 
-Agents: after any code change run **lint → typecheck → test** before "done";
-before closing a phase run `pnpm verify:all` then its `verify:wNN` and paste the
-output in the PR; the gate of a series is `pnpm gate` and its record.
+Agents: after any code change run **lint → typecheck → test** before "done".
+**A BUILD ORDER ENDS AT lint, typecheck, unit and the STATIC suite** (the
+founder, 2026-09-13) — `pnpm verify:all` is all four in one command, and its
+report is what `verify:wNN` reads when a phase closes. **Nothing live runs
+inside a build order:** no `pnpm gate`, no live round, no probe against the
+deployed API, unless the founder opens a TESTING SESSION and names it as one.
 
 ## Environments / flavors
 
