@@ -1,0 +1,10 @@
+warm-up: skipped — the runner warmed the fleet and keeps the heartbeat (GATE-0910 §3.2)
+
+Running 4 tests using 1 worker
+
+  ok 1 [chromium] › e2e\live-country.spec.ts:55:1 › a fresh workspace has NO country, and I1 is where one is set (15.7s)
+  ok 2 [chromium] › e2e\live-country.spec.ts:104:1 › the calendar carries real holidays, each with the rules for that day (4.4s)
+  ok 3 [chromium] › e2e\live-country.spec.ts:153:1 › re-saving the same country is a quiet no-op, not a fake reload (17.6s)
+  ok 4 [chromium] › e2e\live-country.spec.ts:183:1 › C2 no longer offers an event source it cannot create (4.8s)
+
+  4 passed (44.5s)

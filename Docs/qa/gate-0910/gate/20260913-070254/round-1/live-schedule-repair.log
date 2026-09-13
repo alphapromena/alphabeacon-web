@@ -1,0 +1,38 @@
+warm-up: skipped — the runner warmed the fleet and keeps the heartbeat (GATE-0910 §3.2)
+
+Running 3 tests using 1 worker
+
+  ok 1 [chromium] › e2e\live-schedule-repair.spec.ts:45:1 › a live org in the 619 shape: tones seeded, no schedule (6.1s)
+  x  2 [chromium] › e2e\live-schedule-repair.spec.ts:85:1 › C1 creates the missing schedule through the POST fallback, with the exact tones picked (25.6s)
+  -  3 [chromium] › e2e\live-schedule-repair.spec.ts:138:1 › and it survives a reload, still clean
+
+
+  1) [chromium] › e2e\live-schedule-repair.spec.ts:85:1 › C1 creates the missing schedule through the POST fallback, with the exact tones picked 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText('Schedule saved')
+    Expected: visible
+    Timeout: 20000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 20000ms
+      - waiting for getByText('Schedule saved')
+
+
+      120 |   await expect(page.getByText('You have unsaved changes.')).toBeVisible()
+      121 |   await page.getByRole('button', { name: 'Save changes' }).click()
+    > 122 |   await expect(page.getByText('Schedule saved')).toBeVisible({ timeout: 20_000 })
+          |                                                  ^
+      123 |   // A good save leaves nothing for the leave-guard to refuse (B9).
+      124 |   await expect(page.getByText('You have unsaved changes.')).toHaveCount(0)
+      125 |
+        at C:\alphabeacon-web\alphabeacon-web\e2e\live-schedule-repair.spec.ts:122:50
+
+    Error Context: .gate\artifacts\20260913-070254\round-1\live-schedule-repair\live-schedule-repair-C1-cr-0e286-with-the-exact-tones-picked-chromium\error-context.md
+
+  1 failed
+    [chromium] › e2e\live-schedule-repair.spec.ts:85:1 › C1 creates the missing schedule through the POST fallback, with the exact tones picked 
+  1 did not run
+  1 passed (33.7s)

@@ -130,6 +130,11 @@ test('C1 creates the schedule on first save, then PATCHes it — and it survives
   // is valid, then set the cadence.
   await page.getByRole('group', { name: 'Tones' }).getByRole('button', { name: TONE_NAME }).click()
   await page.getByRole('button', { name: 'Monday' }).click()
+  // The production world starts with NO model selected (GATE-0910, item 62):
+  // the form refuses to save without one — "Pick which model drafts your
+  // copy." — so this walk picks Balanced, as a new org on production must.
+  // The dev server's demo world had one pre-picked, which hid this for weeks.
+  await page.getByRole('radio', { name: /^Balanced/ }).check()
   await expect(page.getByText('You have unsaved changes.')).toBeVisible()
   // FIRST save: the org has no schedule, so this is the POST fallback C1 grew
   // in B9 — the wizard used to create the row and no longer does.

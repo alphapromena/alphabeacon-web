@@ -5067,3 +5067,56 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
 - Decisions: the measured count and item 61, appended to the GATE-0910 entry.
 - Verify: lint · typecheck · the script tests · three measurement rounds (48 QA orgs, zero spend).
 - Next: §4.
+
+### 2026-09-13 — GATE-0910 §4 accepted and closed at two runs: the item-63 probe (the maximum is checked AFTER the wallet), three spec fixes proven on the built app, two reporting fixes, items 62 and 63 filed
+
+- Did: the founder accepted the §4 report, ruled **no fourth re-proof ever**,
+  and named this pass's scope. **(1) The item-63 probe**
+  (`pnpm probe:item-63`, `scripts/probe-item-63.ts`, record
+  `Docs/qa/gate-0910/item-63/`): one fresh QA org, wallet proven zero before
+  anything was sent, the two bad bodies posted byte-identical to the spec's,
+  every `x-request-id` kept verbatim, wallet and job list re-read after —
+  `0 → 0` cents, `0` jobs. **The finding is sharper than the report's
+  assumption:** the two halves of one field are enforced in different places —
+  `durationS: "abc"` is refused **400 `bad_request`** BEFORE the wallet, as the
+  document says, while `durationS: 999` passes validation and is refused
+  **402 `wallet_insufficient`** BY the wallet. So the spec's first assertion
+  still holds and only the over-maximum one fails, which is exactly the red the
+  gate recorded six times. On a funded org that body would be PAID for before
+  anything checked the clip's length — the part of item 63 that is worth more
+  than a test. **(2) The three spec fixes**, one line each: pick Balanced on
+  both schedule specs, fill the offer line before the rename. **(3) The two
+  reporting fixes:** `skipLabel` (a skip with no reason in a file that failed
+  reads "not run, an earlier test in this file failed"; the table counts
+  not-runs apart from skips) and the widened re-run rule (`error-page` joins
+  `network-lost`; `isRerunnable` is the one predicate, and the DOM at the
+  failure decides, never the assertion text). **(4) Proven solo, no gate run,
+  no verify chain, no full round:** unit **666 / 58 files** for the runner
+  change (30 tests in the three new script files, 18 of them in
+  `classify.test.ts`), and the three live specs green on the PRODUCTION build
+  through the preview probe — **11 passed, 1 skipped with its own reason**,
+  152 s (`Docs/qa/gate-0910/item-62/preview-probe.log`). lint · typecheck
+  clean. **(5)** `feat/gate-0910` committed and pushed; nothing merged, `main`
+  and `live` untouched. **(6)** Items **62** (the two production walks the dev
+  server hid — the product question is the founder's) and **63** (Hasan's three
+  questions, with the request-ids) filed; the record gained the two notes it
+  owed: why unit is 666/58 against the order's 633/55, and the old chain's one
+  bare-static axe red that went green in all seven verifies and stays
+  UNCLASSIFIED because its context was wiped before it could be read.
+- Phase: GATE-0910 **§3 built, §3.2 measured, §4 proven and CLOSED at two
+  runs** — report-and-stop for the merge word. **From the next order onward a
+  build order ends at lint, typecheck, unit and static; live rounds and gate
+  runs happen only in a testing session the founder asks for by name.**
+- Files: `scripts/probe-item-63.ts` (+ `probe:item-63`), `scripts/gate/classify.ts`
+  (+ its 18 tests), `scripts/gate/gate.ts`, `scripts/verify-lib.ts`,
+  `e2e/live-{team,scheduling,schedule-repair}.spec.ts`,
+  `Docs/qa/gate-0910/{item-62,item-63,gate/README.md}`,
+  `Docs/qa/gate-0910/phase0/preview-probe.sh` (takes several specs),
+  `.agent/{open-items,decisions,sessions,state}.md`.
+- Decisions: the standing rule on where a build order ends; no fourth
+  re-proof; the three specs are spec defects and video-duration is not.
+- Verify: lint · typecheck · unit **666 / 58** · the three live files green on
+  the built app · the probe at zero spend.
+- Next: the founder's merge word. After it: retire the old chain from
+  `package.json` and the docs, item 61 and item 63 to Ward and Hasan, item 62's
+  ruling, then HSN-0910/B on the fast gate.

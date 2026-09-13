@@ -12,8 +12,9 @@
 set -u
 REPO=/c/alphabeacon-web/alphabeacon-web
 S="$(cd "$(dirname "$0")" && pwd)"
-LOG="$S/preview-probe.log"
-SPEC="${1:-e2e/live-auth.spec.ts}"
+LOG="${PROBE_LOG:-$S/preview-probe.log}"
+# One or more specs; they run in ONE Playwright process against the built app.
+SPECS="${*:-e2e/live-auth.spec.ts}"
 cd "$REPO" || exit 1
 
 export VITE_API_BASE_URL="$(grep -E '^\s*VITE_API_BASE_URL\s*=' .env.local | sed -E 's/^[^=]*=\s*//; s/^["'"'"']|["'"'"']$//g; s#/+$##')"
@@ -30,7 +31,7 @@ if [ -n "$(netstat -ano | grep -w 5199 | grep -i -e listen -e time_wait)" ]; the
   exit 1
 fi
 
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$REPO/Docs/qa/hsn-0910/gate/keep-awake.ps1" >"$S/keep-awake-probe.log" 2>&1 &
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$REPO/Docs/qa/hsn-0910/gate/keep-awake.ps1" >"$LOG.keep-awake" 2>&1 &
 AWAKE_PID=$!
 pnpm preview --port 5199 --strictPort >"$S/preview-server.log" 2>&1 &
 PREVIEW_PID=$!
@@ -43,15 +44,15 @@ done
 
 ENTRY="$(curl -s http://localhost:5199/ | grep -o 'assets/index-[A-Za-z0-9_-]*\.js' | head -1)"
 {
-  echo "=== PREVIEW PROBE · start $(date -u +%FT%TZ) · spec $SPEC · E2E_API_ENV=$E2E_API_ENV · funded creds: $([ -n "$QA_FUNDED_EMAIL" ] && echo present || echo absent) · preview pid $PREVIEW_PID · keep-awake pid $AWAKE_PID"
+  echo "=== PREVIEW PROBE · start $(date -u +%FT%TZ) · specs $SPECS · E2E_API_ENV=$E2E_API_ENV · funded creds: $([ -n "$QA_FUNDED_EMAIL" ] && echo present || echo absent) · preview pid $PREVIEW_PID · keep-awake pid $AWAKE_PID"
   echo "served entry: $ENTRY"
   echo "api host inlined in the served entry: $(curl -s "http://localhost:5199/$ENTRY" | grep -o -F "$HOST" | wc -l) time(s)"
   echo "/src/api/config.ts from the preview (the trap-22 tripwire's probe): http $(curl -s -o /dev/null -w '%{http_code} %{content_type}' http://localhost:5199/src/api/config.ts)"
   echo "a deep route from the preview (SPA fallback): http $(curl -s -o /dev/null -w '%{http_code} %{content_type}' http://localhost:5199/settings/organization)"
   started=$(date +%s)
-  pnpm e2e "$SPEC" --workers=1 2>&1
+  pnpm e2e $SPECS --workers=1 2>&1
   rc=$?
-  echo "--- $SPEC · exit $rc · $(( $(date +%s) - started )) s"
+  echo "--- $SPECS · exit $rc · $(( $(date +%s) - started )) s"
   echo "=== PREVIEW PROBE · end $(date -u +%FT%TZ)"
 } >"$LOG" 2>&1
 

@@ -1,0 +1,2089 @@
+{
+  "series": "gate-0910",
+  "run": "20260913-062802",
+  "commit": "8c0694a",
+  "dirty": true,
+  "startedAt": "2026-09-13T06:28:02.823Z",
+  "totalSeconds": 2090.339,
+  "options": {
+    "series": "gate-0910",
+    "workers": 1,
+    "rounds": 2,
+    "lanes": [
+      "A",
+      "B"
+    ],
+    "only": null,
+    "skipStatic": false,
+    "skipLive": false,
+    "funded": false,
+    "media": false,
+    "pool": false,
+    "port": 5199,
+    "legacyVerify": false
+  },
+  "static": {
+    "ok": true,
+    "rows": [
+      {
+        "name": "verify:all",
+        "outcome": "PASS",
+        "seconds": 149.762
+      },
+      {
+        "name": "verify:w00",
+        "outcome": "PASS",
+        "seconds": 19.335
+      },
+      {
+        "name": "verify:w01",
+        "outcome": "PASS",
+        "seconds": 2.898
+      },
+      {
+        "name": "verify:w02",
+        "outcome": "PASS",
+        "seconds": 1.007
+      },
+      {
+        "name": "verify:w03",
+        "outcome": "PASS",
+        "seconds": 0.857
+      },
+      {
+        "name": "verify:w04",
+        "outcome": "PASS",
+        "seconds": 0.841
+      },
+      {
+        "name": "verify:w05",
+        "outcome": "PASS",
+        "seconds": 0.871
+      },
+      {
+        "name": "verify:w06",
+        "outcome": "PASS",
+        "seconds": 0.941
+      }
+    ]
+  },
+  "unit": {
+    "files": 58,
+    "tests": 656,
+    "passed": 656,
+    "failed": 0,
+    "skipped": 0
+  },
+  "staticE2e": {
+    "passed": 115,
+    "skipped": 84,
+    "failed": 0
+  },
+  "rounds": [
+    [
+      {
+        "file": "live-auth",
+        "lane": "A",
+        "round": 1,
+        "attempt": 1,
+        "exit": 0,
+        "seconds": 46.285,
+        "summary": {
+          "passed": 7,
+          "failed": 0,
+          "skipped": 0,
+          "flaky": 0,
+          "tests": [
+            {
+              "title": "signup -> verify with the emailed code -> logged in, WITH a workspace, in the app",
+              "file": "live-auth.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 7222
+            },
+            {
+              "title": "a second signup: resend immediately proves the 429 countdown, wrong password proves the vague 401",
+              "file": "live-auth.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 4547
+            },
+            {
+              "title": "correct password + unverified email routes to the verify screen, and N3 names the workspace",
+              "file": "live-auth.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 6624
+            },
+            {
+              "title": "forgot â†’ reset via the documented deep link revokes everything; only the new password works",
+              "file": "live-auth.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 6670
+            },
+            {
+              "title": "the shell appears; sign out and logout-all both really revoke",
+              "file": "live-auth.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 9034
+            },
+            {
+              "title": "a new user accepts an invite through the documented deep link and lands in the workspace",
+              "file": "live-auth.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 6084
+            },
+            {
+              "title": "a token-carrying 401 purges the session and lands on login with the toast",
+              "file": "live-auth.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 2962
+            }
+          ]
+        },
+        "log": "round-1/live-auth.log",
+        "startedAt": "2026-09-13T06:31:27.869Z",
+        "classification": "green"
+      },
+      {
+        "file": "live-billing",
+        "lane": "B",
+        "round": 1,
+        "attempt": 1,
+        "exit": 0,
+        "seconds": 118.693,
+        "summary": {
+          "passed": 7,
+          "failed": 0,
+          "skipped": 0,
+          "flaky": 0,
+          "tests": [
+            {
+              "title": "a fresh owner + org, made through the product",
+              "file": "live-billing.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 6837
+            },
+            {
+              "title": "the five endpoints answer the shapes the UI is built on — and the checkout url is never opened",
+              "file": "live-billing.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 7386
+            },
+            {
+              "title": "/billing renders the plans FROM THE WIRE, Subscribe for the owner, and the honest empty history",
+              "file": "live-billing.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 5471
+            },
+            {
+              "title": "the abandoned-checkout return shows the plans plus the note",
+              "file": "live-billing.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 5151
+            },
+            {
+              "title": "the success route polls, shows the wire’s status every tick, and gives up honestly on an unpaid org",
+              "file": "live-billing.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 62253
+            },
+            {
+              "title": "a member cannot start checkout: 403 forbidden, and any member reads",
+              "file": "live-billing.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 6092
+            },
+            {
+              "title": "a generation on the unfunded org is refused with 402, and the refusal points at Billing",
+              "file": "live-billing.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 22370
+            }
+          ]
+        },
+        "log": "round-1/live-billing.log",
+        "startedAt": "2026-09-13T06:41:06.098Z",
+        "classification": "green"
+      },
+      {
+        "file": "live-brand",
+        "lane": "A",
+        "round": 1,
+        "attempt": 1,
+        "exit": 0,
+        "seconds": 44.584,
+        "summary": {
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "flaky": 0,
+          "tests": [
+            {
+              "title": "a fresh owner + org, made through the product",
+              "file": "live-brand.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 6040
+            },
+            {
+              "title": "a custom tone: created under the adapter, edited, and it survives a reload",
+              "file": "live-brand.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 7987
+            },
+            {
+              "title": "voice rules: the flat live list persists through the API",
+              "file": "live-brand.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 8474
+            },
+            {
+              "title": "sources and topics: scheme-less display, real persistence",
+              "file": "live-brand.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 11865
+            },
+            {
+              "title": "deleting a tone reflects in the schedules that referenced it",
+              "file": "live-brand.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 7151
+            }
+          ]
+        },
+        "log": "round-1/live-brand.log",
+        "startedAt": "2026-09-13T06:32:41.651Z",
+        "classification": "green"
+      },
+      {
+        "file": "live-brand-kit",
+        "lane": "A",
+        "round": 1,
+        "attempt": 1,
+        "exit": 0,
+        "seconds": 27.495,
+        "summary": {
+          "passed": 3,
+          "failed": 0,
+          "skipped": 0,
+          "flaky": 0,
+          "tests": [
+            {
+              "title": "a fresh owner + org, made through the product",
+              "file": "live-brand-kit.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 5554
+            },
+            {
+              "title": "the wire, from Node (NOT browser truth): presign the closed pair, PUT a tiny PDF, read the row back under Files, Delete, re-read",
+              "file": "live-brand-kit.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 9612
+            },
+            {
+              "title": "browser truth: the Brand kit type sends a PDF from Chromium with nothing typed, it lists, and Delete removes it",
+              "file": "live-brand-kit.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 9211
+            }
+          ]
+        },
+        "log": "round-1/live-brand-kit.log",
+        "startedAt": "2026-09-13T06:32:14.155Z",
+        "classification": "green"
+      },
+      {
+        "file": "live-brand-rules",
+        "lane": "B",
+        "round": 1,
+        "attempt": 1,
+        "exit": 0,
+        "seconds": 53.979,
+        "summary": {
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "flaky": 0,
+          "tests": [
+            {
+              "title": "a fresh owner + org, made through the product",
+              "file": "live-brand-rules.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 5567
+            },
+            {
+              "title": "a fresh org has no tones at all, and the screen says what that costs",
+              "file": "live-brand-rules.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 4155
+            },
+            {
+              "title": "a tone keeps its rules, and a PATCH replaces the whole list",
+              "file": "live-brand-rules.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 11955
+            },
+            {
+              "title": "the brand voice writes to one row, and an edit does not reorder it",
+              "file": "live-brand-rules.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 15459
+            },
+            {
+              "title": "Preview this tone returns a real sample from the platform",
+              "file": "live-brand-rules.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 13731
+            }
+          ]
+        },
+        "log": "round-1/live-brand-rules.log",
+        "startedAt": "2026-09-13T06:43:04.791Z",
+        "classification": "green"
+      },
+      {
+        "file": "live-country",
+        "lane": "A",
+        "round": 1,
+        "attempt": 1,
+        "exit": 0,
+        "seconds": 43.608,
+        "summary": {
+          "passed": 4,
+          "failed": 0,
+          "skipped": 0,
+          "flaky": 0,
+          "tests": [
+            {
+              "title": "a fresh workspace has NO country, and I1 is where one is set",
+              "file": "live-country.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 15862
+            },
+            {
+              "title": "the calendar carries real holidays, each with the rules for that day",
+              "file": "live-country.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 4725
+            },
+            {
+              "title": "re-saving the same country is a quiet no-op, not a fake reload",
+              "file": "live-country.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 15659
+            },
+            {
+              "title": "C2 no longer offers an event source it cannot create",
+              "file": "live-country.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 4280
+            }
+          ]
+        },
+        "log": "round-1/live-country.log",
+        "startedAt": "2026-09-13T06:33:26.236Z",
+        "classification": "green"
+      },
+      {
+        "file": "live-create-visual",
+        "lane": "B",
+        "round": 1,
+        "attempt": 1,
+        "exit": 0,
+        "seconds": 1.099,
+        "summary": {
+          "passed": 0,
+          "failed": 0,
+          "skipped": 3,
+          "flaky": 0,
+          "tests": [
+            {
+              "title": "a fresh owner + org with its brand set up",
+              "file": "live-create-visual.spec.ts",
+              "status": "skipped",
+              "tags": [],
+              "skipReason": "set LIVE_MEDIA=1 to spend on one generate run and one real visual",
+              "durationMs": 0
+            },
+            {
+              "title": "one run, then Create visual on its result renders ONE image and attaches nothing",
+              "file": "live-create-visual.spec.ts",
+              "status": "skipped",
+              "tags": [],
+              "skipReason": "set LIVE_MEDIA=1 to spend on one generate run and one real visual",
+              "durationMs": 0
+            },
+            {
+              "title": "Today offers the same button on the ledger row, and the Studio lists the job",
+              "file": "live-create-visual.spec.ts",
+              "status": "skipped",
+              "tags": [],
+              "skipReason": "set LIVE_MEDIA=1 to spend on one generate run and one real visual",
+              "durationMs": 0
+            }
+          ]
+        },
+        "log": "round-1/live-create-visual.log",
+        "startedAt": "2026-09-13T06:43:58.771Z",
+        "classification": "skipped-all"
+      },
+      {
+        "file": "live-generate",
+        "lane": "B",
+        "round": 1,
+        "attempt": 1,
+        "exit": 0,
+        "seconds": 59.223,
+        "summary": {
+          "passed": 2,
+          "failed": 0,
+          "skipped": 0,
+          "flaky": 0,
+          "tests": [
+            {
+              "title": "a fresh owner + org, made through the product",
+              "file": "live-generate.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 24003
+            },
+            {
+              "title": "one balanced run returns a draft with its tone and its rationale",
+              "file": "live-generate.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 32162
+            }
+          ]
+        },
+        "log": "round-1/live-generate.log",
+        "startedAt": "2026-09-13T06:43:59.871Z",
+        "classification": "green"
+      },
+      {
+        "file": "live-invite-org",
+        "lane": "A",
+        "round": 1,
+        "attempt": 1,
+        "exit": 0,
+        "seconds": 39.569,
+        "summary": {
+          "passed": 3,
+          "failed": 0,
+          "skipped": 0,
+          "flaky": 0,
+          "tests": [
+            {
+              "title": "two accounts, each owning a workspace",
+              "file": "live-invite-org.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 13341
+            },
+            {
+              "title": "an invited existing user can REACH the inviting workspace, and a reload keeps it",
+              "file": "live-invite-org.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 13653
+            },
+            {
+              "title": "losing membership falls back honestly, and never to a dead screen",
+              "file": "live-invite-org.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 9452
+            }
+          ]
+        },
+        "log": "round-1/live-invite-org.log",
+        "startedAt": "2026-09-13T06:34:09.844Z",
+        "classification": "green"
+      },
+      {
+        "file": "live-knowledge",
+        "lane": "A",
+        "round": 1,
+        "attempt": 1,
+        "exit": 0,
+        "seconds": 39.659,
+        "summary": {
+          "passed": 3,
+          "failed": 0,
+          "skipped": 0,
+          "flaky": 0,
+          "tests": [
+            {
+              "title": "a fresh owner + org, made through the product",
+              "file": "live-knowledge.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 5543
+            },
+            {
+              "title": "pasted text becomes a Ready source, and removing it removes it",
+              "file": "live-knowledge.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 15328
+            },
+            {
+              "title": "a FILE uploads straight to storage from the browser (open-item 24)",
+              "file": "live-knowledge.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 15751
+            }
+          ]
+        },
+        "log": "round-1/live-knowledge.log",
+        "startedAt": "2026-09-13T06:34:49.414Z",
+        "classification": "green"
+      },
+      {
+        "file": "live-media-capabilities",
+        "lane": "A",
+        "round": 1,
+        "attempt": 1,
+        "exit": 0,
+        "seconds": 78.917,
+        "summary": {
+          "passed": 3,
+          "failed": 0,
+          "skipped": 0,
+          "flaky": 0,
+          "tests": [
+            {
+              "title": "a fresh owner + org, made through the product",
+              "file": "live-media-capabilities.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 6051
+            },
+            {
+              "title": "every granted capability: the document’s example stops at the wallet (402), its trap before it (400) — zero spend",
+              "file": "live-media-capabilities.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 45738
+            },
+            {
+              "title": "the Studio grid lists what the catalog grants, by name, with the catalog’s price",
+              "file": "live-media-capabilities.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 24098
+            }
+          ]
+        },
+        "log": "round-1/live-media-capabilities.log",
+        "startedAt": "2026-09-13T06:35:29.074Z",
+        "classification": "green"
+      },
+      {
+        "file": "live-media-upload",
+        "lane": "A",
+        "round": 1,
+        "attempt": 1,
+        "exit": 0,
+        "seconds": 29.967,
+        "summary": {
+          "passed": 3,
+          "failed": 0,
+          "skipped": 0,
+          "flaky": 0,
+          "tests": [
+            {
+              "title": "a fresh owner + org, made through the product",
+              "file": "live-media-upload.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 5528
+            },
+            {
+              "title": "an image upload becomes a WIRE-listed Files row, and Delete removes it from the wire",
+              "file": "live-media-upload.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 9778
+            },
+            {
+              "title": "the logo uploads with desc \"logo\", shows as the logo, stays out of Files, and removes",
+              "file": "live-media-upload.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 11620
+            }
+          ]
+        },
+        "log": "round-1/live-media-upload.log",
+        "startedAt": "2026-09-13T06:36:47.992Z",
+        "classification": "green"
+      },
+      {
+        "file": "live-notifications",
+        "lane": "A",
+        "round": 1,
+        "attempt": 1,
+        "exit": 0,
+        "seconds": 12.025,
+        "summary": {
+          "passed": 1,
+          "failed": 0,
+          "skipped": 0,
+          "flaky": 0,
+          "tests": [
+            {
+              "title": "the inbox endpoints hold their contract, and the bell tells the truth",
+              "file": "live-notifications.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 9013
+            }
+          ]
+        },
+        "log": "round-1/live-notifications.log",
+        "startedAt": "2026-09-13T06:37:17.959Z",
+        "classification": "green"
+      },
+      {
+        "file": "live-onboarding",
+        "lane": "B",
+        "round": 1,
+        "attempt": 1,
+        "exit": 0,
+        "seconds": 62.949,
+        "summary": {
+          "passed": 6,
+          "failed": 0,
+          "skipped": 0,
+          "flaky": 0,
+          "tests": [
+            {
+              "title": "signup → verify → the app: no wizard, and the workspace is real",
+              "file": "live-onboarding.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 6023
+            },
+            {
+              "title": "a fresh live org has no tones, and the screen says what that costs",
+              "file": "live-onboarding.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 4126
+            },
+            {
+              "title": "generation is locked, and the checklist names all four",
+              "file": "live-onboarding.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 4649
+            },
+            {
+              "title": "the Studio composer is locked by the same gate",
+              "file": "live-onboarding.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 2232
+            },
+            {
+              "title": "completing the four brand entities unlocks generation",
+              "file": "live-onboarding.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 21594
+            },
+            {
+              "title": "the unlocked run really runs — one balanced draft",
+              "file": "live-onboarding.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 21225
+            }
+          ]
+        },
+        "log": "round-1/live-onboarding.log",
+        "startedAt": "2026-09-13T06:44:59.095Z",
+        "classification": "green"
+      },
+      {
+        "file": "live-proposals",
+        "lane": "A",
+        "round": 1,
+        "attempt": 1,
+        "exit": 0,
+        "seconds": 38.162,
+        "summary": {
+          "passed": 1,
+          "failed": 0,
+          "skipped": 4,
+          "flaky": 0,
+          "tests": [
+            {
+              "title": "a fresh owner + org, with its brand set up",
+              "file": "live-proposals.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 22377
+            },
+            {
+              "title": "one balanced run — the drafts it produces become the proposals under test",
+              "file": "live-proposals.spec.ts",
+              "status": "skipped",
+              "tags": [],
+              "skipReason": "402 wallet_insufficient would refuse the balanced run: the org's wallet is $0.00 — the plan is the only funding, and no funded QA org is configured (QA_FUNDED_EMAIL / QA_FUNDED_PASSWORD; M-BIL-1 step 8) — not a product failure",
+              "durationMs": 3273
+            },
+            {
+              "title": "after a RELOAD, Today shows the draft from the ledger",
+              "file": "live-proposals.spec.ts",
+              "status": "skipped",
+              "tags": [],
+              "skipReason": "402 wallet_insufficient would refuse the run this ledger read depends on: the org's wallet is $0.00 — the plan is the only funding, and no funded QA org is configured (QA_FUNDED_EMAIL / QA_FUNDED_PASSWORD; M-BIL-1 step 8) — not a product failure",
+              "durationMs": 3474
+            },
+            {
+              "title": "approving records it as posted, and the decision survives a reload",
+              "file": "live-proposals.spec.ts",
+              "status": "skipped",
+              "tags": [],
+              "skipReason": "402 wallet_insufficient would refuse the run this approval depends on: the org's wallet is $0.00 — the plan is the only funding, and no funded QA org is configured (QA_FUNDED_EMAIL / QA_FUNDED_PASSWORD; M-BIL-1 step 8) — not a product failure",
+              "durationMs": 2985
+            },
+            {
+              "title": "declining asks why, keeps the row, and is reversible",
+              "file": "live-proposals.spec.ts",
+              "status": "skipped",
+              "tags": [],
+              "skipReason": "402 wallet_insufficient would refuse the second run this decline depends on: the org's wallet is $0.00 — the plan is the only funding, and no funded QA org is configured (QA_FUNDED_EMAIL / QA_FUNDED_PASSWORD; M-BIL-1 step 8) — not a product failure",
+              "durationMs": 2993
+            }
+          ]
+        },
+        "log": "round-1/live-proposals.log",
+        "startedAt": "2026-09-13T06:37:29.984Z",
+        "classification": "green"
+      },
+      {
+        "file": "live-schedule-repair",
+        "lane": "A",
+        "round": 1,
+        "attempt": 1,
+        "exit": 1,
+        "seconds": 34.98,
+        "summary": {
+          "passed": 1,
+          "failed": 1,
+          "skipped": 1,
+          "flaky": 0,
+          "tests": [
+            {
+              "title": "a live org in the 619 shape: tones seeded, no schedule",
+              "file": "live-schedule-repair.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 6259
+            },
+            {
+              "title": "C1 creates the missing schedule through the POST fallback, with the exact tones picked",
+              "file": "live-schedule-repair.spec.ts",
+              "status": "failed",
+              "tags": [],
+              "error": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Schedule saved')\nExpected: visible\nTimeout: 20000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 20000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Schedule saved')\u001b[22m\n",
+              "durationMs": 25653
+            },
+            {
+              "title": "and it survives a reload, still clean",
+              "file": "live-schedule-repair.spec.ts",
+              "status": "skipped",
+              "tags": [],
+              "skipReason": "",
+              "durationMs": 0
+            }
+          ]
+        },
+        "log": "round-1/live-schedule-repair.log",
+        "startedAt": "2026-09-13T06:38:08.147Z",
+        "classification": "unclassified"
+      },
+      {
+        "file": "live-scheduling",
+        "lane": "A",
+        "round": 1,
+        "attempt": 1,
+        "exit": 1,
+        "seconds": 42.395,
+        "summary": {
+          "passed": 1,
+          "failed": 1,
+          "skipped": 1,
+          "flaky": 0,
+          "tests": [
+            {
+              "title": "signup creates the workspace and NOTHING else",
+              "file": "live-scheduling.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 9255
+            },
+            {
+              "title": "C1 creates the schedule on first save, then PATCHes it — and it survives a reload",
+              "file": "live-scheduling.spec.ts",
+              "status": "failed",
+              "tags": [],
+              "error": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+              "durationMs": 30041
+            },
+            {
+              "title": "slots, if ingestion produced any, honour skip/un-skip and never offer approve",
+              "file": "live-scheduling.spec.ts",
+              "status": "skipped",
+              "tags": [],
+              "skipReason": "",
+              "durationMs": 0
+            }
+          ]
+        },
+        "log": "round-1/live-scheduling.log",
+        "startedAt": "2026-09-13T06:38:43.128Z",
+        "classification": "unclassified"
+      },
+      {
+        "file": "live-studio",
+        "lane": "A",
+        "round": 1,
+        "attempt": 1,
+        "exit": 0,
+        "seconds": 21.748,
+        "summary": {
+          "passed": 3,
+          "failed": 0,
+          "skipped": 1,
+          "flaky": 0,
+          "tests": [
+            {
+              "title": "a fresh owner + org, made through the product",
+              "file": "live-studio.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 6581
+            },
+            {
+              "title": "E1 is built from the catalog: the granted capabilities, real prices, no vendors",
+              "file": "live-studio.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 8799
+            },
+            {
+              "title": "E3 lists renders, and is honest when there are none",
+              "file": "live-studio.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 3258
+            },
+            {
+              "title": "E2 renders for real, and E4 opens the asset it made",
+              "file": "live-studio.spec.ts",
+              "status": "skipped",
+              "tags": [],
+              "skipReason": "set LIVE_MEDIA=1 to spend on one real render",
+              "durationMs": 53
+            }
+          ]
+        },
+        "log": "round-1/live-studio.log",
+        "startedAt": "2026-09-13T06:39:25.523Z",
+        "classification": "green"
+      },
+      {
+        "file": "live-team",
+        "lane": "A",
+        "round": 1,
+        "attempt": 1,
+        "exit": 1,
+        "seconds": 32.936,
+        "summary": {
+          "passed": 1,
+          "failed": 1,
+          "skipped": 4,
+          "flaky": 0,
+          "tests": [
+            {
+              "title": "verifying creates the org LIVE; the dashboard follows immediately",
+              "file": "live-team.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 5525
+            },
+            {
+              "title": "I1 renames the org through PATCH, and the name survives a reload",
+              "file": "live-team.spec.ts",
+              "status": "failed",
+              "tags": [],
+              "error": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Organization saved')\nExpected: visible\nTimeout: 20000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 20000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Organization saved')\u001b[22m\n",
+              "durationMs": 24365
+            },
+            {
+              "title": "change-password keeps this session and only the new password works after",
+              "file": "live-team.spec.ts",
+              "status": "skipped",
+              "tags": [],
+              "skipReason": "",
+              "durationMs": 0
+            },
+            {
+              "title": "inviting a NEW user: coded email, resend rate-limits honestly, cancel removes",
+              "file": "live-team.spec.ts",
+              "status": "skipped",
+              "tags": [],
+              "skipReason": "",
+              "durationMs": 0
+            },
+            {
+              "title": "inviting an EXISTING user adds them immediately, and the role ladder holds",
+              "file": "live-team.spec.ts",
+              "status": "skipped",
+              "tags": [],
+              "skipReason": "",
+              "durationMs": 0
+            },
+            {
+              "title": "an ADMIN viewing a team with an owner: no remove on the owner, no role selects at all",
+              "file": "live-team.spec.ts",
+              "status": "skipped",
+              "tags": [],
+              "skipReason": "",
+              "durationMs": 0
+            }
+          ]
+        },
+        "log": "round-1/live-team.log",
+        "startedAt": "2026-09-13T06:39:47.273Z",
+        "classification": "unclassified"
+      },
+      {
+        "file": "live-video-duration",
+        "lane": "A",
+        "round": 1,
+        "attempt": 1,
+        "exit": 1,
+        "seconds": 13.864,
+        "summary": {
+          "passed": 1,
+          "failed": 1,
+          "skipped": 1,
+          "flaky": 0,
+          "tests": [
+            {
+              "title": "a fresh owner + org, made through the product",
+              "file": "live-video-duration.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 6042
+            },
+            {
+              "title": "a bad durationS is refused with 400 BEFORE the wallet check — the field is known, a maximum is enforced",
+              "file": "live-video-duration.spec.ts",
+              "status": "failed",
+              "tags": [],
+              "error": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m400\u001b[39m\nReceived: \u001b[31m402\u001b[39m",
+              "durationMs": 4751
+            },
+            {
+              "title": "the valid video body clears validation — and self-skips on 402, the positive proof riding on LIVE_MEDIA=1",
+              "file": "live-video-duration.spec.ts",
+              "status": "skipped",
+              "tags": [],
+              "skipReason": "",
+              "durationMs": 0
+            }
+          ]
+        },
+        "log": "round-1/live-video-duration.log",
+        "startedAt": "2026-09-13T06:40:20.209Z",
+        "classification": "unclassified"
+      },
+      {
+        "file": "live-wallet",
+        "lane": "A",
+        "round": 1,
+        "attempt": 1,
+        "exit": 0,
+        "seconds": 32.023,
+        "summary": {
+          "passed": 4,
+          "failed": 0,
+          "skipped": 0,
+          "flaky": 0,
+          "tests": [
+            {
+              "title": "a fresh owner + org, made through the product",
+              "file": "live-wallet.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 15356
+            },
+            {
+              "title": "the balance chip shows money — and over a zero wallet, the instruction to subscribe",
+              "file": "live-wallet.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 4762
+            },
+            {
+              "title": "H3 is a balance and a real usage read-back, in both allowed grains",
+              "file": "live-wallet.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 4654
+            },
+            {
+              "title": "the wallet and usage endpoints answer the shapes the UI is built on",
+              "file": "live-wallet.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 4198
+            }
+          ]
+        },
+        "log": "round-1/live-wallet.log",
+        "startedAt": "2026-09-13T06:40:34.074Z",
+        "classification": "green"
+      }
+    ],
+    [
+      {
+        "file": "live-auth",
+        "lane": "A",
+        "round": 2,
+        "attempt": 1,
+        "exit": 0,
+        "seconds": 43.945,
+        "summary": {
+          "passed": 7,
+          "failed": 0,
+          "skipped": 0,
+          "flaky": 0,
+          "tests": [
+            {
+              "title": "signup -> verify with the emailed code -> logged in, WITH a workspace, in the app",
+              "file": "live-auth.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 6107
+            },
+            {
+              "title": "a second signup: resend immediately proves the 429 countdown, wrong password proves the vague 401",
+              "file": "live-auth.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 4534
+            },
+            {
+              "title": "correct password + unverified email routes to the verify screen, and N3 names the workspace",
+              "file": "live-auth.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 6203
+            },
+            {
+              "title": "forgot â†’ reset via the documented deep link revokes everything; only the new password works",
+              "file": "live-auth.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 6633
+            },
+            {
+              "title": "the shell appears; sign out and logout-all both really revoke",
+              "file": "live-auth.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 7377
+            },
+            {
+              "title": "a new user accepts an invite through the documented deep link and lands in the workspace",
+              "file": "live-auth.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 6509
+            },
+            {
+              "title": "a token-carrying 401 purges the session and lands on login with the toast",
+              "file": "live-auth.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 3507
+            }
+          ]
+        },
+        "log": "round-2/live-auth.log",
+        "startedAt": "2026-09-13T06:46:02.053Z",
+        "classification": "green"
+      },
+      {
+        "file": "live-billing",
+        "lane": "B",
+        "round": 2,
+        "attempt": 1,
+        "exit": 0,
+        "seconds": 118.595,
+        "summary": {
+          "passed": 7,
+          "failed": 0,
+          "skipped": 0,
+          "flaky": 0,
+          "tests": [
+            {
+              "title": "a fresh owner + org, made through the product",
+              "file": "live-billing.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 6039
+            },
+            {
+              "title": "the five endpoints answer the shapes the UI is built on — and the checkout url is never opened",
+              "file": "live-billing.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 6873
+            },
+            {
+              "title": "/billing renders the plans FROM THE WIRE, Subscribe for the owner, and the honest empty history",
+              "file": "live-billing.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 6610
+            },
+            {
+              "title": "the abandoned-checkout return shows the plans plus the note",
+              "file": "live-billing.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 5173
+            },
+            {
+              "title": "the success route polls, shows the wire’s status every tick, and gives up honestly on an unpaid org",
+              "file": "live-billing.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 62316
+            },
+            {
+              "title": "a member cannot start checkout: 403 forbidden, and any member reads",
+              "file": "live-billing.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 6047
+            },
+            {
+              "title": "a generation on the unfunded org is refused with 402, and the refusal points at Billing",
+              "file": "live-billing.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 22410
+            }
+          ]
+        },
+        "log": "round-2/live-billing.log",
+        "startedAt": "2026-09-13T06:57:45.669Z",
+        "classification": "green"
+      },
+      {
+        "file": "live-brand",
+        "lane": "A",
+        "round": 2,
+        "attempt": 1,
+        "exit": 0,
+        "seconds": 47.209,
+        "summary": {
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "flaky": 0,
+          "tests": [
+            {
+              "title": "a fresh owner + org, made through the product",
+              "file": "live-brand.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 6057
+            },
+            {
+              "title": "a custom tone: created under the adapter, edited, and it survives a reload",
+              "file": "live-brand.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 9013
+            },
+            {
+              "title": "voice rules: the flat live list persists through the API",
+              "file": "live-brand.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 9466
+            },
+            {
+              "title": "sources and topics: scheme-less display, real persistence",
+              "file": "live-brand.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 12345
+            },
+            {
+              "title": "deleting a tone reflects in the schedules that referenced it",
+              "file": "live-brand.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 7278
+            }
+          ]
+        },
+        "log": "round-2/live-brand.log",
+        "startedAt": "2026-09-13T06:47:13.297Z",
+        "classification": "green"
+      },
+      {
+        "file": "live-brand-kit",
+        "lane": "A",
+        "round": 2,
+        "attempt": 1,
+        "exit": 0,
+        "seconds": 27.298,
+        "summary": {
+          "passed": 3,
+          "failed": 0,
+          "skipped": 0,
+          "flaky": 0,
+          "tests": [
+            {
+              "title": "a fresh owner + org, made through the product",
+              "file": "live-brand-kit.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 5561
+            },
+            {
+              "title": "the wire, from Node (NOT browser truth): presign the closed pair, PUT a tiny PDF, read the row back under Files, Delete, re-read",
+              "file": "live-brand-kit.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 9536
+            },
+            {
+              "title": "browser truth: the Brand kit type sends a PDF from Chromium with nothing typed, it lists, and Delete removes it",
+              "file": "live-brand-kit.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 9120
+            }
+          ]
+        },
+        "log": "round-2/live-brand-kit.log",
+        "startedAt": "2026-09-13T06:46:45.998Z",
+        "classification": "green"
+      },
+      {
+        "file": "live-brand-rules",
+        "lane": "B",
+        "round": 2,
+        "attempt": 1,
+        "exit": 0,
+        "seconds": 54.524,
+        "summary": {
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "flaky": 0,
+          "tests": [
+            {
+              "title": "a fresh owner + org, made through the product",
+              "file": "live-brand-rules.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 6069
+            },
+            {
+              "title": "a fresh org has no tones at all, and the screen says what that costs",
+              "file": "live-brand-rules.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 4119
+            },
+            {
+              "title": "a tone keeps its rules, and a PATCH replaces the whole list",
+              "file": "live-brand-rules.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 11978
+            },
+            {
+              "title": "the brand voice writes to one row, and an edit does not reorder it",
+              "file": "live-brand-rules.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 14943
+            },
+            {
+              "title": "Preview this tone returns a real sample from the platform",
+              "file": "live-brand-rules.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 14379
+            }
+          ]
+        },
+        "log": "round-2/live-brand-rules.log",
+        "startedAt": "2026-09-13T06:59:44.265Z",
+        "classification": "green"
+      },
+      {
+        "file": "live-country",
+        "lane": "A",
+        "round": 2,
+        "attempt": 1,
+        "exit": 0,
+        "seconds": 45.549,
+        "summary": {
+          "passed": 4,
+          "failed": 0,
+          "skipped": 0,
+          "flaky": 0,
+          "tests": [
+            {
+              "title": "a fresh workspace has NO country, and I1 is where one is set",
+              "file": "live-country.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 15692
+            },
+            {
+              "title": "the calendar carries real holidays, each with the rules for that day",
+              "file": "live-country.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 4416
+            },
+            {
+              "title": "re-saving the same country is a quiet no-op, not a fake reload",
+              "file": "live-country.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 17650
+            },
+            {
+              "title": "C2 no longer offers an event source it cannot create",
+              "file": "live-country.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 4754
+            }
+          ]
+        },
+        "log": "round-2/live-country.log",
+        "startedAt": "2026-09-13T06:48:00.507Z",
+        "classification": "green"
+      },
+      {
+        "file": "live-create-visual",
+        "lane": "B",
+        "round": 2,
+        "attempt": 1,
+        "exit": 0,
+        "seconds": 1.099,
+        "summary": {
+          "passed": 0,
+          "failed": 0,
+          "skipped": 3,
+          "flaky": 0,
+          "tests": [
+            {
+              "title": "a fresh owner + org with its brand set up",
+              "file": "live-create-visual.spec.ts",
+              "status": "skipped",
+              "tags": [],
+              "skipReason": "set LIVE_MEDIA=1 to spend on one generate run and one real visual",
+              "durationMs": 0
+            },
+            {
+              "title": "one run, then Create visual on its result renders ONE image and attaches nothing",
+              "file": "live-create-visual.spec.ts",
+              "status": "skipped",
+              "tags": [],
+              "skipReason": "set LIVE_MEDIA=1 to spend on one generate run and one real visual",
+              "durationMs": 0
+            },
+            {
+              "title": "Today offers the same button on the ledger row, and the Studio lists the job",
+              "file": "live-create-visual.spec.ts",
+              "status": "skipped",
+              "tags": [],
+              "skipReason": "set LIVE_MEDIA=1 to spend on one generate run and one real visual",
+              "durationMs": 0
+            }
+          ]
+        },
+        "log": "round-2/live-create-visual.log",
+        "startedAt": "2026-09-13T07:00:38.790Z",
+        "classification": "skipped-all"
+      },
+      {
+        "file": "live-generate",
+        "lane": "B",
+        "round": 2,
+        "attempt": 1,
+        "exit": 0,
+        "seconds": 65.567,
+        "summary": {
+          "passed": 2,
+          "failed": 0,
+          "skipped": 0,
+          "flaky": 0,
+          "tests": [
+            {
+              "title": "a fresh owner + org, made through the product",
+              "file": "live-generate.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 22956
+            },
+            {
+              "title": "one balanced run returns a draft with its tone and its rationale",
+              "file": "live-generate.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 39593
+            }
+          ]
+        },
+        "log": "round-2/live-generate.log",
+        "startedAt": "2026-09-13T07:00:39.890Z",
+        "classification": "green"
+      },
+      {
+        "file": "live-invite-org",
+        "lane": "A",
+        "round": 2,
+        "attempt": 1,
+        "exit": 0,
+        "seconds": 40.298,
+        "summary": {
+          "passed": 3,
+          "failed": 0,
+          "skipped": 0,
+          "flaky": 0,
+          "tests": [
+            {
+              "title": "two accounts, each owning a workspace",
+              "file": "live-invite-org.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 13459
+            },
+            {
+              "title": "an invited existing user can REACH the inviting workspace, and a reload keeps it",
+              "file": "live-invite-org.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 14150
+            },
+            {
+              "title": "losing membership falls back honestly, and never to a dead screen",
+              "file": "live-invite-org.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 9570
+            }
+          ]
+        },
+        "log": "round-2/live-invite-org.log",
+        "startedAt": "2026-09-13T06:48:46.057Z",
+        "classification": "green"
+      },
+      {
+        "file": "live-knowledge",
+        "lane": "A",
+        "round": 2,
+        "attempt": 1,
+        "exit": 1,
+        "seconds": 158.622,
+        "summary": {
+          "passed": 1,
+          "failed": 1,
+          "skipped": 1,
+          "flaky": 0,
+          "tests": [
+            {
+              "title": "a fresh owner + org, made through the product",
+              "file": "live-knowledge.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 5568
+            },
+            {
+              "title": "pasted text becomes a Ready source, and removing it removes it",
+              "file": "live-knowledge.spec.ts",
+              "status": "failed",
+              "tags": [],
+              "error": "\u001b[31mTest timeout of 150000ms exceeded.\u001b[39m",
+              "durationMs": 150029
+            },
+            {
+              "title": "a FILE uploads straight to storage from the browser (open-item 24)",
+              "file": "live-knowledge.spec.ts",
+              "status": "skipped",
+              "tags": [],
+              "skipReason": "",
+              "durationMs": 0
+            }
+          ]
+        },
+        "log": "round-2/live-knowledge.log",
+        "startedAt": "2026-09-13T06:49:26.356Z",
+        "classification": "unclassified"
+      },
+      {
+        "file": "live-media-capabilities",
+        "lane": "A",
+        "round": 2,
+        "attempt": 1,
+        "exit": 0,
+        "seconds": 81.409,
+        "summary": {
+          "passed": 3,
+          "failed": 0,
+          "skipped": 0,
+          "flaky": 0,
+          "tests": [
+            {
+              "title": "a fresh owner + org, made through the product",
+              "file": "live-media-capabilities.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 6505
+            },
+            {
+              "title": "every granted capability: the document’s example stops at the wallet (402), its trap before it (400) — zero spend",
+              "file": "live-media-capabilities.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 47291
+            },
+            {
+              "title": "the Studio grid lists what the catalog grants, by name, with the catalog’s price",
+              "file": "live-media-capabilities.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 24562
+            }
+          ]
+        },
+        "log": "round-2/live-media-capabilities.log",
+        "startedAt": "2026-09-13T06:52:04.978Z",
+        "classification": "green"
+      },
+      {
+        "file": "live-media-upload",
+        "lane": "A",
+        "round": 2,
+        "attempt": 1,
+        "exit": 0,
+        "seconds": 29.308,
+        "summary": {
+          "passed": 3,
+          "failed": 0,
+          "skipped": 0,
+          "flaky": 0,
+          "tests": [
+            {
+              "title": "a fresh owner + org, made through the product",
+              "file": "live-media-upload.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 5567
+            },
+            {
+              "title": "an image upload becomes a WIRE-listed Files row, and Delete removes it from the wire",
+              "file": "live-media-upload.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 9277
+            },
+            {
+              "title": "the logo uploads with desc \"logo\", shows as the logo, stays out of Files, and removes",
+              "file": "live-media-upload.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 11394
+            }
+          ]
+        },
+        "log": "round-2/live-media-upload.log",
+        "startedAt": "2026-09-13T06:53:26.387Z",
+        "classification": "green"
+      },
+      {
+        "file": "live-notifications",
+        "lane": "A",
+        "round": 2,
+        "attempt": 1,
+        "exit": 0,
+        "seconds": 12.75,
+        "summary": {
+          "passed": 1,
+          "failed": 0,
+          "skipped": 0,
+          "flaky": 0,
+          "tests": [
+            {
+              "title": "the inbox endpoints hold their contract, and the bell tells the truth",
+              "file": "live-notifications.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 9714
+            }
+          ]
+        },
+        "log": "round-2/live-notifications.log",
+        "startedAt": "2026-09-13T06:53:55.696Z",
+        "classification": "green"
+      },
+      {
+        "file": "live-onboarding",
+        "lane": "B",
+        "round": 2,
+        "attempt": 1,
+        "exit": 0,
+        "seconds": 67.361,
+        "summary": {
+          "passed": 6,
+          "failed": 0,
+          "skipped": 0,
+          "flaky": 0,
+          "tests": [
+            {
+              "title": "signup → verify → the app: no wizard, and the workspace is real",
+              "file": "live-onboarding.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 6070
+            },
+            {
+              "title": "a fresh live org has no tones, and the screen says what that costs",
+              "file": "live-onboarding.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 5292
+            },
+            {
+              "title": "generation is locked, and the checklist names all four",
+              "file": "live-onboarding.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 4659
+            },
+            {
+              "title": "the Studio composer is locked by the same gate",
+              "file": "live-onboarding.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 2270
+            },
+            {
+              "title": "completing the four brand entities unlocks generation",
+              "file": "live-onboarding.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 21738
+            },
+            {
+              "title": "the unlocked run really runs — one balanced draft",
+              "file": "live-onboarding.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 24210
+            }
+          ]
+        },
+        "log": "round-2/live-onboarding.log",
+        "startedAt": "2026-09-13T07:01:45.458Z",
+        "classification": "green"
+      },
+      {
+        "file": "live-proposals",
+        "lane": "A",
+        "round": 2,
+        "attempt": 1,
+        "exit": 0,
+        "seconds": 38.258,
+        "summary": {
+          "passed": 1,
+          "failed": 0,
+          "skipped": 4,
+          "flaky": 0,
+          "tests": [
+            {
+              "title": "a fresh owner + org, with its brand set up",
+              "file": "live-proposals.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 22434
+            },
+            {
+              "title": "one balanced run — the drafts it produces become the proposals under test",
+              "file": "live-proposals.spec.ts",
+              "status": "skipped",
+              "tags": [],
+              "skipReason": "402 wallet_insufficient would refuse the balanced run: the org's wallet is $0.00 — the plan is the only funding, and no funded QA org is configured (QA_FUNDED_EMAIL / QA_FUNDED_PASSWORD; M-BIL-1 step 8) — not a product failure",
+              "durationMs": 3176
+            },
+            {
+              "title": "after a RELOAD, Today shows the draft from the ledger",
+              "file": "live-proposals.spec.ts",
+              "status": "skipped",
+              "tags": [],
+              "skipReason": "402 wallet_insufficient would refuse the run this ledger read depends on: the org's wallet is $0.00 — the plan is the only funding, and no funded QA org is configured (QA_FUNDED_EMAIL / QA_FUNDED_PASSWORD; M-BIL-1 step 8) — not a product failure",
+              "durationMs": 3483
+            },
+            {
+              "title": "approving records it as posted, and the decision survives a reload",
+              "file": "live-proposals.spec.ts",
+              "status": "skipped",
+              "tags": [],
+              "skipReason": "402 wallet_insufficient would refuse the run this approval depends on: the org's wallet is $0.00 — the plan is the only funding, and no funded QA org is configured (QA_FUNDED_EMAIL / QA_FUNDED_PASSWORD; M-BIL-1 step 8) — not a product failure",
+              "durationMs": 3127
+            },
+            {
+              "title": "declining asks why, keeps the row, and is reversible",
+              "file": "live-proposals.spec.ts",
+              "status": "skipped",
+              "tags": [],
+              "skipReason": "402 wallet_insufficient would refuse the second run this decline depends on: the org's wallet is $0.00 — the plan is the only funding, and no funded QA org is configured (QA_FUNDED_EMAIL / QA_FUNDED_PASSWORD; M-BIL-1 step 8) — not a product failure",
+              "durationMs": 2969
+            }
+          ]
+        },
+        "log": "round-2/live-proposals.log",
+        "startedAt": "2026-09-13T06:54:08.446Z",
+        "classification": "green"
+      },
+      {
+        "file": "live-schedule-repair",
+        "lane": "A",
+        "round": 2,
+        "attempt": 1,
+        "exit": 1,
+        "seconds": 35.225,
+        "summary": {
+          "passed": 1,
+          "failed": 1,
+          "skipped": 1,
+          "flaky": 0,
+          "tests": [
+            {
+              "title": "a live org in the 619 shape: tones seeded, no schedule",
+              "file": "live-schedule-repair.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 6483
+            },
+            {
+              "title": "C1 creates the missing schedule through the POST fallback, with the exact tones picked",
+              "file": "live-schedule-repair.spec.ts",
+              "status": "failed",
+              "tags": [],
+              "error": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Schedule saved')\nExpected: visible\nTimeout: 20000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 20000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Schedule saved')\u001b[22m\n",
+              "durationMs": 25665
+            },
+            {
+              "title": "and it survives a reload, still clean",
+              "file": "live-schedule-repair.spec.ts",
+              "status": "skipped",
+              "tags": [],
+              "skipReason": "",
+              "durationMs": 0
+            }
+          ]
+        },
+        "log": "round-2/live-schedule-repair.log",
+        "startedAt": "2026-09-13T06:54:46.705Z",
+        "classification": "unclassified"
+      },
+      {
+        "file": "live-scheduling",
+        "lane": "A",
+        "round": 2,
+        "attempt": 1,
+        "exit": 1,
+        "seconds": 41.81,
+        "summary": {
+          "passed": 1,
+          "failed": 1,
+          "skipped": 1,
+          "flaky": 0,
+          "tests": [
+            {
+              "title": "signup creates the workspace and NOTHING else",
+              "file": "live-scheduling.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 8688
+            },
+            {
+              "title": "C1 creates the schedule on first save, then PATCHes it — and it survives a reload",
+              "file": "live-scheduling.spec.ts",
+              "status": "failed",
+              "tags": [],
+              "error": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+              "durationMs": 30025
+            },
+            {
+              "title": "slots, if ingestion produced any, honour skip/un-skip and never offer approve",
+              "file": "live-scheduling.spec.ts",
+              "status": "skipped",
+              "tags": [],
+              "skipReason": "",
+              "durationMs": 0
+            }
+          ]
+        },
+        "log": "round-2/live-scheduling.log",
+        "startedAt": "2026-09-13T06:55:21.930Z",
+        "classification": "unclassified"
+      },
+      {
+        "file": "live-studio",
+        "lane": "A",
+        "round": 2,
+        "attempt": 1,
+        "exit": 0,
+        "seconds": 21.826,
+        "summary": {
+          "passed": 3,
+          "failed": 0,
+          "skipped": 1,
+          "flaky": 0,
+          "tests": [
+            {
+              "title": "a fresh owner + org, made through the product",
+              "file": "live-studio.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 6086
+            },
+            {
+              "title": "E1 is built from the catalog: the granted capabilities, real prices, no vendors",
+              "file": "live-studio.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 9356
+            },
+            {
+              "title": "E3 lists renders, and is honest when there are none",
+              "file": "live-studio.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 3240
+            },
+            {
+              "title": "E2 renders for real, and E4 opens the asset it made",
+              "file": "live-studio.spec.ts",
+              "status": "skipped",
+              "tags": [],
+              "skipReason": "set LIVE_MEDIA=1 to spend on one real render",
+              "durationMs": 51
+            }
+          ]
+        },
+        "log": "round-2/live-studio.log",
+        "startedAt": "2026-09-13T06:56:03.741Z",
+        "classification": "green"
+      },
+      {
+        "file": "live-team",
+        "lane": "A",
+        "round": 2,
+        "attempt": 1,
+        "exit": 1,
+        "seconds": 32.927,
+        "summary": {
+          "passed": 1,
+          "failed": 1,
+          "skipped": 4,
+          "flaky": 0,
+          "tests": [
+            {
+              "title": "verifying creates the org LIVE; the dashboard follows immediately",
+              "file": "live-team.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 5530
+            },
+            {
+              "title": "I1 renames the org through PATCH, and the name survives a reload",
+              "file": "live-team.spec.ts",
+              "status": "failed",
+              "tags": [],
+              "error": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('Organization saved')\nExpected: visible\nTimeout: 20000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 20000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Organization saved')\u001b[22m\n",
+              "durationMs": 24329
+            },
+            {
+              "title": "change-password keeps this session and only the new password works after",
+              "file": "live-team.spec.ts",
+              "status": "skipped",
+              "tags": [],
+              "skipReason": "",
+              "durationMs": 0
+            },
+            {
+              "title": "inviting a NEW user: coded email, resend rate-limits honestly, cancel removes",
+              "file": "live-team.spec.ts",
+              "status": "skipped",
+              "tags": [],
+              "skipReason": "",
+              "durationMs": 0
+            },
+            {
+              "title": "inviting an EXISTING user adds them immediately, and the role ladder holds",
+              "file": "live-team.spec.ts",
+              "status": "skipped",
+              "tags": [],
+              "skipReason": "",
+              "durationMs": 0
+            },
+            {
+              "title": "an ADMIN viewing a team with an owner: no remove on the owner, no role selects at all",
+              "file": "live-team.spec.ts",
+              "status": "skipped",
+              "tags": [],
+              "skipReason": "",
+              "durationMs": 0
+            }
+          ]
+        },
+        "log": "round-2/live-team.log",
+        "startedAt": "2026-09-13T06:56:25.570Z",
+        "classification": "unclassified"
+      },
+      {
+        "file": "live-video-duration",
+        "lane": "A",
+        "round": 2,
+        "attempt": 1,
+        "exit": 1,
+        "seconds": 14.792,
+        "summary": {
+          "passed": 1,
+          "failed": 1,
+          "skipped": 1,
+          "flaky": 0,
+          "tests": [
+            {
+              "title": "a fresh owner + org, made through the product",
+              "file": "live-video-duration.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 6551
+            },
+            {
+              "title": "a bad durationS is refused with 400 BEFORE the wallet check — the field is known, a maximum is enforced",
+              "file": "live-video-duration.spec.ts",
+              "status": "failed",
+              "tags": [],
+              "error": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m400\u001b[39m\nReceived: \u001b[31m402\u001b[39m",
+              "durationMs": 5194
+            },
+            {
+              "title": "the valid video body clears validation — and self-skips on 402, the positive proof riding on LIVE_MEDIA=1",
+              "file": "live-video-duration.spec.ts",
+              "status": "skipped",
+              "tags": [],
+              "skipReason": "",
+              "durationMs": 0
+            }
+          ]
+        },
+        "log": "round-2/live-video-duration.log",
+        "startedAt": "2026-09-13T06:56:58.497Z",
+        "classification": "unclassified"
+      },
+      {
+        "file": "live-wallet",
+        "lane": "A",
+        "round": 2,
+        "attempt": 1,
+        "exit": 0,
+        "seconds": 32.379,
+        "summary": {
+          "passed": 4,
+          "failed": 0,
+          "skipped": 0,
+          "flaky": 0,
+          "tests": [
+            {
+              "title": "a fresh owner + org, made through the product",
+              "file": "live-wallet.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 15815
+            },
+            {
+              "title": "the balance chip shows money — and over a zero wallet, the instruction to subscribe",
+              "file": "live-wallet.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 4273
+            },
+            {
+              "title": "H3 is a balance and a real usage read-back, in both allowed grains",
+              "file": "live-wallet.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 4754
+            },
+            {
+              "title": "the wallet and usage endpoints answer the shapes the UI is built on",
+              "file": "live-wallet.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 4435
+            }
+          ]
+        },
+        "log": "round-2/live-wallet.log",
+        "startedAt": "2026-09-13T06:57:13.289Z",
+        "classification": "green"
+      }
+    ]
+  ],
+  "verdict": "RED"
+}

@@ -1,0 +1,551 @@
+
+> alphabeacon-web@0.0.0 verify:w06 C:\alphabeacon-web\alphabeacon-web
+> tsx scripts/verify-w06.ts "--rerun"
+
+
+=== lint ===
+
+> pnpm lint
+
+> alphabeacon-web@0.0.0 lint C:\alphabeacon-web\alphabeacon-web
+> eslint .
+
+
+=== typecheck ===
+
+> pnpm typecheck
+
+> alphabeacon-web@0.0.0 typecheck C:\alphabeacon-web\alphabeacon-web
+> tsc -b
+
+
+=== unit tests ===
+
+> pnpm test
+
+> alphabeacon-web@0.0.0 test C:\alphabeacon-web\alphabeacon-web
+> vitest run
+
+
+[1m[46m RUN [49m[22m [36mv3.2.7 [39m[90mC:/alphabeacon-web/alphabeacon-web[39m
+
+ [32m✓[39m src/features/marketing/concept/site.test.ts [2m([22m[2m13 tests[22m[2m)[22m[33m 456[2mms[22m[39m
+ [32m✓[39m src/components/ab/stat-card.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[32m 235[2mms[22m[39m
+ [32m✓[39m src/data/datasets/resolve-initial.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 351[2mms[22m[39m
+ [32m✓[39m src/data/settings-system.test.ts [2m([22m[2m23 tests[22m[2m)[22m[32m 236[2mms[22m[39m
+ [32m✓[39m src/data/studio.test.ts [2m([22m[2m39 tests[22m[2m)[22m[32m 238[2mms[22m[39m
+ [32m✓[39m src/data/review-queue.test.ts [2m([22m[2m11 tests[22m[2m)[22m[33m 508[2mms[22m[39m
+   [33m[2m✓[22m[39m the state machine drives the queue[2m > [22mapplies every legal transition and refuses every illegal one [33m 382[2mms[22m[39m
+ [32m✓[39m src/components/ab/error-state.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[33m 341[2mms[22m[39m
+ [32m✓[39m src/components/ab/claim-chip.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[33m 461[2mms[22m[39m
+ [32m✓[39m src/components/ab/confirm-dialog.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[33m 673[2mms[22m[39m
+   [33m[2m✓[22m[39m ConfirmDialog[2m > [22mopens from its trigger and names the consequence [33m 387[2mms[22m[39m
+ [32m✓[39m src/components/ab/form.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[33m 1139[2mms[22m[39m
+   [33m[2m✓[22m[39m Form[2m > [22msurfaces the named message from a schema violation, attached to the control [33m 410[2mms[22m[39m
+   [33m[2m✓[22m[39m Form[2m > [22msubmits the values once the schema is satisfied [33m 352[2mms[22m[39m
+ [32m✓[39m src/data/studio-billing.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 183[2mms[22m[39m
+ [32m✓[39m src/features/billing/billing-screen.test.tsx [2m([22m[2m12 tests[22m[2m)[22m[33m 730[2mms[22m[39m
+ [32m✓[39m src/features/billing/use-subscription-poll.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 88[2mms[22m[39m
+ [32m✓[39m src/data/brand.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 149[2mms[22m[39m
+ [32m✓[39m src/data/calendar-connections.test.ts [2m([22m[2m21 tests[22m[2m)[22m[32m 102[2mms[22m[39m
+ [32m✓[39m src/data/generate.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 92[2mms[22m[39m
+ [32m✓[39m src/components/ab/status-badge.test.tsx [2m([22m[2m15 tests[22m[2m)[22m[32m 176[2mms[22m[39m
+ [32m✓[39m src/data/entities/plans.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 79[2mms[22m[39m
+ [32m✓[39m src/lib/timezone.test.ts [2m([22m[2m14 tests[22m[2m)[22m[32m 73[2mms[22m[39m
+ [32m✓[39m src/data/provider.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 94[2mms[22m[39m
+ [32m✓[39m src/data/adapters/auth-adapter.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 69[2mms[22m[39m
+ [32m✓[39m src/api/client.test.ts [2m([22m[2m16 tests[22m[2m)[22m[32m 42[2mms[22m[39m
+ [32m✓[39m src/features/analytics/range.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 62[2mms[22m[39m
+ [32m✓[39m src/data/auth-flow.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 66[2mms[22m[39m
+ [32m✓[39m src/data/brand-wire.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 38[2mms[22m[39m
+ [32m✓[39m src/data/media-capabilities.test.ts [2m([22m[2m29 tests[22m[2m)[22m[32m 32[2mms[22m[39m
+ [32m✓[39m src/data/datasets/datasets.test.ts [2m([22m[2m42 tests[22m[2m)[22m[32m 31[2mms[22m[39m
+ [32m✓[39m src/components/ab/tone-badge.test.tsx [2m([22m[2m1 test[22m[2m)[22m[32m 79[2mms[22m[39m
+ [32m✓[39m scripts/guard-static.test.ts [2m([22m[2m17 tests[22m[2m)[22m[32m 18[2mms[22m[39m
+ [32m✓[39m src/lib/params-schema.test.ts [2m([22m[2m13 tests[22m[2m)[22m[32m 16[2mms[22m[39m
+ [32m✓[39m src/data/billing.test.ts [2m([22m[2m20 tests[22m[2m)[22m[32m 33[2mms[22m[39m
+ [32m✓[39m src/styles/tokens.test.ts [2m([22m[2m49 tests[22m[2m)[22m[32m 17[2mms[22m[39m
+ [32m✓[39m src/api/upload.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 17[2mms[22m[39m
+ [32m✓[39m src/data/adapters/tone-fields.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 14[2mms[22m[39m
+ [32m✓[39m src/styles/marketing-tokens.test.ts [2m([22m[2m26 tests[22m[2m)[22m[32m 15[2mms[22m[39m
+ [32m✓[39m src/features/billing/ledger.test.ts [2m([22m[2m23 tests[22m[2m)[22m[32m 15[2mms[22m[39m
+ [32m✓[39m src/lib/compose-player.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+ [32m✓[39m src/api/session.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32m✓[39m scripts/verify-lib.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+ [32m✓[39m src/features/billing/billing-view.test.ts [2m([22m[2m19 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+ [32m✓[39m src/lib/draft-status.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+ [32m✓[39m src/data/proposals.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+ [32m✓[39m scripts/gate/lanes.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+ [32m✓[39m src/data/adapters/brand-adapter.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+ [32m✓[39m scripts/gate/classify.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+ [32m✓[39m e2e/global-setup.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+ [32m✓[39m src/features/generate/run-plan.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+ [32m✓[39m src/lib/money.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+ [32m✓[39m src/data/adapters/holidays.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+ [32m✓[39m src/lib/format.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+ [32m✓[39m src/features/auth/password-rules.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+ [32m✓[39m src/lib/source-url.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+ [32m✓[39m src/data/readiness.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+ [32m✓[39m src/data/adapters/org-selection.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32m✓[39m src/features/calendar/reconcile-draft.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32m✓[39m src/features/settings/tone-fields.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32m✓[39m src/data/adapters/notification-adapter.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 3[2mms[22m[39m
+ [32m✓[39m src/features/studio/use-create-visual.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m58 passed[39m[22m[90m (58)[39m
+[2m      Tests [22m [1m[32m656 passed[39m[22m[90m (656)[39m
+[2m   Start at [22m 08:45:09
+[2m   Duration [22m 19.16s[2m (transform 3.96s, setup 42.96s, collect 28.32s, tests 7.15s, environment 84.10s, prepare 15.32s)[22m
+
+
+=== guard-static ===
+
+> pnpm guard:static
+
+> alphabeacon-web@0.0.0 guard:static C:\alphabeacon-web\alphabeacon-web
+> tsx scripts/guard-static.ts
+
+guard-static: 352 files clean
+
+=== build ===
+
+> pnpm build
+
+> alphabeacon-web@0.0.0 build C:\alphabeacon-web\alphabeacon-web
+> tsc -b && vite build
+
+[36mvite v7.3.6 [32mbuilding client environment for production...[36m[39m
+transforming...
+[32m✓[39m 2846 modules transformed.
+rendering chunks...
+computing gzip size...
+[2mdist/[22m[32mindex.html                                                    [39m[1m[2m  2.46 kB[22m[1m[22m[2m │ gzip:   0.87 kB[22m
+[2mdist/[22m[32massets/dm-sans-latin-ext-opsz-normal-oos9povj.woff2           [39m[1m[2m 31.29 kB[22m[1m[22m
+[2mdist/[22m[32massets/dm-sans-latin-ext-opsz-italic-DNX9AbKj.woff2           [39m[1m[2m 40.84 kB[22m[1m[22m
+[2mdist/[22m[32massets/ibm-plex-sans-arabic-arabic-400-normal-CyU-ddYS.woff2  [39m[1m[2m 42.85 kB[22m[1m[22m
+[2mdist/[22m[32massets/ibm-plex-sans-arabic-arabic-400-normal-EA1o-u_Q.woff   [39m[1m[2m 44.14 kB[22m[1m[22m
+[2mdist/[22m[32massets/ibm-plex-sans-arabic-arabic-500-normal-C4MQITzh.woff2  [39m[1m[2m 45.30 kB[22m[1m[22m
+[2mdist/[22m[32massets/ibm-plex-sans-arabic-arabic-600-normal-0pRdybE_.woff2  [39m[1m[2m 45.69 kB[22m[1m[22m
+[2mdist/[22m[32massets/ibm-plex-sans-arabic-arabic-600-normal-MJZ0liF5.woff   [39m[1m[2m 46.78 kB[22m[1m[22m
+[2mdist/[22m[32massets/ibm-plex-sans-arabic-arabic-500-normal-DPXcppbm.woff   [39m[1m[2m 46.92 kB[22m[1m[22m
+[2mdist/[22m[32massets/inter-latin-wght-normal-Dx4kXJAl.woff2                 [39m[1m[2m 48.26 kB[22m[1m[22m
+[2mdist/[22m[32massets/dm-sans-latin-opsz-normal-Bf69Tn_J.woff2               [39m[1m[2m 62.72 kB[22m[1m[22m
+[2mdist/[22m[32massets/dm-sans-latin-opsz-italic-C8i6y2Ft.woff2               [39m[1m[2m 76.25 kB[22m[1m[22m
+[2mdist/[22m[32massets/inter-latin-ext-wght-normal-DO1Apj_S.woff2             [39m[1m[2m 85.07 kB[22m[1m[22m
+[2mdist/[22m[35massets/legal-screens-DSRWV6hP.css                             [39m[1m[2m  4.26 kB[22m[1m[22m[2m │ gzip:   1.19 kB[22m
+[2mdist/[22m[35massets/request-demo-screen-CG8IVRvO.css                       [39m[1m[2m  7.77 kB[22m[1m[22m[2m │ gzip:   2.05 kB[22m
+[2mdist/[22m[35massets/pricing-screen-2fPdY0oe.css                            [39m[1m[2m 13.83 kB[22m[1m[22m[2m │ gzip:   2.95 kB[22m
+[2mdist/[22m[35massets/index-CdO1TQyq.css                                     [39m[1m[2m217.09 kB[22m[1m[22m[2m │ gzip:  36.35 kB[22m
+[2mdist/[22m[36massets/error-reference-BC9CwbrY.js                            [39m[1m[2m  0.08 kB[22m[1m[22m[2m │ gzip:   0.09 kB[22m
+[2mdist/[22m[36massets/check-S84BeyuE.js                                      [39m[1m[2m  0.13 kB[22m[1m[22m[2m │ gzip:   0.14 kB[22m
+[2mdist/[22m[36massets/chevron-down-CIi4JMp4.js                               [39m[1m[2m  0.13 kB[22m[1m[22m[2m │ gzip:   0.14 kB[22m
+[2mdist/[22m[36massets/circle-lUMjSibf.js                                     [39m[1m[2m  0.13 kB[22m[1m[22m[2m │ gzip:   0.13 kB[22m
+[2mdist/[22m[36massets/plus-BPy06J8I.js                                       [39m[1m[2m  0.15 kB[22m[1m[22m[2m │ gzip:   0.15 kB[22m
+[2mdist/[22m[36massets/x-BW70mGqt.js                                          [39m[1m[2m  0.16 kB[22m[1m[22m[2m │ gzip:   0.15 kB[22m
+[2mdist/[22m[36massets/arrow-left-Ceya3eBL.js                                 [39m[1m[2m  0.17 kB[22m[1m[22m[2m │ gzip:   0.16 kB[22m
+[2mdist/[22m[36massets/skeleton-D7NYxIRi.js                                   [39m[1m[2m  0.20 kB[22m[1m[22m[2m │ gzip:   0.17 kB[22m
+[2mdist/[22m[36massets/lock-DUh_h8yq.js                                       [39m[1m[2m  0.21 kB[22m[1m[22m[2m │ gzip:   0.19 kB[22m
+[2mdist/[22m[36massets/tone-badge-DXa6c2V6.js                                 [39m[1m[2m  0.22 kB[22m[1m[22m[2m │ gzip:   0.19 kB[22m
+[2mdist/[22m[36massets/upload-EBYmW21L.js                                     [39m[1m[2m  0.23 kB[22m[1m[22m[2m │ gzip:   0.19 kB[22m
+[2mdist/[22m[36massets/copy-CvsLD3fb.js                                       [39m[1m[2m  0.24 kB[22m[1m[22m[2m │ gzip:   0.21 kB[22m
+[2mdist/[22m[36massets/mono-number-Bt00ddSy.js                                [39m[1m[2m  0.24 kB[22m[1m[22m[2m │ gzip:   0.21 kB[22m
+[2mdist/[22m[36massets/external-link-Da1TNeD6.js                              [39m[1m[2m  0.25 kB[22m[1m[22m[2m │ gzip:   0.20 kB[22m
+[2mdist/[22m[36massets/pencil-2NQ_3C9k.js                                     [39m[1m[2m  0.28 kB[22m[1m[22m[2m │ gzip:   0.22 kB[22m
+[2mdist/[22m[36massets/mail-check-CsdbVRh3.js                                 [39m[1m[2m  0.29 kB[22m[1m[22m[2m │ gzip:   0.22 kB[22m
+[2mdist/[22m[36massets/inbox-D_n5cFbf.js                                      [39m[1m[2m  0.29 kB[22m[1m[22m[2m │ gzip:   0.23 kB[22m
+[2mdist/[22m[36massets/mail-warning-rB7J6z_7.js                               [39m[1m[2m  0.33 kB[22m[1m[22m[2m │ gzip:   0.24 kB[22m
+[2mdist/[22m[36massets/trash-2-BqYqrWZw.js                                    [39m[1m[2m  0.33 kB[22m[1m[22m[2m │ gzip:   0.22 kB[22m
+[2mdist/[22m[36massets/film-1bzA8ZJ0.js                                       [39m[1m[2m  0.41 kB[22m[1m[22m[2m │ gzip:   0.24 kB[22m
+[2mdist/[22m[36massets/calendar-days-Dbfiiyzw.js                              [39m[1m[2m  0.50 kB[22m[1m[22m[2m │ gzip:   0.26 kB[22m
+[2mdist/[22m[36massets/label-DCTAge4d.js                                      [39m[1m[2m  0.68 kB[22m[1m[22m[2m │ gzip:   0.44 kB[22m
+[2mdist/[22m[36massets/textarea-Dbsf4nm5.js                                   [39m[1m[2m  0.70 kB[22m[1m[22m[2m │ gzip:   0.38 kB[22m
+[2mdist/[22m[36massets/format-CMzYPIAK.js                                     [39m[1m[2m  0.71 kB[22m[1m[22m[2m │ gzip:   0.41 kB[22m
+[2mdist/[22m[36massets/posting-time-jm-WZJZQ.js                               [39m[1m[2m  0.72 kB[22m[1m[22m[2m │ gzip:   0.45 kB[22m
+[2mdist/[22m[36massets/input-BAYpL96m.js                                      [39m[1m[2m  0.83 kB[22m[1m[22m[2m │ gzip:   0.42 kB[22m
+[2mdist/[22m[36massets/account-BZA_YBxx.js                                    [39m[1m[2m  1.01 kB[22m[1m[22m[2m │ gzip:   0.48 kB[22m
+[2mdist/[22m[36massets/platforms-Bdjmn2wv.js                                  [39m[1m[2m  1.03 kB[22m[1m[22m[2m │ gzip:   0.55 kB[22m
+[2mdist/[22m[36massets/slot-chip-DvvRpDWO.js                                  [39m[1m[2m  1.22 kB[22m[1m[22m[2m │ gzip:   0.56 kB[22m
+[2mdist/[22m[36massets/not-found-CcMTCqgw.js                                  [39m[1m[2m  1.22 kB[22m[1m[22m[2m │ gzip:   0.61 kB[22m
+[2mdist/[22m[36massets/badge-UPg5DbV6.js                                      [39m[1m[2m  1.39 kB[22m[1m[22m[2m │ gzip:   0.65 kB[22m
+[2mdist/[22m[36massets/password-strength-0oBdH7ch.js                          [39m[1m[2m  1.39 kB[22m[1m[22m[2m │ gzip:   0.67 kB[22m
+[2mdist/[22m[36massets/timezone-DFOV_Yvd.js                                   [39m[1m[2m  1.42 kB[22m[1m[22m[2m │ gzip:   0.65 kB[22m
+[2mdist/[22m[36massets/dev-datasets-MwygR9sf.js                               [39m[1m[2m  1.47 kB[22m[1m[22m[2m │ gzip:   0.74 kB[22m
+[2mdist/[22m[36massets/card-BXxUTBn9.js                                       [39m[1m[2m  1.58 kB[22m[1m[22m[2m │ gzip:   0.59 kB[22m
+[2mdist/[22m[36massets/save-bar-DLf2S8lx.js                                   [39m[1m[2m  1.70 kB[22m[1m[22m[2m │ gzip:   0.89 kB[22m
+[2mdist/[22m[36massets/empty-org-screen-DnX4VEmq.js                           [39m[1m[2m  1.79 kB[22m[1m[22m[2m │ gzip:   0.97 kB[22m
+[2mdist/[22m[36massets/empty-state-D1j0QtEO.js                                [39m[1m[2m  1.80 kB[22m[1m[22m[2m │ gzip:   0.69 kB[22m
+[2mdist/[22m[36massets/team-CqhpbKwU.js                                       [39m[1m[2m  1.84 kB[22m[1m[22m[2m │ gzip:   0.79 kB[22m
+[2mdist/[22m[36massets/scheduling-6EoWdU6n.js                                 [39m[1m[2m  1.90 kB[22m[1m[22m[2m │ gzip:   0.75 kB[22m
+[2mdist/[22m[36massets/use-job-poll-B2KlCEOE.js                               [39m[1m[2m  2.01 kB[22m[1m[22m[2m │ gzip:   1.07 kB[22m
+[2mdist/[22m[36massets/claim-chip-C-WS9kfi.js                                 [39m[1m[2m  2.05 kB[22m[1m[22m[2m │ gzip:   1.07 kB[22m
+[2mdist/[22m[36massets/stat-card-DTX_hxK4.js                                  [39m[1m[2m  2.06 kB[22m[1m[22m[2m │ gzip:   0.89 kB[22m
+[2mdist/[22m[36massets/dialog-BTYSmyop.js                                     [39m[1m[2m  2.23 kB[22m[1m[22m[2m │ gzip:   0.88 kB[22m
+[2mdist/[22m[36massets/skeletons-_6djTXAe.js                                  [39m[1m[2m  2.43 kB[22m[1m[22m[2m │ gzip:   0.70 kB[22m
+[2mdist/[22m[36massets/error-state-CtrtMtOX.js                                [39m[1m[2m  2.48 kB[22m[1m[22m[2m │ gzip:   1.15 kB[22m
+[2mdist/[22m[36massets/country-picker-BqfO0h0n.js                             [39m[1m[2m  2.54 kB[22m[1m[22m[2m │ gzip:   1.16 kB[22m
+[2mdist/[22m[36massets/settings-layout-CyxsNM7E.js                            [39m[1m[2m  2.57 kB[22m[1m[22m[2m │ gzip:   1.37 kB[22m
+[2mdist/[22m[36massets/dev-states-g1KKMpd0.js                                 [39m[1m[2m  2.62 kB[22m[1m[22m[2m │ gzip:   0.99 kB[22m
+[2mdist/[22m[36massets/brand-voice-screen-BsqY16IF.js                         [39m[1m[2m  2.63 kB[22m[1m[22m[2m │ gzip:   1.28 kB[22m
+[2mdist/[22m[36massets/sheet-h24LCFhM.js                                      [39m[1m[2m  2.63 kB[22m[1m[22m[2m │ gzip:   0.88 kB[22m
+[2mdist/[22m[36massets/avatar-CbJonxx3.js                                     [39m[1m[2m  2.68 kB[22m[1m[22m[2m │ gzip:   1.19 kB[22m
+[2mdist/[22m[36massets/field-editors-CixXbKO_.js                              [39m[1m[2m  2.78 kB[22m[1m[22m[2m │ gzip:   1.12 kB[22m
+[2mdist/[22m[36massets/signin-screen-BXU-FAN0.js                              [39m[1m[2m  2.88 kB[22m[1m[22m[2m │ gzip:   1.43 kB[22m
+[2mdist/[22m[36massets/auth-layout-KkoM1LaG.js                                [39m[1m[2m  2.89 kB[22m[1m[22m[2m │ gzip:   1.26 kB[22m
+[2mdist/[22m[36massets/auth-DCgixBVa.js                                       [39m[1m[2m  2.94 kB[22m[1m[22m[2m │ gzip:   1.04 kB[22m
+[2mdist/[22m[36massets/button-DWj3xNkR.js                                     [39m[1m[2m  3.37 kB[22m[1m[22m[2m │ gzip:   1.27 kB[22m
+[2mdist/[22m[36massets/setup-checklist-DUg8tIMo.js                            [39m[1m[2m  3.53 kB[22m[1m[22m[2m │ gzip:   1.39 kB[22m
+[2mdist/[22m[36massets/brand-BoBoqA76.js                                      [39m[1m[2m  3.58 kB[22m[1m[22m[2m │ gzip:   1.47 kB[22m
+[2mdist/[22m[36massets/accept-invite-screen-DwS9Tf3e.js                       [39m[1m[2m  3.60 kB[22m[1m[22m[2m │ gzip:   1.73 kB[22m
+[2mdist/[22m[36massets/status-badge-D36TAjVL.js                               [39m[1m[2m  3.71 kB[22m[1m[22m[2m │ gzip:   1.45 kB[22m
+[2mdist/[22m[36massets/signup-screen-w10867y6.js                              [39m[1m[2m  3.72 kB[22m[1m[22m[2m │ gzip:   1.73 kB[22m
+[2mdist/[22m[36massets/sources-screen-DkMzUXIg.js                             [39m[1m[2m  4.11 kB[22m[1m[22m[2m │ gzip:   1.70 kB[22m
+[2mdist/[22m[36massets/use-subscription-poll-BaVsgaPw.js                      [39m[1m[2m  4.19 kB[22m[1m[22m[2m │ gzip:   1.88 kB[22m
+[2mdist/[22m[36massets/tones-screen-2JhiDldN.js                               [39m[1m[2m  4.75 kB[22m[1m[22m[2m │ gzip:   1.75 kB[22m
+[2mdist/[22m[36massets/checkbox-BJOiSncM.js                                   [39m[1m[2m  4.75 kB[22m[1m[22m[2m │ gzip:   2.02 kB[22m
+[2mdist/[22m[36massets/switch-B7gdOd4R.js                                     [39m[1m[2m  4.81 kB[22m[1m[22m[2m │ gzip:   1.96 kB[22m
+[2mdist/[22m[36massets/billing-success-screen-Dnxm6GeZ.js                     [39m[1m[2m  5.32 kB[22m[1m[22m[2m │ gzip:   1.67 kB[22m
+[2mdist/[22m[36massets/tone-editor-BxYTIo7H.js                                [39m[1m[2m  5.48 kB[22m[1m[22m[2m │ gzip:   2.31 kB[22m
+[2mdist/[22m[36massets/confirm-dialog-nn_Gk2S2.js                             [39m[1m[2m  5.55 kB[22m[1m[22m[2m │ gzip:   1.76 kB[22m
+[2mdist/[22m[36massets/reset-password-screen-BdKD5Mh5.js                      [39m[1m[2m  5.67 kB[22m[1m[22m[2m │ gzip:   1.99 kB[22m
+[2mdist/[22m[36massets/toggle-group-BDbWwVi2.js                               [39m[1m[2m  5.79 kB[22m[1m[22m[2m │ gzip:   2.00 kB[22m
+[2mdist/[22m[36massets/dashboard-screen-d8dBySaD.js                           [39m[1m[2m  5.95 kB[22m[1m[22m[2m │ gzip:   2.49 kB[22m
+[2mdist/[22m[36massets/draft-detail-screen-INWFPWr4.js                        [39m[1m[2m  6.57 kB[22m[1m[22m[2m │ gzip:   2.31 kB[22m
+[2mdist/[22m[36massets/schedule-dialog-ii12-_oC.js                            [39m[1m[2m  7.03 kB[22m[1m[22m[2m │ gzip:   2.46 kB[22m
+[2mdist/[22m[36massets/event-sources-screen-FCeipJwv.js                       [39m[1m[2m  7.86 kB[22m[1m[22m[2m │ gzip:   3.13 kB[22m
+[2mdist/[22m[36massets/composer-TgEpDH9r.js                                   [39m[1m[2m  8.94 kB[22m[1m[22m[2m │ gzip:   3.43 kB[22m
+[2mdist/[22m[36massets/team-screen-C9N_Zd6z.js                                [39m[1m[2m  9.07 kB[22m[1m[22m[2m │ gzip:   3.22 kB[22m
+[2mdist/[22m[36massets/billing-screen-D9m-ESmm.js                             [39m[1m[2m  9.31 kB[22m[1m[22m[2m │ gzip:   3.04 kB[22m
+[2mdist/[22m[36massets/schedule-config-screen-BAgaT2xo.js                     [39m[1m[2m 10.51 kB[22m[1m[22m[2m │ gzip:   3.65 kB[22m
+[2mdist/[22m[36massets/today-screen-BLAwrvE8.js                               [39m[1m[2m 10.87 kB[22m[1m[22m[2m │ gzip:   4.03 kB[22m
+[2mdist/[22m[36massets/request-demo-screen-DqofeD6P.js                        [39m[1m[2m 11.01 kB[22m[1m[22m[2m │ gzip:   4.20 kB[22m
+[2mdist/[22m[36massets/connections-screen-CpcTX_Ph.js                         [39m[1m[2m 11.88 kB[22m[1m[22m[2m │ gzip:   3.72 kB[22m
+[2mdist/[22m[36massets/index-18fSDPgS.js                                      [39m[1m[2m 11.90 kB[22m[1m[22m[2m │ gzip:   4.51 kB[22m
+[2mdist/[22m[36massets/organization-screen-CqPiTtmt.js                        [39m[1m[2m 12.71 kB[22m[1m[22m[2m │ gzip:   4.18 kB[22m
+[2mdist/[22m[36massets/calendar-screen-0YkhNfgm.js                            [39m[1m[2m 13.24 kB[22m[1m[22m[2m │ gzip:   4.63 kB[22m
+[2mdist/[22m[36massets/verify-email-screen-u1aMCiQ9.js                        [39m[1m[2m 13.95 kB[22m[1m[22m[2m │ gzip:   5.57 kB[22m
+[2mdist/[22m[36massets/dev-kitchen-sink-BZTEWs0M.js                           [39m[1m[2m 14.45 kB[22m[1m[22m[2m │ gzip:   5.22 kB[22m
+[2mdist/[22m[36massets/legal-screens-Nd-8itxc.js                              [39m[1m[2m 15.55 kB[22m[1m[22m[2m │ gzip:   4.91 kB[22m
+[2mdist/[22m[36massets/pricing-screen-D-DpSBUi.js                             [39m[1m[2m 17.11 kB[22m[1m[22m[2m │ gzip:   5.32 kB[22m
+[2mdist/[22m[36massets/billing-screens-BLsaDhmd.js                            [39m[1m[2m 17.46 kB[22m[1m[22m[2m │ gzip:   5.15 kB[22m
+[2mdist/[22m[36massets/knowledge-screen-B1Rd1UM8.js                           [39m[1m[2m 18.14 kB[22m[1m[22m[2m │ gzip:   6.45 kB[22m
+[2mdist/[22m[36massets/use-draft-actions-DKYRPr57.js                          [39m[1m[2m 21.69 kB[22m[1m[22m[2m │ gzip:   7.49 kB[22m
+[2mdist/[22m[36massets/index-Dxp7VHBE.js                                      [39m[1m[2m 21.93 kB[22m[1m[22m[2m │ gzip:   7.98 kB[22m
+[2mdist/[22m[36massets/generate-screen-B9Rv4riV.js                            [39m[1m[2m 22.42 kB[22m[1m[22m[2m │ gzip:   7.88 kB[22m
+[2mdist/[22m[36massets/studio-Bp1VAxrU.js                                     [39m[1m[2m 29.81 kB[22m[1m[22m[2m │ gzip:   9.89 kB[22m
+[2mdist/[22m[36massets/studio-screens-Cv_m1p93.js                             [39m[1m[2m 38.96 kB[22m[1m[22m[2m │ gzip:  11.98 kB[22m
+[2mdist/[22m[36massets/app-shell-Cyz1s0s8.js                                  [39m[1m[2m 38.99 kB[22m[1m[22m[2m │ gzip:  12.70 kB[22m
+[2mdist/[22m[36massets/form-2Zg-4n-O.js                                       [39m[1m[2m 40.50 kB[22m[1m[22m[2m │ gzip:  14.40 kB[22m
+[2mdist/[22m[36massets/analytics-screens-BQZP8BIa.js                          [39m[1m[2m360.20 kB[22m[1m[22m[2m │ gzip: 108.21 kB[22m
+[2mdist/[22m[36massets/index-CK7x87Cs.js                                      [39m[1m[33m685.32 kB[39m[22m[2m │ gzip: 214.42 kB[22m
+[33m
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+[32m✓ built in 10.81s[39m
+
+=== every generation entry reads the one readiness selector ===
+  F1 /generate: useReadiness yes, GenerationBlocked yes
+  E2 Studio composer: useReadiness yes, GenerationBlocked yes
+  D4 media panel: useReadiness yes, GenerationBlocked yes
+  the ruling lives in readiness.ts: yes
+  tone preview is NOT gated: yes
+gate: F1, the Studio composer and D4 all read useReadiness and render GenerationBlocked
+
+=== one tone editor, three entry points ===
+tones: the sheet and the routed page both render the shared ToneEditorForm
+
+=== a custom tone renders identically on every screen ===
+  D2 draft card: ToneBadge yes
+  D3 draft detail: ToneBadge yes
+  F1 generate: ToneBadge yes
+  G2 channel detail: ToneBadge yes
+tones: every screen badges a tone through ToneBadge and reads it from the provider
+
+=== analytics never draws a number it was not given ===
+analytics: absent deltas stay absent, unsynced channels are excluded and declared
+
+=== F1 hands off to the queue rather than copying it ===
+compose: F1 renders D2's card, D2's actions and D2's dialogs, entering at pending_review
+
+=== the stream is script-driven, not hardcoded in the screen ===
+compose: five scripts in data, selection in the player, no script named in the screen
+
+=== settings screens share one save bar and one guard ===
+  src/features/settings/organization-screen.tsx: SaveBar yes · own guard no
+  src/features/settings/brand-voice-screen.tsx: SaveBar yes · own guard no
+  src/features/calendar/schedule-config-screen.tsx: SaveBar yes · own guard no
+settings: every dirty-state screen commits through the shared SaveBar
+
+=== posting times name their zone, and claim nothing more ===
+time: posting times carry a GMT offset, local time shows only on a mismatch, no audience claim
+
+=== the keyboard-focus rules from the W6 manual pass ===
+focus: settings is a route layout with a real tablist, the guard restores focus, no hidden tab stops
+
+=== every W6 route is a real screen ===
+routes: every W6 path resolves to its real screen; the placeholder is gone
+
+=== e2e specs navigate in-app after switching datasets ===
+  entry-flow.spec.ts: switches via the shared helper, then walks in-app
+  today-queue.spec.ts: switches via the shared helper, then walks in-app
+  calendar-connections.spec.ts: switches via the shared helper, then walks in-app
+  studio-billing.spec.ts: switches via the shared helper, then walks in-app
+  compose-analytics-settings.spec.ts: switches via the shared helper, then walks in-app
+  settings-a11y.spec.ts: switches via the shared helper, then walks in-app
+  hsn-series.spec.ts: switches via the shared helper, then walks in-app
+
+=== W6 deliverables exist ===
+all 21 W6 deliverables present
+
+> pnpm exec playwright install chromium
+
+=== e2e (compose, analytics, settings, axe) ===
+
+> pnpm e2e
+
+> alphabeacon-web@0.0.0 e2e C:\alphabeacon-web\alphabeacon-web
+> playwright test
+
+
+Running 199 tests using 6 workers
+
+  ok   1 [chromium] › e2e\billing.spec.ts:91:1 › an abandoned checkout shows the plans again, plus the one-line note (4.0s)
+  ok   3 [chromium] › e2e\billing.spec.ts:99:1 › a billing link for a workspace this account is not in is refused, not read (4.6s)
+  ok   4 [chromium] › e2e\billing.spec.ts:28:1 › the plans render from the demo in the wire’s shape, with Subscribe for the top tier (5.5s)
+  ok   6 [chromium] › e2e\calendar-connections.spec.ts:25:1 › the calendar shows slots, events, and how published posts did (5.7s)
+  ok   5 [chromium] › e2e\billing.spec.ts:112:1 › @axe the billing page scans clean, populated (6.7s)
+  ok   7 [chromium] › e2e\calendar-connections.spec.ts:38:1 › a post still waiting on analytics says Syncing, never a zero (3.6s)
+  ok   2 [chromium] › e2e\billing.spec.ts:65:1 › the demo’s Subscribe lands on the success route, which says nothing was paid (8.1s)
+  ok  10 [chromium] › e2e\calendar-connections.spec.ts:131:1 › posts per day is capped at 3, and the cap is visible (4.0s)
+  ok  12 [chromium] › e2e\calendar-connections.spec.ts:149:1 › connections show every status, and X stays coming soon (2.6s)
+  ok   8 [chromium] › e2e\calendar-connections.spec.ts:65:1 › skipping a slot is reversible today, and says so (5.7s)
+  ok   9 [chromium] › e2e\calendar-connections.spec.ts:100:1 › schedule config refuses to lose unsaved changes (5.2s)
+  ok  11 [chromium] › e2e\calendar-connections.spec.ts:142:1 › the schedule reaches its event sources (4.0s)
+  ok  13 [chromium] › e2e\calendar-connections.spec.ts:161:1 › the permission sheet lists scopes and names what disconnecting costs (3.2s)
+  ok  14 [chromium] › e2e\calendar-connections.spec.ts:176:1 › a denied connect return is a choice, not an error (2.5s)
+  ok  17 [chromium] › e2e\calendar-connections.spec.ts:216:1 › a slot time names its zone, and never claims to be the audience (2.6s)
+  ok  18 [chromium] › e2e\compose-analytics-settings.spec.ts:38:1 › a workspace with unfinished setup cannot generate, and the screen says why (2.8s)
+  ok  19 [chromium] › e2e\compose-analytics-settings.spec.ts:64:1 › the checklist links reach the screens that complete each item (2.6s)
+  ok  16 [chromium] › e2e\calendar-connections.spec.ts:206:1 › @axe calendar, connections and sources scan clean (4.3s)
+  ok  15 [chromium] › e2e\calendar-connections.spec.ts:192:1 › event sources keep their calendars when a token is lost (4.7s)
+  ok  20 [chromium] › e2e\compose-analytics-settings.spec.ts:77:1 › the Studio composer is gated too — no media job before setup (2.6s)
+  ok  21 [chromium] › e2e\compose-analytics-settings.spec.ts:85:1 › a finished workspace shows no checklist card and generates normally (2.3s)
+  ok  22 [chromium] › e2e\compose-analytics-settings.spec.ts:97:1 › @axe the checklist card and the blocked generate state scan clean (4.1s)
+  ok  27 [chromium] › e2e\compose-analytics-settings.spec.ts:172:1 › the on-demand allowance runs out, and says so instead of failing quietly (3.6s)
+  ok  28 [chromium] › e2e\compose-analytics-settings.spec.ts:197:1 › the overview totals exclude a channel that has not reported, and say so (2.0s)
+  ok  24 [chromium] › e2e\compose-analytics-settings.spec.ts:131:1 › a guardrail flags a claim mid-run without hiding a word of it (6.4s)
+  ok  23 [chromium] › e2e\compose-analytics-settings.spec.ts:111:1 › @golden a finished run becomes an ordinary draft with the full action row (7.4s)
+  ok  25 [chromium] › e2e\compose-analytics-settings.spec.ts:141:1 › a dropped stream keeps the partial text and offers to pick it up (7.1s)
+  ok  29 [chromium] › e2e\compose-analytics-settings.spec.ts:212:1 › a channel detail charts what the platform reports, and explains what it does not (5.0s)
+  ok  31 [chromium] › e2e\compose-analytics-settings.spec.ts:265:1 › settings opens on the org profile and guards unsaved edits (3.5s)
+  ok  33 [chromium] › e2e\compose-analytics-settings.spec.ts:317:1 › deleting a tone names what it costs before it happens (3.3s)
+  ok  26 [chromium] › e2e\compose-analytics-settings.spec.ts:155:1 › stopping keeps what arrived and can be resumed (11.9s)
+  ok  30 [chromium] › e2e\compose-analytics-settings.spec.ts:233:1 › with no channel left to report, analytics invites the fix (7.2s)
+  ok  34 [chromium] › e2e\compose-analytics-settings.spec.ts:335:1 › a source is named from its address, and prose is refused (3.3s)
+  ok  32 [chromium] › e2e\compose-analytics-settings.spec.ts:281:1 › @golden a custom tone written once shows up wherever tones are picked (7.1s)
+  ok  36 [chromium] › e2e\compose-analytics-settings.spec.ts:395:1 › the team screen invites, refuses a duplicate, and never offers to remove you (3.5s)
+  ok  39 [chromium] › e2e\compose-analytics-settings.spec.ts:466:1 › the offline banner is global and non-blocking (1.7s)
+  ok  38 [chromium] › e2e\compose-analytics-settings.spec.ts:451:1 › the bell counts what is unread and clears it (2.7s)
+  ok  35 [chromium] › e2e\compose-analytics-settings.spec.ts:349:1 › knowledge plays the whole ingestion lifecycle, per file (5.3s)
+  ok  37 [chromium] › e2e\compose-analytics-settings.spec.ts:416:1 › a role can be changed in place, and the last admin cannot be demoted (3.5s)
+  ok  42 [chromium] › e2e\design-layer.spec.ts:112:1 › reduced motion removes every signature animation @reduced-motion (1.8s)
+  ok  43 [chromium] › e2e\design-layer.spec.ts:146:1 › form surfaces the named validation message from the schema (1.4s)
+  ok  45 [chromium] › e2e\entry-flow.spec.ts:45:1 › marketing is the front door when signed out (1.8s)
+  ok  41 [chromium] › e2e\design-layer.spec.ts:95:1 › kitchen sink is clean in light and dark @axe (3.8s)
+  ok  44 [chromium] › e2e\design-layer.spec.ts:167:1 › keyboard-only walk of the app shell (3.0s)
+  ok  40 [chromium] › e2e\compose-analytics-settings.spec.ts:482:1 › @axe generate, analytics and settings scan clean (6.6s)
+  ok  47 [chromium] › e2e\entry-flow.spec.ts:75:1 › @golden signup → verify → the app, with no wizard in between (4.0s)
+  ok  46 [chromium] › e2e\entry-flow.spec.ts:61:1 › @axe the auth screens reached from marketing scan clean (4.4s)
+  ok  50 [chromium] › e2e\entry-flow.spec.ts:129:1 › sign-in locks out after repeated failures and counts down (3.3s)
+  ok  48 [chromium] › e2e\entry-flow.spec.ts:99:1 › a signed-in account with no workspace gets the creation retry, not a wizard (4.4s)
+  ok  49 [chromium] › e2e\entry-flow.spec.ts:119:1 › @axe the workspace-creation retry scans clean (4.6s)
+  ok  52 [chromium] › e2e\hsn-0902.spec.ts:129:1 › "brandkit" is a reserved description on any other kind — refused with the pointer at the Brand kit type (2.7s)
+  ok  51 [chromium] › e2e\hsn-0902.spec.ts:69:1 › the Brand kit type asks no description, takes PDF only, and lands under Files as "Brand kit" (4.5s)
+  ok  54 [chromium] › e2e\hsn-0902.spec.ts:203:1 › @axe the Create visual modal with the duration control is clean (4.6s)
+  ok  53 [chromium] › e2e\hsn-0902.spec.ts:153:1 › the video duration: video only, 8 s by default, the maximum shown, clamped on a quality change, over-max refused (6.6s)
+  ok  57 [chromium] › e2e\hsn-series.spec.ts:133:1 › @axe the Create visual modal is clean (4.7s)
+  -   61 [chromium] › e2e\live-auth.spec.ts:87:1 › signup -> verify with the emailed code -> logged in, WITH a workspace, in the app
+  -   62 [chromium] › e2e\live-auth.spec.ts:106:1 › a second signup: resend immediately proves the 429 countdown, wrong password proves the vague 401
+  -   63 [chromium] › e2e\live-auth.spec.ts:126:1 › correct password + unverified email routes to the verify screen, and N3 names the workspace
+  -   64 [chromium] › e2e\live-auth.spec.ts:157:1 › forgot â†’ reset via the documented deep link revokes everything; only the new password works
+  -   65 [chromium] › e2e\live-auth.spec.ts:195:1 › the shell appears; sign out and logout-all both really revoke
+  -   66 [chromium] › e2e\live-auth.spec.ts:247:1 › a new user accepts an invite through the documented deep link and lands in the workspace
+  -   67 [chromium] › e2e\live-auth.spec.ts:291:1 › a token-carrying 401 purges the session and lands on login with the toast
+  -   68 [chromium] › e2e\live-billing.spec.ts:62:1 › a fresh owner + org, made through the product
+  -   69 [chromium] › e2e\live-billing.spec.ts:78:1 › the five endpoints answer the shapes the UI is built on — and the checkout url is never opened
+  -   70 [chromium] › e2e\live-billing.spec.ts:152:1 › /billing renders the plans FROM THE WIRE, Subscribe for the owner, and the honest empty history
+  -   71 [chromium] › e2e\live-billing.spec.ts:204:1 › the abandoned-checkout return shows the plans plus the note
+  -   72 [chromium] › e2e\live-billing.spec.ts:214:1 › the success route polls, shows the wire’s status every tick, and gives up honestly on an unpaid org
+  -   73 [chromium] › e2e\live-billing.spec.ts:252:1 › a member cannot start checkout: 403 forbidden, and any member reads
+  -   74 [chromium] › e2e\live-billing.spec.ts:289:1 › a generation on the unfunded org is refused with 402, and the refusal points at Billing
+  -   75 [chromium] › e2e\live-brand-kit.spec.ts:61:1 › a fresh owner + org, made through the product
+  -   76 [chromium] › e2e\live-brand-kit.spec.ts:71:1 › the wire, from Node (NOT browser truth): presign the closed pair, PUT a tiny PDF, read the row back under Files, Delete, re-read
+  -   77 [chromium] › e2e\live-brand-kit.spec.ts:130:1 › browser truth: the Brand kit type sends a PDF from Chromium with nothing typed, it lists, and Delete removes it
+  -   78 [chromium] › e2e\live-brand-rules.spec.ts:72:1 › a fresh owner + org, made through the product
+  -   79 [chromium] › e2e\live-brand-rules.spec.ts:90:1 › a fresh org has no tones at all, and the screen says what that costs
+  -   80 [chromium] › e2e\live-brand-rules.spec.ts:110:1 › a tone keeps its rules, and a PATCH replaces the whole list
+  -   81 [chromium] › e2e\live-brand-rules.spec.ts:152:1 › the brand voice writes to one row, and an edit does not reorder it
+  -   82 [chromium] › e2e\live-brand-rules.spec.ts:192:1 › Preview this tone returns a real sample from the platform
+  -   83 [chromium] › e2e\live-brand.spec.ts:57:1 › a fresh owner + org, made through the product
+  -   84 [chromium] › e2e\live-brand.spec.ts:66:1 › a custom tone: created under the adapter, edited, and it survives a reload
+  -   85 [chromium] › e2e\live-brand.spec.ts:100:1 › voice rules: the flat live list persists through the API
+  -   86 [chromium] › e2e\live-brand.spec.ts:119:1 › sources and topics: scheme-less display, real persistence
+  -   87 [chromium] › e2e\live-brand.spec.ts:150:1 › deleting a tone reflects in the schedules that referenced it
+  -   88 [chromium] › e2e\live-country.spec.ts:55:1 › a fresh workspace has NO country, and I1 is where one is set
+  -   89 [chromium] › e2e\live-country.spec.ts:104:1 › the calendar carries real holidays, each with the rules for that day
+  -   90 [chromium] › e2e\live-country.spec.ts:153:1 › re-saving the same country is a quiet no-op, not a fake reload
+  -   91 [chromium] › e2e\live-country.spec.ts:183:1 › C2 no longer offers an event source it cannot create
+  -   92 [chromium] › e2e\live-create-visual.spec.ts:53:1 › a fresh owner + org with its brand set up
+  -   93 [chromium] › e2e\live-create-visual.spec.ts:69:1 › one run, then Create visual on its result renders ONE image and attaches nothing
+  -   94 [chromium] › e2e\live-create-visual.spec.ts:106:1 › Today offers the same button on the ledger row, and the Studio lists the job
+  -   95 [chromium] › e2e\live-generate.spec.ts:50:1 › a fresh owner + org, made through the product
+  -   96 [chromium] › e2e\live-generate.spec.ts:69:1 › one balanced run returns a draft with its tone and its rationale
+  -   97 [chromium] › e2e\live-invite-org.spec.ts:84:1 › two accounts, each owning a workspace
+  -   98 [chromium] › e2e\live-invite-org.spec.ts:106:1 › an invited existing user can REACH the inviting workspace, and a reload keeps it
+  -   99 [chromium] › e2e\live-invite-org.spec.ts:165:1 › losing membership falls back honestly, and never to a dead screen
+  -  100 [chromium] › e2e\live-knowledge.spec.ts:36:1 › a fresh owner + org, made through the product
+  -  101 [chromium] › e2e\live-knowledge.spec.ts:46:1 › pasted text becomes a Ready source, and removing it removes it
+  -  102 [chromium] › e2e\live-knowledge.spec.ts:76:1 › a FILE uploads straight to storage from the browser (open-item 24)
+  -  103 [chromium] › e2e\live-media-capabilities.spec.ts:328:1 › a fresh owner + org, made through the product
+  -  104 [chromium] › e2e\live-media-capabilities.spec.ts:338:1 › every granted capability: the document’s example stops at the wallet (402), its trap before it (400) — zero spend
+  -  105 [chromium] › e2e\live-media-capabilities.spec.ts:413:1 › the Studio grid lists what the catalog grants, by name, with the catalog’s price
+  -  106 [chromium] › e2e\live-media-upload.spec.ts:48:1 › a fresh owner + org, made through the product
+  -  107 [chromium] › e2e\live-media-upload.spec.ts:58:1 › an image upload becomes a WIRE-listed Files row, and Delete removes it from the wire
+  -  108 [chromium] › e2e\live-media-upload.spec.ts:97:1 › the logo uploads with desc "logo", shows as the logo, stays out of Files, and removes
+  -  109 [chromium] › e2e\live-notifications.spec.ts:33:1 › the inbox endpoints hold their contract, and the bell tells the truth
+  -  110 [chromium] › e2e\live-onboarding.spec.ts:50:1 › signup → verify → the app: no wizard, and the workspace is real
+  -  111 [chromium] › e2e\live-onboarding.spec.ts:63:1 › a fresh live org has no tones, and the screen says what that costs
+  -  112 [chromium] › e2e\live-onboarding.spec.ts:89:1 › generation is locked, and the checklist names all four
+  -  113 [chromium] › e2e\live-onboarding.spec.ts:116:1 › the Studio composer is locked by the same gate
+  -  114 [chromium] › e2e\live-onboarding.spec.ts:124:1 › completing the four brand entities unlocks generation
+  -  115 [chromium] › e2e\live-onboarding.spec.ts:184:1 › the unlocked run really runs — one balanced draft
+  -  116 [chromium] › e2e\live-proposals.spec.ts:48:1 › a fresh owner + org, with its brand set up
+  -  117 [chromium] › e2e\live-proposals.spec.ts:88:1 › one balanced run — the drafts it produces become the proposals under test
+  -  118 [chromium] › e2e\live-proposals.spec.ts:103:1 › after a RELOAD, Today shows the draft from the ledger
+  -  119 [chromium] › e2e\live-proposals.spec.ts:123:1 › approving records it as posted, and the decision survives a reload
+  -  120 [chromium] › e2e\live-proposals.spec.ts:173:1 › declining asks why, keeps the row, and is reversible
+  -  121 [chromium] › e2e\live-schedule-repair.spec.ts:45:1 › a live org in the 619 shape: tones seeded, no schedule
+  -  122 [chromium] › e2e\live-schedule-repair.spec.ts:85:1 › C1 creates the missing schedule through the POST fallback, with the exact tones picked
+  -  123 [chromium] › e2e\live-schedule-repair.spec.ts:138:1 › and it survives a reload, still clean
+  -  124 [chromium] › e2e\live-scheduling.spec.ts:57:1 › signup creates the workspace and NOTHING else
+  -  125 [chromium] › e2e\live-scheduling.spec.ts:93:1 › C1 creates the schedule on first save, then PATCHes it — and it survives a reload
+  -  126 [chromium] › e2e\live-scheduling.spec.ts:180:1 › slots, if ingestion produced any, honour skip/un-skip and never offer approve
+  -  127 [chromium] › e2e\live-studio.spec.ts:37:1 › a fresh owner + org, made through the product
+  -  128 [chromium] › e2e\live-studio.spec.ts:47:1 › E1 is built from the catalog: the granted capabilities, real prices, no vendors
+  -  129 [chromium] › e2e\live-studio.spec.ts:88:1 › E3 lists renders, and is honest when there are none
+  -  130 [chromium] › e2e\live-studio.spec.ts:99:1 › E2 renders for real, and E4 opens the asset it made
+  -  131 [chromium] › e2e\live-team.spec.ts:75:1 › verifying creates the org LIVE; the dashboard follows immediately
+  -  132 [chromium] › e2e\live-team.spec.ts:87:1 › I1 renames the org through PATCH, and the name survives a reload
+  -  133 [chromium] › e2e\live-team.spec.ts:112:1 › change-password keeps this session and only the new password works after
+  -  134 [chromium] › e2e\live-team.spec.ts:138:1 › inviting a NEW user: coded email, resend rate-limits honestly, cancel removes
+  -  135 [chromium] › e2e\live-team.spec.ts:162:1 › inviting an EXISTING user adds them immediately, and the role ladder holds
+  -  136 [chromium] › e2e\live-team.spec.ts:247:1 › an ADMIN viewing a team with an owner: no remove on the owner, no role selects at all
+  -  137 [chromium] › e2e\live-video-duration.spec.ts:76:1 › a fresh owner + org, made through the product
+  -  138 [chromium] › e2e\live-video-duration.spec.ts:86:1 › a bad durationS is refused with 400 BEFORE the wallet check — the field is known, a maximum is enforced
+  -  139 [chromium] › e2e\live-video-duration.spec.ts:109:1 › the valid video body clears validation — and self-skips on 402, the positive proof riding on LIVE_MEDIA=1
+  -  140 [chromium] › e2e\live-wallet.spec.ts:51:1 › a fresh owner + org, made through the product
+  -  141 [chromium] › e2e\live-wallet.spec.ts:76:1 › the balance chip shows money — and over a zero wallet, the instruction to subscribe
+  -  142 [chromium] › e2e\live-wallet.spec.ts:96:1 › H3 is a balance and a real usage read-back, in both allowed grains
+  -  143 [chromium] › e2e\live-wallet.spec.ts:131:1 › the wallet and usage endpoints answer the shapes the UI is built on
+  ok  58 [chromium] › e2e\hsn-series.spec.ts:145:1 › a tone needs a language, defaults only its length, shows both on its card, and edits them (4.1s)
+  ok  55 [chromium] › e2e\hsn-series.spec.ts:53:1 › Create visual on Today: beside Approve and Reject, refuses a blank kind, runs once, attaches nothing (7.2s)
+  ok 144 [chromium] › e2e\marketing.spec.ts:74:1 › the homepage renders the concept-v2 hero and every section, in order (1.8s)
+  ok 145 [chromium] › e2e\marketing.spec.ts:95:1 › the header wires every CTA at the route it names (1.9s)
+  ok 146 [chromium] › e2e\marketing.spec.ts:113:1 › the footer carries the legal routes and the client login (1.9s)
+  ok 147 [chromium] › e2e\marketing.spec.ts:126:1 › Get started lands on the REAL signup, not a second fake journey (2.3s)
+  ok  59 [chromium] › e2e\hsn-series.spec.ts:194:1 › sources stop at 10 and topics at 30: the counter, the disabled add, and room again after a removal (6.3s)
+  ok  56 [chromium] › e2e\hsn-series.spec.ts:106:1 › Create visual on a Generate result: the second entry point opens the same modal (10.6s)
+  ok  60 [chromium] › e2e\hsn-series.spec.ts:244:1 › the Knowledge upload asks what it is, filters by type, refuses the wrong MIME, and needs a description (5.9s)
+  ok 148 [chromium] › e2e\marketing.spec.ts:135:1 › the header survives navigation between marketing routes (2.7s)
+  ok 151 [chromium] › e2e\marketing.spec.ts:195:1 › pricing renders all three tiers, and only the self-serve ones sell (1.5s)
+  ok 150 [chromium] › e2e\marketing.spec.ts:169:1 › the mobile menu opens, navigates, and closes behind it (2.6s)
+  ok 153 [chromium] › e2e\marketing.spec.ts:273:1 › both legal routes render the website documents (1.6s)
+  ok 154 [chromium] › e2e\marketing.spec.ts:286:1 › the retired early-access door lands on the demo request (1.5s)
+  ok 149 [chromium] › e2e\marketing.spec.ts:151:1 › the section links scroll to their sections, from this page and from another (4.4s)
+  ok 152 [chromium] › e2e\marketing.spec.ts:227:1 › the demo request validates, then resolves locally and says so (3.5s)
+  ok 156 [chromium] › e2e\marketing.spec.ts:319:1 › the control loop is real: Approve schedules the piece and records the preference (2.4s)
+  ok 157 [chromium] › e2e\marketing.spec.ts:353:1 › the Arabic section is native RTL, not a mirrored English layout (2.2s)
+  ok 158 [chromium] › e2e\marketing.spec.ts:362:1 › @reduced-motion the orbit is a composed still and no video mounts (2.2s)
+  ok 159 [chromium] › e2e\marketing.spec.ts:376:1 › the visitor world does not leak into the signed-in app (2.9s)
+  ok 160 [chromium] › e2e\marketing.spec.ts:388:1 › the marketing world self-hosts its type — no font request leaves (1.9s)
+  ok 161 [chromium] › e2e\marketing.spec.ts:435:1 › page titles follow the route (2.6s)
+  -  166 [chromium] › e2e\onb-shots.spec.ts:18:1 › @shots the checklist, the blocked generate, and the empty tones
+  ok 165 [chromium] › e2e\med-media.spec.ts:89:1 › the demo logo previews, replaces and removes — locally (3.0s)
+  ok 155 [chromium] › e2e\marketing.spec.ts:296:1 › the brand demo runs a company and stays honest about what it is (7.9s)
+  ok 164 [chromium] › e2e\med-media.spec.ts:68:1 › "logo" is a reserved description — refused in any case, with the pointer to Organization (4.0s)
+  ok 163 [chromium] › e2e\med-media.spec.ts:34:1 › an image upload lands under Files, whole, and its Delete removes it (5.5s)
+  ok 167 [chromium] › e2e\settings-a11y.spec.ts:40:1 › changing settings section keeps focus on the tab, never on the body (3.2s)
+  ok 169 [chromium] › e2e\settings-a11y.spec.ts:86:1 › the save bar never covers the focused field (2.9s)
+  ok 168 [chromium] › e2e\settings-a11y.spec.ts:62:1 › dismissing the unsaved-changes guard returns focus to the field you were in (3.6s)
+  ok 170 [chromium] › e2e\settings-a11y.spec.ts:113:1 › the upload inputs are not tab stops, so focus never vanishes (3.1s)
+  ok 172 [chromium] › e2e\settings-a11y.spec.ts:182:1 › an inactive tab renders its focus ring unclipped (2.8s)
+  ok 171 [chromium] › e2e\settings-a11y.spec.ts:143:1 › the settings sections are one tab stop, with arrow keys between them (3.3s)
+  ok 162 [chromium] › e2e\marketing.spec.ts:450:1 › every marketing route scans clean @axe (9.1s)
+  ok 174 [chromium] › e2e\smoke.spec.ts:28:1 › boots on the seeded dashboard in both themes (1.5s)
+  ok 175 [chromium] › e2e\smoke.spec.ts:50:1 › the retired wizard route redirects into the app (1.5s)
+  ok 176 [chromium] › e2e\smoke.spec.ts:69:1 › one workspace renders as identity, never as a menu that offers nothing (1.6s)
+  ok 177 [chromium] › e2e\smoke.spec.ts:78:1 › dataset switcher swaps the world in-session (1.5s)
+  ok 173 [chromium] › e2e\settings-a11y.spec.ts:203:1 › adding a brand-voice rule puts the cursor in the new row (3.4s)
+  ok 178 [chromium] › e2e\smoke.spec.ts:98:1 › state switcher forces loading and error presentations (2.3s)
+  ok 180 [chromium] › e2e\studio-billing.spec.ts:29:1 › the studio opens on the capability grid, and a demo asset still reaches the W5 composer (3.1s)
+  ok 179 [chromium] › e2e\smoke.spec.ts:124:1 › dashboard and dev pages scan clean @axe (3.9s)
+  ok 182 [chromium] › e2e\studio-billing.spec.ts:76:1 › a standalone asset attaches only to a draft that has earned media (3.0s)
+  ok 183 [chromium] › e2e\studio-billing.spec.ts:105:1 › the credits ledger explains the balance it shows (3.5s)
+  ok 184 [chromium] › e2e\studio-billing.spec.ts:112:1 › past due gates the product, not just the billing screen (3.5s)
+  ok 181 [chromium] › e2e\studio-billing.spec.ts:46:1 › @golden the W5 composer renders each model’s own parameters and spends credits (5.7s)
+  ok 187 [chromium] › e2e\studio-capabilities.spec.ts:59:1 › the grid shows the 13 capabilities, each an image with the name on it (2.4s)
+  ok 185 [chromium] › e2e\studio-billing.spec.ts:142:1 › changing plan states its consequence and grants through the ledger (3.8s)
+  ok 186 [chromium] › e2e\studio-billing.spec.ts:157:1 › @axe studio and billing scan clean (3.3s)
+  ok 190 [chromium] › e2e\studio-capabilities.spec.ts:212:1 › Settings shows the organization id at the top, with a copy control (HSN-0910/C) (2.6s)
+  ok 188 [chromium] › e2e\studio-capabilities.spec.ts:78:1 › a composer carries only its own fields, and the demo render lands on an asset (4.4s)
+  ok 191 [chromium] › e2e\studio-capabilities.spec.ts:223:1 › @axe the grid and one composer scan clean (3.8s)
+  ok 192 [chromium] › e2e\today-queue.spec.ts:32:1 › the queue groups drafts by slot and offers only legal actions (3.0s)
+  ok 189 [chromium] › e2e\studio-capabilities.spec.ts:111:1 › every composer refuses the document’s own trap before any round-trip (6.1s)
+  ok 193 [chromium] › e2e\today-queue.spec.ts:44:1 › @golden approving moves the card and updates the dashboard in the same session (4.5s)
+  ok 195 [chromium] › e2e\today-queue.spec.ts:96:1 › a short balance refuses the run and keeps the prompt (4.4s)
+  ok 196 [chromium] › e2e\today-queue.spec.ts:134:1 › draft detail shows the timeline and mirrors the queue actions (4.0s)
+  ok 197 [chromium] › e2e\today-queue.spec.ts:111:1 › scheduling reports per channel, and a re-auth channel cannot be picked (4.3s)
+  ok 198 [chromium] › e2e\today-queue.spec.ts:147:1 › rejecting asks why, and the draft leaves the queue (3.3s)
+  ok 194 [chromium] › e2e\today-queue.spec.ts:71:1 › generating media spends credits, and the balance follows (7.2s)
+  ok 199 [chromium] › e2e\today-queue.spec.ts:160:1 › @axe the queue and draft detail scan clean (4.6s)
+
+  84 skipped
+  115 passed (1.4m)
+
+W6 verify summary
+------------------------------------------------
+lint                                        PASS
+typecheck                                   PASS
+unit tests                                  PASS
+guard-static                                PASS
+build                                       PASS
+readiness gate is one selector              PASS
+one tone editor, three entry points         PASS
+custom tone renders identically everywhere  PASS
+analytics never invents a number            PASS
+F1 reuses the queue card and actions        PASS
+compose is script-driven                    PASS
+settings share one save bar                 PASS
+times are honest about zones                PASS
+keyboard-focus rules hold                   PASS
+no stub routes remain                       PASS
+e2e navigation rule holds                   PASS
+W6 deliverables exist                       PASS
+e2e (compose, analytics, settings, axe)     PASS
+------------------------------------------------
+RESULT: PASS (automated steps)
+
+MANUAL -- human judgement; verify by hand (web-plan.md W6 Verify):
+  1. Watch a compose run at full length. Does the token pace read
+     as writing, or as a progress bar wearing words?
+  2. Read G1 as someone who did not publish this week: do the
+     deltas and the "not reported" line tell the same story?
+  3. Walk Settings with the keyboard only, tab by tab.
+
+  Carried forward, still open (see .agent/open-items.md):
+   - W1 screen-reader walk of the app shell (NVDA / VoiceOver)
+   - W2 marketing copy read, wizard at phone width, marketing in a dark OS
+   - W3 queue as one continuous tool, queue on a phone
+   - W4 month grid at phone width, posting times read in the schedule zone
+   - W5 D4 and E2 back to back, credits ledger read as a charge query

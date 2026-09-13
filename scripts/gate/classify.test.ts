@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { E2eSummary } from '../verify-lib'
-import { classifyResult, redact } from './classify'
+import { classifyResult, isRerunnable, redact, skipLabel } from './classify'
 
 const summary = (over: Partial<E2eSummary>): E2eSummary => ({
   passed: 0,
@@ -10,6 +10,22 @@ const summary = (over: Partial<E2eSummary>): E2eSummary => ({
   tests: [],
   ...over,
 })
+
+const failing = (error: string, title = 'a walk') =>
+  summary({
+    failed: 1,
+    passed: 1,
+    tests: [
+      {
+        title,
+        file: 'live-knowledge.spec.ts',
+        status: 'failed',
+        tags: [],
+        error,
+        durationMs: 150_000,
+      },
+    ],
+  })
 
 describe('the classification rule (GATE-0910 §3.5)', () => {
   it('a green file is green', () => {
@@ -64,6 +80,69 @@ describe('the classification rule (GATE-0910 §3.5)', () => {
 
   it('a non-zero exit with no failed test and no report is unclassified, not green', () => {
     expect(classifyResult(null, 1, 'ELIFECYCLE Command failed')).toBe('unclassified')
+  })
+})
+
+describe("the app's own error page is the service's fault, not the product's (2026-09-13)", () => {
+  const timeout = 'locator.fill: Test timeout of 150000ms exceeded. waiting for getByLabel(...)'
+
+  it("a timeout behind 'We couldn't load this screen' is an error-page red", () => {
+    const page = '- paragraph: Something went wrong\n- paragraph: We couldn’t load this screen.'
+    expect(classifyResult(failing(timeout), 1, timeout, page)).toBe('error-page')
+  })
+
+  it('the straight apostrophe reads the same as the typographic one', () => {
+    const page = "- paragraph: We couldn't load this screen. Try again in a moment."
+    expect(classifyResult(failing(timeout), 1, timeout, page)).toBe('error-page')
+  })
+
+  it("the balance chip's own failure text counts too", () => {
+    const page = '- link "Balance could not be read"'
+    expect(classifyResult(failing(timeout), 1, timeout, page)).toBe('error-page')
+  })
+
+  it('the SAME timeout with an ordinary page stays UNCLASSIFIED', () => {
+    const page = '- heading "Knowledge" [level=1]\n- button "Add a file"'
+    expect(classifyResult(failing(timeout), 1, timeout, page)).toBe('unclassified')
+  })
+
+  it('a spec that ASSERTS the error copy fails on its own terms — the page decides, not the message', () => {
+    const asserts =
+      "expect(locator).toBeVisible() failed — waiting for getByText('Something went wrong')"
+    expect(classifyResult(failing(asserts), 1, asserts)).toBe('unclassified')
+  })
+
+  it('a lost socket still wins over an error page — the nearer cause is named first', () => {
+    const page = '- paragraph: Something went wrong'
+    expect(classifyResult(failing('read ECONNRESET'), 1, '', page)).toBe('network-lost')
+  })
+
+  it('both of the runner’s own classes are re-run; nothing else is', () => {
+    expect(isRerunnable('network-lost')).toBe(true)
+    expect(isRerunnable('error-page')).toBe(true)
+    expect(isRerunnable('unclassified')).toBe(false)
+    expect(isRerunnable('green')).toBe(false)
+    expect(isRerunnable('skipped-all')).toBe(false)
+  })
+})
+
+describe('a skip and a not-run are different things (the founder, 2026-09-13)', () => {
+  it('a deliberate skip keeps its own reason', () => {
+    expect(skipLabel({ skipReason: 'set LIVE_MEDIA=1 to spend on one real render' }, false)).toBe(
+      'set LIVE_MEDIA=1 to spend on one real render',
+    )
+    expect(skipLabel({ skipReason: 'the wallet is $0.00' }, true)).toBe('the wallet is $0.00')
+  })
+
+  it("a test with no reason in a file that FAILED did not run — Playwright's serial cascade", () => {
+    expect(skipLabel({}, true)).toBe('not run, an earlier test in this file failed')
+    expect(skipLabel({ skipReason: '   ' }, true)).toBe(
+      'not run, an earlier test in this file failed',
+    )
+  })
+
+  it('a test with no reason in a file that passed is an honest unknown, not a cascade', () => {
+    expect(skipLabel({}, false)).toBe('skipped, no reason given')
   })
 })
 

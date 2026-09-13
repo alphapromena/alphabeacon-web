@@ -48,6 +48,12 @@ export interface E2eTest {
   file: string
   status: 'passed' | 'failed' | 'skipped' | 'flaky'
   tags: string[]
+  /**
+   * Present ONLY when the test carried a skip annotation — a deliberate skip,
+   * with its own reason. ABSENT means Playwright skipped it without one, which
+   * in a `serial` file is every test after a failure: not a skip at all, and
+   * the record must not read it as one (GATE-0910, 2026-09-13).
+   */
   skipReason?: string
   error?: string
   durationMs: number
@@ -285,7 +291,7 @@ export function summarizePlaywright(json: unknown): E2eSummary {
           file: spec.file ?? here,
           status,
           tags: spec.tags ?? [],
-          skipReason: status === 'skipped' ? (skip?.description ?? '') : undefined,
+          skipReason: status === 'skipped' ? skip?.description : undefined,
           error:
             status === 'failed'
               ? (last?.error?.message ?? results.find((r) => r.error)?.error?.message)?.slice(

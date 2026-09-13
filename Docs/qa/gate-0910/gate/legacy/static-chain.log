@@ -1,0 +1,40 @@
+=== LEGACY CHAIN · start 2026-09-13T05:26:12Z · tree 8c0694a
+=== unit 05:26:12Z
+[2m Test Files [22m [1m[32m58 passed[39m[22m[90m (58)[39m
+[2m      Tests [22m [1m[32m656 passed[39m[22m[90m (656)[39m
+--- unit · 23 s
+=== static e2e 05:26:35Z
+  84 skipped
+  114 passed (1.4m)
+ ELIFECYCLE  Command failed with exit code 1.
+--- static e2e · 88 s
+=== verify:w00 --rerun 05:28:03Z
+exit 0 (124 = the 900 s cap)
+RESULT: PASS (automated steps)
+--- verify:w00 · 172 s
+=== verify:w01 --rerun 05:30:55Z
+exit 0 (124 = the 900 s cap)
+RESULT: PASS (automated steps)
+--- verify:w01 · 202 s
+=== verify:w02 --rerun 05:34:18Z
+exit 0 (124 = the 900 s cap)
+RESULT: PASS (automated steps)
+--- verify:w02 · 169 s
+=== verify:w03 --rerun 05:37:07Z
+exit 0 (124 = the 900 s cap)
+RESULT: PASS (automated steps)
+--- verify:w03 · 155 s
+=== verify:w04 --rerun 05:39:42Z
+exit 0 (124 = the 900 s cap)
+RESULT: PASS (automated steps)
+--- verify:w04 · 153 s
+=== verify:w05 --rerun 05:42:15Z
+exit 0 (124 = the 900 s cap)
+RESULT: PASS (automated steps)
+--- verify:w05 · 151 s
+=== verify:w06 --rerun 05:44:46Z
+exit 0 (124 = the 900 s cap)
+RESULT: PASS (automated steps)
+--- verify:w06 · 158 s
+=== LEGACY CHAIN · static end 2026-09-13T05:47:24Z
+=== LEGACY CHAIN · end 2026-09-13T06:28:01Z

@@ -1,0 +1,45 @@
+
+> alphabeacon-web@0.0.0 verify:w03 C:\alphabeacon-web\alphabeacon-web
+> tsx scripts/verify-w03.ts
+
+PASS  lint — 6 s in the report
+PASS  typecheck — 15 s in the report
+PASS  unit tests — 656 passed / 0 failed / 58 files (from the report)
+PASS  guard-static — 1 s in the report
+PASS  build — 24 s in the report
+PASS  e2e (@golden approve walk, queue axe) — 115 passed / 84 skipped / 0 failed (from the report)
+
+=== the approval gate is enforced by the state machine ===
+gate: media entry is rendered from canTransition, and is never disabled-and-teasing
+
+=== e2e specs navigate in-app after switching datasets ===
+  entry-flow.spec.ts: switches via the shared helper, then walks in-app
+  today-queue.spec.ts: switches via the shared helper, then walks in-app
+
+=== W3 deliverables exist ===
+all 11 W3 deliverables present
+
+W3 verify summary
+-------------------------------------------
+lint                                   PASS
+typecheck                              PASS
+unit tests                             PASS
+guard-static                           PASS
+build                                  PASS
+e2e (@golden approve walk, queue axe)  PASS
+approval gate is structural            PASS
+e2e navigation rule holds              PASS
+W3 deliverables exist                  PASS
+-------------------------------------------
+RESULT: PASS (automated steps)
+
+MANUAL -- human judgement; verify by hand (web-plan.md W3 Verify):
+  1. Approve, generate media, and schedule a post end to end and
+     judge whether it FEELS like one continuous tool -- the plan asks
+     for D4 to read as "Studio, in context", not a second product.
+  2. Read the queue on a phone: three slot groups deep, is it still
+     obvious which draft belongs to which time?
+
+  Carried forward, still open (see .agent/open-items.md):
+   - W1 screen-reader walk of the app shell (NVDA / VoiceOver)
+   - W2 marketing copy read, wizard at phone width, marketing in a dark OS

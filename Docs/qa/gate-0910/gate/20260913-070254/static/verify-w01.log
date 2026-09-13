@@ -1,0 +1,52 @@
+
+> alphabeacon-web@0.0.0 verify:w01 C:\alphabeacon-web\alphabeacon-web
+> tsx scripts/verify-w01.ts
+
+
+=== lint ===
+7 s in the report
+
+=== typecheck ===
+15 s in the report
+
+=== unit tests ===
+656 passed / 0 failed / 58 files (from the report)
+
+=== guard-static ===
+1 s in the report
+
+=== build ===
+24 s in the report
+
+=== e2e (kitchen-sink axe both themes, reduced-motion) ===
+115 passed / 84 skipped / 0 failed (from the report)
+
+=== canary: raw color in ab/ fails lint ===
+canary raw color: bg-blue-500 / #ff0000 in ab/ were rejected as expected
+
+=== W1 deliverables exist ===
+all 16 W1 deliverables present
+
+W1 verify summary
+--------------------------------------------------------
+lint                                                PASS
+typecheck                                           PASS
+unit tests                                          PASS
+guard-static                                        PASS
+build                                               PASS
+e2e (kitchen-sink axe both themes, reduced-motion)  PASS
+canary: raw color in ab/ fails lint                 PASS
+W1 deliverables exist                               PASS
+--------------------------------------------------------
+RESULT: PASS (automated steps)
+
+MANUAL -- human judgement; verify by hand (web-plan.md W1 Verify):
+  1. "visual pass of /dev/kitchen-sink in light + dark against design.md" --
+     design.md now exists, written from the Alpha MENA Branding Kit, and
+     tokens.test.ts proves the palette meets AA. What a machine cannot judge
+     is whether it LOOKS like the brand: check the rose against the kit
+     swatches, the Barlow setting, the wordmark, and status treatments.
+  2. "keyboard-only walk of the shell" -- drive the rail, org switcher, bell,
+     theme toggle, and account menu with the keyboard alone on a real screen
+     reader (NVDA or VoiceOver) and confirm every stop announces a name and
+     keeps a visible focus ring. axe cannot hear what the screen reader says.

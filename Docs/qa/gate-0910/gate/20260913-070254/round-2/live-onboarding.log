@@ -1,0 +1,12 @@
+warm-up: skipped — the runner warmed the fleet and keeps the heartbeat (GATE-0910 §3.2)
+
+Running 6 tests using 1 worker
+
+  ok 1 [chromium] › e2e\live-onboarding.spec.ts:50:1 › signup → verify → the app: no wizard, and the workspace is real (6.1s)
+  ok 2 [chromium] › e2e\live-onboarding.spec.ts:63:1 › a fresh live org has no tones, and the screen says what that costs (4.1s)
+  ok 3 [chromium] › e2e\live-onboarding.spec.ts:89:1 › generation is locked, and the checklist names all four (4.6s)
+  ok 4 [chromium] › e2e\live-onboarding.spec.ts:116:1 › the Studio composer is locked by the same gate (2.2s)
+  ok 5 [chromium] › e2e\live-onboarding.spec.ts:124:1 › completing the four brand entities unlocks generation (21.6s)
+  ok 6 [chromium] › e2e\live-onboarding.spec.ts:184:1 › the unlocked run really runs — one balanced draft (27.1s)
+
+  6 passed (1.1m)

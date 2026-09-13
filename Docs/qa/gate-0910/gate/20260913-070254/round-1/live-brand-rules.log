@@ -1,0 +1,11 @@
+warm-up: skipped — the runner warmed the fleet and keeps the heartbeat (GATE-0910 §3.2)
+
+Running 5 tests using 1 worker
+
+  ok 1 [chromium] › e2e\live-brand-rules.spec.ts:72:1 › a fresh owner + org, made through the product (5.5s)
+  ok 2 [chromium] › e2e\live-brand-rules.spec.ts:90:1 › a fresh org has no tones at all, and the screen says what that costs (4.1s)
+  ok 3 [chromium] › e2e\live-brand-rules.spec.ts:110:1 › a tone keeps its rules, and a PATCH replaces the whole list (12.0s)
+  ok 4 [chromium] › e2e\live-brand-rules.spec.ts:152:1 › the brand voice writes to one row, and an edit does not reorder it (14.9s)
+  ok 5 [chromium] › e2e\live-brand-rules.spec.ts:192:1 › Preview this tone returns a real sample from the platform (13.9s)
+
+  5 passed (52.4s)

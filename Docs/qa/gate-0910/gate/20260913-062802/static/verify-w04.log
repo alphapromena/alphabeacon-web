@@ -1,0 +1,46 @@
+
+> alphabeacon-web@0.0.0 verify:w04 C:\alphabeacon-web\alphabeacon-web
+> tsx scripts/verify-w04.ts
+
+PASS  lint — 6 s in the report
+PASS  typecheck — 15 s in the report
+PASS  unit tests — 656 passed / 0 failed / 58 files (from the report)
+PASS  guard-static — 1 s in the report
+PASS  build — 24 s in the report
+PASS  e2e (calendar, connections, axe) — 115 passed / 84 skipped / 0 failed (from the report)
+
+=== an unreported metric is absent, never zero ===
+syncing: metrics are optional, and both surfaces branch on presence before rendering a figure
+
+=== e2e specs navigate in-app after switching datasets ===
+  entry-flow.spec.ts: switches via the shared helper, then walks in-app
+  today-queue.spec.ts: switches via the shared helper, then walks in-app
+  calendar-connections.spec.ts: switches via the shared helper, then walks in-app
+
+=== W4 deliverables exist ===
+all 13 W4 deliverables present
+
+W4 verify summary
+--------------------------------------
+lint                              PASS
+typecheck                         PASS
+unit tests                        PASS
+guard-static                      PASS
+build                             PASS
+e2e (calendar, connections, axe)  PASS
+Syncing never renders a zero      PASS
+e2e navigation rule holds         PASS
+W4 deliverables exist             PASS
+--------------------------------------
+RESULT: PASS (automated steps)
+
+MANUAL -- human judgement; verify by hand (web-plan.md W4 Verify):
+  1. Read the month grid at 360px: three slot chips in one day cell
+     is the density this design is betting on -- does it hold?
+  2. Switch the timezone in Schedule settings and confirm the slot
+     times you see match what your audience in that zone would see.
+
+  Carried forward, still open (see .agent/open-items.md):
+   - W1 screen-reader walk of the app shell (NVDA / VoiceOver)
+   - W2 marketing copy read, wizard at phone width, marketing in a dark OS
+   - W3 queue as one continuous tool, queue on a phone

@@ -1,0 +1,211 @@
+{
+  "order": "GATE-0910 · item 63",
+  "measured": "2026-09-13T07:52:58.419Z",
+  "apiHost": "<api-host>",
+  "org": {
+    "email": "<qa owner>",
+    "name": "QA Item 63 Org 1789285965867195"
+  },
+  "verdict": "Mixed answers 400 and 402 — read the table above. Wallet 0 → 0 cents, 0 job(s) listed after.",
+  "exchanges": [
+    {
+      "title": "signup (owner)",
+      "method": "POST",
+      "path": "/auth/signup",
+      "status": 201,
+      "requestId": "a1e62c91-51cf-493e-bae1-e5fb1cee357f",
+      "ms": 3574,
+      "responseBody": {
+        "email": "qa+1789285965867195i63@alphapromena.com",
+        "codeExpiresAt": "2026-09-13T08:02:49.159Z"
+      }
+    },
+    {
+      "title": "verify-email (owner)",
+      "method": "POST",
+      "path": "/auth/verify-email",
+      "status": 200,
+      "requestId": "34d95590-418b-44df-a276-c86b9edd3e04",
+      "ms": 1207,
+      "responseBody": {
+        "token": "0rfNJDHU6S3pAhroHro0KIKZOvbCAl__r-JGdFfC2kM",
+        "expiresAt": "2026-09-13T19:52:50.256Z",
+        "user": {
+          "id": "2579",
+          "name": "QA Item 63 Owner",
+          "email": "qa+1789285965867195i63@alphapromena.com",
+          "role": "user",
+          "status": "active",
+          "emailVerifiedAt": "2026-09-13T07:52:49.891Z",
+          "createdAt": "2026-09-13T07:52:48.699Z"
+        },
+        "orgs": []
+      }
+    },
+    {
+      "title": "create org",
+      "method": "POST",
+      "path": "/orgs",
+      "status": 201,
+      "requestId": "e9873352-07bc-42d8-a771-639900b2a869",
+      "ms": 772,
+      "responseBody": {
+        "org": {
+          "id": "2161",
+          "name": "QA Item 63 Org 1789285965867195",
+          "slug": "qa-item-63-org-1789285965867195",
+          "status": "active",
+          "createdAt": "2026-09-13T07:52:50.799Z",
+          "updatedAt": "2026-09-13T07:52:50.799Z",
+          "country": null,
+          "whatYouOffer": null,
+          "whatSetsYouApart": null
+        },
+        "membership": {
+          "id": "2455",
+          "orgId": "2161",
+          "userId": "2579",
+          "role": "owner",
+          "isActive": true,
+          "createdAt": "2026-09-13T07:52:50.799Z",
+          "updatedAt": "2026-09-13T07:52:50.799Z"
+        }
+      }
+    },
+    {
+      "title": "wallet before",
+      "method": "GET",
+      "path": "/orgs/2161/alphastudio/wallet",
+      "status": 200,
+      "requestId": "fe383d5c-7df8-4f8b-90d9-177aca038007",
+      "ms": 3192,
+      "responseBody": {
+        "cents": 0,
+        "heldCents": 0,
+        "availableCents": 0
+      }
+    },
+    {
+      "title": "POST media/jobs · durationS \"abc\"",
+      "method": "POST",
+      "path": "/orgs/2161/alphastudio/media/jobs",
+      "status": 400,
+      "requestId": "a3cb0dca-5f6a-4646-9ae8-3abe2c9a5315",
+      "ms": 1445,
+      "requestBody": {
+        "capability": "social-posts.media",
+        "plan": "balanced",
+        "kind": "video",
+        "posts": [
+          {
+            "ref": "hsn-0902-shape-probe",
+            "content": "This lot landed Tuesday and we roasted it Thursday — that is the whole trick. Order this week’s roast.",
+            "tone": {
+              "id": "hsn-0902-probe-tone",
+              "name": "Roastery floor",
+              "description": "Warm, specific, smells of coffee.",
+              "rules": [
+                {
+                  "kind": "do",
+                  "text": "Name the roast date"
+                }
+              ]
+            }
+          }
+        ],
+        "style": {
+          "imgStyle": "Cinematic",
+          "text": true,
+          "logo": true
+        },
+        "guidance": [],
+        "params": {
+          "durationS": "abc"
+        },
+        "collection": {
+          "use": true
+        }
+      },
+      "responseBody": {
+        "error": {
+          "code": "bad_request",
+          "message": "The media service rejected the request — check the body against the capability's schema",
+          "requestId": "a3cb0dca-5f6a-4646-9ae8-3abe2c9a5315"
+        }
+      }
+    },
+    {
+      "title": "POST media/jobs · durationS 999",
+      "method": "POST",
+      "path": "/orgs/2161/alphastudio/media/jobs",
+      "status": 402,
+      "requestId": "25c4c86c-6b07-40ab-bfe5-93efba1b4b86",
+      "ms": 786,
+      "requestBody": {
+        "capability": "social-posts.media",
+        "plan": "balanced",
+        "kind": "video",
+        "posts": [
+          {
+            "ref": "hsn-0902-shape-probe",
+            "content": "This lot landed Tuesday and we roasted it Thursday — that is the whole trick. Order this week’s roast.",
+            "tone": {
+              "id": "hsn-0902-probe-tone",
+              "name": "Roastery floor",
+              "description": "Warm, specific, smells of coffee.",
+              "rules": [
+                {
+                  "kind": "do",
+                  "text": "Name the roast date"
+                }
+              ]
+            }
+          }
+        ],
+        "style": {
+          "imgStyle": "Cinematic",
+          "text": true,
+          "logo": true
+        },
+        "guidance": [],
+        "params": {
+          "durationS": 999
+        },
+        "collection": {
+          "use": true
+        }
+      },
+      "responseBody": {
+        "error": {
+          "code": "wallet_insufficient",
+          "message": "The org's wallet cannot cover this request — not enough credits",
+          "requestId": "25c4c86c-6b07-40ab-bfe5-93efba1b4b86"
+        }
+      }
+    },
+    {
+      "title": "wallet after",
+      "method": "GET",
+      "path": "/orgs/2161/alphastudio/wallet",
+      "status": 200,
+      "requestId": "e19e9307-9833-421e-a85e-107c572000c2",
+      "ms": 780,
+      "responseBody": {
+        "cents": 0,
+        "heldCents": 0,
+        "availableCents": 0
+      }
+    },
+    {
+      "title": "job list after",
+      "method": "GET",
+      "path": "/orgs/2161/alphastudio/media/jobs",
+      "status": 200,
+      "requestId": "41adb2f0-531f-4150-84e6-b32979206d7f",
+      "ms": 790,
+      "responseBody": {
+        "jobs": []
+      }
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+warm-up: skipped — the runner warmed the fleet and keeps the heartbeat (GATE-0910 §3.2)
+
+Running 3 tests using 1 worker
+
+  ok 1 [chromium] › e2e\live-knowledge.spec.ts:36:1 › a fresh owner + org, made through the product (5.6s)
+  x  2 [chromium] › e2e\live-knowledge.spec.ts:46:1 › pasted text becomes a Ready source, and removing it removes it (2.5m)
+  -  3 [chromium] › e2e\live-knowledge.spec.ts:76:1 › a FILE uploads straight to storage from the browser (open-item 24)
+
+
+  1) [chromium] › e2e\live-knowledge.spec.ts:46:1 › pasted text becomes a Ready source, and removing it removes it 
+
+    Test timeout of 150000ms exceeded.
+
+    Error: locator.fill: Test timeout of 150000ms exceeded.
+    Call log:
+      - waiting for getByLabel('Or paste some text')
+
+
+      55 |   await expect(page.locator('[aria-busy="true"]')).toHaveCount(0, { timeout: SCREEN_SYNC })
+      56 |
+    > 57 |   await page.getByLabel('Or paste some text').fill('Roasting notes')
+         |                                               ^
+      58 |   await page.getByLabel('Text to add').fill('Ethiopia Guji, washed. Roast date matters most.')
+      59 |   await page.getByRole('button', { name: 'Add text' }).click()
+      60 |
+        at C:\alphabeacon-web\alphabeacon-web\e2e\live-knowledge.spec.ts:57:47
+
+    Error Context: .gate\artifacts\20260913-062802\round-2\live-knowledge\live-knowledge-pasted-text-1f736--and-removing-it-removes-it-chromium\error-context.md
+
+  1 failed
+    [chromium] › e2e\live-knowledge.spec.ts:46:1 › pasted text becomes a Ready source, and removing it removes it 
+  1 did not run
+  1 passed (2.6m)

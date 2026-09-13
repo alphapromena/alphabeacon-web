@@ -1,0 +1,1581 @@
+{
+  "version": 1,
+  "treeHash": "fd405bbc69088a75184d5e871cc93be8547f74f1dc168aa9fb22fd028d560a53",
+  "startedAt": "2026-09-13T07:02:56.042Z",
+  "finishedAt": "2026-09-13T07:05:26.492Z",
+  "ok": true,
+  "steps": [
+    {
+      "name": "lint",
+      "ok": true,
+      "seconds": 6.923,
+      "log": ".gate/reports/lint.log"
+    },
+    {
+      "name": "typecheck",
+      "ok": true,
+      "seconds": 15.061,
+      "log": ".gate/reports/typecheck.log"
+    },
+    {
+      "name": "guard-static",
+      "ok": true,
+      "seconds": 0.864,
+      "log": ".gate/reports/guard-static.log"
+    },
+    {
+      "name": "unit",
+      "ok": true,
+      "seconds": 18.927,
+      "log": ".gate/reports/unit.log"
+    },
+    {
+      "name": "build",
+      "ok": true,
+      "seconds": 24.038,
+      "log": ".gate/reports/build.log"
+    },
+    {
+      "name": "e2e",
+      "ok": true,
+      "seconds": 84.471,
+      "log": ".gate/reports/e2e.log"
+    }
+  ],
+  "unit": {
+    "files": 58,
+    "tests": 656,
+    "passed": 656,
+    "failed": 0,
+    "skipped": 0
+  },
+  "e2e": {
+    "passed": 115,
+    "failed": 0,
+    "skipped": 84,
+    "flaky": 0,
+    "tests": [
+      {
+        "title": "the plans render from the demo in the wire’s shape, with Subscribe for the top tier",
+        "file": "billing.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 3770
+      },
+      {
+        "title": "the demo’s Subscribe lands on the success route, which says nothing was paid",
+        "file": "billing.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 5814
+      },
+      {
+        "title": "an abandoned checkout shows the plans again, plus the one-line note",
+        "file": "billing.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 2657
+      },
+      {
+        "title": "a billing link for a workspace this account is not in is refused, not read",
+        "file": "billing.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 2938
+      },
+      {
+        "title": "@axe the billing page scans clean, populated",
+        "file": "billing.spec.ts",
+        "status": "passed",
+        "tags": [
+          "axe"
+        ],
+        "durationMs": 4547
+      },
+      {
+        "title": "the calendar shows slots, events, and how published posts did",
+        "file": "calendar-connections.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 3588
+      },
+      {
+        "title": "a post still waiting on analytics says Syncing, never a zero",
+        "file": "calendar-connections.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 2414
+      },
+      {
+        "title": "skipping a slot is reversible today, and says so",
+        "file": "calendar-connections.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 4499
+      },
+      {
+        "title": "schedule config refuses to lose unsaved changes",
+        "file": "calendar-connections.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 4601
+      },
+      {
+        "title": "posts per day is capped at 3, and the cap is visible",
+        "file": "calendar-connections.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 3537
+      },
+      {
+        "title": "the schedule reaches its event sources",
+        "file": "calendar-connections.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 3352
+      },
+      {
+        "title": "connections show every status, and X stays coming soon",
+        "file": "calendar-connections.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 3187
+      },
+      {
+        "title": "the permission sheet lists scopes and names what disconnecting costs",
+        "file": "calendar-connections.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 2921
+      },
+      {
+        "title": "a denied connect return is a choice, not an error",
+        "file": "calendar-connections.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 2365
+      },
+      {
+        "title": "event sources keep their calendars when a token is lost",
+        "file": "calendar-connections.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 4360
+      },
+      {
+        "title": "@axe calendar, connections and sources scan clean",
+        "file": "calendar-connections.spec.ts",
+        "status": "passed",
+        "tags": [
+          "axe"
+        ],
+        "durationMs": 3884
+      },
+      {
+        "title": "a slot time names its zone, and never claims to be the audience",
+        "file": "calendar-connections.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 2444
+      },
+      {
+        "title": "a workspace with unfinished setup cannot generate, and the screen says why",
+        "file": "compose-analytics-settings.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 2695
+      },
+      {
+        "title": "the checklist links reach the screens that complete each item",
+        "file": "compose-analytics-settings.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 2607
+      },
+      {
+        "title": "the Studio composer is gated too — no media job before setup",
+        "file": "compose-analytics-settings.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 2381
+      },
+      {
+        "title": "a finished workspace shows no checklist card and generates normally",
+        "file": "compose-analytics-settings.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 2532
+      },
+      {
+        "title": "@axe the checklist card and the blocked generate state scan clean",
+        "file": "compose-analytics-settings.spec.ts",
+        "status": "passed",
+        "tags": [
+          "axe"
+        ],
+        "durationMs": 3910
+      },
+      {
+        "title": "@golden a finished run becomes an ordinary draft with the full action row",
+        "file": "compose-analytics-settings.spec.ts",
+        "status": "passed",
+        "tags": [
+          "golden"
+        ],
+        "durationMs": 7132
+      },
+      {
+        "title": "a guardrail flags a claim mid-run without hiding a word of it",
+        "file": "compose-analytics-settings.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 6418
+      },
+      {
+        "title": "a dropped stream keeps the partial text and offers to pick it up",
+        "file": "compose-analytics-settings.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 6979
+      },
+      {
+        "title": "stopping keeps what arrived and can be resumed",
+        "file": "compose-analytics-settings.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 11669
+      },
+      {
+        "title": "the on-demand allowance runs out, and says so instead of failing quietly",
+        "file": "compose-analytics-settings.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 3855
+      },
+      {
+        "title": "the overview totals exclude a channel that has not reported, and say so",
+        "file": "compose-analytics-settings.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 1990
+      },
+      {
+        "title": "a channel detail charts what the platform reports, and explains what it does not",
+        "file": "compose-analytics-settings.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 5490
+      },
+      {
+        "title": "with no channel left to report, analytics invites the fix",
+        "file": "compose-analytics-settings.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 6802
+      },
+      {
+        "title": "settings opens on the org profile and guards unsaved edits",
+        "file": "compose-analytics-settings.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 3252
+      },
+      {
+        "title": "@golden a custom tone written once shows up wherever tones are picked",
+        "file": "compose-analytics-settings.spec.ts",
+        "status": "passed",
+        "tags": [
+          "golden"
+        ],
+        "durationMs": 6853
+      },
+      {
+        "title": "deleting a tone names what it costs before it happens",
+        "file": "compose-analytics-settings.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 3261
+      },
+      {
+        "title": "a source is named from its address, and prose is refused",
+        "file": "compose-analytics-settings.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 3139
+      },
+      {
+        "title": "knowledge plays the whole ingestion lifecycle, per file",
+        "file": "compose-analytics-settings.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 5279
+      },
+      {
+        "title": "the team screen invites, refuses a duplicate, and never offers to remove you",
+        "file": "compose-analytics-settings.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 3654
+      },
+      {
+        "title": "a role can be changed in place, and the last admin cannot be demoted",
+        "file": "compose-analytics-settings.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 3307
+      },
+      {
+        "title": "the bell counts what is unread and clears it",
+        "file": "compose-analytics-settings.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 2540
+      },
+      {
+        "title": "the offline banner is global and non-blocking",
+        "file": "compose-analytics-settings.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 1726
+      },
+      {
+        "title": "@axe generate, analytics and settings scan clean",
+        "file": "compose-analytics-settings.spec.ts",
+        "status": "passed",
+        "tags": [
+          "axe"
+        ],
+        "durationMs": 6538
+      },
+      {
+        "title": "kitchen sink is clean in light and dark",
+        "file": "design-layer.spec.ts",
+        "status": "passed",
+        "tags": [
+          "axe"
+        ],
+        "durationMs": 4394
+      },
+      {
+        "title": "reduced motion removes every signature animation",
+        "file": "design-layer.spec.ts",
+        "status": "passed",
+        "tags": [
+          "reduced-motion"
+        ],
+        "durationMs": 1976
+      },
+      {
+        "title": "form surfaces the named validation message from the schema",
+        "file": "design-layer.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 1417
+      },
+      {
+        "title": "keyboard-only walk of the app shell",
+        "file": "design-layer.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 2775
+      },
+      {
+        "title": "marketing is the front door when signed out",
+        "file": "entry-flow.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 1916
+      },
+      {
+        "title": "@axe the auth screens reached from marketing scan clean",
+        "file": "entry-flow.spec.ts",
+        "status": "passed",
+        "tags": [
+          "axe"
+        ],
+        "durationMs": 4132
+      },
+      {
+        "title": "@golden signup → verify → the app, with no wizard in between",
+        "file": "entry-flow.spec.ts",
+        "status": "passed",
+        "tags": [
+          "golden"
+        ],
+        "durationMs": 3957
+      },
+      {
+        "title": "a signed-in account with no workspace gets the creation retry, not a wizard",
+        "file": "entry-flow.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 3978
+      },
+      {
+        "title": "@axe the workspace-creation retry scans clean",
+        "file": "entry-flow.spec.ts",
+        "status": "passed",
+        "tags": [
+          "axe"
+        ],
+        "durationMs": 4119
+      },
+      {
+        "title": "sign-in locks out after repeated failures and counts down",
+        "file": "entry-flow.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 3177
+      },
+      {
+        "title": "the Brand kit type asks no description, takes PDF only, and lands under Files as \"Brand kit\"",
+        "file": "hsn-0902.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 5030
+      },
+      {
+        "title": "\"brandkit\" is a reserved description on any other kind — refused with the pointer at the Brand kit type",
+        "file": "hsn-0902.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 3355
+      },
+      {
+        "title": "the video duration: video only, 8 s by default, the maximum shown, clamped on a quality change, over-max refused",
+        "file": "hsn-0902.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 6763
+      },
+      {
+        "title": "@axe the Create visual modal with the duration control is clean",
+        "file": "hsn-0902.spec.ts",
+        "status": "passed",
+        "tags": [
+          "axe"
+        ],
+        "durationMs": 4940
+      },
+      {
+        "title": "Create visual on Today: beside Approve and Reject, refuses a blank kind, runs once, attaches nothing",
+        "file": "hsn-series.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 7288
+      },
+      {
+        "title": "Create visual on a Generate result: the second entry point opens the same modal",
+        "file": "hsn-series.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 10550
+      },
+      {
+        "title": "@axe the Create visual modal is clean",
+        "file": "hsn-series.spec.ts",
+        "status": "passed",
+        "tags": [
+          "axe"
+        ],
+        "durationMs": 4745
+      },
+      {
+        "title": "a tone needs a language, defaults only its length, shows both on its card, and edits them",
+        "file": "hsn-series.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 4503
+      },
+      {
+        "title": "sources stop at 10 and topics at 30: the counter, the disabled add, and room again after a removal",
+        "file": "hsn-series.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 7730
+      },
+      {
+        "title": "the Knowledge upload asks what it is, filters by type, refuses the wrong MIME, and needs a description",
+        "file": "hsn-series.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 6000
+      },
+      {
+        "title": "signup -> verify with the emailed code -> logged in, WITH a workspace, in the app",
+        "file": "live-auth.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "a second signup: resend immediately proves the 429 countdown, wrong password proves the vague 401",
+        "file": "live-auth.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "correct password + unverified email routes to the verify screen, and N3 names the workspace",
+        "file": "live-auth.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "forgot â†’ reset via the documented deep link revokes everything; only the new password works",
+        "file": "live-auth.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "the shell appears; sign out and logout-all both really revoke",
+        "file": "live-auth.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "a new user accepts an invite through the documented deep link and lands in the workspace",
+        "file": "live-auth.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "a token-carrying 401 purges the session and lands on login with the toast",
+        "file": "live-auth.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "a fresh owner + org, made through the product",
+        "file": "live-billing.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "the five endpoints answer the shapes the UI is built on — and the checkout url is never opened",
+        "file": "live-billing.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "/billing renders the plans FROM THE WIRE, Subscribe for the owner, and the honest empty history",
+        "file": "live-billing.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "the abandoned-checkout return shows the plans plus the note",
+        "file": "live-billing.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "the success route polls, shows the wire’s status every tick, and gives up honestly on an unpaid org",
+        "file": "live-billing.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "a member cannot start checkout: 403 forbidden, and any member reads",
+        "file": "live-billing.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "a generation on the unfunded org is refused with 402, and the refusal points at Billing",
+        "file": "live-billing.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "a fresh owner + org, made through the product",
+        "file": "live-brand-kit.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "the wire, from Node (NOT browser truth): presign the closed pair, PUT a tiny PDF, read the row back under Files, Delete, re-read",
+        "file": "live-brand-kit.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "browser truth: the Brand kit type sends a PDF from Chromium with nothing typed, it lists, and Delete removes it",
+        "file": "live-brand-kit.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "a fresh owner + org, made through the product",
+        "file": "live-brand-rules.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "a fresh org has no tones at all, and the screen says what that costs",
+        "file": "live-brand-rules.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "a tone keeps its rules, and a PATCH replaces the whole list",
+        "file": "live-brand-rules.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "the brand voice writes to one row, and an edit does not reorder it",
+        "file": "live-brand-rules.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "Preview this tone returns a real sample from the platform",
+        "file": "live-brand-rules.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "a fresh owner + org, made through the product",
+        "file": "live-brand.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "a custom tone: created under the adapter, edited, and it survives a reload",
+        "file": "live-brand.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "voice rules: the flat live list persists through the API",
+        "file": "live-brand.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "sources and topics: scheme-less display, real persistence",
+        "file": "live-brand.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "deleting a tone reflects in the schedules that referenced it",
+        "file": "live-brand.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "a fresh workspace has NO country, and I1 is where one is set",
+        "file": "live-country.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "the calendar carries real holidays, each with the rules for that day",
+        "file": "live-country.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "re-saving the same country is a quiet no-op, not a fake reload",
+        "file": "live-country.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "C2 no longer offers an event source it cannot create",
+        "file": "live-country.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "a fresh owner + org with its brand set up",
+        "file": "live-create-visual.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "one run, then Create visual on its result renders ONE image and attaches nothing",
+        "file": "live-create-visual.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "Today offers the same button on the ledger row, and the Studio lists the job",
+        "file": "live-create-visual.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "a fresh owner + org, made through the product",
+        "file": "live-generate.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "one balanced run returns a draft with its tone and its rationale",
+        "file": "live-generate.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "two accounts, each owning a workspace",
+        "file": "live-invite-org.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "an invited existing user can REACH the inviting workspace, and a reload keeps it",
+        "file": "live-invite-org.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "losing membership falls back honestly, and never to a dead screen",
+        "file": "live-invite-org.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "a fresh owner + org, made through the product",
+        "file": "live-knowledge.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "pasted text becomes a Ready source, and removing it removes it",
+        "file": "live-knowledge.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "a FILE uploads straight to storage from the browser (open-item 24)",
+        "file": "live-knowledge.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "a fresh owner + org, made through the product",
+        "file": "live-media-capabilities.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "every granted capability: the document’s example stops at the wallet (402), its trap before it (400) — zero spend",
+        "file": "live-media-capabilities.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "the Studio grid lists what the catalog grants, by name, with the catalog’s price",
+        "file": "live-media-capabilities.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "a fresh owner + org, made through the product",
+        "file": "live-media-upload.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "an image upload becomes a WIRE-listed Files row, and Delete removes it from the wire",
+        "file": "live-media-upload.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "the logo uploads with desc \"logo\", shows as the logo, stays out of Files, and removes",
+        "file": "live-media-upload.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "the inbox endpoints hold their contract, and the bell tells the truth",
+        "file": "live-notifications.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "signup → verify → the app: no wizard, and the workspace is real",
+        "file": "live-onboarding.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "a fresh live org has no tones, and the screen says what that costs",
+        "file": "live-onboarding.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "generation is locked, and the checklist names all four",
+        "file": "live-onboarding.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "the Studio composer is locked by the same gate",
+        "file": "live-onboarding.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "completing the four brand entities unlocks generation",
+        "file": "live-onboarding.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "the unlocked run really runs — one balanced draft",
+        "file": "live-onboarding.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "a fresh owner + org, with its brand set up",
+        "file": "live-proposals.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "one balanced run — the drafts it produces become the proposals under test",
+        "file": "live-proposals.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "after a RELOAD, Today shows the draft from the ledger",
+        "file": "live-proposals.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "approving records it as posted, and the decision survives a reload",
+        "file": "live-proposals.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "declining asks why, keeps the row, and is reversible",
+        "file": "live-proposals.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "a live org in the 619 shape: tones seeded, no schedule",
+        "file": "live-schedule-repair.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "C1 creates the missing schedule through the POST fallback, with the exact tones picked",
+        "file": "live-schedule-repair.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "and it survives a reload, still clean",
+        "file": "live-schedule-repair.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "signup creates the workspace and NOTHING else",
+        "file": "live-scheduling.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "C1 creates the schedule on first save, then PATCHes it — and it survives a reload",
+        "file": "live-scheduling.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "slots, if ingestion produced any, honour skip/un-skip and never offer approve",
+        "file": "live-scheduling.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "a fresh owner + org, made through the product",
+        "file": "live-studio.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "E1 is built from the catalog: the granted capabilities, real prices, no vendors",
+        "file": "live-studio.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "E3 lists renders, and is honest when there are none",
+        "file": "live-studio.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "E2 renders for real, and E4 opens the asset it made",
+        "file": "live-studio.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "verifying creates the org LIVE; the dashboard follows immediately",
+        "file": "live-team.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "I1 renames the org through PATCH, and the name survives a reload",
+        "file": "live-team.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "change-password keeps this session and only the new password works after",
+        "file": "live-team.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "inviting a NEW user: coded email, resend rate-limits honestly, cancel removes",
+        "file": "live-team.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "inviting an EXISTING user adds them immediately, and the role ladder holds",
+        "file": "live-team.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "an ADMIN viewing a team with an owner: no remove on the owner, no role selects at all",
+        "file": "live-team.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "a fresh owner + org, made through the product",
+        "file": "live-video-duration.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "a bad durationS is refused with 400 BEFORE the wallet check — the field is known, a maximum is enforced",
+        "file": "live-video-duration.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "the valid video body clears validation — and self-skips on 402, the positive proof riding on LIVE_MEDIA=1",
+        "file": "live-video-duration.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "a fresh owner + org, made through the product",
+        "file": "live-wallet.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "the balance chip shows money — and over a zero wallet, the instruction to subscribe",
+        "file": "live-wallet.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "H3 is a balance and a real usage read-back, in both allowed grains",
+        "file": "live-wallet.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "the wallet and usage endpoints answer the shapes the UI is built on",
+        "file": "live-wallet.spec.ts",
+        "status": "skipped",
+        "tags": [],
+        "skipReason": "live-mode run only (export VITE_API_BASE_URL)",
+        "durationMs": 0
+      },
+      {
+        "title": "the homepage renders the concept-v2 hero and every section, in order",
+        "file": "marketing.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 1893
+      },
+      {
+        "title": "the header wires every CTA at the route it names",
+        "file": "marketing.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 1963
+      },
+      {
+        "title": "the footer carries the legal routes and the client login",
+        "file": "marketing.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 2156
+      },
+      {
+        "title": "Get started lands on the REAL signup, not a second fake journey",
+        "file": "marketing.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 2499
+      },
+      {
+        "title": "the header survives navigation between marketing routes",
+        "file": "marketing.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 2608
+      },
+      {
+        "title": "the section links scroll to their sections, from this page and from another",
+        "file": "marketing.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 4330
+      },
+      {
+        "title": "the mobile menu opens, navigates, and closes behind it",
+        "file": "marketing.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 2802
+      },
+      {
+        "title": "pricing renders all three tiers, and only the self-serve ones sell",
+        "file": "marketing.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 1345
+      },
+      {
+        "title": "the demo request validates, then resolves locally and says so",
+        "file": "marketing.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 3177
+      },
+      {
+        "title": "both legal routes render the website documents",
+        "file": "marketing.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 1626
+      },
+      {
+        "title": "the retired early-access door lands on the demo request",
+        "file": "marketing.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 1553
+      },
+      {
+        "title": "the brand demo runs a company and stays honest about what it is",
+        "file": "marketing.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 8076
+      },
+      {
+        "title": "the control loop is real: Approve schedules the piece and records the preference",
+        "file": "marketing.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 2132
+      },
+      {
+        "title": "the Arabic section is native RTL, not a mirrored English layout",
+        "file": "marketing.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 2183
+      },
+      {
+        "title": "@reduced-motion the orbit is a composed still and no video mounts",
+        "file": "marketing.spec.ts",
+        "status": "passed",
+        "tags": [
+          "reduced-motion"
+        ],
+        "durationMs": 1841
+      },
+      {
+        "title": "the visitor world does not leak into the signed-in app",
+        "file": "marketing.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 2826
+      },
+      {
+        "title": "the marketing world self-hosts its type — no font request leaves",
+        "file": "marketing.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 1972
+      },
+      {
+        "title": "page titles follow the route",
+        "file": "marketing.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 3398
+      },
+      {
+        "title": "every marketing route scans clean",
+        "file": "marketing.spec.ts",
+        "status": "passed",
+        "tags": [
+          "axe"
+        ],
+        "durationMs": 9554
+      },
+      {
+        "title": "an image upload lands under Files, whole, and its Delete removes it",
+        "file": "med-media.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 5662
+      },
+      {
+        "title": "\"logo\" is a reserved description — refused in any case, with the pointer to Organization",
+        "file": "med-media.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 3990
+      },
+      {
+        "title": "the demo logo previews, replaces and removes — locally",
+        "file": "med-media.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 3065
+      },
+      {
+        "title": "@shots the checklist, the blocked generate, and the empty tones",
+        "file": "onb-shots.spec.ts",
+        "status": "skipped",
+        "tags": [
+          "shots"
+        ],
+        "skipReason": "review artefact — run with ONB_SHOTS=1",
+        "durationMs": 0
+      },
+      {
+        "title": "changing settings section keeps focus on the tab, never on the body",
+        "file": "settings-a11y.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 3030
+      },
+      {
+        "title": "dismissing the unsaved-changes guard returns focus to the field you were in",
+        "file": "settings-a11y.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 3731
+      },
+      {
+        "title": "the save bar never covers the focused field",
+        "file": "settings-a11y.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 2946
+      },
+      {
+        "title": "the upload inputs are not tab stops, so focus never vanishes",
+        "file": "settings-a11y.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 3315
+      },
+      {
+        "title": "the settings sections are one tab stop, with arrow keys between them",
+        "file": "settings-a11y.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 3273
+      },
+      {
+        "title": "an inactive tab renders its focus ring unclipped",
+        "file": "settings-a11y.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 2779
+      },
+      {
+        "title": "adding a brand-voice rule puts the cursor in the new row",
+        "file": "settings-a11y.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 3418
+      },
+      {
+        "title": "boots on the seeded dashboard in both themes",
+        "file": "smoke.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 1569
+      },
+      {
+        "title": "the retired wizard route redirects into the app",
+        "file": "smoke.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 1547
+      },
+      {
+        "title": "one workspace renders as identity, never as a menu that offers nothing",
+        "file": "smoke.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 1448
+      },
+      {
+        "title": "dataset switcher swaps the world in-session",
+        "file": "smoke.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 1987
+      },
+      {
+        "title": "state switcher forces loading and error presentations",
+        "file": "smoke.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 3201
+      },
+      {
+        "title": "dashboard and dev pages scan clean",
+        "file": "smoke.spec.ts",
+        "status": "passed",
+        "tags": [
+          "axe"
+        ],
+        "durationMs": 3461
+      },
+      {
+        "title": "the studio opens on the capability grid, and a demo asset still reaches the W5 composer",
+        "file": "studio-billing.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 3024
+      },
+      {
+        "title": "@golden the W5 composer renders each model’s own parameters and spends credits",
+        "file": "studio-billing.spec.ts",
+        "status": "passed",
+        "tags": [
+          "golden"
+        ],
+        "durationMs": 6024
+      },
+      {
+        "title": "a standalone asset attaches only to a draft that has earned media",
+        "file": "studio-billing.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 2895
+      },
+      {
+        "title": "the credits ledger explains the balance it shows",
+        "file": "studio-billing.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 3458
+      },
+      {
+        "title": "past due gates the product, not just the billing screen",
+        "file": "studio-billing.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 2846
+      },
+      {
+        "title": "changing plan states its consequence and grants through the ledger",
+        "file": "studio-billing.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 3619
+      },
+      {
+        "title": "@axe studio and billing scan clean",
+        "file": "studio-billing.spec.ts",
+        "status": "passed",
+        "tags": [
+          "axe"
+        ],
+        "durationMs": 3748
+      },
+      {
+        "title": "the grid shows the 13 capabilities, each an image with the name on it",
+        "file": "studio-capabilities.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 1825
+      },
+      {
+        "title": "a composer carries only its own fields, and the demo render lands on an asset",
+        "file": "studio-capabilities.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 4494
+      },
+      {
+        "title": "every composer refuses the document’s own trap before any round-trip",
+        "file": "studio-capabilities.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 5972
+      },
+      {
+        "title": "Settings shows the organization id at the top, with a copy control (HSN-0910/C)",
+        "file": "studio-capabilities.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 2825
+      },
+      {
+        "title": "@axe the grid and one composer scan clean",
+        "file": "studio-capabilities.spec.ts",
+        "status": "passed",
+        "tags": [
+          "axe"
+        ],
+        "durationMs": 4174
+      },
+      {
+        "title": "the queue groups drafts by slot and offers only legal actions",
+        "file": "today-queue.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 3456
+      },
+      {
+        "title": "@golden approving moves the card and updates the dashboard in the same session",
+        "file": "today-queue.spec.ts",
+        "status": "passed",
+        "tags": [
+          "golden"
+        ],
+        "durationMs": 4795
+      },
+      {
+        "title": "generating media spends credits, and the balance follows",
+        "file": "today-queue.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 6290
+      },
+      {
+        "title": "a short balance refuses the run and keeps the prompt",
+        "file": "today-queue.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 3817
+      },
+      {
+        "title": "scheduling reports per channel, and a re-auth channel cannot be picked",
+        "file": "today-queue.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 3925
+      },
+      {
+        "title": "draft detail shows the timeline and mirrors the queue actions",
+        "file": "today-queue.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 3615
+      },
+      {
+        "title": "rejecting asks why, and the draft leaves the queue",
+        "file": "today-queue.spec.ts",
+        "status": "passed",
+        "tags": [],
+        "durationMs": 3613
+      },
+      {
+        "title": "@axe the queue and draft detail scan clean",
+        "file": "today-queue.spec.ts",
+        "status": "passed",
+        "tags": [
+          "axe"
+        ],
+        "durationMs": 4393
+      }
+    ]
+  }
+}

@@ -97,6 +97,10 @@ test('I1 renames the org through PATCH, and the name survives a reload', async (
     timeout: SCREEN_SYNC,
   })
   await page.getByLabel('Organization name').fill(ORG_RENAMED)
+  // On production a new org's offer line is empty and REQUIRED (GATE-0910,
+  // item 62): the form refuses any save without it — a rename included — so
+  // the walk fills it, as a user must. The demo world pre-filled it on dev.
+  await page.getByLabel('What you offer, in one line').fill('Small-batch coffee, roasted to order.')
   await page.getByRole('button', { name: 'Save changes' }).click()
   // One PATCH round-trip — live-red-2026-08-23.
   await expect(page.getByText('Organization saved')).toBeVisible({ timeout: ONE_CALL })

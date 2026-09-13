@@ -1,0 +1,9 @@
+warm-up: skipped — the runner warmed the fleet and keeps the heartbeat (GATE-0910 §3.2)
+
+Running 3 tests using 1 worker
+
+  -  1 [chromium] › e2e\live-create-visual.spec.ts:53:1 › a fresh owner + org with its brand set up
+  -  2 [chromium] › e2e\live-create-visual.spec.ts:69:1 › one run, then Create visual on its result renders ONE image and attaches nothing
+  -  3 [chromium] › e2e\live-create-visual.spec.ts:106:1 › Today offers the same button on the ledger row, and the Studio lists the job
+
+  3 skipped

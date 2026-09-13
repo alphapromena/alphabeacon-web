@@ -1,0 +1,41 @@
+warm-up: skipped — the runner warmed the fleet and keeps the heartbeat (GATE-0910 §3.2)
+
+Running 6 tests using 1 worker
+
+  ok 1 [chromium] › e2e\live-team.spec.ts:75:1 › verifying creates the org LIVE; the dashboard follows immediately (5.5s)
+  x  2 [chromium] › e2e\live-team.spec.ts:87:1 › I1 renames the org through PATCH, and the name survives a reload (24.3s)
+  -  3 [chromium] › e2e\live-team.spec.ts:112:1 › change-password keeps this session and only the new password works after
+  -  4 [chromium] › e2e\live-team.spec.ts:138:1 › inviting a NEW user: coded email, resend rate-limits honestly, cancel removes
+  -  5 [chromium] › e2e\live-team.spec.ts:162:1 › inviting an EXISTING user adds them immediately, and the role ladder holds
+  -  6 [chromium] › e2e\live-team.spec.ts:247:1 › an ADMIN viewing a team with an owner: no remove on the owner, no role selects at all
+
+
+  1) [chromium] › e2e\live-team.spec.ts:87:1 › I1 renames the org through PATCH, and the name survives a reload 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText('Organization saved')
+    Expected: visible
+    Timeout: 20000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 20000ms
+      - waiting for getByText('Organization saved')
+
+
+      100 |   await page.getByRole('button', { name: 'Save changes' }).click()
+      101 |   // One PATCH round-trip — live-red-2026-08-23.
+    > 102 |   await expect(page.getByText('Organization saved')).toBeVisible({ timeout: ONE_CALL })
+          |                                                      ^
+      103 |
+      104 |   // A reload re-syncs from the server â€” the rename was real, not local.
+      105 |   await page.goto('/settings/organization')
+        at C:\alphabeacon-web\alphabeacon-web\e2e\live-team.spec.ts:102:54
+
+    Error Context: .gate\artifacts\20260913-062802\round-2\live-team\live-team-I1-renames-the-o-8ca60--the-name-survives-a-reload-chromium\error-context.md
+
+  1 failed
+    [chromium] › e2e\live-team.spec.ts:87:1 › I1 renames the org through PATCH, and the name survives a reload 
+  4 did not run
+  1 passed (31.9s)

@@ -1358,3 +1358,45 @@ Numbering continues from 50. The record: `Docs/qa/hsn-0910/phase0/` and the
     widest count that stays green 3/3 (the record says which), and the app's
     own handling of a 429 (no retry today — the walk times out) is a product
     question for a later order, not this one's.
+
+62. **Two production walks the dev server never showed (GATE-0910 §4, the
+    runner on the production build, 2026-09-13).** On the production build the
+    boot world is `visitor`, so a new org's **Schedule form starts with NO
+    model selected** and refuses the first save with "Pick which model drafts
+    your copy.", and its **Organization form requires "What you offer, in one
+    line"** before any save — a rename included. On a dev server the demo world
+    pre-fills both, which is why `live-scheduling`, `live-schedule-repair` and
+    `live-team` were green there for weeks and red on the production build in
+    all four rounds of the proof (records
+    `Docs/qa/gate-0910/gate/20260913-062802/` and `…-070254/`; the pages at
+    failure carry the two refusals in the app's own words). The three specs now
+    walk what production asks — pick Balanced, fill the offer line — and are
+    green on the built app (`Docs/qa/gate-0910/item-62/preview-probe.log`,
+    11 passed). **For the founder's ruling, a product question the spec fix
+    does not decide:** should a new org's schedule default to a model
+    (`balanced` is already the wire's fallback when none is sent), and should a
+    rename be possible before the offer line exists? Today on `1.malaky.ai` and
+    on the apex a real user meets both walls exactly as the specs did. Item
+    59's family, third and fourth instance.
+
+63. **For Hasan: `social-posts.media` checks the `durationS` TYPE before the
+    wallet and the MAXIMUM after it (GATE-0910, measured 2026-09-13 at zero
+    spend — `Docs/qa/gate-0910/item-63/`, `pnpm probe:item-63`).** The two
+    halves of one field are no longer enforced in the same place: `durationS:
+    "abc"` is refused **400 `bad_request`** before the wallet, as the
+    capabilities document says; `durationS: 999` passes validation and reaches
+    the wallet, which refuses it **402 `wallet_insufficient`** (request-ids
+    `a3cb0dca-5f6a-4646-9ae8-3abe2c9a5315` and
+    `25c4c86c-6b07-40ab-bfe5-93efba1b4b86`, both verbatim on the record). On
+    2026-09-10 both answered 400 and `live-video-duration` was green in both
+    HSN-0910 gate rounds; on 2026-09-13 it is red in six rounds out of six,
+    always on the over-maximum body, never the type one. **Why it matters
+    beyond the test:** on an unfunded org the wallet hides it, but on a FUNDED
+    org that body is paid for before anything checks the clip's length. Asked
+    of Hasan: (1) is the maximum still enforced, and where — before the wallet,
+    after it, or only upstream at render time; (2) if after, is a funded org
+    charged for a body later rejected for its length; (3) if the order is
+    deliberate, the document should say so and the client should hold the
+    maximum itself before spending. **No spec edit** — the spec posts to the
+    API directly, not through the app, and stays as the document says until
+    Hasan answers (the founder's ruling, 2026-09-13).

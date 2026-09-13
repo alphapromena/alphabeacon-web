@@ -1,0 +1,74 @@
+=== PREVIEW PROBE · start 2026-09-13T07:55:38Z · specs e2e/live-team.spec.ts e2e/live-scheduling.spec.ts e2e/live-schedule-repair.spec.ts · E2E_API_ENV=dev · funded creds: present · preview pid 32451 · keep-awake pid 32450
+served entry: assets/index-CK7x87Cs.js
+api host inlined in the served entry: 1 time(s)
+/src/api/config.ts from the preview (the trap-22 tripwire's probe): http 200 text/html
+a deep route from the preview (SPA fallback): http 200 text/html
+
+> alphabeacon-web@0.0.0 e2e C:\alphabeacon-web\alphabeacon-web
+> playwright test "e2e/live-team.spec.ts" "e2e/live-scheduling.spec.ts" "e2e/live-schedule-repair.spec.ts" "--workers=1"
+
+
+warm-up: waking the API before the suite starts (https://<api-host>/health)
+warm-up: service awake after 2 probe(s) in 0.8s — last 2: 479ms, 106ms
+warm-up: burst 1 — slowest of 12 was 200 in 1100ms — fleet not warm yet
+warm-up: burst 2 — slowest of 12 was 200 in 529ms — fleet not warm yet
+warm-up: burst 3 — slowest of 12 was 200 in 93ms — fleet not warm yet
+warm-up: burst 4 — slowest of 12 was 200 in 92ms — fleet not warm yet
+warm-up: burst 5 — slowest of 12 was 200 in 95ms — fleet not warm yet
+warm-up: burst 6 — slowest of 12 was 200 in 93ms — fleet not warm yet
+warm-up: burst 7 — slowest of 12 was 200 in 93ms — fleet not warm yet
+warm-up: burst 8 — slowest of 12 was 200 in 93ms — fleet not warm yet
+warm-up: burst 9 — slowest of 12 was 200 in 95ms — fleet not warm yet
+warm-up: burst 10 — slowest of 12 was 200 in 93ms — fleet not warm yet
+warm-up: burst 11 — slowest of 12 was 200 in 95ms — fleet not warm yet
+warm-up: burst 12 — slowest of 12 was 200 in 94ms — fleet not warm yet
+warm-up: burst 13 — slowest of 12 was 200 in 93ms — fleet not warm yet
+warm-up: burst 14 — slowest of 12 was 200 in 92ms — fleet not warm yet
+warm-up: burst 15 — slowest of 12 was 200 in 92ms — fleet not warm yet
+warm-up: burst 16 — slowest of 12 was 200 in 90ms — fleet not warm yet
+warm-up: burst 17 — slowest of 12 was 200 in 90ms — fleet not warm yet
+warm-up: burst 18 — slowest of 12 was 200 in 100ms — fleet not warm yet
+warm-up: burst 19 — slowest of 12 was 200 in 93ms — fleet not warm yet
+warm-up: burst 20 — slowest of 12 was 200 in 91ms — fleet not warm yet
+warm-up: burst 21 — slowest of 12 was 200 in 93ms — fleet not warm yet
+warm-up: burst 22 — slowest of 12 was 200 in 95ms — fleet not warm yet
+warm-up: burst 23 — slowest of 12 was 200 in 90ms — fleet not warm yet
+warm-up: burst 24 — slowest of 12 was 200 in 91ms — fleet not warm yet
+warm-up: burst 25 — slowest of 12 was 200 in 91ms — fleet not warm yet
+warm-up: burst 26 — slowest of 12 was 200 in 152ms — fleet not warm yet
+warm-up: burst 27 — slowest of 12 was 200 in 95ms — fleet not warm yet
+warm-up: burst 28 — slowest of 12 was 200 in 90ms — fleet not warm yet
+warm-up: burst 29 — slowest of 12 was 200 in 90ms — fleet not warm yet
+warm-up: burst 30 — slowest of 12 was 200 in 91ms — fleet not warm yet
+warm-up: burst 31 — slowest of 12 was 200 in 90ms — fleet not warm yet
+warm-up: burst 32 — slowest of 12 was 200 in 95ms — fleet not warm yet
+warm-up: burst 33 — slowest of 12 was 200 in 90ms — fleet not warm yet
+warm-up: burst 34 — slowest of 12 was 200 in 94ms — fleet not warm yet
+warm-up: burst 35 — slowest of 12 was 200 in 91ms — fleet not warm yet
+warm-up: burst 36 — slowest of 12 was 200 in 92ms — fleet not warm yet
+warm-up: 12-way fleet warm after 37 burst(s), 15.0s total — slowest 108ms
+
+warm-up: heartbeat started — 4 probes every 5s for the life of the run
+
+
+Running 12 tests using 1 worker
+
+  ok  1 [chromium] › e2e\live-schedule-repair.spec.ts:45:1 › a live org in the 619 shape: tones seeded, no schedule (6.8s)
+  ok  2 [chromium] › e2e\live-schedule-repair.spec.ts:85:1 › C1 creates the missing schedule through the POST fallback, with the exact tones picked (11.5s)
+  ok  3 [chromium] › e2e\live-schedule-repair.spec.ts:143:1 › and it survives a reload, still clean (4.6s)
+  ok  4 [chromium] › e2e\live-scheduling.spec.ts:57:1 › signup creates the workspace and NOTHING else (8.3s)
+  ok  5 [chromium] › e2e\live-scheduling.spec.ts:93:1 › C1 creates the schedule on first save, then PATCHes it — and it survives a reload (12.5s)
+  -   6 [chromium] › e2e\live-scheduling.spec.ts:185:1 › slots, if ingestion produced any, honour skip/un-skip and never offer approve
+  ok  7 [chromium] › e2e\live-team.spec.ts:75:1 › verifying creates the org LIVE; the dashboard follows immediately (5.3s)
+  ok  8 [chromium] › e2e\live-team.spec.ts:87:1 › I1 renames the org through PATCH, and the name survives a reload (8.1s)
+  ok  9 [chromium] › e2e\live-team.spec.ts:116:1 › change-password keeps this session and only the new password works after (10.4s)
+  ok 10 [chromium] › e2e\live-team.spec.ts:142:1 › inviting a NEW user: coded email, resend rate-limits honestly, cancel removes (10.7s)
+  ok 11 [chromium] › e2e\live-team.spec.ts:166:1 › inviting an EXISTING user adds them immediately, and the role ladder holds (29.0s)
+  ok 12 [chromium] › e2e\live-team.spec.ts:251:1 › an ADMIN viewing a team with an owner: no remove on the owner, no role selects at all (22.8s)
+
+warm-up: heartbeat stopped after 27 beat(s)
+
+  1 skipped
+  11 passed (2.5m)
+--- e2e/live-team.spec.ts e2e/live-scheduling.spec.ts e2e/live-schedule-repair.spec.ts · exit 0 · 152 s
+=== PREVIEW PROBE · end 2026-09-13T07:58:10Z

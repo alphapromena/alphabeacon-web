@@ -46,7 +46,7 @@ import {
   treeHash,
   type E2eSummary,
 } from '../verify-lib'
-import { classifyResult, redact, type Classification } from './classify'
+import { classifyResult, isRerunnable, redact, skipLabel, type Classification } from './classify'
 import { LANES, filesInLane, laneOf, type Lane } from './lanes'
 
 // ----------------------------------------------------------------- options
@@ -489,15 +489,19 @@ class Gate {
         summary = null
       }
     }
-    // Keep the DOM at any failure out of the wiped folder (trap 24).
+    // Keep the DOM at any failure out of the wiped folder (trap 24) — and READ
+    // it: the app's own failure copy is what tells an error-page red (the
+    // service failed the screen) from a product one, and the first is re-run
+    // like a lost socket rather than left UNCLASSIFIED.
+    let errorContext = ''
     if (summary && summary.failed > 0 && existsSync(outDir)) {
       for (const d of readdirSync(outDir)) {
         const ctx = join(outDir, d, 'error-context.md')
-        if (existsSync(ctx))
-          writeFileSync(
-            join(roundDir, `${name}${suffix}-${d.slice(0, 40)}-error-context.md`),
-            redact(readFileSync(ctx, 'utf8'), this.host),
-          )
+        if (existsSync(ctx)) {
+          const text = redact(readFileSync(ctx, 'utf8'), this.host)
+          errorContext += `\n${text}`
+          writeFileSync(join(roundDir, `${name}${suffix}-${d.slice(0, 40)}-error-context.md`), text)
+        }
       }
     }
     const result: FileResult = {
@@ -512,7 +516,7 @@ class Gate {
       startedAt,
       classification: 'green',
     }
-    result.classification = this.classify(result, raw)
+    result.classification = this.classify(result, raw, errorContext)
     const s = summary
       ? `${summary.passed} passed / ${summary.skipped} skipped / ${summary.failed} failed`
       : `no report (exit ${exit})`
@@ -522,8 +526,8 @@ class Gate {
     return result
   }
 
-  classify(r: FileResult, raw: string): FileResult['classification'] {
-    return classifyResult(r.summary, r.exit, raw)
+  classify(r: FileResult, raw: string, errorContext = ''): Classification {
+    return classifyResult(r.summary, r.exit, raw, errorContext)
   }
 
   async pool<T>(items: T[], n: number, fn: (item: T) => Promise<void>): Promise<void> {
@@ -562,8 +566,11 @@ class Gate {
       for (const file of files) results.push(await this.runFile(file, 'B', round, 1))
       this.say(`round ${round} lane B done in ${seconds(t).toFixed(0)} s`)
     }
-    // The re-run rule: a network-lost file is re-run solo, 3/3, never waived.
-    for (const r of results.filter((x) => x.classification === 'network-lost')) {
+    // The re-run rule: a file the runner can name as the service's fault — a
+    // lost socket, or the app's own error page behind the timeout — is re-run
+    // solo and must come back green 3/3. Never waived, never widened further:
+    // anything the runner cannot name stays UNCLASSIFIED for a human.
+    for (const r of results.filter((x) => isRerunnable(x.classification))) {
       r.reruns = []
       for (let attempt = 2; attempt <= 4; attempt += 1) {
         const again = await this.runFile(`e2e/${r.file}.spec.ts`, r.lane, round, attempt)
@@ -664,26 +671,27 @@ class Gate {
         '',
       )
       lines.push(
-        '| File | Lane | Passed | Skipped | Failed | Seconds | Classification | Skips, with their reasons |',
-        '| --- | --- | ---: | ---: | ---: | ---: | --- | --- |',
+        '| File | Lane | Passed | Skipped | Not run | Failed | Seconds | Classification | Skips and not-runs, with their reasons |',
+        '| --- | --- | ---: | ---: | ---: | ---: | ---: | --- | --- |',
       )
       for (const r of results) {
         const s = r.summary
-        const skips = (s?.tests ?? [])
-          .filter((t) => t.status === 'skipped')
-          .map(
-            (t) =>
-              `${t.title.slice(0, 60)} — _${(t.skipReason ?? 'no reason given').slice(0, 120)}_`,
-          )
+        const failedHere = (s?.failed ?? 0) > 0
+        const skipped = (s?.tests ?? []).filter((t) => t.status === 'skipped')
+        // A skip with its own reason is a decision and keeps it; one without, in
+        // a file that failed, is Playwright's serial cascade — counted apart, so
+        // the table never undercounts what a red cost.
+        const notRun = failedHere ? skipped.filter((t) => !t.skipReason?.trim()).length : 0
+        const skips = skipped
+          .map((t) => `${t.title.slice(0, 60)} — _${skipLabel(t, failedHere).slice(0, 120)}_`)
           .join('<br>')
-        const cls =
-          r.classification === 'network-lost'
-            ? `network-lost, re-run ${r.reruns?.filter((x) => x.classification === 'green' || x.classification === 'skipped-all').length ?? 0}/3`
-            : r.classification === 'unclassified'
-              ? `**UNCLASSIFIED**${r.human ? ` → ${r.human}` : ' — classify before any fix'}`
-              : r.classification
+        const cls = isRerunnable(r.classification)
+          ? `${r.classification}, re-run ${r.reruns?.filter((x) => x.classification === 'green' || x.classification === 'skipped-all').length ?? 0}/3`
+          : r.classification === 'unclassified'
+            ? `**UNCLASSIFIED**${r.human ? ` → ${r.human}` : ' — classify before any fix'}`
+            : r.classification
         lines.push(
-          `| ${r.file} | ${r.lane} | ${s?.passed ?? '?'} | ${s?.skipped ?? '?'} | ${s?.failed ?? '?'} | ${r.seconds.toFixed(0)} | ${cls} | ${skips} |`,
+          `| ${r.file} | ${r.lane} | ${s?.passed ?? '?'} | ${s ? s.skipped - notRun : '?'} | ${notRun} | ${s?.failed ?? '?'} | ${r.seconds.toFixed(0)} | ${cls} | ${skips} |`,
         )
       }
       const reds = results.filter((r) => (r.summary?.failed ?? 1) > 0)

@@ -1,0 +1,11 @@
+warm-up: skipped — the runner warmed the fleet and keeps the heartbeat (GATE-0910 §3.2)
+
+Running 4 tests using 1 worker
+
+  ok 1 [chromium] › e2e\live-studio.spec.ts:37:1 › a fresh owner + org, made through the product (6.1s)
+  ok 2 [chromium] › e2e\live-studio.spec.ts:47:1 › E1 is built from the catalog: the granted capabilities, real prices, no vendors (9.4s)
+  ok 3 [chromium] › e2e\live-studio.spec.ts:88:1 › E3 lists renders, and is honest when there are none (3.2s)
+  -  4 [chromium] › e2e\live-studio.spec.ts:99:1 › E2 renders for real, and E4 opens the asset it made
+
+  1 skipped
+  3 passed (20.8s)

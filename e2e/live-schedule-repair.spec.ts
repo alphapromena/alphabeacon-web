@@ -111,6 +111,11 @@ test('C1 creates the missing schedule through the POST fallback, with the exact 
   )
   await page.getByRole('button', { name: 'Monday' }).click()
   await page.getByRole('button', { name: 'Wednesday' }).click()
+  // The production world starts with NO model selected (GATE-0910, item 62):
+  // the form refuses to save without one — "Pick which model drafts your
+  // copy." — so this walk picks Balanced, as a new org on production must.
+  // The dev server's demo world had one pre-picked, which hid this for weeks.
+  await page.getByRole('radio', { name: /^Balanced/ }).check()
 
   // Pick a deliberate, checkable subset — not all of them, so a screen that
   // saved "whatever it was holding" would be caught.

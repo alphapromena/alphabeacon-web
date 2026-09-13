@@ -3412,3 +3412,40 @@ ConcurrentInvocationLimitExceeded` in the API's words (item 61, for Ward).
 **Lane A runs at one in flight until that cap moves;** the runner keeps its
 lanes, its `--workers`, and the one-command measurement, and the fast gate's
 gain at one is verify-once, one server per round, and no gaps.
+
+### 2026-09-13 — the founder: a build order ends at lint, typecheck, unit and static; live rounds and gate runs happen only in a testing session asked for by name
+
+**The standing rule, from the next order onward.** The tail of every BUILD
+order is **lint → typecheck → unit → the static suite**. Nothing live. No
+`pnpm gate`, no live round, no probe against the deployed API, unless the
+founder opens a **testing session and names it as one**. This order's own
+proof was the last work of its kind done inside a build order.
+
+Why it was ruled: GATE-0910 §4 cost three launches and two and a half days of
+wall clock. The first stopped at its first live red, the second died in an
+uncapped port drain and then the host slept 63 hours, the third finished but
+took 96 minutes for the old chain plus two full runner runs. None of that
+measured the product; it measured the harness, the API's weather and this
+machine. A build order that ends at the static suite finishes in minutes and
+is never wrong about what it proved.
+
+**Also ruled the same day, on GATE-0910's §4 report:**
+
+- **No fourth re-proof, ever.** Two full `pnpm gate` runs stand as the proof
+  (34.8 min and 32.9 min, both RED on the same four files, the reds
+  classified), beside the old chain's 61.8 min. The runner is not re-measured
+  to make a number look better.
+- **The three spec defects are the specs'**, not the wire's: the dev server's
+  demo world pre-filled a schedule model and an offer line that the production
+  build leaves empty, so three specs walked a state production does not have.
+  One line each, walking what a user must do. The product question they raise
+  is item 62 and stays the founder's.
+- **`live-video-duration` gets no spec edit.** It posts to the API directly,
+  not through the app, so a changed answer is Hasan's to confirm, not ours to
+  encode. Measured at zero spend with request-ids for his message (item 63).
+- **Two reporting fixes, because a record that misleads is worse than none:**
+  a skipped test with no reason in a file that failed reads "not run, an
+  earlier test in this file failed" and is counted apart from a real skip; and
+  the re-run rule widens from a lost socket to the app's own error page —
+  both are the service's fault, both re-run solo 3/3, and anything the runner
+  cannot name still stays UNCLASSIFIED for a human.

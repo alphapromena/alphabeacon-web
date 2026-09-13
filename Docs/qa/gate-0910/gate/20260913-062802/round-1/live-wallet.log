@@ -1,0 +1,10 @@
+warm-up: skipped — the runner warmed the fleet and keeps the heartbeat (GATE-0910 §3.2)
+
+Running 4 tests using 1 worker
+
+  ok 1 [chromium] › e2e\live-wallet.spec.ts:51:1 › a fresh owner + org, made through the product (15.4s)
+  ok 2 [chromium] › e2e\live-wallet.spec.ts:76:1 › the balance chip shows money — and over a zero wallet, the instruction to subscribe (4.8s)
+  ok 3 [chromium] › e2e\live-wallet.spec.ts:96:1 › H3 is a balance and a real usage read-back, in both allowed grains (4.7s)
+  ok 4 [chromium] › e2e\live-wallet.spec.ts:131:1 › the wallet and usage endpoints answer the shapes the UI is built on (4.2s)
+
+  4 passed (31.0s)

@@ -33,7 +33,8 @@
     "verify:w05": "tsx scripts/verify-w05.ts",
     "verify:w06": "tsx scripts/verify-w06.ts",
     "verify:all": "tsx scripts/verify-all.ts",
-    "gate": "tsx scripts/gate/gate.ts"
+    "gate": "tsx scripts/gate/gate.ts",
+    "probe:item-63": "tsx scripts/probe-item-63.ts"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
