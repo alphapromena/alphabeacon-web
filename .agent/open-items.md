@@ -1400,3 +1400,67 @@ Numbering continues from 50. The record: `Docs/qa/hsn-0910/phase0/` and the
     maximum itself before spending. **No spec edit** — the spec posts to the
     API directly, not through the app, and stays as the document says until
     Hasan answers (the founder's ruling, 2026-09-13).
+
+64. **`input[id^="voice-do"]` also matches the Don't rows — six call sites read
+    a list they do not name (found 2026-09-13 by the brand-voice removal
+    probe; NOT fixed, by the founder's word).** `RuleList` ids its inputs
+    `<idPrefix>-<index>` (`src/features/settings/field-editors.tsx`), and the
+    Brand voice screen passes `voice-do` and `voice-dont` — so the prefix
+    `voice-do` is a prefix of `voice-dont` too, and
+    `input[id^="voice-do"]` selects **every Do row AND every Don't row**.
+    Measured on org 2166 with one do and one dont stored: the locator returned
+    `["Name the farm when it matters", "Call anything artisanal"]` — two
+    values for a one-row list. What it costs, per site: the READS in
+    `live-brand-rules.spec.ts:167/184/187` and `live-brand.spec.ts:114` use
+    `.first()` / `.nth(1)`, and the Do fieldset renders before the Don't one,
+    so today they land on real Do rows **by DOM order, not because the
+    selector says so** — they pass while asserting something they do not
+    state, and any `toHaveCount` on that locator would be wrong outright. The
+    WRITES are the fragile half: `.last()` at
+    `live-brand-rules.spec.ts:157/159`, `live-brand.spec.ts:109`,
+    `live-onboarding.spec.ts:138` and `live-setup.ts:173/396` resolves to the
+    **Don't** input the moment a don't row already exists, so the helper types
+    the do-rule into the wrong field and the assertion fails somewhere else.
+    `live-setup.ts:173` (`ensureFundedBrand`) is the one to watch: it runs on
+    the SHARED funded org 1813, which today has 1 do / 0 dont (item's own
+    census, same date) — latent, not firing. The honest selector is
+    `input[id^="voice-do-"]` (the trailing dash), or `getByLabel(/^Do rule/)`
+    against the `aria-label` `RuleList` already writes. **Deferred
+    deliberately:** every affected spec is green today, the fix touches four
+    spec files and one helper, and it belongs in a testing session, not in a
+    probe. No behaviour of the app is implicated — the screen and its PATCH
+    are correct (`Docs`-less scratch record, 2026-09-13 probe).
+
+65. **CLOSED IN CODE 2026-09-13 — the brand voice read/write asymmetry that
+    grew org 1867's row from 18 rules to 94** (branch `feat/voice-0913`,
+    decisions.md "D-INT-B AMENDED"). Kept here as the record of what a
+    read/write asymmetry costs, and because the DATA repair was manual: org
+    1867's two rows were merged to 19 deduplicated rules on row 293 and row
+    294 deleted, by hand, at zero spend (request-ids in sessions.md). Three
+    fixes shipped together — the adapter reads the canonical row only, a
+    combined cap of 40 sits below the wire's 50, and a refused save renders
+    the wire's 400 with its request id instead of a green toast. 17 new unit
+    tests. **Nothing live has run against these** (build order, the standing
+    rule): the next testing session the founder names is what proves them on
+    the deployed API. `live-brand-rules.spec.ts` and `live-brand.spec.ts` both
+    walk this screen and neither was touched.
+
+66. **For the founder: how should a workspace with EXTRA brand voice rows be
+    resolved?** (2026-09-13, the half of item 65 deliberately not built.) The
+    screen now edits one row and SAYS the others exist — it does not merge or
+    delete them, because that is destructive, irreversible, and a judgement
+    call about which rule survives a near-duplicate. Today the answer is a
+    support action: read both lists out, merge by hand, delete the loser (the
+    1867 walk is the template). **Two candidates for a real mechanism:**
+    (a) a reviewed merge in the product — show both lists side by side, let
+    the user choose what survives, one explicit press, no silent rewrite; or
+    (b) ask Hasan to make the voice name unique per org, so a second
+    `Brand voice` row cannot be created at all. (b) is the actual fix and
+    removes the class; (a) is what this repo can ship without him, and is
+    worth having anyway for rows that already exist under other names. Until
+    one is chosen, the notice is the whole behaviour. **Nothing to ask Hasan
+    about the limit:** `Docs/api/api.md` line 675 has said "at most **50**
+    rules per create/PATCH" all along. The client simply never enforced a
+    limit its own contract document carried — which is the more useful
+    lesson, and why the new cap is a constant next to the other two rather
+    than a number buried in a screen.

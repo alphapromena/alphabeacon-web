@@ -41,6 +41,7 @@ import {
   useTopics,
 } from '@/data/provider'
 import {
+  MAX_BRAND_VOICE_RULES,
   MAX_FOLLOWED_SOURCES,
   MAX_TOPICS,
   type BrandVoice,
@@ -202,6 +203,15 @@ export function useBrandActions() {
      * jumped to the top of the list (open-items 12).
      */
     async saveBrandVoice(next: BrandVoice): Promise<AuthActionResult> {
+      // The cap is on GROWTH, exactly as topics' is: a list already above it
+      // (written by another client, or by this app before the cap existed)
+      // still saves and still shrinks. Only growing past it stops. Counted
+      // COMBINED because the wire counts one array (item 65).
+      const nextTotal = next.do.length + next.dont.length
+      const savedTotal = org.brandVoice.do.length + org.brandVoice.dont.length
+      if (nextTotal > MAX_BRAND_VOICE_RULES && nextTotal > savedTotal) {
+        return capReached('rules', MESSAGES.errors.brandVoiceCapReached)
+      }
       if (!live || !orgId) return ok
       const rules = joinRules(next)
       const canonicalId = brandIds?.canonicalVoiceId ?? null

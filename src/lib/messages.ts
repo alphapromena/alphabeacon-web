@@ -123,6 +123,8 @@ export const MESSAGES = {
     // silent trim. Existing entries above a cap stay listed.
     sourcesCapReached: 'You can follow at most 10 sources. Remove one to add another.',
     topicsCapReached: 'You can keep at most 30 topics. Remove one to add another.',
+    brandVoiceCapReached:
+      'You can keep at most 40 brand voice rules across Do and Don’t. Remove one to add another.',
     // MED-0831: the media door. An upload is presign → PUT → done, so a
     // failure either left nothing (the reserved slot was deleted) or left a
     // listed slot the user can delete — said plainly, with the asset id
@@ -335,6 +337,17 @@ export const MESSAGES = {
       'Language and length are kept in this browser for now — the backend stores them in a later phase, so another device will show them as not set until then.',
     /** I2/I5 — why a save here matters, said where the saving happens. */
     reachesNextGeneration: 'Saved changes reach the next generation automatically.',
+    /**
+     * D-INT-B amended (2026-09-13, item 65). The screen now reads and writes
+     * ONE voice row, so a workspace carrying extra rows would have their
+     * rules vanish from view while the server's context bundle kept feeding
+     * them to every draft. Silence there is the dangerous option, so the
+     * screen says the rules exist, says they still apply, and says this
+     * screen cannot reach them. Merging them is a support action, not a
+     * button: it rewrites rows a person may not have meant to combine.
+     */
+    brandVoiceExtraRows:
+      'This workspace has extra brand voice rows that this screen cannot edit. Their rules still shape every draft, and the count below covers only the rules shown here. Ask support to merge them into this list.',
     // Org country (INT-8) — the single holiday control in live mode.
     countryLoadsHolidays:
       "Setting this loads that country's public holidays into your calendar, and drafts start working around them.",

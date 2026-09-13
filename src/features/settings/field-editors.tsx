@@ -121,6 +121,7 @@ export function RuleList({
   placeholder,
   values,
   onChange,
+  disableAdd = false,
 }: {
   idPrefix: string
   label: string
@@ -128,6 +129,12 @@ export function RuleList({
   placeholder?: string
   values: string[]
   onChange: (next: string[]) => void
+  /**
+   * A ceiling reached elsewhere (a cap counted ACROSS two lists, say). Adding
+   * stops; every row already here stays listed and stays removable, which is
+   * the HSN-04 rule for a list already over its cap.
+   */
+  disableAdd?: boolean
 }) {
   const set = (index: number, value: string) =>
     onChange(values.map((entry, i) => (i === index ? value : entry)))
@@ -184,7 +191,14 @@ export function RuleList({
         ))}
       </ul>
 
-      <Button type="button" variant="outline" size="sm" className="w-fit" onClick={addRow}>
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        className="w-fit"
+        disabled={disableAdd}
+        onClick={addRow}
+      >
         <Plus aria-hidden />
         Add {label.toLowerCase()}
       </Button>

@@ -530,6 +530,21 @@ export const MAX_POSTS_PER_DAY = 3
 export const MAX_FOLLOWED_SOURCES = 10
 export const MAX_TOPICS = 30
 
+/**
+ * The brand voice's cap, COMBINED across Do and Don't (2026-09-13, item 65).
+ *
+ * Same family as the two above, with one difference that is the whole point:
+ * the wire has a hard limit of its own. A voice row's `rules` array is
+ * refused past **50** items — `400 validation_failed`, "Too big: expected
+ * array to have <=50 items" — so this ceiling sits BELOW it. The gap is
+ * deliberate: a user who reaches 40 is stopped by the product, in the
+ * product's words, instead of by a server error they cannot act on.
+ *
+ * Combined, not per list, because the wire counts one array. Forty do-rules
+ * and forty don'ts would be eighty on the wire and refused.
+ */
+export const MAX_BRAND_VOICE_RULES = 40
+
 /** A2 locks out after this many consecutive failures (screens4.md A2). */
 export const MAX_SIGN_IN_ATTEMPTS = 3
 export const SIGN_IN_LOCKOUT_MS = 30_000

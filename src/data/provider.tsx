@@ -27,7 +27,7 @@ import type { ApiWallet, AuthSession, OrgRole } from '@/api/types'
 import { toastError } from '@/components/ab/toast'
 import { clearAuthSession, graftAuthSession } from '@/data/adapters/auth-adapter'
 import { selectActiveOrg } from '@/data/adapters/org-selection'
-import type { BrandGraft } from '@/data/adapters/brand-adapter'
+import type { BrandGraft, ExtraVoiceRow } from '@/data/adapters/brand-adapter'
 import type { TeamGraft } from '@/data/adapters/org-adapter'
 import type { SchedulingGraft } from '@/data/adapters/scheduling-adapter'
 import {
@@ -109,6 +109,12 @@ export interface DataState {
   liveBrandIds?: {
     /** The `Brand voice` row writes target; null until one exists (D-INT-B). */
     canonicalVoiceId: string | null
+    /**
+     * Voice rows the screen does not edit that still carry rules. Kept so the
+     * screen can SAY they exist — the server's context bundle reads every row
+     * (D-INT-B amended 2026-09-13, item 65).
+     */
+    extraVoiceRows: ExtraVoiceRow[]
     topicIdByText: Record<string, string>
   }
   /** The working schedule's API id (INT-4); null until one is created. */
@@ -327,6 +333,7 @@ export function dataReducer(state: DataState, action: DataAction): DataState {
         liveBrandIds: action.brand
           ? {
               canonicalVoiceId: action.brand.canonicalVoiceId,
+              extraVoiceRows: action.brand.extraVoiceRows,
               topicIdByText: action.brand.topicIdByText,
             }
           : undefined,

@@ -1255,7 +1255,9 @@ Recorded here as the founder set them; each is implemented in its own phase.
   first write, description a plain sentence), and its `rules` are the app's
   do/don't. READS flatten every voice's rules in creation order — exactly how
   the backend builds the context bundle, so what the user sees is what
-  generation gets. INT-3-era rows exist only on QA orgs, so there is no
+  generation gets. **[SUPERSEDED 2026-09-13 — see "D-INT-B AMENDED" at the end
+  of this file: the flatten is gone, because writes never matched it and the
+  gap grew org 1867's row from 18 rules to 94.]** INT-3-era rows exist only on QA orgs, so there is no
   migration code. `examples` still has no wire home: its editor stays disabled
   with the honest note.
 - **D-INT-C — tone rules go live; `example` does not.** `rules[]` ↔
@@ -3449,3 +3451,52 @@ is never wrong about what it proved.
   the re-run rule widens from a lost socket to the app's own error page —
   both are the service's fault, both re-run solo 3/3, and anything the runner
   cannot name still stays UNCLASSIFIED for a human.
+
+### 2026-09-13 — D-INT-B AMENDED: read and write address the SAME voice row
+
+The 2026-08-17 decision above said two things that cannot both hold: reads
+**flatten every voice row**, writes go to **one canonical row**. That is a
+read/write asymmetry, and on org 1867 it did exactly what an asymmetry does.
+The org had two rows both named `Brand voice` (293 with 18 rules, 294 with 94).
+The screen showed the merge of both and every save wrote that merge back onto
+one row, so the row grew with each save: **18 rules became 94 across five
+saves**. Past the wire's hard limit of 50 items in `rules` every PATCH came
+back `400 validation_failed` — "Too big: expected array to have <=50 items" —
+and the screen said **"Brand voice saved"** each time. The data was repaired by
+hand on 2026-09-13 (request-ids in the session log); this is the code.
+
+**What is now true.** The adapter reads the CANONICAL row's rules and only
+those — what the screen shows is exactly what a save replaces. The canonical
+row is resolved in CREATION order, so an org with two same-named rows keeps
+editing the **oldest**; picking the newest would move the write target every
+time a stray row appeared, which is the mechanism that grew 1867's second row.
+
+**Extra rows are named, not hidden.** The server still builds its context
+bundle from EVERY voice row, so rules this screen stops showing would go on
+shaping drafts invisibly — strictly worse than the bug. `adaptBrand` returns
+`extraVoiceRows` (id, name, rule count, empty rows excluded), the provider
+carries it, and the screen says out loud that they exist, that they still
+apply, and that this screen cannot reach them.
+
+**No migration in this order, deliberately.** Merging or deleting rows is
+destructive and irreversible, the merge rule is a judgement (which row wins on
+a near-duplicate?), and a client that silently rewrote a user's rows on load
+would be the same class of mistake in the other direction. It stays a support
+action — done by hand, with the rules read out first — until the founder rules
+on a product mechanism. **Open question for that ruling:** should the screen
+offer a reviewed merge (show both lists, let the user pick what survives, one
+explicit press), or should the backend stop the second row existing at all by
+making the canonical name unique per org? The second is the real fix; the
+first is what the product can do without Hasan. Filed as item 66.
+
+**A product cap of 40, below the wire's 50.** `MAX_BRAND_VOICE_RULES = 40`,
+counted COMBINED across Do and Don't because the wire counts one array. The
+gap is the point: a user who reaches the ceiling is stopped by the product, in
+the product's words, rather than by a server error they cannot act on. Same
+HSN-04 shape as sources and topics — a visible counter, the Add controls
+disabled at the cap, a list already above it still listed, still removable and
+still saveable when it SHRINKS, and nothing ever silently trimmed.
+
+**A refusal renders as itself.** The screen shows the wire's own field message
+with its request id — the Studio composer's pattern — and the green toast
+fires only after a save that actually succeeded.

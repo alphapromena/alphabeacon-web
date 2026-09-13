@@ -5,7 +5,37 @@ without reconstructing it from the session log. **Update this file at the end
 of any turn that finishes a phase or changes the plan.** `sessions.md` is the
 chronological record; this is the current picture.
 
-_Last updated: 2026-09-10, after **ORDER HSN-0910 Phase 0 — Hasan's
+_Last updated: 2026-09-13, after **ORDER VOICE-0913 — the brand voice
+read/write asymmetry, the combined cap, and the honest save — BUILT on branch
+`feat/voice-0913` off `main` = `dff402d`, PUSHED and NOT merged (build order,
+report-and-stop).** One root cause, measured on org 1867: `adaptBrand`
+FLATTENED every voice row's rules while `saveBrandVoice` PATCHed only the
+canonical one, so the screen showed a merge of two rows both named
+`Brand voice` and every save wrote that merge back onto one — **18 rules became
+94 across five saves**, and past the wire's documented 50-rule limit
+(`Docs/api/api.md` 675) every PATCH answered `400 validation_failed` while the
+screen said "Brand voice saved". **Three fixes:** the adapter reads the
+CANONICAL row only (resolved in CREATION order, so the write target never
+moves) and surfaces `extraVoiceRows` rather than hiding rules the server's
+context bundle still feeds to drafts; `MAX_BRAND_VOICE_RULES = 40` COMBINED
+across Do and Don't, below the wire's 50, in HSN-04's exact shape (visible
+counter, both Add controls disabled at the cap, above-cap lists still listed,
+still removable, still saveable when they SHRINK, nothing trimmed); and a
+refused save renders the wire's own field message with its request id, the
+green toast firing only after a real save. **D-INT-B AMENDED** in decisions.md
+(the 2026-08-17 flatten clause marked superseded in place). **The GATE for a
+build order: lint · typecheck · guard-static 354 · unit 683/683 (60 files, +17
+new) · the STATIC e2e — `pnpm verify:all`, all of it.** NOTHING LIVE RAN (the
+standing rule). The DATA on 1867 was repaired by hand the same day at zero
+spend, five stop points, every request-id in sessions.md. **Items 65 (closed in
+code, the manual repair recorded) and 66 (the founder's: a reviewed in-product
+merge, or Hasan making the voice name unique per org — the real fix) are
+open; item 64 stands, still deliberately unfixed.** Next: the founder's ruling
+on 66, and the next testing session he names is what proves these three on the
+deployed API — `live-brand-rules.spec.ts` and `live-brand.spec.ts` both walk
+this screen and neither was touched._
+
+_Before that, 2026-09-10: **ORDER HSN-0910 Phase 0 — Hasan's
 2026-09-09 meeting (the 13 media capabilities in Studio, State under Country,
 the org id in Settings, the dev/prod split) — PROBED at zero spend and HELD at
 stop point 1 (report-and-stop).** Branch **`feat/hsn-0910`** off `main` =

@@ -10,14 +10,22 @@
  *   client-side (CUT-0831) while the wire keeps the field. `example` STILL
  *   has no wire home, so it is
  *   never smuggled into `description` and its editor stays disabled.
- * - **Voices** (D-INT-B): the app has ONE brand voice; the wire has a list of
- *   voice rows. Reads FLATTEN every row's rules in creation order — which is
- *   exactly how the backend builds the context bundle it pushes for
- *   generation, so what the user reads here is what the next run is grounded
- *   on. Writes go to ONE canonical row named `Brand voice`, resolved here so
- *   the seam never has to guess. INT-3-era rows (description-as-rule, no
- *   rules) exist only on QA orgs and are left alone rather than migrated —
- *   their rules list is simply empty, so they contribute nothing.
+ * - **Voices** (D-INT-B, AMENDED 2026-09-13): the app has ONE brand voice; the
+ *   wire has a list of voice rows. Reads take the CANONICAL row's rules and
+ *   only those, because that is the one row a write replaces. Until today the
+ *   read flattened every row while the write PATCHed one, so the screen
+ *   showed a merged list and every save wrote that merge back onto the
+ *   canonical row — 18 rules became 94 across five saves on org 1867, and
+ *   past the wire's 50-rule limit every PATCH came back 400 (item 65).
+ *   Read and write now address the same thing.
+ *
+ *   Extra rows are NOT silently hidden. The backend still builds its context
+ *   bundle from every voice row, so rules this screen stops showing would go
+ *   on shaping drafts invisibly — the worst of both worlds. They are counted
+ *   into `extraVoiceRows` and the screen says so plainly. Nothing is migrated
+ *   or deleted here: that is a destructive change and it is not this order's.
+ *   INT-3-era rows (description-as-rule, no rules) carry no rules at all, so
+ *   they contribute nothing and are not counted.
  *   `examples` still has no wire home; disabled, not invented.
  * - **Sources**: `{url, title}` ↔ `FollowedSource` — addresses are stored
  *   scheme-less by law; the adapter strips on read, the seam restores on write.
@@ -41,12 +49,25 @@ const isToneLength = (value: unknown): value is ToneLength =>
  *  so a row typed by hand in another client still resolves. */
 export const CANONICAL_VOICE_NAME = 'Brand voice'
 
+/** A voice row the screen does not edit, but whose rules still reach drafts. */
+export interface ExtraVoiceRow {
+  id: string
+  name: string
+  ruleCount: number
+}
+
 export interface BrandGraft {
   tones: Tone[]
-  /** Every voice's rules, flattened in creation order — the bundle's own order. */
+  /** The CANONICAL row's rules — the exact list a save replaces (D-INT-B). */
   brandVoice: BrandVoice
   /** The row writes target; `null` when the org has none yet (create lazily). */
   canonicalVoiceId: string | null
+  /**
+   * Rows that are not the canonical one and still carry rules. The screen
+   * cannot edit them and must not pretend they are gone: the server's context
+   * bundle reads every row, so these rules keep shaping drafts.
+   */
+  extraVoiceRows: ExtraVoiceRow[]
   sources: FollowedSource[]
   topics: string[]
   topicIdByText: Record<string, string>
@@ -81,16 +102,26 @@ export function adaptBrand(
   // The list arrives newest-first (`createdAt DESC`), so it is reversed here
   // rather than sorted on a date string.
   const inCreationOrder = [...voices].reverse()
-  const flattened = { do: [] as string[], dont: [] as string[] }
-  for (const voice of inCreationOrder) {
-    const split = splitRules(voice.rules)
-    flattened.do.push(...split.do)
-    flattened.dont.push(...split.dont)
-  }
 
-  const canonical = voices.find(
+  // The canonical row is picked in CREATION order, so an org that ended up
+  // with two rows of the same name keeps editing the OLDEST — the one the
+  // product wrote first. Picking the newest would move the target every time
+  // a stray row appeared, which is how org 1867 grew its second row.
+  const canonical = inCreationOrder.find(
     (voice) => voice.name?.trim().toLowerCase() === CANONICAL_VOICE_NAME.toLowerCase(),
   )
+
+  // Read what a write replaces, and nothing else (D-INT-B, amended).
+  const canonicalRules = splitRules(canonical?.rules)
+
+  const extraVoiceRows = inCreationOrder
+    .filter((voice) => voice.id !== canonical?.id)
+    .map((voice) => ({
+      id: voice.id,
+      name: voice.name?.trim() || CANONICAL_VOICE_NAME,
+      ruleCount: (voice.rules ?? []).length,
+    }))
+    .filter((row) => row.ruleCount > 0)
 
   return {
     tones: tones.map((tone) => ({
@@ -105,11 +136,12 @@ export function adaptBrand(
       ...(isToneLength(tone.length) ? { length: tone.length } : {}),
     })),
     brandVoice: {
-      ...flattened,
+      ...canonicalRules,
       // No wire home yet (open-items 7): absent, never fabricated.
       examples: [],
     },
     canonicalVoiceId: canonical?.id ?? null,
+    extraVoiceRows,
     sources: sources.map((source) => ({
       id: source.id,
       url: normalizeSourceUrl(source.url),

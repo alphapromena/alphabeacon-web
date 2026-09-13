@@ -373,6 +373,14 @@ _Framing: Studio is **the center where the user creates everything the company n
 **Contains:** structured do/don't rule list (add/remove rows) · example tone snippets (optional, illustrative) · a cross-note: "See also **Tones** for per-post style variations — brand voice always applies underneath whatever tone is selected." · save bar.
 **States:** standard form pattern; empty (invites adding at least one rule).
 
+> **Amended 2026-09-13 (item 65):** the list carries a **visible combined
+> counter — at most 40 rules across Do and Don't**, below the wire's own limit
+> of 50 per PATCH (`Docs/api/api.md`). At the cap both Add controls disable;
+> a workspace already above it keeps every rule listed and removable. A
+> workspace carrying extra voice rows this screen cannot edit says so, because
+> their rules still reach generation. A refused save renders the wire's own
+> message with its request id — the green toast follows a real save only.
+
 ### I3 — Tones library · `/settings/tones` — **new**
 
 **Purpose:** manage every tone the generation pipeline can use — the 5 presets plus the org's own custom ones. The durable home for what's first created inline during onboarding Step 4 or from C1.
