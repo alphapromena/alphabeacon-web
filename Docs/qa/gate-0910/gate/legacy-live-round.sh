@@ -27,7 +27,20 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$REPO/scripts/gate/keep
 AWAKE_PID=$!
 trap 'kill $AWAKE_PID 2>/dev/null' EXIT
 
-drain() { until [ -z "$(netstat -ano | grep -w 5199 | grep -i -e listen -e time_wait)" ]; do sleep 5; done; }
+# The drain is CAPPED (2026-09-13): an uncapped drain looped for eleven hours on a
+# listener that never left, until the host slept (trap 23). After 120 s the
+# listener is stopped by pid — the runner refuses a busy port; the old chain
+# must not wait on one forever.
+drain() {
+  for _ in $(seq 1 24); do
+    [ -z "$(netstat -ano | grep -w 5199 | grep -i -e listen -e time_wait)" ] && return
+    sleep 5
+  done
+  for pid in $(netstat -ano | grep -w 5199 | grep -i listen | awk '{print $NF}' | sort -u); do
+    taskkill //F //T //PID "$pid" >/dev/null 2>&1 && echo "drain: stopped listener $pid on 5199"
+  done
+  sleep 5
+}
 
 {
   echo "=== LEGACY LIVE ROUND $ROUND · start $(date -u +%FT%TZ) · E2E_API_ENV=$E2E_API_ENV · funded creds: $([ -n "$QA_FUNDED_EMAIL" ] && echo present || echo absent) · keep-awake pid $AWAKE_PID"

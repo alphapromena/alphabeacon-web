@@ -1,0 +1,24 @@
+=== LEGACY CHAIN · start 2026-09-10T13:37:59Z · tree ea9bf1a
+=== unit 13:38:00Z
+[2m Test Files [22m [1m[32m58 passed[39m[22m[90m (58)[39m
+[2m      Tests [22m [1m[32m656 passed[39m[22m[90m (656)[39m
+--- unit · 20 s
+=== static e2e 13:38:20Z
+  84 skipped
+  115 passed (1.4m)
+--- static e2e · 84 s
+=== verify:w00 --rerun 13:39:44Z
+RESULT: PASS (automated steps)
+--- verify:w00 · 154 s
+=== verify:w01 --rerun 13:42:19Z
+RESULT: PASS (automated steps)
+--- verify:w01 · 154 s
+=== verify:w02 --rerun 13:44:53Z
+RESULT: PASS (automated steps)
+--- verify:w02 · 148 s
+=== verify:w03 --rerun 13:47:22Z
+RESULT: PASS (automated steps)
+--- verify:w03 · 228911 s
+=== verify:w04 --rerun 05:22:33Z
+e2e (calendar, connections, axe)  FAIL
+RESULT: FAIL
