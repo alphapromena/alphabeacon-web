@@ -5120,3 +5120,44 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
 - Next: the founder's merge word. After it: retire the old chain from
   `package.json` and the docs, item 61 and item 63 to Ward and Hasan, item 62's
   ruling, then HSN-0910/B on the fast gate.
+
+### 2026-09-13 — GATE-0910 MERGED and DEPLOYED: `main` and `live` at `387391d`, the old chain retired, `pnpm gate` is the gate
+
+- Did: the founder's merge word. **The retirement first, on the branch:**
+  `wantsRerun` and every `--rerun` arm are gone from the seven verify scripts,
+  with the four shell helpers they orphaned (`run`, `step`, and the `spawnSync`
+  imports in w02–w06); `--legacy-verify` is gone from `pnpm gate`. A verify now
+  spawns nothing at all — it reads `.gate/reports/verify.json` for this tree,
+  runs its own assertions and prints its manual list. `stack.md` says the
+  standing rule in its own row and in the agents' line: **a build order ends at
+  lint, typecheck, unit and the static suite**, and nothing live runs inside one
+  unless the founder opens a testing session by name. The two legacy shell
+  runners under `Docs/qa/gate-0910/gate/` carry a RETIRED banner and stay as the
+  §4 proof's record, never to be run again. **Proven after the cut:**
+  `verify:all` PASS in 153 s (lint 7, typecheck 15, guard 1, unit **666 / 58**,
+  build 25, static e2e **115 / 84 / 0**) and all seven checks PASS over its
+  report in **19 s**. **The merge:** `main` fast-forwarded `4d98942` →
+  **`387391d`** (twelve commits) and pushed, `main:live` with it; the branch
+  `feat/gate-0910` kept on origin at the same commit as the record. **Vercel:**
+  production **`dpl_Dv7y6DJ5Mwc4TfsTJ21pb9Pr2FnQ`** (target production, ref
+  `main`) and the `live` preview **`dpl_5zwntMoMKTx8WVE9zsA9DSKceQeQ`**, both
+  **READY** at `387391d`; the bundle `index-Ckpi_DKM.js` →
+  **`index-CeQdUZ1H.js`**, the same name on `1.malaky.ai` and on the production
+  alias (read from Vercel's side), so both hosts serve one build. Rollback
+  candidate: the `4d98942` pair.
+- Phase: **GATE-0910 CLOSED.** The gate of a series is `pnpm gate`; a build
+  order ends at the static suite; live rounds happen only in a testing session
+  the founder names.
+- Files: `scripts/verify-lib.ts`, `scripts/verify-w0[0-6].ts`,
+  `scripts/gate/gate.ts`, `.agent/stack.md`,
+  `Docs/qa/gate-0910/gate/legacy-*.sh`, `.agent/{state,sessions}.md`.
+- Decisions: none new — the 2026-09-13 entry stands.
+- Verify: `verify:all` + the seven checks after the retirement, then the two
+  deployments READY at the merge commit with one bundle on both hosts.
+- **On the record, the founder's own note:** neither reporting fix has shaped a
+  real record yet. `skipLabel` and the widened re-run rule are proven by 18 unit
+  tests and by nothing else; **the first testing session the founder calls is
+  what proves them.**
+- Next: item 61 to Ward and item 63 to Hasan (both drafted, with request-ids),
+  item 62's ruling on the two production walks, then HSN-0910/B on the fast
+  gate — its base clause is `main` after this merge.
