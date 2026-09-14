@@ -135,14 +135,14 @@
 }
 
 /* ------------------------------------------------------------------
-   TWO UNLAYERED OVERRIDES.
+   THE UNLAYERED OVERRIDES.
 
-   Both correct a shadcn primitive whose shipped classes encode a LIGHT-surface
-   assumption that no token can reach, and both are written unlayered on
-   purpose: a declaration outside a cascade layer beats every declaration
-   inside one, whatever the specificity. That is the same mechanism
-   marketing.css already relies on, and it is why neither of these needs a
-   hand-edit under src/components/ui/ (CLAUDE.md rule 3).
+   Each corrects a shadcn primitive whose shipped classes encode an assumption
+   no token can reach, and each is written unlayered on purpose: a declaration
+   outside a cascade layer beats every declaration inside one, whatever the
+   specificity. That is the same mechanism marketing.css already relies on, and
+   it is why none of these needs a hand-edit under src/components/ui/
+   (CLAUDE.md rule 3).
 ------------------------------------------------------------------ */
 
 /* 1. Form controls sit on the SUNKEN step.
@@ -192,6 +192,92 @@
   background-color: color-mix(in oklab, var(--destructive) 10%, transparent);
 }
 
+/* 4. Active navigation is a GOLD INDICATOR, not a filled block.
+   `sidebarMenuButtonVariants` ships `hover:bg-sidebar-accent` and
+   `data-active:bg-sidebar-accent` — the SAME fill for both — so the current row
+   and a row under the cursor were indistinguishable, and the active row read as
+   a block of surface. The design law says gold is the indicator and hover is a
+   surface step, so the two separate here: active loses the fill and gains a
+   gold rule on the inline-start edge plus full-strength text; hover keeps the
+   surface step it always had. Logical inset, so RTL mirrors for free. */
+:where(
+  [data-slot='sidebar-menu-button'],
+  [data-slot='sidebar-menu-sub-button']
+)[data-active='true'] {
+  position: relative;
+  background-color: transparent;
+  color: var(--sidebar-foreground);
+}
+
+:where(
+    [data-slot='sidebar-menu-button'],
+    [data-slot='sidebar-menu-sub-button']
+  )[data-active='true']::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block: 0.25rem;
+  width: 2px;
+  border-radius: 999px;
+  background-color: var(--brand);
+}
+
+/* Hover on an already-active row still shows the surface step — the row is
+   both current AND under the cursor, and both facts stay readable. */
+:where(
+    [data-slot='sidebar-menu-button'],
+    [data-slot='sidebar-menu-sub-button']
+  )[data-active='true']:hover {
+  background-color: var(--sidebar-accent);
+}
+
+/* 5. Tooltips live on the OVERLAY step, not on an inverted light plate.
+   The primitive ships `bg-foreground text-background` — an idiom that works on
+   a light app, where the tooltip inverts to dark. Inverted on THIS app it is a
+   near-white card (#f3ede6) flashing over graphite: the one genuine orphan
+   light surface in the product. Overlay surface, hairline, ambient shadow —
+   the same treatment every other floating layer gets. */
+:where([data-slot='tooltip-content']) {
+  background-color: var(--popover);
+  color: var(--popover-foreground);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-overlay);
+}
+
+:where([data-slot='tooltip-content']) > svg {
+  background-color: var(--popover);
+  fill: var(--popover);
+}
+
+/* 6. Secondary actions are a neutral surface WITH A BORDER.
+   The design law distinguishes them from the one accent primary by shape as
+   well as colour; the shipped `secondary` variant is a bare fill, which on
+   graphite reads as a slightly lighter rectangle and nothing more. */
+:where([data-slot='button'])[data-variant='secondary'] {
+  border-color: var(--border);
+}
+
+/* 7. Tables: zebra by surface step, sticky header, tabular figures.
+   None of the three is in the primitive. Zebra is the ladder doing the work
+   rules used to do; the header stays put because a long table that loses its
+   column names is unreadable; and figures are tabular so columns of numbers
+   line up rather than jitter per glyph width. `--muted` at 40% keeps the
+   stripe below the hover step, so hovering a striped row still reads. */
+:where([data-slot='table-body']) tr:nth-child(even) {
+  background-color: color-mix(in oklab, var(--muted) 40%, transparent);
+}
+
+:where([data-slot='table-header']) {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background-color: var(--card);
+}
+
+:where([data-slot='table']) {
+  font-variant-numeric: tabular-nums;
+}
+
 /**
  * Signature motion (design law, screens4.md §0.2). Exactly two animations
  * exist in this product and both are opt-in via `data-ab-motion`:
@@ -232,6 +318,44 @@
 
 [data-ab-motion='signal-sweep'] {
   animation: ab-signal-sweep 1.6s linear infinite;
+}
+
+/**
+ * THE ONE MEMORABLE MOMENT (ORDER THEME-0913 §5.7).
+ *
+ * A single gold rule draws itself across the queue heading the moment the LAST
+ * draft is approved and Today goes from "3 drafts ready" to "Your queue is
+ * clear". It runs once, for 900ms, and there is nothing else like it anywhere
+ * in the product.
+ *
+ * It is a third `data-ab-motion` value rather than a bespoke animation, on
+ * purpose: that is the one channel whose reduced-motion guarantee is asserted
+ * by Playwright, so this flourish inherits it instead of needing its own
+ * promise. Under `prefers-reduced-motion` the rule is REMOVED and the heading
+ * that says the queue is clear — the actual state change — is untouched.
+ */
+@keyframes ab-queue-clear {
+  0% {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
+  100% {
+    transform: scaleX(1);
+    opacity: 0;
+  }
+}
+
+[data-ab-motion='queue-clear'] {
+  transform-origin: left center;
+  animation: ab-queue-clear 900ms cubic-bezier(0.16, 1, 0.3, 1) 1;
+}
+
+/* RTL draws it from the other edge, like everything else. */
+[dir='rtl'] [data-ab-motion='queue-clear'] {
+  transform-origin: right center;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -12,11 +12,25 @@
  * Tailwind's `animate-pulse` on shadcn's Skeleton is the one accepted
  * loading motion — signature motion stays in `ab/motion`.
  */
-import type { ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
 
-/** One place for the announce-the-wait contract, so no pattern can forget it. */
+/**
+ * One place for the announce-the-wait contract, so no pattern can forget it.
+ *
+ * It also owns the LONG wait (ORDER THEME-0913 §5.4). A skeleton answers the
+ * first second by itself — it is the shape of what is coming — but it says the
+ * same thing at 2 seconds and at 25, and at 25 seconds silence reads as broken.
+ * The measured cold-start tail on this API is 12–23s, so this is a real
+ * experience and not a hypothetical: after ten seconds the shell adds one line
+ * that says what is actually happening.
+ *
+ * The line is deliberately not a progress bar. We do not know the remaining
+ * time, and a bar that invents one is the fake-progress the design law forbids.
+ */
+const LONG_WAIT_MS = 10_000
+
 function SkeletonShell({
   label,
   className,
@@ -26,9 +40,21 @@ function SkeletonShell({
   className?: string
   children: ReactNode
 }) {
+  const [slow, setSlow] = useState(false)
+  useEffect(() => {
+    const timer = setTimeout(() => setSlow(true), LONG_WAIT_MS)
+    return () => clearTimeout(timer)
+  }, [])
+
   return (
     <div role="status" aria-busy="true" aria-label={label} className={cn('w-full', className)}>
       <div aria-hidden>{children}</div>
+      {slow && (
+        <p className="mt-3 text-sm text-muted-foreground">
+          Still loading. The first request after a quiet spell wakes the server, which can take up
+          to half a minute.
+        </p>
+      )}
     </div>
   )
 }

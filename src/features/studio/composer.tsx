@@ -118,7 +118,7 @@ export function ComposerBody({
                   disabled={modelLocked}
                   onChange={() => chooseModel(model)}
                 />
-                <span className="flex flex-1 flex-col gap-0.5">
+                <span className="flex flex-1 flex-col gap-1">
                   <span className="font-medium">{model.name}</span>
                   <span className="text-muted-foreground">
                     <MonoNumber value={model.credits} /> credits

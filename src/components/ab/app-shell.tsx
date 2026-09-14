@@ -108,7 +108,11 @@ export function AppShell({
     >
       <AppSidebar />
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-2 border-b border-border bg-background px-4 md:px-6">
+        {/* Chrome is RAISED, the work surface is the CANVAS below it. The top
+            bar and the rail share --sidebar so the frame reads as one object
+            and the content it frames is the darkest thing on screen — the
+            ladder doing the job shadow used to (D-THEME-0913-E). */}
+        <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-2 border-b border-border bg-sidebar px-4 md:px-6">
           <SidebarTrigger className="-ms-1" />
           <Separator orientation="vertical" className="me-1 h-4" />
           <div className="min-w-0 flex-1">
@@ -124,7 +128,23 @@ export function AppShell({
         </header>
         <OfflineBanner />
         <PastDueBanner />
-        <main className="mx-auto w-full max-w-[1200px] flex-1 px-4 py-6 md:px-6">{children}</main>
+        {/*
+         * THE SECTION RHYTHM LIVES HERE (ORDER THEME-0913 §5.6).
+         *
+         * Measured across the product, screens were setting their own
+         * top-level rhythm at anything from gap-1 (4px) to gap-8 (32px), so
+         * two screens in the same product put different amounts of air between
+         * their sections and several read as a flat wall of equal-weight rows.
+         * Today — the approved reference — uses 32px, so 32px is the rhythm,
+         * and it is applied once here instead of asked of every screen.
+         *
+         * A screen that wraps itself in a single container is unaffected (one
+         * child, no gap); a screen with several top-level sections gets the
+         * rhythm whether or not it remembered to ask for it.
+         */}
+        <main className="mx-auto flex w-full max-w-[1200px] flex-1 flex-col gap-8 px-4 py-8 md:px-6">
+          {children}
+        </main>
       </div>
     </SidebarProvider>
   )
@@ -141,18 +161,10 @@ function AppSidebar() {
       <SidebarHeader>
         <div className="flex h-10 items-center gap-2 px-1">
           {/* The founder-approved Arabic wordmark, exactly as supplied
-              (design.md Part 3): charcoal on light, white on dark. */}
-          <img
-            src="/brand/malaky-logo-charcoal.png"
-            alt="Malaky"
-            className="h-7 w-auto shrink-0 dark:hidden"
-          />
-          <img
-            src="/brand/malaky-logo-white.png"
-            alt=""
-            aria-hidden
-            className="hidden h-7 w-auto shrink-0 dark:block"
-          />
+              (design.md Part 3). There is ONE theme now (D-THEME-0913-B), so
+              there is one wordmark: the charcoal-on-light variant and its
+              `dark:hidden` twin were unreachable the moment light retired. */}
+          <img src="/brand/malaky-logo-white.png" alt="Malaky" className="h-7 w-auto shrink-0" />
         </div>
       </SidebarHeader>
       <SidebarContent>
@@ -169,7 +181,7 @@ function AppSidebar() {
                         <Icon aria-hidden />
                         <span>{label}</span>
                         {to === '/today' && awaiting > 0 && (
-                          <span className="ms-auto flex items-center gap-1.5">
+                          <span className="ms-auto flex items-center gap-2">
                             <BeaconDot live />
                             <MonoNumber value={awaiting} className="text-xs" />
                             {/* Deliberately not "drafts awaiting review" — that
@@ -348,7 +360,7 @@ function PlanCreditChip() {
       <Link
         to={unfunded ? '/billing' : '/billing/balance'}
         className={cn(
-          'hidden items-center gap-1.5 rounded-full border border-border px-3 py-1 text-xs font-medium transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none sm:inline-flex',
+          'hidden items-center gap-2 rounded-full border border-border px-3 py-1 text-xs font-medium transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none sm:inline-flex',
           low && 'border-warning/60 text-warning',
         )}
       >
@@ -379,7 +391,7 @@ function PlanCreditChip() {
       // `/billing` itself is the product's plans page since BIL-0902.
       to="/billing/subscription"
       className={cn(
-        'hidden items-center gap-1.5 rounded-full border border-border px-3 py-1 text-xs font-medium transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none sm:inline-flex',
+        'hidden items-center gap-2 rounded-full border border-border px-3 py-1 text-xs font-medium transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none sm:inline-flex',
         low && 'border-warning/60 text-warning',
       )}
     >
@@ -413,7 +425,7 @@ function AccountMenu() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuLabel className="flex flex-col gap-0.5">
+        <DropdownMenuLabel className="flex flex-col gap-1">
           <span>{session.user?.name}</span>
           <span className="text-xs font-normal text-muted-foreground">{session.user?.email}</span>
         </DropdownMenuLabel>

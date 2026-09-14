@@ -61,19 +61,56 @@ export function EmptyOrgScreen() {
   }
 
   return (
-    <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-background px-6 text-center">
-      <span aria-hidden className="size-10 rounded-xl bg-brand" />
-      <div className="flex max-w-md flex-col gap-2">
-        <h1 className="font-display text-2xl font-semibold tracking-tight">
-          {recovered ? MESSAGES.notices.workspaceMissing : MESSAGES.notices.workspaceNeedsName}
-        </h1>
-        <p className="text-sm text-muted-foreground">
-          Everything else — your brand voice, tones, sources and posting rhythm — is set up inside
-          the app, whenever you are ready.
-        </p>
+    /*
+     * THE WARMEST SCREEN IN THE PRODUCT (ORDER THEME-0913 §5.2).
+     *
+     * It used to be a bare gold square, one abstract sentence and a field. A
+     * person who has just signed up and hit the one failure path this screen
+     * exists for deserves to be told what they are joining, not only what is
+     * broken. So: the wordmark instead of a coloured square, then the three
+     * things Malaky will actually do — in Today's own vocabulary, so the first
+     * screen and the daily screen describe the same product — and then the one
+     * field it needs.
+     *
+     * The warmth is concrete rather than cheerful. No exclamation marks, no
+     * "Welcome aboard!", and the failure is still named honestly in the
+     * heading; what changed is that the screen now answers "what is this?"
+     * before it asks for anything.
+     */
+    <div className="flex min-h-svh flex-col items-center justify-center gap-8 bg-background px-6 py-12">
+      <div className="flex w-full max-w-md flex-col items-center gap-4 text-center">
+        <img src="/brand/malaky-logo-white.png" alt="Malaky" className="h-9 w-auto" />
+        <div className="flex flex-col gap-2">
+          <h1 className="font-display text-2xl font-semibold tracking-tight text-balance">
+            {recovered ? MESSAGES.notices.workspaceMissing : MESSAGES.notices.workspaceNeedsName}
+          </h1>
+          <p className="text-sm text-pretty text-muted-foreground">
+            {MESSAGES.empty.firstRunReassurance}
+          </p>
+        </div>
       </div>
 
-      <div className="flex w-full max-w-sm flex-col gap-3 text-start">
+      {/* What you are joining, in three lines. The gold numerals are a brand
+          moment, which is what gold is for — never an action (D-THEME-0913-C). */}
+      <ol className="flex w-full max-w-md list-none flex-col gap-3 rounded-xl border border-border bg-card p-5">
+        {[
+          MESSAGES.empty.firstRunStep1,
+          MESSAGES.empty.firstRunStep2,
+          MESSAGES.empty.firstRunStep3,
+        ].map((step, index) => (
+          <li key={step} className="flex items-start gap-3">
+            <span
+              aria-hidden
+              className="mt-px flex size-5 shrink-0 items-center justify-center rounded-full bg-brand/10 text-[11px] font-medium text-brand"
+            >
+              {index + 1}
+            </span>
+            <span className="text-sm/relaxed text-muted-foreground">{step}</span>
+          </li>
+        ))}
+      </ol>
+
+      <div className="flex w-full max-w-md flex-col gap-3 text-start">
         {!recovered && (
           <div className="flex flex-col gap-2">
             <Label htmlFor="workspace-name">Organization name</Label>

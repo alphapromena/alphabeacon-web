@@ -36,7 +36,7 @@ export function ParamsForm({
         const value = values[field.name]
 
         return (
-          <div key={field.name} className="flex flex-col gap-1.5">
+          <div key={field.name} className="flex flex-col gap-2">
             <Label htmlFor={id}>
               {field.label}
               {field.required && (

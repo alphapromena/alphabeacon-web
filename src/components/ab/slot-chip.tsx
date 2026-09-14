@@ -43,7 +43,7 @@ export function SlotChip({
   return (
     <span
       className={cn(
-        'flex w-full items-center gap-1.5 overflow-hidden rounded-md border border-border bg-card px-1.5 py-1 text-xs whitespace-nowrap',
+        'flex w-full items-center gap-2 overflow-hidden rounded-md border border-border bg-card px-1.5 py-1 text-xs whitespace-nowrap',
         className,
       )}
     >

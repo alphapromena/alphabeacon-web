@@ -196,8 +196,21 @@ export function DraftCard({
               Create image or video
             </Button>
           )}
+          {/*
+           * Schedule takes the accent only when it is the card's ONE primary
+           * action (D-THEME-0913-C). `publish_failed` is the state where that
+           * stops being true: the status machine allows publish_failed →
+           * scheduled, so `canSchedule` and `failed` are BOTH set and the card
+           * used to render two accent buttons side by side. On a card whose
+           * post just failed to go out, Retry is the primary and Schedule is
+           * the alternative — so Schedule steps down rather than Retry.
+           */}
           {canSchedule && (
-            <Button size="sm" variant={draft.assetId ? 'default' : 'outline'} onClick={onSchedule}>
+            <Button
+              size="sm"
+              variant={draft.assetId && !failed ? 'default' : 'outline'}
+              onClick={onSchedule}
+            >
               <Send aria-hidden />
               Schedule
             </Button>

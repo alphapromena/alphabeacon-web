@@ -535,6 +535,11 @@ export function ChannelDetailScreen() {
                 icon={ChartLine}
                 title="Nothing published here yet"
                 description={MESSAGES.empty.noPublishedPosts}
+                action={
+                  <Button asChild variant="outline">
+                    <Link to="/today">Review today's queue</Link>
+                  </Button>
+                }
               />
             ) : (
               <div className="overflow-x-auto rounded-xl border border-border">

@@ -57,7 +57,7 @@ export function ConnectionSheet({
 
           <div className="flex flex-col gap-4">
             <div className="flex items-start justify-between gap-3">
-              <div className="flex flex-col gap-0.5">
+              <div className="flex flex-col gap-1">
                 <label htmlFor="sheet-analytics" className="text-sm font-medium">
                   Analytics
                 </label>
@@ -81,7 +81,7 @@ export function ConnectionSheet({
             </div>
 
             <div className="flex items-start justify-between gap-3">
-              <div className="flex flex-col gap-0.5">
+              <div className="flex flex-col gap-1">
                 <label htmlFor="sheet-posting" className="text-sm font-medium">
                   Posting
                 </label>

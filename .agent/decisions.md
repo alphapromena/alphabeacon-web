@@ -3791,3 +3791,87 @@ the error itself.
   the neutral "other" series and sorts last, so they never read as a pair.
 - Instead of: keeping five distinct hues "for when we need them". A palette is
   not a place to store colours nobody has asked for.
+
+### 2026-09-14 — D-THEME-0913-H: the auth split panel is graphite, not a half-viewport of accent
+
+- Why: the panel was `bg-primary`. That was a CHARCOAL fill for as long as
+  `--primary` meant charcoal, and it silently became half a screen of `#ff4e2d`
+  the moment the accent took that token. Nobody decided it; the panel inherited
+  it, which is exactly the class of bug a repalette creates.
+- **Not an accessibility fix — dark ink on the accent measures 5.86:1 and
+  passes AA.** It is a rationing fix (D-THEME-0913-C). The accent's whole job is
+  "this is the action"; half a viewport of it teaches a user on their very first
+  screen that orange means nothing in particular, and it sat directly beside a
+  sign-in button that is also accent, so the one real action on the screen was
+  the least emphatic orange thing on it. The website never fills half a viewport
+  with the accent either, so the old panel did not read as the same product.
+- The panel is now `--card` with a hairline seam. The gold bloom stays — gold is
+  what is allowed to be purely atmospheric — but at **18%, measured**: the
+  heading and body sit over it at 11.16:1 and 5.84:1 worst case. At the previous
+  70% the body would have measured **1.46:1**.
+- The accent survives as exactly one character: **the full stop that closes the
+  panel's headline**, which is the website's own idiom. The copy is unchanged —
+  all three headings already ended in a period, so the existing stop is drawn in
+  the accent rather than a second one added.
+- Instead of: keeping it as "the one place that carries a full accent field".
+  That was the alternative the founder offered, and it loses more than it buys:
+  the screen it decorates is the screen where the accent most needs to mean
+  "press this".
+
+### 2026-09-14 — D-THEME-0913-I: active navigation is a gold rule, hover is a surface step
+
+- Why: `sidebarMenuButtonVariants` ships `hover:bg-sidebar-accent` AND
+  `data-active:bg-sidebar-accent` — **the same fill for both** — so the row you
+  were on and the row under your cursor were indistinguishable, and the active
+  row read as a filled block. The design law says gold is the indicator.
+- Active now loses the fill and gains a 2px gold rule on the inline-start edge
+  plus full-strength text; hover keeps the surface step it always had; a row
+  that is both still shows both. Logical inset, so RTL mirrors for free.
+- The settings sub-navigation had the same fault **inverted**: selected was
+  `bg-secondary` (#10171c) and hover `bg-accent` (#1d272f), so the row under the
+  cursor was LIGHTER than the one you were on. It takes a gold underline now.
+- **One signal was removed on review.** The first build also coloured the active
+  icon gold, which made three signals for one fact (rule + text weight + icon).
+  The rule is visible in the collapsed icon rail on its own, so the icon colour
+  was redundant and went.
+
+### 2026-09-14 — D-THEME-0913-J: the section rhythm lives in the shell, not in each screen
+
+- Why: measured across 25 screens, the top-level section gap was anything from
+  `gap-1` (4px) to `gap-8` (32px) — billing at 4px, connections at 4px, signup
+  at 8px, Today at 32px. Two screens in the same product put different amounts
+  of air between their sections, and several read as the flat wall of
+  equal-weight rows the brief complained about. This was the single biggest
+  contributor to "stiff", and it was not a colour problem.
+- Today is the approved reference and uses 32px, so **32px is the rhythm**, and
+  it is applied **once** in `AppShell`'s `<main>` rather than asked of every
+  screen. A screen that wraps itself in one container is unaffected (one child,
+  no gap); a screen with several top-level sections gets the rhythm whether or
+  not it remembered to ask.
+- The scale itself is now one scale: 4 / 8 / 12 / 16 / 24 / 32 / 48px. The
+  off-scale values were normalised — `gap-0.5`→`gap-1`, `gap-1.5`→`gap-2`,
+  `gap-5`→`gap-6`, `gap-16`→`gap-12` — 62 sites, and nothing off the scale
+  remains.
+- Instead of: editing 25 screen roots by hand. That is the same change made 25
+  times, each an opportunity to miss one, and it would drift again on the next
+  screen anyone adds.
+
+### 2026-09-14 — D-THEME-0913-K: the one memorable moment is finishing the queue
+
+- Why: §5.7 asks for one moment and quiet everywhere else. It is **the last
+  draft being approved** — Today going from "3 drafts ready" to "Your queue is
+  clear" — marked by a single gold rule that draws once, for 900ms.
+- Why there and not elsewhere: it is the only place in the product where the
+  user has actually **finished** something. First-run happens once and is
+  already carried by the warmest screen; a save is routine and gets its
+  feedback at the control (§5.3); generation is the machine's work, not the
+  user's. Approving the last draft is daily, earned, and the exact thing the
+  product promises — "you keep the final say" — completing.
+- It is a third `data-ab-motion` value rather than a bespoke animation, on
+  purpose: that channel's reduced-motion guarantee is the one Playwright
+  asserts, so the flourish **inherits** the promise instead of making its own.
+  Under `prefers-reduced-motion` the rule is removed and the heading that says
+  the queue is clear is untouched.
+- It only fires on a TRANSITION. A queue that was already empty on mount has
+  not been finished, merely arrived at, and marking that would make the moment
+  meaningless within a day.

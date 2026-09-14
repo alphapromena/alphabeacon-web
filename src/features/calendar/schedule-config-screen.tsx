@@ -114,7 +114,7 @@ export function ScheduleConfigScreen() {
         />
       ) : (
         <div className="mx-auto flex max-w-[680px] flex-col gap-8 pb-24">
-          <section className="flex flex-col gap-5">
+          <section className="flex flex-col gap-6">
             <h2 className="font-display text-lg font-semibold">When</h2>
 
             <div className="flex flex-col gap-2">
@@ -161,7 +161,7 @@ export function ScheduleConfigScreen() {
             </div>
           </section>
 
-          <section className="flex flex-col gap-5">
+          <section className="flex flex-col gap-6">
             <h2 className="font-display text-lg font-semibold">How much, and how</h2>
             <PostsPerDayField
               value={draft.postsPerDay}
@@ -203,7 +203,7 @@ export function ScheduleConfigScreen() {
           <section className="flex flex-col gap-3">
             <h2 className="font-display text-lg font-semibold">Events</h2>
             <div className="flex items-start justify-between gap-3">
-              <div className="flex flex-col gap-0.5">
+              <div className="flex flex-col gap-1">
                 <Label htmlFor="attach-events">Attach posts to events</Label>
                 <p className="text-sm text-muted-foreground">
                   Slots near a holiday or launch borrow its name and date.

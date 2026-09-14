@@ -255,6 +255,19 @@ export const MESSAGES = {
       'Nothing is waiting on you. Your next drafts land here at {time}, ready to read and approve.',
     todayNeedsSetup:
       'Malaky writes in your brand voice, so it needs to learn that voice before it can draft anything. This is a one-time setup.',
+    /**
+     * First run (ORDER THEME-0913 §5.2). A signed-in user with no workspace
+     * lands on the warmest screen in the product, and warmth here is concrete,
+     * not cheerful: what Malaky will do, what it needs, one next step. The
+     * three lines are the actual product loop — brand voice, overnight drafts,
+     * your approval — in the same vocabulary Today uses, so the first screen
+     * and the daily screen do not describe two different products.
+     */
+    firstRunStep1: 'It learns your brand voice — what you sell, and how you talk about it.',
+    firstRunStep2: 'It drafts your posts overnight, on whatever rhythm you choose.',
+    firstRunStep3: 'You approve what fits. Nothing goes out that you have not read.',
+    firstRunReassurance:
+      'One field is all it needs to start. Brand voice, tones, sources and posting rhythm all wait until you are inside.',
     noNotifications: "You're all caught up.",
     /** Billing history (BIL-0902): one row per paid invoice, none yet. */
     noCredits: 'No payments yet — your first invoice appears here once you subscribe.',

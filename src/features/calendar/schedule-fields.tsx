@@ -49,7 +49,7 @@ export function ActiveDaysField({
         type="multiple"
         value={value}
         onValueChange={(next) => onChange(next as Weekday[])}
-        className="mt-1 justify-start gap-1.5"
+        className="mt-1 justify-start gap-2"
       >
         {DAYS.map((day) => (
           <ToggleGroupItem
@@ -151,7 +151,7 @@ export function GenerationModelField({
                 onChange={() => onChange(model.id)}
                 className="mt-1 accent-primary"
               />
-              <span className="flex flex-1 flex-col gap-0.5">
+              <span className="flex flex-1 flex-col gap-1">
                 <span className="flex items-center gap-2 text-sm font-medium">
                   {model.name}
                   {locked && (

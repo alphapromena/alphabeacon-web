@@ -174,7 +174,7 @@ export function LiveKnowledge() {
   }
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-6">
       {/* HSN-04: type + description before the file leaves the browser. The
           file's real MIME is what goes on the presign, checked against the
           chosen type — the old `text/plain` fallback for anything unknown is
@@ -240,7 +240,7 @@ export function LiveKnowledge() {
       />
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-2">
           <Label htmlFor="kn-url">Or add a link</Label>
           <div className="flex gap-2">
             <Input
@@ -275,7 +275,7 @@ export function LiveKnowledge() {
         </div>
       </div>
 
-      <div className="flex flex-col gap-1.5">
+      <div className="flex flex-col gap-2">
         <Label htmlFor="kn-title">Or paste some text</Label>
         <Input
           id="kn-title"

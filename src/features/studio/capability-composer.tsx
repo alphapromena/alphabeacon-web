@@ -96,7 +96,7 @@ export function CapabilityComposer({ capability }: { capability: MediaCapability
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-[720px] flex-col gap-5">
+    <div className="mx-auto flex w-full max-w-[720px] flex-col gap-6">
       <Button asChild variant="ghost" size="sm" className="-ms-2 self-start">
         <Link to="/studio">
           <ArrowLeft aria-hidden />
@@ -116,7 +116,7 @@ export function CapabilityComposer({ capability }: { capability: MediaCapability
       </div>
 
       {composer.selectable && (
-        <fieldset className="flex flex-col gap-1.5">
+        <fieldset className="flex flex-col gap-2">
           <legend className="text-sm font-medium">Quality</legend>
           <div className="flex flex-wrap gap-2">
             {MEDIA_PLANS.map((option) => {
@@ -269,7 +269,7 @@ function Field({
       const text = typeof value === 'string' ? value : ''
       const Control = field.multiline ? Textarea : Input
       return (
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-2">
           <Label htmlFor={id}>
             {field.label}
             {required}
@@ -299,7 +299,7 @@ function Field({
       const chosen = typeof value === 'string' ? value : ''
       if (field.options.length === 0) {
         return (
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-2">
             <p className="text-sm font-medium">{field.label}</p>
             <p className="text-sm text-muted-foreground">
               No option for this quality is on offer — the platform lists none.
@@ -308,7 +308,7 @@ function Field({
         )
       }
       return (
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-2">
           <Label htmlFor={id}>
             {field.label}
             {required}
@@ -336,7 +336,7 @@ function Field({
     case 'number': {
       const number = typeof value === 'number' ? value : undefined
       return (
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-2">
           <Label htmlFor={id}>
             {field.label}
             {required}
@@ -464,7 +464,7 @@ function Field({
             />
           )}
           {mode !== 'none' && (
-            <div className="flex flex-col gap-1.5">
+            <div className="flex flex-col gap-2">
               <Label htmlFor={`${id}-desc`}>Who they are</Label>
               <Textarea
                 id={`${id}-desc`}

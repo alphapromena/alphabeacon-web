@@ -218,7 +218,7 @@ export function OrgLogoLive({ orgName }: { orgName: string }) {
             <p role="alert" className="text-xs text-destructive">
               {MESSAGES.errors.logoConflict}
             </p>
-            <ul className="flex flex-col gap-1.5">
+            <ul className="flex flex-col gap-2">
               {rows.map((row) => (
                 <li key={row.assetId} className="flex items-center justify-between gap-3">
                   <span className="truncate font-mono text-xs text-muted-foreground">

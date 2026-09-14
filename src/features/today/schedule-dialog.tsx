@@ -156,7 +156,7 @@ export function ScheduleDialog({
 
                       {needsReauth && (
                         // Disabled, but never a dead end: the fix is one click.
-                        <p className="flex items-center gap-1.5 text-xs text-warning">
+                        <p className="flex items-center gap-2 text-xs text-warning">
                           <AlertTriangle aria-hidden className="size-3" />
                           Needs re-auth —{' '}
                           <Link
@@ -170,7 +170,7 @@ export function ScheduleDialog({
                       )}
 
                       {tooLong && limit && (
-                        <p className="flex items-center gap-1.5 text-xs text-warning">
+                        <p className="flex items-center gap-2 text-xs text-warning">
                           <AlertTriangle aria-hidden className="size-3" />
                           Too long for this channel by{' '}
                           <MonoNumber value={draft.copy.length - limit.chars} /> characters.

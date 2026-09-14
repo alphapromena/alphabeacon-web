@@ -235,7 +235,7 @@ function PermissionSwitch({
   const id = `${connection.platform}-${permission}`
   return (
     <div className="flex items-start justify-between gap-3">
-      <div className="flex flex-col gap-0.5">
+      <div className="flex flex-col gap-1">
         <label htmlFor={id} className="text-sm font-medium">
           {title}
         </label>

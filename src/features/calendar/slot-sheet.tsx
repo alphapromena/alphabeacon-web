@@ -85,11 +85,11 @@ export function SlotSheet({
           </SheetDescription>
         </SheetHeader>
 
-        <div className="flex flex-col gap-5 px-4 pb-6">
+        <div className="flex flex-col gap-6 px-4 pb-6">
           {event && (
             <div className="flex items-center gap-3 rounded-lg border border-primary/40 bg-primary/5 p-3">
               <CalendarDays aria-hidden className="size-4 shrink-0 text-primary" />
-              <div className="flex flex-col gap-0.5">
+              <div className="flex flex-col gap-1">
                 <span className="text-sm font-medium">{event.name}</span>
                 <span className="text-xs text-muted-foreground">
                   Drafts for this slot are written around this event.
@@ -218,8 +218,8 @@ export function SlotSheet({
 
 function Stat({ label, value }: { label: string; value: number }) {
   return (
-    <div className="flex flex-col gap-0.5 rounded-lg border border-border px-3 py-2">
-      <dt className="text-xs tracking-wider text-muted-foreground uppercase">{label}</dt>
+    <div className="flex flex-col gap-1 rounded-lg border border-border px-3 py-2">
+      <dt className="text-xs font-medium text-muted-foreground">{label}</dt>
       <dd>
         <MonoNumber value={value} className="text-lg font-semibold" />
       </dd>

@@ -288,7 +288,13 @@ export function TeamScreen() {
                   </Badge>
                 </td>
                 <td className="px-4 py-3">
-                  <Badge className="font-normal">Invited</Badge>
+                  {/* A status badge, so it takes the GOLD — never the accent, which is
+                      the action colour (D-THEME-0913-C). It was the default
+                      variant, i.e. an orange fill, which read as a button
+                      sitting in a table cell. 7.83:1 on its own tint. */}
+                  <Badge variant="secondary" className="bg-brand/10 font-normal text-brand">
+                    Invited
+                  </Badge>
                 </td>
                 <td className="px-4 py-3 text-end">
                   {admin && (

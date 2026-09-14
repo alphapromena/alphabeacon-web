@@ -27,6 +27,7 @@ import { EmptyState } from '@/components/ab/empty-state'
 import { SkeletonList } from '@/components/ab/skeletons'
 import { StatusBadge } from '@/components/ab/status-badge'
 import { toastError, toastSuccess } from '@/components/ab/toast'
+import { Link } from 'react-router'
 import { Button } from '@/components/ui/button'
 import { isMediaCapabilityId, mediaCapability } from '@/data/media-capabilities'
 import { isJobTerminal, useStudioActions, type MediaAsset, type MediaJob } from '@/data/studio'
@@ -129,6 +130,11 @@ export function LiveJobs() {
         icon={ImageIcon}
         title="Nothing rendered yet"
         description={MESSAGES.empty.noJobs}
+        action={
+          <Button asChild>
+            <Link to="/studio">Open the studio</Link>
+          </Button>
+        }
       />
     )
   }

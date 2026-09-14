@@ -125,11 +125,24 @@ export function CapabilityGrid() {
       </div>
 
       {visible.length === 0 ? (
+        /*
+         * Two different empties, and only one of them has an action (§5.1).
+         * An empty FILTER is the user's own doing and clearing it is a real
+         * control; an empty workspace is not something a button can fix, so it
+         * gets none rather than a decorative one.
+         */
         <EmptyState
           icon={Sparkles}
-          title={granted.size === 0 ? 'Nothing here yet' : 'Nothing of that kind'}
+          title={granted.size === 0 ? 'Nothing here yet' : `No ${kind} tools`}
           description={
             granted.size === 0 ? MESSAGES.empty.noCapabilities : MESSAGES.empty.noCapabilitiesOfKind
+          }
+          action={
+            granted.size === 0 ? undefined : (
+              <Button variant="outline" onClick={() => setKind('all')}>
+                Show all tools
+              </Button>
+            )
           }
         />
       ) : (

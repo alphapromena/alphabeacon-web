@@ -173,7 +173,7 @@ export function EventSourcesScreen() {
                     {source.calendars && source.calendars.length > 0 && (
                       <fieldset className="flex flex-col gap-2 border-t border-border pt-3">
                         <legend className="sr-only">Calendars feeding the schedule</legend>
-                        <p className="text-xs tracking-wider text-muted-foreground uppercase">
+                        <p className="text-xs font-medium text-muted-foreground">
                           Calendars in use
                         </p>
                         {source.calendars.map((calendar) => (
@@ -289,7 +289,7 @@ function AddSourceDialog({
                   checked={kind === value}
                   onChange={() => setKind(value as 'holiday' | 'google')}
                 />
-                <span className="flex flex-col gap-0.5">
+                <span className="flex flex-col gap-1">
                   <span className="text-sm font-medium">{label}</span>
                   <span className="text-xs text-muted-foreground">{description}</span>
                 </span>

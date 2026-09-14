@@ -50,7 +50,7 @@ export function ClaimChip({
   const shownCount = useCountUp(count ?? 0)
 
   const chipClassName = cn(
-    'inline-flex max-w-full items-center gap-1.5 rounded-md border border-border',
+    'inline-flex max-w-full items-center gap-2 rounded-md border border-border',
     'bg-card px-2 py-0.5 text-start align-middle',
     // Focus is re-drawn, never removed — the ring replaces the outline visibly.
     'outline-none focus-visible:ring-2 focus-visible:ring-ring',

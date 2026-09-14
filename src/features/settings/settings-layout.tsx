@@ -106,11 +106,22 @@ export function SettingsLayout() {
                       tabRefs.current[index] = node
                     }}
                     onFocus={() => setFocusIndex(index)}
+                    /*
+                     * Settings sub-navigation follows the sidebar's rule
+                     * (ORDER THEME-0913 Phase 2): the GOLD rule is the
+                     * indicator, hover is a surface step. It had these
+                     * backwards — selected was `bg-secondary` (#10171c) and
+                     * hover `bg-accent` (#1d272f), so the row under the cursor
+                     * was LIGHTER than the one you were actually on.
+                     * The rule is inset-x-3 so it sits under the label rather
+                     * than the padding, and `-bottom-px` lands it on the
+                     * nav's own hairline instead of floating above it.
+                     */
                     className={cn(
-                      'inline-flex rounded-lg px-3 py-1.5 text-sm whitespace-nowrap transition-colors',
+                      'relative inline-flex rounded-lg px-3 py-1.5 text-sm whitespace-nowrap transition-colors',
                       'focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none',
                       isSelected
-                        ? 'bg-secondary font-medium text-secondary-foreground'
+                        ? 'font-medium text-foreground after:absolute after:inset-x-3 after:-bottom-px after:h-0.5 after:rounded-full after:bg-brand'
                         : 'text-muted-foreground hover:bg-accent hover:text-foreground',
                     )}
                   >

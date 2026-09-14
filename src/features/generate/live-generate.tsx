@@ -308,7 +308,7 @@ export function LiveGenerate() {
         </fieldset>
 
         <div className="grid gap-4 sm:grid-cols-2">
-          <fieldset className="flex flex-col gap-1.5">
+          <fieldset className="flex flex-col gap-2">
             <legend className="text-sm font-medium">How it writes</legend>
             {PLANS.map((option) => (
               <label key={option.id} className="flex cursor-pointer items-start gap-2 text-sm">
@@ -330,7 +330,7 @@ export function LiveGenerate() {
 
           <div className="flex flex-col gap-3">
             {occasions.length > 0 && (
-              <div className="flex flex-col gap-1.5">
+              <div className="flex flex-col gap-2">
                 <Label htmlFor="gen-occasion">Attach an occasion (optional)</Label>
                 <select
                   id="gen-occasion"

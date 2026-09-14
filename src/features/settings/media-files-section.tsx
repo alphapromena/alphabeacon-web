@@ -34,7 +34,7 @@ export interface MediaFileRow {
 
 const KIND_WORD: Record<string, string> = { image: 'Image', video: 'Video', document: 'Document' }
 /** The badge word per echoed role — an unknown role shows no badge, claims nothing. */
-const ROLE_BADGE: Record<string, string> = { logo: 'logo', brandkit: 'brand kit' }
+const ROLE_BADGE: Record<string, string> = { logo: 'Logo', brandkit: 'Brand kit' }
 
 function iconFor(kind: string | undefined) {
   if (kind === 'video') return Film
@@ -92,10 +92,10 @@ export function MediaFilesSection({
                 <div className="flex min-w-0 items-center gap-3">
                   <Icon aria-hidden className="size-4 shrink-0 text-muted-foreground" />
                   <div className="flex min-w-0 flex-col">
-                    <span className="flex min-w-0 items-center gap-1.5">
+                    <span className="flex min-w-0 items-center gap-2">
                       <span className="truncate text-sm">{name}</span>
                       {badge && (
-                        <span className="shrink-0 rounded-full bg-muted px-1.5 py-0.5 text-[10px] tracking-wide text-muted-foreground uppercase">
+                        <span className="shrink-0 rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
                           {badge}
                         </span>
                       )}

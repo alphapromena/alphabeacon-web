@@ -232,9 +232,16 @@ export function DashboardScreen() {
               </ToggleGroup>
 
               {feed.length === 0 ? (
+                /*
+                 * No action here, deliberately (§5.1). A notification feed is
+                 * filled by the product doing its work, not by the reader
+                 * pressing something — a button would be decoration. What the
+                 * title owes is what WILL appear, which "Nothing here yet"
+                 * never said.
+                 */
                 <EmptyState
                   icon={Bell}
-                  title="Nothing here yet"
+                  title="Approvals and alerts land here"
                   description={MESSAGES.empty.noNotifications}
                 />
               ) : (

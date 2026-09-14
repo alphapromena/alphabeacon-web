@@ -145,7 +145,7 @@ export function OrganizationScreen() {
        */}
       <OrganizationId />
 
-      <section className="flex flex-col gap-5">
+      <section className="flex flex-col gap-6">
         {live ? (
           // MED-0831: the wire's logo, its own calls, outside the save bar.
           <OrgLogoLive orgName={draft.name} />

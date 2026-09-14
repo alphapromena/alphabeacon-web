@@ -172,7 +172,7 @@ function StatusPill({ status }: { status: KnowledgeDoc['status'] }) {
   const word = STATUS_WORD[status]
   if (status === 'ready') {
     return (
-      <span className="inline-flex items-center gap-1.5 rounded-full bg-success/10 px-2 py-0.5 text-xs text-success">
+      <span className="inline-flex items-center gap-2 rounded-full bg-success/10 px-2 py-0.5 text-xs text-success">
         <CheckCircle2 aria-hidden className="size-3.5" />
         {word}
       </span>
@@ -180,14 +180,14 @@ function StatusPill({ status }: { status: KnowledgeDoc['status'] }) {
   }
   if (status === 'failed') {
     return (
-      <span className="inline-flex items-center gap-1.5 rounded-full bg-destructive/10 px-2 py-0.5 text-xs text-destructive">
+      <span className="inline-flex items-center gap-2 rounded-full bg-destructive/10 px-2 py-0.5 text-xs text-destructive">
         <TriangleAlert aria-hidden className="size-3.5" />
         {word}
       </span>
     )
   }
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
+    <span className="inline-flex items-center gap-2 rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
       <Spinner aria-hidden className="size-3.5" />
       {word}
     </span>

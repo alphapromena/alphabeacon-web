@@ -206,7 +206,7 @@ function StaticGenerateScreen() {
               </Button>
             </div>
           ) : (
-            <div className="flex flex-col gap-5">
+            <div className="flex flex-col gap-6">
               <div className="flex flex-col gap-2">
                 <Label htmlFor="compose-prompt">Prompt</Label>
                 <Textarea
@@ -225,7 +225,7 @@ function StaticGenerateScreen() {
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
-                <div className="flex flex-col gap-1.5">
+                <div className="flex flex-col gap-2">
                   <Label htmlFor="compose-tone">Tone</Label>
                   <select
                     id="compose-tone"
@@ -244,7 +244,7 @@ function StaticGenerateScreen() {
                   </p>
                 </div>
 
-                <div className="flex flex-col gap-1.5">
+                <div className="flex flex-col gap-2">
                   <Label htmlFor="compose-source">Source to ground it in (optional)</Label>
                   <Input
                     id="compose-source"

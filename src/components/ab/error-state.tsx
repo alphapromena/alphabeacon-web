@@ -8,6 +8,9 @@
  * - errors say what happened AND how to fix it, so `message` is required and
  *   comes from `lib/messages.ts` (MESSAGES.errors.*) rather than being
  *   inlined per screen;
+ * - no apology and no code in the primary line: the title names what failed,
+ *   the message says what to do, and the `reference` a support agent needs
+ *   renders last and quietest (ORDER THEME-0913 §5.5);
  * - the retry affordance only exists when retrying is actually possible —
  *   no dead button teasing a recovery the caller can't perform.
  *
@@ -20,18 +23,31 @@ import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
 export function ErrorState({
-  title = 'Something went wrong',
+  title = "This didn't load",
   message,
   onRetry,
   retryLabel = 'Try again',
+  reference,
   className,
 }: {
+  /**
+   * Says WHAT failed, not that something did. The default is deliberately
+   * concrete: "Something went wrong" was an apology stacked on top of a
+   * message that already explained itself, on 16 of the 23 call sites
+   * (ORDER THEME-0913 §5.5).
+   */
   title?: string
   /** What happened and how to fix it — pass a MESSAGES.errors.* entry. */
   message: string
   /** Omit when the caller has no way to retry; the button is then absent, not disabled. */
   onRetry?: () => void
   retryLabel?: string
+  /**
+   * The handle a user can quote when they report this — `errorReference()`.
+   * Rendered SECONDARY and last: a request id is for the person who will
+   * debug it, never the first thing the person who hit it has to read.
+   */
+  reference?: string
   className?: string
 }) {
   return (
@@ -53,6 +69,11 @@ export function ErrorState({
         <Button variant="outline" size="sm" onClick={onRetry}>
           {retryLabel}
         </Button>
+      )}
+      {reference && (
+        <p className="text-xs text-subtle-foreground">
+          Reference <span className="font-medium">{reference}</span>
+        </p>
       )}
     </div>
   )

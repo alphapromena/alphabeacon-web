@@ -202,7 +202,7 @@ function VisualFields({ visual, disabled }: { visual: CreateVisualState; disable
   return (
     <div className="flex flex-col gap-4">
       <div className="grid gap-4 sm:grid-cols-2">
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-2">
           <Label htmlFor="visual-kind">Image or video</Label>
           {/* REQUIRED with NO default: the two kinds are priced differently,
               so the choice is the user's every time. */}
@@ -224,7 +224,7 @@ function VisualFields({ visual, disabled }: { visual: CreateVisualState; disable
           </p>
         </div>
 
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-2">
           <Label htmlFor="visual-plan">Quality</Label>
           <select
             id="visual-plan"
@@ -247,7 +247,7 @@ function VisualFields({ visual, disabled }: { visual: CreateVisualState; disable
         // HSN-0902: VIDEO ONLY. Whole seconds, sent as the top-level
         // `params.durationS`; the ceiling follows the quality and is shown
         // here, and a quality change pulls the value inside it.
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-2">
           <Label htmlFor="visual-duration">Duration (seconds)</Label>
           <Input
             id="visual-duration"
@@ -273,7 +273,7 @@ function VisualFields({ visual, disabled }: { visual: CreateVisualState; disable
         </div>
       )}
 
-      <div className="flex flex-col gap-1.5">
+      <div className="flex flex-col gap-2">
         <Label htmlFor="visual-style">Style</Label>
         <select
           id="visual-style"

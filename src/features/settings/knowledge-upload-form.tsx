@@ -167,7 +167,7 @@ export function KnowledgeUploadForm({
       {describes && (
         // Absent for the brand kit (HSN-0902): there is nothing to say about
         // it — the wire's marker IS its description.
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-2">
           <Label htmlFor="kn-desc">What is it?</Label>
           <Input
             id="kn-desc"

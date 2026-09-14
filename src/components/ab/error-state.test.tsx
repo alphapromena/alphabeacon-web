@@ -10,7 +10,7 @@ describe('ErrorState', () => {
 
     const alert = screen.getByRole('alert')
 
-    expect(alert).toHaveTextContent('Something went wrong')
+    expect(alert).toHaveTextContent("This didn't load")
     expect(alert).toHaveTextContent(MESSAGES.errors.screenLoadFailed)
   })
 

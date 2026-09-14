@@ -62,7 +62,7 @@ export function DevStatesScreen() {
             className={cn('h-auto justify-start px-4 py-3 text-start')}
             onClick={() => dispatch({ type: 'dev/force', mode })}
           >
-            <span className="flex flex-col items-start gap-0.5">
+            <span className="flex flex-col items-start gap-1">
               <span className="font-medium">{label}</span>
               <span
                 className={cn('text-xs', active === mode ? 'opacity-80' : 'text-muted-foreground')}
@@ -86,7 +86,7 @@ export function DevStatesScreen() {
             className={cn('h-auto justify-start px-4 py-3 text-start')}
             onClick={() => dispatch({ type: 'dev/connectivity', mode })}
           >
-            <span className="flex flex-col items-start gap-0.5">
+            <span className="flex flex-col items-start gap-1">
               <span className="font-medium">{label}</span>
               <span
                 className={cn(

@@ -196,12 +196,12 @@ export function CalendarScreen() {
               ['Done', 'bg-success'],
               ['Skipped', 'bg-muted-foreground'],
             ].map(([label, dot]) => (
-              <li key={label} className="flex items-center gap-1.5">
+              <li key={label} className="flex items-center gap-2">
                 <span aria-hidden className={cn('size-1.5 rounded-full', dot)} />
                 {label}
               </li>
             ))}
-            <li className="flex items-center gap-1.5">
+            <li className="flex items-center gap-2">
               <span aria-hidden>↗</span> Published, with reach
             </li>
           </ul>

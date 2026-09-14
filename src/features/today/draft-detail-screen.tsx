@@ -101,9 +101,7 @@ export function DraftDetailScreen() {
                   <>
                     <Separator />
                     <div>
-                      <h2 className="text-xs tracking-wider text-muted-foreground uppercase">
-                        Why this post
-                      </h2>
+                      <h2 className="text-xs font-medium text-muted-foreground">Why this post</h2>
                       <p className="mt-1 text-sm text-muted-foreground">{draft.rationale}</p>
                     </div>
                   </>
@@ -152,7 +150,7 @@ export function DraftDetailScreen() {
             )}
           </div>
 
-          <aside className="flex flex-col gap-5">
+          <aside className="flex flex-col gap-6">
             <div className="flex flex-col gap-3 rounded-xl border border-border p-4">
               <DraftStatusBadge status={draft.status} className="self-start" />
               <dl className="flex flex-col gap-2 text-sm">
@@ -235,7 +233,7 @@ export function DraftDetailScreen() {
                         <span aria-hidden className="w-px flex-1 bg-border" />
                       )}
                     </span>
-                    <span className="flex flex-col gap-0.5 pb-2">
+                    <span className="flex flex-col gap-1 pb-2">
                       <DraftStatusBadge status={entry.status} className="self-start" />
                       <span className="text-xs text-muted-foreground">
                         <PostingTime at={entry.at} zone={schedule.timezone} showZone={false} /> ·{' '}

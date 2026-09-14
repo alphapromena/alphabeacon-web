@@ -7,6 +7,7 @@
  * error and the rest of the queue keeps working.
  */
 import { CalendarClock, Clock, Plus, Sparkles } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router'
 import { EmptyState } from '@/components/ab/empty-state'
 import { useReadiness } from '@/data/readiness'
@@ -74,6 +75,23 @@ function StaticTodayScreen() {
       ? `${awaiting} ${pluralize(awaiting, 'draft')} ready across ${todaySlots.length} ${pluralize(todaySlots.length, 'slot')}`
       : 'Nothing waiting on you right now'
 
+  /*
+   * §5.7 — did the queue just become clear?
+   *
+   * Only a TRANSITION counts. A queue that was already empty when the screen
+   * mounted has not been finished, it has merely been arrived at, and marking
+   * that would make the moment meaningless within a day. `clearedAt` keys the
+   * element so a second clearing re-runs the animation rather than React
+   * reusing a node whose animation has already played.
+   */
+  const previousAwaiting = useRef(awaiting)
+  const [clearedAt, setClearedAt] = useState(0)
+  useEffect(() => {
+    if (previousAwaiting.current > 0 && awaiting === 0) setClearedAt(Date.now())
+    previousAwaiting.current = awaiting
+  }, [awaiting])
+  const cleared = clearedAt > 0 && Date.now() - clearedAt < 2000
+
   /**
    * Why Today is empty, and the one thing that fixes it. Ordered by what
    * blocks first: a workspace that cannot generate is told that before it is
@@ -124,7 +142,22 @@ function StaticTodayScreen() {
               signpost, read hourly it is noise, and it repeated the word the
               top bar already says. The heading carries the meaning alone. */}
           <div className="flex flex-wrap items-start justify-between gap-4">
-            <div className="flex flex-col gap-1">
+            <div className="relative flex flex-col gap-1">
+              {/*
+               * §5.7 — the one memorable moment, and the only one. A gold rule
+               * draws once when the LAST draft is approved. It is earned: it
+               * cannot fire on load, on navigation, or on any queue that still
+               * has work in it, so it marks finishing rather than arriving.
+               * Removed entirely under prefers-reduced-motion (globals.css).
+               */}
+              {cleared && (
+                <span
+                  key={clearedAt}
+                  data-ab-motion="queue-clear"
+                  aria-hidden
+                  className="absolute inset-x-0 -top-2 h-px rounded-full bg-brand"
+                />
+              )}
               <h2 className="font-display text-2xl font-semibold tracking-tight text-balance">
                 {awaiting > 0
                   ? `${awaiting} ${pluralize(awaiting, 'draft')} ready for review`

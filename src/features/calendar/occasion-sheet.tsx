@@ -49,7 +49,7 @@ export function OccasionSheet({
           <SheetDescription>{shortDate(occasion.date)}</SheetDescription>
         </SheetHeader>
 
-        <div className="flex flex-col gap-5 px-4 pb-6">
+        <div className="flex flex-col gap-6 px-4 pb-6">
           <div className="flex items-center gap-3 rounded-lg border border-primary/40 bg-primary/5 p-3">
             <CalendarDays aria-hidden className="size-4 shrink-0 text-primary" />
             <span className="text-sm text-muted-foreground">
@@ -101,9 +101,9 @@ function RuleGroup({
   rules: { kind: string; text: string }[]
 }) {
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className="flex flex-col gap-2">
       <p className="text-xs font-medium text-muted-foreground">{label}</p>
-      <ul className="flex flex-col gap-1.5">
+      <ul className="flex flex-col gap-2">
         {rules.map((rule, index) => (
           <li key={index} className="flex gap-2 text-sm">
             <Icon aria-hidden className={`mt-0.5 size-4 shrink-0 ${tone}`} />

@@ -132,7 +132,7 @@ function Section({
 }) {
   const headingId = useId()
   return (
-    <section aria-labelledby={headingId} className="flex flex-col gap-5">
+    <section aria-labelledby={headingId} className="flex flex-col gap-6">
       <div className="flex flex-col gap-1">
         <h2 id={headingId} className="font-display text-lg font-semibold tracking-tight">
           {title}
@@ -148,7 +148,7 @@ function Section({
 function Specimen({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div className="flex flex-col gap-2">
-      <p className="text-xs tracking-wider text-muted-foreground uppercase">{label}</p>
+      <p className="text-xs font-medium text-muted-foreground">{label}</p>
       {children}
     </div>
   )
@@ -220,7 +220,6 @@ export function DevKitchenSinkScreen() {
       <header className="sticky top-0 z-10 border-b border-border bg-background/95 backdrop-blur">
         <div className="mx-auto flex max-w-5xl flex-col gap-3 px-6 py-4">
           <PageHeader
-            eyebrow="Dev"
             title="Kitchen sink"
             description="Every ab/ primitive on one page, so the design layer can be reviewed and axe-scanned in one pass."
           />
@@ -238,7 +237,7 @@ export function DevKitchenSinkScreen() {
         </div>
       </header>
 
-      <main className="mx-auto flex max-w-5xl flex-col gap-16 px-6 py-12">
+      <main className="mx-auto flex max-w-5xl flex-col gap-12 px-6 py-12">
         <Section
           title="Typography and numbers"
           purpose="The three faces, the heading scale, and every number that matters going through MonoNumber."

@@ -5,7 +5,61 @@ without reconstructing it from the session log. **Update this file at the end
 of any turn that finishes a phase or changes the plan.** `sessions.md` is the
 chronological record; this is the current picture.
 
-_Last updated: 2026-09-14, after **ORDER THEME-0913 Phase 1 — the dark repalette
+_Last updated: 2026-09-14, after **ORDER THEME-0913 COMPLETE — Phases 0 through 5 —
+BUILT on `feat/theme-0913`, PUSHED, report-and-stop, NOT merged.** Branch off
+`feat/ux-0913` = `bb83ffe`. Founder review of Today on the preview PASSED and
+the colour direction is settled.
+
+**THE THREE PREVIEW FINDINGS, all decided.** (1) The login split panel was
+`bg-primary` — a charcoal fill until the accent took that token, then half a
+viewport of `#ff4e2d` that nobody chose. **It is graphite now** (D-THEME-0913-H),
+and NOT for contrast: dark ink on the accent measures **5.86:1** and passes. The
+accent survives as one character, the full stop closing the panel headline — the
+website's own idiom. Panel copy measured at **11.16:1 / 5.84:1** worst case over
+a gold bloom dropped from 70% to **18%**. (2) The Dashboard tile is a **real
+state**, `tone="warning"` at `credits < 50`, and it is `--warning` (h 63.9°) not
+the accent; the rule is uniform across tiles. (3) Font confirmed from the BUILT
+artifact: `html{font-family:DM Sans Variable,…}`, and **`grep -c Inter` on the
+built CSS returns 0**. A browser-computed read still needs Playwright.
+
+**PHASES 2–5.** Chrome: the sidebar active row was a filled block **identical to
+hover**; it is a gold inline-start rule now, and the settings sub-nav had the
+same fault inverted (hover LIGHTER than selected). The `eyebrow` PROP was
+deleted, not just its call site, along with all 7 tracked-uppercase labels.
+Components: four more unlayered overrides — **tooltips were `bg-foreground`, a
+near-white card over graphite and the one genuine orphan light surface**;
+secondary buttons gained their border; tables gained zebra, a sticky header and
+tabular figures. `chart.tsx` re-themes fully through `--chart-1`; **its tooltip
+hardcodes `bg-background` and is REPORTED as unreachable rather than hacked via
+recharts internals.** Sweep: **62 accent buttons counted, most mutually
+exclusive branches, ONE genuine collision fixed** — `publish_failed → scheduled`
+made a failed card render Schedule AND Retry both in accent.
+
+**THE WARMTH PASS.** 6 empty states had no action; 3 got a real control and 3
+are control-adjacent by design. EmptyOrgScreen rebuilt as the warmest screen.
+SaveBar says **"Saved" at the bar that was pressed**. `SkeletonShell` escalates
+after 10s with one honest line — the **12–23s cold-start tail** is real.
+`ErrorState`'s default was **"Something went wrong" on 16 of 23 call sites** and
+is now `"This didn't load"`, with the request id last and quietest. **§5.6 was
+the biggest diff and it was not colour**: the top-level section gap measured
+**4px to 32px across 25 screens**, and 32px is now applied ONCE in AppShell's
+`<main>` (D-THEME-0913-J), with 62 off-scale gaps normalised. **§5.7 — the one
+moment is finishing the queue**: a gold rule drawing once when the LAST draft is
+approved, as a third `data-ab-motion` value so it inherits the reduced-motion
+guarantee Playwright already asserts.
+
+**GREENS, run twice, the second on the frozen formatted tree: lint · typecheck ·
+guard-static 356 files clean · unit 750/750 in 63 files · build.** Prettier
+touched only the 9 files this order made dirty; the pre-existing 17-file
+baseline was measured at HEAD and is unchanged.
+
+**NO PLAYWRIGHT RAN.** The three held specs stay **unedited** per the founder's
+RULING 3: `design-layer.spec.ts:95–118`, `smoke.spec.ts:37–39`, `smoke.spec.ts:34`.
+**SCREENSHOTS ARE THE ONE OUTSTANDING ITEM** — Today in four states, desktop and
+mobile, English only, under `Docs/qa/theme-0913/`. Arabic remains open-items 68
+and was explicitly not started._
+
+_Before that, 2026-09-14: **ORDER THEME-0913 Phase 1 — the dark repalette
 and the Today warmth pass — BUILT on `feat/theme-0913`, PUSHED, report-and-stop,
 NOT merged.** Branch off `feat/ux-0913` = `bb83ffe`, so it carries the UX-0913
 copy work. **Phase 0 was accepted in full and two of its measurements changed the

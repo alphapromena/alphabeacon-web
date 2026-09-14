@@ -356,9 +356,7 @@ export function StudioAssetScreen() {
 
             {job?.params && Object.keys(job.params).length > 0 && (
               <div className="flex flex-col gap-2 rounded-xl border border-border p-4">
-                <h2 className="text-xs tracking-wider text-muted-foreground uppercase">
-                  Parameters
-                </h2>
+                <h2 className="text-xs font-medium text-muted-foreground">Parameters</h2>
                 <dl className="flex flex-col gap-1 text-sm">
                   {Object.entries(job.params).map(([key, value]) => (
                     <div key={key} className="flex justify-between gap-2">

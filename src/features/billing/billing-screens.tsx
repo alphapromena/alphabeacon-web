@@ -400,9 +400,7 @@ export function BalanceScreen() {
         <div className="mx-auto flex max-w-[720px] flex-col gap-6">
           <section className="flex flex-wrap items-end justify-between gap-4 rounded-xl border border-border p-5">
             <div className="flex flex-col gap-1">
-              <span className="text-xs tracking-wider text-muted-foreground uppercase">
-                Balance
-              </span>
+              <span className="text-xs font-medium text-muted-foreground">Balance</span>
               {/* Always the sum of the rows below — never a stored number. */}
               <MonoNumber value={balance} className="text-4xl font-semibold" />
             </div>
@@ -429,7 +427,7 @@ export function BalanceScreen() {
             ].map((cell) => (
               <div
                 key={cell.label}
-                className="flex flex-col gap-0.5 rounded-lg border border-border p-3"
+                className="flex flex-col gap-1 rounded-lg border border-border p-3"
               >
                 <span className="text-xs text-muted-foreground">{cell.label}</span>
                 <MonoNumber

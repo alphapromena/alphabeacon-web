@@ -10,7 +10,8 @@
  * It is sticky and it appears ONLY when there is something to save — a bar that
  * is always there stops meaning anything.
  */
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { Check } from 'lucide-react'
 import { useBlocker } from 'react-router'
 import { Button } from '@/components/ui/button'
 import {
@@ -36,6 +37,28 @@ export function SaveBar({
   consequence: string
   saveLabel?: string
 }) {
+  /*
+   * "Saved", shown at the bar rather than only in a corner toast (§5.3).
+   *
+   * `onSave` is a plain callback with no completion signal, so the success is
+   * read from the only fact this component can see: `dirty` going true → false
+   * is the screen telling us the commit landed. A failed save leaves the form
+   * dirty and its own screen owns the error, so this never claims a success
+   * that did not happen. It holds for 1.6s — long enough to read, short enough
+   * that the bar does not linger over the work it was covering.
+   */
+  const [justSaved, setJustSaved] = useState(false)
+  const wasDirty = useRef(dirty)
+  useEffect(() => {
+    if (wasDirty.current && !dirty) {
+      setJustSaved(true)
+      const timer = setTimeout(() => setJustSaved(false), 1600)
+      wasDirty.current = dirty
+      return () => clearTimeout(timer)
+    }
+    wasDirty.current = dirty
+  }, [dirty])
+
   // The guard is the router's, not a window.confirm: leaving is a navigation,
   // so the refusal belongs where navigation happens.
   const blocker = useBlocker(
@@ -75,19 +98,35 @@ export function SaveBar({
 
   return (
     <>
-      {dirty && (
+      {(dirty || justSaved) && (
         <div
           data-slot="save-bar"
           className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-background/95 backdrop-blur"
         >
           <div className="mx-auto flex max-w-[1200px] items-center justify-between gap-4 px-4 py-3 md:px-6">
-            <p className="text-sm text-muted-foreground">You have unsaved changes.</p>
-            <div className="flex items-center gap-2">
-              <Button variant="ghost" onClick={onCancel}>
-                Cancel
-              </Button>
-              <Button onClick={onSave}>{saveLabel}</Button>
-            </div>
+            {justSaved ? (
+              /*
+               * The result, AT the control that was pressed (§5.3). A corner
+               * toast alone makes the user look away from the thing they just
+               * acted on to find out whether it worked. The bar has to leave
+               * anyway, so it says what happened on its way out.
+               * `role="status"` so it is announced rather than only seen.
+               */
+              <p role="status" className="flex items-center gap-2 text-sm text-success">
+                <Check aria-hidden className="size-4" />
+                Saved
+              </p>
+            ) : (
+              <p className="text-sm text-muted-foreground">You have unsaved changes.</p>
+            )}
+            {!justSaved && (
+              <div className="flex items-center gap-2">
+                <Button variant="ghost" onClick={onCancel}>
+                  Cancel
+                </Button>
+                <Button onClick={onSave}>{saveLabel}</Button>
+              </div>
+            )}
           </div>
         </div>
       )}
