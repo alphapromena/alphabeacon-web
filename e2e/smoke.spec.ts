@@ -25,18 +25,24 @@ function appLink(page: Page) {
   return page.getByRole('link', { name: '← App' })
 }
 
-test('boots on the seeded dashboard in both themes', async ({ page }) => {
+test('boots on the seeded dashboard, in the one theme it has', async ({ page }) => {
   await page.goto('/')
   await expectDashboardStats(page)
 
-  // Inter is the (proposed) brand typeface (design.md Part 2) — asserted here
-  // so the vendored @font-face silently falling back to system-ui fails.
+  // DM Sans is the brand typeface (design.md Part 2), settled by
+  // D-THEME-0913-F — which supersedes the Inter this line used to assert, and
+  // Inter was only ever PROPOSED. Asserted here so the self-hosted @font-face
+  // silently falling back to system-ui fails.
   const fontFamily = await page.evaluate(() => getComputedStyle(document.body).fontFamily)
-  expect(fontFamily).toContain('Inter')
+  expect(fontFamily).toContain('DM Sans')
+  expect(fontFamily, 'Inter is retired (D-THEME-0913-F)').not.toContain('Inter')
 
-  await page.getByRole('button', { name: 'Switch to dark theme' }).click()
+  // ONE theme (D-THEME-0913-B): dark is the product, not a preference. This
+  // used to press a toggle and watch the class change. The toggle is deleted,
+  // so what is worth asserting now is that the class is already there WITHOUT
+  // an interaction, and that no toggle has come back.
   await expect(page.locator('html')).toHaveClass(/\bdark\b/)
-  await expect(page.getByRole('button', { name: 'Switch to light theme' })).toBeVisible()
+  await expect(page.getByRole('button', { name: /^Switch to (dark|light) theme$/ })).toHaveCount(0)
 })
 
 /**

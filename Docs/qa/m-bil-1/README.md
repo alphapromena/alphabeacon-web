@@ -22,6 +22,22 @@ runner's output directory.**
 | `recovered-*.png`                              | Five frames of the PERSISTED state, re-taken by the recovery: org 1813's dashboard chip, `/billing` (Manage billing + the invoice row), `/billing/balance`, the bell's "Wallet credited"; org 1814's cancelled deep link.        |
 | `recovery-api-calls.json` · `network-recovery.api.har` | The recovery's API traffic with request-ids. Scrubbed before commit: `/auth/` bodies and every `authorization`/`cookie` value redacted; the HAR keeps API-origin entries only (the raw 10 MB HAR was never committed). |
 
+> **THESE FIVE FRAMES PREDATE THE DARK THEME, AND THEY STAY THAT WAY**
+> (noted 2026-09-14, ORDER THEME-0913 close-out). They show the LIGHT palette
+> the product wore on 2026-09-03, because that is what it wore when this gate
+> ran. They are **evidence of a payment event**, not a design reference: the
+> orgs are real (1813, 1814), Stripe was live in test mode, and this README's
+> own rule is that the Stripe pages are driven once and nothing that can bill
+> is retried.
+>
+> So they are **not re-taken**. Re-shooting them in the new theme would produce
+> pictures of a run that never happened, which is worse than a stale record —
+> it would be a false one. A record is a record of its moment.
+>
+> Regenerating the *screens* (not the payment) would still need a live run
+> against real orgs, which this order explicitly excludes. Filed as
+> **open-items 69** so the decision is visible rather than assumed.
+
 **Lost for good** (deleted by the step-9 `pnpm e2e` before anyone could copy
 them): the run's eleven frames — the Stripe Checkout page (both orgs), the
 Stripe portal, the confirming and active success states, the `/billing` states

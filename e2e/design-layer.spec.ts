@@ -92,21 +92,19 @@ async function readFocusStop(page: Page): Promise<FocusStop | null> {
   })
 }
 
-test('kitchen sink is clean in light and dark', { tag: '@axe' }, async ({ page }) => {
+test('kitchen sink is clean in the one theme', { tag: '@axe' }, async ({ page }) => {
   await page.goto(KITCHEN_SINK)
+  await expect(page.getByRole('heading', { name: 'Kitchen sink' })).toBeVisible()
 
-  const toDark = page.getByRole('button', { name: 'Switch to dark theme' })
-  await expect(toDark).toBeVisible()
-
-  const lightScan = await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze()
-  expect(lightScan.violations).toEqual([])
-
-  await toDark.click()
+  // This scanned light, pressed the toggle, then scanned dark. There is ONE
+  // theme now (D-THEME-0913-B) and the toggle is deleted, so those two scans
+  // would be the same scan run twice. What still earns its place is that the
+  // theme arrives WITHOUT an interaction — a page that needed a press to go
+  // dark would be the old behaviour wearing the new palette.
   await expect(page.locator('html')).toHaveClass(/\bdark\b/)
-  await expect(page.getByRole('button', { name: 'Switch to light theme' })).toBeVisible()
 
-  const darkScan = await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze()
-  expect(darkScan.violations).toEqual([])
+  const scan = await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze()
+  expect(scan.violations).toEqual([])
 })
 
 test(
@@ -115,7 +113,7 @@ test(
   async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' })
     await page.goto(KITCHEN_SINK)
-    await expect(page.getByRole('button', { name: /^Switch to (dark|light) theme$/ })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Kitchen sink' })).toBeVisible()
 
     const reduced = await motionAnimationNames(page)
     // Without this the sweep below would pass on a page that animates nothing —
@@ -131,7 +129,7 @@ test(
 
     await page.emulateMedia({ reducedMotion: 'no-preference' })
     await page.reload()
-    await expect(page.getByRole('button', { name: /^Switch to (dark|light) theme$/ })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Kitchen sink' })).toBeVisible()
 
     // The same page with motion allowed must animate, which is what proves the
     // assertion above measured a live selector rather than an inert one.

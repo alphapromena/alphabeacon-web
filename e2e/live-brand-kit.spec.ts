@@ -113,7 +113,7 @@ test('the wire, from Node (NOT browser truth): presign the closed pair, PUT a ti
   const listItem = files.getByRole('listitem').filter({ hasText: 'Brand kit' })
   await expect(listItem).toBeVisible({ timeout: SCREEN_SYNC })
   await expect(listItem).toContainText('PDF')
-  await expect(listItem.getByText('brand kit', { exact: true })).toBeVisible()
+  await expect(listItem.locator('[data-slot="file-role-badge"]')).toHaveText('Brand kit')
   await expect(listItem.getByRole('button', { name: 'Open Brand kit' })).toBeVisible()
 
   // Delete removes it from the WIRE: the list is re-read, and it is empty.
@@ -154,7 +154,7 @@ test('browser truth: the Brand kit type sends a PDF from Chromium with nothing t
   const row = files.getByRole('listitem').filter({ hasText: 'Brand kit' })
   await expect(row).toBeVisible({ timeout: SCREEN_SYNC })
   await expect(row).toContainText('PDF')
-  await expect(row.getByText('brand kit', { exact: true })).toBeVisible()
+  await expect(row.locator('[data-slot="file-role-badge"]')).toHaveText('Brand kit')
 
   await row.getByRole('button', { name: 'Delete Brand kit' }).click()
   await page.getByRole('alertdialog').getByRole('button', { name: 'Delete' }).click()

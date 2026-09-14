@@ -99,7 +99,7 @@ test('the Brand kit type asks no description, takes PDF only, and lands under Fi
   const row = files.getByRole('listitem').filter({ hasText: 'Brand kit' })
   await expect(row).toBeVisible()
   await expect(row).toContainText('PDF')
-  await expect(row.getByText('brand kit', { exact: true })).toBeVisible()
+  await expect(row.locator('[data-slot="file-role-badge"]')).toHaveText('Brand kit')
   await expect(row.getByRole('button', { name: /Open/ })).toHaveCount(0)
   await expect(row.getByRole('button', { name: 'Delete Brand kit' })).toBeVisible()
 

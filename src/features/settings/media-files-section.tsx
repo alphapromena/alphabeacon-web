@@ -95,7 +95,10 @@ export function MediaFilesSection({
                     <span className="flex min-w-0 items-center gap-2">
                       <span className="truncate text-sm">{name}</span>
                       {badge && (
-                        <span className="shrink-0 rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
+                        <span
+                          data-slot="file-role-badge"
+                          className="shrink-0 rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground"
+                        >
                           {badge}
                         </span>
                       )}

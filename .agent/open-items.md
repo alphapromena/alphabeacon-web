@@ -1552,3 +1552,33 @@ Numbering continues from 50. The record: `Docs/qa/hsn-0910/phase0/` and the
 
     **This is its own order and it has not been started.** The founder's
     instruction was explicit: name what it needs, do not begin it.
+
+69. **The five M-BIL-1 frames show the retired light theme, and are deliberately
+    NOT re-taken.** (2026-09-14, ORDER THEME-0913 close-out.)
+    `Docs/qa/m-bil-1/recovered-org1813-*.png` (four) and
+    `recovered-org1814-billing-cancelled-deeplink.png` (one) are the only
+    screenshots under `Docs/` that still show the light palette. They were
+    listed in the THEME-0913 Phase 0 inventory as "stale", and the close-out
+    order offered a choice: replace them, or file them here.
+
+    **They are filed, not replaced, and the reason is stronger than
+    scheduling.** These are not design references. They are the **evidence
+    record of a payment event** — the founder's billing manual gate
+    (open-items 45, ORDER M-BIL-1/auto), run ONCE on 2026-09-03 against
+    production with Stripe in test mode on two real orgs (1813, 1814). That
+    folder's own README carries the rule: *"the Stripe pages are driven once,
+    and nothing that can bill is retried."*
+
+    Re-shooting them in the dark theme would produce pictures of a run that
+    never happened. That is worse than a stale record — it is a false one. The
+    frames show the palette the product wore on the day the gate ran, which is
+    exactly what a record is for.
+
+    **What would be needed if the founder ever wants the SCREENS refreshed**
+    (not the payment): a live run against real funded orgs, which is a testing
+    session, not a build order — and it would still not reproduce the original
+    evidence, only new screens in the new theme. The honest form of that is a
+    NEW record under a new folder, leaving these five where they are.
+
+    `Docs/qa/m-bil-1/README.md` carries the same note inline, so a reader who
+    opens the folder learns it there rather than here.

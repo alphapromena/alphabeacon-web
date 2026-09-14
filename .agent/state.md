@@ -5,7 +5,58 @@ without reconstructing it from the session log. **Update this file at the end
 of any turn that finishes a phase or changes the plan.** `sessions.md` is the
 chronological record; this is the current picture.
 
-_Last updated: 2026-09-14, after **ORDER THEME-0913 COMPLETE — Phases 0 through 5 —
+_Last updated: 2026-09-14, after **ORDER THEME-0913 CLOSE-OUT — Playwright cleared,
+the static suite run, the screenshots taken. BOTH UX-0913 AND THEME-0913 ARE
+CLOSED.** `feat/theme-0913` PUSHED, NOT merged.
+
+**THE LANE WAS CHECKED, NOT ASSUMED.** 0 `node.exe`, 0 `ms-playwright`
+processes, 0 listeners on 5199 before anything ran. **This morning's 05:38–05:41Z
+activity was `verify:all`, not the proof** — written by `verify-all.ts`, no
+`summary.json`, no `.gate/runs/` entry, no live rounds, and its guard-static
+count (**354**) proves it ran on the pre-THEME-0913 tree.
+
+**THE THREE HELD SPECS ARE UPDATED.** `smoke.spec.ts:34` now asserts **DM Sans**
+and the absence of Inter; `smoke.spec.ts:37–39` and `design-layer.spec.ts:95–118`
+now assert the dark class arrives **without an interaction** and that no toggle
+came back, with the two light/dark axe scans collapsed into one. Two further
+readiness gates that used the toggle as a liveness check were re-pointed.
+
+**STATIC E2E: 115 passed / 0 failed / 85 skipped** (run 3, authoritative). It
+took three runs and the middle one is the useful record: run 2 showed **5 reds**,
+four of which had passed in run 1 on identical application code. **They were
+diagnosed, not adjusted** — re-run serially in isolation, **16/16 passed**,
+confirming parallel-load flakes. The one true red was **a spec asserting
+something this series deliberately changed**: the all-caps "BRAND KIT" badge
+became sentence case, and the spec identified that badge BY ITS CASE. It now has
+a real hook (`data-slot="file-role-badge"`) and asserts the badge's words.
+
+**SCREENSHOTS: 8 frames under `Docs/qa/theme-0913/`**, Today × four states ×
+desktop/mobile, English only, **never under `test-results/`**. The first spec
+produced a skeleton for "default" and a route spinner for "error"; three real
+causes were found and fixed (the `/dev/states` controls are `role="radio"`; the
+forced-error DASHBOARD renders the same error title so the marker preceded
+navigation; a bare `[aria-busy]` also matches the route Suspense fallback).
+Every frame re-asserts its marker at the shutter and all eight were checked by eye.
+
+**THE FIVE M-BIL-1 FRAMES STAY LIGHT, DELIBERATELY (open-items 69).** They are
+the evidence record of a payment event (Stripe test mode, real orgs 1813/1814),
+not a design reference, and that folder's rule is that the Stripe pages are
+driven once. Re-shooting them would picture a run that never happened.
+
+**GREENS: lint · typecheck · guard-static 356 files clean · unit 750/750 in 63
+files · build · static e2e 115/0/85.** **NO LIVE ROUNDS** — the 21 live specs
+skipped as designed. Two live specs were **edited but not run**
+(`live-brand-kit.spec.ts:116,157`, the same badge assertion), fixed now rather
+than left to fail in the next testing session.
+
+**FOR THE RECORD: both GATE-0910 proof runs (`20260913-062802` and
+`20260913-070254`) carry `"dirty": true`.** Commit `8c0694a` alone does not
+reproduce them.
+
+**Every decision entry both series call for is filed:** D-UX-0913-C, D-UX-0913-D,
+and D-THEME-0913-A through -K. D-UX-0913-A/B were deliberately never written._
+
+_Before that, 2026-09-14: **ORDER THEME-0913 COMPLETE — Phases 0 through 5 —
 BUILT on `feat/theme-0913`, PUSHED, report-and-stop, NOT merged.** Branch off
 `feat/ux-0913` = `bb83ffe`. Founder review of Today on the preview PASSED and
 the colour direction is settled.
