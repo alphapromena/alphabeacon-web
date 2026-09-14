@@ -15,6 +15,15 @@ So every row is `getComputedStyle` at rest, again under the cursor, and again
 with the mouse genuinely **held down** (`mouse.down()` between reads), because
 `:active` cannot be inferred from source at all.
 
+**A CORRECTION, AND IT CHANGED A CONCLUSION.** The first run of this probe read
+`transform` and reported that buttons do not respond to being pressed. They do:
+Tailwind v4 writes `translate-*` to the separate **`translate`** property, and
+the button base class has carried `active:not-aria-[haspopup]:translate-y-px`
+all along — measured, `translate: none → 0px 1px`. The probe now reads
+`translate`, `scale`, `rotate` and `filter` as well, the whole table below is
+the re-run, and the claim "press does not exist" is withdrawn: press exists on
+**buttons only**, as a 1px nudge, and on nothing else.
+
 The probe runs against the **dev server**: `/dev/states` and `/dev/datasets`
 are stripped from a PROD bundle (`routes.tsx`) and the skeleton is only
 reachable through the state switcher. The cascade is identical — Tailwind emits
@@ -51,10 +60,12 @@ rather than quietly swapped for a friendlier element.
 
 ## What the table says
 
-1. **Press does not exist.** Every surface a person can push — buttons, nav
-   rows, menu items, switches, tabs — computes **identically under the cursor
-   and while held down**. This is the order's premise, and it measures true on
-   every single row.
+1. **Press exists on buttons and nowhere else.** A button nudges down 1px.
+   Nav rows, menu items, switches, tabs, cards and the settings sub-nav all
+   compute **identically under the cursor and while held down**. And even on a
+   button the nudge is the whole of it — no surface step, no hairline — so
+   press is not distinguishable from hover by anything except a pixel of
+   movement that a pointer sitting on the control largely hides.
 2. **There is no scale.** Three different durations are in play — 0.15 s
    (Tailwind's default, chosen by nobody), 0 s (no transition), and
    `duration-100` / `duration-200` in the overlay primitives — and not one of

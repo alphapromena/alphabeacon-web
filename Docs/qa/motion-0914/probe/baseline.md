@@ -1,7 +1,7 @@
 # MOTION-0914/A §1 — measured motion baseline
 
 - base: `http://localhost:5199` (the dev server — it is the only build carrying /dev/states; seeded workspace)
-- at: 2026-09-14T12:20:37.091Z
+- at: 2026-09-14T12:24:35.660Z
 
 Every row is a browser read, not a source grep. **Hover changes** and
 **Press changes** list the computed properties that actually differ —
@@ -9,8 +9,8 @@ an empty cell means the surface does not respond at all.
 
 | Surface | transition-property / duration / timing | animation | Hover changes | Press changes (vs hover) |
 | --- | --- | --- | --- | --- |
-| Button — primary | `all` / `0.15s` / `cubic-bezier(0.4, 0, 0.2, 1)` | — | backgroundColor | **nothing** | |
-| Button — outline | `all` / `0.15s` / `cubic-bezier(0.4, 0, 0.2, 1)` | — | backgroundColor | **nothing** | |
+| Button — primary | `all` / `0.15s` / `cubic-bezier(0.4, 0, 0.2, 1)` | — | backgroundColor | translate | |
+| Button — outline | `all` / `0.15s` / `cubic-bezier(0.4, 0, 0.2, 1)` | — | backgroundColor | translate | |
 | Nav row (rail) | `width, height, padding` / `0.15s` / `cubic-bezier(0.4, 0, 0.2, 1)` | — | backgroundColor | **nothing** | |
 | Nav row — ACTIVE gold rule | `all` / `0s` / `ease` | — | **nothing** | **nothing** | |
 | Sidebar (the rail itself) | `all` / `0s` / `ease` | — | **nothing** | **nothing** | |

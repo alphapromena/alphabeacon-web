@@ -57,6 +57,15 @@ const READ = [
   'borderColor',
   'color',
   'transform',
+  // `translate`, `scale` and `rotate` are SEPARATE computed properties, and
+  // Tailwind v4 writes its `translate-*` / `scale-*` utilities to them rather
+  // than to `transform`. Reading `transform` alone reported the button press
+  // nudge as "nothing changed" — it is `translate: none -> 0px 1px` — and the
+  // first version of this probe got that wrong. They are all read now.
+  'translate',
+  'scale',
+  'rotate',
+  'filter',
   'opacity',
   'boxShadow',
 ] as const
