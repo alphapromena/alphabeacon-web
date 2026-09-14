@@ -99,7 +99,7 @@ test('one run, then Create visual on its result renders ONE image and attaches n
     timeout: 300_000,
   })
   await expect(dialog.getByRole('link', { name: 'Download' })).toBeVisible()
-  await expect(dialog.getByText(/Attaching it to the draft arrives in a later phase/)).toBeVisible()
+  await expect(dialog.getByText(/Attaching it to the draft is not available yet/)).toBeVisible()
   await dialog.getByRole('button', { name: 'Done' }).click()
 })
 

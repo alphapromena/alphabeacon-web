@@ -5,7 +5,48 @@ without reconstructing it from the session log. **Update this file at the end
 of any turn that finishes a phase or changes the plan.** `sessions.md` is the
 chronological record; this is the current picture.
 
-_Last updated: 2026-09-14, after **ORDER VOICE-0913 — the brand voice
+_Last updated: 2026-09-14, after **ORDER UX-0913/P1 — Abdallah's UX copy pass — BUILT
+on `feat/ux-0913`, report-and-stop, NOT pushed.** Branch off `origin/main` =
+`0482f20`. **Phase 1 (copy + placeholders) is the WHOLE order: Phase 3 (the
+palette) was WITHDRAWN by the founder on the Phase 0 report and Phase 2 (Today
+as home) DEFERRED — see D-UX-0913-C for both reasons, they are design law, not
+scheduling.** The copy pass: six exact replacements; six new lines (the Brand
+Voice intro, the Sources/Topics line, the topic helper, the Knowledge subtitle,
+the Do and Don't helpers); the three drafting-model descriptions rewritten to
+say what the model DOES rather than how it behaves; Generate and Studio each
+given a self-explanatory header subtitle ("Text posts, on demand" / "Images and
+video") because **the nav has no secondary-text slot** — its only tooltip
+repeats the label and shows just when the rail is collapsed; **15 placeholders
+neutralised** (12 from the order's list, plus the Don't rule's "Call anything
+artisanal", the knowledge description's "Our spring price list", and an offer
+placeholder the field never had); and `brandExamplesPending` DELETED with both
+consumers — the example editor is now simply absent in live mode, saying
+nothing about why, which is the order's "no explanation text at all".
+**The four honest-limit strings were REWORDED, never deleted** (item 6): each
+still states its limit truthfully, in customer language, with "backend phase" /
+"later phase" / "on the wire" gone. None needed a wire change, so there is no
+open item from this order. **NOTE the network law bit back:** the founder's
+example placeholder `https://example.com/blog` is ILLEGAL — `ab/no-network`
+forbids an `http(s)://` literal anywhere in `src/` — so the three URL
+placeholders are scheme-less (`example.com/blog`, `/guide`, `/article`),
+which is also what `normalizeSourceUrl` actually stores. **New guard:**
+`src/lib/placeholder-law.test.ts`, 11 tests, sweeping every customer-facing
+surface for the residue list and PROVEN by an injected violation that it
+catches with file:line (`src/data/**` excluded on purpose — the demo world is
+Atlas Roasters and `/dev/datasets` is not a customer).
+**GREENS: lint · typecheck · guard-static 355 · unit 694/694 in 61 files
+(from 683/60 — the +11 is exactly the new guard) · build — all run TWICE, the
+second time on the frozen formatted tree.** **NO PLAYWRIGHT RAN, of any kind**
+(the founder's word; port 5199, trap 22). **Three spec files are EDITED BUT
+UNRUN** and that is the one loose end: `hsn-series.spec.ts` (static),
+`live-brand.spec.ts` (3 assertions) and `live-create-visual.spec.ts` — they
+were the only specs asserting a replaced string, found by grep, and the two
+that asserted the deleted notice now assert the example editor's ABSENCE
+instead. **Screenshots were NOT taken: they need Playwright, so both the
+before and the after wait on the same word as the static suite.** Nothing
+pushed; `feat/ux-0913` is local only._
+
+_Before that, 2026-09-14: **ORDER VOICE-0913 — the brand voice
 read/write asymmetry, the combined cap, and the honest save — BUILT, MERGED and
 DEPLOYED.** Branch `feat/voice-0913` off `main` = `dff402d`, two commits, KEPT
 on origin as the record; `main` fast-forwarded `dff402d` → **`aba11be`** and

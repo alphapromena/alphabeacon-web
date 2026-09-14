@@ -249,7 +249,8 @@ export const MESSAGES = {
     noPlans: 'No plans are on offer right now. Check back in a moment.',
     noConnections: 'Nothing connected yet — connect your first account to start posting.',
     noEventSources: "No event sources yet — add your country's holidays or connect a calendar.",
-    noCustomTones: 'No custom tones yet — create one to match a campaign or product line.',
+    noCustomTones:
+      'Create custom tones for specific audiences, campaigns, channels or content goals.',
     /**
      * A workspace with NO tones at all (ORDER ONB-0827): live orgs are no
      * longer seeded with presets, so this is the first thing a new owner
@@ -321,22 +322,15 @@ export const MESSAGES = {
     brandVoiceUnderTones:
       'Brand voice always applies underneath whatever tone is selected — tones vary the style, these rules never bend.',
     /**
-     * INT-7 — the note NARROWED. Rules landed on the wire in the 2026-08-17
-     * contract, so do/don't editors are real in live mode; only the example
-     * line still has nowhere to be stored between runs (open-items 7).
-     */
-    brandExamplesPending:
-      'Example lines arrive with a later backend phase — everything else on this screen is saved exactly as you write it.',
-    /**
      * HSN-03 — the interim, said out loud. The tones API does not store
      * language and length yet, so they are kept in this browser until it
      * does; a second device shows them as not set, and that is the truth
      * rather than a bug to paper over.
      */
     toneFieldsLocal:
-      'Language and length are kept in this browser for now — the backend stores them in a later phase, so another device will show them as not set until then.',
+      'Language and length are saved on this device only, so another device will show them as not set.',
     /** I2/I5 — why a save here matters, said where the saving happens. */
-    reachesNextGeneration: 'Saved changes reach the next generation automatically.',
+    reachesNextGeneration: 'Changes apply to all future content automatically.',
     /**
      * D-INT-B amended (2026-09-13, item 65). The screen now reads and writes
      * ONE voice row, so a workspace carrying extra rows would have their
@@ -418,7 +412,7 @@ export const MESSAGES = {
     planAllowance: 'Includes a monthly generation allowance',
     /** C2 in live mode: there is nothing to add here any more, and why. */
     eventSourcesSuperseded:
-      'Your country is the event source now — public holidays load automatically and scheduling works around them. Calendars you keep yourself will connect here in a later phase.',
+      'Your country is the event source now — public holidays load automatically and scheduling works around them. Connecting your own calendars is not available yet.',
     // On-demand generation, live mode (INT-10).
     occasionOutranks: "The day's own guidance outranks your tone and brand rules for that post.",
     generateWorking: 'Writing your drafts…',
@@ -441,14 +435,14 @@ export const MESSAGES = {
       'Still rendering. It keeps going server-side — follow it in your Studio renders.',
     /** This order attaches nothing to the draft; the honest line says where the file is. */
     visualNotAttached:
-      'Saved in your Studio renders. Attaching it to the draft arrives in a later phase.',
+      'Saved in your Studio renders. Attaching it to the draft is not available yet.',
     /** Static mode: the Studio simulation, named as such (D-ONB-E spirit). */
     visualSimulated: 'Simulated in the demo — nothing was sent anywhere.',
 
     // Today, live mode (INT-12).
     /** The whole truth about what Approve does today (D-INT-K). */
     approveRecordsAsPosted:
-      'Malaky records this as posted and stops suggesting anything like it. Copy the text to publish it yourself — connecting your channels arrives in a later phase.',
+      'Malaky records this as posted and stops suggesting anything like it. Copy the text to publish it yourself — connecting your channels is not available yet.',
     approveConfirm:
       'This adds a permanent record that the post went out. You can still decline it later, but the record stays.',
     declineTeaches:

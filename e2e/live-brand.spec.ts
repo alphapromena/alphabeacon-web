@@ -17,7 +17,7 @@ const RUN = runStamp()
 const PASSWORD = 'Roasted2Order!'
 const owner = `qa+${RUN}b@alphapromena.com`
 const ORG_NAME = `QA Brand Org ${RUN}`
-const MESSAGE_REACHES_GENERATION = 'Saved changes reach the next generation automatically.'
+const MESSAGE_REACHES_GENERATION = 'Changes apply to all future content automatically.'
 
 test.skip(!API_BASE, 'live-mode run only (export VITE_API_BASE_URL)')
 test.describe.configure({ mode: 'serial' })
@@ -73,8 +73,9 @@ test('a custom tone: created under the adapter, edited, and it survives a reload
   await page.getByRole('link', { name: 'Create your first tone' }).click()
 
   // INT-7: rules landed on the wire, so both editors are real now; only the
-  // example line is still absent, and the note says so by name.
-  await expect(page.getByText(/Example lines arrive with a later backend phase/)).toBeVisible()
+  // example line is still absent. Since UX-0913/P1 its absence is SILENT — the
+  // explanation was internal vocabulary, so the editor simply is not there.
+  await expect(page.getByLabel('Example line (optional)')).toHaveCount(0)
   await expect(page.getByLabel('Do', { exact: true })).toHaveCount(1)
 
   await page.getByLabel('Tone name').fill('Roastery floor')
@@ -101,8 +102,9 @@ test('voice rules: the flat live list persists through the API', async ({ page }
   await login(page, owner, PASSWORD)
   await openSettingsTab(page, 'Brand voice')
 
-  // Live mode now has BOTH lists; only examples are explained as absent.
-  await expect(page.getByText(/Example lines arrive with a later backend phase/)).toBeVisible()
+  // Live mode now has BOTH lists; examples are absent, and since UX-0913/P1
+  // absent without a word about why.
+  await expect(page.getByRole('group', { name: 'Example' })).toHaveCount(0)
   await expect(page.getByText(MESSAGE_REACHES_GENERATION)).toBeVisible()
 
   await page.getByRole('button', { name: 'Add do', exact: true }).click()

@@ -279,12 +279,20 @@ export const router = createBrowserRouter([
       {
         path: 'brand-voice',
         element: el.settingsBrandVoice(),
-        handle: { title: 'Brand voice', context: 'What every draft must and must not do' },
+        handle: {
+          title: 'Brand voice',
+          context:
+            'Permanent rules that apply to every piece of content, whatever tone it is written in',
+        },
       },
       {
         path: 'tones',
         element: el.settingsTones(),
-        handle: { title: 'Tones', context: 'The voices drafts can be written in', wide: true },
+        handle: {
+          title: 'Tones',
+          context: 'Choose how Malaky should sound for different types of content',
+          wide: true,
+        },
       },
       {
         path: 'tones/new',
@@ -308,7 +316,7 @@ export const router = createBrowserRouter([
         element: el.settingsSources(),
         handle: {
           title: 'Sources & topics',
-          context: 'What drafts read, and what they talk about',
+          context: 'Sources are what Malaky watches. Topics are what Malaky cares about.',
         },
       },
       {
@@ -316,7 +324,7 @@ export const router = createBrowserRouter([
         element: el.settingsKnowledge(),
         handle: {
           title: 'Knowledge',
-          context: 'Documents drafts can quote — price lists, FAQs, product notes',
+          context: 'The approved business information Malaky uses to keep your marketing accurate',
           wide: true,
         },
       },

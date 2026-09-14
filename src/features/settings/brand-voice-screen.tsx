@@ -118,8 +118,8 @@ export function BrandVoiceScreen() {
       <RuleList
         idPrefix="voice-do"
         label="Do"
-        description="Things a draft should reach for."
-        placeholder="Name the farm or the roast date when it matters"
+        description="Rules Malaky should follow in every piece of content."
+        placeholder="One rule per line"
         values={draft.do}
         disableAdd={atCap}
         onChange={(next) => setDraft((current) => ({ ...current, do: next }))}
@@ -128,24 +128,23 @@ export function BrandVoiceScreen() {
       <RuleList
         idPrefix="voice-dont"
         label="Don't"
-        description="Things a draft must never do, in any tone."
-        placeholder="Call anything artisanal"
+        description="Things Malaky should never do, regardless of tone."
+        placeholder="One rule per line"
         values={draft.dont}
         disableAdd={atCap}
         onChange={(next) => setDraft((current) => ({ ...current, dont: next }))}
       />
 
-      {live ? (
-        // Rules landed on the wire in the 2026-08-17 contract, so both lists
-        // above are real now. Examples still have nowhere to be stored, and a
-        // control that silently forgot its rows would be a lie.
-        <p className="text-sm text-muted-foreground">{MESSAGES.notices.brandExamplesPending}</p>
-      ) : (
+      {/* Rules landed on the wire in the 2026-08-17 contract, so both lists
+          above are real now. Examples still have nowhere to be stored, so the
+          editor is absent in live mode — silently, because a customer has no
+          use for the reason (UX-0913/P1). */}
+      {!live && (
         <RuleList
           idPrefix="voice-example"
           label="Example"
           description="Optional. A line that sounds like you — illustration, not a rule."
-          placeholder="This lot landed Tuesday and we roasted it Thursday."
+          placeholder="A sentence that sounds like you"
           values={draft.examples}
           onChange={(next) => setDraft((current) => ({ ...current, examples: next }))}
         />

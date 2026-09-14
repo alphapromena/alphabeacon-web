@@ -70,7 +70,7 @@ function modelName(models: StudioModel[], modelId: string): string {
 
 export function StudioGalleryScreen() {
   return (
-    <AppShell title="Studio" context="What your workspace can make">
+    <AppShell title="Studio" context="Images and video">
       <CapabilityGrid />
     </AppShell>
   )

@@ -89,7 +89,7 @@ export function SourcesScreen() {
             <Input
               id="source-url"
               value={entry}
-              placeholder="perfectdailygrind.com/feed"
+              placeholder="example.com/blog"
               disabled={atCap}
               aria-invalid={error ? true : undefined}
               onChange={(event) => {
@@ -174,7 +174,8 @@ export function SourcesScreen() {
         <TagInput
           id="topic-entry"
           label="Add a topic"
-          placeholder="single origin"
+          description="Be specific. 'Data governance regulation in Saudi Arabia' works better than 'Technology'."
+          placeholder="A specific subject, not a category"
           values={topics}
           onChange={(next) => void brand.setTopics(next)}
           max={MAX_TOPICS}

@@ -247,7 +247,7 @@ export function LiveKnowledge() {
               id="kn-url"
               value={url}
               disabled={busy}
-              placeholder="perfectdailygrind.com/roasting-guide"
+              placeholder="example.com/guide"
               onChange={(event) => setUrl(event.target.value)}
             />
             <Button
@@ -281,7 +281,7 @@ export function LiveKnowledge() {
           id="kn-title"
           value={title}
           disabled={busy}
-          placeholder="Title, e.g. Roasting notes"
+          placeholder="A short name for this document"
           onChange={(event) => setTitle(event.target.value)}
         />
         <Textarea

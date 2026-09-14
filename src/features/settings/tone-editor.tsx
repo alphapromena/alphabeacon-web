@@ -171,13 +171,11 @@ export function ToneEditorForm({
         placeholder={'Corporate we-speak\nHide the rough edges'}
         rows={3}
       />
-      {live ? (
-        // Rules landed on the wire in the 2026-08-17 contract, so both lists
-        // above are real now. The example line still has nowhere to be stored
-        // between runs, so its editor stays absent with the reason stated -
-        // never smuggled into the description (open-items 7).
-        <p className="text-sm text-muted-foreground">{MESSAGES.notices.brandExamplesPending}</p>
-      ) : (
+      {/* Rules landed on the wire in the 2026-08-17 contract, so both lists
+          above are real now. The example line still has nowhere to be stored
+          between runs, so its editor stays absent — and says nothing about
+          why, because that is our problem, not the reader's (UX-0913/P1). */}
+      {!live && (
         <TextAreaField
           name="example"
           label="Example line (optional)"

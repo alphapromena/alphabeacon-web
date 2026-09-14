@@ -76,7 +76,7 @@ export function GenerateScreen() {
    */
   if (!readiness.canGenerate) {
     return (
-      <AppShell title="Generate" context="A post, on demand">
+      <AppShell title="Generate" context="Text posts, on demand">
         <div className="mx-auto w-full max-w-[760px]">
           <GenerationBlocked />
         </div>
@@ -91,7 +91,7 @@ export function GenerateScreen() {
   // the live component's own doc comment.
   if (live) {
     return (
-      <AppShell title="Generate" context="A post, on demand">
+      <AppShell title="Generate" context="Text posts, on demand">
         <LiveGenerate />
       </AppShell>
     )
@@ -213,7 +213,7 @@ function StaticGenerateScreen() {
                   id="compose-prompt"
                   rows={5}
                   value={prompt}
-                  placeholder="The Kirinyaga AA that landed this week, and why roast date matters more than origin"
+                  placeholder="What this post should be about"
                   onChange={(event) => setPrompt(event.target.value)}
                   aria-invalid={touched && promptMissing ? true : undefined}
                 />
@@ -249,7 +249,7 @@ function StaticGenerateScreen() {
                   <Input
                     id="compose-source"
                     value={source}
-                    placeholder="sca.coffee/research/kenya-flavour-wheel"
+                    placeholder="example.com/article"
                     onChange={(event) => setSource(event.target.value)}
                   />
                   <p className="text-xs text-muted-foreground">

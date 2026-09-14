@@ -139,7 +139,7 @@ export function SignUpScreen() {
           name="orgName"
           label="Organization name"
           description="This is what your team and your drafts are grouped under."
-          placeholder="Atlas Roasters"
+          placeholder="Your company or team name"
         />
 
         {/* The label IS the consent sentence — a separate "Terms" caption

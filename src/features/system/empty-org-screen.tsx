@@ -81,7 +81,7 @@ export function EmptyOrgScreen() {
               id="workspace-name"
               value={name}
               onChange={(event) => setName(event.target.value)}
-              placeholder="Atlas Roasters"
+              placeholder="Your company or team name"
             />
           </div>
         )}

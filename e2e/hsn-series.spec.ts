@@ -88,7 +88,7 @@ test('Create visual on Today: beside Approve and Reject, refuses a blank kind, r
 
   // The simulation names itself, and says nothing was attached.
   await expect(dialog.getByText(SIMULATED)).toBeVisible({ timeout: 10_000 })
-  await expect(dialog.getByText(/Attaching it to the draft arrives in a later phase/)).toBeVisible()
+  await expect(dialog.getByText(/Attaching it to the draft is not available yet/)).toBeVisible()
   await expect(dialog.getByRole('link', { name: 'Open the asset' })).toBeVisible()
   await dialog.getByRole('button', { name: 'Done' }).click()
   await expect(dialog).toHaveCount(0)

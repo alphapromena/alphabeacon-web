@@ -3502,3 +3502,64 @@ still saveable when it SHRINKS, and nothing ever silently trimmed.
 **A refusal renders as itself.** The screen shows the wire's own field message
 with its request id — the Studio composer's pattern — and the green toast
 fires only after a save that actually succeeded.
+
+### 2026-09-14 — D-UX-0913-C: placeholders describe the input; and why UX-0913's palette phase was withdrawn before it was built
+
+Abdallah reviewed the app during the first real customer setup. ORDER UX-0913
+carried his notes in three phases; **only the copy phase was built.** What
+follows is the rule the copy phase established, and the record of why the other
+two were withdrawn — because the reasons are design law, not scheduling.
+
+**D-UX-0913-C — Placeholders describe the input; no sample content from
+another vertical reaches a live org.**
+
+A placeholder is a description of the field, never an example borrowed from
+somebody else's business. The app shipped fifteen that were the static demo's
+coffee roaster showing through — `placeholder="Roasted to order"` on
+differentiators, `"sca.coffee/research/kenya-flavour-wheel"` on a source URL,
+`"Atlas Roasters"` on the organization name a real owner was typing into. Each
+one told a live customer, at the exact moment they were deciding what to write,
+that this product was built for someone else.
+
+So: the input describes itself. "One proof point per line", not "Roasted to
+order". "A specific subject, not a category", not "single origin". Where the
+field really does want a shape rather than a description — a URL — the neutral
+form is `example.com/blog`, scheme-less, because **the network law forbids an
+`http(s)://` literal anywhere in `src/`** (`ab/no-network`) and because
+scheme-less is what `normalizeSourceUrl` stores anyway.
+
+`src/lib/placeholder-law.test.ts` enforces it, and deliberately guards MORE
+than the `placeholder` attribute: the same borrowed content is equally wrong in
+a helper line, a default, or a seeded row. It sweeps every customer-facing
+surface — `src/features/**` (less marketing), `src/components/ab/**`,
+`src/lib/**`, `src/api/**`, `src/routes.tsx` — for the order's residue list and
+fails with file:line. **`src/data/**` is excluded on purpose:** Atlas Roasters
+is what the demo world IS, and `/dev/datasets` is not a customer.
+
+**Phase 3 (repalette the app to the marketing page) — WITHDRAWN by the founder
+on the Phase 0 report, and the reason is permanent.** The order's premise was
+that the marketing page is the source of truth for app colour. It is not, and
+cannot be: `design.md` **Part 1** governs the signed-in product (Warm Ivory
+page, Deep Charcoal ink, the gold family split by role) and **Part 7** governs
+the visitor world (Abdullah's concept-v2 — graphite `#080d11`, accent
+`#ff4e2d`, gold `#e3c084`). CLAUDE.md scopes them so they cannot reach each
+other, and `verify:w02` asserts the scoping. Aligning the app "to the marketing
+page" would make the product dark orange.
+
+Two further measurements settled it, and are recorded so the arithmetic is not
+redone: the four tokens the order named are **already** what `tokens.css`
+ships; and `primary = Interactive Gold #9A7B4F` cannot meet the order's own
+4.5:1 bar — charcoal on that gold is **4.26:1** and ivory on it **3.60:1**,
+against **15.34:1** for the charcoal primary shipping today. That is precisely
+why 1.3 split the gold by role in the first place. A dark repalette comes as
+its own order; it is not a copy pass.
+
+**Phase 2 (Today as the post-login home) — DEFERRED, not rejected.** Its
+precondition holds: Today in live mode is real, derived from the proposals
+ledger (D-INT-J), not demo data. Two things need a ruling first. Dashboard has
+no route of its own — it *is* `/` via `RootGate`, and its nav entry is
+`{ to: '/', end: true }` — so "Dashboard stays in the nav, unchanged" and
+"Today is the landing" cannot both be true without giving Dashboard a real
+path. And **51 assertions across 32 files** wait on `heading "Dashboard"` as
+the landing, 24 of them live specs, which collides with the same order's "do
+not run the full live suite". Re-issued once the founder rules.

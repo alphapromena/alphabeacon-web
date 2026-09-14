@@ -221,11 +221,14 @@ export function OrganizationScreen() {
 
         <div className="flex flex-col gap-2">
           <Label htmlFor="org-offer">What you offer, in one line</Label>
-          <p className="text-sm text-muted-foreground">Every draft starts from this sentence.</p>
+          <p className="text-sm text-muted-foreground">
+            This becomes Malaky's baseline understanding of your business.
+          </p>
           <Textarea
             id="org-offer"
             rows={2}
             value={draft.offer}
+            placeholder="What you offer, in one sentence"
             onChange={(event) => patch({ offer: event.target.value })}
             aria-invalid={touched && offerMissing ? true : undefined}
           />
@@ -239,8 +242,8 @@ export function OrganizationScreen() {
         <TagInput
           id="org-differentiators"
           label="What sets you apart"
-          description="Drafts reach for these when they need a reason to believe."
-          placeholder="Roasted to order"
+          description="The proof points Malaky can use when explaining why customers should choose you."
+          placeholder="One proof point per line"
           values={draft.differentiators}
           onChange={(differentiators) => patch({ differentiators })}
         />
@@ -253,7 +256,7 @@ export function OrganizationScreen() {
           <Input
             id="org-cta"
             value={draft.ctaText}
-            placeholder="Order this week’s roast"
+            placeholder="The action you want readers to take"
             onChange={(event) => patch({ ctaText: event.target.value })}
           />
         </div>

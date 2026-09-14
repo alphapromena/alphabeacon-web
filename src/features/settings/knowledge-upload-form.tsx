@@ -174,7 +174,7 @@ export function KnowledgeUploadForm({
             value={description}
             maxLength={500}
             disabled={disabled}
-            placeholder="Our spring price list, valid until June"
+            placeholder="What this document is and when Malaky should use it"
             aria-invalid={error === MESSAGES.errors.knowledgeDescriptionRequired ? true : undefined}
             onChange={(event) => {
               setDescription(event.target.value)
