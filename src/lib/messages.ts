@@ -285,8 +285,18 @@ export const MESSAGES = {
      */
     noTones:
       'Create your first one — nothing generates until this workspace has at least one tone.',
+    /**
+     * ORDER DEMO-0914 §3 — an honest empty state, not a task list.
+     *
+     * This used to read "connect a channel and turn its analytics permission
+     * on to see reach here", which is an instruction nobody can follow to a
+     * result: there is no analytics endpoint anywhere in `src/api`, and the
+     * channel connections it sends people to are not wired to a platform
+     * either. A screen that asks for work it cannot pay off is worse than one
+     * that says what it is waiting for.
+     */
     noAnalytics:
-      'No analytics yet — connect a channel and turn its analytics permission on to see reach here.',
+      'Reach and engagement arrive with channel publishing — once posts go out through a connected channel, how each one did is reported here. Neither is wired up yet.',
     noPublishedPosts: 'No published posts yet in this range.',
     noBrandVoice: 'No rules yet — add one so every draft knows what you would never say.',
     noFollowedSources: 'No sources yet — add a feed so drafts have something current to work from.',
@@ -329,6 +339,17 @@ export const MESSAGES = {
     activeOrgFellBack:
       'You are no longer a member of the workspace you were last in, so we opened another one.',
     xComingSoon: 'X support is coming soon. Everything else is ready to connect now.',
+    /**
+     * ORDER DEMO-0914 §3 — said once, at the top of B1.
+     *
+     * Pressing Connect walks the real return states, which is the point of
+     * the screen, but no platform is on the other end of it in either mode.
+     * The live Today already says this about publishing
+     * (`publishingComingSoon`); the screen the sentence is ABOUT should not
+     * be the one place it goes unsaid.
+     */
+    connectionsPreview:
+      'Connecting walks the flow, but no channel is linked to a platform yet — that arrives with publishing. Nothing here posts on your behalf.',
     /** G1/G2 — an absent number is never drawn as a zero. */
     syncPending: 'Sync pending — this channel has not reported numbers for this range yet.',
     /**

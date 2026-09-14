@@ -5294,3 +5294,44 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
 - Verify: **lint · typecheck · guard-static 356 files clean · unit 750/750 in 63 files · build — GREEN.** **Static e2e 115 passed / 0 failed / 85 skipped.** Prettier clean on every file this close-out touched; the tree's pre-existing 17-file baseline is unchanged.
 - **NO LIVE ROUNDS.** The 21 live specs skipped as designed in static mode. Two live specs were EDITED BUT NOT RUN — `live-brand-kit.spec.ts:116,157`, the same badge assertion, knowingly broken by this series and fixed now rather than left to fail in the next testing session.
 - Next: the founder's word on merging. The Arabic UI locale (open-items 68) and the M-BIL-1 frames (open-items 69) are the two things this series leaves open, both deliberately.
+
+### 2026-09-14 16:05 — DEMO-0914: the first-run probe, then a review world a stranger can walk
+
+- Did: **Phase 1, the probe, committed before a line of product code changed
+  (`ef1d6cc`).** A fresh account signed up twice — once against this branch's
+  own static production build, once against `1.malaky.ai` on the dev API — and
+  every screen recorded verbatim under `Docs/qa/demo-0914/probe/`. The table
+  classifies each screen as missing seed data / the wire returning nothing /
+  awaiting the backend. **The measurement that decided the order:
+  `VITE_API_BASE_URL` is set on Vercel in `production` and in `preview` PINNED
+  TO THE `live` BRANCH, so this branch's preview boots fully static** — which
+  is why client-side seeding is the right lever and not a shortcut. The probe's
+  first pass read the live Studio mid-skeleton and would have recorded a
+  populated screen as empty; `settle` was fixed and both runs retaken.
+  **Then §2**: `src/data/first-run-seed.ts`, applied from the `workspace/created`
+  reducer case — 6 drafts across 4 slots in 5 tones, 3 awaiting review, a
+  running schedule, holidays, two Studio jobs and their asset, brand voice,
+  sources, topics. Static only; live never reaches that case. **§3**: Analytics
+  now names the phase and drops the button that pointed at a screen which
+  cannot finish the job either; Connections says once that nothing is linked to
+  a platform. **§4**: Today's header control is suppressed where it duplicated
+  the empty state's, and the two specs that pinned it by name were updated to
+  the control that survived.
+- Phase: post-W7 (demo readiness, off `feat/theme-0913`)
+- Files: `src/data/first-run-seed.ts` (new), `src/data/first-run-seed.test.ts`
+  (new), `src/data/provider.tsx`, `src/features/today/today-screen.tsx`,
+  `src/features/analytics/analytics-screens.tsx`,
+  `src/features/connections/connections-screen.tsx`, `src/lib/messages.ts`,
+  `e2e/compose-analytics-settings.spec.ts`, `scripts/probe-demo-0914.ts` (new),
+  `Docs/qa/demo-0914/**`, `.agent/decisions.md`, `.agent/state.md`
+- Decisions: see decisions.md — D-DEMO-0914-A (seeded client-side, at workspace
+  creation, static only), -B (what the seed refuses to invent), -C (one route
+  out of Today's empty state), -D (two screens say what is coming)
+- Verify: lint · typecheck · guard-static 358 clean · unit 759/759 in 64 files ·
+  build · static e2e 115/0/85 — run 2 clean showed 5 reds in one file, a
+  different set from run 1's, and the file re-run serially passed 23/23:
+  parallel-load flakes, diagnosed not adjusted. No live rounds, per the
+  standing rule.
+- Next: the founder's walk on the `feat/demo-0914` preview. `first-run-seed.ts`
+  is a stopgap and says so at the top — it is deleted when `POST /orgs` seeds a
+  review world server-side.

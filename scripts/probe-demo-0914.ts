@@ -54,8 +54,10 @@ const SCREENS: { label: string; path: string }[] = [
   { label: 'Dashboard (landing)', path: '/' },
   { label: 'Today', path: '/today' },
   { label: 'Studio', path: '/studio' },
+  { label: 'Studio — your renders', path: '/studio/jobs' },
   { label: 'Brand — brand voice', path: '/settings/brand-voice' },
   { label: 'Brand — tones', path: '/settings/tones' },
+  { label: 'Brand — sources & topics', path: '/settings/sources' },
   { label: 'Schedule — calendar', path: '/calendar' },
   { label: 'Schedule — settings', path: '/calendar/settings' },
   { label: 'Connections', path: '/connections' },
@@ -124,7 +126,9 @@ async function main() {
   await page.getByRole('checkbox', { name: /terms of service/ }).click()
   await page.getByRole('button', { name: 'Create account' }).click()
   await page.getByRole('heading', { name: 'Check your inbox' }).waitFor({ timeout: 30_000 })
-  sections.push(`## Signup — verify screen\n\n${(await page.evaluate(() => document.body.innerText)).trim()}`)
+  sections.push(
+    `## Signup — verify screen\n\n${(await page.evaluate(() => document.body.innerText)).trim()}`,
+  )
 
   if (MODE === 'live') {
     await page.locator('[data-input-otp]').click()

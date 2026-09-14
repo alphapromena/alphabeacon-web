@@ -3875,3 +3875,92 @@ the error itself.
 - It only fires on a TRANSITION. A queue that was already empty on mount has
   not been finished, merely arrived at, and marking that would make the moment
   meaningless within a day.
+
+### 2026-09-14 — D-DEMO-0914-A: the review world is seeded client-side, at workspace creation, and only in static mode
+
+- Why at all: measured, a fresh account landed on an empty Today, an empty
+  queue, an untouched schedule, an empty renders list and a six-row setup
+  checklist, and then walked eight screens in that condition. Someone judging
+  whether this product was built would conclude it was not. The probe table
+  (`Docs/qa/demo-0914/probe/table.md`) is the evidence.
+- WHERE: the `workspace/created` reducer case, which since ONB-0827 (D-ONB-C)
+  is the single moment a workspace goes from not existing to existing. Not the
+  dataset: `visitor` is ALSO the signed-out marketing world, and a queue of
+  drafts sitting in it before anyone has signed up is a world that contradicts
+  itself. Seeding at the moment of creation is also the shape the server-side
+  version will have, so the stopgap resembles its replacement.
+- STATIC ONLY, and this is the load-bearing half of the decision. Live mode
+  dispatches `live/resync` and never reaches that case. Writing these rows into
+  a live world would make every screen report drafts, slots and renders that no
+  reload, no second device and no API call could ever confirm. **Faking the
+  wire is worse than an empty screen**, and the network law's whole point is
+  that the two modes never borrow each other's truth.
+- It is sufficient, and that was measured rather than assumed: `VITE_API_BASE_URL`
+  exists on Vercel in `production` and in `preview` **pinned to the `live`
+  branch**. Every other branch's preview — this one included — boots static.
+- Instead of: a new demo dataset behind `/dev/datasets`. That reaches a
+  reviewer who already knows the switcher exists, which is exactly the person
+  who does not need it.
+
+### 2026-09-14 — D-DEMO-0914-B: what the seed refuses to invent
+
+- **No published or publish-failed drafts.** Both states mean a post left the
+  building through a channel, and no channel exists in either mode. A card
+  reading "Published to Facebook" in a workspace with zero connections is the
+  kind of fake §3 of the order forbids. The queue is seeded in the five states
+  that are true of a workspace that has drafted and never published.
+- **No connections.** Same reason, said at the source.
+- **No org profile** — offer, differentiators, standard CTA. Those are claims
+  about somebody's actual business; an honestly empty profile beats a
+  confidently wrong one. Brand voice IS seeded, because it is craft rules
+  ("write in plain language", "promise nothing we cannot evidence") rather than
+  business facts, and because readiness refuses to generate without it.
+- **Nothing billing.** No plan, no invoice, no wallet movement; the balance a
+  fresh account has is the balance it keeps. Asserted, not just intended
+  (`first-run-seed.test.ts`).
+- **No RUNNING Studio job**, unlike the `active` demo world. Nothing renders in
+  a static world, so a queued job never finishes; honest in a dataset somebody
+  switches to deliberately, and indistinguishable from a hang to the one person
+  this seed exists for.
+- `country` IS set, though `types.ts` calls it live-only. The readiness
+  checklist reads that field and I1 renders its picker in live mode only, so
+  leaving it unset puts an outstanding "Country — Set up" row on the landing
+  screen pointing at a screen with no country control on it.
+
+### 2026-09-14 — D-DEMO-0914-C: one route out of Today's empty state, and it is the empty state's
+
+- The header's button and the empty state's button both pointed at `/generate`
+  — and in the "your next drafts are on the way" branch they carried the SAME
+  words — on a screen whose entire content, when empty, was those two controls.
+- The empty state's survives. It is the primary action, it sits directly under
+  the sentence explaining why it is there, and LIVE Today has only ever had
+  that one (`live-today.tsx`), so dropping the header's makes the two halves of
+  Today agree instead of diverging further.
+- The header's control is **not deleted** — it is suppressed only when it would
+  be a duplicate (`todaySlots.length === 0 && emptyState.href === '/generate'`).
+  With a queue on screen it is the only way to add to it; and in the third
+  empty branch, which sends people to the calendar, it is a genuinely different
+  second route and still renders.
+- Two static specs asserted the header's link by its name and were updated to
+  the control that survived, plus a new assertion that the removed one is gone
+  — the same posture THEME-0913 took with the "BRAND KIT" badge: a spec that
+  pins something the order deliberately changed is updated, never worked around.
+
+### 2026-09-14 — D-DEMO-0914-D: two screens say what is coming instead of asking for work they cannot pay off
+
+- **Analytics** told a fresh account to "connect a channel and turn its
+  analytics permission on to see reach here", with a **Go to Connections**
+  button. There is no analytics endpoint in `src/api` at all, and the screen it
+  pointed at cannot finish the job either — so the pair read as a chore the
+  product set and then refused to accept. It now names the phase
+  ("Analytics arrive with publishing") and carries **no action**, per §5.1's
+  rule that an empty state earns a control when there is something real to
+  press.
+- **Connections** is not empty — four cards, and a Connect that walks the real
+  return states — but nothing behind it reaches a platform in either mode. One
+  line at the top now says so, in the voice the live Today already uses about
+  publishing. Better said once, in advance, than discovered by connecting an
+  account and waiting for a post that never goes out.
+- Not touched: Billing's empty history (a real wire with no invoices yet),
+  Studio's grid (populated in both modes), and every Settings section whose
+  emptiness is simply a new workspace's.

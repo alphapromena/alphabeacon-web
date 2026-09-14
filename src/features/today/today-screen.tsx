@@ -123,6 +123,14 @@ function StaticTodayScreen() {
           href: '/calendar/settings',
         }
 
+  /**
+   * §4 — when the header's control and the empty state's control are the same
+   * link, the header's goes. Both empty-state branches that point at
+   * `/generate` produce that collision; the "tell Malaky when to post" branch
+   * points at the calendar instead and is a real second route, so it keeps it.
+   */
+  const headerActionIsDuplicate = todaySlots.length === 0 && emptyState.href === '/generate'
+
   return (
     <AppShell title="Today" context={context}>
       {phase === 'loading' ? (
@@ -176,18 +184,36 @@ function StaticTodayScreen() {
                 label={awaiting > 0 ? 'Drafts need review' : undefined}
               />
               {/*
+               * ONE route, not two (ORDER DEMO-0914 §4).
+               *
+               * This button and the empty state below it were both rendering,
+               * both pointing at `/generate`, and in the "waiting" branch with
+               * the SAME words on them — two controls, one destination, on a
+               * screen whose whole content was those two controls. The empty
+               * state's is the one that survives: it is the primary action, it
+               * sits under the sentence that explains why it is there, and
+               * LIVE Today has only ever had that one (`live-today.tsx`), so
+               * dropping this one makes the two halves of Today agree.
+               *
+               * It still renders whenever it is NOT a duplicate: with a queue
+               * on screen it is the only way to add to it, and when the empty
+               * state sends you to the calendar instead this offers the other,
+               * genuinely different, route.
+               *
                * The affordance never lies about what pressing it will do
                * (ORDER ONB-0827, D-ONB-D). It stays a real link — `/generate`
                * renders the checklist honestly, so this is never a dead
                * button — but a workspace that cannot generate is told so
                * here rather than one click later.
                */}
-              <Button asChild variant="outline" size="sm">
-                <Link to="/generate">
-                  <Plus aria-hidden />
-                  {readiness.canGenerate ? 'Generate one now' : 'Finish setup to generate'}
-                </Link>
-              </Button>
+              {headerActionIsDuplicate ? null : (
+                <Button asChild variant="outline" size="sm">
+                  <Link to="/generate">
+                    <Plus aria-hidden />
+                    {readiness.canGenerate ? 'Generate one now' : 'Finish setup to generate'}
+                  </Link>
+                </Button>
+              )}
             </div>
           </div>
 

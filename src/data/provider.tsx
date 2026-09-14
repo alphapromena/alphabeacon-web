@@ -40,6 +40,7 @@ import {
   refreshAuthSnapshot,
 } from '@/data/live-sync'
 import { buildDataset, DATASETS, resolveInitialDatasetId } from '@/data/datasets'
+import { applyFirstRunSeed } from '@/data/first-run-seed'
 import type {
   AppNotification,
   Asset,
@@ -565,12 +566,28 @@ export function dataReducer(state: DataState, action: DataAction): DataState {
     case 'org/fallbackAcknowledged':
       return { ...state, activeOrgFellBack: false }
     case 'workspace/created':
+      /*
+       * The STATIC half of `createWorkspace` — and, since ONB-0827 deleted the
+       * wizard, the one moment a workspace goes from not existing to existing.
+       *
+       * DEMO-0914 §2 hangs the first-run seed here rather than on the dataset,
+       * for two reasons. The `visitor` world is ALSO the signed-out marketing
+       * world, and a queue of drafts sitting in it before anybody has signed
+       * up is a world that contradicts itself. And seeding at the moment of
+       * creation is what the server-side version will do, so the stopgap has
+       * the shape of its own replacement.
+       *
+       * `first-run-seed.ts` says at length why it is a stopgap and where it
+       * goes when the platform seeds a review world itself. LIVE mode never
+       * reaches this case — it dispatches `live/resync` — and that boundary is
+       * what keeps seeded rows out of anybody's real org.
+       */
       return {
         ...state,
-        world: {
+        world: applyFirstRunSeed({
           ...state.world,
           org: { ...state.world.org, name: action.name, exists: true },
-        },
+        }),
       }
 
     case 'schedule/update':

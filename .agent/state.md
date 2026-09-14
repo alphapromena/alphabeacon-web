@@ -5,7 +5,79 @@ without reconstructing it from the session log. **Update this file at the end
 of any turn that finishes a phase or changes the plan.** `sessions.md` is the
 chronological record; this is the current picture.
 
-_Last updated: 2026-09-14, after **ORDER THEME-0913 CLOSE-OUT — Playwright cleared,
+_Last updated: 2026-09-14, after **ORDER DEMO-0914 — the first-run probe, then
+a review world a new account can actually walk. BUILT on `feat/demo-0914`
+(off `feat/theme-0913` = `6fb7bcd`), PUSHED, report-and-stop, NOT merged.**
+
+**THE PROBE WAS COMMITTED BEFORE ANY PRODUCT CODE (`ef1d6cc`).** A fresh
+account signed up twice — against this branch's own static production build and
+against `1.malaky.ai` on the dev API — and every screen was recorded verbatim
+under `Docs/qa/demo-0914/probe/`. Its first pass read the live Studio
+mid-skeleton and would have filed a populated screen as an empty one; `settle`
+was fixed and both runs retaken before anything was concluded from them.
+
+**THE MEASUREMENT THAT DECIDED THE ORDER: a branch preview is STATIC.**
+`VITE_API_BASE_URL` exists in the Vercel project in `production` and in
+`preview` **pinned to the `live` branch** — nowhere else. So the preview of
+`feat/demo-0914` boots the fully static app, which is what makes client-side
+seeding the right lever rather than a shortcut, and why the seed is static-only
+without that being a compromise.
+
+**THE SEED IS ONE FILE AND SAYS SO AT THE TOP.**
+`src/data/first-run-seed.ts`, applied from the `workspace/created` reducer case
+— the one moment a workspace goes from not existing to existing since ONB-0827
+deleted the wizard. Six drafts across four slots in five tones (three awaiting
+review, one approved, one media-ready, one scheduled), a running schedule,
+holiday sources, two Studio jobs and their asset, brand voice, sources, topics,
+country. **LIVE MODE NEVER REACHES IT** — it dispatches `live/resync` — and that
+boundary is the decision, not the plumbing: writing these rows into a live world
+would report drafts no reload could confirm. Faking the wire is worse than an
+empty screen.
+
+**NOTHING PUBLISHES, BILLS OR HITS A PAID PATH, AND IT IS ASSERTED.** No
+`published` / `publish_failed` draft and no `publishResults`; every connection
+stays `not_connected`; `billing`, `ledger` and `plans` byte-identical to the
+unseeded world (`first-run-seed.test.ts`, 9 tests). The probe recorded **zero
+off-origin requests** on the seeded build.
+
+**TWO SCREENS NOW SAY WHAT IS COMING RATHER THAN ASKING FOR WORK THEY CANNOT
+PAY OFF.** Analytics told people to connect a channel and turn its permission
+on, with a button to a screen that cannot finish the job either — there is no
+analytics endpoint and no connections endpoint in `src/api` at all. It names the
+phase now and carries **no action**. Connections says once, at the top, that
+nothing is linked to a platform.
+
+**TODAY HAS ONE ROUTE OUT OF ITS EMPTY STATE, NOT TWO.** The header's control
+and the empty state's both pointed at `/generate`, with identical words in one
+branch. The empty state's survives (live Today has only ever had that one); the
+header's is suppressed **only where it duplicates**, so a populated queue and
+the calendar-routing branch keep it. Two static specs pinned the removed link by
+name and were **updated to the control that survived** plus an assertion that
+the old one is gone — the THEME-0913 posture, not a workaround.
+
+**GREENS: lint · typecheck · guard-static 358 clean · unit 759/759 in 64 files ·
+build · static e2e 115/0/85.** No live rounds and no gate run, per the standing
+rule. The live probe is not a suite run — it is one scripted signup on the dev
+tenant, recorded as the order's evidence.
+
+**THE E2E TOOK THREE RUNS AND THE MIDDLE ONE IS THE USEFUL RECORD.** Run 1 was
+polluted — the two specs that pinned the removed header link were edited WHILE
+it ran — so it is discarded. Run 2, clean, showed **5 reds, all in
+`compose-analytics-settings.spec.ts` and a DIFFERENT SET from run 1's**; four
+are timed generate-stream simulations and the fifth lost a DOM node mid-walk
+("element was detached from the DOM"). **Re-run serially in isolation: 23/23
+passed**, the @golden run finishing in 6.1 s against the 18.6 s it timed out on
+under load. Parallel-load flakes, the same class state.md already records from
+THEME-0913 — diagnosed, not adjusted. **THREE specs were genuinely updated
+because this order changed what they pinned**: two on the removed header link
+(now asserting the control that survived AND that the removed one is gone) and
+one on Analytics' "Go to Connections" button.
+
+**Four decisions filed: D-DEMO-0914-A through -D.** `first-run-seed.ts` is a
+stopgap with a named replacement: `POST /orgs` seeding a review world
+server-side, after which the file and its one call site are deleted together._
+
+_Before that, 2026-09-14, after **ORDER THEME-0913 CLOSE-OUT — Playwright cleared,
 the static suite run, the screenshots taken. BOTH UX-0913 AND THEME-0913 ARE
 CLOSED.** `feat/theme-0913` PUSHED, NOT merged.
 

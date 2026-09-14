@@ -12,7 +12,7 @@
  *     explanation, not an empty chart that reads as "nothing happened".
  *   - a delta with no comparable prior period is not shown at all.
  */
-import { ChartLine, Plug } from 'lucide-react'
+import { ChartLine } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router'
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts'
@@ -177,18 +177,20 @@ export function AnalyticsOverviewScreen() {
           onRetry={() => dispatch({ type: 'dev/force', mode: 'none' })}
         />
       ) : channels.length === 0 ? (
+        /*
+         * ORDER DEMO-0914 §3 — the screen that cannot be filled, said plainly.
+         *
+         * No analytics endpoint exists, and the "Go to Connections" button
+         * sent people to a screen that cannot finish the job either, so the
+         * pair read as a chore the product had set them and then refused to
+         * accept. The title now names the phase rather than the symptom, and
+         * the action is gone: §5.1's rule is that an empty state earns a
+         * control when there is something real to press, and there is not.
+         */
         <EmptyState
           icon={ChartLine}
-          title="No channels reporting yet"
+          title="Analytics arrive with publishing"
           description={MESSAGES.empty.noAnalytics}
-          action={
-            <Button asChild>
-              <Link to="/connections">
-                <Plug aria-hidden />
-                Go to Connections
-              </Link>
-            </Button>
-          }
         />
       ) : (
         <div className="flex flex-col gap-6">
@@ -574,10 +576,7 @@ export function ChannelDetailScreen() {
                       >
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-3">
-                            <span
-                              aria-hidden
-                              className="size-9 shrink-0 rounded-md bg-brand"
-                            />
+                            <span aria-hidden className="size-9 shrink-0 rounded-md bg-brand" />
                             <span className="line-clamp-2 max-w-[36ch]">{post.title}</span>
                           </div>
                         </td>

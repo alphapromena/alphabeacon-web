@@ -73,126 +73,143 @@ export function ConnectionsScreen() {
           onRetry={() => dispatch({ type: 'dev/force', mode: 'none' })}
         />
       ) : (
-        <div className="grid gap-4 md:grid-cols-2">
-          {connections.map((connection) => {
-            const { label, icon: Icon } = PLATFORMS[connection.platform]
-            const comingSoon = connection.platform === 'x'
-            const connected = connection.status === 'active'
-            const broken = connection.status === 'needs_reauth' || connection.status === 'revoked'
+        <div className="flex flex-col gap-4">
+          {/*
+           * ORDER DEMO-0914 §3. B1 is not empty — it has four cards and a
+           * Connect that walks the real return states — but nothing behind it
+           * reaches a platform, in either mode: there is no connections
+           * endpoint in `src/api` at all. Said once, at the top, in the same
+           * voice the live Today uses about publishing, rather than left for
+           * somebody to discover by connecting an account and waiting for a
+           * post that never goes out.
+           */}
+          <p className="text-sm text-muted-foreground">{MESSAGES.notices.connectionsPreview}</p>
 
-            return (
-              <Card key={connection.id} className={comingSoon ? 'opacity-80' : undefined}>
-                <CardContent className="flex flex-col gap-4">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex items-center gap-3">
-                      <span className="flex size-10 items-center justify-center rounded-lg bg-muted">
-                        <Icon aria-hidden className="size-5" />
-                      </span>
-                      <div className="flex flex-col gap-1">
-                        <span className="font-medium">{label}</span>
-                        <ConnectionStatusBadge status={connection.status} />
-                      </div>
-                    </div>
-                    {comingSoon && (
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <span tabIndex={0} className="rounded-md text-xs text-muted-foreground">
-                            Coming soon
-                          </span>
-                        </TooltipTrigger>
-                        <TooltipContent>{MESSAGES.notices.xComingSoon}</TooltipContent>
-                      </Tooltip>
-                    )}
-                  </div>
+          <div className="grid gap-4 md:grid-cols-2">
+            {connections.map((connection) => {
+              const { label, icon: Icon } = PLATFORMS[connection.platform]
+              const comingSoon = connection.platform === 'x'
+              const connected = connection.status === 'active'
+              const broken = connection.status === 'needs_reauth' || connection.status === 'revoked'
 
-                  {connection.accountName && (
-                    <div className="flex flex-wrap items-baseline gap-x-2 text-sm text-muted-foreground">
-                      <span>{connection.accountName}</span>
-                      {connection.handle && <span>@{connection.handle}</span>}
-                      {connection.connectedSince && (
-                        <span>
-                          · connected <MonoNumber value={shortDate(connection.connectedSince)} />
+              return (
+                <Card key={connection.id} className={comingSoon ? 'opacity-80' : undefined}>
+                  <CardContent className="flex flex-col gap-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex items-center gap-3">
+                        <span className="flex size-10 items-center justify-center rounded-lg bg-muted">
+                          <Icon aria-hidden className="size-5" />
                         </span>
+                        <div className="flex flex-col gap-1">
+                          <span className="font-medium">{label}</span>
+                          <ConnectionStatusBadge status={connection.status} />
+                        </div>
+                      </div>
+                      {comingSoon && (
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <span tabIndex={0} className="rounded-md text-xs text-muted-foreground">
+                              Coming soon
+                            </span>
+                          </TooltipTrigger>
+                          <TooltipContent>{MESSAGES.notices.xComingSoon}</TooltipContent>
+                        </Tooltip>
                       )}
                     </div>
-                  )}
 
-                  {connected && (
-                    <div className="flex flex-col gap-3">
-                      <PermissionSwitch
-                        connection={connection}
-                        permission="analytics"
-                        title="Analytics"
-                        description="Read reach and engagement for posts on this channel."
-                      />
-                      <PermissionSwitch
-                        connection={connection}
-                        permission="posting"
-                        title="Posting"
-                        description="Publish approved posts to this channel."
-                      />
-                    </div>
-                  )}
-
-                  {broken && (
-                    <p className="text-sm text-muted-foreground">
-                      {connection.status === 'revoked'
-                        ? 'Access was revoked at the platform. Reconnecting restores it.'
-                        : 'The token expired. Reconnecting takes a few seconds.'}
-                      {connection.lastSyncAt && (
-                        <>
-                          {' '}
-                          Last synced <MonoNumber value={relativeTime(connection.lastSyncAt)} />.
-                        </>
-                      )}
-                    </p>
-                  )}
-
-                  <div className="flex flex-wrap items-center gap-2">
-                    {comingSoon ? (
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <span tabIndex={0}>
-                            <Button size="sm" variant="outline" disabled>
-                              Connect
-                            </Button>
+                    {connection.accountName && (
+                      <div className="flex flex-wrap items-baseline gap-x-2 text-sm text-muted-foreground">
+                        <span>{connection.accountName}</span>
+                        {connection.handle && <span>@{connection.handle}</span>}
+                        {connection.connectedSince && (
+                          <span>
+                            · connected <MonoNumber value={shortDate(connection.connectedSince)} />
                           </span>
-                        </TooltipTrigger>
-                        <TooltipContent>{MESSAGES.notices.xComingSoon}</TooltipContent>
-                      </Tooltip>
-                    ) : connected ? (
-                      <>
-                        <Button size="sm" variant="outline" onClick={() => setSheetFor(connection)}>
-                          Manage
-                        </Button>
-                        {connection.pages && connection.pages.length > 1 && (
+                        )}
+                      </div>
+                    )}
+
+                    {connected && (
+                      <div className="flex flex-col gap-3">
+                        <PermissionSwitch
+                          connection={connection}
+                          permission="analytics"
+                          title="Analytics"
+                          description="Read reach and engagement for posts on this channel."
+                        />
+                        <PermissionSwitch
+                          connection={connection}
+                          permission="posting"
+                          title="Posting"
+                          description="Publish approved posts to this channel."
+                        />
+                      </div>
+                    )}
+
+                    {broken && (
+                      <p className="text-sm text-muted-foreground">
+                        {connection.status === 'revoked'
+                          ? 'Access was revoked at the platform. Reconnecting restores it.'
+                          : 'The token expired. Reconnecting takes a few seconds.'}
+                        {connection.lastSyncAt && (
+                          <>
+                            {' '}
+                            Last synced <MonoNumber value={relativeTime(connection.lastSyncAt)} />.
+                          </>
+                        )}
+                      </p>
+                    )}
+
+                    <div className="flex flex-wrap items-center gap-2">
+                      {comingSoon ? (
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <span tabIndex={0}>
+                              <Button size="sm" variant="outline" disabled>
+                                Connect
+                              </Button>
+                            </span>
+                          </TooltipTrigger>
+                          <TooltipContent>{MESSAGES.notices.xComingSoon}</TooltipContent>
+                        </Tooltip>
+                      ) : connected ? (
+                        <>
                           <Button
                             size="sm"
-                            variant="ghost"
-                            onClick={() => setPagePickerFor(connection)}
+                            variant="outline"
+                            onClick={() => setSheetFor(connection)}
                           >
-                            Choose Pages
+                            Manage
                           </Button>
-                        )}
-                      </>
-                    ) : (
-                      <Button
-                        size="sm"
-                        onClick={() =>
-                          setParams({
-                            connect: broken ? 'success' : 'success',
-                            platform: connection.platform,
-                          })
-                        }
-                      >
-                        {broken ? 'Reconnect' : 'Connect'}
-                      </Button>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            )
-          })}
+                          {connection.pages && connection.pages.length > 1 && (
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => setPagePickerFor(connection)}
+                            >
+                              Choose Pages
+                            </Button>
+                          )}
+                        </>
+                      ) : (
+                        <Button
+                          size="sm"
+                          onClick={() =>
+                            setParams({
+                              connect: broken ? 'success' : 'success',
+                              platform: connection.platform,
+                            })
+                          }
+                        >
+                          {broken ? 'Reconnect' : 'Connect'}
+                        </Button>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              )
+            })}
+          </div>
         </div>
       )}
 

@@ -42,8 +42,13 @@ test('a workspace with unfinished setup cannot generate, and the screen says why
 
   // The affordance tells the truth BEFORE it is pressed — it is a real link,
   // not a dead or disabled button.
-  const cta = page.getByRole('link', { name: 'Finish setup to generate' }).first()
-  await expect(cta).toBeVisible()
+  //
+  // It is the EMPTY STATE's control, and there is exactly one of it: the
+  // header used to offer a second link to the same route and DEMO-0914 §4
+  // removed it, so this asserts the single route as well as the honesty.
+  const cta = page.getByRole('link', { name: 'Finish setup', exact: true })
+  await expect(cta).toHaveCount(1)
+  await expect(page.getByRole('link', { name: 'Finish setup to generate' })).toHaveCount(0)
   await cta.click()
 
   // The route renders the checklist state, not a form that could only fail.
@@ -63,7 +68,7 @@ test('a workspace with unfinished setup cannot generate, and the screen says why
 
 test('the checklist links reach the screens that complete each item', async ({ page }) => {
   await open(page, 'Today', 'Fresh org')
-  await page.getByRole('link', { name: 'Finish setup to generate' }).first().click()
+  await page.getByRole('link', { name: 'Finish setup', exact: true }).click()
 
   await page
     .getByRole('region', { name: 'Brand setup' })
@@ -230,7 +235,9 @@ test('a channel detail charts what the platform reports, and explains what it do
   await expect(page.getByText(/only reports follower counts/)).toBeVisible()
 })
 
-test('with no channel left to report, analytics invites the fix', async ({ page }) => {
+test('with no channel left to report, analytics names the phase it is waiting on', async ({
+  page,
+}) => {
   // Reached the way an org actually reaches it — by disconnecting the
   // channels — rather than from a world that never had any. The `fresh` world
   // has none, but it also has not finished onboarding, so N3 owns it.
@@ -254,8 +261,16 @@ test('with no channel left to report, analytics invites the fix', async ({ page 
 
   await rail(page, 'Analytics').click()
   await expect(page.locator('[aria-busy="true"]')).toHaveCount(0)
-  await expect(page.getByText('No channels reporting yet')).toBeVisible()
-  await expect(page.getByRole('link', { name: 'Go to Connections' })).toBeVisible()
+  /*
+   * It used to invite the fix — "Go to Connections" — and DEMO-0914 §3 removed
+   * that, because no analytics endpoint exists and the screen it pointed at
+   * cannot finish the job either. An empty state earns a control when there is
+   * something real to press; this one names what it is waiting on instead, and
+   * the absence of the button is the assertion that matters.
+   */
+  await expect(page.getByText('Analytics arrive with publishing')).toBeVisible()
+  await expect(page.getByText(/Neither is wired up yet/)).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Go to Connections' })).toHaveCount(0)
 })
 
 // ---------------------------------------------------------------------------
