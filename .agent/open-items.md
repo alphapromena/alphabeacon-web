@@ -1466,3 +1466,34 @@ Numbering continues from 50. The record: `Docs/qa/hsn-0910/phase0/` and the
     limit its own contract document carried — which is the more useful
     lesson, and why the new cap is a constant next to the other two rather
     than a number buried in a screen.
+
+67. **For Hasan: what do `creative` and `precise` actually change on a
+    generate run — the grounding SOURCE, the grounding STRICTNESS, or the
+    model?** (2026-09-14, ORDER UX-0913/P1-R.) The Generate screen's plan
+    control (`PLANS` in `src/features/generate/live-generate.tsx`, sent as
+    `plan` on `PostsGenerateRequest`, `ApiPlan = balanced|creative|precise`)
+    tells the customer what each option does. **Balanced's copy is settled**
+    and was updated in this order. The other two are FROZEN until this is
+    answered, because two plausible readings contradict each other and we will
+    not replace one possibly-wrong claim with another:
+
+    - _grounding SOURCE_ — what the app says today: creative grounds in a
+      curated web search **instead of** the org's own material.
+    - _grounding STRICTNESS_ — what Abdallah's replacement copy implied:
+      creative stays on the org's material but leans **less on verbatim
+      facts**.
+
+    These are different behaviours and only one can ship. **The three strings
+    as they stand today, verbatim, so the answer can be checked against them:**
+
+    - `balanced` → "Grounded in your knowledge and sources, with fresh
+      phrasing. The default."  _(settled, this order)_
+    - `creative` → "Grounded in a curated web search instead."  _(frozen)_
+    - `precise` → "The most careful writer, also web-grounded."  _(frozen)_
+
+    Note `precise` carries its own unanswered half: "also web-grounded" says
+    the careful option ALSO reaches the web, which sits oddly beside a name
+    that reads as the most conservative choice. Worth confirming in the same
+    answer. **Not to be confused with open-items 9** (`gm_creative → fast` on a
+    schedule's `modelAlias`) — that is the OTHER vocabulary, and D-UX-0913-D is
+    the record of why the two are so easy to confuse.

@@ -3563,3 +3563,63 @@ no route of its own — it *is* `/` via `RootGate`, and its nav entry is
 path. And **51 assertions across 32 files** wait on `heading "Dashboard"` as
 the landing, 24 of them live specs, which collides with the same order's "do
 not run the full live suite". Re-issued once the founder rules.
+
+### 2026-09-14 — D-UX-0913-D: two vocabularies, identical labels — name the wire field before you edit an option description
+
+**The rule.** `ApiPlan` (`balanced|creative|precise`) and a schedule's
+`modelAlias` (`fast|balanced|quality`) are separate vocabularies that **display
+identical labels**. Copy written for one is never valid on the other. **Before
+editing any option description, name the wire field it is sent as.**
+
+D-INT-D already said the two must never be mapped onto each other. That was
+about VALUES, and it held — `MODEL_ALIAS_BY_ID` maps the app's own `gm_*` ids,
+never `ApiPlan`. What no one had written down is that the two render **the same
+three words on two different screens**:
+
+| screen | table | wire field | values |
+| --- | --- | --- | --- |
+| Generate (live) | `PLANS`, `live-generate.tsx` | `plan` on `PostsGenerateRequest` | `balanced \| creative \| precise` |
+| Calendar › schedule | `GENERATION_MODELS`, `entities/generation-models.ts` | `modelAlias` on `ApiSchedule` | `fast \| balanced \| quality` |
+
+**How it bit.** ORDER UX-0913/P1 carried three rewritten descriptions for
+"the Generate plan picker". Grep found Balanced/Creative/Precise in
+`generation-models.ts`, the labels matched, the copy landed there — and it
+shipped as far as a commit. The P1 report even noted the location ("this picker
+lives on the schedule's Generation model field, not on Generate") and filed it
+as a note rather than the blocker it was. **The founder caught it on a rider.**
+
+The result was not merely misplaced; it was false at the wire. "Grounded in
+your knowledge and sources" ended up describing `gm_creative` → **`fast`**, and
+"Stays closest to your approved knowledge and sources" described `gm_precise` →
+**`quality`**. Neither `fast` nor `quality` is a grounding mode.
+
+**What the schedule picker may now say.** Only what is true of `modelAlias`:
+no grounding, freshness, knowledge, sources or web-research claim of any kind.
+`gm_balanced` → "The default. Every plan can use it." (it is the fallback in
+both directions, and its tier is `free` — both checkable in code).
+`gm_precise` → "Our highest-quality drafting model." (the confirmed alias is
+literally `quality`; that is the only evidence, and it is enough for that
+sentence and nothing more). **`gm_creative` is LEFT EXACTLY AS IT WAS**, because
+`gm_creative → fast` is unconfirmed by elimination (open-items 9) and any
+behavioural sentence could become false the day Hasan answers — the founder's
+constraint was to say so rather than invent one.
+
+**What the Generate control may now say.** Grounding language belongs here and
+nowhere else — it IS the control a customer uses to choose grounding while
+generating. Only `balanced` is settled. `creative` and `precise` are FROZEN
+under open-items 67: their current copy ("Grounded in a curated web search
+instead", "The most careful writer, also web-grounded") conflicts with the
+replacement copy that was offered, and the two describe different behaviours —
+a grounding SOURCE versus a grounding STRICTNESS. Which is true is Hasan's
+answer, not a copy decision, and **we do not replace one possibly-wrong claim
+with another.**
+
+**Four artefacts hold the lesson**, because a decision entry alone would not
+have stopped this one: a warning comment at the top of each table pointing at
+the other; the `ApiPlan` doc comment in `api/types.ts` extended to name the
+LABEL collision and not only the value incompatibility; and
+`generation-models.test.ts`, which fails the build if grounding vocabulary
+(`grounded`, `grounding`, `knowledge`, `sources`, `web search`, `facts`,
+`research`) reappears in a schedule model description — and names the wire
+alias in its failure message, so the next reader learns the distinction from
+the error itself.

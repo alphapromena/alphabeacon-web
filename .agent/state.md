@@ -12,8 +12,8 @@ palette) was WITHDRAWN by the founder on the Phase 0 report and Phase 2 (Today
 as home) DEFERRED — see D-UX-0913-C for both reasons, they are design law, not
 scheduling.** The copy pass: six exact replacements; six new lines (the Brand
 Voice intro, the Sources/Topics line, the topic helper, the Knowledge subtitle,
-the Do and Don't helpers); the three drafting-model descriptions rewritten to
-say what the model DOES rather than how it behaves; Generate and Studio each
+the Do and Don't helpers); **the three drafting-model descriptions — CORRECTED
+BY /P1-R, see below, they landed on the WRONG CONTROL;** Generate and Studio each
 given a self-explanatory header subtitle ("Text posts, on demand" / "Images and
 video") because **the nav has no secondary-text slot** — its only tooltip
 repeats the label and shows just when the rail is collapsed; **15 placeholders
@@ -45,6 +45,43 @@ that asserted the deleted notice now assert the example editor's ABSENCE
 instead. **Screenshots were NOT taken: they need Playwright, so both the
 before and the after wait on the same word as the static suite.** Nothing
 pushed; `feat/ux-0913` is local only._
+
+_**ORDER UX-0913/P1-R — item 3 CORRECTED, and the lesson written down
+(2026-09-14, same branch).** The founder's rider caught what the P1 report had
+filed as a note: the three rewritten drafting-model descriptions landed on
+`generation-models.ts`, whose ONLY rendering surface is the schedule's
+`modelAlias` control — **on-demand grounding copy on a scheduling control**,
+the cross-mapping the project forbids, and false at the wire ("Grounded in your
+knowledge and sources" had come to describe `gm_creative` → **`fast`**).
+**The root cause is a label collision: `ApiPlan` (`balanced|creative|precise`)
+and `modelAlias` (`fast|balanced|quality`) render THE SAME THREE WORDS on two
+different screens.** D-INT-D had recorded the VALUES must never be mapped; no
+one had written down that the LABELS are identical, which is why grep found the
+wrong table and two reviewers missed it.
+**Fixed:** the schedule picker reverted byte-for-byte, then rewritten to say
+only what `modelAlias` supports — `gm_balanced` "The default. Every plan can
+use it.", `gm_precise` "Our highest-quality drafting model.", and
+**`gm_creative` LEFT EXACTLY AS IT WAS** because `gm_creative → fast` is
+unconfirmed (open-items 9) and any behavioural sentence could become false the
+day Hasan answers. On the REAL control — `PLANS` in `live-generate.tsx`, sent
+as `plan` — only **balanced** was changed, to Abdallah's line; **creative and
+precise are FROZEN under new open-items 67**, because "Grounded in a curated
+web search instead" and "leans less on verbatim facts" describe different
+behaviours (grounding SOURCE vs STRICTNESS) and we do not replace one
+possibly-wrong claim with another. **Four artefacts hold the lesson**
+(D-UX-0913-D): a cross-pointing warning comment at the head of each table, the
+`ApiPlan` doc comment extended to name the LABEL collision, and
+`generation-models.test.ts` — which fails the build if grounding vocabulary
+reappears in a schedule description and names the wire alias in its failure.
+**PROVEN by breaking it**: the exact string the founder caught was re-injected
+and the guard failed on "knowledge" and "sources", then reverted.
+**GREENS: lint · typecheck · guard-static 356 · unit 703/703 in 62 files (+9,
+exactly the new guard) · build.** **NO PLAYWRIGHT RAN.** **No spec asserts a
+description from EITHER table** (checked all 13 strings), and
+`live-scheduling.spec.ts:137` / `live-schedule-repair.spec.ts:118` match
+`/^Balanced/` on the LABEL, which was never touched — the revert is safe by
+construction. **`feat/ux-0913` PUSHED to origin on the founder's word so the
+theme order can branch off it; NOT merged.**_
 
 _Before that, 2026-09-14: **ORDER VOICE-0913 — the brand voice
 read/write asymmetry, the combined cap, and the honest save — BUILT, MERGED and

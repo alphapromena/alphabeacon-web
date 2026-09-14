@@ -44,9 +44,33 @@ import { pluralize, shortDate } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import { MESSAGES } from '@/lib/messages'
 
-/** D-INT-D: the run vocabulary, mapped straight onto the app's model names. */
+/**
+ * D-INT-D: the run vocabulary, mapped straight onto the app's model names.
+ *
+ * ⚠️ TWO VOCABULARIES, IDENTICAL LABELS (D-UX-0913-D). This table renders
+ * "Balanced", "Creative" and "Precise" — and so does the SCHEDULE's model
+ * picker, `GENERATION_MODELS` in `src/data/entities/generation-models.ts`.
+ * They are NOT the same thing and their copy is not interchangeable:
+ *
+ *   THIS table          → an on-demand run's `plan`, wire `balanced|creative|precise`
+ *   GENERATION_MODELS   → a schedule's `modelAlias`, wire `fast|balanced|quality`
+ *
+ * **Before editing any hint below, name the wire field it is sent as** — here
+ * that is `plan` on `PostsGenerateRequest`. This IS the control a customer
+ * uses to choose grounding while generating, so grounding language belongs
+ * here and nowhere else.
+ *
+ * `creative` and `precise` below are FROZEN pending open-items 67: we do not
+ * know whether they change the grounding SOURCE (web search vs knowledge), the
+ * grounding STRICTNESS, or the model itself, and we will not replace one
+ * possibly-wrong claim with another. `balanced` is settled.
+ */
 const PLANS: { id: GenerationPlan; label: string; hint: string }[] = [
-  { id: 'balanced', label: 'Balanced', hint: 'Grounded in your brand, sources and knowledge.' },
+  {
+    id: 'balanced',
+    label: 'Balanced',
+    hint: 'Grounded in your knowledge and sources, with fresh phrasing. The default.',
+  },
   { id: 'creative', label: 'Creative', hint: 'Grounded in a curated web search instead.' },
   { id: 'precise', label: 'Precise', hint: 'The most careful writer, also web-grounded.' },
 ]

@@ -425,6 +425,18 @@ export interface PortalReceipt {
  * whole recipe behind it. Deliberately SEPARATE from a schedule's `modelAlias`
  * (`fast|balanced|quality`), which is a different vocabulary on a different
  * surface (decisions.md D-INT-D); the two must never be mapped onto each other.
+ *
+ * ⚠️ AND THE VALUES ARE NOT THE ONLY THING THAT COLLIDES (D-UX-0913-D). The
+ * two vocabularies DISPLAY THE SAME THREE LABELS — "Balanced", "Creative",
+ * "Precise" — on different screens with different meanings:
+ *
+ *   `plan` here            → the Generate screen's control (`live-generate.tsx`, PLANS)
+ *   `modelAlias` elsewhere → the schedule's picker (`entities/generation-models.ts`)
+ *
+ * Identical words, incompatible meanings. That is what made ORDER UX-0913/P1
+ * put one control's copy on the other and neither reviewer see it. So copy
+ * written for one is NEVER valid on the other, and before editing any option
+ * description, name the wire field it is sent as.
  */
 export type ApiPlan = 'balanced' | 'creative' | 'precise'
 
