@@ -1582,3 +1582,79 @@ Numbering continues from 50. The record: `Docs/qa/hsn-0910/phase0/` and the
 
     `Docs/qa/m-bil-1/README.md` carries the same note inline, so a reader who
     opens the folder learns it there rather than here.
+
+70. **The static e2e suite is not deterministic under parallel load — four
+    specs flake, and locally there are no retries to absorb it.**
+    (2026-09-14, ORDER THEME-0913 close-out, filed on the founder's word.)
+
+    **NOT a regression, and that is established rather than assumed.** All four
+    passed in run 1 and again 16/16 when re-run serially on the same tree and
+    the same application code; the only files that changed between run 1 and
+    run 2 were e2e specs, none of which touch these four.
+
+    **The four, with both results:**
+
+    | Spec | Run 2 (6 workers) | Run 1 / isolation (`--workers=1`) |
+    | ---- | ----------------- | --------------------------------- |
+    | `entry-flow.spec.ts:75` — `@golden signup → verify → the app, with no wizard in between` | FAILED — `getByText('Nova Skincare').first()` not found | passed (6.0s) / passed (3.2s) |
+    | `entry-flow.spec.ts:119` — `@axe the workspace-creation retry scans clean` | FAILED — `getByRole('button', { name: 'Create my workspace' })` not found | passed (5.6s) / passed (3.3s) |
+    | `entry-flow.spec.ts:129` — `sign-in locks out after repeated failures and counts down` | FAILED — test timeout 30 000 ms clicking the marketing header's `Login` link | passed (3.9s) / passed (2.1s) |
+    | `hsn-series.spec.ts:53` — `Create visual on Today: beside Approve and Reject, refuses a blank kind, runs once, attaches nothing` | FAILED — the dialog's `Simulated in the demo…` line not found; the log shows `navigated to /today` mid-assertion | passed (8.8s) / passed (5.8s) |
+
+    **Run totals for the record:** run 1 **114 passed / 1 failed / 84 skipped**;
+    run 2 **110 / 5 / 85**; run 3 **115 / 0 / 85**; isolation
+    (`entry-flow hsn-0902 hsn-series --workers=1`) **16 / 0 / 0**.
+    (Run 2's fifth red was NOT a flake — it was `hsn-0902.spec.ts:69`, a real
+    consequence of this series' all-caps ban, fixed with a `data-slot` hook.)
+
+    **The mechanism, measured, not guessed.** `playwright.config.ts` sets
+    `fullyParallel: true` and **`retries: process.env.CI ? 2 : 0`** — so a local
+    run has **zero retries** and every flake lands as a hard red. Three of the
+    four failures are a locator or a click missing its default 5 s / 30 s
+    window; the fourth is an assertion racing a navigation. All four are timing,
+    not logic, and the machine was carrying the developer's own browser
+    (≈50 Chrome renderers) alongside six workers.
+
+    **Why it matters for the named testing session:** the gate runs these same
+    specs, and a red that is only contention costs a re-run and an
+    investigation each time. **Nothing here is fixed by this order** — it is
+    recorded so the next person does not re-derive it at 2 a.m.
+
+    **Candidate remedies, none applied** (each is a decision, not a tidy-up):
+    raise `retries` for local runs the way CI already does; give the four
+    specs' first-navigation assertions explicit `waitForURL`, which is exactly
+    what fixed the THEME-0913 screenshot spec; or pin `--workers` for the
+    entry-flow file, which is the one that carries signup state.
+
+71. **Two LIVE spec edits are UNRUN and must not be assumed verified.**
+    (2026-09-14, ORDER THEME-0913 close-out, filed on the founder's word.)
+
+    `e2e/live-brand-kit.spec.ts` **line 116** and **line 157** were edited by
+    the THEME-0913 close-out and **never executed** — the close-out ran the
+    static suite only, and the 21 live specs skipped as designed.
+
+    **What changed and why.** Both lines asserted the media file's role badge
+    by its TEXT CASE: `getByText('brand kit', { exact: true })`. That worked
+    only because the badge's source string was lowercase and CSS rendered it
+    uppercase. ORDER THEME-0913 banned all-caps labels, so the source became
+    sentence case ("Brand kit") — and in the demo world the FILE is also named
+    "Brand kit", so the exact-text locator then matched two elements. Both
+    lines now read:
+
+    ```ts
+    await expect(<row>.locator('[data-slot="file-role-badge"]')).toHaveText('Brand kit')
+    ```
+
+    The hook `data-slot="file-role-badge"` was added to
+    `src/features/settings/media-files-section.tsx` in the same change.
+
+    **The static twin IS verified:** the identical edit to
+    `e2e/hsn-0902.spec.ts:102` passed in run 3 and in the serial isolation run.
+    That is good evidence the live pair will pass — it is **not** proof, because
+    in live mode the badge is driven by the role the WIRE echoes rather than by
+    the demo's fixture, and that path has not been exercised since the change.
+
+    **Action for the named testing session:** run `live-brand-kit.spec.ts` and
+    confirm both assertions. If the wire echoes a role the table does not map,
+    the badge renders nothing and `toHaveText` fails — which would be a real
+    finding about the wire, not about this edit.
