@@ -5,7 +5,75 @@ without reconstructing it from the session log. **Update this file at the end
 of any turn that finishes a phase or changes the plan.** `sessions.md` is the
 chronological record; this is the current picture.
 
-_Last updated: 2026-09-14, after **ORDER DEMO-0914 — the first-run probe, then
+_Last updated: 2026-09-14, after **ORDER MOTION-0914/A — the motion baseline.
+BUILT on `feat/motion-0914` (off `feat/demo-0914` = `9e81545`), PUSHED,
+report-and-stop, NOT merged. Phase B (the celebration moments) is NOT in this
+order and has not started.**
+
+**THE PROBE WENT FIRST (`fb8bbc0`) AND WAS THEN CORRECTED (`97608c6`).** Every
+interactive surface was read in a real browser at rest, under the cursor, and
+with the mouse genuinely held down — and the first pass got a conclusion wrong.
+It read `transform`; **Tailwind v4 writes `translate-*` to the separate
+`translate` property**, and the button base class has carried a 1px press nudge
+all along. The claim "press does not exist" was withdrawn in its own commit
+before anything was built on it. The true baseline: **press exists on BUTTONS
+ONLY**, and nav rows, menu items, switches, tabs and cards respond to being
+held by nothing at all.
+
+**THE REST OF THE BASELINE, MEASURED.** The product ran on **0.15s — Tailwind's
+default, chosen by nobody and written nowhere** — on 0s for cards, menu items
+and both gold indicators, and on `duration-100`/`200` inside the overlays. The
+rail's nav row transitioned `width, height, padding` while the thing that
+changed on hover was the FILL, so it snapped. Inputs transitioned colours while
+the focus ring arrives as a `box-shadow`, so it snapped. No number in the
+product animated. `ui/table.tsx` is imported by no feature, so THEME-0913's
+zebra and sticky header style a primitive nobody renders.
+
+**THE SCALE IS THREE VALUES AND LIVES WITH THE COLOUR TOKENS**: fast 120ms
+(hover, press), medium 220ms (entrances, state changes), slow 900ms (RESERVED
+for phase B; §5.7's queue-clear is the one that exists and is now on the token
+rather than a literal). **fast is deliberately UNDER the default it replaces.**
+Tailwind's `--default-transition-duration` points at it, so every shadcn
+primitive is re-timed with **no `components/ui/` hand-edit** (rule 3).
+`design.md` Part 5.0 documents it as part of the same system.
+
+**PRESS IS A SURFACE STEP TO `--sunken` PLUS THE HAIRLINE**, never a shadow —
+and the hairline half applies only where a border already exists, because a
+borderless row cannot grow one without shifting under the finger. The accent
+button steps down its own ramp: **the website's `--c-accent-lo` was REFUSED at
+a measured 4.49:1** under the button label, and `--primary-pressed` (#e84122,
+4.78:1) is the darkest point on that ramp that clears AA.
+
+**THE GOLD INDICATOR IS ONE ELEMENT THAT TRAVELS**, in both navigations.
+Measured sliding: **translateY 4 → 36 → 132 → 228px** across four routes.
+
+**THE COLLAPSE IS IN THE SAME BLOCK AS §5.7's REMOVAL, AND IT IS NOT
+`data-ab-motion`.** That attribute carries `display: none !important`; hanging
+it on every button — the literal reading of §4 — would delete the product's
+control surface for anyone who asked for stillness. The three tokens zero
+instead, so state stays legible and instant. The existing Playwright assertion
+is untouched. **`motion-scale.test.ts` was PROVEN BY BREAKING IT TWICE** (one
+token left uncollapsed, then the whole collapse deleted); it named the
+offending token both times.
+
+**A REAL BUG CAUGHT BY VERIFYING RATHER THAN READING.** The number tween used
+the timestamp `requestAnimationFrame` passes in — the same clock as
+`performance.now()` in a browser, a DIFFERENT one in jsdom — so progress went
+negative, `easeOut` is unbounded there, and a counter going 94 → 93 was
+measured **leaping to 332**. Both it and `use-count-up.ts` (identical latent
+fault, invisible because it counts up from zero) now read one clock and clamp.
+
+**TWO THINGS ARE REPORTED, NOT TUNED, under §5's law.** (1) The content
+entrance fires on **every navigation**, because `useScreenPhase` holds every
+screen on a designed 400ms skeleton at mount — so loading→ready is universal,
+not rare. It delays no input but adds 220ms of settle to the most frequent
+action in the product; the founder's call. (2) The sidebar's own collapse still
+runs on shadcn's `duration-200` literal inside a file rule 3 forbids editing.
+
+**GREENS: lint · typecheck · guard-static 362 clean · unit 773/773 in 66 files ·
+build · static e2e.** No live rounds, per the standing rule._
+
+_Before that, 2026-09-14, after **ORDER DEMO-0914 — the first-run probe, then
 a review world a new account can actually walk. BUILT on `feat/demo-0914`
 (off `feat/theme-0913` = `6fb7bcd`), PUSHED, report-and-stop, NOT merged.**
 

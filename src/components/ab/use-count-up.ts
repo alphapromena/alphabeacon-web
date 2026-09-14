@@ -48,12 +48,21 @@ export function useCountUp(target: number, options?: { durationMs?: number }): n
       return
     }
 
-    // rAF timestamps share performance.now()'s time origin, so this is the same
-    // clock the frames report in.
+    // ONE clock, and the progress clamped at both ends.
+    //
+    // The claim that used to stand here — "rAF timestamps share
+    // performance.now()'s time origin" — is true of a browser and NOT of
+    // jsdom, where the two origins differ and `now - startedAt` comes out
+    // large and negative. `easeOut` of a negative progress is unbounded. It
+    // never showed here because this hook counts up from zero, so the
+    // overshoot lands below zero and off-screen; it showed the moment
+    // `useNumberTransition` animated between two non-zero figures and was
+    // measured leaping to 332 on its way from 94 to 93. Fixed in both.
     const startedAt = performance.now()
     let frame = 0
-    const step = (now: number) => {
-      const progress = Math.min((now - startedAt) / durationMs, 1)
+    const step = () => {
+      const elapsed = performance.now() - startedAt
+      const progress = Math.min(Math.max(elapsed / durationMs, 0), 1)
       setValue(Math.round(target * easeOut(progress)))
       if (progress < 1) frame = requestAnimationFrame(step)
     }

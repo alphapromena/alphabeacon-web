@@ -26,10 +26,11 @@ import {
   Sparkles,
   UserRound,
 } from 'lucide-react'
-import { useEffect, useRef, type CSSProperties, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import { Link, useLocation } from 'react-router'
 import { MonoNumber } from '@/components/ab/mono-number'
 import { BeaconDot } from '@/components/ab/motion'
+import { NavIndicator } from '@/components/ab/nav-indicator'
 import { NotificationBell } from '@/components/ab/notification-bell'
 import { OfflineBanner } from '@/components/ab/offline-banner'
 import { toastError, toastSuccess } from '@/components/ab/toast'
@@ -101,6 +102,7 @@ export function AppShell({
   actions?: ReactNode
   children: ReactNode
 }) {
+  const arrived = useSkeletonHandoff()
   return (
     <SidebarProvider
       // 72px icon rail per screens4.md §0.2 (shadcn's default is 48px).
@@ -142,7 +144,38 @@ export function AppShell({
          * child, no gap); a screen with several top-level sections gets the
          * rhythm whether or not it remembered to ask for it.
          */}
-        <main className="mx-auto flex w-full max-w-[1200px] flex-1 flex-col gap-8 px-4 py-8 md:px-6">
+        <main
+          /*
+           * SKELETON TO CONTENT IS A TRANSITION (ORDER MOTION-0914/A §3).
+           *
+           * React unmounts the skeleton subtree and mounts the content
+           * subtree, so there is no element whose style changes and no CSS
+           * transition that can span the two. The shell is the one place that
+           * can see the change happen, so it marks it here and globals.css
+           * carries the arrival.
+           *
+           * It fires on the loading→ready EDGE and nowhere else — not on first
+           * paint, not on a re-render.
+           *
+           * MEASURED, THAT EDGE IS EVERY NAVIGATION, and the comment that
+           * first stood here said the opposite. `useScreenPhase` holds every
+           * screen on a designed 400ms skeleton when it mounts (/dev/states
+           * calls it "a short designed skeleton"), so there is no such thing
+           * here as moving between two already-loaded screens: every screen
+           * loads. The entrance therefore plays once per navigation.
+           *
+           * That is exactly what §3 asked for — skeleton to content is a
+           * transition — and it sits against §5, which says a transition must
+           * not make a frequent action feel slower. It is REPORTED rather
+           * than tuned: the content is interactive for every frame of it (an
+           * opacity change plus 4px, nothing that swallows a click), so it
+           * delays nobody's input, but it does add 220ms of visual settle to
+           * the most frequent action in the product. The call belongs to the
+           * founder, not to a tuning knob.
+           */
+          data-ab-enter={arrived ? 'content' : undefined}
+          className="mx-auto flex w-full max-w-[1200px] flex-1 flex-col gap-8 px-4 py-8 md:px-6"
+        >
           {children}
         </main>
       </div>
@@ -150,10 +183,51 @@ export function AppShell({
   )
 }
 
+/**
+ * True for exactly one render: the one where a screen stopped showing its
+ * skeleton and started showing content.
+ *
+ * Deliberately an EDGE, not a state. `phase === 'ready'` is true for the whole
+ * life of a loaded screen, so keying the entrance off it would replay the
+ * animation on every re-render — which is the decorative entrance §5 bans.
+ *
+ * How often the edge occurs is a property of `useScreenPhase`, not of this
+ * hook: it holds every screen on a designed 400ms skeleton at mount, so the
+ * edge is crossed once per navigation. See the `<main>` comment below for the
+ * §5 tension that creates and why it is reported rather than tuned away.
+ */
+function useSkeletonHandoff(): boolean {
+  const phase = useScreenPhase()
+  const wasLoading = useRef(false)
+  const [arrived, setArrived] = useState(false)
+
+  useEffect(() => {
+    if (phase === 'loading') {
+      wasLoading.current = true
+      setArrived(false)
+      return
+    }
+    if (phase === 'ready' && wasLoading.current) {
+      wasLoading.current = false
+      setArrived(true)
+    }
+  }, [phase])
+
+  // One play, then off — so a re-render for any other reason cannot repeat it.
+  useEffect(() => {
+    if (!arrived) return
+    const timer = window.setTimeout(() => setArrived(false), 600)
+    return () => window.clearTimeout(timer)
+  }, [arrived])
+
+  return arrived
+}
+
 function AppSidebar() {
   const org = useOrg()
   const drafts = useDrafts()
   const { pathname } = useLocation()
+  const railRef = useRef<HTMLDivElement | null>(null)
   const awaiting = drafts.filter((d) => d.status === 'pending_review').length
 
   return (
@@ -171,31 +245,41 @@ function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupLabel>Workspace</SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
-              {NAV.map(({ to, label, icon: Icon, end }) => {
-                const isActive = end ? pathname === to : pathname.startsWith(to)
-                return (
-                  <SidebarMenuItem key={to}>
-                    <SidebarMenuButton asChild isActive={isActive} tooltip={label}>
-                      <Link to={to}>
-                        <Icon aria-hidden />
-                        <span>{label}</span>
-                        {to === '/today' && awaiting > 0 && (
-                          <span className="ms-auto flex items-center gap-2">
-                            <BeaconDot live />
-                            <MonoNumber value={awaiting} className="text-xs" />
-                            {/* Deliberately not "drafts awaiting review" — that
+            {/* `relative` so the one gold indicator below has something to be
+                measured against (ORDER MOTION-0914/A §3). */}
+            <div ref={railRef} className="relative">
+              <NavIndicator
+                containerRef={railRef}
+                activeSelector="[data-active='true']"
+                orientation="vertical"
+                activeKey={pathname}
+              />
+              <SidebarMenu>
+                {NAV.map(({ to, label, icon: Icon, end }) => {
+                  const isActive = end ? pathname === to : pathname.startsWith(to)
+                  return (
+                    <SidebarMenuItem key={to}>
+                      <SidebarMenuButton asChild isActive={isActive} tooltip={label}>
+                        <Link to={to}>
+                          <Icon aria-hidden />
+                          <span>{label}</span>
+                          {to === '/today' && awaiting > 0 && (
+                            <span className="ms-auto flex items-center gap-2">
+                              <BeaconDot live />
+                              <MonoNumber value={awaiting} className="text-xs" />
+                              {/* Deliberately not "drafts awaiting review" — that
                                 is D1's stat-card label, and two different
                                 surfaces should not read as the same control. */}
-                            <span className="sr-only">drafts need review</span>
-                          </span>
-                        )}
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                )
-              })}
-            </SidebarMenu>
+                              <span className="sr-only">drafts need review</span>
+                            </span>
+                          )}
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  )
+                })}
+              </SidebarMenu>
+            </div>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>

@@ -98,6 +98,22 @@
   --radius-3xl: calc(var(--radius) * 2);
   --radius-4xl: calc(var(--radius) * 2.4);
 
+  /* MOTION — the scale reaches every shipped primitive from here.
+     ORDER MOTION-0914/A §2. Tailwind's `transition-*` utilities fall back to
+     `--default-transition-duration` / `--default-transition-timing-function`,
+     so pointing those two at the scale re-times every `transition-colors` and
+     `transition-all` the shadcn primitives already carry — WITHOUT a single
+     hand-edit under src/components/ui/ (CLAUDE.md rule 3). Measured before
+     this change, those utilities ran at Tailwind's own 150ms/ease-in-out,
+     numbers chosen by nobody and written nowhere.
+     `duration-fast|medium|slow` also exist as utilities for anything authored
+     here, so a call site never needs a literal either. */
+  --default-transition-duration: var(--motion-fast);
+  --default-transition-timing-function: var(--ease-out);
+  --transition-duration-fast: var(--motion-fast);
+  --transition-duration-medium: var(--motion-medium);
+  --transition-duration-slow: var(--motion-slow);
+
   /* Shadow is NOT elevation here (D-THEME-0913-E). These override Tailwind's
      own scale so that the `shadow-md` / `shadow-lg` the shadcn primitives
      already carry resolve to an ambient wash under a true overlay instead of
@@ -209,18 +225,13 @@
   color: var(--sidebar-foreground);
 }
 
-:where(
-    [data-slot='sidebar-menu-button'],
-    [data-slot='sidebar-menu-sub-button']
-  )[data-active='true']::before {
-  content: '';
-  position: absolute;
-  inset-inline-start: 0;
-  inset-block: 0.25rem;
-  width: 2px;
-  border-radius: 999px;
-  background-color: var(--brand);
-}
+/* The gold rule itself moved OUT of here (ORDER MOTION-0914/A §3, rule 8g).
+   A `::before` belongs to one row, so travelling between rows could only ever
+   be one pseudo-element blinking out and another blinking in. There is a
+   single `[data-slot='nav-indicator']` in the rail now, measured against
+   whichever row is active, and it slides. Everything else this rule decided
+   stands: no fill on the active row, full-strength text, hover still a
+   surface step. */
 
 /* Hover on an already-active row still shows the surface step — the row is
    both current AND under the cursor, and both facts stay readable. */
@@ -278,6 +289,170 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* ------------------------------------------------------------------
+   8. MOTION — the baseline (ORDER MOTION-0914/A §3).
+
+   Fixed HERE and in AppShell, once, the way the 32px section rhythm was —
+   not in 25 screens. Every duration below is a scale token; a literal would
+   be a bug. The measured "before" for each rule is in
+   Docs/qa/motion-0914/probe/table.md.
+
+   THE PRESS VOCABULARY on this canvas is a SURFACE STEP plus the HAIRLINE,
+   never a shadow (D-THEME-0913-E — shadow does not read on graphite, and an
+   inset shadow is the light-UI idiom for "pushed"). A press steps the surface
+   DOWN to --sunken, the well below the page: on a dark canvas being pushed in
+   means going darker, and it is the one rung nothing else uses for a state.
+   Hover keeps the rung it already had, so the two are never confusable.
+------------------------------------------------------------------ */
+
+/* 8a. Press — the neutral surfaces.
+   Measured before this rule: nav rows, menu items, tabs, switches and cards
+   computed IDENTICALLY under the cursor and held down. Buttons alone
+   responded, and only by nudging 1px (`translate`), which a pointer resting
+   on the control largely hides. */
+:where(
+  [data-slot='button'][data-variant='outline'],
+  [data-slot='button'][data-variant='secondary'],
+  [data-slot='button'][data-variant='ghost'],
+  [data-slot='sidebar-menu-button'],
+  [data-slot='sidebar-menu-sub-button'],
+  [data-slot='dropdown-menu-item'],
+  [data-slot='command-item'],
+  [data-slot='select-item'],
+  [data-slot='toggle'],
+  [data-slot='switch'],
+  [data-slot='checkbox'],
+  [role='tab']
+):active {
+  background-color: var(--sunken);
+}
+
+/* The hairline half, only where a border already exists — a borderless row
+   cannot grow one without shifting the layout under the finger, and a press
+   that moves the thing you are pressing is worse than no press at all. */
+:where(
+  [data-slot='button'][data-variant='outline'],
+  [data-slot='button'][data-variant='secondary']
+):active {
+  border-color: var(--input);
+}
+
+/* 8b. Press — the one accent-filled control.
+   It has no ladder to step down, so it steps down its own ramp instead
+   (--primary-pressed, and see tokens.css for why the website's own
+   --c-accent-lo was refused at 4.49:1). The 1px nudge the base class already
+   carried stays: it is not a shadow, and it costs nothing. */
+:where([data-slot='button'])[data-variant='default']:active {
+  background-color: var(--primary-pressed);
+}
+
+/* 8c. The rail's nav row transitioned `width, height, padding` — the sidebar
+   collapse — while the thing that actually changes on hover is the fill. So
+   the fill snapped. Both belong in the list; the collapse keeps MEDIUM
+   because it moves layout, the colour takes FAST because it answers a
+   pointer. */
+:where([data-slot='sidebar-menu-button'], [data-slot='sidebar-menu-sub-button']) {
+  transition-property: width, height, padding, background-color, color;
+  transition-duration:
+    var(--motion-medium), var(--motion-medium), var(--motion-medium), var(--motion-fast),
+    var(--motion-fast);
+  transition-timing-function: var(--ease-out);
+}
+
+/* 8d. A menu item had NO transition at all (0s), so its hover fill snapped. */
+:where([data-slot='dropdown-menu-item'], [data-slot='command-item'], [data-slot='select-item']) {
+  transition:
+    background-color var(--motion-fast) var(--ease-out),
+    color var(--motion-fast) var(--ease-out);
+}
+
+/* 8e. The focus ring arrives as a `box-shadow`, and `box-shadow` was not in
+   the inputs' transition list — so the ring snapped on while the border it
+   sits under faded in. Same event, two different speeds. */
+:where(
+  [data-slot='input'],
+  [data-slot='textarea'],
+  [data-slot='select-trigger'],
+  [data-slot='input-group']
+) {
+  transition:
+    border-color var(--motion-fast) var(--ease-out),
+    box-shadow var(--motion-fast) var(--ease-out),
+    background-color var(--motion-fast) var(--ease-out);
+}
+
+/* 8f. Cards respond ONLY when the whole card is a click target.
+   Measured, no card responded to anything — but most cards are not controls,
+   and §5's law is that motion carries meaning or it does not ship. A hover
+   state on a card nobody can click is decoration. `:has(> a)` is exactly the
+   test: the Studio capability cards wrap a full-height link as a direct
+   child, a stat card's "view details" link does not. */
+:where([data-slot='card']):has(> a) {
+  transition:
+    background-color var(--motion-fast) var(--ease-out),
+    border-color var(--motion-fast) var(--ease-out);
+}
+
+:where([data-slot='card']):has(> a):hover {
+  background-color: var(--muted);
+  border-color: var(--input);
+}
+
+:where([data-slot='card']):has(> a):active {
+  background-color: var(--sunken);
+}
+
+/* 8g. The gold navigation indicator SLIDES (ORDER MOTION-0914/A §3).
+
+   It used to be a `::before` on the active row and an `::after` on the
+   selected tab — one pseudo-element per row, so moving between rows could
+   only ever be one blinking out and another blinking in. A single element
+   that travels is the only construction that can slide, so AppShell and the
+   settings layout each render ONE, measured against the active row.
+
+   The per-row pseudo-elements are gone; rule 4 above keeps the rest of what
+   it decided (no fill on the active row, full-strength text, hover still a
+   surface step). */
+[data-slot='nav-indicator'] {
+  position: absolute;
+  border-radius: 999px;
+  background-color: var(--brand);
+  transition:
+    transform var(--motion-medium) var(--ease-out),
+    height var(--motion-medium) var(--ease-out),
+    width var(--motion-medium) var(--ease-out),
+    opacity var(--motion-fast) var(--ease-out);
+}
+
+/* Before it has ever been measured it must not fly in from the corner: the
+   first paint places it silently and every move after that animates. */
+[data-slot='nav-indicator'][data-placed='false'] {
+  opacity: 0;
+  transition: none;
+}
+
+/* 8h. Skeleton to content is a TRANSITION, not a swap.
+   React unmounts the skeleton subtree and mounts the content subtree, so
+   there is no element whose style changes and no CSS transition can span it.
+   AppShell marks `<main>` the one time a screen goes from loading to loaded,
+   and the content arrives instead of appearing. It fires ONLY after a real
+   skeleton — never on navigation, never on first paint — because an entrance
+   that plays every time you move is the decorative entrance §5 bans. */
+@keyframes ab-content-in {
+  from {
+    opacity: 0;
+    translate: 0 4px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+[data-ab-enter='content'] {
+  animation: ab-content-in var(--motion-medium) var(--ease-out) 1;
+}
+
 /**
  * Signature motion (design law, screens4.md §0.2). Exactly two animations
  * exist in this product and both are opt-in via `data-ab-motion`:
@@ -312,6 +487,14 @@
   }
 }
 
+/* These two keep their own periods, and that is deliberate (ORDER
+   MOTION-0914/A §2). The scale describes how long a change TAKES — a hover, a
+   press, an entrance. These are continuous ambient loops with no start and no
+   finish, and a 2.2s heartbeat is not "slow motion", it is a tempo. Forcing
+   them onto a three-step transition scale would be arithmetic theatre.
+   The queue-clear below IS on the scale, because it is a single play with a
+   beginning and an end — which is exactly what `--motion-slow` is reserved
+   for. */
 [data-ab-motion='beacon-pulse'] {
   animation: ab-beacon-pulse 2.2s cubic-bezier(0, 0, 0.2, 1) infinite;
 }
@@ -350,7 +533,7 @@
 
 [data-ab-motion='queue-clear'] {
   transform-origin: left center;
-  animation: ab-queue-clear 900ms cubic-bezier(0.16, 1, 0.3, 1) 1;
+  animation: ab-queue-clear var(--motion-slow) var(--ease-out) 1;
 }
 
 /* RTL draws it from the other edge, like everything else. */
@@ -358,10 +541,47 @@
   transform-origin: right center;
 }
 
+/**
+ * THE GUARANTEE, IN ONE PLACE (ORDER MOTION-0914/A §4).
+ *
+ * Two mechanisms, one block, because there are two kinds of motion here and
+ * they are owed different things.
+ *
+ * The SIGNATURE animations are opt-in via `data-ab-motion` and are REMOVED,
+ * not slowed — they say nothing a stationary screen does not already say.
+ * That rule is unchanged from §5.7, and the Playwright assertion over it
+ * (`animation-name: none` on every `[data-ab-motion]`) still covers exactly
+ * what it covered before.
+ *
+ * The BASELINE is different, and the difference matters: a hover fill, a
+ * press step, a focus ring and a nav indicator are STATE, not flourish.
+ * Removing them would remove the interface's answer to the user. So the scale
+ * collapses to 0ms instead — every transition still happens, it simply
+ * happens instantly, and every state stays exactly as legible as before.
+ * Zeroing the three tokens is the whole of it, which is what the scale is for.
+ *
+ * NOT done by hanging `data-ab-motion` on every button: that attribute carries
+ * `display: none !important` four lines down, and a literal reading would
+ * delete the product's entire control surface for anyone who asked for
+ * stillness. Same block, same guarantee, same test surface — one collapse for
+ * values, one removal for flourishes.
+ */
 @media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-fast: 0ms;
+    --motion-medium: 0ms;
+    --motion-slow: 0ms;
+  }
+
   [data-ab-motion] {
     animation: none !important;
     display: none !important;
+  }
+
+  /* The content entrance is a real state change, so it is not removed with
+     the flourishes — it just takes no time, like everything else. */
+  [data-ab-enter='content'] {
+    animation-duration: 0ms;
   }
 }
 

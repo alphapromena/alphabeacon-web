@@ -67,7 +67,14 @@ export function ClaimChip({
         {claim.source}
       </span>
       {count !== undefined && (
-        <MonoNumber value={shownCount} className="shrink-0 text-xs font-medium text-foreground" />
+        /* `animate={false}`: this chip owns the motion on this figure —
+           `useCountUp` is already walking it up from zero, and letting
+           MonoNumber tween it again stacks two easings on one number. */
+        <MonoNumber
+          value={shownCount}
+          animate={false}
+          className="shrink-0 text-xs font-medium text-foreground"
+        />
       )}
     </>
   )

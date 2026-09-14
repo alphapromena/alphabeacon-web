@@ -69,10 +69,24 @@ describe('ClaimChip', () => {
     // 700ms animation race a test timeout measures the machine, not the hook.
     // Two frames — one mid-flight, one past the end — also prove it settles
     // rather than merely passing through the right number.
+    //
+    // THE CLOCK IS WHAT MOVES, not an argument. The hook reads
+    // `performance.now()` inside its own frame rather than trusting the
+    // timestamp rAF passes in, because those two are the same clock in a
+    // browser and different clocks in jsdom — which is how a sibling tween was
+    // measured overshooting to 332 (see use-number-transition.test.ts). So the
+    // fake advances `performance.now()` and the frames simply fire.
+    const realNow = performance.now()
     const frames = [80, 5_000]
+    let offset = 0
+    vi.stubGlobal('performance', { ...performance, now: () => realNow + offset })
     vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) => {
       const at = frames.shift()
-      if (at !== undefined) queueMicrotask(() => callback(performance.now() + at))
+      if (at !== undefined)
+        queueMicrotask(() => {
+          offset = at
+          callback(realNow + at)
+        })
       return 1
     })
     vi.stubGlobal('cancelAnimationFrame', () => {})

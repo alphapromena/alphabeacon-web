@@ -116,9 +116,10 @@ const SURFACES: Surface[] = [
   },
   { label: 'Nav row (rail)', selector: '[data-slot="sidebar-menu-button"]', hoverOnly: true },
   {
-    label: 'Nav row — ACTIVE gold rule',
-    selector: '[data-slot="sidebar-menu-button"][data-active="true"]',
-    pseudo: 'before',
+    // Was a `::before` on the active row; MOTION-0914/A made it one element
+    // that travels, so this reads the element rather than a pseudo.
+    label: 'Nav indicator (rail)',
+    selector: '[data-slot="nav-indicator"]',
     hoverOnly: true,
   },
   { label: 'Sidebar (the rail itself)', selector: '[data-slot="sidebar"]', hoverOnly: true },
@@ -159,11 +160,18 @@ const SURFACES: Surface[] = [
     hoverOnly: true,
   },
   {
-    label: 'Settings sub-nav — SELECTED gold rule',
-    selector: '[role="tab"][aria-selected="true"]',
-    pseudo: 'after',
+    label: 'Nav indicator (settings sub-nav)',
+    selector: '[data-slot="nav-indicator"]',
     setup: async (page) => {
       await go(page, '/settings/organization')
+    },
+    hoverOnly: true,
+  },
+  {
+    label: 'Card that IS a link (Studio capability)',
+    selector: '[data-slot="card"]:has(> a)',
+    setup: async (page) => {
+      await go(page, '/studio')
     },
     hoverOnly: true,
   },

@@ -11,7 +11,7 @@
  *    invisible: five PATCHes answered 400 and the screen said "Brand voice
  *    saved" every time.
  */
-import { render, screen, within } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { createElement, type ReactNode } from 'react'
 import { createMemoryRouter, RouterProvider } from 'react-router'
@@ -139,7 +139,11 @@ describe('a workspace already above the cap (item 65)', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Remove do rule 1' }))
 
     expect(screen.getAllByRole('button', { name: /^Remove do rule / })).toHaveLength(93)
-    expect(counterText()).toContain('93')
+    // The counter TRAVELS to its new figure now (ORDER MOTION-0914/A §3 —
+    // `MonoNumber` tweens any number that changes), so it is mid-flight for a
+    // frame or two after the row goes. The row count above is the synchronous
+    // truth; this waits for the figure to arrive at it.
+    await waitFor(() => expect(counterText()).toContain('93'))
     // Still above the cap, so adding is still closed — but shrinking worked.
     expect(screen.getByRole('button', { name: 'Add do' })).toBeDisabled()
   })

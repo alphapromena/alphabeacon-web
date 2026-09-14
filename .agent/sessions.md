@@ -5335,3 +5335,48 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
 - Next: the founder's walk on the `feat/demo-0914` preview. `first-run-seed.ts`
   is a stopgap and says so at the top — it is deleted when `POST /orgs` seeds a
   review world server-side.
+
+### 2026-09-14 17:40 — MOTION-0914/A: the baseline layer, measured before and after
+
+- Did: **Phase 1, the probe, committed before any code (`fb8bbc0`)** — every
+  interactive surface read in a real browser at rest, under the cursor, and
+  with the mouse genuinely held down. **Then corrected (`97608c6`) and the
+  conclusion withdrawn**: it read `transform`, Tailwind v4 writes `translate-*`
+  to the separate `translate` property, and buttons DO press (1px nudge). Press
+  exists on buttons only; nav rows, menu items, switches, tabs and cards
+  respond to nothing. **§2**: three durations in `tokens.css` beside the colour
+  ladder — fast 120ms / medium 220ms / slow 900ms (reserved) — with Tailwind's
+  `--default-transition-duration` pointed at them so every shadcn primitive is
+  re-timed without a `components/ui/` edit, and `design.md` Part 5.0 written as
+  part of the same system. **§3**: press as a surface step to `--sunken` plus
+  the hairline; the rail's fill added to a transition list that only carried
+  `width, height, padding`; `box-shadow` added to the inputs' so the focus ring
+  stops snapping ahead of its border; menu items given the transition they
+  never had; cards responding only when `:has(> a)`; ONE gold indicator per nav
+  that travels (measured: translateY 4 → 36 → 132 → 228px); skeleton→content
+  marked on the loading→ready edge in AppShell; `MonoNumber` tweening any
+  number that changes. **§4**: the collapse zeroes the three tokens in the same
+  block that removes the signature animations — NOT by hanging `data-ab-motion`
+  on controls, which carries `display: none !important` and would delete the
+  control surface. `motion-scale.test.ts` proven by breaking it twice.
+- Phase: post-W7 (motion baseline, off `feat/demo-0914`)
+- Files: `src/styles/tokens.css`, `src/styles/globals.css`,
+  `src/styles/motion-scale.test.ts` (new), `src/components/ab/nav-indicator.tsx`
+  (new), `src/components/ab/use-number-transition.ts` (new) + its test (new),
+  `src/components/ab/mono-number.tsx`, `src/components/ab/claim-chip.tsx` (+ its
+  test), `src/components/ab/use-count-up.ts`, `src/components/ab/app-shell.tsx`,
+  `src/features/settings/settings-layout.tsx`,
+  `src/features/settings/brand-voice-screen.test.tsx`,
+  `scripts/probe-motion-0914.ts` (new), `design.md`, `Docs/qa/motion-0914/**`,
+  `.agent/decisions.md`, `.agent/state.md`
+- Decisions: see decisions.md — D-MOTION-0914-A (the scale), -B (the press
+  vocabulary and the refused `--c-accent-lo`), -C (one indicator that travels),
+  -D (the collapse, and why not via `data-ab-motion`), -E (one owner per
+  animated number, and the rAF clock bug)
+- Verify: lint · typecheck · guard-static 362 clean · unit 773/773 in 66 files ·
+  build · static e2e. No live rounds, per the standing rule.
+- Next: phase B, the celebration moments, which `--motion-slow` is reserved
+  for. Two items are REPORTED for the founder rather than tuned: the content
+  entrance fires on every navigation (the designed 400ms skeleton makes
+  loading→ready universal), and the sidebar's own collapse still runs on
+  shadcn's `duration-200` literal inside a file rule 3 forbids editing.

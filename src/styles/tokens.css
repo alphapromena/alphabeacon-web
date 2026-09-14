@@ -78,6 +78,19 @@
   /* Secondary actions: a neutral surface with a border, not a second accent. */
   --secondary: #10171c;
 
+  /* The accent PRESSED (ORDER MOTION-0914/A §3). The press vocabulary on this
+     canvas is a step down the surface ladder, and the one accent-filled
+     control has no ladder to step down — so it steps down its own ramp.
+
+     THE WEBSITE'S OWN `--c-accent-lo` (#e13d1e) WAS REFUSED, measured:
+     `--primary-foreground` (#1a0a05) over it is **4.49:1**, under AA by a
+     hundredth. This is the darkest point on that same ramp that clears it —
+     **4.78:1** for the label, 4.84:1 against the page — and it is visibly
+     darker than both the rest (#ff4e2d) and shadcn's `/90` hover composite.
+     Product-only, like --destructive and --warning; not a shared value, so it
+     is not one-theme's to police. */
+  --primary-pressed: #e84122; /* label 4.78:1 · page 4.84:1 */
+
   /* --- Gold: quiet metal, never an action -------------------------- */
   --brand: #e3c084; /* --c-gold    · 11.28:1 page */
   --brand-strong: #f0d19c; /* --c-gold-hi */
@@ -145,14 +158,35 @@
   /* --- Radius: Part 7's scale, 8 / 12 / 18 / 26 --------------------- */
   --radius: 0.75rem; /* --r-md, 12px */
 
-  /* --- Motion: one pair for micro-interaction, one for overlays -----
-     Easings are marketing.css's. Motion answers an action and shows what
-     changed; it is never a decorative entrance. Under prefers-reduced-motion
-     movement is REMOVED and the state change stays legible (globals.css). */
+  /* --- Motion: THREE durations, one pair of easings ------------------
+     ORDER MOTION-0914/A §2. There is one scale and everything that moves
+     comes from it; a literal duration anywhere in `src/` is a bug.
+
+     It replaces `--motion-micro` (160ms) and `--motion-overlay` (220ms),
+     which had ZERO call sites — measured, the product ran on Tailwind's
+     unnamed 150ms default and on nothing at all. See Docs/qa/motion-0914/.
+
+       fast    hover and press. Deliberately UNDER the 150ms default the
+               product had been running on by accident: a press that answers
+               late reads as lag, and §5's law is that motion never delays
+               somebody who knows where they are going.
+       medium  entrances and state changes — overlays, the nav indicator
+               sliding between rows, content arriving after a skeleton.
+               Keeps the old --motion-overlay value, so no menu or modal
+               changes speed.
+       slow    RESERVED for the memorable moments. There is exactly one
+               today (§5.7's queue-clear, which was a 900ms literal and is
+               now this token) and phase B adds the rest.
+
+     Easings are marketing.css's, byte-for-byte, and `one-theme.test.ts`
+     asserts it. Under prefers-reduced-motion all three collapse to 0ms in
+     ONE place — globals.css's reduced-motion block, beside the rule that
+     removes the signature animations. */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
-  --motion-micro: 160ms;
-  --motion-overlay: 220ms;
+  --motion-fast: 120ms;
+  --motion-medium: 220ms;
+  --motion-slow: 900ms;
 
   /* --- Shadow: ambient, under true overlays only -------------------
      D-THEME-0913-E. There is no elevation shadow in this system; a card is

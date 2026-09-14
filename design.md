@@ -284,6 +284,57 @@ so there is one source.
 The kit's motion law: **"Gentle fades, subtle hover effects, no flashy
 animations."** Calm micro-animations only.
 
+### 5.0 The scale — three durations, and everything comes from them
+
+Added ORDER MOTION-0914/A §2, and it is part of the token system rather than a
+separate document: the durations live in `styles/tokens.css` beside the colour
+ladder, and `motion-scale.test.ts` fails the build if the scale grows a fourth
+value, runs out of order, or stops collapsing.
+
+| Token             | Value   | What it is for                                                                        |
+| ----------------- | ------- | ------------------------------------------------------------------------------------- |
+| `--motion-fast`   | `120ms` | Hover and press. Everything that answers a pointer.                                   |
+| `--motion-medium` | `220ms` | Entrances and state changes — overlays, the nav indicator, content after a skeleton.  |
+| `--motion-slow`   | `900ms` | **Reserved** for the memorable moments. One exists (§5.7's queue-clear).              |
+
+Easings are `--ease-out` and `--ease-inout`, both `marketing.css`'s to the
+byte, both guarded by `one-theme.test.ts`.
+
+**`fast` is deliberately under the 150ms the product had been running on.**
+That 150ms was Tailwind's default, inherited rather than chosen and written
+down nowhere; measured, it was the duration of every transition in the app that
+had one at all. A press that answers later than an unconsidered default would
+be a design system making the product worse.
+
+**A literal duration in code we author is a bug.** Tailwind's
+`--default-transition-duration` and `--default-transition-timing-function`
+point at the scale, so every `transition-colors` and `transition-all` the
+shadcn primitives ship inherits it without a single hand-edit under
+`components/ui/`. Two exemptions, both named rather than quietly tolerated: the
+**two ambient loops** below (a heartbeat is a tempo, not a duration), and the
+**sidebar's own collapse**, which still carries shadcn's `duration-200` inside
+`components/ui/sidebar.tsx` — a file rule 3 forbids editing, and 200ms is
+within a rounding error of `medium`.
+
+**THE PRESS VOCABULARY on this canvas is a surface step plus the hairline,
+never a shadow.** Shadow does not read on graphite (Part 1, D-THEME-0913-E) and
+an inset shadow is the light-UI idiom for "pushed". A press steps the surface
+DOWN to `--sunken`, the well below the page — on a dark canvas, being pushed in
+means going darker — and strengthens the border to `--input` where one already
+exists. Hover keeps the rung it had, so the two never collide. The one
+accent-filled control has no ladder to step down and steps down its own ramp
+instead (`--primary-pressed`; the website's own `--c-accent-lo` was refused at
+a measured 4.49:1 under the button label).
+
+**Reduced motion collapses the scale to `0ms`; it does not remove it.** The
+distinction is the whole of §4 and it is not a softening of the law below: a
+hover fill, a press step, a focus ring and the nav indicator are STATE, and
+removing them would remove the interface's answer to the user. The signature
+animations below say nothing a still screen does not already say, so those are
+still REMOVED outright. One block in `globals.css` does both.
+
+### 5.1 The signature animations
+
 Two animations exist inside the product, and only two:
 
 - **Signal sweep** — a line crossing a surface's top edge while work is in
@@ -294,8 +345,16 @@ Two animations exist inside the product, and only two:
 Both opt in through the `data-ab-motion` attribute; `styles/globals.css`
 removes them wholesale under `prefers-reduced-motion`, and Playwright asserts
 it. The count-up in `useCountUp` enforces the same rule in JavaScript, where
-CSS cannot reach: under reduced motion the final figure renders immediately.
-No other animation may be added without extending this part.
+CSS cannot reach: under reduced motion the final figure renders immediately —
+and so does `useNumberTransition`, which carries §3's "numbers that change
+animate to their new value" for every figure in the product through
+`MonoNumber`. No other animation may be added without extending this part.
+
+**`data-ab-motion` is for flourishes only, and must never be hung on a
+control.** That attribute carries `display: none !important` under reduced
+motion; putting it on a button would delete the button for anyone who asked for
+stillness. The baseline reaches the same guarantee by collapsing the scale, in
+the same block — see 5.0.
 
 F1's token-by-token stream is **not** a third animation: it is content
 arriving. The caret beside it is a static glyph — a blinking cursor is exactly

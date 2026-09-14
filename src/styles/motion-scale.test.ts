@@ -1,0 +1,150 @@
+/**
+ * THE MOTION GUARANTEE, ASSERTED (ORDER MOTION-0914/A §4).
+ *
+ * §4 says every value in the scale collapses to zero under
+ * `prefers-reduced-motion`. That is a sentence, and a sentence does not
+ * survive a stylesheet edit — the same reasoning that produced
+ * `one-theme.test.ts`. This is what makes it mechanically true.
+ *
+ * It reads the CSS rather than a rendered page on purpose. jsdom does not
+ * evaluate `@media (prefers-reduced-motion: reduce)` and cannot resolve a
+ * `var()` chain, so a DOM-based assertion here would pass on a stylesheet
+ * that had been gutted. The text of the guarantee is the guarantee.
+ *
+ * The Playwright assertion over `[data-ab-motion]` is untouched and still
+ * covers the signature animations from the browser's side; this covers the
+ * baseline scale, which has no `data-ab-motion` attribute to hang off and
+ * must not have one (see the block's own comment for why — that attribute
+ * carries `display: none !important`).
+ */
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
+import { describe, expect, it } from 'vitest'
+import { NUMBER_TRANSITION_MS } from '@/components/ab/use-number-transition'
+
+const read = (p: string) => readFileSync(resolve(process.cwd(), p), 'utf8')
+
+const TOKENS = read('src/styles/tokens.css')
+const GLOBALS = read('src/styles/globals.css')
+
+/** The scale, and nothing else may join it — §2 caps it at three. */
+const SCALE = ['motion-fast', 'motion-medium', 'motion-slow'] as const
+
+/** `--name: value;` from a stylesheet, first declaration winning. */
+function declarations(css: string): Record<string, string> {
+  const out: Record<string, string> = {}
+  const pattern = /--([\w-]+):\s*([^;]+);/g
+  let m: RegExpExecArray | null
+  while ((m = pattern.exec(css)) !== null) {
+    if (!(m[1] in out)) out[m[1]] = m[2].trim().toLowerCase()
+  }
+  return out
+}
+
+/** The body of the one `@media (prefers-reduced-motion: reduce)` block. */
+function reducedMotionBlock(css: string): string {
+  const start = css.indexOf('@media (prefers-reduced-motion: reduce)')
+  expect(start, 'globals.css must carry a reduced-motion block').toBeGreaterThan(-1)
+  let depth = 0
+  let i = css.indexOf('{', start)
+  const from = i
+  for (; i < css.length; i++) {
+    if (css[i] === '{') depth++
+    else if (css[i] === '}') {
+      depth--
+      if (depth === 0) return css.slice(from, i + 1)
+    }
+  }
+  throw new Error('unterminated reduced-motion block')
+}
+
+const tokens = declarations(TOKENS)
+const reduced = reducedMotionBlock(GLOBALS)
+
+describe('the motion scale', () => {
+  it('is exactly three durations, and all three are real time', () => {
+    for (const name of SCALE) {
+      expect(tokens[name], `--${name} must be declared in tokens.css`).toBeDefined()
+      expect(tokens[name]).toMatch(/^\d+ms$/)
+      expect(Number.parseInt(tokens[name], 10)).toBeGreaterThan(0)
+    }
+    // No fourth duration smuggled in beside them.
+    const durations = Object.keys(tokens).filter((name) => name.startsWith('motion-'))
+    expect(durations.sort()).toEqual([...SCALE].sort())
+  })
+
+  it('runs fast < medium < slow, so the names mean what they say', () => {
+    const ms = (name: string) => Number.parseInt(tokens[name], 10)
+    expect(ms('motion-fast')).toBeLessThan(ms('motion-medium'))
+    expect(ms('motion-medium')).toBeLessThan(ms('motion-slow'))
+  })
+
+  it('keeps hover and press UNDER the 150ms default the product ran on by accident', () => {
+    // §5: motion never delays somebody who knows where they are going. A press
+    // that answers later than the unconsidered default would be a regression
+    // dressed as a design system.
+    expect(Number.parseInt(tokens['motion-fast'], 10)).toBeLessThan(150)
+  })
+})
+
+describe('the reduced-motion collapse', () => {
+  it('zeroes EVERY duration in the scale', () => {
+    for (const name of SCALE) {
+      expect(
+        reduced,
+        `--${name} is not collapsed under prefers-reduced-motion — the reduced-motion block must redefine it to 0ms`,
+      ).toMatch(new RegExp(`--${name}:\\s*0ms\\s*;`))
+    }
+  })
+
+  it('still removes the signature animations, so §5.7 is untouched', () => {
+    expect(reduced).toMatch(/\[data-ab-motion\]/)
+    expect(reduced).toMatch(/animation:\s*none\s*!important/)
+  })
+
+  it('collapses the content entrance rather than deleting the content', () => {
+    // It is a state change, not a flourish: it may take no time, but the
+    // screen it carries must still be there.
+    expect(reduced).toMatch(/\[data-ab-enter='content'\]/)
+    expect(reduced).not.toMatch(/\[data-ab-enter='content'\][^}]*display:\s*none/)
+  })
+})
+
+describe('every value comes from the scale', () => {
+  /**
+   * Rule 8 — the authored baseline — and ONLY that. It stops where the
+   * signature section begins, because the two ambient loops after it keep
+   * their own periods on purpose (a heartbeat is a tempo, not a duration) and
+   * the reduced-motion block's `0ms` is the collapse itself, both of which
+   * would otherwise read as violations of the thing they implement.
+   */
+  const authored = GLOBALS.slice(
+    GLOBALS.indexOf('8. MOTION — the baseline'),
+    GLOBALS.indexOf('Signature motion (design law'),
+  )
+
+  it('uses no literal duration in the motion block', () => {
+    // Strip comments first: the prose there quotes the measured 150ms default
+    // and the old 900ms literal, and quoting a number is not using one.
+    const code = authored.replace(/\/\*[\s\S]*?\*\//g, '')
+    const literals = code.match(/(?:transition|animation)[^;{}]*?\b\d+m?s\b/g) ?? []
+    expect(literals, `literal durations must come from the scale: ${literals.join(' | ')}`).toEqual(
+      [],
+    )
+  })
+
+  it('carries the one memorable moment on the slow token, not on a literal', () => {
+    // §5.7's queue-clear was `900ms` written out; it is `--motion-slow` now,
+    // which is what makes the collapse above cover it too.
+    expect(GLOBALS).toMatch(/\[data-ab-motion='queue-clear'\]/)
+    const rule = GLOBALS.slice(GLOBALS.indexOf("[data-ab-motion='queue-clear']"))
+    expect(rule.slice(0, 200)).toMatch(/var\(--motion-slow\)/)
+  })
+
+  it('keeps the JS counter and the CSS medium in step', () => {
+    // A number changing is a state change, so it runs at MEDIUM — but it is a
+    // requestAnimationFrame loop and cannot read a CSS variable. This is the
+    // one crossing, and it is asserted rather than trusted.
+    expect(NUMBER_TRANSITION_MS).toBe(Number.parseInt(tokens['motion-medium'], 10))
+  })
+})

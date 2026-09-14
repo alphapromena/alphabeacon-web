@@ -18,6 +18,7 @@ import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
 import { NavLink, Outlet, useLocation, useMatches } from 'react-router'
 import { AppShell } from '@/components/ab/app-shell'
 import { ErrorState } from '@/components/ab/error-state'
+import { NavIndicator } from '@/components/ab/nav-indicator'
 import { SkeletonForm } from '@/components/ab/skeletons'
 import { useDataDispatch, useScreenPhase, useTones } from '@/data/provider'
 import { MESSAGES } from '@/lib/messages'
@@ -50,6 +51,7 @@ export function SettingsLayout() {
   const { pathname } = useLocation()
   const tones = useTones()
   const tabRefs = useRef<(HTMLAnchorElement | null)[]>([])
+  const navRef = useRef<HTMLElement | null>(null)
 
   const deepest = matches[matches.length - 1]
   const handle = (deepest?.handle ?? {}) as Partial<SettingsHandle>
@@ -89,7 +91,15 @@ export function SettingsLayout() {
       <div className="flex flex-col gap-6">
         {/* py-1 is load-bearing: `overflow-x-auto` clips vertically too, and
             without the room the focus ring on a tab renders sliced off. */}
-        <nav aria-label="Settings sections" className="overflow-x-auto py-1">
+        <nav aria-label="Settings sections" className="relative overflow-x-auto py-1" ref={navRef}>
+          {/* ONE gold rule that travels, not one per tab (ORDER
+              MOTION-0914/A §3). See components/ab/nav-indicator.tsx. */}
+          <NavIndicator
+            containerRef={navRef}
+            activeSelector="[aria-selected='true']"
+            orientation="horizontal"
+            activeKey={String(selected)}
+          />
           <ul role="tablist" className="flex min-w-max gap-1 px-1" onKeyDown={onKeyDown}>
             {SECTIONS.map((section, index) => {
               const isSelected = index === selected
@@ -120,8 +130,10 @@ export function SettingsLayout() {
                     className={cn(
                       'relative inline-flex rounded-lg px-3 py-1.5 text-sm whitespace-nowrap transition-colors',
                       'focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none',
+                      // The gold rule is no longer an `after:` on the
+                      // selected tab — one indicator travels between them.
                       isSelected
-                        ? 'font-medium text-foreground after:absolute after:inset-x-3 after:-bottom-px after:h-0.5 after:rounded-full after:bg-brand'
+                        ? 'font-medium text-foreground'
                         : 'text-muted-foreground hover:bg-accent hover:text-foreground',
                     )}
                   >

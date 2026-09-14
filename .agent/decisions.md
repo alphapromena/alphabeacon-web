@@ -3964,3 +3964,107 @@ the error itself.
 - Not touched: Billing's empty history (a real wire with no invoices yet),
   Studio's grid (populated in both modes), and every Settings section whose
   emptiness is simply a new workspace's.
+
+### 2026-09-14 — D-MOTION-0914-A: three durations, defined once, and Tailwind's defaults point at them
+
+- Measured first: the product ran on **0.15s**, Tailwind's own default, chosen
+  by nobody and written in no file; on **0s** (no transition at all) for cards,
+  menu items and both gold indicators; and on `duration-100` / `duration-200`
+  inside the overlay primitives. Three speeds, none of them a decision.
+- The scale is `--motion-fast: 120ms` (hover, press), `--motion-medium: 220ms`
+  (entrances and state changes), `--motion-slow: 900ms` (**reserved** for the
+  memorable moments; phase B adds them). It lives in `tokens.css` beside the
+  colour ladder because it is the same system, and `design.md` Part 5.0
+  documents it there rather than in a motion appendix.
+- **`fast` is deliberately UNDER the default it replaces.** A press that
+  answers later than an unconsidered inherited value would be a design system
+  making the product worse, which is §5's law pointed at itself.
+- `medium` keeps the retired `--motion-overlay`'s 220ms exactly, so no menu or
+  modal changes speed. `--motion-micro` (160ms) and `--motion-overlay` are
+  deleted; both had **zero call sites**, which is why the measured product ran
+  on Tailwind's default instead.
+- It reaches every shipped primitive through `--default-transition-duration`
+  and `--default-transition-timing-function` in the `@theme` block, so
+  `transition-colors` and `transition-all` in the shadcn components are
+  re-timed **without one hand-edit under `components/ui/`** (CLAUDE.md rule 3).
+- Instead of: a `duration-*` utility on every call site. That is the same
+  change made a hundred times, each an opportunity to miss one, and it would
+  drift again on the next component anyone adds.
+
+### 2026-09-14 — D-MOTION-0914-B: press is a surface step and the hairline, and the accent steps down its own ramp
+
+- The order's vocabulary, and it follows from D-THEME-0913-E: shadow does not
+  read on graphite, and an inset shadow is the light-UI idiom for "pushed".
+  A press steps the surface DOWN to `--sunken` — on a dark canvas being pushed
+  in means going darker — and strengthens the border to `--input`.
+- **The hairline half applies only where a border already exists.** A
+  borderless nav row cannot grow one without shifting the layout under the
+  finger, and a press that moves the thing you are pressing is worse than no
+  press at all.
+- The one accent-filled control has no ladder to step down, so it steps down
+  its own ramp: `--primary-pressed`. **The website's own `--c-accent-lo`
+  (#e13d1e) was refused, measured** — `--primary-foreground` over it is
+  **4.49:1**, under AA by a hundredth. `#e84122` is the darkest point on that
+  same ramp that clears it (4.78:1 label, 4.84:1 against the page). Product
+  only, like `--destructive` and `--warning`, so `one-theme.test.ts` has
+  nothing to police.
+- The 1px `translate` nudge the button base class already carried STAYS. It is
+  not a shadow, it costs nothing, and it was the only press feedback in the
+  product before this order.
+
+### 2026-09-14 — D-MOTION-0914-C: the gold navigation indicator is ONE element that travels
+
+- It was a `::before` on the rail's active row and an `::after` on the settings
+  sub-nav's selected tab. A pseudo-element belongs to its row, so moving
+  between rows could only ever be one blinking out and another blinking in —
+  measured at `0s`, it did not even fade.
+- So both navigations render a single `[data-slot='nav-indicator']` and measure
+  the active row against the container (`components/ab/nav-indicator.tsx`).
+  Measured sliding: **translateY 4 → 36 → 132 → 228px** across four routes.
+- It measures with `getBoundingClientRect` deltas rather than `offsetTop`: the
+  measured row and the container need not share an offsetParent, and in the
+  rail they do not. A `ResizeObserver` re-measures on collapse and resize —
+  the row moves without the route changing.
+- First placement is silent (`data-placed="false"` → `opacity: 0`, no
+  transition) so the indicator never flies in from the corner on first paint.
+- Everything rule 4 of the unlayered block decided still stands: no fill on the
+  active row, full-strength text, hover still a surface step.
+
+### 2026-09-14 — D-MOTION-0914-D: the collapse zeroes the scale; it does not hang `data-ab-motion` on controls
+
+- §4 asks for the collapse to go "through the same `data-ab-motion` mechanism
+  §5.7 uses". Taken literally that would put the attribute on every button —
+  and **that attribute carries `display: none !important`**, so a literal
+  reading deletes the product's entire control surface for anyone who asked for
+  stillness.
+- So: same block, two rules. The signature animations are still REMOVED (they
+  say nothing a still screen does not), and the scale collapses to `0ms` (a
+  hover fill, a press step, a focus ring and the nav indicator are STATE — the
+  interface's answer to the user — and removing them removes the answer). The
+  existing Playwright assertion over `[data-ab-motion]` is untouched and covers
+  exactly what it covered before.
+- `motion-scale.test.ts` asserts the collapse, that the scale stays three
+  values in order, that the motion block contains no literal duration, that
+  §5.7's queue-clear now runs on `--motion-slow` rather than a `900ms` literal,
+  and that the one JS/CSS crossing (`NUMBER_TRANSITION_MS`) matches `medium`.
+  **It was proven by breaking it twice** — one token left uncollapsed, then the
+  whole collapse deleted — and it named the offending token both times.
+
+### 2026-09-14 — D-MOTION-0914-E: one owner per animated number, and one clock
+
+- `MonoNumber` is the single component every figure renders through, so §3's
+  "numbers that change animate to their new value" is fixed there and every
+  screen inherits it. `useNumberTransition` animates from the PREVIOUS value on
+  change and does nothing on first render — counting up from zero on mount is
+  `useCountUp`'s separate job, and doing it here would be the decorative
+  entrance §5 bans.
+- `ClaimChip` owns the motion on its own figure, so it passes `animate={false}`.
+  Stacking the two tweens put two easings on one number; the screen test caught
+  it the moment the tween landed.
+- **A real bug, found by verifying rather than by reading**: the first version
+  used the timestamp `requestAnimationFrame` passes its callback. That shares
+  `performance.now()`'s time origin in a browser and NOT in jsdom, so progress
+  went large and negative and `easeOut` is unbounded there — a counter going
+  94 → 93 was measured leaping to **332**. Both hooks now read one clock and
+  clamp progress to [0, 1]. `use-count-up.ts` had the identical latent fault
+  and never showed it: counting up from zero, the overshoot lands off-screen.
