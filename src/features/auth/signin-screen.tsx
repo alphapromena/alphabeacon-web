@@ -132,7 +132,7 @@ export function SignInScreen() {
           )}
         </FormField>
 
-        <div className="-mt-2 text-right text-sm">
+        <div className="-mt-2 text-end text-sm">
           <Link
             className="font-medium text-primary underline-offset-4 hover:underline"
             to="/reset-password"

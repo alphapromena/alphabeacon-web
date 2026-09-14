@@ -95,17 +95,17 @@ export function UsageView() {
                 Usage for {from} to {to}, grouped by {grain}
               </caption>
               <thead>
-                <tr className="border-b border-border bg-muted/50 text-left">
+                <tr className="border-b border-border bg-muted/50 text-start">
                   <th scope="col" className="px-3 py-2 font-medium capitalize">
                     {grain}
                   </th>
                   <th scope="col" className="px-3 py-2 font-medium">
                     Unit
                   </th>
-                  <th scope="col" className="px-3 py-2 text-right font-medium">
+                  <th scope="col" className="px-3 py-2 text-end font-medium">
                     Quantity
                   </th>
-                  <th scope="col" className="px-3 py-2 text-right font-medium">
+                  <th scope="col" className="px-3 py-2 text-end font-medium">
                     Estimated cost
                   </th>
                 </tr>
@@ -119,10 +119,10 @@ export function UsageView() {
                     {/* `key` is null for unattributed usage — a real answer. */}
                     <td className="px-3 py-2">{group.key ?? 'Unattributed'}</td>
                     <td className="px-3 py-2 text-muted-foreground">{group.unit}</td>
-                    <td className="px-3 py-2 text-right">
+                    <td className="px-3 py-2 text-end">
                       <MonoNumber value={group.qty} />
                     </td>
-                    <td className="px-3 py-2 text-right tabular-nums">
+                    <td className="px-3 py-2 text-end tabular-nums">
                       {formatUsdString(group.costUsdEstimate)}
                     </td>
                   </tr>
@@ -133,7 +133,7 @@ export function UsageView() {
                   <td className="px-3 py-2 font-medium" colSpan={3}>
                     Total, estimated
                   </td>
-                  <td className="px-3 py-2 text-right font-medium tabular-nums">
+                  <td className="px-3 py-2 text-end font-medium tabular-nums">
                     {formatUsdString(total)}
                   </td>
                 </tr>

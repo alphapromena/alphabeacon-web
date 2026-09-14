@@ -158,7 +158,7 @@ export function CalendarScreen() {
               <Button variant="ghost" size="icon" aria-label="Next" onClick={() => shift(1)}>
                 <ChevronRight aria-hidden />
               </Button>
-              <h2 className="ml-2 font-display text-lg font-semibold">{title}</h2>
+              <h2 className="ms-2 font-display text-lg font-semibold">{title}</h2>
             </div>
 
             <div className="flex items-center gap-2">
@@ -279,7 +279,7 @@ export function CalendarScreen() {
                         key={slot.id}
                         type="button"
                         onClick={() => setOpenSlotId(slot.id)}
-                        className="rounded-md text-left focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+                        className="rounded-md text-start focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
                       >
                         <SlotChip
                           time={slot.time}

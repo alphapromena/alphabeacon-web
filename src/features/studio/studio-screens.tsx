@@ -132,7 +132,7 @@ function StaticStudioComposerScreen() {
   return (
     <AppShell title="New generation" context="Creative Studio">
       <div className="mx-auto flex max-w-[720px] flex-col gap-6">
-        <Button asChild variant="ghost" size="sm" className="-ml-2 self-start">
+        <Button asChild variant="ghost" size="sm" className="-ms-2 self-start">
           <Link to="/studio">
             <ArrowLeft aria-hidden />
             Back to the gallery
@@ -327,7 +327,7 @@ export function StudioAssetScreen() {
   return (
     <AppShell title="Asset" context={modelLabel}>
       <div className="flex flex-col gap-6">
-        <Button asChild variant="ghost" size="sm" className="-ml-2 self-start">
+        <Button asChild variant="ghost" size="sm" className="-ms-2 self-start">
           <Link to="/studio/jobs">
             <ArrowLeft aria-hidden />
             Back to my jobs
@@ -437,7 +437,7 @@ export function StudioAssetScreen() {
                       toastSuccess('Attached', { description: 'The draft now has its media.' })
                       setAttachOpen(false)
                     }}
-                    className="w-full rounded-lg border border-border p-3 text-left text-sm hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+                    className="w-full rounded-lg border border-border p-3 text-start text-sm hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
                   >
                     {draft.copy.slice(0, 90)}…
                   </button>

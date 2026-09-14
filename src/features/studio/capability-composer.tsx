@@ -97,7 +97,7 @@ export function CapabilityComposer({ capability }: { capability: MediaCapability
 
   return (
     <div className="mx-auto flex w-full max-w-[720px] flex-col gap-5">
-      <Button asChild variant="ghost" size="sm" className="-ml-2 self-start">
+      <Button asChild variant="ghost" size="sm" className="-ms-2 self-start">
         <Link to="/studio">
           <ArrowLeft aria-hidden />
           Back to the studio

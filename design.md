@@ -19,132 +19,218 @@ document and fails the build if an edit breaks one. If this file and
 `tokens.css` ever disagree, that is a bug in one of them — not a matter of
 taste.
 
-**Two design systems live in this repo (since 2026-08-23 / M2).** Parts 1–6
-are the SIGNED-IN PRODUCT: light-first, Inter, the shadcn token map. **Part 7
-is the VISITOR WORLD** — Abdullah's concept-v2, dark, DM Sans, its own token
-file at `src/styles/marketing.css` and its own contrast guard at
-`src/styles/marketing-tokens.test.ts`. They are scoped so they cannot reach
-each other, and the boundary is Part 7's first rule. Where the two disagree,
-neither is wrong: they describe different places.
+**ONE design system governs this repo (since 2026-09-14 / ORDER THEME-0913).**
+It was two — Parts 1–6 the signed-in product, light-first and Inter; Part 7 the
+visitor world, dark and DM Sans — and they were scoped so they could not reach
+each other. **The founder repealed that separation** (D-THEME-0913-A) on
+Abdallah's requirement that the product wear the website's theme.
+
+So: **Part 7's token file, `src/styles/marketing.css`, is the SOURCE**, and
+Part 1 is now the product's copy of it — the same graphite ladder, the same
+warm ink, the same accent, the same gold, plus the handful of roles a work
+surface needs that a landing page never did (error, warning, a form boundary, a
+scrim). `src/styles/one-theme.test.ts` fails the build if the two files drift.
+
+**The CSS isolation was NOT repealed, only the design separation.**
+`marketing.css` is still scoped to `html[data-mk-world]`, still declares nothing
+on `:root`, and `verify:w02` still asserts it. Part 7 keeps its own contrast
+guard at `src/styles/marketing-tokens.test.ts`. The two worlds share values, not
+a cascade — and where their text disagrees, **the stylesheet wins and the prose
+is the bug**, which is exactly how §7.1's "warm-leaning" defect was caught.
 
 ---
 
 ## Part 1 — Color
 
-### 1.1 The kit palette
+**REWRITTEN 2026-09-14 by ORDER THEME-0913.** Everything this part used to say
+— Warm Ivory page, Deep Charcoal ink, the gold family split by role because it
+could not carry text on a light surface — described a light product that no
+longer exists. That system is retired, not deprecated: there is no toggle and
+no second palette. Keeping the old text beside the new would leave two
+contradictory parts, so it is replaced.
 
-| Swatch           | Hex       | OKLCH                         | Role in this product                             |
-| ---------------- | --------- | ----------------------------- | ------------------------------------------------ |
-| Deep Charcoal    | `#1D1D1F` | `oklch(0.2316 0.0038 286.1)`  | Primary text, logo, buttons; dark-theme surfaces |
-| Warm Ivory       | `#F7F4EF` | `oklch(0.9681 0.0074 80.72)`  | Page background (light), body text (dark)        |
-| Limestone        | `#EFE9DF` | `oklch(0.936 0.0149 80.71)`   | Secondary background (`--secondary`, `--muted`)  |
-| Champagne Gold   | `#C7A76A` | `oklch(0.7432 0.0876 82.76)`  | Primary accent — see 1.3 for where it may live   |
-| Burnished Bronze | `#8C6A3F` | `oklch(0.5487 0.0735 71.79)`  | Secondary accent (`--brand-strong`, light)       |
-| Muted Emerald    | `#3F7C57` | —                             | Basis of `--success` (deepened, see 1.4)         |
-| Terracotta       | `#B9654A` | —                             | Basis of `--warning` / `--destructive` (see 1.4) |
+### 1.1 One theme, and where it comes from
 
-The previous identity's signature pink `#FF1E57` and the
-`#FF1E57 → #B1204A` signal gradient are **retired everywhere**. No bright
-gradients exist anywhere in the product (kit: "No bright gradients").
+**The product wears the website's theme** (D-THEME-0913-A). Abdallah reviewed
+the live app and required it; the founder ruled; the rule in `CLAUDE.md` that
+scoped Part 1 and Part 7 apart is repealed.
 
-### 1.2 The accessibility constraint
+`src/styles/marketing.css` — the concept-v2 token file Part 7 documents — is
+the **source**. `src/styles/tokens.css` carries its values **to the byte**, and
+`src/styles/one-theme.test.ts` fails the build if the two ever disagree. Values
+are written as hex in both files for exactly that reason: a reader must be able
+to diff them by eye.
 
-Every piece of text must clear **WCAG AA — 4.5:1** for small text, 3:1 for
-large text and meaningful UI boundaries. Measured against the kit's own
-palette:
+Only the **design** separation was repealed. The **CSS** isolation stands:
+`marketing.css` is still scoped to `html[data-mk-world]`, still declares nothing
+on `:root`, and `verify:w02` still asserts it. The two worlds share values, not
+a cascade.
 
-| Color                    | As small text on ivory | Large-type minimum (3:1) | Verdict                  |
-| ------------------------ | ---------------------- | ------------------------ | ------------------------ |
-| `#C7A76A` Champagne Gold | **1.90:1**             | fails                    | Cannot carry text on light — not even display |
-| `#8C6A3F` Bronze         | **4.04:1**             | passes                   | Large type only on light |
-| `#3F7C57` Emerald        | **3.86:1**             | passes                   | Needs deepening for badges |
-| `#B9654A` Terracotta     | **3.05:1**             | passes                   | Needs deepening for badges |
-| `#1D1D1F` Charcoal       | **15.16:1**            | passes                   | Carries everything       |
+### 1.2 The surface ladder — elevation is lightness
 
-The binding surface is the `bg-X/10 text-X` tint pattern every status badge
-uses — stricter than text on the page, and where failures actually surface.
+Shadow does not read on graphite, so depth is **lightness plus a hairline**
+(D-THEME-0913-E). Four roles, two hover steps, all six taken whole from Part 7:
 
-### 1.3 The resolution: split the gold by role, never dilute it
+| Token          | Value     | L      | Role                                   |
+| -------------- | --------- | ------ | -------------------------------------- |
+| `--sunken`     | `#05080b` | 0.1316 | inputs, wells                          |
+| `--background` | `#080d11` | 0.1556 | the page                               |
+| `--card`       | `#0c1217` | 0.1784 | cards, panels                          |
+| `--muted`      | `#10171c` | 0.1999 | zebra, row hover, quiet fill           |
+| `--popover`    | `#161f26` | 0.2338 | menus, popovers, modals                |
+| `--accent`     | `#1d272f` | 0.2668 | menu-item hover inside a popover       |
 
-Champagne gold is not softened into legibility and it is not dropped. It is
-assigned the surfaces where it genuinely reads, and the charcoal takes the
-jobs the kit already gave it:
+Strictly monotonic, one hue throughout (~242°, **cool** — see the correction in
+§7.1), asserted by `tokens.test.ts`. Separation is the step **plus** a
+white-12% hairline (`--border`). **Neither pure black nor pure white appears in
+the token set**, and the test asserts that too.
 
-- **`--primary`** — **Deep Charcoal on light, Champagne Gold on dark.** The
-  kit assigns charcoal "primary text, logo, buttons"; buttons and interactive
-  text are charcoal in the light theme. On dark, gold is the interactive
-  color: charcoal text on a gold fill reads 7.34:1, and the kit calls gold on
-  dark the premium treatment.
-- **`--brand` (light) `#9A7B4F`** — the gold family's voice on light surfaces:
-  gold deepened toward bronze until it clears 3:1 for large display type
-  (3.60:1 on ivory). Display only, never body text. The light-theme brand
-  contrast is asserted to sit in the `[3.0, 4.5)` window — readable as
-  display, never mistaken for a text color.
-- **`--brand` (dark) `#C7A76A`** — the true champagne gold (7.34:1 on
-  charcoal). The premium moment lives on dark: the gold wordmark, the gold
-  primary.
+Shadow survives only under a true overlay, as ambient wash: Tailwind's
+`--shadow-sm/md/lg` are overridden in `globals.css` so the `shadow-md` the
+shadcn primitives already carry stops pretending to be elevation. The scrim is
+`rgba(0, 0, 0, 0.72)` — chosen by measurement, because on this canvas a scrim
+cannot create contrast (1.18:1 → 1.24:1 at any alpha) and can only **suppress**
+the page behind it (13.1:1 → 2.0:1).
 
-### 1.4 Adjustments made for AA, and why
+### 1.3 Text
 
-Every value that is not a kit color exactly (light / dark):
+Three real tiers, warm off-white, never stark. The warmth is here, not in the
+surfaces.
 
-| Token                | Kit basis           | Shipped               | Why                                                                     |
-| -------------------- | ------------------- | --------------------- | ----------------------------------------------------------------------- |
-| `--brand` (light)    | `#C7A76A` → bronze  | `#9A7B4F`             | Gold reads 1.9:1 on ivory; deepened until ≥3:1 for display type.        |
-| `--success`          | `#3F7C57`           | `#33684A` / `#84BE9C` | Deepened (lifted on dark) until 4.5:1 on its own 10% tint.              |
-| `--warning`          | `#B9654A` (softened)| `#7D5226` / `#DCA96A` | Terracotta's cautionary voice, darkened until its tints read.           |
-| `--destructive`      | `#B9654A` (deepened)| `#8F3E26` / `#EDA58C` | A step deeper and redder than warning so "delete" outweighs "careful"; >12° hue gap from `--primary` asserted. |
-| `--muted-foreground` | charcoal family     | `#5C5850` / `#B5AFA3` | Warm greys that clear 4.5:1 on Limestone / dark muted.                  |
-| `--input`            | —                   | `#8A8577` / `#787367` | Form-control boundaries carry meaning; ≥3:1 (WCAG 1.4.11) on page and card, unlike decorative `--border`. |
-| `--accent`           | gold family         | `#F1E9DA` / `#33302A` | A gold-tinted wash for hover/selected surfaces; its foreground pair clears 4.5:1. |
+| Token                  | Value     | On page | On card | Role              |
+| ---------------------- | --------- | ------- | ------- | ----------------- |
+| `--foreground`         | `#f3ede6` | 16.79   | 16.21   | headings, body    |
+| `--muted-foreground`   | `#b3ada6` | 8.78    | 8.47    | supporting copy   |
+| `--subtle-foreground`  | `#857f79` | 4.93    | 4.76    | captions, meta    |
 
-`--border` stays deliberately subtle (`#E3DCCD` light / 12% white dark) — the
-kit's "light borders"; decorative dividers carry no 3:1 requirement.
+**`--subtle-foreground` is barred from `--popover` and below** — 4.22:1 there,
+under AA. That is the same bar Part 7 sets on its own quiet tiers, and
+`tokens.test.ts` asserts **both halves**: that it clears AA on page and card,
+and that it still fails on the overlay steps. If a future edit lifted it until
+it passed everywhere, the ladder would have flattened, and that is worth
+failing on.
 
-### 1.5 Semantic tokens
+Body line length stays under 80 characters. Tabular figures in tables and
+metrics, through `MonoNumber`.
 
-Features never use a hex or a Tailwind palette class — ESLint fails the build.
-The full set lives in `src/styles/tokens.css`, light and dark:
+### 1.4 The colour roles — spend the accent, don't spray it
 
-`background` `foreground` `card` `popover` `primary` `secondary` `muted`
-`accent` `destructive` `warning` `success` `border` `input` `ring`
-`chart-1…5` `sidebar*` `brand` `brand-strong` `shadow-soft-sm/md/lg`
+**`--primary` `#ff4e2d` is the one action colour** (D-THEME-0913-C). One
+primary action per view region; three orange buttons on a screen is a bug, not
+a style. It also carries the focus ring (`--ring`) and the selected state.
+Secondary actions are a neutral surface with a border. Ink on the accent is
+`--primary-foreground` `#1a0a05` at 5.86:1 — never white, which is 3.29:1 and
+fails AA for a label.
 
-Gone with the rebrand: `--signal-gradient`, `--glow-signal`, `--ab-ink`,
-`--ab-cinema-seam`.
+**`--brand` `#e3c084` is quiet metal.** The active navigation indicator, plan
+and status badges, brand moments, a secondary chart series, a header rule.
+**Never a button fill, never a link colour.** The visitor world declares a
+`.gold` button tone and has zero call sites for it; the product keeps that
+discipline, and `tokens.test.ts` asserts `--primary` and `--ring` are never the
+gold — the exact failure that withdrew the previous palette attempt
+(D-UX-0913-C).
+
+**Error leaves red** (D-THEME-0913-D). The accent is a red-orange at hue 32.7°;
+a red error collides with it. `--destructive` `#ed647c` sits at hue 12.1° —
+**20.6° of circular hue distance**, a deliberate compromise recorded in the
+decision. Error is **never colour alone**: icon plus text, always.
+
+| Token           | Value     | Hue    | On page | On card | On popover |
+| --------------- | --------- | ------ | ------- | ------- | ---------- |
+| `--primary`     | `#ff4e2d` | 32.7°  | 5.93    | 5.72    | 5.07       |
+| `--brand`       | `#e3c084` | 80.5°  | 11.28   | 10.89   | 9.65       |
+| `--success`     | `#4fb286` | 161.9° | 7.48    | 7.22    | 6.39       |
+| `--destructive` | `#ed647c` | 12.1°  | 6.24    | 6.02    | 5.34       |
+| `--warning`     | `#ea9e51` | 63.9°  | 8.84    | 8.53    | 7.56       |
+
+`--destructive` and `--warning` are the two roles the visitor world never
+needed; both are ours, both measured. Success is Part 7's `--c-ok`.
+
+**Informational and neutral states use surface steps and text tokens, not a
+hue.** Hover is a surface step, never the accent.
+
+### 1.5 Boundaries and focus
+
+`--border` is `rgba(255,255,255,0.12)` — decorative separation, no contrast
+duty. **`--input` `#857f79` is different**: it identifies a control, so WCAG
+1.4.11 wants 3:1, and Part 7's hairlines top out at 1.84:1. Solving for ≥3:1 on
+all six surfaces landed on the value Part 7 already had for `--c-text-3`. The
+one role the visitor world never needed is filled by a colour it already owned.
+
+Focus is the accent ring, visible on every interactive element, never the
+browser default. Both `--input` and `--ring` are asserted at ≥3:1 against every
+surface in the ladder.
+
+### 1.6 Charts
+
+Built only from colours this palette owns (D-THEME-0913-G): `--chart-1` gold →
+`--chart-2` gold dimmed one lightness step → `--chart-3` success → `--chart-4`
+warning → `--chart-5` the neutral text tier. **The accent is deliberately not a
+series** — it is the action colour and a chart is not an action. The test
+asserts every series is within 6° of a hue the palette already contains, so an
+invented hue fails the build.
+
+### 1.7 Radius, and what is measured
+
+Radius is Part 7's scale: **8 / 12 / 18 / 26px**, wider and more characterful
+than the 8/10/12/16 the product carried.
+
+`tokens.test.ts` is the contract: every text pair on every surface it may
+appear on, the `bg-X/10 text-X` badge pattern that broke this palette three
+times historically, the monotonic ladder, the hue separations as **circular**
+distance, `--input` and `--ring` at 3:1, and the chart ramp. axe covers what a
+rendered page shows; this covers the palette itself.
 
 ---
 
 ## Part 2 — Typography
 
-**The kit names no typeface.** The choice below is recorded in `decisions.md`
-as **proposed, pending founder confirmation** — everything else in this part
-is law regardless of which family finally carries it.
+**The kit names no typeface.** It did not name Inter either — Inter was
+recorded here as **PROPOSED, pending founder confirmation**, and was never
+chosen so much as defaulted to.
 
-**Inter** (variable, self-hosted) is the single family, display to caption:
-`--font-display`, `--font-sans`, and `--font-mono` all resolve to it. Barlow
-and Geist Mono are retired with the old identity.
+**SETTLED 2026-09-14 (D-THEME-0913-F). The confirmation came, and it was a
+CHANGE, not an alignment: Inter is retired.**
+
+**DM Sans** (variable, the opsz axis, self-hosted) is the single Latin family,
+display to caption — the website's face, now the product's too.
+`--font-display`, `--font-sans` and `--font-mono` all resolve to it.
+**IBM Plex Sans Arabic** (400 / 500 / 600) is the Arabic pairing,
+`--font-arabic`. Barlow and Geist Mono were retired with the old identity;
+Inter joins them.
+
+No new dependency: both faces were already installed for the visitor world.
+The vendored `src/styles/fonts/inter-latin*.woff2` are deleted.
 
 Figures that matter — credits, counts, percentages, timestamps, IDs — still
-render through the `MonoNumber` component, which now means **Inter with
+render through the `MonoNumber` component, which now means **DM Sans with
 `tabular-nums`**: columns align and digits do not jitter as they count up.
-That requirement is functional, not a brand choice, and it survives any
-future typeface swap.
+That requirement is functional, not a brand choice, and it survived this
+typeface swap exactly as it was written to.
 
 | Role                     | Face  | Weight  |
 | ------------------------ | ----- | ------- |
-| Display / headings       | Inter | 600–700 |
-| Body / UI                | Inter | 400–500 |
-| Figures, timestamps, IDs | Inter + `tabular-nums` | 400–500 |
+| Display / headings       | DM Sans | 500–600 |
+| Body / UI                | DM Sans | 400–500 |
+| Figures, timestamps, IDs | DM Sans + `tabular-nums` | 400–500 |
+| Arabic, all roles        | IBM Plex Sans Arabic | one step above the Latin equivalent at body size and below |
 
-**Type scale** (unchanged from `screens4.md` §0.2): display 48 · h1 38 · h2 30
-· h3 24 · h4 20 · body-lg 18 · body 16 · body-sm 14 · caption 12 (uppercase,
-tracked) · mono 13–16. Kit: "Large headlines, short paragraphs, clear
-hierarchy."
+**The Arabic weight step is law, not preference:** thin light-on-dark Arabic
+blooms, so at body size and below Arabic sits one weight step up. It is
+recorded and not yet applicable — the product has no Arabic UI strings at all
+(open-items 68). For the same reason the product **loses** a light-weight step
+wherever one was used.
 
-**Font files:** vendored WOFF2 under `src/styles/fonts/` with hand-written
-`@font-face` (see decisions.md — the npm registry was unreachable the day of
-the rebrand; swap to `@fontsource-variable/inter` when it returns).
+**Type scale.** Display steps are **fixed**, not fluid: Part 7's
+`clamp()` display sizes are right for a page scrolled once and wrong for a work
+surface, where a heading should not resize as a sidebar collapses (see §1.7 and
+Part 7's own note). display 32 · title 24 · section 18 · body 15 · small 13 ·
+micro 11, with intentional weight and tracking per step.
+
+**No all-caps labels, no tracked-out eyebrow labels above headings, no
+monospace for ordinary small text.** The caption tier is no longer "12,
+uppercase, tracked" — that row of the old scale is deleted. Today's eyebrow was
+the first casualty and the rest go with Phase 4's sweep.
 
 ---
 
@@ -376,18 +462,41 @@ leaks into a signed-in screen.
 
 ### 7.1 — Surfaces
 
-Very dark graphite, warm-leaning. Six steps, darkest first:
+Very dark graphite, **cool-leaning**. Six steps, darkest first, with the
+measured OKLCH lightness and hue of each:
 
-| Token             | Value     | Where                                     |
-| ----------------- | --------- | ----------------------------------------- |
-| `--c-void`        | `#05080b` | the footer, the deepest ground            |
-| `--c-bg`          | `#080d11` | the page                                  |
-| `--c-surface-1`   | `#0c1217` | cards at rest                             |
-| `--c-surface-2`   | `#10171c` | cards that have arrived                   |
-| `--c-surface-3`   | `#161f26` | icon tiles, chips, the customer monogram  |
-| `--c-surface-4`   | `#1d272f` | declared by the prototype; unused so far  |
+| Token             | Value     | L      | Hue    | Where                                     |
+| ----------------- | --------- | ------ | ------ | ----------------------------------------- |
+| `--c-void`        | `#05080b` | 0.1316 | 242.7° | the footer, the deepest ground            |
+| `--c-bg`          | `#080d11` | 0.1556 | 242.0° | the page                                  |
+| `--c-surface-1`   | `#0c1217` | 0.1784 | 243.8° | cards at rest                             |
+| `--c-surface-2`   | `#10171c` | 0.1999 | 239.5° | cards that have arrived                   |
+| `--c-surface-3`   | `#161f26` | 0.2338 | 242.0° | icon tiles, chips, the customer monogram  |
+| `--c-surface-4`   | `#1d272f` | 0.2668 | 242.7° | declared by the prototype; unused so far  |
 
-Lines are white at 7% / 12% / 20% (`--c-line`, `-2`, `-3`).
+> **CORRECTED 2026-09-14 (D-THEME-0913-A) — a documentation defect, not a
+> design change. This section said "warm-leaning" from M2 until now, and the
+> values never were.** Measured, all six surfaces sit at **hue 239–244°, which
+> is blue.** Nothing in `marketing.css` changed and nothing on the site moved;
+> the prose was simply wrong about the stylesheet it documents, which §7.0
+> already says wins.
+>
+> **The warmth in this palette lives in the INK, not the ground** —
+> `--c-text` is h 71.9°, `--c-text-2` h 71.9°, `--c-text-3` h 67.6°. Warm
+> off-white on cool graphite is the actual system, and it is a better one than
+> the sentence that described it.
+>
+> This mattered beyond tidiness: ORDER THEME-0913's design law was written from
+> this sentence and said "one **warm** graphite hue across all four surfaces".
+> The founder amended the law to the measurement — one graphite hue taken from
+> the reference **as measured**, warmth carried by the text — rather than
+> re-hueing a palette to match a typo. `tokens.test.ts` now asserts the ladder
+> holds one hue within 8°, so the claim is checked rather than written.
+
+Lines are white at 7% / 12% / 20% (`--c-line`, `-2`, `-3`). They are decorative
+separation and carry no contrast duty; measured, they reach only **1.18 / 1.38
+/ 1.84:1** against `--c-surface-1`, which is why the product needed a real
+`--input` value for anything that identifies a control (Part 1).
 
 ### 7.2 — Text
 

@@ -19,11 +19,34 @@ scripts — the rules below ARE the workflow.
 | `.agent/open-items.md`   | Manual gates awaiting a human sign-off            |
 
 `screens4.md` is screen truth and `design.md` is the visual system — both live
-in the product docs; never contradict them silently. **`design.md` describes
-TWO systems since M2:** Parts 1–6 are the signed-in product, Part 7 is the
-visitor world (Abdullah's concept-v2, vendored under
-`src/features/marketing/concept/`). They are scoped so they cannot reach each
-other; don't blur them.
+in the product docs; never contradict them silently.
+
+**ONE theme governs the visitor world and the product (2026-09-14, founder
+ruling, D-THEME-0913-A).** This repeals the rule that stood here from M2 until
+now, which scoped `design.md` Parts 1–6 (the product) and Part 7 (the visitor
+world) so they could not reach each other. Abdallah required that the signed-in
+product wear the website's theme; the founder ruled; the separation is gone.
+
+What that means in practice:
+
+- **`src/styles/marketing.css` is the SOURCE of colour, type and motion.**
+  `src/styles/tokens.css` carries its values to the byte, and
+  `src/styles/one-theme.test.ts` fails the build if the two drift. Change one
+  without the other and you will be told immediately.
+- **`design.md` Part 1 is now the product's copy of Part 7**, plus the roles a
+  work surface needs that a landing page never did — error, warning, a form
+  boundary, a scrim. Part 2 is settled on DM Sans + IBM Plex Sans Arabic.
+- **The CSS isolation is NOT repealed — only the design separation was.**
+  `marketing.css` stays scoped to `html[data-mk-world]`, still declares nothing
+  on `:root`, and `verify:w02` still asserts it. The two worlds share VALUES,
+  not a cascade. Don't "simplify" that by moving the concept's tokens to
+  `:root`.
+- **Where Part 7's prose and its stylesheet disagree, the stylesheet wins and
+  the prose is the bug.** That is how §7.1's "warm-leaning" claim was caught:
+  measured, those surfaces are blue (hue 239–244°) and the warmth is in the ink.
+  Measure before you quote a doc at someone.
+- **One theme means one theme.** Dark is the product; there is no toggle and no
+  light palette (D-THEME-0913-B). A light theme would be a new decision.
 
 ## Hard rules — follow every time, no exceptions
 
@@ -51,7 +74,14 @@ other; don't blur them.
    via `pnpm dlx shadcn@latest add`. Files under `src/components/ui/` are never
    hand-edited; customize via tokens, variants, or wrappers in
    `src/components/ab/`, and record kept divergences (`shadcn diff`) in
-   `decisions.md`.
+   `decisions.md`. **A fourth mechanism exists for the cases a token cannot
+   reach: an UNLAYERED rule in `globals.css`**, which beats any `@layer`
+   declaration whatever its specificity (the same trick `marketing.css` uses).
+   There are exactly three, all from THEME-0913, all commented with the
+   arithmetic that forced them — form controls onto the sunken step, the modal
+   scrim, and the destructive tint plate. Reach for it only when the primitive's
+   shipped classes encode an assumption no token can override, and say why in
+   the comment.
 
 4. **All data comes through the provider.** Features read via `DataProvider`
    hooks (`useDrafts()`, `usePlans()`, …) and never import `src/data/entities/*`

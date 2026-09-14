@@ -5,7 +5,85 @@ without reconstructing it from the session log. **Update this file at the end
 of any turn that finishes a phase or changes the plan.** `sessions.md` is the
 chronological record; this is the current picture.
 
-_Last updated: 2026-09-14, after **ORDER UX-0913/P1 — Abdallah's UX copy pass — BUILT
+_Last updated: 2026-09-14, after **ORDER THEME-0913 Phase 1 — the dark repalette
+and the Today warmth pass — BUILT on `feat/theme-0913`, PUSHED, report-and-stop,
+NOT merged.** Branch off `feat/ux-0913` = `bb83ffe`, so it carries the UX-0913
+copy work. **Phase 0 was accepted in full and two of its measurements changed the
+order rather than the other way round** — see below. **Phases 2–5 have NOT
+started: nothing begins until Abdallah has seen Today.**
+
+**ONE THEME NOW GOVERNS THE VISITOR WORLD AND THE PRODUCT (D-THEME-0913-A).**
+The `CLAUDE.md` rule that scoped `design.md` Parts 1–6 and Part 7 apart is
+**repealed by founder ruling** — that separation is what withdrew UX-0913's
+palette phase (D-UX-0913-C), and it is gone. `src/styles/marketing.css` is the
+SOURCE; `tokens.css` carries its values **to the byte**; the new
+`src/styles/one-theme.test.ts` compares 19 shared values and fails the build on
+drift. **PROVEN by breaking it** — `--c-accent` drifted one byte, the guard
+named both files and both values, then reverted; **`marketing.css` is
+byte-for-byte unchanged in this branch.** The **CSS isolation was NOT repealed**:
+marketing.css stays scoped to `html[data-mk-world]`, declares nothing on
+`:root`, and `verify:w02`'s assertions are untouched.
+
+**A DOCUMENTATION DEFECT CORRECTED, and it changed the design law.** Part 7 had
+called the surfaces "warm-leaning" since M2. Measured, **all six sit at hue
+239–244° — blue**; the warmth is in the INK (h≈72°). The founder amended his own
+law to the measurement rather than re-hue a palette to match a typo, and §7.1
+now carries the measured table plus the correction. `tokens.test.ts` asserts the
+ladder holds one hue within 8°.
+
+**THE SYSTEM AS SHIPPED.** Four-step ladder, all values Part 7's: sunken
+`#05080b` < canvas `#080d11` < card `#0c1217` < popover `#161f26`, plus two hover
+steps, strictly monotonic and asserted. Accent `#ff4e2d` is the ONE action
+colour and carries focus; gold `#e3c084` is quiet metal and is asserted never to
+become `--primary` or `--ring` — the exact failure that killed the last attempt.
+**Two invented roles only**: `--destructive #ed647c` (hue 12.1°, **20.6° from
+the accent** — a deliberate compromise, reasons in D-THEME-0913-D) and
+`--warning #ea9e51`. **The form-boundary gap closed on a value Part 7 already
+had**: solving `--input` for ≥3:1 on all six surfaces landed exactly on
+`--c-text-3` `#857f79`. **Inter is RETIRED** (D-THEME-0913-F) for DM Sans +
+IBM Plex Sans Arabic — no new dependency, and the vendored woff2 are deleted;
+the build confirms Inter is out of the bundle.
+
+**THREE UNLAYERED OVERRIDES IN `globals.css`, each forced by arithmetic** and
+each avoiding a hand-edit under `components/ui/` (CLAUDE.md rule 3, now amended
+to name this mechanism). (1) Form controls onto the sunken step — the primitives
+ship `dark:bg-input/30`, which composites OVER the parent and **can never be
+darker than it**, so the equation has no solution. (2) The scrim — `bg-black/10`
+is nearly a no-op here; measured, darkening moves modal separation only
+**1.18:1 → 1.24:1** at ANY alpha, so the scrim's real job is suppression and at
+72% the page text behind falls **13.1:1 → 2.0:1**. (3) The destructive tint plate
+pinned back to 10% — shadcn's `dark:bg-destructive/20` measures **4.06:1 over
+--popover**, under AA, because this overlay step is already light.
+
+**TODAY, RE-THEMED, with §5.1 pulled forward.** The tracked-out uppercase eyebrow
+is deleted (it repeated the word the top bar already says). The empty state was
+`"No drafts yet"` — a defect by the design law, naming neither what would appear
+nor why nor what to do — and is now **three honest branches** (needs setup /
+waiting, with the real time / no rhythm set), each naming all three things, with
+the three existing destinations unchanged and the copy in `MESSAGES.empty.*`.
+
+**RTL SHIPPED IN STRUCTURE** (founder RULING 2): all **35** physical-direction
+classes plus **7** negative margins converted to logical properties; the app now
+hardcodes left or right **nowhere**. **The locale half is NOT done and is
+escalated as open-items 68** — the product has **zero Arabic UI strings** and no
+`dir` mechanism at all, while it is positioned Arabic-first. That is its own
+order and was explicitly not started.
+
+**GREENS, run twice, the second pass on the frozen formatted tree: lint ·
+typecheck · guard-static 356 files clean · unit 750/750 in 63 files (from
+703/62 — +47 tests, +1 file, all of it the two rewritten/new guards) · build.**
+Prettier was run on **only the four files this order made dirty**; the tree's
+pre-existing 17-file prettier baseline was measured at HEAD and is unchanged.
+
+**NO PLAYWRIGHT RAN, of any kind** — the founder's word on the GATE-0910 proof
+is still pending. **THREE SPECS ARE KNOWN CASUALTIES AND WERE DELIBERATELY LEFT
+UNEDITED** (founder RULING 3 — edit them when Playwright is cleared, not
+before): `design-layer.spec.ts:95–118` and `smoke.spec.ts:37–39` drive the
+deleted theme toggle, and `smoke.spec.ts:34` asserts the body font contains
+"Inter". **SCREENSHOTS ARE THE ONE THING OUTSTANDING**: Today in all four
+states, desktop and mobile, English only, under `Docs/qa/theme-0913/`._
+
+_Before that, 2026-09-14: **ORDER UX-0913/P1 — Abdallah's UX copy pass — BUILT
 on `feat/ux-0913`, report-and-stop, NOT pushed.** Branch off `origin/main` =
 `0482f20`. **Phase 1 (copy + placeholders) is the WHOLE order: Phase 3 (the
 palette) was WITHDRAWN by the founder on the Phase 0 report and Phase 2 (Today

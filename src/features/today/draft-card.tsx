@@ -80,7 +80,7 @@ export function DraftCard({
             </span>
           )}
           {typeof draft.judgeScore === 'number' && (
-            <span className="ml-auto text-xs text-muted-foreground">
+            <span className="ms-auto text-xs text-muted-foreground">
               Quality <MonoNumber value={draft.judgeScore} />
             </span>
           )}
@@ -93,7 +93,7 @@ export function DraftCard({
             <Button
               variant="ghost"
               size="sm"
-              className="-ml-2 h-auto px-2 py-1 text-xs"
+              className="-ms-2 h-auto px-2 py-1 text-xs"
               aria-expanded={showRationale}
               onClick={() => setShowRationale((open) => !open)}
             >
@@ -123,7 +123,7 @@ export function DraftCard({
           <div className="flex items-center gap-3 rounded-lg border border-border bg-muted p-3">
             <span
               aria-hidden
-              className="flex size-10 shrink-0 items-center justify-center rounded-md bg-brand"
+              className="flex size-10 shrink-0 items-center justify-center rounded-md bg-popover ring-1 ring-border"
             />
             <span className="text-sm">{assetLabel}</span>
           </div>
@@ -212,7 +212,7 @@ export function DraftCard({
               Generating… usually takes about 30 seconds.
             </span>
           )}
-          <Button asChild size="sm" variant="ghost" className="ml-auto">
+          <Button asChild size="sm" variant="ghost" className="ms-auto">
             <Link to={`/today/${draft.id}`}>Open</Link>
           </Button>
         </div>

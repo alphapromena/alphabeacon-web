@@ -3623,3 +3623,171 @@ LABEL collision and not only the value incompatibility; and
 `research`) reappears in a schedule model description — and names the wire
 alias in its failure message, so the next reader learns the distinction from
 the error itself.
+
+### 2026-09-14 — D-THEME-0913-A: one theme governs the visitor world and the product
+
+- Why: Abdallah reviewed the live app and gave two requirements, the first
+  being that **the signed-in product must wear the same theme as the website**.
+  The founder ruled on it, which **repeals the CLAUDE.md rule** that scoped
+  `design.md` Part 1 (the product) and Part 7 (the visitor world) so they could
+  not reach each other. That separation is what withdrew UX-0913's palette
+  phase (D-UX-0913-C); it is now gone, and `tokens.css` carries
+  `marketing.css`'s values **to the byte**.
+- **The CSS isolation is NOT repealed.** Only the design separation is.
+  `marketing.css` is still scoped to `html[data-mk-world]`, still declares
+  nothing on `:root`, and `verify:w02` still asserts both. The two worlds share
+  VALUES now, not a cascade.
+- **`src/styles/one-theme.test.ts` is what makes the ruling true.** A ruling is
+  a sentence in a document and a sentence does not survive a palette edit: the
+  guard compares 19 shared values by VALUE (the two files name things
+  differently on purpose — `--c-surface-1` vs `--card`) and fails the build the
+  moment they drift. **Proven by breaking it:** `--c-accent` in `marketing.css`
+  was changed `#ff4e2d` → `#ff4e2e`, the guard failed naming both tokens and
+  both values, and the break was reverted — `marketing.css` is byte-for-byte
+  unchanged in this branch.
+- **A documentation defect corrected in the same change.** `design.md` Part 7
+  described the surfaces as "very dark graphite, **warm-leaning**". Measured,
+  all six sit at **hue 239–244° — blue**:
+  `--c-void` 242.7°, `--c-bg` 242.0°, `--c-surface-1` 243.8°,
+  `--c-surface-2` 239.5°, `--c-surface-3` 242.0°, `--c-surface-4` 242.7°.
+  The warmth in this palette is in the **INK** (`--c-text` h 71.9°), not the
+  ground. The founder amended his own design law to match the measurement
+  rather than the prose. Part 7 is corrected in this commit so nobody
+  re-derives the mistake, and `tokens.test.ts` asserts the ladder holds one
+  hue within 8°.
+- Instead of: keeping the separation and building a second dark palette for the
+  app. That is what produced two different golds shipping at once — `#C7A76A`
+  in the product, `#e3c084` on the site — which is the drift this repeals.
+
+### 2026-09-14 — D-THEME-0913-B: dark replaces light; there is no theme toggle
+
+- Why: dark is the product, not a mode. The light palette is **retired**, not
+  kept behind a switch, because two themes means two contrast matrices, two
+  screenshot sets and two ways for the gold rule to rot. A light theme is a
+  separate decision and is not in this order.
+- `ab/theme-toggle.tsx` is **deleted** with both call sites (`app-shell.tsx`,
+  `dev-kitchen-sink.tsx`). `lib/theme.tsx` keeps next-themes mounted for one
+  reason only: it stamps `class="dark"` on `<html>`, and the shadcn primitives
+  carry dark-gated classes (`dark:bg-input/30`, `dark:border-input`,
+  `dark:bg-destructive/20`, …) that would silently switch off without it.
+  `forcedTheme="dark"` makes the preference unreachable; nothing is persisted
+  and nothing reads the system setting. The tokens sit on `:root`, so the
+  palette is right even before the class lands and there is no first-paint flash.
+- **Two specs are expected casualties**, edited only when the founder clears
+  Playwright: `e2e/design-layer.spec.ts:95–118` and `e2e/smoke.spec.ts:37–39`
+  both drive "Switch to dark theme".
+- Instead of: `defaultTheme="dark"` with the toggle left in place. That keeps a
+  control that switches to a palette nobody maintains.
+
+### 2026-09-14 — D-THEME-0913-C: the accent is rationed to one primary action per view region
+
+- Why: `--primary` (`#ff4e2d`) is the single answer to "what do I press". Three
+  orange buttons on a screen is a bug, not a style. The accent also carries the
+  focus ring and the selected state; secondary actions are a neutral surface
+  with a border (`--secondary`, `#10171c`).
+- The reference already works this way and it was measured, not assumed: across
+  the 24 visitor-world CSS modules the accent family appears **113 times** and
+  the gold **12**, and every section carries exactly one `tone="primary"`
+  beside one `tone="secondary"`.
+- **Gold is never a button fill and never a link colour.** The visitor world
+  declares a `.gold` button tone in `ui.module.css` and has **zero call sites**
+  for it — the law is already real there, and the product keeps it. Gold is the
+  active navigation indicator, plan and status badges, brand moments, a
+  secondary chart series, a header rule.
+- Phase 1 fixed the largest violation by token alone: `button.tsx`'s `default`
+  variant is `bg-primary`, and `--primary` in the retired dark theme **was the
+  champagne gold** — so every default button in dark was a gold fill. All 229
+  `<Button>` call sites were corrected without one component edit.
+- Not yet done: **64 of those 229 buttons take the default (accent) variant**,
+  and rationing them to one per view region is Phase 4's sweep, not Phase 1's.
+
+### 2026-09-14 — D-THEME-0913-D: error leaves red, at a measured 20.6°
+
+- Why: the accent is a **red-orange at OKLCH hue 32.7°**. A red error collides
+  with it and the user cannot tell confirm from delete at a glance. Error moves
+  to a cooler, lighter crimson: **`--destructive` `#ed647c`, hue 12.1°** —
+  **20.6° of circular hue distance from the accent.**
+- **This is a deliberate compromise and a future reader should not "fix" it.**
+  20.6° is narrower than the founder would choose in the abstract. It is
+  accepted because (a) the error hue is markedly **lighter and cooler** than
+  the accent, so the two do not read alike even at 20°; (b) **error is never
+  signalled by colour alone** — `ab/error-state.tsx` and `ab/status-badge.tsx`
+  both weld an icon and a written label to every state; and (c) **no wider hue
+  exists that still sits inside this palette** — pushing further toward magenta
+  leaves the warm family the brand is built from. Widening it is a palette
+  decision, not a tidy-up.
+- Measured, and asserted by `tokens.test.ts` as **circular** distance. The
+  previous test subtracted raw angles, which is wrong across the 0°/360° wrap:
+  it would report a 12° gap as 348° and pass a palette that had collapsed.
+  That bug is fixed, not carried forward.
+- `--warning` `#ea9e51` (hue 63.9°) is 31.2° from the accent and 51.9° from
+  error. It sits 16.6° from the gold and is separated from it by chroma
+  (0.13 vs 0.087) and by role; that closeness is known and accepted.
+- **Not to be confused with D-UX-0913-D**, which is the vocabulary rule about
+  two identical option labels. Different register, different order, both keep
+  their letters.
+
+### 2026-09-14 — D-THEME-0913-E: elevation is surface lightness plus a hairline; shadow only under true overlays
+
+- Why: shadow does not read on graphite. Depth is a four-step ladder in OKLCH
+  lightness, taken whole from the reference — **sunken 0.1316 < canvas 0.1556 <
+  card 0.1784 < popover 0.2338**, with two more steps for hover — plus a
+  white-12% hairline. `tokens.test.ts` asserts the ladder is strictly monotonic.
+- The three elevation shadows (`--shadow-soft-sm/md/lg`) are **gone**, with
+  both consumers rewritten (`ab/motion.tsx`'s beacon now uses the accent glow;
+  `not-found.tsx`'s gold rule needed no shadow at all). Tailwind's own
+  `--shadow-sm/md/lg` are overridden in `globals.css` so the `shadow-md` /
+  `shadow-lg` the shadcn primitives already carry resolve to an **ambient wash
+  under a true overlay** instead of a drop shadow.
+- **The scrim, measured.** The four dialog overlays shipped `bg-black/10`.
+  Against this canvas that is very nearly a no-op, and darkening cannot fix it:
+  a modal's contrast against the page behind moves only **1.18:1 → 1.24:1**
+  across every alpha from 10% to 80%, because the canvas is already near-black.
+  What a scrim CAN do on dark is **suppress**: at 72% the text behind falls
+  from **13.1:1 to 2.0:1** — plainly no longer readable as content — while the
+  modal keeps its own +0.13 lightness step. So `--scrim` is
+  `rgba(0, 0, 0, 0.72)`; separation is the step and the hairline, and the
+  scrim's job is suppression, not contrast.
+- Instead of: a heavier shadow under modals. It would have been invisible.
+
+### 2026-09-14 — D-THEME-0913-F: DM Sans and IBM Plex Sans Arabic; Inter is retired
+
+- Why: one family across the app, matching the website's. **This supersedes
+  `design.md` Part 2**, which recorded Inter as PROPOSED and pending the
+  founder's confirmation. The confirmation came with ORDER THEME-0913 and it is
+  a **change, not an alignment**: Inter was never chosen, only defaulted to.
+- `--font-sans` is now DM Sans Variable (the opsz axis), `--font-arabic` is IBM
+  Plex Sans Arabic in 400/500/600. **No new dependency** — both were already
+  installed for the visitor world. `--font-mono` still resolves to the same
+  family, because MonoNumber's `font-mono tabular-nums` idiom is the numeric
+  contract product-wide and never wanted a second typeface.
+- The vendored `src/styles/fonts/inter-latin*.woff2` are **deleted** and the
+  directory with them; the build confirms Inter is out of the bundle and the
+  five DM Sans / IBM Plex faces are in it. Zero network either way — the static
+  e2e's no-request assertion still holds.
+- The design law's **+1 Arabic weight step** at body size and below is recorded
+  but not yet applicable: the product has no Arabic UI strings at all
+  (open-items 68).
+- **One expected casualty**, edited only when Playwright is cleared:
+  `e2e/smoke.spec.ts:34` asserts the body font family contains "Inter".
+
+### 2026-09-14 — D-THEME-0913-G: the chart ramp contains no invented hue
+
+- Why: the first proposal was gold / green / **blue** / **violet** / grey — a
+  categorical-5 in which two hues existed nowhere else in the system. That is
+  what any charting library emits, dressed in the brand's colours, and it
+  failed its own measurement: **the app renders exactly one chart, with one
+  series, reading only `--chart-1`** (`analytics-screens.tsx:393`). Four hues
+  were being invented for a product that draws one line.
+- The ramp is now built only from colours the palette already owns: gold →
+  gold dimmed one lightness step (`#aa8e5c`, same hue, ΔL 0.164) → success →
+  warning → the neutral text tier. Multi-series of one metric reads as a gold
+  ramp; categorical series borrow the semantic colours.
+- **The accent is deliberately not a series.** It is the action colour and a
+  chart is not an action (D-THEME-0913-C).
+- `tokens.test.ts` asserts every series is within 6° of a hue the palette owns,
+  so re-adding an invented hue fails the build. `chart-1` and `chart-5` sit
+  8.7° apart in hue and are separated by chroma (0.087 vs 0.012); `chart-5` is
+  the neutral "other" series and sorts last, so they never read as a pair.
+- Instead of: keeping five distinct hues "for when we need them". A palette is
+  not a place to store colours nobody has asked for.

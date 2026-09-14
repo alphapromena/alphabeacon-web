@@ -45,7 +45,6 @@ import {
   DraftStatusBadge,
   JobStatusBadge,
 } from '@/components/ab/status-badge'
-import { ThemeToggle } from '@/components/ab/theme-toggle'
 import { toastError, toastInfo, toastSuccess } from '@/components/ab/toast'
 import { ToneBadge } from '@/components/ab/tone-badge'
 import { Button } from '@/components/ui/button'
@@ -223,8 +222,7 @@ export function DevKitchenSinkScreen() {
           <PageHeader
             eyebrow="Dev"
             title="Kitchen sink"
-            description="Every ab/ primitive on one page, so the design layer can be reviewed and axe-scanned in light and dark."
-            actions={<ThemeToggle />}
+            description="Every ab/ primitive on one page, so the design layer can be reviewed and axe-scanned in one pass."
           />
           <nav aria-label="Dev pages" className="flex flex-wrap items-center gap-4 text-sm">
             <Link className="underline underline-offset-4" to="/">

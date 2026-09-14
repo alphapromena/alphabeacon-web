@@ -32,7 +32,6 @@ import { MonoNumber } from '@/components/ab/mono-number'
 import { BeaconDot } from '@/components/ab/motion'
 import { NotificationBell } from '@/components/ab/notification-bell'
 import { OfflineBanner } from '@/components/ab/offline-banner'
-import { ThemeToggle } from '@/components/ab/theme-toggle'
 import { toastError, toastSuccess } from '@/components/ab/toast'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
@@ -110,8 +109,8 @@ export function AppShell({
       <AppSidebar />
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-2 border-b border-border bg-background px-4 md:px-6">
-          <SidebarTrigger className="-ml-1" />
-          <Separator orientation="vertical" className="mr-1 h-4" />
+          <SidebarTrigger className="-ms-1" />
+          <Separator orientation="vertical" className="me-1 h-4" />
           <div className="min-w-0 flex-1">
             <h1 className="truncate font-display text-lg font-semibold tracking-tight">{title}</h1>
             {context && <p className="truncate text-sm text-muted-foreground">{context}</p>}
@@ -120,7 +119,6 @@ export function AppShell({
             {actions}
             <PlanCreditChip />
             <NotificationBell />
-            <ThemeToggle />
             <AccountMenu />
           </div>
         </header>
@@ -171,7 +169,7 @@ function AppSidebar() {
                         <Icon aria-hidden />
                         <span>{label}</span>
                         {to === '/today' && awaiting > 0 && (
-                          <span className="ml-auto flex items-center gap-1.5">
+                          <span className="ms-auto flex items-center gap-1.5">
                             <BeaconDot live />
                             <MonoNumber value={awaiting} className="text-xs" />
                             {/* Deliberately not "drafts awaiting review" — that
@@ -259,12 +257,12 @@ function OrgIdentity({ name }: { name: string }) {
       <DropdownMenuTrigger asChild>
         <button
           type="button"
-          className="flex w-full items-center gap-2 rounded-md px-1 py-1.5 text-left text-sm hover:bg-sidebar-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+          className="flex w-full items-center gap-2 rounded-md px-1 py-1.5 text-start text-sm hover:bg-sidebar-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
         >
           {identity}
           <ChevronsUpDown
             aria-hidden
-            className="ml-auto size-4 shrink-0 text-muted-foreground group-data-[collapsible=icon]:hidden"
+            className="ms-auto size-4 shrink-0 text-muted-foreground group-data-[collapsible=icon]:hidden"
           />
           <span className="sr-only">Switch workspace</span>
         </button>

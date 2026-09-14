@@ -6,7 +6,7 @@
  * generate must not take its siblings down with it — each group renders its own
  * error and the rest of the queue keeps working.
  */
-import { Inbox, Plus } from 'lucide-react'
+import { CalendarClock, Clock, Plus, Sparkles } from 'lucide-react'
 import { Link } from 'react-router'
 import { EmptyState } from '@/components/ab/empty-state'
 import { useReadiness } from '@/data/readiness'
@@ -74,6 +74,37 @@ function StaticTodayScreen() {
       ? `${awaiting} ${pluralize(awaiting, 'draft')} ready across ${todaySlots.length} ${pluralize(todaySlots.length, 'slot')}`
       : 'Nothing waiting on you right now'
 
+  /**
+   * Why Today is empty, and the one thing that fixes it. Ordered by what
+   * blocks first: a workspace that cannot generate is told that before it is
+   * told about a rhythm, and a workspace with a rhythm is simply waiting.
+   * `Clock` rather than `Inbox` for the waiting case — an inbox says "empty",
+   * a clock says "not yet", which is the truth.
+   */
+  const emptyState = !readiness.canGenerate
+    ? {
+        icon: Sparkles,
+        title: 'Malaky needs your brand voice first',
+        description: MESSAGES.empty.todayNeedsSetup,
+        action: 'Finish setup',
+        href: '/generate',
+      }
+    : schedule.started
+      ? {
+          icon: Clock,
+          title: 'Your next drafts are on the way',
+          description: MESSAGES.empty.todayWaiting.replace('{time}', schedule.generateAt),
+          action: 'Generate one now',
+          href: '/generate',
+        }
+      : {
+          icon: CalendarClock,
+          title: 'Tell Malaky when to post',
+          description: MESSAGES.empty.todayNoRhythm,
+          action: 'Set your posting rhythm',
+          href: '/calendar/settings',
+        }
+
   return (
     <AppShell title="Today" context={context}>
       {phase === 'loading' ? (
@@ -87,11 +118,14 @@ function StaticTodayScreen() {
         <div className="flex flex-col gap-8">
           {/* The shell's top bar already carries this screen's h1, so the
               in-page header is an h2 — one h1 per page, and the queue summary
-              reads as a section of it rather than a second title. */}
+              reads as a section of it rather than a second title.
+              The tracked-out uppercase eyebrow that sat above this heading is
+              gone (ORDER THEME-0913): read once on a landing page it is a
+              signpost, read hourly it is noise, and it repeated the word the
+              top bar already says. The heading carries the meaning alone. */}
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div className="flex flex-col gap-1">
-              <p className="text-xs tracking-wider text-muted-foreground uppercase">Today</p>
-              <h2 className="font-display text-2xl font-semibold tracking-tight">
+              <h2 className="font-display text-2xl font-semibold tracking-tight text-balance">
                 {awaiting > 0
                   ? `${awaiting} ${pluralize(awaiting, 'draft')} ready for review`
                   : 'Your queue is clear'}
@@ -139,35 +173,26 @@ function StaticTodayScreen() {
           )}
 
           {todaySlots.length === 0 ? (
+            /*
+             * Today's empty state, in the three shapes it can honestly take
+             * (ORDER THEME-0913 §5.1 — pulled forward into Phase 1 because
+             * this is the screen Abdallah reviews first and a stub would make
+             * that review meaningless).
+             *
+             * "No drafts yet" was a defect by the design law: it named neither
+             * what would appear here, nor why nothing had, nor what to do. The
+             * three branches below are the three reasons Today can be empty,
+             * in the order they block — brand setup first (nothing runs
+             * without it), then the posting rhythm, then simply waiting — and
+             * each names all three things. The destinations are unchanged.
+             */
             <EmptyState
-              icon={Inbox}
-              title="No drafts yet"
-              description={
-                schedule.started
-                  ? `Your next slot generates at ${schedule.generateAt}.`
-                  : MESSAGES.empty.dashboardFresh
-              }
+              icon={emptyState.icon}
+              title={emptyState.title}
+              description={emptyState.description}
               action={
                 <Button asChild>
-                  {/* Three honest destinations, in the order they block:
-                      brand setup first (nothing runs without it), then the
-                      posting rhythm on C1 — the wizard is gone and the
-                      Calendar editor owns the rhythm now — then the run. */}
-                  <Link
-                    to={
-                      !readiness.canGenerate
-                        ? '/generate'
-                        : schedule.started
-                          ? '/generate'
-                          : '/calendar/settings'
-                    }
-                  >
-                    {!readiness.canGenerate
-                      ? 'Finish setup to generate'
-                      : schedule.started
-                        ? 'Generate one now'
-                        : 'Set your posting rhythm'}
-                  </Link>
+                  <Link to={emptyState.href}>{emptyState.action}</Link>
                 </Button>
               }
             />

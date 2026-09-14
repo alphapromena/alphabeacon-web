@@ -66,7 +66,7 @@ export function TagInput({
           {values.map((value) => (
             <li
               key={value}
-              className="inline-flex items-center gap-1 rounded-full border border-border py-0.5 pr-1 pl-3 text-sm"
+              className="inline-flex items-center gap-1 rounded-full border border-border py-0.5 pe-1 ps-3 text-sm"
             >
               {value}
               <Button

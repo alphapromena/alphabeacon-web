@@ -197,7 +197,7 @@ export function ToneEditorForm({
         <p className="text-sm text-destructive">
           {previewError.message}
           {previewError.reference && (
-            <span className="ml-1 font-mono text-xs text-muted-foreground">
+            <span className="ms-1 font-mono text-xs text-muted-foreground">
               ({previewError.reference})
             </span>
           )}

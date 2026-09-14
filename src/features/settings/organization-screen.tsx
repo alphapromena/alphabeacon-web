@@ -72,7 +72,7 @@ function OrganizationId() {
         type="button"
         variant="outline"
         size="sm"
-        className="ml-auto"
+        className="ms-auto"
         aria-label="Copy the organization ID"
         onClick={() => void copy()}
       >

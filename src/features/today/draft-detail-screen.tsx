@@ -85,7 +85,7 @@ export function DraftDetailScreen() {
   return (
     <AppShell title="Draft" context={tone ? `${tone.name} tone` : undefined}>
       <div className="flex flex-col gap-6">
-        <Button asChild variant="ghost" size="sm" className="-ml-2 self-start">
+        <Button asChild variant="ghost" size="sm" className="-ms-2 self-start">
           <Link to="/today">
             <ArrowLeft aria-hidden />
             Back to Today
@@ -121,7 +121,7 @@ export function DraftDetailScreen() {
                     <Button
                       size="sm"
                       variant="ghost"
-                      className="ml-auto"
+                      className="ms-auto"
                       onClick={() => setMediaOpen(true)}
                     >
                       Regenerate

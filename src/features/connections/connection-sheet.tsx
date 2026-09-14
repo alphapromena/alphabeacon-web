@@ -112,7 +112,7 @@ export function ConnectionSheet({
               <Button
                 variant="ghost"
                 size="sm"
-                className="-ml-2 h-auto w-fit px-2 py-1"
+                className="-ms-2 h-auto w-fit px-2 py-1"
                 aria-expanded={scopesOpen}
                 onClick={() => setScopesOpen((value) => !value)}
               >

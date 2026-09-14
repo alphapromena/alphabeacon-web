@@ -1,151 +1,163 @@
 /**
- * Malaky design tokens — the Malaky Brand Starter Guide v1.0, in OKLCH,
- * light + dark.
+ * Malaky design tokens — ONE theme, governing the visitor world and the
+ * signed-in product alike (ORDER THEME-0913, D-THEME-0913-A).
  *
- * Source of truth: `design.md` (Part 1), written from
- * `Docs/brand/Malaky_Brand_Standards_v1.pages`. Every value below is either a
- * kit color exactly, or a documented derivation of one; nothing here is
- * invented for taste alone.
+ * SOURCE OF TRUTH: `src/styles/marketing.css`, the concept-v2 token file that
+ * `design.md` Part 7 documents. Every surface, text tier, accent, gold and
+ * success value below is that file's value **to the byte**. It is not "inspired
+ * by" the website — it IS the website's palette, and
+ * `one-theme.test.ts` fails the build if the two files ever disagree.
  *
- * THE RULE THAT SHAPES THIS FILE: Champagne Gold #C7A76A — the kit's primary
- * accent — reads ~1.9:1 on the ivory page. It cannot carry text, and on light
- * surfaces it cannot even carry large display type (3:1). So the gold family
- * is split by ROLE, the same discipline the previous palette used:
+ * Values are hex, not OKLCH, for exactly that reason: a reader must be able to
+ * diff this file against `marketing.css` by eye, and a guard must be able to
+ * compare them literally.
  *
- *   --primary       #1D1D1F  Deep Charcoal. Buttons, interactive text, rings —
- *                            exactly what the kit assigns it.
- *   --brand         #9A7B4F  the gold family's voice on LIGHT surfaces: gold
- *                            deepened toward Burnished Bronze until it clears
- *                            3:1 for large display type (3.60:1 on ivory,
- *                            still below 4.5 — display only, never body text).
- *   --brand (dark)  #C7A76A  the true champagne gold, where charcoal gives it
- *                            7.3:1 — the premium moment lives on dark.
+ * THREE RULES SHAPE THIS FILE
+ *
+ * 1. ELEVATION IS LIGHTNESS, NOT SHADOW (D-THEME-0913-E). Shadow does not read
+ *    on dark. Depth is a four-step graphite ladder plus a hairline border;
+ *    shadow survives only under a true overlay, as ambient wash. The ladder is
+ *    strictly monotonic in OKLCH lightness and the test asserts it:
+ *      sunken 0.1316 < canvas 0.1556 < card 0.1784 < popover 0.2338
+ *
+ * 2. THE ACCENT IS RATIONED (D-THEME-0913-C). `--primary` (#ff4e2d) is the one
+ *    action colour — one primary action per view region — and it also carries
+ *    the focus ring and the selected state. Secondary actions are a neutral
+ *    surface with a border. `--brand` (the gold) is quiet metal: the active
+ *    navigation indicator, plan and status badges, brand moments, a secondary
+ *    chart series, a header rule. **Gold is never a button fill and never a
+ *    link colour** — the website declares a `.gold` button tone and has zero
+ *    call sites for it, and the product keeps that discipline.
+ *
+ * 3. ERROR LEAVES RED (D-THEME-0913-D). The accent is a red-orange at hue
+ *    32.7°; a red error collides with it and the user cannot tell confirm from
+ *    delete at a glance. `--destructive` is a cooler, lighter crimson at hue
+ *    12.1° — **20.6° of circular hue distance**, a deliberate compromise
+ *    recorded in decisions.md. Error is never colour alone: icon plus text.
+ *
+ * NOT WARM. `design.md` Part 7 called these surfaces "warm-leaning"; measured,
+ * all six sit at hue 239–244° (blue). The warmth in this palette lives in the
+ * INK at h≈72°, not the ground. That prose is corrected in Part 7 and the
+ * defect is logged — see D-THEME-0913-A.
  *
  * `tokens.test.ts` asserts every pair below and fails the build if an edit
  * breaks AA. Measured ratios are quoted per token so the margin is visible.
  */
 :root {
-  /* Warm Ivory as the page, pure white as the raised surface. */
-  --background: oklch(0.9681 0.0074 80.72); /* #F7F4EF Warm Ivory */
-  --foreground: oklch(0.2316 0.0038 286.1); /* #1D1D1F Deep Charcoal · 15.16:1 */
-  --card: oklch(1 0 0); /* #FFFFFF */
-  --card-foreground: oklch(0.2316 0.0038 286.1); /* 16.34:1 */
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.2316 0.0038 286.1);
+  /* --- The graphite ladder — elevation is lightness ------------------
+     All six values are marketing.css's, re-roled for a work surface. The
+     hover steps are what the law means by "hover uses a surface step, never
+     the accent". */
+  --sunken: #05080b; /* --c-void       · L 0.1316 · inputs, wells */
+  --background: #080d11; /* --c-bg         · L 0.1556 · the page */
+  --card: #0c1217; /* --c-surface-1  · L 0.1784 · cards, panels */
+  --muted: #10171c; /* --c-surface-2  · L 0.1999 · zebra, row hover, quiet fill */
+  --popover: #161f26; /* --c-surface-3  · L 0.2338 · menus, modals */
+  --accent: #1d272f; /* --c-surface-4  · L 0.2668 · menu-item hover inside a popover */
 
-  /* Deep Charcoal is the interactive color (kit: "primary text, logo,
-     buttons"). Ivory text on a charcoal fill: 14.05:1. */
-  --primary: oklch(0.2316 0.0038 286.1); /* #1D1D1F */
-  --primary-foreground: oklch(0.9681 0.0074 80.72); /* #F7F4EF */
+  /* --- Text: warm off-white, never stark. Three real tiers ---------- */
+  --foreground: #f3ede6; /* 16.79:1 page · 16.21:1 card · 14.36:1 popover */
+  --muted-foreground: #b3ada6; /*  8.78:1 page ·  8.47:1 card ·  7.51:1 popover */
+  /* Captions and meta. BARRED from --popover and below: 4.22:1 there, under
+     AA. The same bar Part 7 sets on its own quiet tiers, enforced by
+     tokens.test.ts rather than by review. */
+  --subtle-foreground: #857f79; /*  4.93:1 page ·  4.76:1 card */
 
-  --secondary: oklch(0.936 0.0149 80.71); /* #EFE9DF Limestone */
-  --secondary-foreground: oklch(0.2316 0.0038 286.1);
-  --muted: oklch(0.936 0.0149 80.71);
-  --muted-foreground: oklch(0.4616 0.0137 84.59); /* #5C5850 · 5.04:1 on muted */
-  --accent: oklch(0.9363 0.0218 83.26); /* #F1E9DA gold-tinted wash */
-  --accent-foreground: oklch(0.4622 0.0619 72.47); /* #6E5330 · 5.36:1 */
+  --card-foreground: #f3ede6;
+  --popover-foreground: #f3ede6;
+  --accent-foreground: #f3ede6;
+  --secondary-foreground: #f3ede6;
 
-  /* Terracotta family, split for gravity: warnings keep the kit's terracotta
-     (darkened until its 10% tint reads), destructive goes a step deeper and
-     redder so "delete" carries more weight than "careful". Both clear 4.5 on
-     their own tints over every surface. */
-  --destructive: oklch(0.4675 0.1162 37.15); /* #8F3E26 */
-  --destructive-foreground: oklch(1 0 0); /* 7.36:1 on the fill */
-  --warning: oklch(0.4773 0.0825 64.04); /* #7D5226 */
-  --warning-foreground: oklch(1 0 0);
-  --success: oklch(0.4716 0.0755 157); /* #33684A Muted Emerald, deepened */
-  --success-foreground: oklch(1 0 0);
+  /* --- The accent: the one action colour --------------------------- */
+  --primary: #ff4e2d; /* --c-accent    · 5.93:1 page · 5.72:1 card */
+  /* Dark ink on the orange, never white: #fff is 3.29:1 and fails AA for a
+     button label. This is marketing.css's --c-on-accent, and the same
+     correction (D-M2-F-r2) that the website already carries. */
+  --primary-foreground: #1a0a05; /* 5.86:1 on the fill */
 
-  --border: oklch(0.8959 0.0216 85.95); /* #E3DCCD — light borders (kit) */
-  /* Form-control boundaries carry meaning: 3.19:1 on page, 3.44:1 on card. */
-  --input: oklch(0.617 0.0214 90.63); /* #8A8577 */
-  --ring: oklch(0.2316 0.0038 286.1); /* charcoal focus ring */
+  /* Secondary actions: a neutral surface with a border, not a second accent. */
+  --secondary: #10171c;
 
-  /* The gold family, split by role (see the header note). */
-  --brand: oklch(0.6023 0.0716 75.42); /* #9A7B4F · 3.60:1 — display only */
-  --brand-strong: oklch(0.5487 0.0735 71.79); /* #8C6A3F Burnished Bronze */
+  /* --- Gold: quiet metal, never an action -------------------------- */
+  --brand: #e3c084; /* --c-gold    · 11.28:1 page */
+  --brand-strong: #f0d19c; /* --c-gold-hi */
 
-  --chart-1: oklch(0.2316 0.0038 286.1); /* charcoal */
-  --chart-2: oklch(0.5487 0.0735 71.79); /* bronze */
-  --chart-3: oklch(0.4716 0.0755 157); /* emerald */
-  --chart-4: oklch(0.4675 0.1162 37.15); /* terracotta-deep */
-  --chart-5: oklch(0.4616 0.0137 84.59); /* warm grey */
+  /* --- Semantic state ----------------------------------------------
+     success is marketing.css's --c-ok. destructive and warning are the two
+     roles the visitor world never needed; both are mine, both measured. */
+  --success: #4fb286; /* --c-ok · 7.48:1 page · 7.22:1 card · 6.39:1 popover */
+  --success-foreground: #080d11;
+  --destructive: #ed647c; /* h 12.1° · 6.24:1 page · 6.02:1 card · 5.34:1 popover */
+  --destructive-foreground: #080d11; /* 6.24:1 on the fill */
+  --warning: #ea9e51; /* h 63.9° · 8.84:1 page · 8.53:1 card · 7.56:1 popover */
+  --warning-foreground: #080d11;
 
-  /* Soft-modern, slightly tighter than before: sm 8 · md 10 · lg 12 · xl 16
-     (design.md Part 4 — premium spacing, gentle corners). */
-  --radius: 0.75rem;
+  /* --- Lines -------------------------------------------------------
+     A hairline, exactly as the website draws it: white at low opacity, never a
+     solid colour. --border is decorative separation and carries no contrast
+     duty; --input identifies a CONTROL and therefore must clear 3:1.
+     The site's other two tiers (--c-line at 7%, --c-line-3 at 20%) are NOT
+     copied here. Nothing in the product asked for them, and a palette is not
+     a place to store colours nobody has asked for — the same argument that
+     shaped the chart ramp (D-THEME-0913-G). Add one when a surface needs it. */
+  --border: rgba(255, 255, 255, 0.12); /* --c-line-2 */
+  /* WCAG 1.4.11. Part 7's hairlines top out at 1.84:1 and cannot legally
+     identify a control, so this role needed a real value — and solving for
+     ≥3:1 on all six surfaces landed on #857f79, which IS Part 7's --c-text-3.
+     The one role the visitor world never needed is filled by a value it
+     already had. 4.03:1 page · 3.89:1 card · 3.45:1 popover. */
+  --input: #857f79;
+  --ring: #ff4e2d; /* the accent carries focus · 5.93:1 page, 5.07:1 popover */
 
-  --sidebar: oklch(1 0 0);
-  --sidebar-foreground: oklch(0.2316 0.0038 286.1);
-  --sidebar-primary: oklch(0.2316 0.0038 286.1);
-  --sidebar-primary-foreground: oklch(0.9681 0.0074 80.72);
-  --sidebar-accent: oklch(0.9363 0.0218 83.26);
-  --sidebar-accent-foreground: oklch(0.4622 0.0619 72.47);
-  --sidebar-border: oklch(0.8959 0.0216 85.95);
-  --sidebar-ring: oklch(0.2316 0.0038 286.1);
+  /* --- The scrim ----------------------------------------------------
+     NOT bg-black/10. Measured against this canvas, darkening buys almost
+     nothing for separation (1.18:1 → 1.24:1 at any alpha) because the page is
+     already near-black. What a scrim can do on dark is SUPPRESS the page: at
+     72% the text behind falls from 13.1:1 to 2.0:1 — plainly no longer
+     readable as content — while the modal keeps its own +0.13 lightness step.
+     Separation is the step and the hairline; the scrim's job is suppression. */
+  --scrim: rgba(0, 0, 0, 0.72);
 
-  /* Soft shadows (kit: "soft shadows", "minimal shadows" on buttons) — warm,
-     low-alpha, never a glow. The three elevation levels of design.md Part 4. */
-  --shadow-soft-sm: 0 1px 2px oklch(0.2316 0.0038 286.1 / 5%);
-  --shadow-soft-md: 0 2px 8px oklch(0.2316 0.0038 286.1 / 7%);
-  --shadow-soft-lg: 0 8px 28px oklch(0.2316 0.0038 286.1 / 9%);
-}
+  /* --- Charts -------------------------------------------------------
+     Built only from colours this palette already contains. The accent is
+     deliberately NOT a series: it is the action colour and a chart is not an
+     action. Multi-series of one metric reads as a gold lightness ramp
+     (chart-1 → chart-2, same hue, ΔL 0.164); categorical series borrow the
+     semantic colours. See D-THEME-0913-G for why there is no invented hue. */
+  --chart-1: #e3c084; /* gold        · 11.28:1 */
+  --chart-2: #aa8e5c; /* gold, dimmed ·  6.26:1 */
+  --chart-3: #4fb286; /* success      ·  7.48:1 */
+  --chart-4: #ea9e51; /* warning      ·  8.84:1 */
+  --chart-5: #b3ada6; /* neutral      ·  8.78:1 */
 
-.dark {
-  /* Charcoal surfaces with ivory text (kit: dark = charcoal + ivory). */
-  --background: oklch(0.2316 0.0038 286.1); /* #1D1D1F */
-  --foreground: oklch(0.9681 0.0074 80.72); /* Warm Ivory · 14.05:1 */
-  --card: oklch(0.2615 0.0055 286.01); /* #242427 */
-  --card-foreground: oklch(0.9681 0.0074 80.72);
-  --popover: oklch(0.2615 0.0055 286.01);
-  --popover-foreground: oklch(0.9681 0.0074 80.72);
+  /* --- Sidebar: the chrome -----------------------------------------
+     Active navigation is the GOLD indicator (--sidebar-primary); hover is a
+     surface step (--sidebar-accent), never the accent. */
+  --sidebar: #0c1217;
+  --sidebar-foreground: #f3ede6;
+  --sidebar-primary: #e3c084;
+  --sidebar-primary-foreground: #080d11;
+  --sidebar-accent: #10171c;
+  --sidebar-accent-foreground: #f3ede6;
+  --sidebar-border: rgba(255, 255, 255, 0.12);
+  --sidebar-ring: #ff4e2d;
 
-  /* The premium moment: champagne gold is the interactive color on dark.
-     Charcoal text on a gold fill: 7.34:1; gold as text on the page: 7.34:1;
-     on its 10% tint over a card: 6.06:1. */
-  --primary: oklch(0.7432 0.0876 82.76); /* #C7A76A Champagne Gold */
-  --primary-foreground: oklch(0.2316 0.0038 286.1);
+  /* --- Radius: Part 7's scale, 8 / 12 / 18 / 26 --------------------- */
+  --radius: 0.75rem; /* --r-md, 12px */
 
-  --secondary: oklch(0.2947 0.0072 285.95); /* #2C2C30 */
-  --secondary-foreground: oklch(0.9681 0.0074 80.72);
-  --muted: oklch(0.2947 0.0072 285.95);
-  --muted-foreground: oklch(0.7556 0.0182 84.59); /* #B5AFA3 · 5.87:1 on muted */
-  --accent: oklch(0.3102 0.0113 84.59); /* #33302A gold-warmed charcoal */
-  --accent-foreground: oklch(0.7432 0.0876 82.76); /* gold · 5.65:1 */
+  /* --- Motion: one pair for micro-interaction, one for overlays -----
+     Easings are marketing.css's. Motion answers an action and shows what
+     changed; it is never a decorative entrance. Under prefers-reduced-motion
+     movement is REMOVED and the state change stays legible (globals.css). */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
+  --motion-micro: 160ms;
+  --motion-overlay: 220ms;
 
-  /* Lifted for dark, and destructive clears the /20 tint shadcn uses there. */
-  --destructive: oklch(0.7853 0.0928 39.94); /* #EDA58C */
-  --destructive-foreground: oklch(0.2316 0.0038 286.1);
-  --warning: oklch(0.7684 0.1003 71.28); /* #DCA96A */
-  --warning-foreground: oklch(0.2316 0.0038 286.1);
-  --success: oklch(0.752 0.0778 158.15); /* #84BE9C */
-  --success-foreground: oklch(0.2316 0.0038 286.1);
-
-  --border: oklch(1 0 0 / 12%);
-  --input: oklch(0.5564 0.0191 88.06); /* #787367 · 3.30:1 page, 3.02:1 card */
-  --ring: oklch(0.7432 0.0876 82.76);
-
-  /* On dark the gold needs no split — it IS the brand voice here. */
-  --brand: oklch(0.7432 0.0876 82.76); /* #C7A76A */
-  --brand-strong: oklch(0.8073 0.079 83.02); /* #D9BC85 lighter champagne */
-
-  --chart-1: oklch(0.7432 0.0876 82.76);
-  --chart-2: oklch(0.8073 0.079 83.02);
-  --chart-3: oklch(0.752 0.0778 158.15);
-  --chart-4: oklch(0.7853 0.0928 39.94);
-  --chart-5: oklch(0.7556 0.0182 84.59);
-
-  --sidebar: oklch(0.2615 0.0055 286.01);
-  --sidebar-foreground: oklch(0.9681 0.0074 80.72);
-  --sidebar-primary: oklch(0.7432 0.0876 82.76);
-  --sidebar-primary-foreground: oklch(0.2316 0.0038 286.1);
-  --sidebar-accent: oklch(0.3102 0.0113 84.59);
-  --sidebar-accent-foreground: oklch(0.7432 0.0876 82.76);
-  --sidebar-border: oklch(1 0 0 / 12%);
-  --sidebar-ring: oklch(0.7432 0.0876 82.76);
-
-  /* Shadows barely read on charcoal; depth comes from the lifted surfaces. */
-  --shadow-soft-sm: 0 1px 2px oklch(0 0 0 / 20%);
-  --shadow-soft-md: 0 2px 8px oklch(0 0 0 / 25%);
-  --shadow-soft-lg: 0 8px 28px oklch(0 0 0 / 30%);
+  /* --- Shadow: ambient, under true overlays only -------------------
+     D-THEME-0913-E. There is no elevation shadow in this system; a card is
+     raised because it is LIGHTER, not because it casts. These exist so a
+     menu or a modal reads as detached from the plane, and for nothing else. */
+  --shadow-overlay: 0 24px 56px -28px rgb(0 0 0 / 0.75);
+  --accent-glow: rgba(255, 78, 45, 0.22); /* --c-accent-glow */
 }

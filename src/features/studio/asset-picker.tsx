@@ -177,7 +177,7 @@ export function AssetPicker({
           {value.map((assetId) => (
             <li
               key={assetId}
-              className="flex items-center gap-1 rounded-full border border-border py-1 pr-1 pl-3 text-xs"
+              className="flex items-center gap-1 rounded-full border border-border py-1 pe-1 ps-3 text-xs"
             >
               <span className="max-w-[16rem] truncate">{labelOf(assetId)}</span>
               <Button
@@ -251,7 +251,7 @@ export function AssetPicker({
                       disabled={disabled || (!chosen && full)}
                       aria-pressed={chosen}
                       onClick={() => pick(choice)}
-                      className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none disabled:opacity-50"
+                      className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-start text-sm hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none disabled:opacity-50"
                     >
                       <span className="flex size-4 shrink-0 items-center justify-center">
                         {chosen && <Check aria-hidden className="size-4" />}

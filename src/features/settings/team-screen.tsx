@@ -143,7 +143,7 @@ export function TeamScreen() {
 
       <div className="overflow-x-auto rounded-xl border border-border">
         <table className="w-full text-sm">
-          <thead className="border-b border-border text-left">
+          <thead className="border-b border-border text-start">
             <tr>
               <th scope="col" className="px-4 py-2 font-medium">
                 Member
@@ -207,7 +207,7 @@ export function TeamScreen() {
                 <td className="px-4 py-3">
                   <MonoNumber value={shortDate(user.joinedAt)} />
                 </td>
-                <td className="px-4 py-3 text-right">
+                <td className="px-4 py-3 text-end">
                   {/* Removal follows the API's precedence: owners remove
                       anyone, admins remove members only — an equal or higher
                       role gets no button rather than a 403. */}
@@ -290,7 +290,7 @@ export function TeamScreen() {
                 <td className="px-4 py-3">
                   <Badge className="font-normal">Invited</Badge>
                 </td>
-                <td className="px-4 py-3 text-right">
+                <td className="px-4 py-3 text-end">
                   {admin && (
                     <div className="flex justify-end gap-2">
                       <Button

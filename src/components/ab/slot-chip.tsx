@@ -57,7 +57,7 @@ export function SlotChip({
         </span>
       )}
       {toneName && <span className="shrink-0 text-muted-foreground">{toneName}</span>}
-      {metric && <MonoNumber value={metric} className="ml-auto shrink-0 text-muted-foreground" />}
+      {metric && <MonoNumber value={metric} className="ms-auto shrink-0 text-muted-foreground" />}
     </span>
   )
 }

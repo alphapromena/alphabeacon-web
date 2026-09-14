@@ -73,7 +73,7 @@ export function EmptyOrgScreen() {
         </p>
       </div>
 
-      <div className="flex w-full max-w-sm flex-col gap-3 text-left">
+      <div className="flex w-full max-w-sm flex-col gap-3 text-start">
         {!recovered && (
           <div className="flex flex-col gap-2">
             <Label htmlFor="workspace-name">Organization name</Label>

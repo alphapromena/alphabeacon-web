@@ -1497,3 +1497,58 @@ Numbering continues from 50. The record: `Docs/qa/hsn-0910/phase0/` and the
     answer. **Not to be confused with open-items 9** (`gm_creative → fast` on a
     schedule's `modelAlias`) — that is the OTHER vocabulary, and D-UX-0913-D is
     the record of why the two are so easy to confuse.
+
+68. **The product has no Arabic UI locale, and no `dir` mechanism at all —
+    while Malaky is positioned Arabic-first.** (2026-09-14, ORDER THEME-0913
+    Phase 0, escalated by the founder in RULING 2.) This is not a polish item
+    and it is not a translation backlog: **the mechanism does not exist.**
+
+    **Measured, Phase 0:**
+
+    - `index.html` is `<html lang="en">` with **no `dir` attribute**, and
+      nothing in `src/` ever sets one.
+    - **Zero Arabic strings anywhere in the signed-in product.** A script
+      sweep of every `.ts`/`.tsx` under `src/` found Arabic script in exactly
+      four files, **all of them under `src/features/marketing/`**
+      (`Footer.tsx`, `icons.tsx`, `lib/campaign-creative.ts`,
+      `lib/content.ts`). The visitor world speaks Arabic; the product a
+      customer signs in to does not.
+    - There is no locale layer, no message catalogue keyed by language, and no
+      language preference on the account. `src/lib/messages.ts` is a flat
+      English catalogue.
+    - Arabic appears in the product only as **customer content** — a tone's
+      language, a brand's language — never as interface.
+
+    **What Phase 1 did and did not do.** ORDER THEME-0913 shipped the product
+    **RTL-correct in structure**: all 35 physical-direction utility classes
+    (`ml-`, `mr-`, `pl-`, `pr-`, `text-left`, `text-right`, and seven negative
+    margins) were converted to logical properties (`ms-`, `me-`, `ps-`, `pe-`,
+    `text-start`, `text-end`), and the app now hardcodes left or right
+    **nowhere**. So a `dir="rtl"` document would lay out correctly. That is the
+    structural half and it is done. **The locale half is untouched.**
+
+    **What an Arabic locale would need** (named here so the order that does it
+    starts from a list, not a discovery phase):
+
+    1. **A locale layer** — a language preference that persists, a message
+       catalogue keyed by locale, and a way for every designed string in
+       `src/lib/messages.ts` (and the ~19 inline field helpers and
+       `routes.tsx` handle contexts that UX-0913 deliberately left inline) to
+       resolve through it.
+    2. **`dir` on the document**, set from that preference before paint, the
+       way `MarketingLayout` already sets `data-mk-world`.
+    3. **The Arabic face — already present.** `--font-arabic`
+       (IBM Plex Sans Arabic, 400/500/600) is in the token set and bundled;
+       THEME-0913 put it there. Nothing to add.
+    4. **The +1 weight step.** The design law requires Arabic to sit one
+       weight step above the Latin equivalent at body size and below, because
+       thin light-on-dark Arabic blooms. That is a rule about where Arabic is
+       SET, so it cannot be applied until there is Arabic to set.
+    5. **Number, date and time formatting** — `src/lib/format.ts`,
+       `timezone.ts` and `MonoNumber`'s tabular-figure contract all assume
+       Latin digits today.
+    6. **The QA surface** — Phase 1's screenshots are English-only for exactly
+       this reason. An Arabic locale needs its own screenshot matrix.
+
+    **This is its own order and it has not been started.** The founder's
+    instruction was explicit: name what it needs, do not begin it.

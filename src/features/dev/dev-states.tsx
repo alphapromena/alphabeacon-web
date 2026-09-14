@@ -59,7 +59,7 @@ export function DevStatesScreen() {
             role="radio"
             aria-checked={active === mode}
             variant={active === mode ? 'default' : 'outline'}
-            className={cn('h-auto justify-start px-4 py-3 text-left')}
+            className={cn('h-auto justify-start px-4 py-3 text-start')}
             onClick={() => dispatch({ type: 'dev/force', mode })}
           >
             <span className="flex flex-col items-start gap-0.5">
@@ -83,7 +83,7 @@ export function DevStatesScreen() {
             role="radio"
             aria-checked={connectivity === mode}
             variant={connectivity === mode ? 'default' : 'outline'}
-            className={cn('h-auto justify-start px-4 py-3 text-left')}
+            className={cn('h-auto justify-start px-4 py-3 text-start')}
             onClick={() => dispatch({ type: 'dev/connectivity', mode })}
           >
             <span className="flex flex-col items-start gap-0.5">

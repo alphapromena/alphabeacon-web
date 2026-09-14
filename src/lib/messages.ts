@@ -242,6 +242,19 @@ export const MESSAGES = {
   empty: {
     dashboardFresh: 'Your pipeline has not started yet — finish setup to see drafts here.',
     noDrafts: 'No drafts yet — your next slot will generate them.',
+    /**
+     * Today's empty state, in the three shapes it can honestly take (ORDER
+     * THEME-0913 §5.1). This is the product's most important sentence: an
+     * empty Today must read as "the work has not arrived yet", never as a
+     * broken screen. Each one names what will appear here, why it is empty,
+     * and leaves the single action to the control beside it.
+     */
+    todayNoRhythm:
+      'Malaky drafts your posts overnight and leaves them here to approve. It needs to know which days and times you want to post first.',
+    todayWaiting:
+      'Nothing is waiting on you. Your next drafts land here at {time}, ready to read and approve.',
+    todayNeedsSetup:
+      'Malaky writes in your brand voice, so it needs to learn that voice before it can draft anything. This is a one-time setup.',
     noNotifications: "You're all caught up.",
     /** Billing history (BIL-0902): one row per paid invoice, none yet. */
     noCredits: 'No payments yet — your first invoice appears here once you subscribe.',
