@@ -5,10 +5,22 @@ without reconstructing it from the session log. **Update this file at the end
 of any turn that finishes a phase or changes the plan.** `sessions.md` is the
 chronological record; this is the current picture.
 
-_Last updated: 2026-09-13, after **ORDER VOICE-0913 — the brand voice
-read/write asymmetry, the combined cap, and the honest save — BUILT on branch
-`feat/voice-0913` off `main` = `dff402d`, PUSHED and NOT merged (build order,
-report-and-stop).** One root cause, measured on org 1867: `adaptBrand`
+_Last updated: 2026-09-14, after **ORDER VOICE-0913 — the brand voice
+read/write asymmetry, the combined cap, and the honest save — BUILT, MERGED and
+DEPLOYED.** Branch `feat/voice-0913` off `main` = `dff402d`, two commits, KEPT
+on origin as the record; `main` fast-forwarded `dff402d` → **`aba11be`** and
+pushed with `main:live`. **Production `dpl_4JS6QhApPnbjRfzsuuYHce4shrqV`
+(branch `main`) and the `live` preview `dpl_2bxSdDidn7Yej23LfNzkouZSvqpc`
+(branch `live`) are both READY at `aba11be`, and BOTH serve the same bundle
+`index-CeQdUZ1H.js` → **`index-DJniABIr.js`** (the production one read from
+Vercel's side through the MCP fetch, `1.malaky.ai` read directly). The apex
+`malaky.ai` is STILL the GoDaddy site-builder page (`Server: DPS/2.0.0`) — the
+DNS cutover remains the founder's hand, item 53. Rollback candidate: the
+`dff402d` pair.** **The last commit is a COPY fix on the founder's word
+(2026-09-14): the extra-rows notice said "Ask support to merge them into this
+list" and **there is no support channel in this product**, so it now says "Ask
+a **workspace owner or admin**"; decisions.md and item 66 were corrected from
+"a support action" to a workspace owner's act in the same commit.** One root cause, measured on org 1867: `adaptBrand`
 FLATTENED every voice row's rules while `saveBrandVoice` PATCHed only the
 canonical one, so the screen showed a merge of two rows both named
 `Brand voice` and every save wrote that merge back onto one — **18 rules became
@@ -23,10 +35,17 @@ counter, both Add controls disabled at the cap, above-cap lists still listed,
 still removable, still saveable when they SHRINK, nothing trimmed); and a
 refused save renders the wire's own field message with its request id, the
 green toast firing only after a real save. **D-INT-B AMENDED** in decisions.md
-(the 2026-08-17 flatten clause marked superseded in place). **The GATE for a
-build order: lint · typecheck · guard-static 354 · unit 683/683 (60 files, +17
-new) · the STATIC e2e — `pnpm verify:all`, all of it.** NOTHING LIVE RAN (the
-standing rule). The DATA on 1867 was repaired by hand the same day at zero
+(the 2026-08-17 flatten clause marked superseded in place). **The GATE: lint · typecheck ·
+guard-static 354 · unit 683/683 (60 files, +17 new) · static e2e 115 passed /
+84 skipped / 0 failed — `pnpm verify:all` RESULT: PASS, run three times (run 1
+red on two specs with its own cause printed, `the tree changed during
+verify:all`, a prettier line-ending fix landing mid-run; both passed solo; run
+2 green on a frozen tree; run 3 green after the copy edit, tree
+`2feeddaf4aec`).** **THE THREE FIXES ARE PROVEN BY UNIT AND STATIC ONLY.**
+NOTHING LIVE RAN in this order (the standing rule) — no gate, no live round, no
+probe against the deployed API. **The next testing session the founder names is
+what proves them against the deployed API**; `live-brand-rules.spec.ts` and
+`live-brand.spec.ts` both walk this screen and neither was touched. The DATA on 1867 was repaired by hand the same day at zero
 spend, five stop points, every request-id in sessions.md. **Items 65 (closed in
 code, the manual repair recorded) and 66 (the founder's: a reviewed in-product
 merge, or Hasan making the voice name unique per org — the real fix) are
