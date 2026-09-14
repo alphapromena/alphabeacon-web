@@ -3481,9 +3481,11 @@ apply, and that this screen cannot reach them.
 **No migration in this order, deliberately.** Merging or deleting rows is
 destructive and irreversible, the merge rule is a judgement (which row wins on
 a near-duplicate?), and a client that silently rewrote a user's rows on load
-would be the same class of mistake in the other direction. It stays a support
-action — done by hand, with the rules read out first — until the founder rules
-on a product mechanism. **Open question for that ruling:** should the screen
+would be the same class of mistake in the other direction. It stays a
+WORKSPACE OWNER'S act — done by hand, with the rules read out first — until the
+founder rules on a product mechanism. **There is no support channel in this
+product** (the founder, 2026-09-14), so the notice points at an owner or admin:
+naming a channel that does not exist would send the reader nowhere. **Open question for that ruling:** should the screen
 offer a reviewed merge (show both lists, let the user pick what survives, one
 explicit press), or should the backend stop the second row existing at all by
 making the canonical name unique per org? The second is the real fix; the

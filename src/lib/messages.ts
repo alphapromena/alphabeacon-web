@@ -343,11 +343,14 @@ export const MESSAGES = {
      * rules vanish from view while the server's context bundle kept feeding
      * them to every draft. Silence there is the dangerous option, so the
      * screen says the rules exist, says they still apply, and says this
-     * screen cannot reach them. Merging them is a support action, not a
-     * button: it rewrites rows a person may not have meant to combine.
+     * screen cannot reach them. Merging them is a deliberate act by a person
+     * with the authority to do it, not a button: it rewrites rows someone may
+     * not have meant to combine. It points at a workspace owner or admin
+     * because THIS PRODUCT HAS NO SUPPORT CHANNEL — naming one would send the
+     * reader nowhere, which is worse than the silence this notice replaced.
      */
     brandVoiceExtraRows:
-      'This workspace has extra brand voice rows that this screen cannot edit. Their rules still shape every draft, and the count below covers only the rules shown here. Ask support to merge them into this list.',
+      'This workspace has extra brand voice rows that this screen cannot edit. Their rules still shape every draft, and the count below covers only the rules shown here. Ask a workspace owner or admin to merge them into this list.',
     // Org country (INT-8) — the single holiday control in live mode.
     countryLoadsHolidays:
       "Setting this loads that country's public holidays into your calendar, and drafts start working around them.",

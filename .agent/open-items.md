@@ -1450,8 +1450,10 @@ Numbering continues from 50. The record: `Docs/qa/hsn-0910/phase0/` and the
     screen now edits one row and SAYS the others exist — it does not merge or
     delete them, because that is destructive, irreversible, and a judgement
     call about which rule survives a near-duplicate. Today the answer is a
-    support action: read both lists out, merge by hand, delete the loser (the
-    1867 walk is the template). **Two candidates for a real mechanism:**
+    workspace owner's act, by hand: read both lists out, merge, delete the
+    loser (the 1867 walk is the template). There is NO support channel in this
+    product (the founder, 2026-09-14) — the screen's notice points at an owner
+    or admin for exactly that reason. **Two candidates for a real mechanism:**
     (a) a reviewed merge in the product — show both lists side by side, let
     the user choose what survives, one explicit press, no silent rewrite; or
     (b) ask Hasan to make the voice name unique per org, so a second
