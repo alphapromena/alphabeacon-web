@@ -16,7 +16,18 @@ pushed with `main:live`. **Production `dpl_4JS6QhApPnbjRfzsuuYHce4shrqV`
 Vercel's side through the MCP fetch, `1.malaky.ai` read directly). The apex
 `malaky.ai` is STILL the GoDaddy site-builder page (`Server: DPS/2.0.0`) — the
 DNS cutover remains the founder's hand, item 53. Rollback candidate: the
-`dff402d` pair.** **The last commit is a COPY fix on the founder's word
+`dff402d` pair.** **ID CORRECTION, read from Vercel's side after the docs
+commit: the pair named above is the **`aba11be`** pair — the one that carries
+the CODE — but it is no longer what serves. The docs commit `8a759c4` (this
+close-out itself) redeployed both targets, so what serves today is production
+**`dpl_D8ULehw3p33HEHAdL4C2FubUDpRa`** and `live`
+**`dpl_Bbh8QeyGFM2T3MteXtJNVJ74fiop`**, both at `8a759c4`, plus the kept
+branch's preview `dpl_EQrNvVUPERL57N2YSjTkgbwg7a75` at `aba11be`. The BUNDLE is
+byte-identical across the two pairs — **`index-DJniABIr.js`** (and
+`index-CdO1TQyq.css`) on `1.malaky.ai` and on the production host alike,
+re-read after the docs deploy — because `8a759c4` touches only `.agent/` docs
+and builds the same app. Either pair is a valid rollback target for the code;
+`dff402d` is the rollback that removes it.** **The last commit is a COPY fix on the founder's word
 (2026-09-14): the extra-rows notice said "Ask support to merge them into this
 list" and **there is no support channel in this product**, so it now says "Ask
 a **workspace owner or admin**"; decisions.md and item 66 were corrected from
