@@ -23,7 +23,12 @@
  * and the router resolves the lazy chunk on mount.
  *
  * Two guards, both reading the fake session in `DataProvider`:
- *   Authed — signed out goes to the marketing front door.
+ *   Authed — signed out goes to LOGIN, never to the marketing front door
+ *   (ORDER-FIX-0915, item 75): the 401 handler purges the session and pushes
+ *   `/login`, and the provider's update re-renders the current authed route
+ *   with the cleared session FIRST — so whatever this guard answers wins the
+ *   race. It answered `/` and a revoked token landed on the website; the two
+ *   navigations agree now. No refresh endpoint exists: a 401 is a re-login.
  *   A workspace — signed in with no org lands on N3. **That gate used to mean
  *   "the wizard is unfinished"** and it does not any more (ORDER ONB-0827,
  *   D-ONB-C): the wizard is deleted, verifying creates the org, and the only
@@ -143,16 +148,16 @@ function RootGate() {
   return <>{el.dashboard()}</>
 }
 
-function Authed({ children }: { children: ReactNode }) {
+export function Authed({ children }: { children: ReactNode }) {
   const session = useSession()
   const org = useOrg()
-  if (!session.signedIn) return <Navigate to="/" replace />
+  if (!session.signedIn) return <Navigate to="/login" replace />
   if (!org.exists) return <>{el.emptyOrg()}</>
   return children
 }
 
 /** Auth screens redirect away once there is nothing left to authenticate. */
-function SignedOutOnly({ children }: { children: ReactNode }) {
+export function SignedOutOnly({ children }: { children: ReactNode }) {
   const session = useSession()
   const org = useOrg()
   if (session.signedIn && org.exists) return <Navigate to="/" replace />

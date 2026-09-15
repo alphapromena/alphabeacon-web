@@ -1,0 +1,267 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "C:\\alphabeacon-web\\alphabeacon-web\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "e2e/live-auth-401.spec.ts",
+      "--workers=1",
+      "--reporter=list,json",
+      "--output",
+      "Docs/qa/fix-0915/item-75/artifacts"
+    ],
+    "configFile": "C:\\alphabeacon-web\\alphabeacon-web\\playwright.config.ts",
+    "rootDir": "C:/alphabeacon-web/alphabeacon-web/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": "C:\\alphabeacon-web\\alphabeacon-web\\e2e\\global-setup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/alphabeacon-web/alphabeacon-web/Docs/qa/fix-0915/item-75/artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "C:/alphabeacon-web/alphabeacon-web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "/.*\\.spec\\.ts$/"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.62.0",
+    "workers": 1,
+    "webServer": {
+      "command": "pnpm dev --port 5199 --strictPort",
+      "url": "http://localhost:5199",
+      "reuseExistingServer": true,
+      "timeout": 120000,
+      "env": {
+        "VITE_API_BASE_URL": "https://<api-host>/api"
+      }
+    }
+  },
+  "suites": [
+    {
+      "title": "live-auth-401.spec.ts",
+      "file": "live-auth-401.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "a fresh owner + org, made through the product",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 150000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6728,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "    a f · GET /me/orgs → 401 · request 978373c0-a5d4-462d-ba0d-7bb6a0dfbe12\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-15T12:19:53.225Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "92f2020ea3680c82b404-3c415f7413ecddc8b342",
+          "file": "live-auth-401.spec.ts",
+          "line": 127,
+          "column": 1
+        },
+        {
+          "title": "1 · a token expired at boot on `/` lands on login with the toast",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 150000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6461,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "    1 · · GET /me → 401 · request 619c2340-f066-4313-be07-6fc9c50f8bda\n"
+                    },
+                    {
+                      "text": "    1 · · GET /me/orgs → 401 · request 6132a224-8794-4e59-ae2a-a75758fd2490\n"
+                    },
+                    {
+                      "text": "    1 · · GET /me/orgs → 401 · request cbd0f0b2-6900-45cd-b807-57e8008227ff\n"
+                    },
+                    {
+                      "text": "    1 · · GET /me → 401 · request 7c6b35da-0111-4202-ac92-d4a1a5d24283\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-15T12:20:00.121Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "92f2020ea3680c82b404-f66bdacc5d0044d7cdae",
+          "file": "live-auth-401.spec.ts",
+          "line": 137,
+          "column": 1
+        },
+        {
+          "title": "2 · a token revoked mid-session on an authed route lands on login, not on the website",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 150000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5777,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "    2 · · GET /orgs/2273/alphastudio/media/assets → 401 · request 0ae65499-ea05-4b13-99f9-a8986f8e3aa1\n"
+                    },
+                    {
+                      "text": "    2 · · GET /orgs/2273/event-sources/countries → 401 · request 467dbfcf-e3c4-48ff-a679-608045672137\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-15T12:20:06.592Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "92f2020ea3680c82b404-7f5c2e3e268ed83135ec",
+          "file": "live-auth-401.spec.ts",
+          "line": 145,
+          "column": 1
+        },
+        {
+          "title": "3 · a boot on an authed route with a dead token lands on login, not on the website",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 150000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5590,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "    3 · · GET /me → 401 · request dda5ead9-7095-46d0-897b-e3e5e5450762\n"
+                    },
+                    {
+                      "text": "    3 · · GET /me/orgs → 401 · request d5bf8bf3-5b5f-4d3a-8363-a8232dcc246b\n"
+                    },
+                    {
+                      "text": "    3 · · GET /me → 401 · request bfef7b0b-3392-4157-b2b5-e81a5bdaf6d9\n"
+                    },
+                    {
+                      "text": "    3 · · GET /me/orgs → 401 · request dc11d843-1a87-4eb3-85d0-4c394c7f91fa\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-15T12:20:12.383Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "92f2020ea3680c82b404-bdcc5815b7585a1a3bf1",
+          "file": "live-auth-401.spec.ts",
+          "line": 173,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-09-15T12:19:48.280Z",
+    "duration": 29951.647999999997,
+    "expected": 4,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

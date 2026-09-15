@@ -1,0 +1,29 @@
+
+warm-up: waking the API before the suite starts (https://<api-host>/api/health)
+warm-up: service awake after 2 probe(s) in 0.7s — last 2: 358ms, 102ms
+warm-up: 12-way fleet warm after 1 burst(s), 1.0s total — slowest 295ms
+
+warm-up: heartbeat started — 4 probes every 5s for the life of the run
+
+
+Running 4 tests using 1 worker
+
+    a f · GET /me/orgs → 401 · request 978373c0-a5d4-462d-ba0d-7bb6a0dfbe12
+  ok 1 [chromium] › e2e\live-auth-401.spec.ts:127:1 › a fresh owner + org, made through the product (6.7s)
+    1 · · GET /me → 401 · request 619c2340-f066-4313-be07-6fc9c50f8bda
+    1 · · GET /me/orgs → 401 · request 6132a224-8794-4e59-ae2a-a75758fd2490
+    1 · · GET /me/orgs → 401 · request cbd0f0b2-6900-45cd-b807-57e8008227ff
+    1 · · GET /me → 401 · request 7c6b35da-0111-4202-ac92-d4a1a5d24283
+  ok 2 [chromium] › e2e\live-auth-401.spec.ts:137:1 › 1 · a token expired at boot on `/` lands on login with the toast (6.5s)
+    2 · · GET /orgs/2273/alphastudio/media/assets → 401 · request 0ae65499-ea05-4b13-99f9-a8986f8e3aa1
+    2 · · GET /orgs/2273/event-sources/countries → 401 · request 467dbfcf-e3c4-48ff-a679-608045672137
+  ok 3 [chromium] › e2e\live-auth-401.spec.ts:145:1 › 2 · a token revoked mid-session on an authed route lands on login, not on the website (5.8s)
+    3 · · GET /me → 401 · request dda5ead9-7095-46d0-897b-e3e5e5450762
+    3 · · GET /me/orgs → 401 · request d5bf8bf3-5b5f-4d3a-8363-a8232dcc246b
+    3 · · GET /me → 401 · request bfef7b0b-3392-4157-b2b5-e81a5bdaf6d9
+    3 · · GET /me/orgs → 401 · request dc11d843-1a87-4eb3-85d0-4c394c7f91fa
+  ok 4 [chromium] › e2e\live-auth-401.spec.ts:173:1 › 3 · a boot on an authed route with a dead token lands on login, not on the website (5.6s)
+
+warm-up: heartbeat stopped after 5 beat(s)
+
+  4 passed (30.0s)

@@ -1,0 +1,84 @@
+
+warm-up: waking the API before the suite starts (https://<api-host>/api/health)
+warm-up: probe 1 — 200 in 1324ms — not warm yet
+warm-up: service awake after 3 probe(s) in 2.1s — last 2: 117ms, 118ms
+warm-up: burst 1 — slowest of 12 was 200 in 1233ms — fleet not warm yet
+warm-up: burst 2 — slowest of 12 was 200 in 538ms — fleet not warm yet
+warm-up: burst 3 — slowest of 12 was 200 in 120ms — fleet not warm yet
+warm-up: 12-way fleet warm after 4 burst(s), 4.9s total — slowest 97ms
+
+warm-up: heartbeat started — 4 probes every 5s for the life of the run
+
+
+Running 4 tests using 1 worker
+
+    a f · [api] POST /auth/signup → 201 (request-id unexposed)
+    a f · [api] POST /auth/verify-email → 200 (request-id unexposed)
+    a f · [api] GET /me/orgs → 401 (request-id unexposed)
+    a f · [api] GET /me → 200 (request-id unexposed)
+    a f · [api] GET /me/orgs → 200 (request-id unexposed)
+    a f · [api] POST /orgs → 201 (request-id unexposed)
+    a f · [api] GET /me/orgs → 200 (request-id unexposed)
+    a f · [api] GET /me → 200 (request-id unexposed)
+    a f · [api] GET /me → 200 (request-id unexposed)
+    a f · [api] GET /me/orgs → 200 (request-id unexposed)
+  ok 1 [chromium] › e2e\live-auth-401.spec.ts:89:1 › a fresh owner + org, made through the product (11.3s)
+    1 · · [api] POST /auth/login → 200 (request-id unexposed)
+    1 · · [api] GET /me → 200 (request-id unexposed)
+    1 · · [api] GET /me/orgs → 200 (request-id unexposed)
+    1 · · [api] GET /me/orgs → 401 (request-id unexposed)
+    1 · · [api] GET /me → 401 (request-id unexposed)
+    1 · · [api] GET /me/orgs → 401 (request-id unexposed)
+    1 · · [api] GET /me → 401 (request-id unexposed)
+  ok 2 [chromium] › e2e\live-auth-401.spec.ts:99:1 › 1 · a token expired at boot on `/` lands on login with the toast (3.5s)
+    2 · · [api] POST /auth/login → 200 (request-id unexposed)
+    2 · · [api] GET /me → 200 (request-id unexposed)
+    2 · · [api] GET /me/orgs → 200 (request-id unexposed)
+    2 · · [api] GET /orgs/2269/invites → 200 (request-id unexposed)
+    2 · · [api] GET /orgs/2269/members → 200 (request-id unexposed)
+    2 · · [api] GET /orgs/2269/brand/voices → 200 (request-id unexposed)
+    2 · · [api] GET /orgs/2269/brand/topics → 200 (request-id unexposed)
+    2 · · [api] GET /orgs/2269/brand/sources → 200 (request-id unexposed)
+    2 · · [api] GET /orgs/2269/brand/tones → 200 (request-id unexposed)
+    2 · · [api] GET /orgs/2269 → 200 (request-id unexposed)
+    2 · · [api] GET /orgs/2269/schedules → 200 (request-id unexposed)
+    2 · · [api] GET /orgs/2269/holidays → 200 (request-id unexposed)
+    2 · · [api] GET /orgs/2269/notifications/unread-count → 200 (request-id unexposed)
+    2 · · [api] GET /orgs/2269/notifications → 200 (request-id unexposed)
+    2 · · [api] GET /orgs/2269/alphastudio/wallet → 200 (request-id unexposed)
+  x  3 [chromium] › e2e\live-auth-401.spec.ts:107:1 › 2 · a token revoked mid-session on an authed route lands on login, not on the website (43.5s)
+  -  4 [chromium] › e2e\live-auth-401.spec.ts:127:1 › 3 · a boot on an authed route with a dead token lands on login, not on the website
+
+warm-up: heartbeat stopped after 11 beat(s)
+
+
+  1) [chromium] › e2e\live-auth-401.spec.ts:107:1 › 2 · a token revoked mid-session on an authed route lands on login, not on the website 
+
+    Error: expect(page).toHaveURL(expected) failed
+
+    Expected pattern: /\/login$/
+    Received string:  "http://localhost:5199/settings/team"
+    Timeout: 40000ms
+
+    Call log:
+      - Expect "toHaveURL" with timeout 40000ms
+        82 × locator resolved to <html lang="en" class="dark">…</html>
+           - unexpected value "http://localhost:5199/settings/team"
+
+
+      74 | /** Login, the toast, and no session left behind — the end state all three share. */
+      75 | async function expectReLogin(page: Page) {
+    > 76 |   await expect(page).toHaveURL(/\/login$/, { timeout: SCREEN_SYNC })
+         |                      ^
+      77 |   await expect(page.getByText(SESSION_ENDED)).toBeVisible({ timeout: SCREEN_SYNC })
+      78 |   await expect(page.getByRole('button', { name: 'Sign in' })).toBeVisible()
+      79 |   expect(
+        at expectReLogin (C:\alphabeacon-web\alphabeacon-web\e2e\live-auth-401.spec.ts:76:22)
+        at C:\alphabeacon-web\alphabeacon-web\e2e\live-auth-401.spec.ts:124:9
+
+    Error Context: Docs\qa\fix-0915\item-75\artifacts\live-auth-401-2-·-a-token--3041a-on-login-not-on-the-website-chromium\error-context.md
+
+  1 failed
+    [chromium] › e2e\live-auth-401.spec.ts:107:1 › 2 · a token revoked mid-session on an authed route lands on login, not on the website 
+  1 did not run
+  2 passed (1.2m)

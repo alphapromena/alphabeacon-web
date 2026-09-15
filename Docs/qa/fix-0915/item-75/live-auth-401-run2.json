@@ -1,0 +1,279 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "C:\\alphabeacon-web\\alphabeacon-web\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "e2e/live-auth-401.spec.ts",
+      "--workers=1",
+      "--reporter=list,json",
+      "--output",
+      "Docs/qa/fix-0915/item-75/artifacts"
+    ],
+    "configFile": "C:\\alphabeacon-web\\alphabeacon-web\\playwright.config.ts",
+    "rootDir": "C:/alphabeacon-web/alphabeacon-web/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": "C:\\alphabeacon-web\\alphabeacon-web\\e2e\\global-setup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/alphabeacon-web/alphabeacon-web/Docs/qa/fix-0915/item-75/artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "C:/alphabeacon-web/alphabeacon-web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "/.*\\.spec\\.ts$/"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.62.0",
+    "workers": 1,
+    "webServer": {
+      "command": "pnpm dev --port 5199 --strictPort",
+      "url": "http://localhost:5199",
+      "reuseExistingServer": true,
+      "timeout": 120000,
+      "env": {
+        "VITE_API_BASE_URL": "https://<api-host>/api"
+      }
+    }
+  },
+  "suites": [
+    {
+      "title": "live-auth-401.spec.ts",
+      "file": "live-auth-401.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "a fresh owner + org, made through the product",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 150000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6662,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "    a f · GET /me/orgs → 401 · request f1f1106c-b134-4c8e-a044-03b137bcda60\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-15T12:07:43.460Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "92f2020ea3680c82b404-3c415f7413ecddc8b342",
+          "file": "live-auth-401.spec.ts",
+          "line": 99,
+          "column": 1
+        },
+        {
+          "title": "1 · a token expired at boot on `/` lands on login with the toast",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 150000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3526,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "    1 · · GET /me → 401 · request 524a369a-ad09-4d90-ae32-fe392c79a0a5\n"
+                    },
+                    {
+                      "text": "    1 · · GET /me/orgs → 401 · request 8a625751-7e24-4696-9ff9-f1d15dfd9d74\n"
+                    },
+                    {
+                      "text": "    1 · · GET /me → 401 · request 25dd06fc-702a-4c91-8705-15b062af0889\n"
+                    },
+                    {
+                      "text": "    1 · · GET /me/orgs → 401 · request 96044da0-421d-4ca7-81d5-e746545ad12b\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-15T12:07:50.236Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "92f2020ea3680c82b404-f66bdacc5d0044d7cdae",
+          "file": "live-auth-401.spec.ts",
+          "line": 109,
+          "column": 1
+        },
+        {
+          "title": "2 · a token revoked mid-session on an authed route lands on login, not on the website",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 150000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "timedOut",
+                  "duration": 150019,
+                  "error": {
+                    "message": "\u001b[31mTest timeout of 150000ms exceeded.\u001b[39m",
+                    "stack": "\u001b[31mTest timeout of 150000ms exceeded.\u001b[39m"
+                  },
+                  "errors": [
+                    {
+                      "message": "\u001b[31mTest timeout of 150000ms exceeded.\u001b[39m"
+                    },
+                    {
+                      "location": {
+                        "file": "C:\\alphabeacon-web\\alphabeacon-web\\e2e\\live-auth-401.spec.ts",
+                        "column": 61,
+                        "line": 135
+                      },
+                      "message": "Error: locator.click: Test timeout of 150000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('link', { name: 'Billing' }).first()\u001b[22m\n\n\n  133 |   // credits and subscription on mount (the Team tab, already loaded, reads\n  134 |   // nothing again — run 1 of this file proved that the hard way).\n> 135 |   await page.getByRole('link', { name: 'Billing' }).first().click()\n      |                                                             ^\n  136 |   await expectReLogin(page)\n  137 | })\n  138 |\n    at C:\\alphabeacon-web\\alphabeacon-web\\e2e\\live-auth-401.spec.ts:135:61"
+                    }
+                  ],
+                  "stdout": [
+                    {
+                      "text": "    2 · · GET /orgs/2270 → 401 · request f5f5ba2c-39f8-4818-a47f-5d3b602ae72d\n"
+                    },
+                    {
+                      "text": "    2 · · GET /orgs/2270/alphastudio/wallet → 401 · request 2047612d-bf94-4ae3-b059-d33111070ba4\n"
+                    },
+                    {
+                      "text": "    2 · · GET /orgs/2270/schedules?limit=20 → 401 · request e5f694ea-1f46-45db-8699-9f7bfc3965e2\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-15T12:07:53.772Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\alphabeacon-web\\alphabeacon-web\\Docs\\qa\\fix-0915\\item-75\\artifacts\\live-auth-401-2-·-a-token--3041a-on-login-not-on-the-website-chromium\\error-context.md"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "92f2020ea3680c82b404-7f5c2e3e268ed83135ec",
+          "file": "live-auth-401.spec.ts",
+          "line": 117,
+          "column": 1
+        },
+        {
+          "title": "3 · a boot on an authed route with a dead token lands on login, not on the website",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": -1,
+                  "parallelIndex": -1,
+                  "status": "skipped",
+                  "duration": 0,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-15T12:10:23.867Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "92f2020ea3680c82b404-bdcc5815b7585a1a3bf1",
+          "file": "live-auth-401.spec.ts",
+          "line": 139,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-09-15T12:07:38.381Z",
+    "duration": 165669.04100000003,
+    "expected": 2,
+    "skipped": 1,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

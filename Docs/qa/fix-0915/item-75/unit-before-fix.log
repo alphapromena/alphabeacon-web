@@ -1,0 +1,189 @@
+
+[1m[46m RUN [49m[22m [36mv3.2.7 [39m[90mC:/alphabeacon-web/alphabeacon-web[39m
+
+[90mstdout[2m | src/data/session-breach.test.tsx[2m > [22m[2ma 401 on the boot sync[2m > [22m[2mbooting on `/`: purges the session, toasts, and the handler itself pushes login
+[22m[39m[api] GET /me → 401 (request-id unexposed)
+[api] GET /me/orgs → 401 (request-id unexposed)
+
+[90mstdout[2m | src/data/session-breach.test.tsx[2m > [22m[2ma 401 on the boot sync[2m > [22m[2mbooting on an authed route: the guard sends the cleared session to login, where the handler is pushing too
+[22m[39m[api] GET /me → 401 (request-id unexposed)
+[api] GET /me/orgs → 401 (request-id unexposed)
+
+ [31m❯[39m src/data/session-breach.test.tsx [2m([22m[2m2 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 1150[2mms[22m[39m
+   [32m✓[39m a 401 on the boot sync[2m > [22mbooting on `/`: purges the session, toasts, and the handler itself pushes login[32m 125[2mms[22m[39m
+[31m   [31m×[31m a 401 on the boot sync[2m > [22mbooting on an authed route: the guard sends the cleared session to login, where the handler is pushing too[39m[33m 1024[2mms[22m[39m
+[31m     → expected '/' to be '/login' // Object.is equality
+
+Ignored nodes: comments, script, style
+[36m<html>[31m
+  [36m<head />[31m
+  [36m<body>[31m
+    [36m<div>[31m
+      [36m<div[31m
+        [33mdata-testid[31m=[32m"where"[31m
+      [36m>[31m
+        [0m/[0m
+      [36m</div>[31m
+      [36m<div>[31m
+        [0mfront door[0m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</body>[31m
+[36m</html>[31m[39m
+ [31m❯[39m src/routes.test.tsx [2m([22m[2m3 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[33m 2099[2mms[22m[39m
+[31m   [31m×[31m Authed — where an unauthenticated visitor lands[2m > [22ma boot on an authed route with no session lands on login, not on the marketing home[39m[33m 1039[2mms[22m[39m
+[31m     → expected '/' to be '/login' // Object.is equality
+
+Ignored nodes: comments, script, style
+[36m<html>[31m
+  [36m<head />[31m
+  [36m<body>[31m
+    [36m<div>[31m
+      [36m<div[31m
+        [33mdata-testid[31m=[32m"where"[31m
+      [36m>[31m
+        [0m/[0m
+      [36m</div>[31m
+      [36m<div>[31m
+        [0mmarketing home[0m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</body>[31m
+[36m</html>[31m...[39m
+[31m   [31m×[31m Authed — where an unauthenticated visitor lands[2m > [22ma session that ends mid-session on an authed route lands on login — the guard agrees with the 401 handler[39m[33m 1048[2mms[22m[39m
+[31m     → expected '/' to be '/login' // Object.is equality
+
+Ignored nodes: comments, script, style
+[36m<html>[31m
+  [36m<head />[31m
+  [36m<body>[31m
+    [36m<div>[31m
+      [36m<div[31m
+        [33mdata-testid[31m=[32m"where"[31m
+      [36m>[31m
+        [0m/[0m
+      [36m</div>[31m
+      [36m<div>[31m
+        [0mmarketing home[0m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</body>[31m
+[36m</html>[31m...[39m
+   [32m✓[39m Authed — where an unauthenticated visitor lands[2m > [22ma signed-in visitor with a workspace is sent from login into the product (unchanged)[32m 11[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 3 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m src/routes.test.tsx[2m > [22mAuthed — where an unauthenticated visitor lands[2m > [22ma boot on an authed route with no session lands on login, not on the marketing home
+[31m[1mAssertionError[22m: expected '/' to be '/login' // Object.is equality
+
+Ignored nodes: comments, script, style
+[36m<html>[31m
+  [36m<head />[31m
+  [36m<body>[31m
+    [36m<div>[31m
+      [36m<div[31m
+        [33mdata-testid[31m=[32m"where"[31m
+      [36m>[31m
+        [0m/[0m
+      [36m</div>[31m
+      [36m<div>[31m
+        [0mmarketing home[0m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</body>[31m
+[36m</html>[31m...[39m
+
+Expected: [32m"/[7mlogin[27m"[39m
+Received: [31m"/"[39m
+
+[36m [2m❯[22m src/routes.test.tsx:[2m97:41[22m[39m
+    [90m 95| [39m  it('a boot on an authed route with no session lands on login, not on…
+    [90m 96| [39m    [34mmount[39m([32m'visitor'[39m[33m,[39m [32m'/billing'[39m)
+    [90m 97| [39m    [35mawait[39m [34mwaitFor[39m(() [33m=>[39m [34mexpect[39m([34mwhere[39m())[33m.[39m[34mtoBe[39m([32m'/login'[39m))
+    [90m   | [39m                                        [31m^[39m
+    [90m 98| [39m    [34mexpect[39m(screen[33m.[39m[34mgetByText[39m([32m'login screen'[39m))[33m.[39m[34mtoBeInTheDocument[39m()
+    [90m 99| [39m    expect(screen.queryByText('marketing home')).not.toBeInTheDocument…
+[90m [2m❯[22m runWithExpensiveErrorDiagnosticsDisabled node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/config.js:[2m47:12[22m[39m
+[90m [2m❯[22m checkCallback node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/wait-for.js:[2m124:77[22m[39m
+[90m [2m❯[22m Timeout.checkRealTimersCallback node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/wait-for.js:[2m118:16[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/routes.test.tsx[2m > [22mAuthed — where an unauthenticated visitor lands[2m > [22ma session that ends mid-session on an authed route lands on login — the guard agrees with the 401 handler
+[31m[1mAssertionError[22m: expected '/' to be '/login' // Object.is equality
+
+Ignored nodes: comments, script, style
+[36m<html>[31m
+  [36m<head />[31m
+  [36m<body>[31m
+    [36m<div>[31m
+      [36m<div[31m
+        [33mdata-testid[31m=[32m"where"[31m
+      [36m>[31m
+        [0m/[0m
+      [36m</div>[31m
+      [36m<div>[31m
+        [0mmarketing home[0m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</body>[31m
+[36m</html>[31m...[39m
+
+Expected: [32m"/[7mlogin[27m"[39m
+Received: [31m"/"[39m
+
+[36m [2m❯[22m src/routes.test.tsx:[2m109:41[22m[39m
+    [90m107| [39m      [34mdispatchRef[39m[33m![39m({ type[33m:[39m [32m'live/sessionCleared'[39m })
+    [90m108| [39m    })
+    [90m109| [39m    [35mawait[39m [34mwaitFor[39m(() [33m=>[39m [34mexpect[39m([34mwhere[39m())[33m.[39m[34mtoBe[39m([32m'/login'[39m))
+    [90m   | [39m                                        [31m^[39m
+    [90m110| [39m    [34mexpect[39m(screen[33m.[39m[34mgetByText[39m([32m'login screen'[39m))[33m.[39m[34mtoBeInTheDocument[39m()
+    [90m111| [39m  })
+[90m [2m❯[22m runWithExpensiveErrorDiagnosticsDisabled node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/config.js:[2m47:12[22m[39m
+[90m [2m❯[22m checkCallback node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/wait-for.js:[2m124:77[22m[39m
+[90m [2m❯[22m Timeout.checkRealTimersCallback node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/wait-for.js:[2m118:16[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/data/session-breach.test.tsx[2m > [22ma 401 on the boot sync[2m > [22mbooting on an authed route: the guard sends the cleared session to login, where the handler is pushing too
+[31m[1mAssertionError[22m: expected '/' to be '/login' // Object.is equality
+
+Ignored nodes: comments, script, style
+[36m<html>[31m
+  [36m<head />[31m
+  [36m<body>[31m
+    [36m<div>[31m
+      [36m<div[31m
+        [33mdata-testid[31m=[32m"where"[31m
+      [36m>[31m
+        [0m/[0m
+      [36m</div>[31m
+      [36m<div>[31m
+        [0mfront door[0m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</body>[31m
+[36m</html>[31m[39m
+
+Expected: [32m"/[7mlogin[27m"[39m
+Received: [31m"/"[39m
+
+[36m [2m❯[22m src/data/session-breach.test.tsx:[2m151:41[22m[39m
+    [90m149| [39m  it('booting on an authed route: the guard sends the cleared session …
+    [90m150| [39m    [34mmount[39m([32m'/billing'[39m)
+    [90m151| [39m    [35mawait[39m [34mwaitFor[39m(() [33m=>[39m [34mexpect[39m([34mwhere[39m())[33m.[39m[34mtoBe[39m([32m'/login'[39m))
+    [90m   | [39m                                        [31m^[39m
+    [90m152| [39m    [34mexpect[39m(screen[33m.[39m[34mgetByText[39m([32m'login screen'[39m))[33m.[39m[34mtoBeInTheDocument[39m()
+    [90m153| [39m    [34mexpect[39m(screen[33m.[39m[34mqueryByText[39m([32m'front door'[39m))[33m.[39mnot[33m.[39m[34mtoBeInTheDocument[39m()
+[90m [2m❯[22m runWithExpensiveErrorDiagnosticsDisabled node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/config.js:[2m47:12[22m[39m
+[90m [2m❯[22m checkCallback node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/wait-for.js:[2m124:77[22m[39m
+[90m [2m❯[22m Timeout.checkRealTimersCallback node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/wait-for.js:[2m118:16[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m2 failed[39m[22m[90m (2)[39m
+[2m      Tests [22m [1m[31m3 failed[39m[22m[2m | [22m[1m[32m2 passed[39m[22m[90m (5)[39m
+[2m   Start at [22m 14:57:43
+[2m   Duration [22m 4.80s[2m (transform 771ms, setup 719ms, collect 2.37s, tests 3.25s, environment 1.38s, prepare 353ms)[22m
+

@@ -1,0 +1,19 @@
+
+[1m[46m RUN [49m[22m [36mv3.2.7 [39m[90mC:/alphabeacon-web/alphabeacon-web[39m
+
+[90mstdout[2m | src/data/session-breach.test.tsx[2m > [22m[2ma 401 on the boot sync[2m > [22m[2mbooting on `/`: purges the session, toasts, and the handler itself pushes login
+[22m[39m[api] GET /me → 401 (request-id unexposed)
+[api] GET /me/orgs → 401 (request-id unexposed)
+
+ [32m✓[39m src/routes.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[32m 101[2mms[22m[39m
+[90mstdout[2m | src/data/session-breach.test.tsx[2m > [22m[2ma 401 on the boot sync[2m > [22m[2mbooting on an authed route: the guard sends the cleared session to login, where the handler is pushing too
+[22m[39m[api] GET /me → 401 (request-id unexposed)
+[api] GET /me/orgs → 401 (request-id unexposed)
+
+ [32m✓[39m src/data/session-breach.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[32m 141[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m2 passed[39m[22m[90m (2)[39m
+[2m      Tests [22m [1m[32m5 passed[39m[22m[90m (5)[39m
+[2m   Start at [22m 14:57:50
+[2m   Duration [22m 2.85s[2m (transform 795ms, setup 740ms, collect 2.43s, tests 242ms, environment 1.33s, prepare 337ms)[22m
+

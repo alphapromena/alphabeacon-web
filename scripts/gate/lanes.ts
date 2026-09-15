@@ -24,6 +24,11 @@ export interface LanedSpec {
 
 export const LANES: LanedSpec[] = [
   { file: 'live-auth', lane: 'A', reason: 'two fresh orgs plus an invitee; nothing shared' },
+  {
+    file: 'live-auth-401',
+    lane: 'A',
+    reason: 'one fresh org; three dead-token walks, reads only (ORDER-FIX-0915 item 75)',
+  },
   { file: 'live-brand-kit', lane: 'A', reason: 'one fresh org; its PDF deleted in-test' },
   { file: 'live-brand', lane: 'A', reason: 'one fresh org; tone, voice, source, topic, schedule' },
   {
