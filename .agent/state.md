@@ -5,7 +5,68 @@ without reconstructing it from the session log. **Update this file at the end
 of any turn that finishes a phase or changes the plan.** `sessions.md` is the
 chronological record; this is the current picture.
 
-_Last updated: 2026-09-15, after **ORDER MOTION-0914/A2 — the designed wait is
+_Last updated: 2026-09-15, after **ORDER MOTION-0914/B — the four moments.
+BUILT on `feat/motion-0914`, PUSHED, report-and-stop, NOT merged.**
+
+**FOUR MOMENTS, ONE FIGURE — the beacon, at four intensities.** No new colour,
+no new hue, no imagery, and `motion-scale.test.ts` asserts both the count and
+the absence of any colour value in the block, so a fifth cannot arrive quietly.
+
+| # | Moment | Duration |
+| --- | --- | --- |
+| 1 | the tone sample rewrites, beside the picker | 220ms |
+| 2 | first light, once per account | **1800ms** (ceiling 2000) |
+| 3 | approve — the card settles, a rule crosses it | 220ms |
+| 4 | generating — the sweep plus three honest stages | continuous |
+
+**MOMENT 1 IS NOT IN A WIZARD, BECAUSE THERE IS NONE** (ONB-0827 deleted it).
+It lives in `TonesField`, the one multi-select of tones in the product, and
+shows the tone picked MOST RECENTLY. The words are composed from DEMO-0914's
+seeded drafts and **never from the wire** — the real `posts/tones-preview`
+endpoint exists and is deliberately unused. It returns nothing rather than
+inventing a sentence about somebody's business.
+
+**MOMENT 2 CANNOT REPEAT ON RELOAD, AND THAT IS PROVEN.** localStorage keyed by
+the account's own address, written BEFORE the animation plays so a reload
+halfway through cannot replay it; a storage that throws answers "already seen",
+so a browser that cannot remember shows it never rather than every time.
+
+**MOMENT 3 COST THE CLICK +4ms** — 40 → 44ms median, both timestamps inside
+the page. n=3 because three drafts await review, which is the whole population.
+The last approve is ONE sequence: the card's rule and §5.7's queue-clear share
+a keyframe and the queue's is delayed by exactly the card's duration.
+
+**MOMENT 4's THREE STAGES WERE OBSERVED IN ORDER** — "Reading your brand voice,
+tones and sources…" → "Writing your draft…" → "Checking the claims it made
+against your sources…". Each names something that has already happened; the
+tests assert none can ever claim a percentage. The last spinner in the product
+(Knowledge ingestion) is the beacon now.
+
+**AXE WAS SCANNED DURING EVERY MOMENT — and found a REAL pre-existing fault.**
+The Approve toast's description measured **1.46:1** (#373839 on #141c23),
+effectively unreadable, on the daily action. Cause: `ui/sonner.tsx` passes
+next-themes' `system` straight through, so on a machine set to light sonner
+chose its LIGHT palette and painted dark grey on our graphite popover. There is
+one theme (D-THEME-0913-B); the call site now says `theme="dark"`. **14:1, and
+0 violations on all five mid-animation scans.**
+
+**EIGHT TESTS, EACH PROVEN BY BREAKING IT FIRST** — a fifth moment family, a
+new colour, the collapsed sequence, the settle not collapsing, first light not
+recording, first light over two seconds, a stage inventing progress, and the
+sample inventing a business claim.
+
+**GREENS: lint · typecheck · guard-static 373 clean · unit 808/808 in 69 files ·
+build · static e2e 115 passed / 0 failed / 85 skipped.** No live rounds.
+
+**TWO CLAUSES ARE REPORTED, NOT BUILT.** (1) First light resolves into the
+Dashboard rather than Today: changing the post-verify destination would break
+`signUpAndEnter` in `e2e/live-setup.ts`, which ~15 live specs share and which
+cannot be run in a build order — open item 71's exact failure mode. (2) An
+approved card stays in its slot in STATIC Today, because a slot shows its whole
+day (screens4 D2); in live Today the item does leave the pending tab. Both in
+`Docs/qa/motion-0914/moments/README.md`._
+
+_Before that, 2026-09-15, after **ORDER MOTION-0914/A2 — the designed wait is
 deleted. BUILT on `feat/motion-0914`, PUSHED, report-and-stop, NOT merged.**
 
 **THE FOUNDER RULED ON THE §5 ITEM A REPORTED.** `useScreenPhase` held every

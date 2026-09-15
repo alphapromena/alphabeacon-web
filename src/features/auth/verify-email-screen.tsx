@@ -20,7 +20,7 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp
 import { Label } from '@/components/ui/label'
 import { useAccountActions } from '@/data/account'
 import { useAuthActions } from '@/data/auth'
-import { useLiveMode, useSession } from '@/data/provider'
+import { useDataDispatch, useLiveMode, useSession } from '@/data/provider'
 import { VERIFY_RESEND_COOLDOWN_MS } from '@/data/types'
 import { MESSAGES } from '@/lib/messages'
 import { AuthErrorAlert, type AuthFailure } from './auth-error'
@@ -35,6 +35,7 @@ export function VerifyEmailScreen() {
   const account = useAccountActions()
   const live = useLiveMode()
   const session = useSession()
+  const dispatch = useDataDispatch()
   const navigate = useNavigate()
   const [params] = useSearchParams()
   const expired = params.get('state') === 'expired'
@@ -89,8 +90,29 @@ export function VerifyEmailScreen() {
       return
     }
     const workspaceName = (pendingOrgName ?? '').trim()
-    if (workspaceName) await account.createWorkspace(workspaceName)
+    let created = false
+    if (workspaceName) {
+      const workspace = await account.createWorkspace(workspaceName)
+      created = workspace.ok
+    }
     setVerifying(false)
+    /*
+     * MOMENT 2 (ORDER MOTION-0914/B) — armed HERE, because this is the only
+     * place in the product that knows a workspace has just been created by a
+     * person who was signing up. It is armed only on a create that LANDED: a
+     * failed create sends them to N3 to retry, and welcoming somebody to a
+     * workspace that does not exist is the worst possible moment to celebrate.
+     *
+     * Whether it actually plays is not this screen's business —
+     * `lib/first-light.ts` remembers whether this account has had one, and the
+     * root asks. Arming twice is harmless for that reason.
+     */
+    if (created) {
+      // The name the person typed at signup, held on their user record by
+      // `auth/signUp`. Empty in a login-then-verify walk, which the greeting
+      // handles by falling back rather than by not appearing.
+      dispatch({ type: 'firstLight/arm', name: session.user?.name ?? '', email })
+    }
     // Verified, signed in, and — if that landed — with a workspace. RootGate
     // routes from here: the product, or N3 to finish the create.
     navigate('/')

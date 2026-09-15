@@ -353,6 +353,31 @@ removing them would remove the interface's answer to the user. The signature
 animations below say nothing a still screen does not already say, so those are
 still REMOVED outright. One block in `globals.css` does both.
 
+### 5.0b The four moments
+
+ORDER MOTION-0914/B, and `--motion-slow` is what they were reserved for. There
+are **four**, and four is the number: moments are rationed exactly the way the
+accent is, because if everything celebrates nothing does. A fifth fails
+`motion-scale.test.ts`.
+
+All four are the same figure — **the beacon** — at different intensities. No
+new colour, no new hue, no imagery; gold (`--brand`) is the only ink any of
+them uses, and the test asserts the block introduces no colour value of its own.
+
+| Moment | Where | Intensity |
+| --- | --- | --- |
+| Tone sample rewrites | the tone picker | a rule crosses the card, `--motion-medium` |
+| First light | once per account, over the app | rings draw outward, `--motion-slow` |
+| Approve | the draft card | the card settles, a rule crosses it, `--motion-medium` |
+| Generating | Generate, Studio, Knowledge | the sweep, continuous while work is in flight |
+
+**The last approve is ONE sequence.** It fires moment 3 and §5.7's queue-clear
+together, so they share a keyframe and the queue's rule is delayed by exactly
+the card's duration: the small gesture finishes and hands off to the large one.
+
+**Nothing here animates opacity on text**, for the reason 5.0 gives. First
+light's words arrive by being rendered after the beacon, not by fading in.
+
 ### 5.1 The signature animations
 
 Two animations exist inside the product, and only two:

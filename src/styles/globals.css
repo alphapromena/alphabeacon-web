@@ -582,13 +582,152 @@
   }
 }
 
+/*
+ * ONE SEQUENCE, NOT TWO ANIMATIONS COLLIDING (ORDER MOTION-0914/B moment 3).
+ *
+ * The last approve fires both: the card's own rule (9b, `--motion-medium`) and
+ * this one. Started together they would be two gold rules drawing at once in
+ * different places at different speeds. Delayed by exactly the card's
+ * duration, the small gesture finishes and hands off to the large one — the
+ * same figure, twice, reading as a single thought.
+ */
 [data-ab-motion='queue-clear'] {
   transform-origin: left center;
-  animation: ab-queue-clear var(--motion-slow) var(--ease-out) 1;
+  animation: ab-queue-clear var(--motion-slow) var(--ease-out) var(--motion-medium) 1 both;
 }
 
 /* RTL draws it from the other edge, like everything else. */
 [dir='rtl'] [data-ab-motion='queue-clear'] {
+  transform-origin: right center;
+}
+
+/* ------------------------------------------------------------------
+   9. THE FOUR MOMENTS (ORDER MOTION-0914/B).
+
+   One figure at four intensities: the beacon. No new colour, no new hue, no
+   imagery — gold (`--brand`) is the only ink any of these use, and gold is
+   already the product's "quiet metal" (D-THEME-0913-C). Four, and no more:
+   moments are rationed like the accent, because if everything celebrates
+   nothing does.
+
+   TWO MECHANISMS, THE SAME ONES PHASE A ESTABLISHED, and which one a piece
+   gets is decided by one question — would removing it remove meaning?
+
+     - Pure decoration (a ring, a sweep) carries `data-ab-motion` and is
+       REMOVED under reduced motion. It says nothing the still screen does not.
+     - Anything that carries meaning (a card, a control, text) never carries
+       that attribute — it collapses to 0ms through the scale instead, because
+       `[data-ab-motion]` also carries `display: none !important` and a literal
+       reading would delete the interface.
+
+   NOTHING HERE ANIMATES OPACITY ON TEXT. Phase A shipped a 220ms opacity fade
+   over `<main>` and axe measured the accent button's own label at 4.44:1
+   against its settled 5.86:1 — 58 violations. Text arrives by moving or by
+   being rendered, never by being composited at less than full opacity.
+------------------------------------------------------------------ */
+
+/* 9a. FIRST LIGHT — the beacon draws outward once, and the core lights.
+   Two rings on the same figure as `beacon-pulse`, slowed to the one duration
+   reserved for a moment and staggered so it reads as a single expansion
+   rather than two circles. Decorative in full: under reduced motion the whole
+   overlay is never mounted (the JS asks), so these never need to exist. */
+@keyframes ab-first-light-ring {
+  0% {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.55;
+  }
+  100% {
+    transform: scale(3.2);
+    opacity: 0;
+  }
+}
+
+@keyframes ab-first-light-core {
+  0% {
+    transform: scale(0.2);
+  }
+  55% {
+    transform: scale(1.12);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+[data-ab-motion='first-light-ring'] {
+  animation: ab-first-light-ring var(--motion-slow) var(--ease-out) 1;
+}
+
+[data-ab-motion='first-light-ring'][data-ring='2'] {
+  animation-delay: 160ms;
+}
+
+[data-ab-motion='first-light-core'] {
+  animation: ab-first-light-core var(--motion-slow) var(--ease-out) 1;
+}
+
+/* The line under the wordmark, drawn the way §5.7's queue rule is drawn — the
+   same gesture, which is the point of having one figure. */
+[data-ab-motion='first-light-rule'] {
+  transform-origin: center;
+  animation: ab-queue-clear var(--motion-slow) var(--ease-out) 1;
+}
+
+/* 9b. APPROVE — the card settles a step and a gold rule crosses it.
+
+   THE SETTLE IS ON THE CARD, so it must never be `data-ab-motion`: that
+   attribute would delete the card. It collapses through the scale instead, to
+   0ms, and the card simply arrives in its approved state.
+
+   `translate` rather than `transform`, to sit beside the button press nudge
+   Phase A measured, and because `transform` is the property `Card` may use for
+   other things. */
+@keyframes ab-approve-settle {
+  0% {
+    translate: 0 0;
+  }
+  45% {
+    translate: 0 3px;
+  }
+  100% {
+    translate: 0 0;
+  }
+}
+
+[data-ab-approving='true'] {
+  animation: ab-approve-settle var(--motion-medium) var(--ease-out) 1;
+}
+
+/* The rule that crosses the card's width. Decoration, so it goes under reduced
+   motion — the card has already changed state and says so in words. It is the
+   SAME sweep §5.7 draws when the queue empties, at the same origin and the
+   same curve, so the two read as one gesture at two scales rather than as two
+   different animations colliding. `--motion-medium` here against §5.7's
+   `--motion-slow`: one card finishing is smaller than the whole queue
+   finishing, and the queue's rule is still drawing when this one has gone. */
+[data-ab-motion='approve-sweep'] {
+  transform-origin: left center;
+  animation: ab-queue-clear var(--motion-medium) var(--ease-out) 1;
+}
+
+[dir='rtl'] [data-ab-motion='approve-sweep'] {
+  transform-origin: right center;
+}
+
+/* 9c. TONE REWRITE — the sweep crosses the sample as the line changes.
+
+   The text is REPLACED under the sweep rather than faded, for the contrast
+   reason at the top of this section. `--motion-medium`: it answers a click on
+   a tone, and it is a state change rather than a celebration. */
+[data-ab-motion='tone-rewrite'] {
+  transform-origin: left center;
+  animation: ab-queue-clear var(--motion-medium) var(--ease-out) 1;
+}
+
+[dir='rtl'] [data-ab-motion='tone-rewrite'] {
   transform-origin: right center;
 }
 
@@ -632,6 +771,14 @@
   /* The content entrance is a real state change, so it is not removed with
      the flourishes — it just takes no time, like everything else. */
   [data-ab-enter='content'] {
+    animation-duration: 0ms;
+  }
+
+  /* Moment 3's settle is on the CARD, which is why it can never carry
+     `data-ab-motion` — that would delete the card. It collapses through the
+     scale like every other piece of state, to its end state: the approved
+     card, sitting still. */
+  [data-ab-approving='true'] {
     animation-duration: 0ms;
   }
 }

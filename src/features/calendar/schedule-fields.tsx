@@ -14,8 +14,10 @@
  * without seeing what they just asked for.
  */
 import { Lock, Plus } from 'lucide-react'
+import { useState } from 'react'
 import { MonoNumber } from '@/components/ab/mono-number'
 import { ToneBadge } from '@/components/ab/tone-badge'
+import { ToneSampleCard } from '@/components/ab/tone-sample-card'
 import { Button } from '@/components/ui/button'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import type { GenerationModel, PlanTier, Tone, Weekday } from '@/data/types'
@@ -182,6 +184,14 @@ export function TonesField({
   onChange: (next: string[]) => void
   onCreate: () => void
 }) {
+  /*
+   * The tone the sample speaks in: the last one turned ON, falling back to
+   * whatever is still selected. Held here rather than derived from `value`,
+   * because `value` is a set and a set has no "most recent".
+   */
+  const [lastPickedId, setLastPickedId] = useState<string | undefined>(undefined)
+  const lastPicked = value.includes(lastPickedId ?? '') ? lastPickedId : value[value.length - 1]
+
   return (
     <fieldset className="flex flex-col gap-2">
       <legend className="text-sm font-medium">Tones</legend>
@@ -194,9 +204,10 @@ export function TonesField({
               key={tone.id}
               type="button"
               aria-pressed={selected}
-              onClick={() =>
+              onClick={() => {
+                if (!selected) setLastPickedId(tone.id)
                 onChange(selected ? value.filter((id) => id !== tone.id) : [...value, tone.id])
-              }
+              }}
               className={cn(
                 'rounded-full ring-offset-background transition-shadow focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none',
                 selected && 'ring-2 ring-primary ring-offset-2',
@@ -213,6 +224,15 @@ export function TonesField({
           Create custom tone
         </Button>
       </div>
+
+      {/*
+       * MOMENT 1 (ORDER MOTION-0914/B) — the output, where the tones are
+       * picked. It shows the tone picked MOST RECENTLY rather than the first
+       * in the list: the question a person is asking while clicking these is
+       * "what does THAT one sound like", and answering with something they
+       * chose three clicks ago answers nobody.
+       */}
+      <ToneSampleCard toneId={lastPicked} className="mt-2" />
     </fieldset>
   )
 }

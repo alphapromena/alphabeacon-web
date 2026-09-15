@@ -92,6 +92,18 @@ export interface DataState {
   /** Bumped to re-run the sync (the error state's Try again path). */
   liveResyncNonce?: number
   /**
+   * MOMENT 2 (ORDER MOTION-0914/B) — armed by the ONE flow that finishes
+   * onboarding, and by nothing else.
+   *
+   * It is not derived from "signed in and has a workspace", which would be
+   * true of every demo dataset on every boot and would welcome somebody to
+   * Atlas Roasters on a dev server. The verify screen arms it because that is
+   * the only place that knows a workspace was just created; the root shows it
+   * and dismisses it. `lib/first-light.ts` owns whether the account has had
+   * one already.
+   */
+  firstLight?: { name: string; email: string } | null
+  /**
    * The org this session is working in (ORDER ONB-0827-B, D-ONB-F). Held in
    * state AND persisted beside the session, so a reload opens where the user
    * left off instead of blindly in `orgs[0]` — which is what made an invited
@@ -187,6 +199,9 @@ export type DataAction =
   | { type: 'org/setActive'; orgId: string }
   /** The shell has said the fallback out loud; stop saying it. */
   | { type: 'org/fallbackAcknowledged' }
+  /** Moment 2: the welcome is owed (arm) and has been shown (dismiss). */
+  | { type: 'firstLight/arm'; name: string; email: string }
+  | { type: 'firstLight/dismiss' }
   | { type: 'schedule/update'; patch: Partial<Schedule> }
   | { type: 'schedule/start' }
   | { type: 'tones/create'; tone: Tone }
@@ -564,6 +579,11 @@ export function dataReducer(state: DataState, action: DataAction): DataState {
     }
     case 'org/fallbackAcknowledged':
       return { ...state, activeOrgFellBack: false }
+
+    case 'firstLight/arm':
+      return { ...state, firstLight: { name: action.name, email: action.email } }
+    case 'firstLight/dismiss':
+      return { ...state, firstLight: null }
     case 'workspace/created':
       /*
        * The STATIC half of `createWorkspace` — and, since ONB-0827 deleted the
@@ -1599,6 +1619,11 @@ export function useDevForce() {
 
 export function useConnectivity() {
   return useData().state.connectivity
+}
+
+/** Moment 2: who is owed a welcome, or null. Read by the root, nobody else. */
+export function useFirstLight() {
+  return useData().state.firstLight ?? null
 }
 
 // ---------------------------------------------------------------------------

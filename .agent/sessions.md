@@ -5412,3 +5412,51 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   build · **static e2e 115 passed / 0 failed / 85 skipped — a clean full run,
   no flakes, no isolation pass needed.** No live rounds.
 - Next: phase B, the celebration moments. Open item 72 awaits a human.
+
+### 2026-09-15 10:10 — MOTION-0914/B: the four moments
+
+- Did: **moment 1** — a sample post beside the tone picker (`TonesField`, the
+  one multi-select of tones in the product; there is no wizard, ONB-0827
+  deleted it) that rewrites when the picked tone changes, composed from the
+  DEMO-0914 seeded drafts and **never from the wire**. **Moment 2** — first
+  light: rings draw, the core lights, "Welcome to Malaky, <first name>", 1800ms,
+  skippable by click or key, armed by the verify screen only on a create that
+  landed, recorded in localStorage keyed by the account BEFORE it plays so a
+  reload cannot repeat it. **Moment 3** — the approve settle plus a gold rule
+  across the card, detected from `draft.status` on the card so it fires however
+  the draft was approved; sequenced with §5.7's queue-clear by delaying the
+  queue rule exactly one card-duration, so the last approve reads as one
+  gesture. **Moment 4** — three honest stages read off what has arrived
+  (`accepted` → `writing` → `grounding`, all three observed in order), no
+  percentage, plus the last spinner in the product (Knowledge ingestion)
+  becoming the beacon. **Eight tests written and each PROVEN BY BREAKING IT.**
+- **Approve cost the click +4ms** (40 → 44ms median, inside the page, n=3 which
+  is the whole population of pending drafts). Far under perceptible.
+- **axe scanned DURING every moment**, which is the scan phase A's hazard
+  taught us to run — and it found a REAL pre-existing fault: the Approve
+  toast's description at **1.46:1**, because `ui/sonner.tsx` passes
+  next-themes' `system` through and sonner picked its light palette on a light
+  machine. Fixed at the call site (`theme="dark"`); now 14:1 and **0
+  violations on all five scans**.
+- Phase: post-W7 (motion moments, `feat/motion-0914`)
+- Files: `src/styles/globals.css`, `src/styles/motion-scale.test.ts`,
+  `src/app.tsx`, `src/data/provider.tsx`,
+  `src/features/auth/verify-email-screen.tsx`,
+  `src/features/calendar/schedule-fields.tsx`,
+  `src/features/today/draft-card.tsx`,
+  `src/features/generate/generate-screen.tsx`,
+  `src/features/settings/knowledge-screen.tsx`, `design.md`, and new:
+  `components/ab/{first-light,first-light-gate,tone-sample-card}.tsx`,
+  `components/ab/use-status-arrival.ts`,
+  `lib/{first-light,tone-sample,generate-stage,reduced-motion}.ts`, four test
+  files, `scripts/probe-moments-0914.ts`, `Docs/qa/motion-0914/moments/**`
+- Decisions: see decisions.md — D-MOTION-0914-I (four moments, one figure, and
+  where each lives), -J (composed, never generated, never invents a claim),
+  -K (one sequence on the last approve), -L (the 1.46:1 toast and its cause)
+- Verify: lint · typecheck · guard-static 373 clean · unit 808/808 in 69 files ·
+  build · **static e2e 115 passed / 0 failed / 85 skipped**. No live rounds.
+- Next: two clauses are REPORTED not built — first light resolves into the
+  Dashboard rather than Today (changing the post-verify destination would break
+  `signUpAndEnter`, which ~15 unrunnable live specs share), and an approved
+  card stays in its slot in static Today (screens4 D2 shows the whole day).
+  Both are in Docs/qa/motion-0914/moments/README.md.

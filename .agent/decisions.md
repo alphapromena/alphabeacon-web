@@ -4133,3 +4133,68 @@ the error itself.
   under AA after every navigation cannot stand beside that. So the entrance
   survives as the MOVEMENT and the fade goes. Nothing is rendered at reduced
   contrast at any instant, and no spec needed accommodating.
+
+### 2026-09-15 — D-MOTION-0914-I: four moments, one figure, and where each one lives
+
+- The beacon, at four intensities — no new colour, no new hue, no imagery.
+  `motion-scale.test.ts` asserts there are exactly FOUR `data-ab-motion`
+  families in the moments block and that the block introduces no colour value
+  of its own, so a fifth moment cannot arrive quietly.
+- **Moment 1 is NOT in a wizard, because there is none.** ONB-0827 deleted it
+  (D-ONB-C). "Where the user picks tones" is `TonesField` in the schedule
+  config — the one multi-select of tones in the product — so the sample sits
+  there. It shows the tone picked MOST RECENTLY rather than the first selected:
+  the question somebody is asking while clicking those badges is "what does
+  THAT one sound like".
+- Moment 2 is armed by the verify screen, which is the only place that knows a
+  workspace was just created by somebody signing up, and only on a create that
+  LANDED — a failed create goes to N3, and welcoming somebody to a workspace
+  that does not exist is the worst possible moment to celebrate. It is mounted
+  above the router so it overlays whatever the app routed to and never
+  navigates; that is what makes "skipping lands in the same place" structural.
+- Moment 3 is detected on the CARD, from `draft.status` arriving at `approved`,
+  not handed down from the approve handler — so it fires however the draft was
+  approved, including from the detail screen.
+- Moment 4 was half-built: `SignalSweep` was already the figure on Generate and
+  in the Studio composer. What was missing was honest text, and one last
+  spinner in Knowledge, which is now the beacon too.
+
+### 2026-09-15 — D-MOTION-0914-J: the sample is composed, never generated, and never invents a claim
+
+- There is a real wire for this (`POST .../posts/tones-preview`) and it is
+  deliberately unused: the order forbids it, it spends the org's wallet, and a
+  sample that needs the network cannot be the thing you show somebody in their
+  first minute. `src/data/brand.ts` still owns that call for I4's Preview,
+  where the user asked for a real run.
+- Three sources, in order: **the seeded draft written in that tone**
+  (DEMO-0914's review world, so the sample and the queue tell the same story),
+  then the tone's own example, then its description. The card says which.
+- It returns **null** rather than composing a sentence about the business. The
+  offer line is the owner's claim to make (D-DEMO-0914-B), and a fabricated one
+  at the moment somebody is deciding whether to trust the product is the worst
+  place in the app to invent. Asserted by breaking it.
+
+### 2026-09-15 — D-MOTION-0914-K: one sequence on the last approve, not two animations colliding
+
+- Approving the last draft fires moment 3 AND §5.7's queue-clear. Started
+  together they are two gold rules drawing at once, in different places, at
+  different speeds.
+- They share a keyframe (`ab-queue-clear`) and an origin, and the queue's rule
+  is delayed by exactly the card's duration (`--motion-medium`), so the small
+  gesture finishes and hands off to the large one. One figure, twice, reading
+  as a single thought. Asserted, and proven by removing the delay.
+
+### 2026-09-15 — D-MOTION-0914-L: the toast description was at 1.46:1, and the cause was the theme
+
+- Found by pointing axe at moment 3 mid-animation, which is the scan phase A's
+  hazard taught this project to run. The Approve toast's description measured
+  **1.46:1** (`#373839` on `#141c23`) — effectively unreadable, on the daily
+  action, and present before this order.
+- Cause: `ui/sonner.tsx` passes next-themes' value straight through and it
+  resolves to `system`, so on a machine set to light sonner chose its LIGHT
+  internal palette and painted dark grey on our graphite popover. There is only
+  one theme (D-THEME-0913-B), so the call site says `theme="dark"`. The
+  description measures 14:1 and the scan is clean.
+- Fixed at the CALL SITE. `components/ui/` is never hand-edited (rule 3), and a
+  prop the primitive already spreads is a better answer than an unlayered rule
+  that would paper over the palette choice rather than correct it.

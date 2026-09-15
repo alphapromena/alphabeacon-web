@@ -158,6 +158,62 @@ describe('no screen manufactures a wait', () => {
   })
 })
 
+describe('the four moments (ORDER MOTION-0914/B)', () => {
+  /** Rule 9 — the moments block, and only it. */
+  const moments = GLOBALS.slice(
+    GLOBALS.indexOf('9. THE FOUR MOMENTS'),
+    GLOBALS.indexOf('THE GUARANTEE, IN ONE PLACE'),
+  )
+
+  it('there are FOUR, and the vocabulary is the beacon', () => {
+    // Moments are rationed like the accent. A fifth `data-ab-motion` family
+    // appearing here is the thing this assertion exists to catch.
+    const families = new Set(
+      Array.from(moments.matchAll(/\[data-ab-motion='([a-z-]+)'\]/g), (m) => m[1]),
+    )
+    expect([...families].sort()).toEqual([
+      'approve-sweep',
+      'first-light-core',
+      'first-light-ring',
+      'first-light-rule',
+      'tone-rewrite',
+    ])
+  })
+
+  it('introduces no colour of its own — the gold is the only ink', () => {
+    const colours = moments.match(/#[0-9a-f]{3,8}|\brgb\b|\boklch\b|\bhsl\b/gi) ?? []
+    expect(colours, `moments must borrow existing tokens: ${colours.join(' ')}`).toEqual([])
+  })
+
+  it('uses no literal duration — every moment comes from the scale', () => {
+    const code = moments.replace(/\/\*[\s\S]*?\*\//g, '')
+    const literals = code.match(/animation:[^;{}]*?\b\d+m?s\b/g) ?? []
+    expect(literals, `literals: ${literals.join(' | ')}`).toEqual([])
+  })
+
+  it('draws the approve sweep and the queue rule on the SAME keyframe', () => {
+    // "One sequence, not two animations colliding": the card's rule and
+    // §5.7's are the same gesture at two scales, so they share a keyframe and
+    // the large one is delayed by exactly the small one's duration.
+    expect(moments).toMatch(/\[data-ab-motion='approve-sweep'\][\s\S]{0,160}ab-queue-clear/)
+    const queue = GLOBALS.slice(GLOBALS.indexOf("[data-ab-motion='queue-clear'] {"))
+    expect(queue.slice(0, 200)).toMatch(/var\(--motion-slow\)[^;]*var\(--motion-medium\)/)
+  })
+
+  it('never hangs data-ab-motion on something that carries meaning', () => {
+    // That attribute also carries `display: none !important`. The card's
+    // settle and the content entrance are STATE, so they collapse through the
+    // scale instead — and are named in the reduced-motion block, not here.
+    expect(moments).not.toMatch(/\[data-ab-approving[^\]]*\][^{]*\{[^}]*data-ab-motion/)
+    expect(moments).toMatch(/\[data-ab-approving='true'\]/)
+  })
+
+  it('collapses the approve settle to its end state under reduced motion', () => {
+    expect(reduced).toMatch(/\[data-ab-approving='true'\]/)
+    expect(reduced).not.toMatch(/\[data-ab-approving='true'\][^}]*display:\s*none/)
+  })
+})
+
 describe('every value comes from the scale', () => {
   /**
    * Rule 8 — the authored baseline — and ONLY that. It stops where the

@@ -11,6 +11,7 @@
  * animation of it.
  */
 import { useEffect, useState } from 'react'
+import { prefersReducedMotion } from '@/lib/reduced-motion'
 
 /** Long enough to register as counting, short enough to never delay a fact. */
 const DEFAULT_DURATION_MS = 700
@@ -23,11 +24,6 @@ const easeOut = (progress: number) => 1 - (1 - progress) ** 3
  * "motion allowed" keeps the guard from silently disabling signature motion in
  * environments that simply cannot answer the question.
  */
-function prefersReducedMotion() {
-  if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return false
-  return window.matchMedia('(prefers-reduced-motion: reduce)').matches
-}
-
 /**
  * Anything that cannot animate shows the finished number. The figure is the
  * point; the count is the flourish, so the flourish is what gets dropped.

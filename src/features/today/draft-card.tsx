@@ -19,6 +19,7 @@ import { ClaimChip } from '@/components/ab/claim-chip'
 import { MonoNumber } from '@/components/ab/mono-number'
 import { PostingTime } from '@/components/ab/posting-time'
 import { SignalSweep } from '@/components/ab/motion'
+import { useStatusArrival } from '@/components/ab/use-status-arrival'
 import { DraftStatusBadge } from '@/components/ab/status-badge'
 import { ToneBadge } from '@/components/ab/tone-badge'
 import { Button } from '@/components/ui/button'
@@ -67,9 +68,37 @@ export function DraftCard({
   const generating = draft.status === 'media_pending'
   const failed = draft.status === 'publish_failed'
 
+  /*
+   * MOMENT 3 (ORDER MOTION-0914/B) — the daily action.
+   *
+   * Detected on the CARD rather than handed down from the approve handler, so
+   * it fires however the draft was approved: this card's button, the detail
+   * screen, a keyboard shortcut somebody adds later. One place, one rule.
+   *
+   * Nothing here gates the click. `draft/approve` dispatches and the queue
+   * re-renders exactly as before; this reads the result and draws over it, so
+   * the animation cannot sit between a person and their own decision. Measured
+   * either side of the change — Docs/qa/motion-0914/approve/.
+   */
+  const justApproved = useStatusArrival(draft.status, 'approved')
+
   return (
-    <Card className={cn('relative overflow-hidden', generating && 'ring-1 ring-primary/40')}>
+    <Card
+      data-ab-approving={justApproved ? 'true' : undefined}
+      className={cn('relative overflow-hidden', generating && 'ring-1 ring-primary/40')}
+    >
       <SignalSweep active={generating} />
+      {/* The rule crosses the card's width — the same gesture §5.7 draws
+          across the queue heading, one scale down. Decoration in full, so it
+          is removed under reduced motion; the card has already said
+          "Approved" in words by then. */}
+      {justApproved && (
+        <span
+          data-ab-motion="approve-sweep"
+          aria-hidden
+          className="absolute inset-x-0 top-0 h-px rounded-full bg-brand"
+        />
+      )}
       <CardContent className="flex flex-col gap-4">
         <div className="flex flex-wrap items-center gap-2">
           <DraftStatusBadge status={draft.status} />

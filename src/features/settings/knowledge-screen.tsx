@@ -12,10 +12,10 @@
  */
 import { CheckCircle2, FileText, TriangleAlert, Trash2 } from 'lucide-react'
 import { EmptyState } from '@/components/ab/empty-state'
+import { BeaconDot } from '@/components/ab/motion'
 import { MonoNumber } from '@/components/ab/mono-number'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
-import { Spinner } from '@/components/ui/spinner'
 import { useDataDispatch, useKnowledgeDocs, useLiveMode, useMediaFiles } from '@/data/provider'
 import { assetKindForUpload, isMediaUploadKind } from '@/data/studio'
 import { KnowledgeUploadForm } from './knowledge-upload-form'
@@ -187,8 +187,15 @@ function StatusPill({ status }: { status: KnowledgeDoc['status'] }) {
     )
   }
   return (
+    /*
+     * MOMENT 4 (ORDER MOTION-0914/B) — the last spinner in a work-in-flight
+     * surface becomes the beacon. Generate and the Studio composer already
+     * used it; this one row still turned. One product, one figure for "work
+     * is happening", and a spinner is a different vocabulary borrowed from a
+     * different product.
+     */
     <span className="inline-flex items-center gap-2 rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
-      <Spinner aria-hidden className="size-3.5" />
+      <BeaconDot live />
       {word}
     </span>
   )

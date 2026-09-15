@@ -24,6 +24,7 @@
  * stillness gets the fact immediately, never a slower animation of it.
  */
 import { useEffect, useRef, useState } from 'react'
+import { prefersReducedMotion } from '@/lib/reduced-motion'
 
 /**
  * The scale's MEDIUM, in milliseconds.
@@ -37,11 +38,6 @@ export const NUMBER_TRANSITION_MS = 220
 
 /** Decelerating, the curve `--ease-out` describes: it settles, never lands. */
 const easeOut = (progress: number) => 1 - (1 - progress) ** 3
-
-function prefersReducedMotion() {
-  if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return false
-  return window.matchMedia('(prefers-reduced-motion: reduce)').matches
-}
 
 function cannotAnimate(durationMs: number) {
   return prefersReducedMotion() || durationMs <= 0 || typeof requestAnimationFrame !== 'function'

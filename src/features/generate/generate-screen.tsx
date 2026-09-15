@@ -23,7 +23,7 @@ import { AppShell } from '@/components/ab/app-shell'
 import { GenerationBlocked } from '@/components/ab/setup-checklist'
 import { ErrorState } from '@/components/ab/error-state'
 import { MonoNumber } from '@/components/ab/mono-number'
-import { SignalSweep } from '@/components/ab/motion'
+import { BeaconDot, SignalSweep } from '@/components/ab/motion'
 import { SkeletonForm } from '@/components/ab/skeletons'
 import { ToneBadge } from '@/components/ab/tone-badge'
 import { Button } from '@/components/ui/button'
@@ -44,6 +44,7 @@ import { useReadiness } from '@/data/readiness'
 import { LiveGenerate } from './live-generate'
 import type { Claim } from '@/data/types'
 import { useComposePlayer } from '@/lib/compose-player'
+import { generateStage, GENERATE_STAGE_LINE } from '@/lib/generate-stage'
 import { MESSAGES } from '@/lib/messages'
 import { DraftCard } from '@/features/today/draft-card'
 import { DraftDialogs } from '@/features/today/draft-dialogs'
@@ -170,6 +171,17 @@ function StaticGenerateScreen() {
 
   const collapsed = player.phase !== 'idle'
 
+  /*
+   * The run's stage, read off what has actually arrived (`lib/generate-stage`).
+   * Only `streaming` has stages — every other phase is a single settled fact
+   * and already had the right sentence.
+   */
+  const stage =
+    player.phase === 'streaming'
+      ? generateStage({ text: player.text, claimCount: player.claims.length })
+      : null
+  const statusLine = stage ? GENERATE_STAGE_LINE[stage] : STATUS_LINE[player.phase]
+
   return (
     <AppShell
       title="What should we write about?"
@@ -276,9 +288,17 @@ function StaticGenerateScreen() {
             </div>
           )}
 
-          {/* One polite announcement per transition — not one per token. */}
+          {/*
+           * MOMENT 4 (ORDER MOTION-0914/B) — the run says what it is doing.
+           *
+           * Still ONE announcement per transition rather than one per token:
+           * the stage changes three times in a run, not eighty. Both the
+           * spoken line and the visible one come from the same value, so a
+           * screen-reader user and a sighted one are told the same thing at
+           * the same moment.
+           */}
           <p role="status" className="sr-only">
-            {STATUS_LINE[player.phase]}
+            {statusLine}
           </p>
 
           {player.phase === 'rate_limited' ? (
@@ -300,8 +320,22 @@ function StaticGenerateScreen() {
                   />
                 ) : (
                   <Card className="relative overflow-hidden">
+                    {/* The beacon, sweeping — this product's one figure for
+                        work in flight, and it was already here. */}
                     <SignalSweep active={player.phase === 'streaming'} />
                     <CardContent className="flex flex-col gap-4">
+                      {/*
+                       * MOMENT 4 — the stage, said where it can be read. It
+                       * is the SAME string the polite region announces, and
+                       * it names a thing that has already happened rather
+                       * than a fraction of a thing that has not.
+                       */}
+                      {stage && (
+                        <p className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <BeaconDot live />
+                          {GENERATE_STAGE_LINE[stage]}
+                        </p>
+                      )}
                       <p className="text-lg/relaxed whitespace-pre-wrap">
                         {player.text}
                         {player.phase === 'streaming' && (
