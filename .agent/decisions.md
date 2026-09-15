@@ -4346,3 +4346,52 @@ the error itself.
   of: the dashboard's Ignored Build Step setting — configuration in the repo
   is reviewable and travels with the branch. Commit `ae2d741`; the proof on
   the branch preview is in the session report.
+
+### 2026-09-15 — ORDER-SHELL-0915: the signed-in shell is a layout route, mounted once
+
+- **The order.** Part B of the founder's follow-ups word: lift `AppShell` to a
+  layout route with an outlet so the shell mounts once — probe first, the
+  signed-in app only, no screen behaviour changes, route timings inside the
+  post-A2 range measured before and after, the identity proven by a static
+  spec and by breaking it. Branch `feat/shell-0915`, stacked on
+  `fix/followups-0915`. No merge.
+- **D-SHELL-0915-A — the chrome is the layout route's; a screen declares its
+  top bar.** `AppFrame` — rail, top bar, banners, the section rhythm, the
+  content entrance — is mounted ONCE by `WorldLayout` (`routes.tsx`) above
+  every app route, `/` included, so the rail and the one gold indicator in
+  it survive navigation and the indicator travels instead of being re-created
+  at the new row (state.md trap 8's rule, applied to the whole signed-in
+  world). `AppShell` keeps the signature every screen renders — title,
+  context, actions, children — and DECLARES the top bar to the frame through
+  a context in a layout effect (the title lands in the same commit as the
+  content), rendering its children into the frame's `main`; a screen with no
+  frame above throws rather than mounting one of its own, because a per-screen
+  shell coming back silently is the bug this kills. `WorldLayout` renders the
+  visitor world's layout for the marketing paths at any session state and for
+  `/` when signed out or without a workspace (the marketing layout gates `/`
+  itself), and passes the outlet through bare for an app path outside the
+  frame world, so every guard answers exactly as before — login, or N3. The
+  content entrance re-arms per location key (a new arrival inside the previous
+  play's 600 ms restarts clean); the route fallback centres in the frame's
+  main when there is one. Nothing per screen changed: `useScreenPhase`, the
+  220 ms skeleton threshold, `role="status"` + `aria-busy`, first light
+  (above the router), §5.7 and the four moments — 33 render sites in 15 files
+  untouched, the settings sub-layout still nested inside. Instead of: route
+  `handle`s for the top bar — the context line and the actions are computed
+  by the screen, not static per route; a fallback frame where none is above
+  — the silent regression path. Measured on the static dev server, proof E's
+  clock: proof E's clock on the static dev server, warm hops, three runs per route in both modes — medians 73 → 52 ms (motion) and 77 → 49 ms (reduced); Today 65–73 → 48–52, Billing 62–68 → 22–25, Settings 82–95 → 65–67, Studio 55–58 → 30–32, Calendar 52–56 → 32–35; the indicator re-created on 30 of 30 hops before, the same node on 30 of 30 after. `app-shell.test.tsx` holds the seams (the declaration,
+  the throw, the same nodes across a hop, the entrance per arrival);
+  `shell-identity.spec.ts` walks Dashboard → Today → Billing → Calendar →
+  Settings under normal and reduced motion and goes red with a second frame
+  around a screen. Two consequences, licensed here: the frame's `main` is up
+  before a screen's chunk arrives, with the busy fallback inside, so "main is
+  visible" no longer means "the screen is there" — `design-layer.spec.ts`'s
+  keyboard walk now waits for the Dashboard's own heading and for the busy
+  marker to clear (it went red on the first static run for exactly that
+  reason, then green); and a screen mounted with no frame above throws, so a
+  unit test that renders a screen wraps it in `AppFrame` with a `matchMedia`
+  stub and a `ResizeObserver` stub that notifies on observe (the indicator's
+  first measurement comes from that notification). The rail and the top bar's
+  chips are memoised so a declaration costs the header, not the whole chrome.
+  Commit `5f01310`.

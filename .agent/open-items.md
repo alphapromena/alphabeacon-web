@@ -1793,9 +1793,9 @@ Numbering continues from 72. The record: `Docs/qa/test-0915/`.
     accepted transient. Not fixed here — it is a motion decision about every
     toast in the product, not a bug in one.
 
-77. **The rail's gold indicator does not travel BETWEEN SCREENS: every screen
+77. **CLOSED 2026-09-15 (ORDER-SHELL-0915, D-SHELL-0915-A) — the shell is a layout route now: `AppFrame` (rail, top bar, banners, the section rhythm, the content entrance) mounts once in `WorldLayout` above every app route, `/` included, and each screen's `AppShell` — same props, 33 render sites untouched — declares its top bar into the frame and renders into its outlet. The indicator tagged on the Dashboard is the same DOM node through Today, Billing, Calendar and Settings (`e2e/shell-identity.spec.ts`, normal and reduced motion; red with a second frame around a screen), the five route arrivals measured before and after (proof E's clock on the static dev server, warm hops, three runs per route in both modes — medians 73 → 52 ms (motion) and 77 → 49 ms (reduced); Today 65–73 → 48–52, Billing 62–68 → 22–25, Settings 82–95 → 65–67, Studio 55–58 → 30–32, Calendar 52–56 → 32–35; the indicator re-created on 30 of 30 hops before, the same node on 30 of 30 after). Nothing per screen changed. Commit `5f01310`; record `Docs/qa/shell-0915/`. Original text:** The rail's gold indicator does not travel BETWEEN SCREENS: every screen
     renders its own `AppShell`, so the rail — and the one indicator in it — is
-    re-created on each route change.** (TEST-0915 proof G, sampled at 8 ms on
+    re-created on each route change. (TEST-0915 proof G, sampled at 8 ms on
     the static dev server.) D-MOTION-0914-C built the right construction — ONE
     `[data-slot='nav-indicator']` per rail, measured against the active row —
     and recorded "measured sliding: translateY 4 → 36 → 132 → 228px across four

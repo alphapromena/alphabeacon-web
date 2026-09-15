@@ -5593,3 +5593,39 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
 - Next: the founder reads the report; Part B on `feat/shell-0915`; the
   questions — a returnTo for the login redirect (none exists), the root
   markdown files inside the docs-only rule, item 78's topics seam
+
+### 2026-09-15 — ORDER-SHELL-0915: the signed-in shell lifted to a layout route on `feat/shell-0915` (stacked on `fix/followups-0915`); item 77 closed; pushed, NOT merged
+
+- Did: **Probe** — 33 `<AppShell>` render sites in 15 files, four props
+  (title, context, actions, children), no unit test renders a screen, 21
+  specs touch the rail or the busy markers and none depends on a per-screen
+  shell; the entrance (`data-ab-enter`) was keyed on "this shell's first
+  ready", the marketing layout already gates `/`. **Before** — proof E's
+  clock on the static dev server, five routes × 3 runs, normal and reduced
+  motion (`Docs/qa/shell-0915/timings-before.md`; the indicator re-created on
+  every hop). **Build** (`5f01310`) — `AppFrame` + `AppShell` as the
+  declaration (`app-shell.tsx`), `WorldLayout` above both worlds with the
+  app routes and `/` as its children (`routes.tsx`), the entrance re-armed
+  per location, the route fallback frame-aware, the rail and the top bar's
+  chips memoised (the first after-run put Settings 20–30 ms above its
+  before-value; memoised, every route arrives sooner than before); no screen
+  file changed. **After** — proof E's clock on the static dev server, warm hops, three runs per route in both modes — medians 73 → 52 ms (motion) and 77 → 49 ms (reduced); Today 65–73 → 48–52, Billing 62–68 → 22–25, Settings 82–95 → 65–67, Studio 55–58 → 30–32, Calendar 52–56 → 32–35; the indicator re-created on 30 of 30 hops before, the same node on 30 of 30 after; `shell-identity.spec.ts` green under
+  normal and reduced motion, red with a second frame around Billing, green
+  after the revert; `app-shell.test.tsx` 4 cases. The first static run had
+  one red — `design-layer.spec.ts`'s keyboard walk started tabbing the
+  moment `main` was visible, which the persistent frame makes true before
+  the Dashboard's chunk arrives; the spec now waits for the Dashboard's own
+  heading and the busy marker (licensed in D-SHELL-0915-A), and the second
+  run is clean. Cheap checks: lint · typecheck · guard-static · unit 829/829 in 74 files
+  · static e2e 119 / 0 / 90 (209 tests; the first run 118 / 1 / 90 on the keyboard-walk spec's own wait, recorded) at one worker.
+- Phase: post-W7 — the follow-ups; no merge
+- Files: `src/components/ab/app-shell.tsx` (+ test),
+  `src/components/ab/shell-chrome.ts`, `src/routes.tsx`,
+  `e2e/shell-identity.spec.ts`, `e2e/design-layer.spec.ts`,
+  `scripts/probe-shell-0915.ts`, `Docs/qa/shell-0915/**`,
+  `.agent/{sessions,decisions,open-items}.md`
+- Decisions: D-SHELL-0915-A (the chrome is the layout route's; a screen
+  declares its top bar)
+- Verify: as above; every Playwright run alone at `--workers=1`; no live run
+- Next: the founder's read of both branches; the testing session that gates
+  them runs the full gate on `feat/shell-0915`'s tip
