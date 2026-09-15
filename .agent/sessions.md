@@ -5667,3 +5667,10 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   every commit
 - Next: the founder's rulings on 81, 82, 83 and 66b (still open on Hasan's
   side); the topics seam (78) unchanged; returnTo pending
+- Merge: `main` = `live` = **`3b5d72c`** (fast-forward from `f3d5a83`,
+  confirmed from GitHub's atom feeds); production and the `live` preview
+  READY at that SHA on one bundle `index-BVhSvkNX.js`, the CSS the last READY
+  branch preview served, the JS by construction a different hash (the preview
+  builds static); the docs-only commit that carries this line is CANCELED on
+  both targets and both hosts still serve `index-BVhSvkNX.js`. Smoke on
+  `2.malaky.ai`: green on every row in run 4.
