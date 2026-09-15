@@ -92,3 +92,5 @@ Fixes on the branch: `d827693` + `fbb8789` (Phase 1, the ignored build step), `2
 ## Phase 6 — merge and deploy
 
 Step 1 — the close-out on the branch (sessions entry, open-items 58 / 63 / 70 / 79 annotated and 81–83 filed, D-TEST-0915-2-A) as a docs-only commit: proof (b) — its branch-preview deployment must be CANCELED by the ignored build step.
+
+**Step 1, read against the base Vercel actually uses.** The close-out push (`71d5862`) carried `2dc7c45` (two specs), `9188ffc` (the probe) and `7d256a9` beneath the docs tip, and the branch's last successful deployment was `96e1c25` — so the diff held e2e and scripts files and the step BUILT it (`dpl_HnQpEKBPpAjpWyn882FPHikoNNQ3`, BUILDING → READY): a second instance of proof (a), the exact case `ae2d741`'s HEAD^ diff would have canceled. Proof (b) is therefore this very line: a docs-only commit pushed alone on top of `71d5862`, which must be CANCELED.
