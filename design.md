@@ -326,6 +326,26 @@ accent-filled control has no ladder to step down and steps down its own ramp
 instead (`--primary-pressed`; the website's own `--c-accent-lo` was refused at
 a measured 4.49:1 under the button label).
 
+**A skeleton needs a real wait.** `--skeleton-delay: 220ms` is the threshold:
+a skeleton mounts the instant a screen is genuinely waiting — `role="status"`,
+`aria-busy` and the ten-second long-wait counter all start on time — but it is
+invisible until the threshold has passed, then fades in over `--motion-fast`.
+A wait that resolves faster than that is never seen. It is deliberately NOT a
+fourth member of the scale and it does NOT collapse under reduced motion: the
+scale says how long a change takes, this says when a state is worth showing at
+all, and somebody who asked for stillness must not be shown a skeleton flashing
+on and off for work that was already finished. `useScreenPhase` manufactures no
+wait of its own any more (ORDER MOTION-0914/A2, D-MOTION-0914-F/G) — which
+makes `/dev/states` the only way to see the loading and error designs, and so
+load-bearing for rule 5 rather than a convenience.
+
+**The content entrance moves; it does not fade.** It is a 4px rise at
+`--motion-medium`, and the opacity it used to carry was removed because
+compositing every text node at ~95% put the tightest colour pairs under AA for
+the length of it — axe measured the accent button's label at 4.44:1 against its
+settled 5.86:1 (D-MOTION-0914-H). Part 1's standard does not get a 220ms
+exemption.
+
 **Reduced motion collapses the scale to `0ms`; it does not remove it.** The
 distinction is the whole of §4 and it is not a softening of the law below: a
 hover fill, a press step, a focus ring and the nav indicator are STATE, and

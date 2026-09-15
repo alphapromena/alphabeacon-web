@@ -102,7 +102,7 @@ export function AppShell({
   actions?: ReactNode
   children: ReactNode
 }) {
-  const arrived = useSkeletonHandoff()
+  const arrived = useContentEntrance()
   return (
     <SidebarProvider
       // 72px icon rail per screens4.md §0.2 (shadcn's default is 48px).
@@ -146,32 +146,21 @@ export function AppShell({
          */}
         <main
           /*
-           * SKELETON TO CONTENT IS A TRANSITION (ORDER MOTION-0914/A §3).
+           * CONTENT ARRIVES RATHER THAN APPEARING (ORDER MOTION-0914/A §3,
+           * kept by the A2 ruling).
            *
-           * React unmounts the skeleton subtree and mounts the content
-           * subtree, so there is no element whose style changes and no CSS
-           * transition that can span the two. The shell is the one place that
-           * can see the change happen, so it marks it here and globals.css
-           * carries the arrival.
+           * Where a skeleton preceded it, React unmounts one subtree and
+           * mounts another, so no element's style changes and no CSS
+           * transition can span the two. The shell is the one place that can
+           * see the handover, so it marks it here and globals.css carries it.
            *
-           * It fires on the loading→ready EDGE and nowhere else — not on first
-           * paint, not on a re-render.
-           *
-           * MEASURED, THAT EDGE IS EVERY NAVIGATION, and the comment that
-           * first stood here said the opposite. `useScreenPhase` holds every
-           * screen on a designed 400ms skeleton when it mounts (/dev/states
-           * calls it "a short designed skeleton"), so there is no such thing
-           * here as moving between two already-loaded screens: every screen
-           * loads. The entrance therefore plays once per navigation.
-           *
-           * That is exactly what §3 asked for — skeleton to content is a
-           * transition — and it sits against §5, which says a transition must
-           * not make a frequent action feel slower. It is REPORTED rather
-           * than tuned: the content is interactive for every frame of it (an
-           * opacity change plus 4px, nothing that swallows a click), so it
-           * delays nobody's input, but it does add 220ms of visual settle to
-           * the most frequent action in the product. The call belongs to the
-           * founder, not to a tuning knob.
+           * A2 removed the 400ms artificial wait that used to sit in front of
+           * this on every navigation; the 220ms entrance itself was ruled to
+           * stay. It is a 4px rise and nothing else — the fade it used to
+           * carry put every tight colour pair on the screen under AA for the
+           * length of it, which two @axe specs caught and globals.css records.
+           * The content is interactive for every frame, so it delays no input;
+           * what it cost before was the wait it followed, not itself.
            */
           data-ab-enter={arrived ? 'content' : undefined}
           className="mx-auto flex w-full max-w-[1200px] flex-1 flex-col gap-8 px-4 py-8 md:px-6"
@@ -184,33 +173,32 @@ export function AppShell({
 }
 
 /**
- * True for exactly one render: the one where a screen stopped showing its
- * skeleton and started showing content.
+ * True for one play, when this screen's content arrives.
  *
- * Deliberately an EDGE, not a state. `phase === 'ready'` is true for the whole
- * life of a loaded screen, so keying the entrance off it would replay the
- * animation on every re-render — which is the decorative entrance §5 bans.
+ * ORDER MOTION-0914/A2 changed what "arrives" means. It used to be the
+ * loading→ready EDGE, which was every navigation only because
+ * `useScreenPhase` manufactured a 400ms skeleton on every mount. That delay is
+ * gone: a static screen is ready on its first render and there is no edge to
+ * catch, so keying off one would have silently retired the entrance the
+ * founder ruled should stay.
  *
- * How often the edge occurs is a property of `useScreenPhase`, not of this
- * hook: it holds every screen on a designed 400ms skeleton at mount, so the
- * edge is crossed once per navigation. See the `<main>` comment below for the
- * §5 tension that creates and why it is reported rather than tuned away.
+ * So it fires when this shell first sees `ready` — immediately when there was
+ * nothing to wait for, and after the wait when there was. One `AppShell` is
+ * mounted per screen, so "first" is per arrival rather than per session.
+ *
+ * Still an edge, not a state: `phase === 'ready'` stays true for the life of a
+ * loaded screen, and keying the animation off it would replay on every
+ * re-render, which is the decorative entrance §5 bans.
  */
-function useSkeletonHandoff(): boolean {
+function useContentEntrance(): boolean {
   const phase = useScreenPhase()
-  const wasLoading = useRef(false)
+  const played = useRef(false)
   const [arrived, setArrived] = useState(false)
 
   useEffect(() => {
-    if (phase === 'loading') {
-      wasLoading.current = true
-      setArrived(false)
-      return
-    }
-    if (phase === 'ready' && wasLoading.current) {
-      wasLoading.current = false
-      setArrived(true)
-    }
+    if (phase !== 'ready' || played.current) return
+    played.current = true
+    setArrived(true)
   }, [phase])
 
   // One play, then off — so a re-render for any other reason cannot repeat it.

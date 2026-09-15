@@ -110,6 +110,54 @@ describe('the reduced-motion collapse', () => {
   })
 })
 
+describe('the real-wait threshold (ORDER MOTION-0914/A2)', () => {
+  it('exists, is real time, and is NOT a fourth member of the scale', () => {
+    expect(tokens['skeleton-delay']).toBeDefined()
+    expect(tokens['skeleton-delay']).toMatch(/^\d+ms$/)
+    expect(Number.parseInt(tokens['skeleton-delay'], 10)).toBeGreaterThan(0)
+    // It is not named `motion-*`, which is what keeps the scale at three — the
+    // assertion above in "is exactly three durations" does the enforcing.
+    expect(Object.keys(tokens)).not.toContain('motion-skeleton-delay')
+  })
+
+  it('does NOT collapse under reduced motion', () => {
+    // The fade that carries the skeleton in collapses; the threshold does not.
+    // Somebody who asked for stillness must not be shown a skeleton flashing
+    // on and off for work that was already finished.
+    expect(reduced).not.toMatch(/--skeleton-delay:\s*0ms/)
+  })
+
+  it('holds the skeleton invisible until the threshold has passed', () => {
+    const rule = GLOBALS.slice(GLOBALS.indexOf("[role='status'][aria-busy='true']"))
+    const head = rule.slice(0, 300)
+    expect(head).toMatch(/var\(--skeleton-delay\)/)
+    // `both` is what keeps it at opacity 0 DURING the delay. Without it the
+    // element paints at full opacity and the flash is exactly back.
+    expect(head.includes(' both;')).toBe(true)
+  })
+})
+
+describe('no screen manufactures a wait', () => {
+  const PROVIDER = read('src/data/provider.tsx')
+
+  it('useScreenPhase takes no delay argument any more', () => {
+    // The 400ms artificial skeleton cost a routine navigation 473–514ms on
+    // data already in memory (Docs/qa/motion-0914/nav/). A default parameter
+    // is how it would come back.
+    const signature = PROVIDER.slice(PROVIDER.indexOf('export function useScreenPhase'))
+    expect(signature.slice(0, 120)).toMatch(/useScreenPhase\(\): ScreenPhase/)
+  })
+
+  it('static mode is ready without waiting for anything', () => {
+    const body = PROVIDER.slice(
+      PROVIDER.indexOf('export function useScreenPhase'),
+      PROVIDER.indexOf('export function useScreenPhase') + 1200,
+    )
+    expect(body).not.toMatch(/setTimeout/)
+    expect(body).toMatch(/return 'ready'/)
+  })
+})
+
 describe('every value comes from the scale', () => {
   /**
    * Rule 8 — the authored baseline — and ONLY that. It stops where the

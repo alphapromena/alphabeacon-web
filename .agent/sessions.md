@@ -5380,3 +5380,35 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   entrance fires on every navigation (the designed 400ms skeleton makes
   loading→ready universal), and the sidebar's own collapse still runs on
   shadcn's `duration-200` literal inside a file rule 3 forbids editing.
+
+### 2026-09-15 08:55 — MOTION-0914/A2: the designed wait is deleted
+
+- Did: the founder ruled on the §5 item A reported, so `useScreenPhase`'s 400ms
+  artificial skeleton is **gone**. Measured first and measured after, twice each,
+  timestamps taken inside the page: a routine navigation on the DEMO-0914 seeded
+  world went **486–515ms → 60–109ms** on four routes. **Studio was the control**
+  — it never gated on the phase and measured 44–47ms, which is the proof the
+  product was never slow, it was waiting on itself. Skeleton visible during a
+  navigation: **5/5 on four routes → 0/5 on all five**. The real-wait rule is
+  `--skeleton-delay: 220ms`, enforced on what is PAINTED rather than what is
+  mounted, so the a11y announcement and the ten-second long-wait counter still
+  start on time. The entrance now fires on ARRIVAL rather than on a
+  loading→ready edge, because with the wait gone there is no edge to catch.
+  **Two @axe specs then failed and they were right**: the entrance's opacity
+  fade put the accent button's label at 4.44:1 against its settled 5.86:1, 58
+  violations across two screens. The fade was removed rather than the scans
+  accommodated — 44 AxeBuilder call sites exist and 42 passed only by timing.
+  The `after` numbers were then taken AGAIN so the record describes the shipped
+  build. Sidebar `duration-200` filed as **open item 72**, recorded not fixed.
+- Phase: post-W7 (motion baseline, `feat/motion-0914`)
+- Files: `src/data/provider.tsx`, `src/styles/tokens.css`, `src/styles/globals.css`,
+  `src/components/ab/app-shell.tsx`, `src/styles/motion-scale.test.ts`,
+  `scripts/probe-navigation-0914.ts` (new), `Docs/qa/motion-0914/nav/**`,
+  `design.md`, `.agent/decisions.md`, `.agent/open-items.md`, `.agent/state.md`
+- Decisions: see decisions.md — D-MOTION-0914-F (the designed skeleton deleted),
+  -G (the 220ms threshold, and why it is not part of the scale), -H (the
+  entrance moves, it does not fade)
+- Verify: lint · typecheck · guard-static 362 clean · unit 778/778 in 66 files ·
+  build · **static e2e 115 passed / 0 failed / 85 skipped — a clean full run,
+  no flakes, no isolation pass needed.** No live rounds.
+- Next: phase B, the celebration moments. Open item 72 awaits a human.

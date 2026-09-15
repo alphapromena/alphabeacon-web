@@ -4068,3 +4068,68 @@ the error itself.
   94 → 93 was measured leaping to **332**. Both hooks now read one clock and
   clamp progress to [0, 1]. `use-count-up.ts` had the identical latent fault
   and never showed it: counting up from zero, the overshoot lands off-screen.
+
+### 2026-09-15 — D-MOTION-0914-F: the 400ms designed skeleton is deleted; a skeleton needs a real wait
+
+- **The founder's ruling on the §5 item MOTION-0914/A reported.** `useScreenPhase`
+  held every screen on a skeleton for 400ms at mount so "the skeleton design is
+  real". Measured on the DEMO-0914 seeded world, a routine navigation cost
+  **486–515ms** on four routes — on data already in memory — and then paid the
+  220ms entrance on top.
+- **Studio was the control and it proved the product was never slow.**
+  `StudioGalleryScreen` renders its grid directly instead of gating on the
+  phase, and measured **44–47ms** for the same trip. The other four were
+  waiting on the app, not on work.
+- After: **60–109ms** across all five routes, both sample runs agreeing.
+  Docs/qa/motion-0914/nav/.
+- The rule is now a REAL WAIT. Static mode has nothing to await, so a screen is
+  ready on its first render. Live mode is untouched and deliberately so: those
+  are real network states, and `loading` there is not decoration — trap 20 in
+  `readiness.ts` — because the world still holds seeded demo data until
+  `live/orgSynced` lands.
+- `/dev/states` is now the ONLY way to see the loading and error designs, which
+  makes that switcher load-bearing for CLAUDE.md rule 5 rather than a
+  convenience. Said out loud in the hook's comment so nobody deletes it as dead.
+
+### 2026-09-15 — D-MOTION-0914-G: the skeleton threshold is 220ms, and it is not part of the motion scale
+
+- `--skeleton-delay: 220ms`. A skeleton mounts the instant a screen is waiting —
+  `role="status"`, `aria-busy` and the ten-second long-wait counter all start on
+  time — but it is **invisible** until the threshold passes, then fades in over
+  `--motion-fast`. So a wait that resolves quickly is never seen.
+- Enforced on what is PAINTED, not on what is mounted, because "nothing may
+  flash a skeleton for work that is already complete" is a claim about what a
+  person sees. The probe measures it as rendered opacity for the same reason:
+  **skeleton visible went from 5/5 on four routes to 0/5 on all five.**
+- **220ms, chosen not guessed.** Under ~100ms a change reads as instantaneous
+  and a skeleton there is pure noise. It is `--motion-medium`'s value because a
+  skeleton appearing IS a state change — written out rather than aliased, so the
+  two can diverge without dragging each other. Measured against the product:
+  with the artificial delay gone nothing in static mode can cross it, and the
+  API's measured 12–23s cold-start tail clears it with room to spare.
+- **It is NOT a fourth duration and does not collapse under reduced motion.**
+  The scale says how long a change takes; this says when a state is worth
+  showing. Somebody who asked for stillness must not be shown a skeleton
+  flashing on and off for work that was already finished. `motion-scale.test.ts`
+  asserts both halves.
+- It hangs off `SkeletonShell`'s wrapper rather than `[data-slot='skeleton']`:
+  the individual box carries `animate-pulse`, and overriding its animation would
+  mean re-declaring the pulse. The wrapper is where the a11y contract already
+  lives, for the same reason.
+
+### 2026-09-15 — D-MOTION-0914-H: the content entrance moves, it does not fade
+
+- The entrance the A2 ruling kept was `opacity: 0 → 1` plus a 4px rise on
+  `<main>` — which is every text node on the screen. Composited at ~95% over the
+  page, the pairs closest to the line go under it: **axe measured the accent
+  button's own label at 4.44:1** (#47180d on #fc4d2d) against its settled
+  5.86:1, and reported **58 violations across two screens**.
+- Both failures were `@axe` specs, and **they were right**. The first instinct —
+  have the scans wait for the animation to finish — would have been
+  test-appeasement: 44 AxeBuilder call sites exist and 42 passed only because
+  they happen to interact first, so the hazard would have been left everywhere.
+- This product refused the website's own `--c-accent-lo` over **one hundredth**
+  of a contrast ratio (D-MOTION-0914-B). An entrance that puts every tight pair
+  under AA after every navigation cannot stand beside that. So the entrance
+  survives as the MOVEMENT and the fade goes. Nothing is rendered at reduced
+  contrast at any instant, and no spec needed accommodating.

@@ -188,6 +188,33 @@
   --motion-medium: 220ms;
   --motion-slow: 900ms;
 
+  /* --- The real-wait threshold (ORDER MOTION-0914/A2) ----------------
+     How long something must ACTUALLY be being waited for before a skeleton
+     is shown. Not part of the three-duration scale above, and not a fourth
+     duration: the scale says how long a change TAKES, this says WHEN a state
+     is worth showing at all. `motion-scale.test.ts` enforces that separation.
+
+     220ms, chosen and not guessed:
+
+     - Under ~100ms a change reads as instantaneous, so a skeleton there is
+       pure noise — something appears and vanishes before it can be read.
+     - It is `--motion-medium`'s value on purpose. A skeleton appearing IS a
+       state change, so the threshold is that same unit rather than a new
+       invented number; it is written out rather than aliased because the two
+       must be free to diverge without one dragging the other.
+     - MEASURED against the product: with the 400ms artificial delay gone, a
+       routine navigation on the seeded world resolves in tens of
+       milliseconds, so NOTHING in static mode can cross this and no skeleton
+       can flash there at all. Live waits are the opposite case — the API's
+       measured cold-start tail is 12–23s — so a genuine wait clears it with
+       room to spare.
+
+     IT DOES NOT COLLAPSE UNDER prefers-reduced-motion. The fade that carries
+     the skeleton in does, but the threshold itself is not motion: somebody
+     who asked for stillness must not be shown a skeleton flashing on and off
+     for work that was already finished. */
+  --skeleton-delay: 220ms;
+
   /* --- Shadow: ambient, under true overlays only -------------------
      D-THEME-0913-E. There is no elevation shadow in this system; a card is
      raised because it is LIGHTER, not because it casts. These exist so a

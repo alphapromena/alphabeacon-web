@@ -1658,3 +1658,30 @@ Numbering continues from 50. The record: `Docs/qa/hsn-0910/phase0/` and the
     confirm both assertions. If the wire echoes a role the table does not map,
     the badge renders nothing and `toHaveText` fails — which would be a real
     finding about the wire, not about this edit.
+
+72. **The sidebar's collapse runs on a `duration-200` literal that the motion
+    scale does not reach, and the file it lives in may not be hand-edited.**
+    Filed by ORDER MOTION-0914/A2, which ruled it **recorded, not fixed**.
+
+    **What it is.** `src/components/ui/sidebar.tsx` ships
+    `transition-[width,height,padding]` with an explicit `duration-200` on the
+    rail's collapse. An explicit `duration-*` utility beats the
+    `--default-transition-duration` that MOTION-0914/A pointed at the scale, so
+    that one transition runs at 200ms while everything else in the product runs
+    at `--motion-fast` (120ms) or `--motion-medium` (220ms).
+
+    **Why it was not fixed.** CLAUDE.md rule 3: files under
+    `src/components/ui/` are never hand-edited. The three legitimate escapes
+    are a token, a variant, or an unlayered rule in `globals.css` — and the
+    third would work here. It was left alone because 200ms is **20ms** from
+    `--motion-medium`, which is the value it would move to; nobody can see the
+    difference, and an unlayered override buys a rule in the cascade and a
+    thing to maintain in exchange for nothing visible.
+
+    `design.md` Part 5.0 names it as one of the two exemptions from "a literal
+    duration in code we author is a bug", so the doc does not claim a
+    completeness the code does not have.
+
+    **Action for a human:** decide whether the 20ms is worth an unlayered rule.
+    If a future shadcn update changes that literal, or if the scale's `medium`
+    moves far from 200ms, this stops being cosmetic and should be revisited.

@@ -16,7 +16,6 @@ import {
   useMemo,
   useReducer,
   useRef,
-  useState,
   type Dispatch,
   type ReactNode,
 } from 'react'
@@ -1609,18 +1608,41 @@ export function useConnectivity() {
 export type ScreenPhase = 'loading' | 'error' | 'ready'
 
 /**
- * Drives a screen's loading/error presentation. The dataset supplies empty
- * and populated; /dev/states forces loading or error; otherwise a short
- * artificial delay on first mount makes the skeleton design real.
+ * Drives a screen's loading/error presentation.
+ *
+ * ## The 400ms artificial delay is GONE (ORDER MOTION-0914/A2, founder ruling)
+ *
+ * This hook used to hold EVERY screen on a skeleton for 400ms on mount, so
+ * that "the skeleton design is real". Measured, that cost a routine navigation
+ * on already-local data **473–514ms** across four routes, plus the 220ms
+ * content entrance on top — while Studio, the one screen that never gated on
+ * it, measured **47ms** for the same trip. The product was not slow; it was
+ * waiting on itself, and a first-time reviewer learned the wrong lesson from
+ * every single click.
+ *
+ * So there is no artificial delay any more. The rule is a REAL WAIT: a
+ * skeleton appears when something is genuinely being waited for, and only once
+ * that wait crosses the threshold (`--skeleton-delay`, see tokens.css). In
+ * static mode the world is already in memory and nothing is awaited, so a
+ * screen is ready on its first render and the content simply appears.
+ *
+ * ## What each branch still means
+ *
+ * `/dev/states` still forces either presentation — that switcher is how the
+ * loading and error designs stay reviewable now that no screen manufactures
+ * them, and `every screen, all four states` (CLAUDE.md rule 5) depends on it.
+ *
+ * LIVE mode is unchanged and deliberately so: those are REAL network states.
+ * `loading` while the sync is in flight is not decoration — trap 20 in
+ * `readiness.ts` — because until `live/orgSynced` lands, `world` still holds
+ * the seeded demo data, and rendering it as "ready" would report somebody
+ * else's tones as this org's. The threshold is applied to the skeleton's
+ * VISIBILITY rather than to this phase, so a sync that finishes quickly never
+ * flashes a skeleton and a slow one still announces itself.
  */
-export function useScreenPhase(delayMs = 400): ScreenPhase {
+export function useScreenPhase(): ScreenPhase {
   const devForce = useDevForce()
   const { state } = useData()
-  const [settled, setSettled] = useState(false)
-  useEffect(() => {
-    const t = window.setTimeout(() => setSettled(true), delayMs)
-    return () => window.clearTimeout(t)
-  }, [delayMs])
 
   const syncPhase = state.liveSyncPhase
   if (devForce === 'loading') return 'loading'
@@ -1632,5 +1654,7 @@ export function useScreenPhase(delayMs = 400): ScreenPhase {
     if (syncPhase === 'error') return 'error'
     return 'ready'
   }
-  return settled ? 'ready' : 'loading'
+  // Static: the dataset is in memory. There is nothing to wait for, so there
+  // is nothing to show a skeleton for.
+  return 'ready'
 }

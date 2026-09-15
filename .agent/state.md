@@ -5,7 +5,62 @@ without reconstructing it from the session log. **Update this file at the end
 of any turn that finishes a phase or changes the plan.** `sessions.md` is the
 chronological record; this is the current picture.
 
-_Last updated: 2026-09-14, after **ORDER MOTION-0914/A — the motion baseline.
+_Last updated: 2026-09-15, after **ORDER MOTION-0914/A2 — the designed wait is
+deleted. BUILT on `feat/motion-0914`, PUSHED, report-and-stop, NOT merged.**
+
+**THE FOUNDER RULED ON THE §5 ITEM A REPORTED.** `useScreenPhase` held every
+screen on a 400ms skeleton at mount so "the skeleton design is real". It is
+gone. Measured on the DEMO-0914 seeded world, both timestamps taken INSIDE the
+page, five runs per route, twice:
+
+| Route | before | after |
+| --- | --- | --- |
+| Today | 496 / 486 ms | **75 / 76 ms** |
+| Billing | 473 / 463 ms | **76 / 74 ms** |
+| Calendar | 479 / 476 ms | **60 / 65 ms** |
+| Settings | 514 / 515 ms | **108 / 109 ms** |
+| Studio | 47 / 44 ms | 69 / 66 ms |
+
+**STUDIO IS THE CONTROL AND IT PROVED THE PRODUCT WAS NEVER SLOW.** It renders
+its grid directly instead of gating on the phase, so it never paid the delay —
+44–47ms while its four neighbours paid 463–515ms. They were waiting on the app,
+not on work. Studio is also the one route that got slower (~22ms), and that was
+MEASURED rather than explained away: a third condition with the entrance
+disabled puts it back at exactly 47ms.
+
+**SKELETON VISIBLE DURING A NAVIGATION: 5/5 on four routes → 0/5 on all five.**
+The rule is a real wait — `--skeleton-delay: 220ms`, enforced on what is
+PAINTED rather than what is mounted, so `role="status"`, `aria-busy` and the
+ten-second long-wait counter still start at the true beginning of a wait. It is
+NOT a fourth member of the motion scale and does NOT collapse under reduced
+motion: the scale says how long a change takes, this says when a state is worth
+showing, and stillness must not mean a skeleton flashing for finished work.
+
+**LIVE MODE IS UNTOUCHED, DELIBERATELY.** Those are real network states, and
+`loading` there is not decoration — trap 20 in `readiness.ts` — because the
+world holds seeded demo data until `live/orgSynced` lands. **`/dev/states` is
+now the ONLY way to see the loading and error designs**, which makes that
+switcher load-bearing for CLAUDE.md rule 5 rather than a convenience.
+
+**TWO @axe SPECS FAILED AND THEY WERE RIGHT.** The content entrance's opacity
+fade composited every text node at ~95%, putting the accent button's own label
+at **4.44:1** against its settled 5.86:1 — 58 violations across two screens.
+The fade was REMOVED, not the scans accommodated: 44 AxeBuilder call sites
+exist and 42 passed only because they interact first, so accommodating would
+have left the hazard everywhere. The entrance survives as a 4px rise. This
+product refused a value over one hundredth of a ratio (D-MOTION-0914-B); a
+220ms exemption was not available. The `after` numbers above were then taken
+AGAIN so the record describes the shipped build.
+
+**GREENS: lint · typecheck · guard-static 362 clean · unit 778/778 in 66 files ·
+build · static e2e 115 passed / 0 FAILED / 85 skipped — a clean full run, no
+flakes, no isolation pass needed.** No live rounds.
+
+**OPEN ITEM 72 FILED, recorded not fixed by the order's instruction:** the
+sidebar's collapse still runs on shadcn's `duration-200` literal, inside a file
+rule 3 forbids hand-editing._
+
+_Before that, 2026-09-14, after **ORDER MOTION-0914/A — the motion baseline.
 BUILT on `feat/motion-0914` (off `feat/demo-0914` = `9e81545`), PUSHED,
 report-and-stop, NOT merged. Phase B (the celebration moments) is NOT in this
 order and has not started.**

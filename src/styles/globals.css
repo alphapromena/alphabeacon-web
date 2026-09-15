@@ -438,19 +438,70 @@
    and the content arrives instead of appearing. It fires ONLY after a real
    skeleton — never on navigation, never on first paint — because an entrance
    that plays every time you move is the decorative entrance §5 bans. */
+/*
+ * IT MOVES; IT DOES NOT FADE (ORDER MOTION-0914/A2).
+ *
+ * This animated `opacity: 0 -> 1` on `<main>`, which is every text node on the
+ * screen. Composited at 95% over the page, the pairs that sit closest to the
+ * line go under it: axe measured the accent button's own label at **4.44:1**
+ * (#47180d on #fc4d2d) against its settled 5.86:1, and reported 58 violations
+ * on two screens. Brief, and the sort of thing most products ship — but this
+ * one refused the website's `--c-accent-lo` over a hundredth of a ratio
+ * (D-MOTION-0914-B), and an entrance that puts every tight pair under AA after
+ * every navigation cannot stand beside that.
+ *
+ * So the entrance the A2 ruling kept survives as the MOVEMENT. Nothing is ever
+ * rendered at reduced contrast, at any instant, and the two @axe specs that
+ * caught this need no accommodation — they were right.
+ */
 @keyframes ab-content-in {
   from {
-    opacity: 0;
     translate: 0 4px;
   }
   to {
-    opacity: 1;
     translate: 0 0;
   }
 }
 
 [data-ab-enter='content'] {
   animation: ab-content-in var(--motion-medium) var(--ease-out) 1;
+}
+
+/* 8i. A skeleton waits for the threshold before it shows itself
+   (ORDER MOTION-0914/A2).
+
+   "Nothing may flash a skeleton for work that is already complete" is a claim
+   about what a PERSON SEES, so it is enforced on what is painted rather than
+   on what is mounted. `SkeletonShell` still mounts the instant a screen is
+   waiting — `role="status"` and `aria-busy` are announced on time, and the
+   ten-second long-wait line still starts counting from the real beginning of
+   the wait — but it is invisible until `--skeleton-delay` has passed.
+
+   So a wait that resolves under the threshold is never seen, and one that
+   crosses it fades in over `--motion-fast` instead of appearing hard. The
+   fade is what makes the band just past the threshold harmless: a wait that
+   ends at 230ms reveals the skeleton at a few percent opacity rather than
+   flashing a finished shape.
+
+   `both` is load-bearing: without it the element paints at full opacity
+   during the delay, which is precisely the flash this removes.
+
+   It is deliberately NOT keyed off `[data-slot='skeleton']`. That is the
+   individual placeholder box and it carries `animate-pulse`; overriding its
+   animation would mean re-declaring the pulse here. `SkeletonShell` is the one
+   wrapper every pattern goes through, which is the same reason the a11y
+   contract lives there. */
+@keyframes ab-skeleton-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+:where([role='status'][aria-busy='true']) {
+  animation: ab-skeleton-in var(--motion-fast) var(--ease-out) var(--skeleton-delay) both;
 }
 
 /**
