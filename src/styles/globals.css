@@ -289,6 +289,38 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* 7b. The toast's entrance RISES; it does not fade (ORDER-FIX-0915, item 76;
+   D-FIX-0915-C).
+   sonner ships `[data-sonner-toast] { opacity: 0; transition: transform 400ms,
+   opacity 400ms, height 400ms, box-shadow 200ms }` and flips opacity to 1 once
+   the toast is mounted, so for the first frames the whole toast — its text
+   included — is composited over the page at partial opacity. That is the
+   class of hazard D-MOTION-0914-H removed from the content entrance ("nothing
+   is rendered at reduced contrast at any instant"): TEST-0915 proof E ran axe
+   80 ms after an Approve and it failed the description that measures 13.62:1
+   at rest. Measured on the built app before this rule
+   (Docs/qa/fix-0915/item-76/probe-before.md): opacity 0 at +51 ms, 0.14 at
+   +85 ms, 0.50 at +168 ms — the description rendered at 1:1, 1.34:1 and
+   4.27:1 against 13.5:1 at rest, under AA for the first ~170 ms of every
+   toast; axe happened to pass at +80 ms that run, which is why proof E's
+   catch was a matter of timing and this rule is not.
+   Only the PROPERTY LIST is overridden, so everything else sonner decides
+   keeps its say: its durations (the second slot names a property the toast
+   never changes, so the shipped durations line up by index — transform 400,
+   height 400, box-shadow 200), its `transition: none` while a toast is being
+   swiped, and its reduced-motion block (`transition: none !important`, the
+   end state at once). The exit, which shipped as a fade too, is now a cut:
+   the removed state still sets opacity 0, without the ramp — no frame of it
+   is ever half-readable either.
+   Keyed on the two classes ui/sonner.tsx puts on the region and on every
+   toast (rule 3: no hand edit under components/ui, none of sonner's data
+   attributes). Specificity (0,2,0) beats the shipped (0,1,0) whichever sheet
+   the browser reads last — sonner injects its own at runtime, after this one
+   in a build and before it on the dev server — so this cannot be a `:where`. */
+.toaster .cn-toast {
+  transition-property: transform, visibility, height, box-shadow;
+}
+
 /* ------------------------------------------------------------------
    8. MOTION — the baseline (ORDER MOTION-0914/A §3).
 

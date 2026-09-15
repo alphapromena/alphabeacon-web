@@ -1,0 +1,14 @@
+
+Running 9 tests using 1 worker
+
+  ok 1 [chromium] › e2e\today-queue.spec.ts:32:1 › the queue groups drafts by slot and offers only legal actions (3.0s)
+  ok 2 [chromium] › e2e\today-queue.spec.ts:44:1 › @golden approving moves the card and updates the dashboard in the same session (3.3s)
+  ok 3 [chromium] › e2e\today-queue.spec.ts:71:1 › generating media spends credits, and the balance follows (5.8s)
+  ok 4 [chromium] › e2e\today-queue.spec.ts:96:1 › a short balance refuses the run and keeps the prompt (3.4s)
+  ok 5 [chromium] › e2e\today-queue.spec.ts:111:1 › scheduling reports per channel, and a re-auth channel cannot be picked (3.8s)
+  ok 6 [chromium] › e2e\today-queue.spec.ts:134:1 › draft detail shows the timeline and mirrors the queue actions (3.0s)
+  ok 7 [chromium] › e2e\today-queue.spec.ts:147:1 › rejecting asks why, and the draft leaves the queue (3.0s)
+  ok 8 [chromium] › e2e\today-queue.spec.ts:160:1 › @axe the queue and draft detail scan clean (3.3s)
+  ok 9 [chromium] › e2e\today-queue.spec.ts:169:1 › @axe the Approve toast is readable from its first frame — it rises, it does not fade (item 76) (3.2s)
+
+  9 passed (36.4s)

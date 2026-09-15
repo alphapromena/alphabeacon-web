@@ -1,0 +1,7 @@
+PASS · motion: the description reads ≥ 4.5:1 as rendered at every offset · +53 ms → 13.62 (opacity 1); +87 ms → 13.62 (opacity 1); +169 ms → 13.62 (opacity 1); +402 ms → 13.62 (opacity 1)
+PASS · motion: opacity is not a transitioned property on the toast · transform, visibility, height, box-shadow
+PASS · axe at +80 ms: no color-contrast violation · clean
+PASS · reduced motion: the description reads ≥ 4.5:1 as rendered at every offset · +45 ms → 13.62 (opacity 1); +90 ms → 13.62 (opacity 1); +167 ms → 13.62 (opacity 1); +403 ms → 13.62 (opacity 1)
+PASS · reduced motion: opacity is not a transitioned property on the toast · none
+PASS · reduced motion: the end state at the first sample (opacity 1, transform settled) · +45 ms → opacity 1, transform matrix(1, 0, 0, 1, 0, 0)
+wrote Docs/qa/fix-0915/item-76/probe-after.md

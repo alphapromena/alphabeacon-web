@@ -1,0 +1,11 @@
+lint exit: 0
+typecheck exit: 0
+guard-static exit: 0
+unit exit: 0
+[2m Test Files [22m [1m[32m73 passed[39m[22m[90m (73)[39m
+[2m      Tests [22m [1m[32m825 passed[39m[22m[90m (825)[39m
+static-e2e exit: 0
+Running 207 tests using 1 worker
+  90 skipped
+  117 passed (5.8m)
+SUMMARY: done rc=0

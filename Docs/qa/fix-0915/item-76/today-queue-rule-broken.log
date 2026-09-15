@@ -1,0 +1,37 @@
+
+Running 9 tests using 1 worker
+
+  ok 1 [chromium] › e2e\today-queue.spec.ts:32:1 › the queue groups drafts by slot and offers only legal actions (3.0s)
+  ok 2 [chromium] › e2e\today-queue.spec.ts:44:1 › @golden approving moves the card and updates the dashboard in the same session (2.9s)
+  ok 3 [chromium] › e2e\today-queue.spec.ts:71:1 › generating media spends credits, and the balance follows (6.0s)
+  ok 4 [chromium] › e2e\today-queue.spec.ts:96:1 › a short balance refuses the run and keeps the prompt (3.8s)
+  ok 5 [chromium] › e2e\today-queue.spec.ts:111:1 › scheduling reports per channel, and a re-auth channel cannot be picked (4.2s)
+  ok 6 [chromium] › e2e\today-queue.spec.ts:134:1 › draft detail shows the timeline and mirrors the queue actions (2.6s)
+  ok 7 [chromium] › e2e\today-queue.spec.ts:147:1 › rejecting asks why, and the draft leaves the queue (3.2s)
+  ok 8 [chromium] › e2e\today-queue.spec.ts:160:1 › @axe the queue and draft detail scan clean (3.3s)
+  x  9 [chromium] › e2e\today-queue.spec.ts:169:1 › @axe the Approve toast is readable from its first frame — it rises, it does not fade (item 76) (3.0s)
+
+
+  1) [chromium] › e2e\today-queue.spec.ts:169:1 › @axe the Approve toast is readable from its first frame — it rises, it does not fade (item 76) 
+
+    Error: the toast is at full opacity 80 ms in
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: "1"
+    Received: "0.31429"
+
+      183 |     return { opacity: s.opacity, transitionProperty: s.transitionProperty }
+      184 |   })
+    > 185 |   expect(style.opacity, 'the toast is at full opacity 80 ms in').toBe('1')
+          |                                                                  ^
+      186 |   expect(style.transitionProperty.split(',').map((p) => p.trim())).not.toContain('opacity')
+      187 |   const scan = await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze()
+      188 |   expect(scan.violations.filter((v) => v.id === 'color-contrast')).toEqual([])
+        at C:\alphabeacon-web\alphabeacon-web\e2e\today-queue.spec.ts:185:66
+
+    Error Context: test-results\today-queue--axe-the-Appro-41b5b-s-it-does-not-fade-item-76--chromium\error-context.md
+
+  1 failed
+    [chromium] › e2e\today-queue.spec.ts:169:1 › @axe the Approve toast is readable from its first frame — it rises, it does not fade (item 76) 
+  8 passed (36.6s)

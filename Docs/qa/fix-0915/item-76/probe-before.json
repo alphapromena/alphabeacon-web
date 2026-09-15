@@ -1,0 +1,147 @@
+{
+  "base": "http://localhost:5197",
+  "label": "before",
+  "motion": {
+    "name": "motion",
+    "samples": [
+      {
+        "t": 51,
+        "present": true,
+        "opacity": 0,
+        "transform": "matrix(1, 0, 0, 1, 0, 73.6875)",
+        "transitionProperty": "transform, opacity, height, box-shadow",
+        "text": "rgb(232, 232, 232)",
+        "fill": "rgb(22, 31, 38)",
+        "behind": "rgb(8, 13, 17)",
+        "rendered": 1,
+        "atRest": 13.62
+      },
+      {
+        "t": 85,
+        "present": true,
+        "opacity": 0.136938,
+        "transform": "matrix(1, 0, 0, 1, 0, 63.5968)",
+        "transitionProperty": "transform, opacity, height, box-shadow",
+        "text": "rgb(232, 232, 232)",
+        "fill": "rgb(22, 31, 38)",
+        "behind": "rgb(8, 13, 17)",
+        "rendered": 1.34,
+        "atRest": 13.62
+      },
+      {
+        "t": 168,
+        "present": true,
+        "opacity": 0.496939,
+        "transform": "matrix(1, 0, 0, 1, 0, 37.0693)",
+        "transitionProperty": "transform, opacity, height, box-shadow",
+        "text": "rgb(232, 232, 232)",
+        "fill": "rgb(22, 31, 38)",
+        "behind": "rgb(12, 18, 23)",
+        "rendered": 4.27,
+        "atRest": 13.62
+      },
+      {
+        "t": 401,
+        "present": true,
+        "opacity": 0.99609,
+        "transform": "matrix(1, 0, 0, 1, 0, 0.288148)",
+        "transitionProperty": "transform, opacity, height, box-shadow",
+        "text": "rgb(232, 232, 232)",
+        "fill": "rgb(22, 31, 38)",
+        "behind": "rgb(8, 13, 17)",
+        "rendered": 13.53,
+        "atRest": 13.62
+      }
+    ],
+    "axeAt80": {
+      "violations": 0,
+      "detail": ""
+    }
+  },
+  "reduced": {
+    "name": "reduced motion",
+    "samples": [
+      {
+        "t": 46,
+        "present": true,
+        "opacity": 1,
+        "transform": "matrix(1, 0, 0, 1, 0, 0)",
+        "transitionProperty": "none",
+        "text": "rgb(232, 232, 232)",
+        "fill": "rgb(22, 31, 38)",
+        "behind": "rgb(8, 13, 17)",
+        "rendered": 13.62,
+        "atRest": 13.62
+      },
+      {
+        "t": 89,
+        "present": true,
+        "opacity": 1,
+        "transform": "matrix(1, 0, 0, 1, 0, 0)",
+        "transitionProperty": "none",
+        "text": "rgb(232, 232, 232)",
+        "fill": "rgb(22, 31, 38)",
+        "behind": "rgb(8, 13, 17)",
+        "rendered": 13.62,
+        "atRest": 13.62
+      },
+      {
+        "t": 168,
+        "present": true,
+        "opacity": 1,
+        "transform": "matrix(1, 0, 0, 1, 0, 0)",
+        "transitionProperty": "none",
+        "text": "rgb(232, 232, 232)",
+        "fill": "rgb(22, 31, 38)",
+        "behind": "rgb(8, 13, 17)",
+        "rendered": 13.62,
+        "atRest": 13.62
+      },
+      {
+        "t": 408,
+        "present": true,
+        "opacity": 1,
+        "transform": "matrix(1, 0, 0, 1, 0, 0)",
+        "transitionProperty": "none",
+        "text": "rgb(232, 232, 232)",
+        "fill": "rgb(22, 31, 38)",
+        "behind": "rgb(8, 13, 17)",
+        "rendered": 13.62,
+        "atRest": 13.62
+      }
+    ],
+    "axeAt80": null
+  },
+  "checks": [
+    {
+      "check": "motion: the description reads ≥ 4.5:1 as rendered at every offset",
+      "ok": false,
+      "detail": "+51 ms → 1 (opacity 0); +85 ms → 1.34 (opacity 0.136938); +168 ms → 4.27 (opacity 0.496939); +401 ms → 13.53 (opacity 0.99609)"
+    },
+    {
+      "check": "motion: opacity is not a transitioned property on the toast",
+      "ok": false,
+      "detail": "transform, opacity, height, box-shadow"
+    },
+    {
+      "check": "axe at +80 ms: no color-contrast violation",
+      "ok": true,
+      "detail": "clean"
+    },
+    {
+      "check": "reduced motion: the description reads ≥ 4.5:1 as rendered at every offset",
+      "ok": true,
+      "detail": "+46 ms → 13.62 (opacity 1); +89 ms → 13.62 (opacity 1); +168 ms → 13.62 (opacity 1); +408 ms → 13.62 (opacity 1)"
+    },
+    {
+      "check": "reduced motion: opacity is not a transitioned property on the toast",
+      "ok": true,
+      "detail": "none"
+    },
+    {
+      "check": "reduced motion: the end state at the first sample (opacity 1, transform settled)",
+      "ok": true,
+      "detail": "+46 ms → opacity 1, transform matrix(1, 0, 0, 1, 0, 0)"
+    }
+  ]
+}

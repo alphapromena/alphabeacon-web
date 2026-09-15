@@ -1,0 +1,127 @@
+[36mvite v7.3.6 [32mbuilding client environment for production...[36m[39m
+transforming...
+[32m✓[39m 2855 modules transformed.
+rendering chunks...
+computing gzip size...
+[2m.gate/probe-dist/[22m[32mindex.html                                                    [39m[1m[2m  2.46 kB[22m[1m[22m[2m │ gzip:   0.87 kB[22m
+[2m.gate/probe-dist/[22m[32massets/dm-sans-latin-ext-opsz-normal-oos9povj.woff2           [39m[1m[2m 31.29 kB[22m[1m[22m
+[2m.gate/probe-dist/[22m[32massets/dm-sans-latin-ext-opsz-italic-DNX9AbKj.woff2           [39m[1m[2m 40.84 kB[22m[1m[22m
+[2m.gate/probe-dist/[22m[32massets/ibm-plex-sans-arabic-arabic-400-normal-CyU-ddYS.woff2  [39m[1m[2m 42.85 kB[22m[1m[22m
+[2m.gate/probe-dist/[22m[32massets/ibm-plex-sans-arabic-arabic-400-normal-EA1o-u_Q.woff   [39m[1m[2m 44.14 kB[22m[1m[22m
+[2m.gate/probe-dist/[22m[32massets/ibm-plex-sans-arabic-arabic-500-normal-C4MQITzh.woff2  [39m[1m[2m 45.30 kB[22m[1m[22m
+[2m.gate/probe-dist/[22m[32massets/ibm-plex-sans-arabic-arabic-600-normal-0pRdybE_.woff2  [39m[1m[2m 45.69 kB[22m[1m[22m
+[2m.gate/probe-dist/[22m[32massets/ibm-plex-sans-arabic-arabic-600-normal-MJZ0liF5.woff   [39m[1m[2m 46.78 kB[22m[1m[22m
+[2m.gate/probe-dist/[22m[32massets/ibm-plex-sans-arabic-arabic-500-normal-DPXcppbm.woff   [39m[1m[2m 46.92 kB[22m[1m[22m
+[2m.gate/probe-dist/[22m[32massets/dm-sans-latin-opsz-normal-Bf69Tn_J.woff2               [39m[1m[2m 62.72 kB[22m[1m[22m
+[2m.gate/probe-dist/[22m[32massets/dm-sans-latin-opsz-italic-C8i6y2Ft.woff2               [39m[1m[2m 76.25 kB[22m[1m[22m
+[2m.gate/probe-dist/[22m[35massets/legal-screens-DSRWV6hP.css                             [39m[1m[2m  4.26 kB[22m[1m[22m[2m │ gzip:   1.19 kB[22m
+[2m.gate/probe-dist/[22m[35massets/request-demo-screen-CG8IVRvO.css                       [39m[1m[2m  7.77 kB[22m[1m[22m[2m │ gzip:   2.05 kB[22m
+[2m.gate/probe-dist/[22m[35massets/pricing-screen-2fPdY0oe.css                            [39m[1m[2m 13.83 kB[22m[1m[22m[2m │ gzip:   2.95 kB[22m
+[2m.gate/probe-dist/[22m[35massets/index-Crfna5rg.css                                     [39m[1m[2m222.76 kB[22m[1m[22m[2m │ gzip:  37.21 kB[22m
+[2m.gate/probe-dist/[22m[36massets/error-reference-BC9CwbrY.js                            [39m[1m[2m  0.08 kB[22m[1m[22m[2m │ gzip:   0.09 kB[22m
+[2m.gate/probe-dist/[22m[36massets/check-D7rXQiGX.js                                      [39m[1m[2m  0.13 kB[22m[1m[22m[2m │ gzip:   0.14 kB[22m
+[2m.gate/probe-dist/[22m[36massets/chevron-down-Dchi6Ega.js                               [39m[1m[2m  0.13 kB[22m[1m[22m[2m │ gzip:   0.14 kB[22m
+[2m.gate/probe-dist/[22m[36massets/circle-BI0yjlbC.js                                     [39m[1m[2m  0.13 kB[22m[1m[22m[2m │ gzip:   0.13 kB[22m
+[2m.gate/probe-dist/[22m[36massets/plus-Cv0xd-IS.js                                       [39m[1m[2m  0.15 kB[22m[1m[22m[2m │ gzip:   0.15 kB[22m
+[2m.gate/probe-dist/[22m[36massets/x-DNBuMsRB.js                                          [39m[1m[2m  0.16 kB[22m[1m[22m[2m │ gzip:   0.15 kB[22m
+[2m.gate/probe-dist/[22m[36massets/arrow-left-e_LHXXtX.js                                 [39m[1m[2m  0.17 kB[22m[1m[22m[2m │ gzip:   0.16 kB[22m
+[2m.gate/probe-dist/[22m[36massets/skeleton-Br7we9oL.js                                   [39m[1m[2m  0.20 kB[22m[1m[22m[2m │ gzip:   0.17 kB[22m
+[2m.gate/probe-dist/[22m[36massets/lock-_aB51VGo.js                                       [39m[1m[2m  0.21 kB[22m[1m[22m[2m │ gzip:   0.19 kB[22m
+[2m.gate/probe-dist/[22m[36massets/tone-badge-CVdSlL45.js                                 [39m[1m[2m  0.22 kB[22m[1m[22m[2m │ gzip:   0.19 kB[22m
+[2m.gate/probe-dist/[22m[36massets/upload-jojUI5Y7.js                                     [39m[1m[2m  0.23 kB[22m[1m[22m[2m │ gzip:   0.19 kB[22m
+[2m.gate/probe-dist/[22m[36massets/copy-e8K3XxyI.js                                       [39m[1m[2m  0.24 kB[22m[1m[22m[2m │ gzip:   0.21 kB[22m
+[2m.gate/probe-dist/[22m[36massets/external-link-DhrVBqoA.js                              [39m[1m[2m  0.25 kB[22m[1m[22m[2m │ gzip:   0.20 kB[22m
+[2m.gate/probe-dist/[22m[36massets/pencil-DD6MCbqq.js                                     [39m[1m[2m  0.28 kB[22m[1m[22m[2m │ gzip:   0.23 kB[22m
+[2m.gate/probe-dist/[22m[36massets/mail-check-T-lIayqD.js                                 [39m[1m[2m  0.29 kB[22m[1m[22m[2m │ gzip:   0.23 kB[22m
+[2m.gate/probe-dist/[22m[36massets/mail-warning-DSAoptCk.js                               [39m[1m[2m  0.33 kB[22m[1m[22m[2m │ gzip:   0.24 kB[22m
+[2m.gate/probe-dist/[22m[36massets/trash-2-BcwWZM9C.js                                    [39m[1m[2m  0.33 kB[22m[1m[22m[2m │ gzip:   0.22 kB[22m
+[2m.gate/probe-dist/[22m[36massets/film-CZtcgWyk.js                                       [39m[1m[2m  0.41 kB[22m[1m[22m[2m │ gzip:   0.25 kB[22m
+[2m.gate/probe-dist/[22m[36massets/calendar-days-j-D8P-hz.js                              [39m[1m[2m  0.50 kB[22m[1m[22m[2m │ gzip:   0.27 kB[22m
+[2m.gate/probe-dist/[22m[36massets/label-BJcnflwK.js                                      [39m[1m[2m  0.68 kB[22m[1m[22m[2m │ gzip:   0.44 kB[22m
+[2m.gate/probe-dist/[22m[36massets/textarea-Ch_-kOkD.js                                   [39m[1m[2m  0.70 kB[22m[1m[22m[2m │ gzip:   0.38 kB[22m
+[2m.gate/probe-dist/[22m[36massets/format-CMzYPIAK.js                                     [39m[1m[2m  0.71 kB[22m[1m[22m[2m │ gzip:   0.41 kB[22m
+[2m.gate/probe-dist/[22m[36massets/posting-time-DuleP2Tb.js                               [39m[1m[2m  0.72 kB[22m[1m[22m[2m │ gzip:   0.45 kB[22m
+[2m.gate/probe-dist/[22m[36massets/input-DwMpC5Y4.js                                      [39m[1m[2m  0.83 kB[22m[1m[22m[2m │ gzip:   0.42 kB[22m
+[2m.gate/probe-dist/[22m[36massets/mono-number-kw5USq4t.js                                [39m[1m[2m  0.85 kB[22m[1m[22m[2m │ gzip:   0.51 kB[22m
+[2m.gate/probe-dist/[22m[36massets/account-lR4hue38.js                                    [39m[1m[2m  1.01 kB[22m[1m[22m[2m │ gzip:   0.48 kB[22m
+[2m.gate/probe-dist/[22m[36massets/error-state-Bv4xhRC4.js                                [39m[1m[2m  1.02 kB[22m[1m[22m[2m │ gzip:   0.54 kB[22m
+[2m.gate/probe-dist/[22m[36massets/platforms-B16RsWu7.js                                  [39m[1m[2m  1.03 kB[22m[1m[22m[2m │ gzip:   0.55 kB[22m
+[2m.gate/probe-dist/[22m[36massets/motion-EMPQBZcY.js                                     [39m[1m[2m  1.06 kB[22m[1m[22m[2m │ gzip:   0.60 kB[22m
+[2m.gate/probe-dist/[22m[36massets/not-found-BpxiYWg7.js                                  [39m[1m[2m  1.19 kB[22m[1m[22m[2m │ gzip:   0.59 kB[22m
+[2m.gate/probe-dist/[22m[36massets/slot-chip-DGkhnYGE.js                                  [39m[1m[2m  1.22 kB[22m[1m[22m[2m │ gzip:   0.57 kB[22m
+[2m.gate/probe-dist/[22m[36massets/badge-Cc2r8iLf.js                                      [39m[1m[2m  1.39 kB[22m[1m[22m[2m │ gzip:   0.65 kB[22m
+[2m.gate/probe-dist/[22m[36massets/password-strength-BznYe1Ag.js                          [39m[1m[2m  1.39 kB[22m[1m[22m[2m │ gzip:   0.67 kB[22m
+[2m.gate/probe-dist/[22m[36massets/timezone-DFOV_Yvd.js                                   [39m[1m[2m  1.42 kB[22m[1m[22m[2m │ gzip:   0.65 kB[22m
+[2m.gate/probe-dist/[22m[36massets/dev-datasets-DHqrvoUf.js                               [39m[1m[2m  1.47 kB[22m[1m[22m[2m │ gzip:   0.74 kB[22m
+[2m.gate/probe-dist/[22m[36massets/card-CZ7Ht07B.js                                       [39m[1m[2m  1.58 kB[22m[1m[22m[2m │ gzip:   0.59 kB[22m
+[2m.gate/probe-dist/[22m[36massets/empty-state-Cz5AUBjh.js                                [39m[1m[2m  1.80 kB[22m[1m[22m[2m │ gzip:   0.69 kB[22m
+[2m.gate/probe-dist/[22m[36massets/team-sTeusLs1.js                                       [39m[1m[2m  1.85 kB[22m[1m[22m[2m │ gzip:   0.79 kB[22m
+[2m.gate/probe-dist/[22m[36massets/scheduling-BTC4bisL.js                                 [39m[1m[2m  1.90 kB[22m[1m[22m[2m │ gzip:   0.74 kB[22m
+[2m.gate/probe-dist/[22m[36massets/claim-chip-DsgNuSG_.js                                 [39m[1m[2m  1.96 kB[22m[1m[22m[2m │ gzip:   1.03 kB[22m
+[2m.gate/probe-dist/[22m[36massets/use-job-poll-D-rq4fbg.js                               [39m[1m[2m  2.01 kB[22m[1m[22m[2m │ gzip:   1.07 kB[22m
+[2m.gate/probe-dist/[22m[36massets/stat-card-B2Gt8BxY.js                                  [39m[1m[2m  2.06 kB[22m[1m[22m[2m │ gzip:   0.90 kB[22m
+[2m.gate/probe-dist/[22m[36massets/save-bar-CLwe6NDd.js                                   [39m[1m[2m  2.19 kB[22m[1m[22m[2m │ gzip:   1.08 kB[22m
+[2m.gate/probe-dist/[22m[36massets/dialog-DkPIEafb.js                                     [39m[1m[2m  2.23 kB[22m[1m[22m[2m │ gzip:   0.89 kB[22m
+[2m.gate/probe-dist/[22m[36massets/empty-org-screen-D0v6tsdd.js                           [39m[1m[2m  2.34 kB[22m[1m[22m[2m │ gzip:   1.12 kB[22m
+[2m.gate/probe-dist/[22m[36massets/country-picker-BB2dvUXd.js                             [39m[1m[2m  2.54 kB[22m[1m[22m[2m │ gzip:   1.16 kB[22m
+[2m.gate/probe-dist/[22m[36massets/dev-states-C4LEDwGi.js                                 [39m[1m[2m  2.62 kB[22m[1m[22m[2m │ gzip:   0.99 kB[22m
+[2m.gate/probe-dist/[22m[36massets/sheet-COXzSrhK.js                                      [39m[1m[2m  2.63 kB[22m[1m[22m[2m │ gzip:   0.89 kB[22m
+[2m.gate/probe-dist/[22m[36massets/avatar-BD2cr1X2.js                                     [39m[1m[2m  2.68 kB[22m[1m[22m[2m │ gzip:   1.19 kB[22m
+[2m.gate/probe-dist/[22m[36massets/settings-layout-BVGUpnhG.js                            [39m[1m[2m  2.71 kB[22m[1m[22m[2m │ gzip:   1.44 kB[22m
+[2m.gate/probe-dist/[22m[36massets/skeletons-jmLBYbBP.js                                  [39m[1m[2m  2.74 kB[22m[1m[22m[2m │ gzip:   0.89 kB[22m
+[2m.gate/probe-dist/[22m[36massets/field-editors-BZIJVpV6.js                              [39m[1m[2m  2.81 kB[22m[1m[22m[2m │ gzip:   1.14 kB[22m
+[2m.gate/probe-dist/[22m[36massets/auth-layout-BS5CwLUv.js                                [39m[1m[2m  2.87 kB[22m[1m[22m[2m │ gzip:   1.27 kB[22m
+[2m.gate/probe-dist/[22m[36massets/signin-screen-va5HOfKd.js                              [39m[1m[2m  2.88 kB[22m[1m[22m[2m │ gzip:   1.43 kB[22m
+[2m.gate/probe-dist/[22m[36massets/auth-DxarsY1s.js                                       [39m[1m[2m  2.94 kB[22m[1m[22m[2m │ gzip:   1.03 kB[22m
+[2m.gate/probe-dist/[22m[36massets/button-nPIOOUpC.js                                     [39m[1m[2m  3.37 kB[22m[1m[22m[2m │ gzip:   1.27 kB[22m
+[2m.gate/probe-dist/[22m[36massets/setup-checklist-CgTRnc4C.js                            [39m[1m[2m  3.53 kB[22m[1m[22m[2m │ gzip:   1.39 kB[22m
+[2m.gate/probe-dist/[22m[36massets/accept-invite-screen-BCGAJYcr.js                       [39m[1m[2m  3.60 kB[22m[1m[22m[2m │ gzip:   1.73 kB[22m
+[2m.gate/probe-dist/[22m[36massets/status-badge-DQoZTpgm.js                               [39m[1m[2m  3.72 kB[22m[1m[22m[2m │ gzip:   1.45 kB[22m
+[2m.gate/probe-dist/[22m[36massets/signup-screen-C7UlrhTe.js                              [39m[1m[2m  3.73 kB[22m[1m[22m[2m │ gzip:   1.73 kB[22m
+[2m.gate/probe-dist/[22m[36massets/brand-PYruj9jQ.js                                      [39m[1m[2m  3.74 kB[22m[1m[22m[2m │ gzip:   1.53 kB[22m
+[2m.gate/probe-dist/[22m[36massets/brand-voice-screen-BSazvsYh.js                         [39m[1m[2m  3.85 kB[22m[1m[22m[2m │ gzip:   1.70 kB[22m
+[2m.gate/probe-dist/[22m[36massets/use-subscription-poll-BbhbzVV_.js                      [39m[1m[2m  4.19 kB[22m[1m[22m[2m │ gzip:   1.88 kB[22m
+[2m.gate/probe-dist/[22m[36massets/sources-screen-CllSzKoz.js                             [39m[1m[2m  4.23 kB[22m[1m[22m[2m │ gzip:   1.76 kB[22m
+[2m.gate/probe-dist/[22m[36massets/tones-screen-DTRRZOAH.js                               [39m[1m[2m  4.75 kB[22m[1m[22m[2m │ gzip:   1.74 kB[22m
+[2m.gate/probe-dist/[22m[36massets/checkbox-Cu6QIYEN.js                                   [39m[1m[2m  4.75 kB[22m[1m[22m[2m │ gzip:   2.02 kB[22m
+[2m.gate/probe-dist/[22m[36massets/switch-b1ZwbpnJ.js                                     [39m[1m[2m  4.81 kB[22m[1m[22m[2m │ gzip:   1.95 kB[22m
+[2m.gate/probe-dist/[22m[36massets/billing-success-screen-CArA59kc.js                     [39m[1m[2m  5.32 kB[22m[1m[22m[2m │ gzip:   1.67 kB[22m
+[2m.gate/probe-dist/[22m[36massets/tone-editor-D89OpjYZ.js                                [39m[1m[2m  5.39 kB[22m[1m[22m[2m │ gzip:   2.30 kB[22m
+[2m.gate/probe-dist/[22m[36massets/confirm-dialog-CXIp84et.js                             [39m[1m[2m  5.55 kB[22m[1m[22m[2m │ gzip:   1.76 kB[22m
+[2m.gate/probe-dist/[22m[36massets/reset-password-screen-C3R5K3gW.js                      [39m[1m[2m  5.67 kB[22m[1m[22m[2m │ gzip:   1.99 kB[22m
+[2m.gate/probe-dist/[22m[36massets/toggle-group-BHwO4H2_.js                               [39m[1m[2m  5.79 kB[22m[1m[22m[2m │ gzip:   2.00 kB[22m
+[2m.gate/probe-dist/[22m[36massets/dashboard-screen-BOxDjPpM.js                           [39m[1m[2m  5.97 kB[22m[1m[22m[2m │ gzip:   2.49 kB[22m
+[2m.gate/probe-dist/[22m[36massets/draft-detail-screen-Bd-atLQY.js                        [39m[1m[2m  6.56 kB[22m[1m[22m[2m │ gzip:   2.29 kB[22m
+[2m.gate/probe-dist/[22m[36massets/schedule-dialog-DqCAVAQ4.js                            [39m[1m[2m  7.03 kB[22m[1m[22m[2m │ gzip:   2.45 kB[22m
+[2m.gate/probe-dist/[22m[36massets/event-sources-screen-D0k-jKvW.js                       [39m[1m[2m  7.84 kB[22m[1m[22m[2m │ gzip:   3.11 kB[22m
+[2m.gate/probe-dist/[22m[36massets/composer-Ce4AvtEF.js                                   [39m[1m[2m  8.93 kB[22m[1m[22m[2m │ gzip:   3.41 kB[22m
+[2m.gate/probe-dist/[22m[36massets/team-screen-hAW2eKrC.js                                [39m[1m[2m  9.11 kB[22m[1m[22m[2m │ gzip:   3.23 kB[22m
+[2m.gate/probe-dist/[22m[36massets/billing-screen-DYkHojTK.js                             [39m[1m[2m  9.31 kB[22m[1m[22m[2m │ gzip:   3.04 kB[22m
+[2m.gate/probe-dist/[22m[36massets/request-demo-screen-B2_fxNRq.js                        [39m[1m[2m 11.01 kB[22m[1m[22m[2m │ gzip:   4.20 kB[22m
+[2m.gate/probe-dist/[22m[36massets/today-screen-NJncDZxr.js                               [39m[1m[2m 11.36 kB[22m[1m[22m[2m │ gzip:   4.26 kB[22m
+[2m.gate/probe-dist/[22m[36massets/index-kZrSO157.js                                      [39m[1m[2m 11.90 kB[22m[1m[22m[2m │ gzip:   4.51 kB[22m
+[2m.gate/probe-dist/[22m[36massets/schedule-config-screen-CcK-skaP.js                     [39m[1m[2m 12.22 kB[22m[1m[22m[2m │ gzip:   4.37 kB[22m
+[2m.gate/probe-dist/[22m[36massets/connections-screen-WkNOuaIX.js                         [39m[1m[2m 12.27 kB[22m[1m[22m[2m │ gzip:   3.77 kB[22m
+[2m.gate/probe-dist/[22m[36massets/organization-screen-B9CLeeP8.js                        [39m[1m[2m 12.82 kB[22m[1m[22m[2m │ gzip:   4.21 kB[22m
+[2m.gate/probe-dist/[22m[36massets/calendar-screen-BMfnuBXQ.js                            [39m[1m[2m 13.22 kB[22m[1m[22m[2m │ gzip:   4.61 kB[22m
+[2m.gate/probe-dist/[22m[36massets/verify-email-screen-DIBagcpv.js                        [39m[1m[2m 14.05 kB[22m[1m[22m[2m │ gzip:   5.61 kB[22m
+[2m.gate/probe-dist/[22m[36massets/dev-kitchen-sink-DABLVJqJ.js                           [39m[1m[2m 14.28 kB[22m[1m[22m[2m │ gzip:   5.17 kB[22m
+[2m.gate/probe-dist/[22m[36massets/legal-screens-D7l3mNxY.js                              [39m[1m[2m 15.55 kB[22m[1m[22m[2m │ gzip:   4.91 kB[22m
+[2m.gate/probe-dist/[22m[36massets/pricing-screen-OZASaIqq.js                             [39m[1m[2m 17.11 kB[22m[1m[22m[2m │ gzip:   5.32 kB[22m
+[2m.gate/probe-dist/[22m[36massets/billing-screens-BG5oiA9s.js                            [39m[1m[2m 17.44 kB[22m[1m[22m[2m │ gzip:   5.13 kB[22m
+[2m.gate/probe-dist/[22m[36massets/knowledge-screen-DJRCM3kc.js                           [39m[1m[2m 17.96 kB[22m[1m[22m[2m │ gzip:   6.38 kB[22m
+[2m.gate/probe-dist/[22m[36massets/index-KY5k8LoD.js                                      [39m[1m[2m 21.93 kB[22m[1m[22m[2m │ gzip:   7.98 kB[22m
+[2m.gate/probe-dist/[22m[36massets/use-draft-actions-DJCBgTja.js                          [39m[1m[2m 22.16 kB[22m[1m[22m[2m │ gzip:   7.67 kB[22m
+[2m.gate/probe-dist/[22m[36massets/generate-screen-C7NALi17.js                            [39m[1m[2m 22.85 kB[22m[1m[22m[2m │ gzip:   8.03 kB[22m
+[2m.gate/probe-dist/[22m[36massets/studio-BgNwEQyS.js                                     [39m[1m[2m 29.81 kB[22m[1m[22m[2m │ gzip:   9.89 kB[22m
+[2m.gate/probe-dist/[22m[36massets/studio-screens-CARERMjo.js                             [39m[1m[2m 39.11 kB[22m[1m[22m[2m │ gzip:  11.98 kB[22m
+[2m.gate/probe-dist/[22m[36massets/app-shell-D5BltPKC.js                                  [39m[1m[2m 40.27 kB[22m[1m[22m[2m │ gzip:  13.16 kB[22m
+[2m.gate/probe-dist/[22m[36massets/form-CDpLq6HH.js                                       [39m[1m[2m 40.50 kB[22m[1m[22m[2m │ gzip:  14.39 kB[22m
+[2m.gate/probe-dist/[22m[36massets/analytics-screens-BRrUxEq_.js                          [39m[1m[2m360.19 kB[22m[1m[22m[2m │ gzip: 108.20 kB[22m
+[2m.gate/probe-dist/[22m[36massets/index-BzQIenUz.js                                      [39m[1m[33m695.42 kB[39m[22m[2m │ gzip: 217.78 kB[22m
+[33m
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+[32m✓ built in 9.05s[39m

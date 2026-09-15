@@ -165,3 +165,25 @@ test('@axe the queue and draft detail scan clean', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Timeline' })).toBeVisible()
   expect((await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze()).violations).toEqual([])
 })
+
+test('@axe the Approve toast is readable from its first frame — it rises, it does not fade (item 76)', async ({
+  page,
+}) => {
+  await openTodayQueue(page)
+  await pendingCard(page).getByRole('button', { name: 'Approve' }).click()
+  // `.cn-toast` is the class ui/sonner.tsx puts on every toast. +80 ms is where
+  // TEST-0915 proof E caught sonner's 400 ms opacity ramp near 0.2 and axe
+  // failed the description; the unlayered rule in globals.css keeps the rise
+  // and drops the ramp, so at ANY instant the text is at full opacity.
+  const toast = page.locator('.cn-toast').first()
+  await expect(toast).toBeAttached()
+  await page.waitForTimeout(80)
+  const style = await toast.evaluate((el) => {
+    const s = getComputedStyle(el)
+    return { opacity: s.opacity, transitionProperty: s.transitionProperty }
+  })
+  expect(style.opacity, 'the toast is at full opacity 80 ms in').toBe('1')
+  expect(style.transitionProperty.split(',').map((p) => p.trim())).not.toContain('opacity')
+  const scan = await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze()
+  expect(scan.violations.filter((v) => v.id === 'color-contrast')).toEqual([])
+})
