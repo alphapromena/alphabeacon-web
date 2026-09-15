@@ -68,6 +68,49 @@ describe('first light, the moment', () => {
     expect(onDone).toHaveBeenCalledTimes(1)
   })
 
+  /*
+   * NIGHT-0916 order 4 (item 82; D-NIGHT-0916-D): the clock runs from the
+   * FIRST PAINT — two animation frames after mount — not from mount and never
+   * from arming. Under fake timers a frame is 16 ms, so the moment is due at
+   * 32 ms + FIRST_LIGHT_MS, and a clock started at mount would already have
+   * fired at FIRST_LIGHT_MS.
+   */
+  it('runs its clock from the first paint, not from mount', () => {
+    vi.useFakeTimers()
+    const onDone = vi.fn()
+    render(<FirstLight {...ACCOUNT} onDone={onDone} />)
+    // Two frames pass, then the whole hold: not yet — the clock began at the
+    // second frame, so the moment is still short by those two frames.
+    vi.advanceTimersByTime(FIRST_LIGHT_MS + 16)
+    expect(onDone).not.toHaveBeenCalled()
+    vi.advanceTimersByTime(32)
+    expect(onDone).toHaveBeenCalledTimes(1)
+  })
+
+  it('takes itself off the screen BEFORE it tells the app, so nothing the app is busy with can hold it there', () => {
+    vi.useFakeTimers()
+    let hiddenWhenTold: boolean | null = null
+    const onDone = vi.fn(() => {
+      // Read at the moment of the call: the node is already hidden.
+      hiddenWhenTold = screen.getByRole('status', { hidden: true }).hidden
+    })
+    render(<FirstLight {...ACCOUNT} onDone={onDone} />)
+    expect(screen.getByRole('status').hidden).toBe(false)
+    vi.advanceTimersByTime(FIRST_LIGHT_MS + 64)
+    expect(onDone).toHaveBeenCalledTimes(1)
+    expect(hiddenWhenTold).toBe(true)
+  })
+
+  it('a skip hides it the same way, at once', async () => {
+    let hiddenWhenTold: boolean | null = null
+    const onDone = vi.fn(() => {
+      hiddenWhenTold = screen.getByRole('status', { hidden: true }).hidden
+    })
+    render(<FirstLight {...ACCOUNT} onDone={onDone} />)
+    await userEvent.click(screen.getByRole('button', { name: 'Skip' }))
+    expect(hiddenWhenTold).toBe(true)
+  })
+
   it('is skippable by click, and by key, and both land in the same place', async () => {
     const byPointer = vi.fn()
     const { unmount } = render(<FirstLight {...ACCOUNT} onDone={byPointer} />)

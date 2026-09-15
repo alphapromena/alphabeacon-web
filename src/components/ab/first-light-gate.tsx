@@ -7,7 +7,14 @@
  *
  *   1. the verify flow armed it (a workspace was just created, and it landed);
  *   2. this account has never seen it (`lib/first-light.ts`, localStorage);
- *   3. this person has not asked for stillness.
+ *   3. this person has not asked for stillness;
+ *   4. the workspace is READY — the org is in the state the product renders
+ *      from, so the app under the overlay is the app the person lands in
+ *      (NIGHT-0916 order 4, item 82; D-NIGHT-0916-D). The overlay's own
+ *      clock runs from its first paint, so what the sync does after that
+ *      never stretches the moment; if the sync is still landing at the end,
+ *      the overlay leaves anyway and the screen shows its own state under the
+ *      220 ms skeleton rule.
  *
  * Condition 3 is JS rather than CSS because the overlay owns timers, and a
  * hidden-but-mounted overlay would still swallow two seconds of clicks. The
@@ -16,13 +23,14 @@
  */
 import { useEffect, useRef } from 'react'
 import { FirstLight } from '@/components/ab/first-light'
-import { useDataDispatch, useFirstLight } from '@/data/provider'
+import { useDataDispatch, useFirstLight, useOrg } from '@/data/provider'
 import { hasSeenFirstLight } from '@/lib/first-light'
 import { prefersReducedMotion } from '@/lib/reduced-motion'
 
 export function FirstLightGate() {
   const armed = useFirstLight()
   const dispatch = useDataDispatch()
+  const org = useOrg()
 
   /*
    * Decided ONCE per arming (TEST-0915, proof F on the built app against the
@@ -50,6 +58,9 @@ export function FirstLightGate() {
   }, [blocked, dispatch])
 
   if (!armed || blocked) return null
+  // Armed and allowed, but the workspace is not on screen yet: wait, without
+  // deciding again — the decision above is keyed by the arming, not by time.
+  if (!org.exists) return null
 
   return (
     <FirstLight

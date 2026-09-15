@@ -44,7 +44,7 @@ function Hand() {
   return null
 }
 
-function renderGate() {
+function renderGate(dataset: 'active' | 'visitor' = 'active') {
   const node: ReactNode = createElement(
     'div',
     null,
@@ -54,7 +54,7 @@ function renderGate() {
   const router = createMemoryRouter([
     {
       path: '/',
-      element: createElement(DataProvider, { initialDatasetId: 'active', children: node }),
+      element: createElement(DataProvider, { initialDatasetId: dataset, children: node }),
     },
   ])
   return render(<RouterProvider router={router} />)
@@ -89,6 +89,27 @@ describe('FirstLightGate', () => {
       dispatchRef!({ type: 'firstLight/arm', ...ACCOUNT })
     })
     expect(screen.queryByRole('status', { name: /Welcome to Malaky/ })).not.toBeInTheDocument()
+  })
+
+  /*
+   * NIGHT-0916 order 4 (item 82; D-NIGHT-0916-D): the overlay first paints
+   * only when the workspace is on screen — the org in the state the product
+   * renders from. Armed before that, it waits; it does not decide again, and
+   * the account's flag is not written until it actually plays.
+   */
+  it('waits for the workspace, then plays — armed on a world with no org yet', async () => {
+    renderGate('visitor')
+    await act(async () => {
+      dispatchRef!({ type: 'firstLight/arm', ...ACCOUNT })
+    })
+    expect(screen.queryByRole('status', { name: /Welcome to Malaky/ })).not.toBeInTheDocument()
+    // Not seen: nothing has played, so nothing is recorded.
+    expect(window.localStorage.getItem(firstLightKey(ACCOUNT.email))).toBeNull()
+    await act(async () => {
+      dispatchRef!({ type: 'workspace/created', name: 'Nova' })
+    })
+    expect(screen.getByRole('status', { name: /Welcome to Malaky, Dana/ })).toBeInTheDocument()
+    expect(window.localStorage.getItem(firstLightKey(ACCOUNT.email))).toBe('1')
   })
 
   it('is not mounted at all under reduced motion', async () => {

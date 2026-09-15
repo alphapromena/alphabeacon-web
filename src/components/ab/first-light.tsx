@@ -12,6 +12,16 @@
  * two-second ceiling the order sets, and the total is asserted rather than
  * eyeballed (`first-light.test.tsx`).
  *
+ * The clock starts at the overlay's FIRST PAINT — two animation frames after
+ * mount, the frame the browser has actually shown — not at mount and never at
+ * arming (NIGHT-0916 order 4, item 82; D-NIGHT-0916-D). Live, the workspace
+ * sync lands inside the moment, and a clock started at mount ran 2.2–2.3 s
+ * measured paint to removal (TEST-0915-2): the mount effect itself waited on
+ * the first commit, and the dismissal's re-render queued behind the sync's.
+ * So at the clock's end the overlay takes itself off the screen FIRST — the
+ * node is hidden synchronously — and only then tells the app; the sync can
+ * delay the unmount, never the leaving.
+ *
  * ## Skippable, and skipping lands in the same place
  *
  * Any click, any key. There is exactly one exit path — `finish()` — so
@@ -31,7 +41,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { markFirstLightSeen } from '@/lib/first-light'
 
-/** How long the whole moment is on screen. The order's ceiling is 2000ms. */
+/** How long the whole moment is on screen, from its first paint. The order's ceiling is 2000ms. */
 export const FIRST_LIGHT_MS = 1_800
 
 export function FirstLight({
@@ -46,6 +56,7 @@ export function FirstLight({
   onDone: () => void
 }) {
   const done = useRef(false)
+  const overlay = useRef<HTMLDivElement>(null)
   // The words arrive after the beacon rather than with it, and they arrive by
   // being rendered — never by fading, which is what put text under AA in
   // phase A (D-MOTION-0914-H).
@@ -54,15 +65,29 @@ export function FirstLight({
   const finish = useCallback(() => {
     if (done.current) return
     done.current = true
+    // Off the screen now, in this very task; the unmount follows whenever the
+    // app gets to it (a landing sync may be rendering first).
+    if (overlay.current) overlay.current.hidden = true
     onDone()
   }, [onDone])
 
   useEffect(() => {
     // Marked at the START: a reload halfway through must not replay it.
     markFirstLightSeen(email)
-    const light = window.setTimeout(() => setLit(true), 420)
-    const close = window.setTimeout(finish, FIRST_LIGHT_MS)
+    let light = 0
+    let close = 0
+    let secondFrame = 0
+    // First paint: the second animation frame after mount is the first one
+    // the browser has shown. The clock runs from there.
+    const firstFrame = window.requestAnimationFrame(() => {
+      secondFrame = window.requestAnimationFrame(() => {
+        light = window.setTimeout(() => setLit(true), 420)
+        close = window.setTimeout(finish, FIRST_LIGHT_MS)
+      })
+    })
     return () => {
+      window.cancelAnimationFrame(firstFrame)
+      window.cancelAnimationFrame(secondFrame)
       window.clearTimeout(light)
       window.clearTimeout(close)
     }
@@ -82,6 +107,7 @@ export function FirstLight({
 
   return (
     <div
+      ref={overlay}
       data-slot="first-light"
       /*
        * `role="status"` rather than `dialog`: nothing here is to be decided,
