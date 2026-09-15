@@ -1,0 +1,190 @@
+{
+  "base": "http://localhost:5199",
+  "label": "after",
+  "normal": [
+    {
+      "rail": "Today",
+      "ms": 338,
+      "sameIndicator": true
+    },
+    {
+      "rail": "Billing",
+      "ms": 322.2000000476837,
+      "sameIndicator": true
+    },
+    {
+      "rail": "Settings",
+      "ms": 657.5999999046326,
+      "sameIndicator": true
+    },
+    {
+      "rail": "Studio",
+      "ms": 338.40000009536743,
+      "sameIndicator": true
+    },
+    {
+      "rail": "Calendar",
+      "ms": 322.2999999523163,
+      "sameIndicator": true
+    },
+    {
+      "rail": "Today",
+      "ms": 51.80000019073486,
+      "sameIndicator": true
+    },
+    {
+      "rail": "Billing",
+      "ms": 24.899999856948853,
+      "sameIndicator": true
+    },
+    {
+      "rail": "Settings",
+      "ms": 66.79999995231628,
+      "sameIndicator": true
+    },
+    {
+      "rail": "Studio",
+      "ms": 31.799999952316284,
+      "sameIndicator": true
+    },
+    {
+      "rail": "Calendar",
+      "ms": 34.799999952316284,
+      "sameIndicator": true
+    },
+    {
+      "rail": "Today",
+      "ms": 48.200000047683716,
+      "sameIndicator": true
+    },
+    {
+      "rail": "Billing",
+      "ms": 23.299999952316284,
+      "sameIndicator": true
+    },
+    {
+      "rail": "Settings",
+      "ms": 64.59999990463257,
+      "sameIndicator": true
+    },
+    {
+      "rail": "Studio",
+      "ms": 29.5,
+      "sameIndicator": true
+    },
+    {
+      "rail": "Calendar",
+      "ms": 34.60000014305115,
+      "sameIndicator": true
+    }
+  ],
+  "reduced": [
+    {
+      "rail": "Today",
+      "ms": 337.2999999523163,
+      "sameIndicator": true
+    },
+    {
+      "rail": "Billing",
+      "ms": 334.2999999523163,
+      "sameIndicator": true
+    },
+    {
+      "rail": "Settings",
+      "ms": 649.8000001907349,
+      "sameIndicator": true
+    },
+    {
+      "rail": "Studio",
+      "ms": 338.80000019073486,
+      "sameIndicator": true
+    },
+    {
+      "rail": "Calendar",
+      "ms": 318.09999990463257,
+      "sameIndicator": true
+    },
+    {
+      "rail": "Today",
+      "ms": 48.799999952316284,
+      "sameIndicator": true
+    },
+    {
+      "rail": "Billing",
+      "ms": 24.09999990463257,
+      "sameIndicator": true
+    },
+    {
+      "rail": "Settings",
+      "ms": 66.80000019073486,
+      "sameIndicator": true
+    },
+    {
+      "rail": "Studio",
+      "ms": 30.799999952316284,
+      "sameIndicator": true
+    },
+    {
+      "rail": "Calendar",
+      "ms": 33.799999952316284,
+      "sameIndicator": true
+    },
+    {
+      "rail": "Today",
+      "ms": 49,
+      "sameIndicator": true
+    },
+    {
+      "rail": "Billing",
+      "ms": 22.300000190734863,
+      "sameIndicator": true
+    },
+    {
+      "rail": "Settings",
+      "ms": 66.60000014305115,
+      "sameIndicator": true
+    },
+    {
+      "rail": "Studio",
+      "ms": 30.399999856948853,
+      "sameIndicator": true
+    },
+    {
+      "rail": "Calendar",
+      "ms": 32.19999980926514,
+      "sameIndicator": true
+    }
+  ],
+  "checks": [
+    {
+      "check": "motion: every hop arrived (no timeout)",
+      "ok": true,
+      "detail": "0 timed out"
+    },
+    {
+      "check": "motion: the median arrival stays inside TEST-0915's 53–90 ms (the hard stop is a regression ABOVE it)",
+      "ok": true,
+      "detail": "median 52 ms, max 658 ms"
+    },
+    {
+      "check": "motion: the indicator is the same node after every hop",
+      "ok": true,
+      "detail": "0 of 15 hops re-created it"
+    },
+    {
+      "check": "reduced motion: every hop arrived (no timeout)",
+      "ok": true,
+      "detail": "0 timed out"
+    },
+    {
+      "check": "reduced motion: the median arrival stays inside TEST-0915's 53–90 ms (the hard stop is a regression ABOVE it)",
+      "ok": true,
+      "detail": "median 49 ms, max 650 ms"
+    },
+    {
+      "check": "reduced motion: the indicator is the same node after every hop",
+      "ok": true,
+      "detail": "0 of 15 hops re-created it"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+
+[1m[46m RUN [49m[22m [36mv3.2.7 [39m[90mC:/alphabeacon-web/alphabeacon-web[39m
+
+ [31m❯[39m src/components/ab/app-shell.test.tsx [2m([22m[2m4 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 1056[2mms[22m[39m
+   [32m✓[39m AppShell declares into the frame above it[2m > [22mthe top bar reads the screen: title, context, actions; the content lands in main[32m 165[2mms[22m[39m
+   [32m✓[39m AppShell declares into the frame above it[2m > [22ma screen with no frame above it says so, loudly[32m 5[2mms[22m[39m
+[31m   [31m×[31m one frame across a navigation[2m > [22mthe rail, its indicator and the main are the same nodes after the hop, and the top bar follows the screen[39m[32m 60[2mms[22m[39m
+[31m     → the indicator: expected null not to be null[39m
+   [33m[2m✓[22m[39m one frame across a navigation[2m > [22mthe content entrance plays once per arrival: on mount, off after its 600 ms, on again after the hop [33m 825[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 1 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m src/components/ab/app-shell.test.tsx[2m > [22mone frame across a navigation[2m > [22mthe rail, its indicator and the main are the same nodes after the hop, and the top bar follows the screen
+[31m[1mAssertionError[22m: the indicator: expected null not to be null[39m
+[36m [2m❯[22m src/components/ab/app-shell.test.tsx:[2m120:51[22m[39m
+    [90m118| [39m    const before = { rail: rail(), indicator: indicator(), main: main(…
+    [90m119| [39m    [34mexpect[39m(before[33m.[39mrail[33m,[39m [32m'the rail'[39m)[33m.[39mnot[33m.[39m[34mtoBeNull[39m()
+    [90m120| [39m    [34mexpect[39m(before[33m.[39mindicator[33m,[39m [32m'the indicator'[39m)[33m.[39mnot[33m.[39m[34mtoBeNull[39m()
+    [90m   | [39m                                                  [31m^[39m
+    [90m121| [39m
+    [90m122| [39m    fireEvent[33m.[39m[34mclick[39m(screen[33m.[39m[34mgetByRole[39m([32m'link'[39m[33m,[39m { name[33m:[39m [32m'to billing'[39m }))
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m3 passed[39m[22m[90m (4)[39m
+[2m   Start at [22m 20:15:58
+[2m   Duration [22m 4.00s[2m (transform 402ms, setup 347ms, collect 1.39s, tests 1.06s, environment 637ms, prepare 219ms)[22m
+

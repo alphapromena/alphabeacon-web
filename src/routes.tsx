@@ -36,7 +36,9 @@
  *   N3 is the retry surface for exactly that, not a journey to resume.
  */
 import { Suspense, lazy, type ComponentType, type ReactNode } from 'react'
-import { createBrowserRouter, Navigate } from 'react-router'
+import { createBrowserRouter, Navigate, Outlet, useLocation } from 'react-router'
+import { AppFrame } from '@/components/ab/app-shell'
+import { useInShellFrame } from '@/components/ab/shell-chrome'
 import { useOrg, useSession } from '@/data/provider'
 import { MarketingHome } from '@/features/marketing/home-screen'
 import { MarketingLayout } from '@/features/marketing/marketing-layout'
@@ -44,8 +46,19 @@ import { MarketingLayout } from '@/features/marketing/marketing-layout'
 /** The only visual between route resolution and a lazy chunk's arrival —
  * quiet, centered, and announced to assistive tech. */
 function RouteFallback() {
+  // Inside the signed-in frame the rail and the top bar stay up while a chunk
+  // arrives (ORDER-SHELL-0915), so the spinner centres in the frame's main
+  // rather than claiming the viewport.
+  const inFrame = useInShellFrame()
   return (
-    <div aria-busy="true" className="grid min-h-svh place-items-center bg-background">
+    <div
+      aria-busy="true"
+      className={
+        inFrame
+          ? 'flex flex-1 items-center justify-center'
+          : 'grid min-h-svh place-items-center bg-background'
+      }
+    >
       <span className="sr-only">Loading</span>
       <span
         aria-hidden
@@ -156,6 +169,44 @@ export function Authed({ children }: { children: ReactNode }) {
   return children
 }
 
+/** The visitor world's own paths — marketing chrome at any session state. */
+const MARKETING_PATHS = new Set(['/pricing', '/request-demo', '/privacy', '/terms'])
+
+/**
+ * ONE layout above both worlds (ORDER-SHELL-0915, item 77; state.md trap 8).
+ *
+ * Signed in with a workspace, on any path that is not the marketing site's,
+ * the app's frame — rail, top bar, banners, the section rhythm — mounts here
+ * exactly once and every app screen renders into its outlet: the rail and the
+ * one gold indicator in it survive navigation, so the indicator travels
+ * between screens instead of being re-created at the new row. That includes
+ * `/`, which `RootGate` resolves to the Dashboard — Dashboard → Today was
+ * the measured re-mount.
+ *
+ * Otherwise the visitor world's layout renders — for its four paths at any
+ * session state, and for `/`, which it gates itself (bare when signed in
+ * without a workspace, so N3 wears no chrome). An app path outside the frame
+ * world — signed out, or no workspace yet — passes the outlet through bare, so
+ * the guards on each route answer exactly as they always did: login, or N3.
+ * The auth screens, the redirects and the dev pages sit outside this layout
+ * altogether, as before.
+ */
+export function WorldLayout() {
+  const session = useSession()
+  const org = useOrg()
+  const { pathname } = useLocation()
+  const marketing = MARKETING_PATHS.has(pathname)
+  if (session.signedIn && org.exists && !marketing) {
+    return (
+      <AppFrame>
+        <Outlet />
+      </AppFrame>
+    )
+  }
+  if (marketing || pathname === '/') return <MarketingLayout />
+  return <Outlet />
+}
+
 /** Auth screens redirect away once there is nothing left to authenticate. */
 export function SignedOutOnly({ children }: { children: ReactNode }) {
   const session = useSession()
@@ -173,28 +224,7 @@ const devRoutes = import.meta.env.PROD
     ]
 
 export const router = createBrowserRouter([
-  /**
-   * The visitor world. One layout, five routes, one mounted header.
-   *
-   * '/' stays dual-purpose: `RootGate` resolves it to the Dashboard or N3 when
-   * signed in, and `MarketingLayout` drops its own chrome for exactly that
-   * case. The other four are marketing at any session state — /terms and
-   * /privacy are website documents, and the signup consent line links to them.
-   */
-  {
-    element: <MarketingLayout />,
-    children: [
-      { path: '/', element: <RootGate /> },
-      { path: '/pricing', element: el.pricing() },
-      { path: '/request-demo', element: el.requestDemo() },
-      // Public legal documents: real routes, linked from the marketing footer
-      // and the signup consent line.
-      { path: '/privacy', element: el.legal('privacy') },
-      { path: '/terms', element: el.legal('terms') },
-    ],
-  },
-
-  // Area A — auth
+  // Area A — auth (outside both worlds: no chrome at any session state)
   { path: '/signup', element: <SignedOutOnly>{el.signup()}</SignedOutOnly> },
   { path: '/login', element: <SignedOutOnly>{el.signin()}</SignedOutOnly> },
   { path: '/verify-email', element: el.verify() },
@@ -223,124 +253,155 @@ export const router = createBrowserRouter([
    */
   { path: '/request-access', element: <Navigate to="/request-demo" replace /> },
 
-  // Area D — the review queue
-  { path: '/today', element: <Authed>{el.today()}</Authed> },
-  { path: '/today/:id', element: <Authed>{el.draft()}</Authed> },
-
-  // Areas C and B — calendar, scheduling, connections
-  ...[
-    { path: '/calendar', element: el.calendar() },
-    { path: '/calendar/settings', element: el.schedule() },
-    { path: '/calendar/sources', element: el.eventSources() },
-    { path: '/connections', element: el.connections() },
-
-    // Area E — Creative Studio
-    { path: '/studio', element: el.studioGallery() },
-    { path: '/studio/new', element: el.studioComposer() },
-    { path: '/studio/jobs', element: el.studioJobs() },
-    { path: '/studio/assets/:id', element: el.studioAsset() },
-
-    // Area H — Billing. `/billing` and `/billing/success` are the product's
-    // (BIL-0902, wire); `/billing/plans`, `/billing/subscription` and
-    // `/billing/return` are the static demo's H1/H2/H4 and redirect to
-    // `/billing` in live mode; `/billing/balance` is H3 in both modes.
-    { path: '/billing', element: el.billing() },
-    { path: '/billing/success', element: el.billingSuccess() },
-    { path: '/billing/plans', element: el.billingPlans() },
-    { path: '/billing/subscription', element: el.billingSubscription() },
-    { path: '/billing/balance', element: el.billingBalance() },
-    // The old path stays reachable: it was linked from the shell chip, the
-    // dashboard tile and a live e2e spec, and a bookmark should not 404
-    // because the product renamed its vocabulary (E2E-0820 F4).
-    { path: '/billing/credits', element: <Navigate to="/billing/balance" replace /> },
-    { path: '/billing/return', element: el.billingReturn() },
-
-    // Area F — on-demand generate
-    { path: '/generate', element: el.generate() },
-
-    // Area G — analytics
-    { path: '/analytics', element: el.analytics() },
-    { path: '/analytics/:connectionId', element: el.analyticsChannel() },
-  ].map(({ path, element }) => ({ path, element: <Authed>{element}</Authed> })),
-
   /**
-   * Area I — settings. A NESTED layout, deliberately: the sections share one
-   * tablist, and mounting it once above the `Outlet` is what stops the focused
-   * tab being destroyed on every section change. Each child carries its own
-   * heading in `handle` (typed as `SettingsHandle`), because the layout owns
-   * the `h1` and there is exactly one per page.
+   * Both worlds under ONE layout (`WorldLayout`, ORDER-SHELL-0915).
+   *
+   * The visitor world: five routes, one mounted header. '/' stays
+   * dual-purpose: `RootGate` resolves it to the Dashboard or N3 when signed
+   * in, and the marketing layout drops its own chrome for exactly that case.
+   * The other four are marketing at any session state — /terms and /privacy
+   * are website documents, and the signup consent line links to them.
+   *
+   * The signed-in world: every app screen is a child here too, so the frame
+   * mounts once above all of them and the rail survives navigation.
    */
   {
-    path: '/settings',
-    element: <Authed>{el.settingsLayout()}</Authed>,
+    element: <WorldLayout />,
     children: [
-      // Every entry point into Settings lands on the org profile (I1).
-      { index: true, element: <Navigate to="/settings/organization" replace /> },
+      { path: '/', element: <RootGate /> },
+      { path: '/pricing', element: el.pricing() },
+      { path: '/request-demo', element: el.requestDemo() },
+      // Public legal documents: real routes, linked from the marketing footer
+      // and the signup consent line.
+      { path: '/privacy', element: el.legal('privacy') },
+      { path: '/terms', element: el.legal('terms') },
+
+      // Area D — the review queue
+      { path: '/today', element: <Authed>{el.today()}</Authed> },
+      { path: '/today/:id', element: <Authed>{el.draft()}</Authed> },
+
+      // Areas C and B — calendar, scheduling, connections
+      ...[
+        { path: '/calendar', element: el.calendar() },
+        { path: '/calendar/settings', element: el.schedule() },
+        { path: '/calendar/sources', element: el.eventSources() },
+        { path: '/connections', element: el.connections() },
+
+        // Area E — Creative Studio
+        { path: '/studio', element: el.studioGallery() },
+        { path: '/studio/new', element: el.studioComposer() },
+        { path: '/studio/jobs', element: el.studioJobs() },
+        { path: '/studio/assets/:id', element: el.studioAsset() },
+
+        // Area H — Billing. `/billing` and `/billing/success` are the product's
+        // (BIL-0902, wire); `/billing/plans`, `/billing/subscription` and
+        // `/billing/return` are the static demo's H1/H2/H4 and redirect to
+        // `/billing` in live mode; `/billing/balance` is H3 in both modes.
+        { path: '/billing', element: el.billing() },
+        { path: '/billing/success', element: el.billingSuccess() },
+        { path: '/billing/plans', element: el.billingPlans() },
+        { path: '/billing/subscription', element: el.billingSubscription() },
+        { path: '/billing/balance', element: el.billingBalance() },
+        // The old path stays reachable: it was linked from the shell chip, the
+        // dashboard tile and a live e2e spec, and a bookmark should not 404
+        // because the product renamed its vocabulary (E2E-0820 F4).
+        { path: '/billing/credits', element: <Navigate to="/billing/balance" replace /> },
+        { path: '/billing/return', element: el.billingReturn() },
+
+        // Area F — on-demand generate
+        { path: '/generate', element: el.generate() },
+
+        // Area G — analytics
+        { path: '/analytics', element: el.analytics() },
+        { path: '/analytics/:connectionId', element: el.analyticsChannel() },
+      ].map(({ path, element }) => ({ path, element: <Authed>{element}</Authed> })),
+
+      /**
+       * Area I — settings. A NESTED layout, deliberately: the sections share one
+       * tablist, and mounting it once above the `Outlet` is what stops the focused
+       * tab being destroyed on every section change. Each child carries its own
+       * heading in `handle` (typed as `SettingsHandle`), because the layout owns
+       * the `h1` and there is exactly one per page.
+       */
       {
-        path: 'organization',
-        element: el.settingsOrg(),
-        handle: { title: 'Organization', context: 'Who you are, and how drafts should sign off' },
-      },
-      {
-        path: 'brand-voice',
-        element: el.settingsBrandVoice(),
-        handle: {
-          title: 'Brand voice',
-          context:
-            'Permanent rules that apply to every piece of content, whatever tone it is written in',
-        },
-      },
-      {
-        path: 'tones',
-        element: el.settingsTones(),
-        handle: {
-          title: 'Tones',
-          context: 'Choose how Malaky should sound for different types of content',
-          wide: true,
-        },
-      },
-      {
-        path: 'tones/new',
-        element: el.settingsToneEditor(),
-        handle: {
-          title: 'New custom tone',
-          context: 'Brand voice always applies underneath — a tone shapes the style on top of it',
-        },
-      },
-      {
-        // The layout renames this one after the tone being edited.
-        path: 'tones/:toneId',
-        element: el.settingsToneEditor(),
-        handle: {
-          title: 'Edit tone',
-          context: 'Brand voice always applies underneath — a tone shapes the style on top of it',
-        },
-      },
-      {
-        path: 'sources',
-        element: el.settingsSources(),
-        handle: {
-          title: 'Sources & topics',
-          context: 'Sources are what Malaky watches. Topics are what Malaky cares about.',
-        },
-      },
-      {
-        path: 'knowledge',
-        element: el.settingsKnowledge(),
-        handle: {
-          title: 'Knowledge',
-          context: 'The approved business information Malaky uses to keep your marketing accurate',
-          wide: true,
-        },
-      },
-      {
-        path: 'team',
-        element: el.settingsTeam(),
-        handle: {
-          title: 'Team',
-          context: 'Who can see and approve what this workspace publishes',
-          wide: true,
-        },
+        path: '/settings',
+        element: <Authed>{el.settingsLayout()}</Authed>,
+        children: [
+          // Every entry point into Settings lands on the org profile (I1).
+          { index: true, element: <Navigate to="/settings/organization" replace /> },
+          {
+            path: 'organization',
+            element: el.settingsOrg(),
+            handle: {
+              title: 'Organization',
+              context: 'Who you are, and how drafts should sign off',
+            },
+          },
+          {
+            path: 'brand-voice',
+            element: el.settingsBrandVoice(),
+            handle: {
+              title: 'Brand voice',
+              context:
+                'Permanent rules that apply to every piece of content, whatever tone it is written in',
+            },
+          },
+          {
+            path: 'tones',
+            element: el.settingsTones(),
+            handle: {
+              title: 'Tones',
+              context: 'Choose how Malaky should sound for different types of content',
+              wide: true,
+            },
+          },
+          {
+            path: 'tones/new',
+            element: el.settingsToneEditor(),
+            handle: {
+              title: 'New custom tone',
+              context:
+                'Brand voice always applies underneath — a tone shapes the style on top of it',
+            },
+          },
+          {
+            // The layout renames this one after the tone being edited.
+            path: 'tones/:toneId',
+            element: el.settingsToneEditor(),
+            handle: {
+              title: 'Edit tone',
+              context:
+                'Brand voice always applies underneath — a tone shapes the style on top of it',
+            },
+          },
+          {
+            path: 'sources',
+            element: el.settingsSources(),
+            handle: {
+              title: 'Sources & topics',
+              context: 'Sources are what Malaky watches. Topics are what Malaky cares about.',
+            },
+          },
+          {
+            path: 'knowledge',
+            element: el.settingsKnowledge(),
+            handle: {
+              title: 'Knowledge',
+              context:
+                'The approved business information Malaky uses to keep your marketing accurate',
+              wide: true,
+            },
+          },
+          {
+            path: 'team',
+            element: el.settingsTeam(),
+            handle: {
+              title: 'Team',
+              context: 'Who can see and approve what this workspace publishes',
+              wide: true,
+            },
+          },
+        ],
       },
     ],
   },

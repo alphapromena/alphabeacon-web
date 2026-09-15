@@ -1,0 +1,72 @@
+
+Running 2 tests using 1 worker
+
+  x  1 [chromium] › e2e\shell-identity.spec.ts:96:1 › the rail, its indicator and the main are the same nodes from the Dashboard through Today, Billing, Calendar and Settings (3.9s)
+  x  2 [chromium] › e2e\shell-identity.spec.ts:105:3 › under reduced motion › the same walk keeps the same nodes (2.9s)
+
+
+  1) [chromium] › e2e\shell-identity.spec.ts:96:1 › the rail, its indicator and the main are the same nodes from the Dashboard through Today, Billing, Calendar and Settings 
+
+    Error: Billing: {"indicators":2,"tagged":true,"mains":2,"sameRail":true,"sameMain":true,"h1":"Today"}
+
+    expect(received).toMatchObject(expected)
+
+    - Expected  - 2
+    + Received  + 2
+
+      Object {
+    -   "indicators": 1,
+    -   "mains": 1,
+    +   "indicators": 2,
+    +   "mains": 2,
+        "sameMain": true,
+        "sameRail": true,
+        "tagged": true,
+      }
+
+      90 |     await expect(page.locator('[aria-busy="true"]')).toHaveCount(0)
+      91 |     const identity = await readShell(page)
+    > 92 |     expect(identity, `${stop.rail}: ${JSON.stringify(identity)}`).toMatchObject(SAME)
+         |                                                                   ^
+      93 |   }
+      94 | }
+      95 |
+        at walk (C:\alphabeacon-web\alphabeacon-web\e2e\shell-identity.spec.ts:92:67)
+        at C:\alphabeacon-web\alphabeacon-web\e2e\shell-identity.spec.ts:99:3
+
+    Error Context: test-results\shell-identity-the-rail-it-3a7d8-lling-Calendar-and-Settings-chromium\error-context.md
+
+  2) [chromium] › e2e\shell-identity.spec.ts:105:3 › under reduced motion › the same walk keeps the same nodes 
+
+    Error: Billing: {"indicators":2,"tagged":true,"mains":2,"sameRail":true,"sameMain":true,"h1":"Today"}
+
+    expect(received).toMatchObject(expected)
+
+    - Expected  - 2
+    + Received  + 2
+
+      Object {
+    -   "indicators": 1,
+    -   "mains": 1,
+    +   "indicators": 2,
+    +   "mains": 2,
+        "sameMain": true,
+        "sameRail": true,
+        "tagged": true,
+      }
+
+      90 |     await expect(page.locator('[aria-busy="true"]')).toHaveCount(0)
+      91 |     const identity = await readShell(page)
+    > 92 |     expect(identity, `${stop.rail}: ${JSON.stringify(identity)}`).toMatchObject(SAME)
+         |                                                                   ^
+      93 |   }
+      94 | }
+      95 |
+        at walk (C:\alphabeacon-web\alphabeacon-web\e2e\shell-identity.spec.ts:92:67)
+        at C:\alphabeacon-web\alphabeacon-web\e2e\shell-identity.spec.ts:106:5
+
+    Error Context: test-results\shell-identity-under-reduc-866be-e-walk-keeps-the-same-nodes-chromium\error-context.md
+
+  2 failed
+    [chromium] › e2e\shell-identity.spec.ts:96:1 › the rail, its indicator and the main are the same nodes from the Dashboard through Today, Billing, Calendar and Settings 
+    [chromium] › e2e\shell-identity.spec.ts:105:3 › under reduced motion › the same walk keeps the same nodes 

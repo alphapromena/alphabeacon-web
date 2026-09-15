@@ -1,0 +1,7 @@
+PASS · motion: every hop arrived (no timeout) · 0 timed out
+PASS · motion: the median arrival stays inside TEST-0915's 53–90 ms (the hard stop is a regression ABOVE it) · median 73 ms, max 670 ms
+FAIL · motion: the indicator is the same node after every hop · 15 of 15 hops re-created it
+PASS · reduced motion: every hop arrived (no timeout) · 0 timed out
+PASS · reduced motion: the median arrival stays inside TEST-0915's 53–90 ms (the hard stop is a regression ABOVE it) · median 77 ms, max 683 ms
+FAIL · reduced motion: the indicator is the same node after every hop · 15 of 15 hops re-created it
+wrote Docs/qa/shell-0915/timings-before.md

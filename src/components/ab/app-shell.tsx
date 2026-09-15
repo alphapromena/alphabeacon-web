@@ -7,6 +7,18 @@
  * Today (pulsing only while drafts actually wait), the notification bell's
  * quick glance, and the credit balance that gates the Studio.
  *
+ * TWO PIECES since ORDER-SHELL-0915 (item 77; state.md trap 8). `AppFrame`
+ * is the chrome itself and is mounted ONCE, by the signed-in world's layout
+ * route in `routes.tsx`, with every app screen rendered into its outlet — so
+ * the rail, the one gold indicator in it, the top bar and the section rhythm
+ * survive navigation, and the indicator can travel between screens instead of
+ * being re-created at the new row. `AppShell` keeps the signature every
+ * screen already renders — title, context, actions, children — and DECLARES
+ * that chrome to the frame above rather than mounting one of its own: it is
+ * the screen's half of the top bar, and its children go straight into the
+ * frame's `<main>`. A screen rendered with no frame above has nothing to
+ * declare to and says so loudly; nothing in the product does that.
+ *
  * Landmarks are deliberate: the rail is <nav>, the top bar a <header> banner,
  * and content a sibling <main> — the shadcn `SidebarInset` is skipped because
  * it *is* the <main>, which would nest the banner inside it.
@@ -26,13 +38,23 @@ import {
   Sparkles,
   UserRound,
 } from 'lucide-react'
-import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
+import {
+  memo,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type ReactNode,
+} from 'react'
 import { Link, useLocation } from 'react-router'
 import { MonoNumber } from '@/components/ab/mono-number'
 import { BeaconDot } from '@/components/ab/motion'
 import { NavIndicator } from '@/components/ab/nav-indicator'
 import { NotificationBell } from '@/components/ab/notification-bell'
 import { OfflineBanner } from '@/components/ab/offline-banner'
+import { ShellChromeContext, type ShellChrome } from '@/components/ab/shell-chrome'
 import { toastError, toastSuccess } from '@/components/ab/toast'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
@@ -90,25 +112,77 @@ const NAV = [
   { to: '/settings', label: 'Settings', icon: Settings, end: false },
 ] as const
 
+/**
+ * The frame re-renders whenever a screen declares its top bar and on every
+ * arrival. The rail and the top bar's chips take no props and subscribe to
+ * their own hooks, so they re-render only for their own reasons — a
+ * navigation costs the header, not the whole chrome.
+ */
+const Rail = memo(AppSidebar)
+const CreditChip = memo(PlanCreditChip)
+const Bell = memo(NotificationBell)
+const Account = memo(AccountMenu)
+
+/**
+ * The screen's half of the shell: declare the top bar, render the content.
+ * Same props every screen has always passed; the chrome they describe is the
+ * frame's, mounted once above the outlet this renders into.
+ */
 export function AppShell({
   title,
   context,
   actions,
   children,
+}: ShellChrome & { children: ReactNode }) {
+  const declare = useContext(ShellChromeContext)
+  // Before paint, so the top bar never shows the previous screen's title over
+  // this screen's content — the frame's state update is flushed in the same
+  // commit.
+  useLayoutEffect(() => {
+    declare?.({ title, context, actions })
+  }, [declare, title, context, actions])
+  if (!declare) {
+    throw new Error(
+      "AppShell renders under AppFrame — the signed-in world's layout route mounts the chrome once (item 77); a screen outside it has no frame to declare to.",
+    )
+  }
+  return <>{children}</>
+}
+
+/**
+ * The chrome, mounted ONCE by the layout route. Its top bar reads whatever the
+ * screen in its outlet declared; its main is where the screen renders.
+ */
+export function AppFrame({ children }: { children: ReactNode }) {
+  const [chrome, setChrome] = useState<ShellChrome>({ title: '' })
+  // A new location is a new arrival: the entrance re-arms per navigation,
+  // exactly as it did when every screen mounted a shell of its own.
+  const { key: arrivalKey } = useLocation()
+  const arrived = useContentEntrance(arrivalKey)
+  return (
+    <ShellChromeContext.Provider value={setChrome}>
+      <AppFrameChrome chrome={chrome} arrived={arrived}>
+        {children}
+      </AppFrameChrome>
+    </ShellChromeContext.Provider>
+  )
+}
+
+function AppFrameChrome({
+  chrome: { title, context, actions },
+  arrived,
+  children,
 }: {
-  title: string
-  /** The one-line status under the title, e.g. "5 drafts ready · generated 6:02 AM". */
-  context?: string
-  actions?: ReactNode
+  chrome: ShellChrome
+  arrived: boolean
   children: ReactNode
 }) {
-  const arrived = useContentEntrance()
   return (
     <SidebarProvider
       // 72px icon rail per screens4.md §0.2 (shadcn's default is 48px).
       style={{ '--sidebar-width-icon': '4.5rem' } as CSSProperties}
     >
-      <AppSidebar />
+      <Rail />
       <div className="flex min-w-0 flex-1 flex-col">
         {/* Chrome is RAISED, the work surface is the CANVAS below it. The top
             bar and the rail share --sidebar so the frame reads as one object
@@ -123,9 +197,9 @@ export function AppShell({
           </div>
           <div className="flex shrink-0 items-center gap-1">
             {actions}
-            <PlanCreditChip />
-            <NotificationBell />
-            <AccountMenu />
+            <CreditChip />
+            <Bell />
+            <Account />
           </div>
         </header>
         <OfflineBanner />
@@ -182,24 +256,33 @@ export function AppShell({
  * catch, so keying off one would have silently retired the entrance the
  * founder ruled should stay.
  *
- * So it fires when this shell first sees `ready` — immediately when there was
- * nothing to wait for, and after the wait when there was. One `AppShell` is
- * mounted per screen, so "first" is per arrival rather than per session.
+ * So it fires when the frame first sees `ready` FOR THIS ARRIVAL — immediately
+ * when there was nothing to wait for, and after the wait when there was. The
+ * frame is mounted once now (ORDER-SHELL-0915), so "first" is keyed on the
+ * location: each navigation is a new arrival and plays once, exactly as it
+ * did when every screen mounted a shell of its own. A new arrival inside the
+ * previous play's 600 ms starts clean — the attribute comes off before paint
+ * and goes back on in the next commit, so the animation restarts rather than
+ * running out the old clock.
  *
  * Still an edge, not a state: `phase === 'ready'` stays true for the life of a
  * loaded screen, and keying the animation off it would replay on every
  * re-render, which is the decorative entrance §5 bans.
  */
-function useContentEntrance(): boolean {
+function useContentEntrance(arrivalKey: string): boolean {
   const phase = useScreenPhase()
-  const played = useRef(false)
+  const playedFor = useRef<string | null>(null)
   const [arrived, setArrived] = useState(false)
 
+  useLayoutEffect(() => {
+    setArrived(false)
+  }, [arrivalKey])
+
   useEffect(() => {
-    if (phase !== 'ready' || played.current) return
-    played.current = true
+    if (phase !== 'ready' || playedFor.current === arrivalKey) return
+    playedFor.current = arrivalKey
     setArrived(true)
-  }, [phase])
+  }, [phase, arrivalKey])
 
   // One play, then off — so a re-render for any other reason cannot repeat it.
   useEffect(() => {

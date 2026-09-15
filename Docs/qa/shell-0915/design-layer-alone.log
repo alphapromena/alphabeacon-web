@@ -1,0 +1,32 @@
+
+Running 4 tests using 1 worker
+
+  ok 1 [chromium] › e2e\design-layer.spec.ts:95:1 › kitchen sink is clean in the one theme @axe (2.9s)
+  ok 2 [chromium] › e2e\design-layer.spec.ts:110:1 › reduced motion removes every signature animation @reduced-motion (1.2s)
+  ok 3 [chromium] › e2e\design-layer.spec.ts:144:1 › form surfaces the named validation message from the schema (822ms)
+  x  4 [chromium] › e2e\design-layer.spec.ts:165:1 › keyboard-only walk of the app shell (766ms)
+
+
+  1) [chromium] › e2e\design-layer.spec.ts:165:1 › keyboard-only walk of the app shell ─────────────
+
+    Error: the walk must reach the main content, not circle the chrome
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+      201 |     stops.some((stop) => stop.inMain),
+      202 |     'the walk must reach the main content, not circle the chrome',
+    > 203 |   ).toBe(true)
+          |     ^
+      204 |
+      205 |   // Enter has to activate what Tab reached. Dashboard is skipped: it points at
+      206 |   // the page we start on, so following it would prove nothing.
+        at C:\alphabeacon-web\alphabeacon-web\e2e\design-layer.spec.ts:203:5
+
+    Error Context: test-results\design-layer-keyboard-only-walk-of-the-app-shell-chromium\error-context.md
+
+  1 failed
+    [chromium] › e2e\design-layer.spec.ts:165:1 › keyboard-only walk of the app shell ──────────────
+  3 passed (10.3s)

@@ -166,6 +166,12 @@ test('keyboard-only walk of the app shell', async ({ page }) => {
   await page.goto('/')
   await expect(page.getByRole('banner')).toBeVisible()
   await expect(page.getByRole('main')).toBeVisible()
+  // The shell mounts once (ORDER-SHELL-0915, D-SHELL-0915-A): its main is up
+  // before the screen's chunk has arrived, with the busy fallback inside, so a
+  // visible main no longer means the screen is there. The Dashboard declares
+  // its own heading on arrival; wait for that, and for the busy marker to go.
+  await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible()
+  await expect(page.locator('[aria-busy="true"]')).toHaveCount(0)
 
   const stops: FocusStop[] = []
   for (let press = 1; press <= MAX_TAB_PRESSES; press += 1) {

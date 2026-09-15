@@ -1,0 +1,9 @@
+
+Running 4 tests using 1 worker
+
+  ok 1 [chromium] › e2e\design-layer.spec.ts:95:1 › kitchen sink is clean in the one theme @axe (2.7s)
+  ok 2 [chromium] › e2e\design-layer.spec.ts:110:1 › reduced motion removes every signature animation @reduced-motion (1.2s)
+  ok 3 [chromium] › e2e\design-layer.spec.ts:144:1 › form surfaces the named validation message from the schema (793ms)
+  ok 4 [chromium] › e2e\design-layer.spec.ts:165:1 › keyboard-only walk of the app shell (1.3s)
+
+  4 passed (10.8s)

@@ -1,0 +1,6 @@
+
+> alphabeacon-web@0.0.0 typecheck C:\alphabeacon-web\alphabeacon-web
+> tsc -b
+
+e2e/shell-identity.spec.ts(97,14): error TS2353: Object literal may only specify known properties, and 'reducedMotion' does not exist in type 'Fixtures<{}, {}, PlaywrightTestArgs & PlaywrightTestOptions, PlaywrightWorkerArgs & PlaywrightWorkerOptions>'.
+ ELIFECYCLE  Command failed with exit code 2.
