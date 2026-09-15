@@ -1,0 +1,17 @@
+login: html.class="dark" --background=#080d11 --primary=#ff4e2d body bg=rgb(8, 13, 17) font=""DM Sans Variable", -apple-system, Blink" frame on the auth page: 0 (must be 0) entry=assets/index-BVhSvkNX.js
+node:internal/process/promises:394
+    triggerUncaughtException(err, true /* fromPromise */);
+    ^
+
+locator.waitFor: Timeout 30000ms exceeded.
+Call log:
+[2m  - waiting for getByRole('heading', { name: 'Check your inbox' }) to be visible[22m
+
+    at main (C:\alphabeacon-web\alphabeacon-web\Docs\qa\test-0915-2\post-deploy\smoke.ts:89:65) {
+  log: [
+    "  - waiting for getByRole('heading', { name: 'Check your inbox' }) to be visible"
+  ],
+  name: 'TimeoutError'
+}
+
+Node.js v24.14.0
