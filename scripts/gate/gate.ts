@@ -46,7 +46,14 @@ import {
   treeHash,
   type E2eSummary,
 } from '../verify-lib'
-import { classifyResult, isRerunnable, redact, skipLabel, type Classification } from './classify'
+import {
+  classifyResult,
+  gateRoundGreen,
+  isRerunnable,
+  redact,
+  skipLabel,
+  type Classification,
+} from './classify'
 import { LANES, filesInLane, laneOf, type Lane } from './lanes'
 
 // ----------------------------------------------------------------- options
@@ -715,14 +722,7 @@ class Gate {
     }
 
     const last = rounds[rounds.length - 1] ?? []
-    const gateGreen =
-      last.length > 0 &&
-      last.every(
-        (r) =>
-          r.classification === 'green' ||
-          r.classification === 'skipped-all' ||
-          r.classification === 'network-lost',
-      )
+    const gateGreen = gateRoundGreen(last.map((r) => r.classification))
     const verdict = error
       ? 'STOPPED'
       : (staticHalf ? staticHalf.ok : true) && (this.opts.skipLive || gateGreen)
@@ -731,7 +731,7 @@ class Gate {
     lines.push(
       '## Verdict',
       '',
-      `**${verdict}** — ${(total / 60).toFixed(1)} min end to end. ${verdict === 'GREEN' ? 'Every red in the gate round was classified network-lost and re-run green, or there was none.' : 'See the rounds above; an UNCLASSIFIED red is classified before any fix.'}`,
+      `**${verdict}** — ${(total / 60).toFixed(1)} min end to end. ${verdict === 'GREEN' ? 'Every red in the gate round was classified network-lost or error-page and re-run green 3/3, or there was none.' : 'See the rounds above; an UNCLASSIFIED red is classified before any fix.'}`,
       '',
     )
     lines.push(

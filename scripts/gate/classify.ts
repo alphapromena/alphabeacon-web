@@ -60,11 +60,15 @@ export function isRerunnable(classification: Classification): boolean {
  * The round's verdict (§3.5): green when every file is green, all-skipped, or
  * one of the runner's own re-run classes — which the runner has already
  * downgraded to `unclassified` unless its re-runs came back green 3/3.
+ *
+ * TEST-0915 proof D found this forgave `network-lost` only: an `error-page`
+ * file re-run 3/3 green still read RED, half-wiring the 2026-09-13 rule. Both
+ * re-run classes count now, through the one predicate that names them.
  */
 export function gateRoundGreen(classifications: Classification[]): boolean {
   return (
     classifications.length > 0 &&
-    classifications.every((c) => c === 'green' || c === 'skipped-all' || c === 'network-lost')
+    classifications.every((c) => c === 'green' || c === 'skipped-all' || isRerunnable(c))
   )
 }
 
