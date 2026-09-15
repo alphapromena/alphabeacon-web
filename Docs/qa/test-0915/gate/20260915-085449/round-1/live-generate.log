@@ -1,0 +1,8 @@
+warm-up: skipped — the runner warmed the fleet and keeps the heartbeat (GATE-0910 §3.2)
+
+Running 2 tests using 1 worker
+
+  ok 1 [chromium] › e2e\live-generate.spec.ts:50:1 › a fresh owner + org, made through the product (22.7s)
+  ok 2 [chromium] › e2e\live-generate.spec.ts:69:1 › one balanced run returns a draft with its tone and its rationale (46.3s)
+
+  2 passed (1.2m)

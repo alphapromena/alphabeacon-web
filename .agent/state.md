@@ -5,7 +5,60 @@ without reconstructing it from the session log. **Update this file at the end
 of any turn that finishes a phase or changes the plan.** `sessions.md` is the
 chronological record; this is the current picture.
 
-_Last updated: 2026-09-15, after **ORDER MOTION-0914/B — the four moments.
+_Last updated: 2026-09-15, after **TEST-0915 — the named testing session on
+the `feat/motion-0914` stack tip. Gate run twice, four bucket-b regressions
+fixed, items 64 and 71 closed, the stack MERGED to `main` and `live`
+(fast-forward, one bundle on both hosts).**
+
+**THE SESSION IN ONE PARAGRAPH.** The 2026-09-13 ruling put live rounds in a
+named testing session; this was it. Every stage, both gates: lint · typecheck ·
+guard-static **373 clean** · unit **808/808 in 69 files → 817/817 in 71 files** · build · static e2e
+**115 / 0 / 85 serially** (four times, no flake) · the 21 live files one at a
+time on the built app with the dev base inlined. Gate 1 (tip `454e98e`)
+found two reds: `live-video-duration` (item 63, KNOWN — the over-maximum
+`durationS` is refused by the wallet, not by validation; reproduced at zero
+spend, requests `2f6229da…` / `81cf254c…`) and `live-scheduling`, which was a
+REAL regression: THEME-0913's SaveBar inferred "Saved" from a dirty edge and
+its cleanup cleared the reset timer, so an edit inside the 1.6 s left the bar
+stuck on "Saved" with no Save button, and a reload's sync said "Saved" for a
+save nobody made (`f2b1adc`, four unit tests, three red before). Gate 2 (tip
+`d793cb1`): gate 2 on `fb5c33b` (unit 815/815 in 71 files; static e2e 115 / 1 / 85 — the one red a bucket-a spec that had used the removed fake Connect success, updated under D-TEST-0915-C in `7e776b6`; live 19 of 21 green or all-skipped, `live-scheduling` green, two bucket-c reds: item 63, and item 58's five-reference body answering 400 at 09:00Z) and **gate 3 on `d793cb1`** — lint · typecheck · guard-static **373** · unit **817/817 in 71 files** · build · static e2e **116 / 0 / 85** in 340 s · live **20 of 21 green or all-skipped**, the one red `live-video-duration` = item 63 (bucket c); the five-reference body answered 502 again at 09:31Z, so item 58's answer flaps rather than having been fixed. **The final gate is clean except bucket c**.
+
+**FOUR BUCKET-B FIXES, EACH PROVEN BY BREAKING IT FIRST.** The SaveBar above
+(`f2b1adc`); the Connect return's "success" that toasted "Facebook connected ·
+Posting and analytics are on" for a connection the product cannot make
+(`7af4be5`, proof F, both modes — now "<Platform> is not linked yet" over the
+hub's own sentence, no state change); the first-light gate that re-read the
+flag the overlay itself writes, so a live sync dismissed the moment before it
+was seen (`b66b156`, proof F — on a fresh live account the flag was written
+and nothing ever mounted; now decided once per arming); and item 64's
+`input[id^="voice-do"]` prefix that typed do-rules into the Don't input
+(`454e98e`, spec-only, proven on orgs 2170 → 2171).
+
+**PROOFS A–I ON RECORD** (`Docs/qa/test-0915/`): the brand voice reads the
+canonical row in creation order with the owner-or-admin notice verbatim (org
+2199); the cap is 40 in the product below the wire's 50, measured both ways
+(org 2200: 45 → 44 → 43 saved; 51 → 400, 50 → 201); a refused save never says
+saved (and its in-screen alert is wiped by the failure path's resync — item
+73); the reporter's "not run" label and column and the widened error-page
+re-run (`gate/20260915-084209`, `gate/20260915-084446` error-page + re-run 3/3 but the verdict RED — the runner's verdict gap fixed in `299aff6` + `d793cb1`, GREEN at `gate/20260915-091544`); every moment scanned in flight
+(0 violations, except the toast's own entrance fade at +80 ms — item 76 —
+13.62:1 once up); first light 1806 ms, flag at 11 ms, once per account, never
+on reload, storage-throws → seen, reduced motion → not mounted; the skeleton
+painted 231 ms after mount and never on a finished screen; reduced motion
+collapses the scale with no control lost (40 vs 40); routes at 53–90 ms
+medians; the seed never reaches a live org (three fresh orgs, all wires 0);
+Connections and Analytics honest in both modes; the press step at 4.78:1 and
+`--c-accent-lo` absent; the indicator slides where its container persists
+(the settings tabs) and re-mounts between screens because every screen renders
+its own AppShell (item 77); design.md's repealed separation sentences
+corrected (proof H); the boot-path 401 lands on login, the mid-session one on
+`/` (item 75).
+
+**NEW ITEMS 73–77** (Hasan-side and rulings); items 64 and 71 CLOSED; 63 and
+70 annotated. **Merge:** `main` fast-forwarded to the close-out commit that carries this entry (the gated code tip is `d793cb1`; the merge SHA is in `Docs/qa/test-0915/run-log.md` and the session report), `live` fast-forwarded to `main`, one bundle on both hosts checked after the deploy.
+
+_Previously (2026-09-15, morning): after **ORDER MOTION-0914/B — the four moments.
 BUILT on `feat/motion-0914`, PUSHED, report-and-stop, NOT merged.**
 
 **FOUR MOMENTS, ONE FIGURE — the beacon, at four intensities.** No new colour,
@@ -1087,7 +1140,7 @@ below).
 |            |                                                        |
 | ---------- | ------------------------------------------------------ |
 | Remote     | `github.com/alphapromena/alphabeacon-web` (private)    |
-| `main`     | Production line, now at **`83fc942`** — **HSN-0910** (the Studio's 13-capability grid on one table, the capability composers, the org id in Settings, the no-production harness guard; ten commits on `feat/hsn-0910`) fast-forwarded and **pushed 2026-09-10** on the founder's word, `main:live` with it; production `dpl_4HmK6thTkPezvYMHSQuuhwputwtc` and the `live` preview `dpl_BvXcdyDLNdeRVikHriArxYaWFmMD` READY at `83fc942`, the bundle `index-Ckpi_DKM.js` on both hosts, production LIVE on the dev API base (the Production-scope `VITE_API_BASE_URL`, set by hand 10:51:50Z); rollback candidate the `1772734` pair. Before that **`5cbda94`** — **BIL-0902/R** (billing on Ward's corrected plans: Malaky Business / Malaky Scale monthly on the wire's own keys `base`/`pro`, the Enterprise card, `DASHBOARD_URL`, the funded-QA-org mechanism; eleven commits on `feat/bil-0902`) fast-forwarded and **pushed 2026-09-03** on the founder's word, `main:live` with it; production `dpl_3QpLH1SqJ5BrGbptusyp6TG5gZWs` and `live` `dpl_EjY9KcdJVFBqtR4NG7tx5m7SFUUn` READY, `1.malaky.ai` on `index-DUHITzRc.js`; rollback candidate the `d645607` pair (`dpl_85t8AoU2RX69XzPJvc5hAFEdkPrZ` / `dpl_F5HpQTqGSqdj8L83efJzG56K23UZ`). Before the merge it was `d645607` — **HSN-0902** (2026-09-02, see `feat/hsn-0902` below). Previously at **`6f45679`** — the whole **Hasan series** (HSN-01…04 plus the HSN-FINAL gate, fourteen commits across five stacked branches) fast-forwarded and **pushed 2026-08-30** on a green round 2, `main:live` with it. Vercel blocked the first deployment pair (private repo on the Hobby plan; commit author ≠ team owner); **on 2026-08-31 the founder reverted the repo to PUBLIC** and the re-triggered pair went **READY** at `0a5e84d` — production `dpl_5ASg1kwjqAsEAN45chuEukyjWwKJ`, `live` `dpl_HSvSjvQoQ437eCunKQCc7togzn7u` — with `1.malaky.ai` moving to `index-B6ntD0ng.js` and the zero-spend smoke green (31/32; the one FAIL was the smoke's own chunk regex, disproven by a direct chunk sweep). Before the merge it was `289cad5`. Previously at **`963c9f7`** — the whole **onboarding redesign** (ONB-0827 → 0827-B → 0827-C, fourteen commits across four stacked branches) fast-forwarded and **pushed 2026-08-30** on the founder's explicit approval, `main:live` with it. Before that push it was `fd84173`. The wizard is deleted, a fresh live org starts with zero tones, nothing generates before brand setup is complete, and a session opens in the org it remembers. Decisions D-ONB-A…F. Previously at **`039adfb`** — the whole **M2 design cycle** (`design/m2-concept-v2`, four commits) fast-forwarded and **pushed 2026-08-24** on the founder's explicit approval, `main:live` with it. Before that push it was `b8becc1`. Previously at **`b8becc1`** — the live-suite warm-up (`df23176` plus its close-out, three commits) fast-forwarded and pushed 2026-08-24, `main:live` with it. Before that push it was `5c01c68`. Previously at **`83ec448`** — the E2E-0820 triage (B1–B9, three commits) fast-forwarded and **pushed 2026-08-20** on the founder's explicit approval, `main:live` with it. Before that push it was `550f54e`. Previously at **`c6e3489`** — everything below PLUS the whole live integration (INT-6…12), merged as a fast-forward and **pushed 2026-08-19** on the founder's explicit approval. Before that push it was `6c598b2`. Open-items 16–18 still hold the human gates |
+| `main`     | Production line, now at **`d793cb1`** — **TEST-0915** (the four orders UX-0913, THEME-0913, DEMO-0914, MOTION-0914 plus the session's fixes) fast-forwarded and **pushed 2026-09-15**, `live` with it; `main` fast-forwarded to the close-out commit that carries this entry (the gated code tip is `d793cb1`; the merge SHA is in `Docs/qa/test-0915/run-log.md` and the session report), `live` fast-forwarded to `main`, one bundle on both hosts checked after the deploy. Before that **`83fc942`** — **HSN-0910** (the Studio's 13-capability grid on one table, the capability composers, the org id in Settings, the no-production harness guard; ten commits on `feat/hsn-0910`) fast-forwarded and **pushed 2026-09-10** on the founder's word, `main:live` with it; production `dpl_4HmK6thTkPezvYMHSQuuhwputwtc` and the `live` preview `dpl_BvXcdyDLNdeRVikHriArxYaWFmMD` READY at `83fc942`, the bundle `index-Ckpi_DKM.js` on both hosts, production LIVE on the dev API base (the Production-scope `VITE_API_BASE_URL`, set by hand 10:51:50Z); rollback candidate the `1772734` pair. Before that **`5cbda94`** — **BIL-0902/R** (billing on Ward's corrected plans: Malaky Business / Malaky Scale monthly on the wire's own keys `base`/`pro`, the Enterprise card, `DASHBOARD_URL`, the funded-QA-org mechanism; eleven commits on `feat/bil-0902`) fast-forwarded and **pushed 2026-09-03** on the founder's word, `main:live` with it; production `dpl_3QpLH1SqJ5BrGbptusyp6TG5gZWs` and `live` `dpl_EjY9KcdJVFBqtR4NG7tx5m7SFUUn` READY, `1.malaky.ai` on `index-DUHITzRc.js`; rollback candidate the `d645607` pair (`dpl_85t8AoU2RX69XzPJvc5hAFEdkPrZ` / `dpl_F5HpQTqGSqdj8L83efJzG56K23UZ`). Before the merge it was `d645607` — **HSN-0902** (2026-09-02, see `feat/hsn-0902` below). Previously at **`6f45679`** — the whole **Hasan series** (HSN-01…04 plus the HSN-FINAL gate, fourteen commits across five stacked branches) fast-forwarded and **pushed 2026-08-30** on a green round 2, `main:live` with it. Vercel blocked the first deployment pair (private repo on the Hobby plan; commit author ≠ team owner); **on 2026-08-31 the founder reverted the repo to PUBLIC** and the re-triggered pair went **READY** at `0a5e84d` — production `dpl_5ASg1kwjqAsEAN45chuEukyjWwKJ`, `live` `dpl_HSvSjvQoQ437eCunKQCc7togzn7u` — with `1.malaky.ai` moving to `index-B6ntD0ng.js` and the zero-spend smoke green (31/32; the one FAIL was the smoke's own chunk regex, disproven by a direct chunk sweep). Before the merge it was `289cad5`. Previously at **`963c9f7`** — the whole **onboarding redesign** (ONB-0827 → 0827-B → 0827-C, fourteen commits across four stacked branches) fast-forwarded and **pushed 2026-08-30** on the founder's explicit approval, `main:live` with it. Before that push it was `fd84173`. The wizard is deleted, a fresh live org starts with zero tones, nothing generates before brand setup is complete, and a session opens in the org it remembers. Decisions D-ONB-A…F. Previously at **`039adfb`** — the whole **M2 design cycle** (`design/m2-concept-v2`, four commits) fast-forwarded and **pushed 2026-08-24** on the founder's explicit approval, `main:live` with it. Before that push it was `b8becc1`. Previously at **`b8becc1`** — the live-suite warm-up (`df23176` plus its close-out, three commits) fast-forwarded and pushed 2026-08-24, `main:live` with it. Before that push it was `5c01c68`. Previously at **`83ec448`** — the E2E-0820 triage (B1–B9, three commits) fast-forwarded and **pushed 2026-08-20** on the founder's explicit approval, `main:live` with it. Before that push it was `550f54e`. Previously at **`c6e3489`** — everything below PLUS the whole live integration (INT-6…12), merged as a fast-forward and **pushed 2026-08-19** on the founder's explicit approval. Before that push it was `6c598b2`. Open-items 16–18 still hold the human gates |
 | `rb/02-v1-brief` | Website V1 per Abdullah's brief + the ambient idle drift + the M1 card-realism passes through 2026-08-12 — tip `6c598b2`, and `origin/main` is at the same commit, so the production line has all of it |
 | Local `main` ref | **No longer stale** (checked 2026-08-24): local `main` == `origin/main`, and this merge fast-forwards both. The 2026-08-17 warning stood because the local ref had never been fast-forwarded and `git log main..` over-reported by 22 commits — worth re-checking with `git rev-parse main origin/main` before trusting any local `main` comparison. |
 | `fix/e2e-0820` | **The E2E-0820 triage, 2026-08-20 — branched off `main` (`550f54e`), MERGED as a fast-forward and pushed; kept on `origin` as the per-fix record.** F3 Generate reachable from the rail/dashboard/Today, F4 the "credits" vocabulary + `/billing/balance`, F5 the pre-run count, F6 the tone-preview reference, F9 the balance chip's three states, F10 the stale results footer, F11 pluralization, F12 the wizard Finish (failure-tolerant, reported, idempotent), B9 the schedule draft reconciler + a blank schedule for a live org that has none. Gate output in the session entry |

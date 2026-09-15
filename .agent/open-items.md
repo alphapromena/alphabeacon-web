@@ -1316,6 +1316,14 @@ Numbering continues from 50. The record: `Docs/qa/hsn-0910/phase0/` and the
     instead of validating, so a user who could send five would be told to
     "try again later" for a body that can never succeed. The app enforces
     the 1–4 range client-side; asked of Hasan: a 400 that names the limit.
+    **TEST-0915 (2026-09-15): the answer FLAPS.** The same five-reference body
+    answered 502 at 07:44Z (gate 1, the spec's expectation), **400
+    `bad_request`** at 09:00Z (gate 2 — request `abc39336-4b76-4999-9edd-996da3dc516d`,
+    the generic sentence, no field named), and 502 again at 09:31Z (gate 3).
+    `live-media-capabilities` was red in gate 2 for that reason and green in
+    gates 1 and 3; classified bucket c (this item), spec untouched. For Hasan
+    with the two questions above: the upstream's answer to an over-limit body
+    is not stable between minutes.
 
 59. **live-auth test 3 encodes a dev-server artefact; the production build is
     the honest one (GATE-0910 Phase 0, 2026-09-10).** `DEFAULT_DATASET_ID`
@@ -1399,11 +1407,16 @@ Numbering continues from 50. The record: `Docs/qa/hsn-0910/phase0/` and the
     deliberate, the document should say so and the client should hold the
     maximum itself before spending. **No spec edit** — the spec posts to the
     API directly, not through the app, and stays as the document says until
-    Hasan answers (the founder's ruling, 2026-09-13).
+    Hasan answers (the founder's ruling, 2026-09-13). **TEST-0915 (2026-09-15):**
+    the same red in the session's first full gate (bucket c, KNOWN, no spec
+    edit) and reproduced at zero spend on throwaway org 2197 — `durationS:
+    "abc"` → 400 `bad_request` (request `2f6229da-b800-497a-b92e-06877bda2755`),
+    `durationS: 999` → 402 `wallet_insufficient` (`81cf254c-2cec-441d-bf7b-c7b3492caf91`),
+    wallet 0 → 0, no job. Still Hasan's.
 
-64. **`input[id^="voice-do"]` also matches the Don't rows — six call sites read
+64. **CLOSED 2026-09-15 (TEST-0915) — proven first on QA org 2170 through the affected write site byte-identical: with one Don't row stored, `input[id^="voice-do"]` matched only `voice-dont-0`, the stored Don't rule was overwritten and no do rule reached the wire (GET voices request `19beee5f-02b2-48b0-b191-bfcab36c2f1d`). Fixed by ONE helper, `addVoiceRule(page, 'Do' | "Don't", text)` in `e2e/live-setup.ts`, which targets the new row by the exact label `RuleList` writes (`Do rule N` / `Don't rule N`) with the row count read BEFORE Add, so nothing relies on DOM order; the six write sites and four read sites in `live-brand-rules`, `live-brand`, `live-onboarding` and `live-setup` (`ensureFundedBrand` on the shared org 1813, `completeBrandSetup`) moved to exact labels. Proven fixed on QA org 2171 with a Don't row present (`b21a362f-715e-4229-9291-905834df41d4`). Commit `454e98e`; no product code changed; record `Docs/qa/test-0915/item-64/`. Original text:** `input[id^="voice-do"]` also matches the Don't rows — six call sites read
     a list they do not name (found 2026-09-13 by the brand-voice removal
-    probe; NOT fixed, by the founder's word).** `RuleList` ids its inputs
+    probe; NOT fixed, by the founder's word). `RuleList` ids its inputs
     `<idPrefix>-<index>` (`src/features/settings/field-editors.tsx`), and the
     Brand voice screen passes `voice-do` and `voice-dont` — so the prefix
     `voice-do` is a prefix of `voice-dont` too, and
@@ -1625,8 +1638,15 @@ Numbering continues from 50. The record: `Docs/qa/hsn-0910/phase0/` and the
     specs' first-navigation assertions explicit `waitForURL`, which is exactly
     what fixed the THEME-0913 screenshot spec; or pin `--workers` for the
     entry-flow file, which is the one that carries signup state.
+    **TEST-0915 (2026-09-15):** the session's rule was `--workers=1` on every
+    Playwright command line; the static suite ran serially four times —
+    115 / 0 / 85 each time (350 s, 351 s, 351 s, 340 s) — with no flake, and the
+    live files ran one at a time through the runner. `playwright.config.ts`
+    was not edited. The remedies above are still the founder's to choose;
+    item 74 records that the runner's static half cannot take the worker
+    count from its command line.
 
-71. **Two LIVE spec edits are UNRUN and must not be assumed verified.**
+71. **CLOSED 2026-09-15 (TEST-0915) — `live-brand-kit.spec.ts` ran ALONE first, live, `--workers=1`, on the built app with the dev base inlined: 3 passed / 0 skipped / 0 failed in 33 s; both edited assertions (lines 116 and 157, `[data-slot="file-role-badge"]` → `Brand kit`) executed and the wire echoed a role the table maps. Record `Docs/qa/test-0915/gate/20260915-070659/` (tree `9d4fdbc`). Original text:** Two LIVE spec edits are UNRUN and must not be assumed verified.
     (2026-09-14, ORDER THEME-0913 close-out, filed on the founder's word.)
 
     `e2e/live-brand-kit.spec.ts` **line 116** and **line 157** were edited by
@@ -1685,3 +1705,108 @@ Numbering continues from 50. The record: `Docs/qa/hsn-0910/phase0/` and the
     **Action for a human:** decide whether the 20ms is worth an unlayered rule.
     If a future shadcn update changes that literal, or if the scale's `medium`
     moves far from 200ms, this stops being cosmetic and should be revisited.
+
+### TEST-0915 — the named testing session (2026-09-15)
+
+Numbering continues from 72. The record: `Docs/qa/test-0915/`.
+
+73. **A refused Brand voice save wipes its own refusal and the user's draft:
+    `saveBrandVoice`'s failure path resyncs, and the Settings layout unmounts
+    the screen while the sync runs.** (TEST-0915 proof C, on the built app
+    against the dev API, org 2199.) A PATCH answered 400 (intercepted, the
+    wire's envelope with `details[0].message` and a request id). The honesty
+    half held: no "Brand voice saved", and the error toast carried the wire's
+    own field message. But VOICE-0913's in-screen `role="alert"` with the
+    request id — and the draft the user had typed, and the Save button — were
+    gone within a second: `src/data/brand.ts` calls `resync()` in the catch
+    (since INT-3, 2026-07-30), `liveSyncPhase` goes `syncing`, and
+    `settings-layout.tsx` renders its skeleton instead of the outlet, so the
+    screen remounts pristine when the sync lands. The unit tests that proved
+    fix (3) render the screen under a mocked provider that never remounts,
+    which is why it was green. Pre-existing on `main`; not this stack's; not a
+    gate red. **Two candidate fixes, for a ruling:** (a) do not resync after a
+    4xx refusal — nothing changed on the wire, the client's saved state is
+    still the truth, and the draft and the alert survive (one line, but the
+    same `resync()` idiom sits in eight other brand seams); (b) keep the
+    resync but let the settings layout keep its outlet mounted during a
+    re-sync (a busy indicator instead of the skeleton), which touches every
+    settings screen's loading design. Evidence:
+    `Docs/qa/test-0915/proofs/proof-c-1-refused-save.png`,
+    `proof-c-2-three-seconds-later.png`, `proofs-live-run2.md`.
+
+74. **`pnpm gate`'s static half runs Playwright at the default worker count,
+    and nothing on its command line can change that.** (TEST-0915, item 70's
+    rule for a testing session is `--workers=1` on every Playwright command
+    line.) `scripts/verify-all.ts` spawns `pnpm exec playwright test
+    --reporter=list,json` with no `--workers`, and `gate.ts`'s `--workers`
+    reaches only the live lanes. This session ran the static suite directly
+    (`playwright test --workers=1`: 115 / 0 / 85 twice, 350 s and 351 s, no
+    flake) and the live half through `pnpm gate --skip-static`, so the seven
+    `verify:wNN` report checks were not part of the gate record. **For a
+    ruling:** give `verify:all` a `--workers <n>` pass-through (and `gate.ts`
+    hand its own value down), or accept that the static half of a testing
+    session runs outside the runner. Not a product item.
+
+75. **A 401 met MID-SESSION on an authed route lands on the marketing home,
+    not on login.** (TEST-0915 proof I, on the built app against the dev API,
+    org 2199.) The boot path is right: an expired or tampered token at reload
+    answers 401 on the first sync, the session is purged, the toast "Your
+    session ended. Sign in again to continue." shows, and the app lands on
+    `/login` (PASS, four runs). But a token REVOKED while the app holds it
+    (`POST /auth/logout` from outside, 204) and then a read from an authed
+    route (Settings) ends with the session purged and the URL at **`/`** — the
+    signed-out website home — with no toast on screen after a few seconds.
+    Mechanism, read in the code: `onUnauthorized` (`provider.tsx`) purges,
+    dispatches `live/sessionCleared`, toasts and pushes `/login`; the
+    provider's update renders the CURRENT authed route with `signedIn: false`
+    first, and `Authed` (`routes.tsx`) answers a signed-out render with
+    `<Navigate to="/" replace />`, which supersedes the push to `/login`
+    (React Router wraps its own navigation in a transition). Pre-existing on
+    `main` (INT-era code; the stack did not touch it); not a gate red; proof
+    I's expected end state ("lands on login") holds only for the boot path.
+    **For a ruling:** should `Authed` send a signed-out render to `/login`
+    (which also changes where an anonymous deep link to `/today` lands), or
+    should the 401 handler navigate through the router after the state
+    settles? Measured (run 6, sampled every 200 ms from the revocation, request `3c6f25d3…`): url `/ → /settings → /`; the toast and the purge both at 413 ms; `/login` never reached; no Sign in button at the end. Record `proofs/proofs-live-run6.md`.
+
+76. **The Approve toast's ENTRANCE fade puts its description under AA for the
+    first ~400 ms — sonner's own motion, not ours.** (TEST-0915 proof E,
+    axe mid-animation.) Scanned 80 ms after the Approve click, axe reported one
+    serious `color-contrast` node, `div[data-description]` of the toast;
+    scanned again once the toast was up it reported 0 violations and the
+    description measured **13.62:1** (`rgb(232,232,232)` on `rgb(22,31,38)`),
+    so D-MOTION-0914-L's fix stands. The transient is `sonner`'s default
+    entrance — `[data-sonner-toast] { opacity: 0; transition: transform 400ms,
+    opacity 400ms, … }` in `node_modules/sonner/dist/styles.css` — which
+    composites the text at partial opacity over the page for the first
+    frames. It is the same class of hazard D-MOTION-0914-H removed from the
+    content entrance ("nothing is rendered at reduced contrast at any
+    instant"), at a smaller scale and in a primitive this repo never hand-edits
+    (CLAUDE.md rule 3). MOTION-0914/B's +80 ms scan recorded 0 here; the
+    difference is timing, not the code. **For a ruling:** an unlayered rule in
+    `globals.css` that keeps the toast's slide and drops its opacity ramp (the
+    fourth mechanism rule 3 allows, with the arithmetic in the comment), or an
+    accepted transient. Not fixed here — it is a motion decision about every
+    toast in the product, not a bug in one.
+
+77. **The rail's gold indicator does not travel BETWEEN SCREENS: every screen
+    renders its own `AppShell`, so the rail — and the one indicator in it — is
+    re-created on each route change.** (TEST-0915 proof G, sampled at 8 ms on
+    the static dev server.) D-MOTION-0914-C built the right construction — ONE
+    `[data-slot='nav-indicator']` per rail, measured against the active row —
+    and recorded "measured sliding: translateY 4 → 36 → 132 → 228px across four
+    routes". Those are positions read after each navigation; the motion itself
+    was not sampled. Sampled, Dashboard → Today: the old node is gone and a
+    NEW node appears at 77 ms with `data-placed="false"`, its opacity ramps
+    from 0 (the silent first placement, then the `--motion-fast` fade), and only
+    two transforms are ever seen (the old position, the new) — no intermediate
+    frame, so nothing slides. Today → Billing: the same. The indicator DOES
+    slide where the container persists: the settings sub-nav between tabs
+    (see the run's next row), because `SettingsLayout` stays mounted. The
+    press step, the hover step and the rest of D-MOTION-0914-C stand; only the
+    between-route travel is unrealised. **The structural fix is state.md
+    trap 8's rule** — shared chrome belongs in a route layout above an
+    `Outlet` — which is an architecture change to how every signed-in screen
+    mounts its shell, not a testing-session fix. Until then the rail's
+    indicator appears at the new row in one fade; nothing is broken, the claim
+    is narrower than written. Evidence: `proofs/proofs-static-run2.md`.

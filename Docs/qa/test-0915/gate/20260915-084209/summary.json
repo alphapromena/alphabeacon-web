@@ -1,0 +1,72 @@
+{
+  "series": "test-0915",
+  "run": "20260915-084209",
+  "commit": "fb5c33b",
+  "dirty": true,
+  "startedAt": "2026-09-15T08:42:09.235Z",
+  "totalSeconds": 38.897,
+  "options": {
+    "series": "test-0915",
+    "workers": 1,
+    "rounds": 1,
+    "lanes": [
+      "A"
+    ],
+    "only": [
+      "live-brand-kit"
+    ],
+    "skipStatic": true,
+    "skipLive": false,
+    "funded": false,
+    "media": false,
+    "pool": false,
+    "port": 5199
+  },
+  "static": null,
+  "rounds": [
+    [
+      {
+        "file": "live-brand-kit",
+        "lane": "A",
+        "round": 1,
+        "attempt": 1,
+        "exit": 1,
+        "seconds": 9.845,
+        "summary": {
+          "passed": 0,
+          "failed": 1,
+          "skipped": 2,
+          "flaky": 0,
+          "tests": [
+            {
+              "title": "a fresh owner + org, made through the product",
+              "file": "live-brand-kit.spec.ts",
+              "status": "failed",
+              "tags": [],
+              "error": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('heading', { name: 'TEST-0915 deliberately absent' })\nExpected: visible\nTimeout: 1000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 1000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading', { name: 'TEST-0915 deliberately absent' })\u001b[22m\n",
+              "durationMs": 7941
+            },
+            {
+              "title": "the wire, from Node (NOT browser truth): presign the closed pair, PUT a tiny PDF, read the row back under Files, Delete, re-read",
+              "file": "live-brand-kit.spec.ts",
+              "status": "skipped",
+              "tags": [],
+              "durationMs": 0
+            },
+            {
+              "title": "browser truth: the Brand kit type sends a PDF from Chromium with nothing typed, it lists, and Delete removes it",
+              "file": "live-brand-kit.spec.ts",
+              "status": "skipped",
+              "tags": [],
+              "durationMs": 0
+            }
+          ]
+        },
+        "log": "round-1/live-brand-kit.log",
+        "startedAt": "2026-09-15T08:42:37.964Z",
+        "classification": "unclassified"
+      }
+    ]
+  ],
+  "verdict": "RED"
+}

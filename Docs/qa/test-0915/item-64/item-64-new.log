@@ -1,0 +1,21 @@
+=== item 64 proof · selector=new · org 2171 · start 2026-09-15T07:17:38Z
+
+warm-up: waking the API before the suite starts (https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/health)
+warm-up: service awake after 2 probe(s) in 0.7s — last 2: 328ms, 99ms
+warm-up: 12-way fleet warm after 1 burst(s), 1.0s total — slowest 302ms
+
+warm-up: heartbeat started — 4 probes every 5s for the life of the run
+
+
+Running 1 test using 1 worker
+
+[item-64 new] input[id^="voice-do"] matches before Add do: ["voice-dont-0"]
+[item-64 new] on screen before Save: Do rule 1 = "Name the farm when it matters" · Don't rule 1 = "Call anything artisanal"
+[item-64 new] wire rules after Save (request b21a362f-715e-4229-9291-905834df41d4): ["do: Name the farm when it matters","dont: Call anything artisanal"]
+  ok 1 [chromium] › e2e\item-64-proof.spec.ts:30:1 › item 64 (new selector): with one Don't row stored, "Add do" + fill lands the Do rule where the spec says it does (10.7s)
+
+warm-up: heartbeat stopped after 2 beat(s)
+
+  1 passed (16.4s)
+=== exit 0 · end 2026-09-15T07:17:56Z
+ITEM64_new_DONE

@@ -1,0 +1,10 @@
+warm-up: skipped — the runner warmed the fleet and keeps the heartbeat (GATE-0910 §3.2)
+
+Running 3 tests using 1 worker
+
+  ok 1 [chromium] › e2e\live-scheduling.spec.ts:57:1 › signup creates the workspace and NOTHING else (8.0s)
+  ok 2 [chromium] › e2e\live-scheduling.spec.ts:93:1 › C1 creates the schedule on first save, then PATCHes it — and it survives a reload (10.8s)
+  -  3 [chromium] › e2e\live-scheduling.spec.ts:185:1 › slots, if ingestion produced any, honour skip/un-skip and never offer approve
+
+  1 skipped
+  2 passed (22.9s)

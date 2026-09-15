@@ -1,0 +1,131 @@
+
+> alphabeacon-web@0.0.0 build C:\alphabeacon-web\alphabeacon-web
+> tsc -b && vite build
+
+[36mvite v7.3.6 [32mbuilding client environment for production...[36m[39m
+transforming...
+[32m✓[39m 2855 modules transformed.
+rendering chunks...
+computing gzip size...
+[2mdist/[22m[32mindex.html                                                    [39m[1m[2m  2.46 kB[22m[1m[22m[2m │ gzip:   0.87 kB[22m
+[2mdist/[22m[32massets/dm-sans-latin-ext-opsz-normal-oos9povj.woff2           [39m[1m[2m 31.29 kB[22m[1m[22m
+[2mdist/[22m[32massets/dm-sans-latin-ext-opsz-italic-DNX9AbKj.woff2           [39m[1m[2m 40.84 kB[22m[1m[22m
+[2mdist/[22m[32massets/ibm-plex-sans-arabic-arabic-400-normal-CyU-ddYS.woff2  [39m[1m[2m 42.85 kB[22m[1m[22m
+[2mdist/[22m[32massets/ibm-plex-sans-arabic-arabic-400-normal-EA1o-u_Q.woff   [39m[1m[2m 44.14 kB[22m[1m[22m
+[2mdist/[22m[32massets/ibm-plex-sans-arabic-arabic-500-normal-C4MQITzh.woff2  [39m[1m[2m 45.30 kB[22m[1m[22m
+[2mdist/[22m[32massets/ibm-plex-sans-arabic-arabic-600-normal-0pRdybE_.woff2  [39m[1m[2m 45.69 kB[22m[1m[22m
+[2mdist/[22m[32massets/ibm-plex-sans-arabic-arabic-600-normal-MJZ0liF5.woff   [39m[1m[2m 46.78 kB[22m[1m[22m
+[2mdist/[22m[32massets/ibm-plex-sans-arabic-arabic-500-normal-DPXcppbm.woff   [39m[1m[2m 46.92 kB[22m[1m[22m
+[2mdist/[22m[32massets/dm-sans-latin-opsz-normal-Bf69Tn_J.woff2               [39m[1m[2m 62.72 kB[22m[1m[22m
+[2mdist/[22m[32massets/dm-sans-latin-opsz-italic-C8i6y2Ft.woff2               [39m[1m[2m 76.25 kB[22m[1m[22m
+[2mdist/[22m[35massets/legal-screens-DSRWV6hP.css                             [39m[1m[2m  4.26 kB[22m[1m[22m[2m │ gzip:   1.19 kB[22m
+[2mdist/[22m[35massets/request-demo-screen-CG8IVRvO.css                       [39m[1m[2m  7.77 kB[22m[1m[22m[2m │ gzip:   2.05 kB[22m
+[2mdist/[22m[35massets/pricing-screen-2fPdY0oe.css                            [39m[1m[2m 13.83 kB[22m[1m[22m[2m │ gzip:   2.95 kB[22m
+[2mdist/[22m[35massets/index-DQcbA0WZ.css                                     [39m[1m[2m222.69 kB[22m[1m[22m[2m │ gzip:  37.18 kB[22m
+[2mdist/[22m[36massets/error-reference-BC9CwbrY.js                            [39m[1m[2m  0.08 kB[22m[1m[22m[2m │ gzip:   0.09 kB[22m
+[2mdist/[22m[36massets/check-BVXq-rQb.js                                      [39m[1m[2m  0.13 kB[22m[1m[22m[2m │ gzip:   0.14 kB[22m
+[2mdist/[22m[36massets/chevron-down-FRRXBY5a.js                               [39m[1m[2m  0.13 kB[22m[1m[22m[2m │ gzip:   0.14 kB[22m
+[2mdist/[22m[36massets/circle-BSGrTTpF.js                                     [39m[1m[2m  0.13 kB[22m[1m[22m[2m │ gzip:   0.13 kB[22m
+[2mdist/[22m[36massets/plus-CGtR9PZr.js                                       [39m[1m[2m  0.15 kB[22m[1m[22m[2m │ gzip:   0.15 kB[22m
+[2mdist/[22m[36massets/x-DKYlR-CT.js                                          [39m[1m[2m  0.16 kB[22m[1m[22m[2m │ gzip:   0.15 kB[22m
+[2mdist/[22m[36massets/arrow-left-D0SMEhxp.js                                 [39m[1m[2m  0.17 kB[22m[1m[22m[2m │ gzip:   0.16 kB[22m
+[2mdist/[22m[36massets/skeleton-DbRBYmxH.js                                   [39m[1m[2m  0.20 kB[22m[1m[22m[2m │ gzip:   0.17 kB[22m
+[2mdist/[22m[36massets/lock-2LdZvjMm.js                                       [39m[1m[2m  0.21 kB[22m[1m[22m[2m │ gzip:   0.19 kB[22m
+[2mdist/[22m[36massets/tone-badge-CJvfAmnn.js                                 [39m[1m[2m  0.22 kB[22m[1m[22m[2m │ gzip:   0.18 kB[22m
+[2mdist/[22m[36massets/upload-Ciimrzbz.js                                     [39m[1m[2m  0.23 kB[22m[1m[22m[2m │ gzip:   0.19 kB[22m
+[2mdist/[22m[36massets/copy-CKMqDmhm.js                                       [39m[1m[2m  0.24 kB[22m[1m[22m[2m │ gzip:   0.21 kB[22m
+[2mdist/[22m[36massets/external-link-Cr5VOBeh.js                              [39m[1m[2m  0.25 kB[22m[1m[22m[2m │ gzip:   0.20 kB[22m
+[2mdist/[22m[36massets/pencil-CY2DhL1_.js                                     [39m[1m[2m  0.28 kB[22m[1m[22m[2m │ gzip:   0.23 kB[22m
+[2mdist/[22m[36massets/mail-check-IrgXcH3y.js                                 [39m[1m[2m  0.29 kB[22m[1m[22m[2m │ gzip:   0.22 kB[22m
+[2mdist/[22m[36massets/mail-warning-CqG07XH_.js                               [39m[1m[2m  0.33 kB[22m[1m[22m[2m │ gzip:   0.24 kB[22m
+[2mdist/[22m[36massets/trash-2-DuXtvy21.js                                    [39m[1m[2m  0.33 kB[22m[1m[22m[2m │ gzip:   0.22 kB[22m
+[2mdist/[22m[36massets/film-DRW71myE.js                                       [39m[1m[2m  0.41 kB[22m[1m[22m[2m │ gzip:   0.24 kB[22m
+[2mdist/[22m[36massets/calendar-days-eeFz0zsc.js                              [39m[1m[2m  0.50 kB[22m[1m[22m[2m │ gzip:   0.27 kB[22m
+[2mdist/[22m[36massets/label-BZQkCWat.js                                      [39m[1m[2m  0.68 kB[22m[1m[22m[2m │ gzip:   0.44 kB[22m
+[2mdist/[22m[36massets/textarea-2tK9_L3Z.js                                   [39m[1m[2m  0.70 kB[22m[1m[22m[2m │ gzip:   0.38 kB[22m
+[2mdist/[22m[36massets/format-CMzYPIAK.js                                     [39m[1m[2m  0.71 kB[22m[1m[22m[2m │ gzip:   0.41 kB[22m
+[2mdist/[22m[36massets/posting-time-CFWLFDqp.js                               [39m[1m[2m  0.72 kB[22m[1m[22m[2m │ gzip:   0.45 kB[22m
+[2mdist/[22m[36massets/input-C_tUaHT4.js                                      [39m[1m[2m  0.83 kB[22m[1m[22m[2m │ gzip:   0.42 kB[22m
+[2mdist/[22m[36massets/mono-number-fcReGHEV.js                                [39m[1m[2m  0.85 kB[22m[1m[22m[2m │ gzip:   0.51 kB[22m
+[2mdist/[22m[36massets/account-BDZphLkX.js                                    [39m[1m[2m  1.01 kB[22m[1m[22m[2m │ gzip:   0.48 kB[22m
+[2mdist/[22m[36massets/error-state-Cqdflawa.js                                [39m[1m[2m  1.02 kB[22m[1m[22m[2m │ gzip:   0.53 kB[22m
+[2mdist/[22m[36massets/platforms-DBxKAti1.js                                  [39m[1m[2m  1.03 kB[22m[1m[22m[2m │ gzip:   0.55 kB[22m
+[2mdist/[22m[36massets/motion-BTFpWvFm.js                                     [39m[1m[2m  1.06 kB[22m[1m[22m[2m │ gzip:   0.60 kB[22m
+[2mdist/[22m[36massets/not-found-CyOaf6hk.js                                  [39m[1m[2m  1.19 kB[22m[1m[22m[2m │ gzip:   0.59 kB[22m
+[2mdist/[22m[36massets/slot-chip-DtkLGgG5.js                                  [39m[1m[2m  1.22 kB[22m[1m[22m[2m │ gzip:   0.57 kB[22m
+[2mdist/[22m[36massets/badge-DGzhgz7u.js                                      [39m[1m[2m  1.39 kB[22m[1m[22m[2m │ gzip:   0.65 kB[22m
+[2mdist/[22m[36massets/password-strength-BunxSvVB.js                          [39m[1m[2m  1.39 kB[22m[1m[22m[2m │ gzip:   0.67 kB[22m
+[2mdist/[22m[36massets/timezone-DFOV_Yvd.js                                   [39m[1m[2m  1.42 kB[22m[1m[22m[2m │ gzip:   0.65 kB[22m
+[2mdist/[22m[36massets/dev-datasets-q87yZ365.js                               [39m[1m[2m  1.47 kB[22m[1m[22m[2m │ gzip:   0.73 kB[22m
+[2mdist/[22m[36massets/card-DljyecLu.js                                       [39m[1m[2m  1.58 kB[22m[1m[22m[2m │ gzip:   0.59 kB[22m
+[2mdist/[22m[36massets/empty-state-DYPro7LP.js                                [39m[1m[2m  1.80 kB[22m[1m[22m[2m │ gzip:   0.69 kB[22m
+[2mdist/[22m[36massets/team-DXHofX6H.js                                       [39m[1m[2m  1.85 kB[22m[1m[22m[2m │ gzip:   0.79 kB[22m
+[2mdist/[22m[36massets/scheduling-CVgPvynP.js                                 [39m[1m[2m  1.90 kB[22m[1m[22m[2m │ gzip:   0.75 kB[22m
+[2mdist/[22m[36massets/claim-chip-D-W9x2XT.js                                 [39m[1m[2m  1.96 kB[22m[1m[22m[2m │ gzip:   1.03 kB[22m
+[2mdist/[22m[36massets/use-job-poll-BD7ZcIe2.js                               [39m[1m[2m  2.01 kB[22m[1m[22m[2m │ gzip:   1.07 kB[22m
+[2mdist/[22m[36massets/stat-card-Bw6kGFdw.js                                  [39m[1m[2m  2.06 kB[22m[1m[22m[2m │ gzip:   0.90 kB[22m
+[2mdist/[22m[36massets/save-bar-jGuQHNoy.js                                   [39m[1m[2m  2.19 kB[22m[1m[22m[2m │ gzip:   1.08 kB[22m
+[2mdist/[22m[36massets/dialog-BCwgOiPZ.js                                     [39m[1m[2m  2.23 kB[22m[1m[22m[2m │ gzip:   0.88 kB[22m
+[2mdist/[22m[36massets/empty-org-screen-Cj0U2yM1.js                           [39m[1m[2m  2.34 kB[22m[1m[22m[2m │ gzip:   1.12 kB[22m
+[2mdist/[22m[36massets/country-picker-e5G5St5y.js                             [39m[1m[2m  2.54 kB[22m[1m[22m[2m │ gzip:   1.16 kB[22m
+[2mdist/[22m[36massets/dev-states-x0TuUClT.js                                 [39m[1m[2m  2.62 kB[22m[1m[22m[2m │ gzip:   0.99 kB[22m
+[2mdist/[22m[36massets/sheet-DiforZZ0.js                                      [39m[1m[2m  2.63 kB[22m[1m[22m[2m │ gzip:   0.88 kB[22m
+[2mdist/[22m[36massets/avatar-D0lFOEDt.js                                     [39m[1m[2m  2.68 kB[22m[1m[22m[2m │ gzip:   1.19 kB[22m
+[2mdist/[22m[36massets/settings-layout-B4x-kovD.js                            [39m[1m[2m  2.71 kB[22m[1m[22m[2m │ gzip:   1.44 kB[22m
+[2mdist/[22m[36massets/skeletons-DfL4X1O2.js                                  [39m[1m[2m  2.74 kB[22m[1m[22m[2m │ gzip:   0.89 kB[22m
+[2mdist/[22m[36massets/field-editors-CqLlQxqY.js                              [39m[1m[2m  2.81 kB[22m[1m[22m[2m │ gzip:   1.14 kB[22m
+[2mdist/[22m[36massets/auth-layout-Bp1AI2YJ.js                                [39m[1m[2m  2.87 kB[22m[1m[22m[2m │ gzip:   1.27 kB[22m
+[2mdist/[22m[36massets/signin-screen-CFpq92Ze.js                              [39m[1m[2m  2.88 kB[22m[1m[22m[2m │ gzip:   1.43 kB[22m
+[2mdist/[22m[36massets/auth-D9X8XWiS.js                                       [39m[1m[2m  2.94 kB[22m[1m[22m[2m │ gzip:   1.03 kB[22m
+[2mdist/[22m[36massets/button-CoivyydT.js                                     [39m[1m[2m  3.37 kB[22m[1m[22m[2m │ gzip:   1.27 kB[22m
+[2mdist/[22m[36massets/setup-checklist-DsV7fGnE.js                            [39m[1m[2m  3.53 kB[22m[1m[22m[2m │ gzip:   1.39 kB[22m
+[2mdist/[22m[36massets/accept-invite-screen-D_2pFgab.js                       [39m[1m[2m  3.60 kB[22m[1m[22m[2m │ gzip:   1.73 kB[22m
+[2mdist/[22m[36massets/status-badge-BqB7azz-.js                               [39m[1m[2m  3.72 kB[22m[1m[22m[2m │ gzip:   1.45 kB[22m
+[2mdist/[22m[36massets/signup-screen-BnUdAYKw.js                              [39m[1m[2m  3.73 kB[22m[1m[22m[2m │ gzip:   1.73 kB[22m
+[2mdist/[22m[36massets/brand-BqWVhfWB.js                                      [39m[1m[2m  3.74 kB[22m[1m[22m[2m │ gzip:   1.53 kB[22m
+[2mdist/[22m[36massets/brand-voice-screen-CofA1lR9.js                         [39m[1m[2m  3.85 kB[22m[1m[22m[2m │ gzip:   1.70 kB[22m
+[2mdist/[22m[36massets/use-subscription-poll-BqzoBGYd.js                      [39m[1m[2m  4.19 kB[22m[1m[22m[2m │ gzip:   1.88 kB[22m
+[2mdist/[22m[36massets/sources-screen-B_bDHVD8.js                             [39m[1m[2m  4.23 kB[22m[1m[22m[2m │ gzip:   1.76 kB[22m
+[2mdist/[22m[36massets/tones-screen-Qscpyvmc.js                               [39m[1m[2m  4.75 kB[22m[1m[22m[2m │ gzip:   1.74 kB[22m
+[2mdist/[22m[36massets/checkbox-DAieea_y.js                                   [39m[1m[2m  4.75 kB[22m[1m[22m[2m │ gzip:   2.02 kB[22m
+[2mdist/[22m[36massets/switch-0o7DEhiQ.js                                     [39m[1m[2m  4.81 kB[22m[1m[22m[2m │ gzip:   1.95 kB[22m
+[2mdist/[22m[36massets/billing-success-screen-D7PXJAkb.js                     [39m[1m[2m  5.32 kB[22m[1m[22m[2m │ gzip:   1.66 kB[22m
+[2mdist/[22m[36massets/tone-editor-TQpTKYQ2.js                                [39m[1m[2m  5.39 kB[22m[1m[22m[2m │ gzip:   2.29 kB[22m
+[2mdist/[22m[36massets/confirm-dialog-DhnPk3mO.js                             [39m[1m[2m  5.55 kB[22m[1m[22m[2m │ gzip:   1.75 kB[22m
+[2mdist/[22m[36massets/reset-password-screen-BqHEeiI5.js                      [39m[1m[2m  5.67 kB[22m[1m[22m[2m │ gzip:   1.99 kB[22m
+[2mdist/[22m[36massets/toggle-group-du4kHkBC.js                               [39m[1m[2m  5.79 kB[22m[1m[22m[2m │ gzip:   2.00 kB[22m
+[2mdist/[22m[36massets/dashboard-screen-CuMHPVBr.js                           [39m[1m[2m  5.97 kB[22m[1m[22m[2m │ gzip:   2.49 kB[22m
+[2mdist/[22m[36massets/draft-detail-screen-Cvav6L3G.js                        [39m[1m[2m  6.56 kB[22m[1m[22m[2m │ gzip:   2.29 kB[22m
+[2mdist/[22m[36massets/schedule-dialog-DhB38EJQ.js                            [39m[1m[2m  7.03 kB[22m[1m[22m[2m │ gzip:   2.45 kB[22m
+[2mdist/[22m[36massets/event-sources-screen-l1K80fBr.js                       [39m[1m[2m  7.84 kB[22m[1m[22m[2m │ gzip:   3.11 kB[22m
+[2mdist/[22m[36massets/composer-9OqFj3HS.js                                   [39m[1m[2m  8.93 kB[22m[1m[22m[2m │ gzip:   3.41 kB[22m
+[2mdist/[22m[36massets/team-screen-BcN2PZOO.js                                [39m[1m[2m  9.11 kB[22m[1m[22m[2m │ gzip:   3.23 kB[22m
+[2mdist/[22m[36massets/billing-screen-F_fk9WEb.js                             [39m[1m[2m  9.31 kB[22m[1m[22m[2m │ gzip:   3.04 kB[22m
+[2mdist/[22m[36massets/request-demo-screen-BpqtyEU8.js                        [39m[1m[2m 11.01 kB[22m[1m[22m[2m │ gzip:   4.20 kB[22m
+[2mdist/[22m[36massets/today-screen-MRQiQwJQ.js                               [39m[1m[2m 11.36 kB[22m[1m[22m[2m │ gzip:   4.25 kB[22m
+[2mdist/[22m[36massets/index-gBI_yW9q.js                                      [39m[1m[2m 11.90 kB[22m[1m[22m[2m │ gzip:   4.51 kB[22m
+[2mdist/[22m[36massets/schedule-config-screen-DIRlCEGs.js                     [39m[1m[2m 12.22 kB[22m[1m[22m[2m │ gzip:   4.36 kB[22m
+[2mdist/[22m[36massets/connections-screen-DHy-O3Lm.js                         [39m[1m[2m 12.27 kB[22m[1m[22m[2m │ gzip:   3.77 kB[22m
+[2mdist/[22m[36massets/organization-screen-CVv2jSdn.js                        [39m[1m[2m 12.82 kB[22m[1m[22m[2m │ gzip:   4.21 kB[22m
+[2mdist/[22m[36massets/calendar-screen-IxvDKzi_.js                            [39m[1m[2m 13.22 kB[22m[1m[22m[2m │ gzip:   4.60 kB[22m
+[2mdist/[22m[36massets/verify-email-screen-DN5JXORD.js                        [39m[1m[2m 14.05 kB[22m[1m[22m[2m │ gzip:   5.62 kB[22m
+[2mdist/[22m[36massets/dev-kitchen-sink-fvf8fKpO.js                           [39m[1m[2m 14.28 kB[22m[1m[22m[2m │ gzip:   5.16 kB[22m
+[2mdist/[22m[36massets/legal-screens-CHhCqt14.js                              [39m[1m[2m 15.55 kB[22m[1m[22m[2m │ gzip:   4.91 kB[22m
+[2mdist/[22m[36massets/pricing-screen-lvHCwwj9.js                             [39m[1m[2m 17.11 kB[22m[1m[22m[2m │ gzip:   5.32 kB[22m
+[2mdist/[22m[36massets/billing-screens-DK0uv6If.js                            [39m[1m[2m 17.44 kB[22m[1m[22m[2m │ gzip:   5.13 kB[22m
+[2mdist/[22m[36massets/knowledge-screen-DKOxmrWI.js                           [39m[1m[2m 17.96 kB[22m[1m[22m[2m │ gzip:   6.37 kB[22m
+[2mdist/[22m[36massets/index-cjNrunki.js                                      [39m[1m[2m 21.93 kB[22m[1m[22m[2m │ gzip:   7.98 kB[22m
+[2mdist/[22m[36massets/use-draft-actions-Ce4XrkiP.js                          [39m[1m[2m 22.16 kB[22m[1m[22m[2m │ gzip:   7.67 kB[22m
+[2mdist/[22m[36massets/generate-screen-D6n9Dutb.js                            [39m[1m[2m 22.85 kB[22m[1m[22m[2m │ gzip:   8.03 kB[22m
+[2mdist/[22m[36massets/studio-cec0SOhP.js                                     [39m[1m[2m 29.81 kB[22m[1m[22m[2m │ gzip:   9.89 kB[22m
+[2mdist/[22m[36massets/studio-screens-33RjCkmC.js                             [39m[1m[2m 39.11 kB[22m[1m[22m[2m │ gzip:  11.98 kB[22m
+[2mdist/[22m[36massets/app-shell-B9ndsy4-.js                                  [39m[1m[2m 40.27 kB[22m[1m[22m[2m │ gzip:  13.16 kB[22m
+[2mdist/[22m[36massets/form-B-OlswsE.js                                       [39m[1m[2m 40.50 kB[22m[1m[22m[2m │ gzip:  14.39 kB[22m
+[2mdist/[22m[36massets/analytics-screens-DmnltUCb.js                          [39m[1m[2m360.19 kB[22m[1m[22m[2m │ gzip: 108.20 kB[22m
+[2mdist/[22m[36massets/index-DtaK8Nrx.js                                      [39m[1m[33m695.50 kB[39m[22m[2m │ gzip: 217.85 kB[22m
+[32m✓ built in 8.99s[39m
+[33m
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m

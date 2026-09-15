@@ -1,0 +1,28 @@
+
+Running 23 tests using 1 worker
+
+  ok  1 [chromium] › e2e\compose-analytics-settings.spec.ts:38:1 › a workspace with unfinished setup cannot generate, and the screen says why (3.4s)
+  ok  2 [chromium] › e2e\compose-analytics-settings.spec.ts:69:1 › the checklist links reach the screens that complete each item (2.9s)
+  ok  3 [chromium] › e2e\compose-analytics-settings.spec.ts:82:1 › the Studio composer is gated too — no media job before setup (1.8s)
+  ok  4 [chromium] › e2e\compose-analytics-settings.spec.ts:90:1 › a finished workspace shows no checklist card and generates normally (2.5s)
+  ok  5 [chromium] › e2e\compose-analytics-settings.spec.ts:102:1 › @axe the checklist card and the blocked generate state scan clean (2.9s)
+  ok  6 [chromium] › e2e\compose-analytics-settings.spec.ts:116:1 › @golden a finished run becomes an ordinary draft with the full action row (5.8s)
+  ok  7 [chromium] › e2e\compose-analytics-settings.spec.ts:136:1 › a guardrail flags a claim mid-run without hiding a word of it (4.5s)
+  ok  8 [chromium] › e2e\compose-analytics-settings.spec.ts:146:1 › a dropped stream keeps the partial text and offers to pick it up (5.2s)
+  ok  9 [chromium] › e2e\compose-analytics-settings.spec.ts:160:1 › stopping keeps what arrived and can be resumed (8.2s)
+  ok 10 [chromium] › e2e\compose-analytics-settings.spec.ts:177:1 › the on-demand allowance runs out, and says so instead of failing quietly (2.9s)
+  ok 11 [chromium] › e2e\compose-analytics-settings.spec.ts:202:1 › the overview totals exclude a channel that has not reported, and say so (1.4s)
+  ok 12 [chromium] › e2e\compose-analytics-settings.spec.ts:217:1 › a channel detail charts what the platform reports, and explains what it does not (3.4s)
+  ok 13 [chromium] › e2e\compose-analytics-settings.spec.ts:238:1 › with no channel left to report, analytics names the phase it is waiting on (5.3s)
+  ok 14 [chromium] › e2e\compose-analytics-settings.spec.ts:284:1 › settings opens on the org profile and guards unsaved edits (3.1s)
+  ok 15 [chromium] › e2e\compose-analytics-settings.spec.ts:300:1 › @golden a custom tone written once shows up wherever tones are picked (5.0s)
+  ok 16 [chromium] › e2e\compose-analytics-settings.spec.ts:336:1 › deleting a tone names what it costs before it happens (2.4s)
+  ok 17 [chromium] › e2e\compose-analytics-settings.spec.ts:354:1 › a source is named from its address, and prose is refused (2.7s)
+  ok 18 [chromium] › e2e\compose-analytics-settings.spec.ts:368:1 › knowledge plays the whole ingestion lifecycle, per file (5.2s)
+  ok 19 [chromium] › e2e\compose-analytics-settings.spec.ts:414:1 › the team screen invites, refuses a duplicate, and never offers to remove you (3.1s)
+  ok 20 [chromium] › e2e\compose-analytics-settings.spec.ts:435:1 › a role can be changed in place, and the last admin cannot be demoted (2.9s)
+  ok 21 [chromium] › e2e\compose-analytics-settings.spec.ts:470:1 › the bell counts what is unread and clears it (1.9s)
+  ok 22 [chromium] › e2e\compose-analytics-settings.spec.ts:485:1 › the offline banner is global and non-blocking (1.5s)
+  ok 23 [chromium] › e2e\compose-analytics-settings.spec.ts:501:1 › @axe generate, analytics and settings scan clean (3.9s)
+
+  23 passed (1.4m)

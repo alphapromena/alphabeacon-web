@@ -1,0 +1,13 @@
+warm-up: skipped — the runner warmed the fleet and keeps the heartbeat (GATE-0910 §3.2)
+
+Running 7 tests using 1 worker
+
+  ok 1 [chromium] › e2e\live-billing.spec.ts:62:1 › a fresh owner + org, made through the product (6.0s)
+  ok 2 [chromium] › e2e\live-billing.spec.ts:78:1 › the five endpoints answer the shapes the UI is built on — and the checkout url is never opened (7.0s)
+  ok 3 [chromium] › e2e\live-billing.spec.ts:152:1 › /billing renders the plans FROM THE WIRE, Subscribe for the owner, and the honest empty history (5.6s)
+  ok 4 [chromium] › e2e\live-billing.spec.ts:204:1 › the abandoned-checkout return shows the plans plus the note (5.1s)
+  ok 5 [chromium] › e2e\live-billing.spec.ts:214:1 › the success route polls, shows the wire’s status every tick, and gives up honestly on an unpaid org (1.1m)
+  ok 6 [chromium] › e2e\live-billing.spec.ts:252:1 › a member cannot start checkout: 403 forbidden, and any member reads (6.1s)
+  ok 7 [chromium] › e2e\live-billing.spec.ts:289:1 › a generation on the unfunded org is refused with 402, and the refusal points at Billing (22.5s)
+
+  7 passed (1.9m)

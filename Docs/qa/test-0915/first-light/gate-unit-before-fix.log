@@ -1,0 +1,51 @@
+
+[1m[46m RUN [49m[22m [36mv3.2.7 [39m[90mC:/alphabeacon-web/alphabeacon-web[39m
+
+ [31m❯[39m src/components/ab/first-light-gate.test.tsx [2m([22m[2m3 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 116[2mms[22m[39m
+[31m   [31m×[31m FirstLightGate[2m > [22mplays on a fresh account, and a provider update mid-moment does not dismiss it[39m[32m 104[2mms[22m[39m
+[31m     → Unable to find an accessible element with the role "status" and name `/Welcome to Malaky, Dana/`
+
+There are no accessible roles. But there might be some inaccessible roles. If you wish to access them, then set the `hidden` option to `true`. Learn more about this here: https://testing-library.com/docs/dom-testing-library/api-queries#byrole
+
+Ignored nodes: comments, script, style
+[36m<body>[31m
+  [36m<div>[31m
+    [36m<div />[31m
+  [36m</div>[31m
+[36m</body>[31m[39m
+   [32m✓[39m FirstLightGate[2m > [22mnever plays for an account that has been welcomed[32m 6[2mms[22m[39m
+   [32m✓[39m FirstLightGate[2m > [22mis not mounted at all under reduced motion[32m 5[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 1 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m src/components/ab/first-light-gate.test.tsx[2m > [22mFirstLightGate[2m > [22mplays on a fresh account, and a provider update mid-moment does not dismiss it
+[31m[1mTestingLibraryElementError[22m: Unable to find an accessible element with the role "status" and name `/Welcome to Malaky, Dana/`
+
+There are no accessible roles. But there might be some inaccessible roles. If you wish to access them, then set the `hidden` option to `true`. Learn more about this here: https://testing-library.com/docs/dom-testing-library/api-queries#byrole
+
+Ignored nodes: comments, script, style
+[36m<body>[31m
+  [36m<div>[31m
+    [36m<div />[31m
+  [36m</div>[31m
+[36m</body>[31m[39m
+[90m [2m❯[22m Object.getElementError node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/config.js:[2m37:19[22m[39m
+[90m [2m❯[22m node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:[2m76:38[22m[39m
+[90m [2m❯[22m node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:[2m52:17[22m[39m
+[90m [2m❯[22m node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:[2m95:19[22m[39m
+[36m [2m❯[22m src/components/ab/first-light-gate.test.tsx:[2m82:19[22m[39m
+    [90m 80| [39m      dispatchRef!({ type: 'org/update', patch: { name: 'Renamed mid-m…
+    [90m 81| [39m    })
+    [90m 82| [39m    expect(screen.getByRole('status', { name: /Welcome to Malaky, Dana…
+    [90m   | [39m                  [31m^[39m
+    [90m 83| [39m  })
+    [90m 84| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m2 passed[39m[22m[90m (3)[39m
+[2m   Start at [22m 11:23:33
+[2m   Duration [22m 2.10s[2m (transform 273ms, setup 347ms, collect 519ms, tests 116ms, environment 635ms, prepare 187ms)[22m
+

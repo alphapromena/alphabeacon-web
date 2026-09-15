@@ -1,0 +1,38 @@
+warm-up: skipped — the runner warmed the fleet and keeps the heartbeat (GATE-0910 §3.2)
+
+Running 3 tests using 1 worker
+
+  ok 1 [chromium] › e2e\live-brand-kit.spec.ts:62:1 › a fresh owner + org, made through the product (6.5s)
+  x  2 [chromium] › e2e\live-brand-kit.spec.ts:72:1 › the wire, from Node (NOT browser truth): presign the closed pair, PUT a tiny PDF, read the row back under Files, Delete, re-read (47.0s)
+  -  3 [chromium] › e2e\live-brand-kit.spec.ts:147:1 › browser truth: the Brand kit type sends a PDF from Chromium with nothing typed, it lists, and Delete removes it
+
+
+  1) [chromium] › e2e\live-brand-kit.spec.ts:72:1 › the wire, from Node (NOT browser truth): presign the closed pair, PUT a tiny PDF, read the row back under Files, Delete, re-read 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('region', { name: 'Files' }).getByRole('listitem').filter({ hasText: 'Brand kit' })
+    Expected: visible
+    Timeout: 40000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 40000ms
+      - waiting for getByRole('region', { name: 'Files' }).getByRole('listitem').filter({ hasText: 'Brand kit' })
+
+
+      129 |   const files = page.getByRole('region', { name: 'Files' })
+      130 |   const listItem = files.getByRole('listitem').filter({ hasText: 'Brand kit' })
+    > 131 |   await expect(listItem).toBeVisible({ timeout: SCREEN_SYNC })
+          |                          ^
+      132 |   await expect(listItem).toContainText('PDF')
+      133 |   await expect(listItem.locator('[data-slot="file-role-badge"]')).toHaveText('Brand kit')
+      134 |   await expect(listItem.getByRole('button', { name: 'Open Brand kit' })).toBeVisible()
+        at C:\alphabeacon-web\alphabeacon-web\e2e\live-brand-kit.spec.ts:131:26
+
+    Error Context: .gate\artifacts\20260915-091252\round-1\live-brand-kit\live-brand-kit-the-wire-fr-0a25e--under-Files-Delete-re-read-chromium\error-context.md
+
+  1 failed
+    [chromium] › e2e\live-brand-kit.spec.ts:72:1 › the wire, from Node (NOT browser truth): presign the closed pair, PUT a tiny PDF, read the row back under Files, Delete, re-read 
+  1 did not run
+  1 passed (54.3s)

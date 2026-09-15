@@ -1,0 +1,9 @@
+warm-up: skipped — the runner warmed the fleet and keeps the heartbeat (GATE-0910 §3.2)
+
+Running 3 tests using 1 worker
+
+  ok 1 [chromium] › e2e\live-schedule-repair.spec.ts:45:1 › a live org in the 619 shape: tones seeded, no schedule (6.3s)
+  ok 2 [chromium] › e2e\live-schedule-repair.spec.ts:85:1 › C1 creates the missing schedule through the POST fallback, with the exact tones picked (7.1s)
+  ok 3 [chromium] › e2e\live-schedule-repair.spec.ts:143:1 › and it survives a reload, still clean (4.6s)
+
+  3 passed (18.8s)

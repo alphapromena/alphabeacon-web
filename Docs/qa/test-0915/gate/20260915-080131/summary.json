@@ -1,0 +1,72 @@
+{
+  "series": "test-0915",
+  "run": "20260915-080131",
+  "commit": "f2b1adc",
+  "dirty": true,
+  "startedAt": "2026-09-15T08:01:31.084Z",
+  "totalSeconds": 59.044,
+  "options": {
+    "series": "test-0915",
+    "workers": 1,
+    "rounds": 1,
+    "lanes": [
+      "A"
+    ],
+    "only": [
+      "live-scheduling"
+    ],
+    "skipStatic": true,
+    "skipLive": false,
+    "funded": false,
+    "media": false,
+    "pool": false,
+    "port": 5199
+  },
+  "static": null,
+  "rounds": [
+    [
+      {
+        "file": "live-scheduling",
+        "lane": "A",
+        "round": 1,
+        "attempt": 1,
+        "exit": 0,
+        "seconds": 28.19,
+        "summary": {
+          "passed": 2,
+          "failed": 0,
+          "skipped": 1,
+          "flaky": 0,
+          "tests": [
+            {
+              "title": "signup creates the workspace and NOTHING else",
+              "file": "live-scheduling.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 12123
+            },
+            {
+              "title": "C1 creates the schedule on first save, then PATCHes it — and it survives a reload",
+              "file": "live-scheduling.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 11173
+            },
+            {
+              "title": "slots, if ingestion produced any, honour skip/un-skip and never offer approve",
+              "file": "live-scheduling.spec.ts",
+              "status": "skipped",
+              "tags": [],
+              "skipReason": "ingestion has not produced slots for this org yet",
+              "durationMs": 2876
+            }
+          ]
+        },
+        "log": "round-1/live-scheduling.log",
+        "startedAt": "2026-09-15T08:02:01.542Z",
+        "classification": "green"
+      }
+    ]
+  ],
+  "verdict": "GREEN"
+}

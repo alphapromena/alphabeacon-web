@@ -1,0 +1,9 @@
+
+> alphabeacon-web@0.0.0 build C:\alphabeacon-web\alphabeacon-web
+> tsc -b && vite build
+
+scripts/probe-test-0915-live.ts(461,13): error TS2349: This expression is not callable.
+  Type 'Number' has no call signatures.
+scripts/probe-test-0915-live.ts(461,13): error TS2448: Block-scoped variable 'login' used before its declaration.
+scripts/probe-test-0915-live.ts(461,13): error TS2454: Variable 'login' is used before being assigned.
+ ELIFECYCLE  Command failed with exit code 2.

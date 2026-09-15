@@ -1,0 +1,9 @@
+warm-up: skipped — the runner warmed the fleet and keeps the heartbeat (GATE-0910 §3.2)
+
+Running 3 tests using 1 worker
+
+  ok 1 [chromium] › e2e\live-invite-org.spec.ts:84:1 › two accounts, each owning a workspace (13.8s)
+  ok 2 [chromium] › e2e\live-invite-org.spec.ts:106:1 › an invited existing user can REACH the inviting workspace, and a reload keeps it (14.2s)
+  ok 3 [chromium] › e2e\live-invite-org.spec.ts:165:1 › losing membership falls back honestly, and never to a dead screen (9.4s)
+
+  3 passed (38.2s)

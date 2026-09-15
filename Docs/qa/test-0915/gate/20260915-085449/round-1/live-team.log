@@ -1,0 +1,12 @@
+warm-up: skipped — the runner warmed the fleet and keeps the heartbeat (GATE-0910 §3.2)
+
+Running 6 tests using 1 worker
+
+  ok 1 [chromium] › e2e\live-team.spec.ts:75:1 › verifying creates the org LIVE; the dashboard follows immediately (5.4s)
+  ok 2 [chromium] › e2e\live-team.spec.ts:87:1 › I1 renames the org through PATCH, and the name survives a reload (8.7s)
+  ok 3 [chromium] › e2e\live-team.spec.ts:116:1 › change-password keeps this session and only the new password works after (10.4s)
+  ok 4 [chromium] › e2e\live-team.spec.ts:142:1 › inviting a NEW user: coded email, resend rate-limits honestly, cancel removes (10.3s)
+  ok 5 [chromium] › e2e\live-team.spec.ts:166:1 › inviting an EXISTING user adds them immediately, and the role ladder holds (28.9s)
+  ok 6 [chromium] › e2e\live-team.spec.ts:251:1 › an ADMIN viewing a team with an owner: no remove on the owner, no role selects at all (21.9s)
+
+  6 passed (1.4m)

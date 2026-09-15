@@ -507,21 +507,23 @@ theme flip.
 ## Part 6 — The rules that outrank taste
 
 1. Contrast ≥ AA everywhere; the palette is guarded by `tokens.test.ts` and
-   every screen is scanned by axe in both themes.
+   every screen is scanned by axe in the one theme (D-THEME-0913-B).
 2. Status is never color alone — always an icon and words as well.
-3. Numbers that matter are mono (Inter `tabular-nums`), via `MonoNumber`.
+3. Numbers that matter are mono (`tabular-nums` on the one family, DM Sans —
+   D-THEME-0913-F), via `MonoNumber`.
 4. Destructive actions name their consequence.
 5. Action labels persist through their flow (Approve → Approved).
 6. Custom tones render identically to preset tones, everywhere.
 7. Reduced motion removes signature animation entirely.
-8. Light-first **inside the product**: light is the app's default face; dark
-   is charcoal with ivory text and the white wordmark, and the app honors the
-   selected theme in every signed-in route. **AMENDED 2026-08-23 (M2):** the
-   visitor world is the exception and it is DARK-canonical — concept-v2 is a
-   dark site, it ignores the app theme entirely, and it says so through
-   `color-scheme: dark` on the document while it is mounted. Rules 1–7 and
-   9–11 apply to both worlds; this one is the only rule with a border in it.
-   See Part 7.
+8. One theme, dark, inside the product and on the website alike
+   (D-THEME-0913-A/B, 2026-09-14): there is no toggle and no light palette,
+   and the product wears the website's tokens to the byte
+   (`one-theme.test.ts`). **The 2026-08-23 (M2) amendment is superseded:** the
+   visitor world is no longer the dark exception, because dark is the rule.
+   What survives of the boundary is CSS isolation, not design separation —
+   the concept's tokens hang off `html[data-mk-world]` and never `:root`
+   (`verify:w02`). Rules 1–7 and 9–11 apply to both worlds, and so does this
+   one now. See Part 7.
 9. A figure nobody reported is absent, never zero — "Syncing…" on a post, no
    delta at all where there is no comparable prior period.
 10. A metric moving the wrong way is `warning`, not `destructive`. Reach
@@ -549,7 +551,8 @@ disagree, the stylesheet wins and this section is the bug.
 
 ### 7.0 — The boundary
 
-The product keeps its own design system. So:
+The product shares the website's design VALUES (D-THEME-0913-A, 2026-09-14)
+and never its cascade. The isolation that survives is CSS, and it is asserted:
 
 - Every concept-v2 token hangs off `html[data-mk-world]`, an attribute
   `MarketingLayout` sets before paint and removes on unmount.
@@ -561,8 +564,8 @@ The product keeps its own design system. So:
 - Nothing under `src/features/marketing/` reads `@/data`, with one exception:
   the layout asks the provider whether `/` is the site or the product.
 
-`verify:w02` asserts all three. Break one and the concept's dark palette
-leaks into a signed-in screen.
+`verify:w02` asserts all three. Break one and the concept's cascade leaks
+into a signed-in screen — the values are the same now, the rules are not.
 
 ### 7.1 — Surfaces
 

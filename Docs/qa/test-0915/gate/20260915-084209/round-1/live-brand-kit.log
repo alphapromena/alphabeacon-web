@@ -1,0 +1,37 @@
+warm-up: skipped — the runner warmed the fleet and keeps the heartbeat (GATE-0910 §3.2)
+
+Running 3 tests using 1 worker
+
+  x  1 [chromium] › e2e\live-brand-kit.spec.ts:61:1 › a fresh owner + org, made through the product (7.9s)
+  -  2 [chromium] › e2e\live-brand-kit.spec.ts:73:1 › the wire, from Node (NOT browser truth): presign the closed pair, PUT a tiny PDF, read the row back under Files, Delete, re-read
+  -  3 [chromium] › e2e\live-brand-kit.spec.ts:132:1 › browser truth: the Brand kit type sends a PDF from Chromium with nothing typed, it lists, and Delete removes it
+
+
+  1) [chromium] › e2e\live-brand-kit.spec.ts:61:1 › a fresh owner + org, made through the product ──
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('heading', { name: 'TEST-0915 deliberately absent' })
+    Expected: visible
+    Timeout: 1000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 1000ms
+      - waiting for getByRole('heading', { name: 'TEST-0915 deliberately absent' })
+
+
+      68 |   })
+      69 |   // TEST-0915 proof D1 — DELIBERATE, reverted after the run.
+    > 70 |   await expect(page.getByRole('heading', { name: 'TEST-0915 deliberately absent' })).toBeVisible({ timeout: 1_000 })
+         |                                                                                      ^
+      71 | })
+      72 |
+      73 | test('the wire, from Node (NOT browser truth): presign the closed pair, PUT a tiny PDF, read the row back under Files, Delete, re-read', async ({
+        at C:\alphabeacon-web\alphabeacon-web\e2e\live-brand-kit.spec.ts:70:86
+
+    Error Context: .gate\artifacts\20260915-084209\round-1\live-brand-kit\live-brand-kit-a-fresh-owner-org-made-through-the-product-chromium\error-context.md
+
+  1 failed
+    [chromium] › e2e\live-brand-kit.spec.ts:61:1 › a fresh owner + org, made through the product ───
+  2 did not run

@@ -1,0 +1,71 @@
+{
+  "series": "test-0915",
+  "run": "20260915-084249",
+  "commit": "fb5c33b",
+  "dirty": true,
+  "startedAt": "2026-09-15T08:42:49.884Z",
+  "totalSeconds": 57.996,
+  "options": {
+    "series": "test-0915",
+    "workers": 1,
+    "rounds": 1,
+    "lanes": [
+      "A"
+    ],
+    "only": [
+      "live-brand-kit"
+    ],
+    "skipStatic": true,
+    "skipLive": false,
+    "funded": false,
+    "media": false,
+    "pool": false,
+    "port": 5199
+  },
+  "static": null,
+  "rounds": [
+    [
+      {
+        "file": "live-brand-kit",
+        "lane": "A",
+        "round": 1,
+        "attempt": 1,
+        "exit": 0,
+        "seconds": 28.806,
+        "summary": {
+          "passed": 3,
+          "failed": 0,
+          "skipped": 0,
+          "flaky": 0,
+          "tests": [
+            {
+              "title": "a fresh owner + org, made through the product",
+              "file": "live-brand-kit.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 6472
+            },
+            {
+              "title": "the wire, from Node (NOT browser truth): presign the closed pair, PUT a tiny PDF, read the row back under Files, Delete, re-read",
+              "file": "live-brand-kit.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 10571
+            },
+            {
+              "title": "browser truth: the Brand kit type sends a PDF from Chromium with nothing typed, it lists, and Delete removes it",
+              "file": "live-brand-kit.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 9818
+            }
+          ]
+        },
+        "log": "round-1/live-brand-kit.log",
+        "startedAt": "2026-09-15T08:43:18.717Z",
+        "classification": "green"
+      }
+    ]
+  ],
+  "verdict": "GREEN"
+}

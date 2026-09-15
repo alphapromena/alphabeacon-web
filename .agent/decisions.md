@@ -4198,3 +4198,78 @@ the error itself.
 - Fixed at the CALL SITE. `components/ui/` is never hand-edited (rule 3), and a
   prop the primitive already spreads is a better answer than an unlayered rule
   that would paper over the palette choice rather than correct it.
+
+### 2026-09-15 — TEST-0915: the named testing session's rulings applied — the SaveBar's "Saved" is gated by the press, and a spec targets a control by its exact label
+
+- **The session.** The founder's word for TEST-0915: run the full gate on the
+  `feat/motion-0914` stack tip, fix what is legitimately fixable, merge the
+  stack to main. The 2026-09-13 ruling (live rounds only in a named testing
+  session) is what this session is. Every red was classified into one bucket
+  BEFORE anything was touched; a spec was never adjusted to match the code
+  without a decision that licenses the change.
+- **D-TEST-0915-A — the SaveBar's "Saved" counts only after its own Save was
+  pressed, and never outlives the next edit.** THEME-0913 §5.3 licensed
+  feedback at the control: the bar says "Saved" for 1.6 s when a save lands.
+  The first version inferred that from `dirty` going true → false, which is
+  also what a live sync does to a pristine form after a reload (one render of
+  dirty while the draft adopts the wire) and what Cancel does after a failed
+  save — so the bar said "Saved" for saves nobody made; and its effect cleanup
+  cleared the reset timer on the next edit, which left the bar stuck on
+  "Saved" with its buttons hidden. Nothing could be saved until a reload.
+  Found by `live-scheduling` on the built app (gate record
+  `Docs/qa/test-0915/gate/20260915-073808/`), a bucket-b regression by the
+  house honesty rule. The fix keeps §5.3's feedback exactly and adds two
+  guards: a `savePressed` ref set by the Save button (reset by Cancel,
+  consumed by the first clean edge), and `dirty` going true clearing "Saved"
+  at once. Instead of: making `onSave` return a promise and reading its
+  result — every screen would have had to change its contract for a fact the
+  bar can read from the press it owns. `save-bar.test.tsx` holds all four
+  cases; three were red on the previous code. Commit `f2b1adc`.
+- **D-TEST-0915-B — a spec targets a Brand voice rule input by the exact label
+  `RuleList` writes, never by an id prefix.** `input[id^="voice-do"]` matched
+  `voice-dont-0` too, so `.last()` typed a do-rule into the Don't input the
+  moment a don't row existed (item 64, proven on org 2170 and fixed on 2171).
+  One helper, `addVoiceRule`, reads the row count BEFORE Add and fills
+  `Do rule N` / `Don't rule N` exactly; the read sites use the same labels.
+  The rule generalises: a locator that passes by DOM order is asserting
+  something it does not state. Commit `454e98e`; no product code changed.
+- **Applied, not decided here:** item 63 stays KNOWN (Hasan; the over-maximum
+  `durationS` is refused by the wallet, not by validation — reproduced today
+  on org 2197, requests `2f6229da…` / `81cf254c…`); item 70's rule for the
+  session was `--workers=1` on every Playwright command line, and
+  `playwright.config.ts` was not edited.
+- **D-TEST-0915-C — the Connect return's "success" links nothing and says so.**
+  Proof F measured the B3 walk on the built app in LIVE mode and on the seeded
+  static world: pressing Connect landed on "Connecting your Facebook account…
+  Almost there. We are storing the permissions you granted.", the card flipped
+  to Active with Posting and Analytics on, and a toast said "Facebook connected
+  · Posting and analytics are on." Nothing behind that screen reaches a
+  platform in either mode (there is no connections endpoint in `src/api`), so
+  it promised what the product cannot do — the honesty rule ORDER DEMO-0914 §3
+  wrote and TEST-0915 restated, which D-DEMO-0914-D's line at the top of the
+  hub named but did not remove from the walk. The `success` return now renders
+  "<Platform> is not linked yet" over the hub's own sentence
+  (`MESSAGES.notices.connectionsPreview`), changes no state and toasts nothing;
+  `denied`, `failed` and `already` are untouched, so the return states stay
+  walkable by URL as D-DEMO-0914-D intended. When publishing arrives this
+  branch is where a real callback lands and the dispatches return with it.
+  Instead of: disabling Connect the way X's card is — that hides the walk the
+  demo order kept, and a disabled control explains less than an honest end
+  state. The title is the one new sentence; it is the founder's and
+  Abdallah's to reword. `calendar-connections.spec.ts` walks it (red on the
+  previous code, 13/13 after). Commit `7af4be5`.
+- **D-TEST-0915-D — the first-light gate decides once per arming.** Proof F on
+  the built app against the dev API: a fresh live account's "seen" flag was
+  written and the welcome was never on screen. The overlay writes that flag
+  the moment it mounts (so a reload mid-moment cannot replay it), and the gate
+  re-read `hasSeenFirstLight` on every render — the workspace sync's update,
+  which lands within the first second in LIVE mode, read the flag back as
+  "already seen" and unmounted the moment while it played. Static mode is
+  quiet for those two seconds, which is why MOTION-0914/B's probes saw it
+  play. The gate now takes its decision when a new arming arrives (each
+  `firstLight/arm` is a new object) and keeps it through re-renders; the flag
+  still blocks the NEXT arming and reduced motion still means "not mounted".
+  Instead of: having the overlay write the flag on unmount — that reopens the
+  reload-mid-moment replay the flag exists to prevent. `first-light-gate.test.tsx`
+  holds the three cases; the mid-moment one was red on the previous code.
+  Commit `b66b156`.

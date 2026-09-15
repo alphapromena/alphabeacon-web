@@ -1,0 +1,28 @@
+{
+  "series": "test-0915",
+  "run": "20260915-072746",
+  "commit": "454e98e",
+  "dirty": true,
+  "startedAt": "2026-09-15T07:27:46.873Z",
+  "totalSeconds": 17.954,
+  "options": {
+    "series": "test-0915",
+    "workers": 1,
+    "rounds": 1,
+    "lanes": [
+      "A",
+      "B"
+    ],
+    "only": null,
+    "skipStatic": true,
+    "skipLive": false,
+    "funded": false,
+    "media": false,
+    "pool": false,
+    "port": 5199
+  },
+  "static": null,
+  "rounds": [],
+  "verdict": "STOPPED",
+  "error": "the live build failed — see .gate\\runs\\20260915-072746\\build.log"
+}

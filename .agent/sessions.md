@@ -5460,3 +5460,74 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   `signUpAndEnter`, which ~15 unrunnable live specs share), and an approved
   card stays in its slot in static Today (screens4 D2 shows the whole day).
   Both are in Docs/qa/motion-0914/moments/README.md.
+
+
+### 2026-09-15 07:01 — TEST-0915: the full gate twice on the `feat/motion-0914` stack tip, four bucket-b fixes proven by breaking them first, proofs A–I on record, the stack merged to `main` and `live`
+
+- Did: **Pre-flight** matched (origin/main `0482f20`, the four phase tips as
+  ordered, 5199 clear, `.env.local` on the dev Lambda, lockfile unchanged);
+  baseline lint · typecheck · guard-static 373 · unit 808/808 in 69 files ·
+  build identical to the build order's. **Phase 1:** item 71 ran alone first —
+  `live-brand-kit` 3/3 in 33 s on the built app, both never-run assertions
+  executed (`gate/20260915-070659`); item 64 proven on org 2170 through the
+  write site byte-identical (the stored Don't rule overwritten, no do rule on
+  the wire, request `19beee5f…`), fixed by one exact-label helper
+  `addVoiceRule` across six write and four read sites, proven on org 2171
+  (`b21a362f…`), commit `454e98e`; every Playwright run passed `--workers=1`
+  on its command line and `playwright.config.ts` was not edited (item 70);
+  item 63 classified KNOWN. **Gate 1** (tip `454e98e` → re-run on `3576305`
+  after my own proof scripts' type error stopped the runner's build): static
+  chain clean, static e2e **115 / 0 / 85** serially (350 s, 351 s), live
+  **19 of 21 files green or all-skipped**, two reds — `live-video-duration`
+  bucket c (item 63, reproduced at zero spend on org 2197: `"abc"` → 400
+  `2f6229da…`, `999` → 402 `81cf254c…`) and `live-scheduling` **bucket b**:
+  THEME-0913's SaveBar (`b7c338e`) inferred "Saved" from a dirty edge and its
+  effect cleanup cleared the reset timer, so an edit inside the 1.6 s window
+  left the bar stuck on "Saved" with no Save button, and a reload's sync
+  produced a false "Saved"; fixed at the press (`savePressed` ref, an edit
+  clears "Saved" at once), four unit tests three of them red before,
+  `f2b1adc`, the file green alone on the built app (`gate/20260915-080131`).
+  **Proofs A–I** (`Docs/qa/test-0915/proofs/`, live on orgs 2199/2200/2201–
+  2203, static on the seeded world): A PASS on all seven checks; B PASS
+  (45 → 44 → 43 on the wire, the wire's own 50 stands: 51 → 400, 50 → 201);
+  C PASS on the honesty half — never "saved", the wire's field message in the
+  toast — and a finding on the alert half (item 73: the failure path resyncs
+  and the settings layout remounts the screen); D PROVEN both halves
+  (`gate/20260915-084209`: Not run 2 with the label; `gate/20260915-084446` error-page + re-run 3/3 but the verdict RED — the runner's verdict gap fixed in `299aff6` + `d793cb1`, GREEN at `gate/20260915-091544`); E all
+  measured in the moving state — first light 1806 ms, flag at 11 ms, four
+  gating cases, moments 1/3/4 clean, 22 screens clean inside the entrance,
+  skeleton at 231 ms, reduced motion 40 vs 40 controls, routes 53–90 ms, the
+  three guards bite — with one finding (item 76: the toast's entrance fade at
+  +80 ms); F PASS on the seed boundary (three fresh live orgs, every wire 0)
+  and, after the fix, on the Connect flow in both modes; G PASS on the press
+  token (4.78:1) and `--c-accent-lo`, with the indicator's between-screen
+  travel measured as a re-mount (item 77); H the five repealed sentences in
+  `design.md` corrected here; I PASS on the boot path and a finding on the
+  mid-session path (item 75: `/ → /settings → /`, toast at 413 ms).
+  **Two more bucket-b fixes from the proofs:** the Connect return's fake
+  success (`7af4be5`, `calendar-connections.spec.ts` red before, 13/13 after)
+  and the first-light gate dismissed by a live sync (`b66b156`,
+  `first-light-gate.test.tsx` red before, 14/14 after; then visible on a fresh
+  live account). **Gate 2** (tip `d793cb1`): gate 2 on `fb5c33b` (unit 815/815 in 71 files; static e2e 115 / 1 / 85 — the one red a bucket-a spec that had used the removed fake Connect success, updated under D-TEST-0915-C in `7e776b6`; live 19 of 21 green or all-skipped, `live-scheduling` green, two bucket-c reds: item 63, and item 58's five-reference body answering 400 at 09:00Z) and **gate 3 on `d793cb1`** — lint · typecheck · guard-static **373** · unit **817/817 in 71 files** · build · static e2e **116 / 0 / 85** in 340 s · live **20 of 21 green or all-skipped**, the one red `live-video-duration` = item 63 (bucket c); the five-reference body answered 502 again at 09:31Z, so item 58's answer flaps rather than having been fixed. **The final gate is clean except bucket c**. **Close-out:**
+  items 64 and 71 closed, 63 and 70 annotated, 73–77 filed, D-TEST-0915-A…D
+  recorded, `design.md` Part 6 rules 1/3/8 and 7.0 corrected, the fresh
+  screenshot set under `Docs/qa/test-0915/screens/`. **Merge:** `main` fast-forwarded to the close-out commit that carries this entry (the gated code tip is `d793cb1`; the merge SHA is in `Docs/qa/test-0915/run-log.md` and the session report), `live` fast-forwarded to `main`, one bundle on both hosts checked after the deploy.
+- Phase: post-W7 — the named testing session; the four orders UX-0913,
+  THEME-0913, DEMO-0914, MOTION-0914 ship together
+- Files: `e2e/live-setup.ts`, `e2e/live-brand-rules.spec.ts`,
+  `e2e/live-brand.spec.ts`, `e2e/live-onboarding.spec.ts`,
+  `e2e/calendar-connections.spec.ts`, `src/components/ab/save-bar.tsx`
+  (+ test), `src/components/ab/first-light-gate.tsx` (+ test),
+  `src/features/connections/connect-return.tsx`,
+  `scripts/probe-test-0915-live.ts`, `scripts/probe-test-0915-static.ts`,
+  `design.md`, `Docs/qa/test-0915/**`, `.agent/{state,sessions,decisions,open-items}.md`
+- Decisions: see decisions.md — D-TEST-0915-A (the SaveBar's "Saved" gated by
+  the press), -B (a spec targets a control by its exact label), -C (the Connect
+  return links nothing and says so), -D (the first-light gate decides once)
+- Verify: gate 1 and gate 2 as above; every fix red-then-green; lint ·
+  typecheck · prettier clean on every commit
+- Next: the founder's rulings on items 73 (resync after a refusal), 75 (where a
+  mid-session 401 lands), 76 (the toast's entrance fade), 77 (shared chrome in
+  a layout route), 74 (the runner's static worker count); item 66b can go to
+  Hasan now that proof A is on record; item 62 and the Today double-Finish
+  route are still his; the post-verify destination stays the Dashboard.

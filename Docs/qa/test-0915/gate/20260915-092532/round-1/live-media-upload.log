@@ -1,0 +1,9 @@
+warm-up: skipped — the runner warmed the fleet and keeps the heartbeat (GATE-0910 §3.2)
+
+Running 3 tests using 1 worker
+
+  ok 1 [chromium] › e2e\live-media-upload.spec.ts:48:1 › a fresh owner + org, made through the product (5.4s)
+  ok 2 [chromium] › e2e\live-media-upload.spec.ts:58:1 › an image upload becomes a WIRE-listed Files row, and Delete removes it from the wire (9.6s)
+  ok 3 [chromium] › e2e\live-media-upload.spec.ts:97:1 › the logo uploads with desc "logo", shows as the logo, stays out of Files, and removes (11.5s)
+
+  3 passed (27.2s)

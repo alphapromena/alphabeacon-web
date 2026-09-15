@@ -1,0 +1,194 @@
+{
+  "series": "test-0915",
+  "run": "20260915-091544",
+  "commit": "d793cb1",
+  "dirty": true,
+  "startedAt": "2026-09-15T09:15:44.309Z",
+  "totalSeconds": 165.073,
+  "options": {
+    "series": "test-0915",
+    "workers": 1,
+    "rounds": 1,
+    "lanes": [
+      "A"
+    ],
+    "only": [
+      "live-brand-kit"
+    ],
+    "skipStatic": true,
+    "skipLive": false,
+    "funded": false,
+    "media": false,
+    "pool": false,
+    "port": 5199
+  },
+  "static": null,
+  "rounds": [
+    [
+      {
+        "file": "live-brand-kit",
+        "lane": "A",
+        "round": 1,
+        "attempt": 1,
+        "exit": 1,
+        "seconds": 54.536,
+        "summary": {
+          "passed": 1,
+          "failed": 1,
+          "skipped": 1,
+          "flaky": 0,
+          "tests": [
+            {
+              "title": "a fresh owner + org, made through the product",
+              "file": "live-brand-kit.spec.ts",
+              "status": "passed",
+              "tags": [],
+              "durationMs": 6432
+            },
+            {
+              "title": "the wire, from Node (NOT browser truth): presign the closed pair, PUT a tiny PDF, read the row back under Files, Delete, re-read",
+              "file": "live-brand-kit.spec.ts",
+              "status": "failed",
+              "tags": [],
+              "error": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('region', { name: 'Files' }).getByRole('listitem').filter({ hasText: 'Brand kit' })\nExpected: visible\nTimeout: 40000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 40000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('region', { name: 'Files' }).getByRole('listitem').filter({ hasText: 'Brand kit' })\u001b[22m\n",
+              "durationMs": 46149
+            },
+            {
+              "title": "browser truth: the Brand kit type sends a PDF from Chromium with nothing typed, it lists, and Delete removes it",
+              "file": "live-brand-kit.spec.ts",
+              "status": "skipped",
+              "tags": [],
+              "durationMs": 0
+            }
+          ]
+        },
+        "log": "round-1/live-brand-kit.log",
+        "startedAt": "2026-09-15T09:16:12.312Z",
+        "classification": "error-page",
+        "reruns": [
+          {
+            "file": "live-brand-kit",
+            "lane": "A",
+            "round": 1,
+            "attempt": 2,
+            "exit": 0,
+            "seconds": 28.077,
+            "summary": {
+              "passed": 3,
+              "failed": 0,
+              "skipped": 0,
+              "flaky": 0,
+              "tests": [
+                {
+                  "title": "a fresh owner + org, made through the product",
+                  "file": "live-brand-kit.spec.ts",
+                  "status": "passed",
+                  "tags": [],
+                  "durationMs": 5947
+                },
+                {
+                  "title": "the wire, from Node (NOT browser truth): presign the closed pair, PUT a tiny PDF, read the row back under Files, Delete, re-read",
+                  "file": "live-brand-kit.spec.ts",
+                  "status": "passed",
+                  "tags": [],
+                  "durationMs": 10501
+                },
+                {
+                  "title": "browser truth: the Brand kit type sends a PDF from Chromium with nothing typed, it lists, and Delete removes it",
+                  "file": "live-brand-kit.spec.ts",
+                  "status": "passed",
+                  "tags": [],
+                  "durationMs": 9828
+                }
+              ]
+            },
+            "log": "round-1/live-brand-kit-rerun1.log",
+            "startedAt": "2026-09-15T09:17:06.849Z",
+            "classification": "green"
+          },
+          {
+            "file": "live-brand-kit",
+            "lane": "A",
+            "round": 1,
+            "attempt": 3,
+            "exit": 0,
+            "seconds": 27.083,
+            "summary": {
+              "passed": 3,
+              "failed": 0,
+              "skipped": 0,
+              "flaky": 0,
+              "tests": [
+                {
+                  "title": "a fresh owner + org, made through the product",
+                  "file": "live-brand-kit.spec.ts",
+                  "status": "passed",
+                  "tags": [],
+                  "durationMs": 5417
+                },
+                {
+                  "title": "the wire, from Node (NOT browser truth): presign the closed pair, PUT a tiny PDF, read the row back under Files, Delete, re-read",
+                  "file": "live-brand-kit.spec.ts",
+                  "status": "passed",
+                  "tags": [],
+                  "durationMs": 10099
+                },
+                {
+                  "title": "browser truth: the Brand kit type sends a PDF from Chromium with nothing typed, it lists, and Delete removes it",
+                  "file": "live-brand-kit.spec.ts",
+                  "status": "passed",
+                  "tags": [],
+                  "durationMs": 9782
+                }
+              ]
+            },
+            "log": "round-1/live-brand-kit-rerun2.log",
+            "startedAt": "2026-09-15T09:17:34.927Z",
+            "classification": "green"
+          },
+          {
+            "file": "live-brand-kit",
+            "lane": "A",
+            "round": 1,
+            "attempt": 4,
+            "exit": 0,
+            "seconds": 27.028,
+            "summary": {
+              "passed": 3,
+              "failed": 0,
+              "skipped": 0,
+              "flaky": 0,
+              "tests": [
+                {
+                  "title": "a fresh owner + org, made through the product",
+                  "file": "live-brand-kit.spec.ts",
+                  "status": "passed",
+                  "tags": [],
+                  "durationMs": 5432
+                },
+                {
+                  "title": "the wire, from Node (NOT browser truth): presign the closed pair, PUT a tiny PDF, read the row back under Files, Delete, re-read",
+                  "file": "live-brand-kit.spec.ts",
+                  "status": "passed",
+                  "tags": [],
+                  "durationMs": 10513
+                },
+                {
+                  "title": "browser truth: the Brand kit type sends a PDF from Chromium with nothing typed, it lists, and Delete removes it",
+                  "file": "live-brand-kit.spec.ts",
+                  "status": "passed",
+                  "tags": [],
+                  "durationMs": 9279
+                }
+              ]
+            },
+            "log": "round-1/live-brand-kit-rerun3.log",
+            "startedAt": "2026-09-15T09:18:02.010Z",
+            "classification": "green"
+          }
+        ]
+      }
+    ]
+  ],
+  "verdict": "GREEN"
+}

@@ -1,0 +1,56 @@
+=== item 64 proof · selector=old · org 2170 · start 2026-09-15T07:12:20Z
+
+warm-up: waking the API before the suite starts (https://g2pftek7nwnh7kstwuvii2j4pm0aqllt.lambda-url.eu-west-2.on.aws/api/health)
+warm-up: service awake after 2 probe(s) in 0.8s — last 2: 421ms, 103ms
+warm-up: burst 1 — slowest of 12 was 200 in 755ms — fleet not warm yet
+warm-up: burst 2 — slowest of 12 was 200 in 128ms — fleet not warm yet
+warm-up: burst 3 — slowest of 12 was 200 in 107ms — fleet not warm yet
+warm-up: burst 4 — slowest of 12 was 200 in 94ms — fleet not warm yet
+warm-up: burst 5 — slowest of 12 was 200 in 91ms — fleet not warm yet
+warm-up: burst 6 — slowest of 12 was 200 in 90ms — fleet not warm yet
+warm-up: burst 7 — slowest of 12 was 200 in 93ms — fleet not warm yet
+warm-up: burst 8 — slowest of 12 was 200 in 88ms — fleet not warm yet
+warm-up: 12-way fleet warm after 9 burst(s), 4.4s total — slowest 120ms
+
+warm-up: heartbeat started — 4 probes every 5s for the life of the run
+
+
+Running 1 test using 1 worker
+
+[item-64 old] input[id^="voice-do"] matches before Add do: ["voice-dont-0"]
+[item-64 old] on screen before Save: Do rule 1 = "" · Don't rule 1 = "Name the farm when it matters"
+[item-64 old] wire rules after Save (request 19beee5f-02b2-48b0-b191-bfcab36c2f1d): ["dont: Name the farm when it matters"]
+  x  1 [chromium] › e2e\item-64-proof.spec.ts:30:1 › item 64 (old selector): with one Don't row stored, "Add do" + fill lands the Do rule where the spec says it does (10.4s)
+
+warm-up: heartbeat stopped after 2 beat(s)
+
+
+  1) [chromium] › e2e\item-64-proof.spec.ts:30:1 › item 64 (old selector): with one Don't row stored, "Add do" + fill lands the Do rule where the spec says it does 
+
+    Error: the Do rule must be stored as a do rule beside the untouched Don't rule (request 19beee5f-02b2-48b0-b191-bfcab36c2f1d)
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 2
+    + Received  + 1
+
+      Array [
+    -   "do: Name the farm when it matters",
+    -   "dont: Call anything artisanal",
+    +   "dont: Name the farm when it matters",
+      ]
+
+      90 |     rules,
+      91 |     `the Do rule must be stored as a do rule beside the untouched Don't rule (request ${rid})`,
+    > 92 |   ).toEqual(['do: Name the farm when it matters', 'dont: Call anything artisanal'])
+         |     ^
+      93 | })
+      94 |
+        at C:\alphabeacon-web\alphabeacon-web\e2e\item-64-proof.spec.ts:92:5
+
+    Error Context: ..\..\Users\user\AppData\Local\Temp\claude\c--alphabeacon-web\3986fa6c-7b14-409e-a13c-7857ff9af626\scratchpad\p1\pw-out-item-64-old\item-64-proof-item-64-old--7539a-where-the-spec-says-it-does-chromium\error-context.md
+
+  1 failed
+    [chromium] › e2e\item-64-proof.spec.ts:30:1 › item 64 (old selector): with one Don't row stored, "Add do" + fill lands the Do rule where the spec says it does 
+=== exit 1 · end 2026-09-15T07:12:42Z
+ITEM64_old_DONE

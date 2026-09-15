@@ -1,0 +1,53 @@
+
+[1m[46m RUN [49m[22m [36mv3.2.7 [39m[90mC:/alphabeacon-web/alphabeacon-web[39m
+
+ [31m❯[39m scripts/gate/classify.test.ts [2m([22m[2m20 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 12[2mms[22m[39m
+   [32m✓[39m the classification rule (GATE-0910 §3.5)[2m > [22ma green file is green[32m 1[2mms[22m[39m
+   [32m✓[39m the classification rule (GATE-0910 §3.5)[2m > [22ma file whose every test skipped with a reason is skipped-all, not green and not red[32m 0[2mms[22m[39m
+   [32m✓[39m the classification rule (GATE-0910 §3.5)[2m > [22ma lost socket in the failing test is network-lost — the file is re-run, never waived[32m 0[2mms[22m[39m
+   [32m✓[39m the classification rule (GATE-0910 §3.5)[2m > [22mthe signature is read from the raw log too, for a run that left no report[32m 0[2mms[22m[39m
+   [32m✓[39m the classification rule (GATE-0910 §3.5)[2m > [22man assertion failure is UNCLASSIFIED until a human names it[32m 0[2mms[22m[39m
+   [32m✓[39m the classification rule (GATE-0910 §3.5)[2m > [22ma non-zero exit with no failed test and no report is unclassified, not green[32m 0[2mms[22m[39m
+   [32m✓[39m the app's own error page is the service's fault, not the product's (2026-09-13)[2m > [22ma timeout behind 'We couldn't load this screen' is an error-page red[32m 0[2mms[22m[39m
+   [32m✓[39m the app's own error page is the service's fault, not the product's (2026-09-13)[2m > [22mthe straight apostrophe reads the same as the typographic one[32m 0[2mms[22m[39m
+   [32m✓[39m the app's own error page is the service's fault, not the product's (2026-09-13)[2m > [22mthe balance chip's own failure text counts too[32m 0[2mms[22m[39m
+   [32m✓[39m the app's own error page is the service's fault, not the product's (2026-09-13)[2m > [22mthe SAME timeout with an ordinary page stays UNCLASSIFIED[32m 0[2mms[22m[39m
+   [32m✓[39m the app's own error page is the service's fault, not the product's (2026-09-13)[2m > [22ma spec that ASSERTS the error copy fails on its own terms — the page decides, not the message[32m 0[2mms[22m[39m
+   [32m✓[39m the app's own error page is the service's fault, not the product's (2026-09-13)[2m > [22ma lost socket still wins over an error page — the nearer cause is named first[32m 0[2mms[22m[39m
+   [32m✓[39m the app's own error page is the service's fault, not the product's (2026-09-13)[2m > [22mboth of the runner’s own classes are re-run; nothing else is[32m 0[2mms[22m[39m
+   [32m✓[39m a skip and a not-run are different things (the founder, 2026-09-13)[2m > [22ma deliberate skip keeps its own reason[32m 0[2mms[22m[39m
+   [32m✓[39m a skip and a not-run are different things (the founder, 2026-09-13)[2m > [22ma test with no reason in a file that FAILED did not run — Playwright's serial cascade[32m 0[2mms[22m[39m
+   [32m✓[39m a skip and a not-run are different things (the founder, 2026-09-13)[2m > [22ma test with no reason in a file that passed is an honest unknown, not a cascade[32m 0[2mms[22m[39m
+[31m   [31m×[31m the round's verdict counts both of the runner's own classes (TEST-0915 proof D)[2m > [22man error-page file re-run 3/3 green leaves the round GREEN, exactly like network-lost[39m[32m 7[2mms[22m[39m
+[31m     → expected false to be true // Object.is equality[39m
+   [32m✓[39m the round's verdict counts both of the runner's own classes (TEST-0915 proof D)[2m > [22manything the runner could not name keeps the round RED, and an empty round is not green[32m 0[2mms[22m[39m
+   [32m✓[39m the record carries no host and no presigned url[2m > [22mredacts the API host, storage urls and any X-Amz-signed url[32m 0[2mms[22m[39m
+   [32m✓[39m the record carries no host and no presigned url[2m > [22mleaves a run with no host to redact alone[32m 0[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 1 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m scripts/gate/classify.test.ts[2m > [22mthe round's verdict counts both of the runner's own classes (TEST-0915 proof D)[2m > [22man error-page file re-run 3/3 green leaves the round GREEN, exactly like network-lost
+[31m[1mAssertionError[22m: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m scripts/gate/classify.test.ts:[2m153:53[22m[39m
+    [90m151| [39m    // Proof D2 on 2026-09-15: classified error-page, re-run 3/3 green…
+    [90m152| [39m    // README still said RED, because the verdict forgave network-lost…
+    [90m153| [39m    [34mexpect[39m([34mgateRoundGreen[39m([[32m'green'[39m[33m,[39m [32m'error-page'[39m]))[33m.[39m[34mtoBe[39m([35mtrue[39m)
+    [90m   | [39m                                                    [31m^[39m
+    [90m154| [39m    [34mexpect[39m([34mgateRoundGreen[39m([[32m'green'[39m[33m,[39m [32m'network-lost'[39m]))[33m.[39m[34mtoBe[39m([35mtrue[39m)
+    [90m155| [39m    [34mexpect[39m([34mgateRoundGreen[39m([[32m'skipped-all'[39m[33m,[39m [32m'green'[39m]))[33m.[39m[34mtoBe[39m([35mtrue[39m)
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m19 passed[39m[22m[90m (20)[39m
+[2m   Start at [22m 12:12:25
+[2m   Duration [22m 1.46s[2m (transform 46ms, setup 337ms, collect 29ms, tests 12ms, environment 615ms, prepare 167ms)[22m
+
