@@ -1,0 +1,11 @@
+
+Running 6 tests using 1 worker
+
+  ok 1 [chromium] › e2e\entry-flow.spec.ts:45:1 › marketing is the front door when signed out (3.4s)
+  ok 2 [chromium] › e2e\entry-flow.spec.ts:61:1 › @axe the auth screens reached from marketing scan clean (2.4s)
+  ok 3 [chromium] › e2e\entry-flow.spec.ts:75:1 › @golden signup → verify → the app, with no wizard in between (2.4s)
+  ok 4 [chromium] › e2e\entry-flow.spec.ts:99:1 › a signed-in account with no workspace gets the creation retry, not a wizard (3.7s)
+  ok 5 [chromium] › e2e\entry-flow.spec.ts:119:1 › @axe the workspace-creation retry scans clean (3.7s)
+  ok 6 [chromium] › e2e\entry-flow.spec.ts:129:1 › sign-in locks out after repeated failures and counts down (2.1s)
+
+  6 passed (29.4s)

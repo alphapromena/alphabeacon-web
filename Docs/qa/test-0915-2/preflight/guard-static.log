@@ -1,0 +1,5 @@
+
+> alphabeacon-web@0.0.0 guard:static C:\alphabeacon-web\alphabeacon-web
+> tsx scripts/guard-static.ts
+
+guard-static: 379 files clean

@@ -1,0 +1,10 @@
+probe-66b 2026-09-15T17:59:55.999Z · qa+178949519599941066b@alphapromena.com
+POST /auth/signup → 201 · request a516943d-5cec-4270-b90b-d92db28732bf
+POST /auth/verify-email → 200 · request d8a999fb-9b70-424f-aa3a-f49d537c1ede
+POST /orgs → 201 · request 97420cf0-3976-43bb-8cd6-cfefd0d88fef
+org 2275
+POST /orgs/2275/brand/voices → 201 · request 411f9532-45a1-4644-8077-9efd9d9555b5
+POST /orgs/2275/brand/voices → 201 · request 16e7d6ce-02c5-4da8-9d2b-7a9057b64d96
+GET /orgs/2275/brand/voices → 200 · request df098dbb-9b13-4562-bd3f-04465ead96af
+voices named "Brand voice" on the wire: 2
+VERDICT: ACCEPTED — uniqueness has NOT landed; the two-row proof stands
