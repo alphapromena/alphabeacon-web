@@ -65,17 +65,13 @@ function workspaceLabel(page: Page) {
 async function signOut(page: Page) {
   await page.getByRole('button', { name: 'Account menu' }).click()
   await page.getByRole('menuitem', { name: 'Sign out', exact: true }).click()
-  // Signing out re-renders the current route signed out. On an authed route
-  // that is the guard, and since D-FIX-0915-A it lands on LOGIN ("Welcome
-  // back"); on `/` it is RootGate, which is the marketing home (the M2 hero
-  // headline). Either is the signed-out front door (TEST-0915-2, bucket a).
+  // A deliberate sign-out lands on the marketing home from ANY route: the
+  // action moves to `/` before the session clears (NIGHT-0916 order 2,
+  // D-NIGHT-0916-B); the M2 hero headline spans three lines.
   // One POST round-trip — live-red-2026-08-23.
-  await expect(page.getByRole('heading', { level: 1 })).toContainText(
-    /Welcome back|before you were./,
-    {
-      timeout: ONE_CALL,
-    },
-  )
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('before you were.', {
+    timeout: ONE_CALL,
+  })
 }
 
 /** Add the member to the owner's workspace. No code: they already exist. */

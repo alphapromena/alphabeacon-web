@@ -17,6 +17,7 @@
  */
 import { useCallback } from 'react'
 import { api, resetUnauthorizedGuard, withDeliberateLogout } from '@/api/client'
+import { navigateTo } from '@/lib/navigation'
 import { isLiveMode } from '@/api/config'
 import { isApiError, type ApiErrorCode, type ApiFieldDetail } from '@/api/errors'
 import { purgeSession, saveSession } from '@/api/session'
@@ -72,7 +73,11 @@ export interface AuthActions {
     password: string
     orgName: string
   }): Promise<AuthActionResult>
-  verifyEmail(input: { email: string; code: string; rememberMe?: boolean }): Promise<AuthActionResult>
+  verifyEmail(input: {
+    email: string
+    code: string
+    rememberMe?: boolean
+  }): Promise<AuthActionResult>
   resendVerification(email: string): Promise<AuthActionResult>
   signIn(input: {
     email: string
@@ -177,9 +182,7 @@ export function useAuthActions(): AuthActions {
 
     async signIn({ email, password, rememberMe = false }) {
       if (!live) {
-        const known = users.some(
-          (user) => user.email.toLowerCase() === email.trim().toLowerCase(),
-        )
+        const known = users.some((user) => user.email.toLowerCase() === email.trim().toLowerCase())
         if (!known) {
           dispatch({ type: 'auth/signInFailed' })
           return { ok: false, code: 'unauthorized', message: 'Unknown email', fieldErrors: [] }
@@ -204,8 +207,16 @@ export function useAuthActions(): AuthActions {
       }
     },
 
+    // A deliberate sign-out lands on the marketing home from any route
+    // (NIGHT-0916 order 2, item 83; D-NIGHT-0916-B): revoke on the screen the
+    // user is on, move to `/` through the router and await it, THEN purge. The
+    // guard on an authed route answers a signed-out render with login, so a
+    // session cleared in place lands there; on `/` the route that renders
+    // signed out is RootGate — the marketing home. No timer: the router's own
+    // promise is the order.
     async signOut() {
       if (!live) {
+        await navigateTo('/')
         dispatch({ type: 'session/signOut' })
         return
       }
@@ -215,12 +226,17 @@ export function useAuthActions(): AuthActions {
       } catch {
         // Best-effort: a dead or unreachable session must still sign out here.
       }
+      await navigateTo('/')
       purgeSession()
       dispatch({ type: 'live/sessionCleared' })
     },
 
+    // Deliberate too: the same landing as signOut (D-NIGHT-0916-B). A revoke
+    // that failed for any reason but a dead token stays on the screen, with
+    // its failure.
     async signOutEverywhere() {
       if (!live) {
+        await navigateTo('/')
         dispatch({ type: 'session/signOut' })
         return ok(1)
       }
@@ -228,6 +244,7 @@ export function useAuthActions(): AuthActions {
         const { revoked } = await withDeliberateLogout(() =>
           api<{ revoked: number }>('POST', '/auth/logout-all'),
         )
+        await navigateTo('/')
         purgeSession()
         dispatch({ type: 'live/sessionCleared' })
         return ok(revoked)
@@ -236,6 +253,7 @@ export function useAuthActions(): AuthActions {
         // A dead token cannot revoke anything server-side, but the user asked
         // to be signed out — locally, they are.
         if (!result.ok && result.code === 'unauthorized') {
+          await navigateTo('/')
           purgeSession()
           dispatch({ type: 'live/sessionCleared' })
           return ok(0)

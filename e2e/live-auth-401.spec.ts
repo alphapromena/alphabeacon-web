@@ -183,3 +183,39 @@ test('3 · a boot on an authed route with a dead token lands on login, not on th
   await page.reload()
   await expectReLogin(page)
 })
+
+/**
+ * The other way a session ends (NIGHT-0916 order 2, item 83; D-NIGHT-0916-B):
+ * a DELIBERATE sign-out lands on the marketing home from any route — the
+ * action moves to `/` before the session clears — while the forced ones above
+ * land on login. Two routes here; the unit test walks four.
+ */
+for (const start of [
+  { rail: 'Settings', heading: 'Organization' },
+  { rail: 'Billing', heading: 'Billing' },
+]) {
+  test(`4 · a deliberate sign-out from ${start.rail} lands on the marketing home, not on login`, async ({
+    page,
+  }) => {
+    test.setTimeout(150_000)
+    await login(page)
+    await page.getByRole('link', { name: start.rail }).first().click()
+    await expect(page.getByRole('heading', { name: start.heading, level: 1 })).toBeVisible({
+      timeout: SCREEN_SYNC,
+    })
+    await page.getByRole('button', { name: 'Account menu' }).click()
+    await page.getByRole('menuitem', { name: 'Sign out', exact: true }).click()
+    await expect(page).toHaveURL(/\/$/, { timeout: SCREEN_SYNC })
+    await expect(page.getByRole('heading', { level: 1 })).toContainText('before you were.', {
+      timeout: SCREEN_SYNC,
+    })
+    expect(
+      await page.evaluate(() =>
+        Boolean(
+          window.sessionStorage.getItem('ab-live-session') ||
+          window.localStorage.getItem('ab-live-session'),
+        ),
+      ),
+    ).toBe(false)
+  })
+}

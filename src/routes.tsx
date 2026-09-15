@@ -35,9 +35,17 @@
  *   way to arrive here without one is a create that failed or was interrupted.
  *   N3 is the retry surface for exactly that, not a journey to resume.
  */
-import { Suspense, lazy, type ComponentType, type ReactNode } from 'react'
+import {
+  Suspense,
+  lazy,
+  useEffect,
+  useLayoutEffect,
+  type ComponentType,
+  type ReactNode,
+} from 'react'
 import { createBrowserRouter, Navigate, Outlet, useLocation } from 'react-router'
 import { AppFrame } from '@/components/ab/app-shell'
+import { configureNavigation, reportCommittedPath, setCommitReporter } from '@/lib/navigation'
 import { useInShellFrame } from '@/components/ab/shell-chrome'
 import { useOrg, useSession } from '@/data/provider'
 import { MarketingHome } from '@/features/marketing/home-screen'
@@ -196,15 +204,41 @@ export function WorldLayout() {
   const org = useOrg()
   const { pathname } = useLocation()
   const marketing = MARKETING_PATHS.has(pathname)
+  let world: ReactNode
   if (session.signedIn && org.exists && !marketing) {
-    return (
+    world = (
       <AppFrame>
         <Outlet />
       </AppFrame>
     )
+  } else if (marketing || pathname === '/') {
+    world = <MarketingLayout />
+  } else {
+    world = <Outlet />
   }
-  if (marketing || pathname === '/') return <MarketingLayout />
-  return <Outlet />
+  return (
+    <>
+      <NavigationCommit />
+      {world}
+    </>
+  )
+}
+
+/**
+ * Tells the data layer's door (lib/navigation.ts) which path the router has
+ * COMMITTED — before paint, so a seam awaiting the marketing home purges the
+ * session only once `/` is the location the guards render.
+ */
+export function NavigationCommit() {
+  const { pathname } = useLocation()
+  useLayoutEffect(() => {
+    reportCommittedPath(pathname)
+  }, [pathname])
+  useEffect(() => {
+    setCommitReporter(true)
+    return () => setCommitReporter(false)
+  }, [])
+  return null
 }
 
 /** Auth screens redirect away once there is nothing left to authenticate. */
@@ -409,3 +443,8 @@ export const router = createBrowserRouter([
   ...devRoutes,
   { path: '*', element: el.notFound() },
 ])
+
+// The data layer's door (lib/navigation.ts): a deliberate sign-out moves to
+// the marketing home through the router's own navigation, and awaits it,
+// before the session clears.
+configureNavigation((to, options) => router.navigate(to, options))
