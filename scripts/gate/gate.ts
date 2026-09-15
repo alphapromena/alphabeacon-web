@@ -22,7 +22,7 @@
  * 25 (Playwright runs *.spec.ts only — playwright.config.ts).
  *
  * Usage:
- *   pnpm gate [--series <name>] [--workers 1] [--rounds 2] [--lanes A,B]
+ *   pnpm gate [--series <name>] [--workers 1] [--rounds 2] [--lanes A,B] [--spacing 8]
  *             [--only live-auth,live-team] [--skip-static] [--skip-live]
  *             [--funded] [--media] [--pool] [--port 5199]
  */
@@ -61,6 +61,8 @@ import { LANES, filesInLane, laneOf, type Lane } from './lanes'
 interface Options {
   series: string
   workers: number
+  /** Seconds between consecutive file starts in a lane (NIGHT-0916 order 1, item 81). */
+  spacing: number
   rounds: number
   lanes: Lane[]
   only: string[] | null
@@ -71,6 +73,8 @@ interface Options {
   pool: boolean
   port: number
 }
+
+const pause = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms))
 
 function parseArgs(argv: string[]): Options {
   const get = (flag: string): string | undefined => {
@@ -97,6 +101,13 @@ function parseArgs(argv: string[]): Options {
     // Re-measure with --workers once Ward raises it; the runner does not change.
     // The same value reaches the static half's Playwright (item 74).
     workers: Number(get('--workers') ?? 1),
+    // Every live file opens with a signup and a code send; back to back, 17
+    // of them inside ten minutes is the burst TEST-0915-2 read five submit
+    // hangs under (item 81). A pause between starts keeps a round inside the
+    // wire's own cadence (60 s between code sends per email, 5 per hour per
+    // email and purpose — each file is its own email, so the pause is about
+    // the wire as a whole, not one address).
+    spacing: Number(get('--spacing') ?? 8),
     rounds: Number(get('--rounds') ?? 2),
     lanes,
     only:
@@ -565,8 +576,13 @@ class Gate {
     if (this.opts.lanes.includes('A')) {
       const files = pick('A')
       const t = Date.now()
-      this.say(`round ${round} lane A: ${files.length} files, ${this.opts.workers} in flight`)
+      this.say(
+        `round ${round} lane A: ${files.length} files, ${this.opts.workers} in flight, ${this.opts.spacing} s between starts`,
+      )
+      let startedA = 0
       await this.pool(files, this.opts.workers, async (file) => {
+        if (startedA > 0) await pause(this.opts.spacing * 1000)
+        startedA += 1
         results.push(await this.runFile(file, 'A', round, 1))
       })
       this.say(`round ${round} lane A done in ${seconds(t).toFixed(0)} s`)
@@ -574,8 +590,15 @@ class Gate {
     if (this.opts.lanes.includes('B')) {
       const files = pick('B')
       const t = Date.now()
-      this.say(`round ${round} lane B: ${files.length} files, serial`)
-      for (const file of files) results.push(await this.runFile(file, 'B', round, 1))
+      this.say(
+        `round ${round} lane B: ${files.length} files, serial, ${this.opts.spacing} s between starts`,
+      )
+      let startedB = 0
+      for (const file of files) {
+        if (startedB > 0) await pause(this.opts.spacing * 1000)
+        startedB += 1
+        results.push(await this.runFile(file, 'B', round, 1))
+      }
       this.say(`round ${round} lane B done in ${seconds(t).toFixed(0)} s`)
     }
     // The re-run rule: a file the runner can name as the service's fault — a
@@ -810,6 +833,8 @@ async function main(): Promise<void> {
   const opts = parseArgs(process.argv.slice(2))
   if (!Number.isFinite(opts.workers) || opts.workers < 1)
     throw new Error('--workers must be a positive number')
+  if (!Number.isFinite(opts.spacing) || opts.spacing < 0)
+    throw new Error('--spacing must be zero or a positive number of seconds')
   for (const l of LANES)
     if (!existsSync(join(root, 'e2e', `${l.file}.spec.ts`)))
       throw new Error(`laned file missing on disk: ${l.file}`)
