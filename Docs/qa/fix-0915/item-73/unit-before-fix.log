@@ -1,0 +1,105 @@
+
+[1m[46m RUN [49m[22m [36mv3.2.7 [39m[90mC:/alphabeacon-web/alphabeacon-web[39m
+
+ [31m❯[39m src/data/brand-voice.test.ts [2m([22m[2m10 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 34[2mms[22m[39m
+   [32m✓[39m the brand voice cap (item 65)[2m > [22msaves a list exactly at the cap, counting Do and Don’t TOGETHER[32m 14[2mms[22m[39m
+   [32m✓[39m the brand voice cap (item 65)[2m > [22mrefuses one past the cap with the catalogue message and never reaches the wire[32m 2[2mms[22m[39m
+   [32m✓[39m the brand voice cap (item 65)[2m > [22mcounts the combined total, not either list alone[32m 1[2mms[22m[39m
+   [32m✓[39m a list already above the cap (item 65)[2m > [22mstill saves when it SHRINKS, so above-cap rules stay removable[32m 1[2mms[22m[39m
+   [32m✓[39m a list already above the cap (item 65)[2m > [22mrefuses to GROW an above-cap list, and trims nothing[32m 2[2mms[22m[39m
+   [32m✓[39m a refused save is never a success (item 65)[2m > [22mreturns the wire’s 400 with its FIELD message and request id[32m 2[2mms[22m[39m
+   [32m✓[39m a refused save is never a success (item 65)[2m > [22mreports a POST failure the same way, so a first save cannot lie either[32m 1[2mms[22m[39m
+[31m   [31m×[31m a refused save never resyncs (ORDER-FIX-0915, item 73)[2m > [22ma 400 on the PATCH leaves the provider alone[39m[32m 7[2mms[22m[39m
+[31m     → expected "spy" to not be called at all, but actually been called 1 times[90m
+
+Received: 
+
+[1m  1st spy call:
+
+[22m    Array [
+      Object {
+        "type": "live/resync",
+      },
+    ]
+[31m[90m
+
+Number of calls: [1m1[22m
+[31m[39m
+[31m   [31m×[31m a refused save never resyncs (ORDER-FIX-0915, item 73)[2m > [22ma 400 on the first save (the POST) leaves it alone too[39m[32m 1[2mms[22m[39m
+[31m     → expected "spy" to not be called at all, but actually been called 1 times[90m
+
+Received: 
+
+[1m  1st spy call:
+
+[22m    Array [
+      Object {
+        "type": "live/resync",
+      },
+    ]
+[31m[90m
+
+Number of calls: [1m1[22m
+[31m[39m
+   [32m✓[39m a refused save never resyncs (ORDER-FIX-0915, item 73)[2m > [22ma save that lands still re-reads the truth, exactly once[32m 1[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 2 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m src/data/brand-voice.test.ts[2m > [22ma refused save never resyncs (ORDER-FIX-0915, item 73)[2m > [22ma 400 on the PATCH leaves the provider alone
+[31m[1mAssertionError[22m: expected "spy" to not be called at all, but actually been called 1 times[90m
+
+Received: 
+
+[1m  1st spy call:
+
+[22m    Array [
+      Object {
+        "type": "live/resync",
+      },
+    ]
+[31m[90m
+
+Number of calls: [1m1[22m
+[31m[39m
+[36m [2m❯[22m src/data/brand-voice.test.ts:[2m205:29[22m[39m
+    [90m203| [39m
+    [90m204| [39m    [34mexpect[39m(refused[33m.[39mok)[33m.[39m[34mtoBe[39m([35mfalse[39m)
+    [90m205| [39m    [34mexpect[39m(dispatchSpy)[33m.[39mnot[33m.[39m[34mtoHaveBeenCalled[39m()
+    [90m   | [39m                            [31m^[39m
+    [90m206| [39m  })
+    [90m207| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/data/brand-voice.test.ts[2m > [22ma refused save never resyncs (ORDER-FIX-0915, item 73)[2m > [22ma 400 on the first save (the POST) leaves it alone too
+[31m[1mAssertionError[22m: expected "spy" to not be called at all, but actually been called 1 times[90m
+
+Received: 
+
+[1m  1st spy call:
+
+[22m    Array [
+      Object {
+        "type": "live/resync",
+      },
+    ]
+[31m[90m
+
+Number of calls: [1m1[22m
+[31m[39m
+[36m [2m❯[22m src/data/brand-voice.test.ts:[2m214:29[22m[39m
+    [90m212| [39m
+    [90m213| [39m    expect((await result.current.saveBrandVoice(voice(['one'], []))).o…
+    [90m214| [39m    [34mexpect[39m(dispatchSpy)[33m.[39mnot[33m.[39m[34mtoHaveBeenCalled[39m()
+    [90m   | [39m                            [31m^[39m
+    [90m215| [39m  })
+    [90m216| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m8 passed[39m[22m[90m (10)[39m
+[2m   Start at [22m 15:33:14
+[2m   Duration [22m 1.75s[2m (transform 113ms, setup 360ms, collect 200ms, tests 34ms, environment 657ms, prepare 185ms)[22m
+

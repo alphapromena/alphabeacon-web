@@ -38,8 +38,11 @@ let savedVoice = { do: [] as string[], dont: [] as string[], examples: [] as str
 /** null exercises the lazy-create POST path; an id exercises the PATCH path. */
 let canonicalVoiceId: string | null = '293'
 
+/** The provider's dispatch, shared so a test can read what a save sent it. */
+const { dispatchSpy } = vi.hoisted(() => ({ dispatchSpy: vi.fn() }))
+
 vi.mock('@/data/provider', () => ({
-  useDataDispatch: () => vi.fn(),
+  useDataDispatch: () => dispatchSpy,
   useFollowedSources: () => [],
   useLiveBrandIds: () => ({ canonicalVoiceId, extraVoiceRows: [], topicIdByText: {} }),
   useLiveWorkingOrgId: () => '1867',
@@ -53,6 +56,7 @@ const apiMock = vi.mocked(api)
 
 beforeEach(() => {
   apiMock.mockReset()
+  dispatchSpy.mockReset()
   savedVoice = { do: [], dont: [], examples: [] }
   canonicalVoiceId = '293'
 })
@@ -174,5 +178,48 @@ describe('a refused save is never a success (item 65)', () => {
     const refused = await result.current.saveBrandVoice(voice(['one'], []))
 
     expect(refused).toMatchObject({ ok: false, code: 'validation_failed' })
+  })
+})
+
+describe('a refused save never resyncs (ORDER-FIX-0915, item 73)', () => {
+  // TEST-0915 proof C, org 2199: the catch's resync put the sync phase on
+  // `syncing`, the settings layout swapped the screen for its skeleton, and
+  // the remount wiped the draft, the alert and its request id — the refusal
+  // erased itself. Nothing changed on the wire, so there is nothing to re-read:
+  // a resync follows a save that LANDED, or the user's own Try again.
+  it('a 400 on the PATCH leaves the provider alone', async () => {
+    apiMock.mockRejectedValueOnce(
+      new ApiError(
+        400,
+        'validation_failed',
+        'Validation failed',
+        [{ field: 'rules', message: 'Too big: expected array to have <=50 items' }],
+        'req-0915-c',
+      ),
+    )
+    const { result } = renderHook(() => useBrandActions())
+
+    const refused = await result.current.saveBrandVoice(voice(['one'], []))
+
+    expect(refused.ok).toBe(false)
+    expect(dispatchSpy).not.toHaveBeenCalled()
+  })
+
+  it('a 400 on the first save (the POST) leaves it alone too', async () => {
+    canonicalVoiceId = null
+    apiMock.mockRejectedValueOnce(new ApiError(400, 'validation_failed', 'Name is required'))
+    const { result } = renderHook(() => useBrandActions())
+
+    expect((await result.current.saveBrandVoice(voice(['one'], []))).ok).toBe(false)
+    expect(dispatchSpy).not.toHaveBeenCalled()
+  })
+
+  it('a save that lands still re-reads the truth, exactly once', async () => {
+    apiMock.mockResolvedValueOnce({ id: '293' })
+    const { result } = renderHook(() => useBrandActions())
+
+    expect(await result.current.saveBrandVoice(voice(['one'], []))).toEqual({ ok: true })
+    expect(dispatchSpy).toHaveBeenCalledTimes(1)
+    expect(dispatchSpy).toHaveBeenCalledWith({ type: 'live/resync' })
   })
 })

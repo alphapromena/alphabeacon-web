@@ -232,7 +232,13 @@ export function useBrandActions() {
         resync()
         return ok
       } catch (error) {
-        resync()
+        // A refusal changes nothing on the wire, so there is nothing to
+        // re-read — and a resync here is what erased the refusal: the sync
+        // phase went `syncing`, the settings layout swapped the screen for
+        // its skeleton, and the screen remounted pristine, taking the draft,
+        // the alert and its request id with it (item 73, TEST-0915 proof C).
+        // The client's saved state is still the truth; the next re-read is a
+        // save that lands, or the user's own Try again (D-FIX-0915-B).
         return failure(error)
       }
     },

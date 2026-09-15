@@ -1,0 +1,104 @@
+
+[1m[46m RUN [49m[22m [36mv3.2.7 [39m[90mC:/alphabeacon-web/alphabeacon-web[39m
+
+ [32m✓[39m src/data/review-queue.test.ts [2m([22m[2m11 tests[22m[2m)[22m[33m 467[2mms[22m[39m
+   [33m[2m✓[22m[39m the state machine drives the queue[2m > [22mapplies every legal transition and refuses every illegal one [33m 364[2mms[22m[39m
+ [32m✓[39m src/components/ab/first-light.test.tsx [2m([22m[2m11 tests[22m[2m)[22m[33m 1146[2mms[22m[39m
+   [33m[2m✓[22m[39m first light, the moment[2m > [22mgreets the person by their own first name [33m 491[2mms[22m[39m
+   [33m[2m✓[22m[39m first light, the moment[2m > [22mfalls back rather than greeting an empty string [33m 450[2mms[22m[39m
+ [32m✓[39m src/components/ab/error-state.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[32m 260[2mms[22m[39m
+ [32m✓[39m src/components/ab/claim-chip.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[33m 370[2mms[22m[39m
+ [32m✓[39m src/components/ab/confirm-dialog.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[33m 636[2mms[22m[39m
+   [33m[2m✓[22m[39m ConfirmDialog[2m > [22mopens from its trigger and names the consequence [33m 307[2mms[22m[39m
+ [32m✓[39m src/components/ab/use-number-transition.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 2408[2mms[22m[39m
+   [33m[2m✓[22m[39m useNumberTransition[2m > [22mtravels to a new value without ever leaving the interval [33m 953[2mms[22m[39m
+   [33m[2m✓[22m[39m useNumberTransition[2m > [22marrives at the target when the numbers are far apart [33m 710[2mms[22m[39m
+   [33m[2m✓[22m[39m useNumberTransition[2m > [22mcounts DOWN as readily as up [33m 706[2mms[22m[39m
+[90mstdout[2m | src/data/session-breach.test.tsx[2m > [22m[2ma 401 on the boot sync[2m > [22m[2mbooting on `/`: purges the session, toasts, and the handler itself pushes login
+[22m[39m[api] GET /me → 401 (request-id unexposed)
+[api] GET /me/orgs → 401 (request-id unexposed)
+
+[90mstdout[2m | src/data/session-breach.test.tsx[2m > [22m[2ma 401 on the boot sync[2m > [22m[2mbooting on an authed route: the guard sends the cleared session to login, where the handler is pushing too
+[22m[39m[api] GET /me → 401 (request-id unexposed)
+[api] GET /me/orgs → 401 (request-id unexposed)
+
+ [32m✓[39m src/data/session-breach.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[32m 215[2mms[22m[39m
+ [32m✓[39m src/components/ab/form.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[33m 926[2mms[22m[39m
+   [33m[2m✓[22m[39m Form[2m > [22msurfaces the named message from a schema violation, attached to the control [33m 325[2mms[22m[39m
+ [32m✓[39m src/features/billing/billing-screen.test.tsx [2m([22m[2m12 tests[22m[2m)[22m[33m 638[2mms[22m[39m
+ [32m✓[39m src/components/ab/save-bar.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[33m 2458[2mms[22m[39m
+   [33m[2m✓[22m[39m SaveBar — "Saved" at the bar (§5.3)[2m > [22ma save that lands says "Saved" at the bar, then lets the bar go [33m 1928[2mms[22m[39m
+ [32m✓[39m src/data/datasets/resolve-initial.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 227[2mms[22m[39m
+ [32m✓[39m src/components/ab/first-light-gate.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[32m 251[2mms[22m[39m
+ [32m✓[39m src/data/studio-billing.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 192[2mms[22m[39m
+ [32m✓[39m src/features/settings/brand-voice-screen.test.tsx [2m([22m[2m8 tests[22m[2m)[22m[33m 3353[2mms[22m[39m
+   [33m[2m✓[22m[39m the combined counter and the cap (item 65)[2m > [22mleaves both Add controls live below the cap [33m 359[2mms[22m[39m
+   [33m[2m✓[22m[39m a workspace already above the cap (item 65)[2m > [22mlists every rule and keeps each one removable [33m 1094[2mms[22m[39m
+   [33m[2m✓[22m[39m a refused save is never reported as a success (item 65)[2m > [22mrenders the wire’s FIELD message and request id, and fires no success toast [33m 452[2mms[22m[39m
+   [33m[2m✓[22m[39m a refused save is never reported as a success (item 65)[2m > [22mfalls back to the envelope message when the wire names no field [33m 464[2mms[22m[39m
+   [33m[2m✓[22m[39m a refused save is never reported as a success (item 65)[2m > [22mfires the green toast only after a save that actually succeeded [33m 533[2mms[22m[39m
+ [32m✓[39m src/data/settings-system.test.ts [2m([22m[2m23 tests[22m[2m)[22m[32m 222[2mms[22m[39m
+ [32m✓[39m src/lib/placeholder-law.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 153[2mms[22m[39m
+ [32m✓[39m src/routes.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[32m 187[2mms[22m[39m
+ [32m✓[39m src/components/ab/stat-card.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[32m 228[2mms[22m[39m
+ [32m✓[39m src/components/ab/status-badge.test.tsx [2m([22m[2m15 tests[22m[2m)[22m[32m 169[2mms[22m[39m
+ [32m✓[39m src/data/studio.test.ts [2m([22m[2m39 tests[22m[2m)[22m[32m 232[2mms[22m[39m
+ [32m✓[39m src/features/marketing/concept/site.test.ts [2m([22m[2m13 tests[22m[2m)[22m[32m 98[2mms[22m[39m
+ [32m✓[39m src/data/brand.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 125[2mms[22m[39m
+ [32m✓[39m src/data/calendar-connections.test.ts [2m([22m[2m21 tests[22m[2m)[22m[32m 125[2mms[22m[39m
+ [32m✓[39m src/features/billing/use-subscription-poll.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 95[2mms[22m[39m
+ [32m✓[39m src/data/entities/plans.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 88[2mms[22m[39m
+ [32m✓[39m src/lib/timezone.test.ts [2m([22m[2m14 tests[22m[2m)[22m[32m 66[2mms[22m[39m
+ [32m✓[39m src/data/adapters/auth-adapter.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 71[2mms[22m[39m
+ [32m✓[39m src/data/generate.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 96[2mms[22m[39m
+ [32m✓[39m src/data/provider.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 79[2mms[22m[39m
+ [32m✓[39m src/features/analytics/range.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 61[2mms[22m[39m
+ [32m✓[39m src/data/auth-flow.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 62[2mms[22m[39m
+ [32m✓[39m src/api/client.test.ts [2m([22m[2m16 tests[22m[2m)[22m[32m 39[2mms[22m[39m
+ [32m✓[39m src/data/brand-wire.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 35[2mms[22m[39m
+ [32m✓[39m src/data/media-capabilities.test.ts [2m([22m[2m29 tests[22m[2m)[22m[32m 29[2mms[22m[39m
+ [32m✓[39m src/components/ab/tone-badge.test.tsx [2m([22m[2m1 test[22m[2m)[22m[32m 63[2mms[22m[39m
+ [32m✓[39m src/lib/tone-sample.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 31[2mms[22m[39m
+ [32m✓[39m src/data/brand-voice.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 63[2mms[22m[39m
+ [32m✓[39m src/styles/tokens.test.ts [2m([22m[2m73 tests[22m[2m)[22m[32m 27[2mms[22m[39m
+ [32m✓[39m src/data/datasets/datasets.test.ts [2m([22m[2m42 tests[22m[2m)[22m[32m 29[2mms[22m[39m
+ [32m✓[39m src/data/billing.test.ts [2m([22m[2m20 tests[22m[2m)[22m[32m 24[2mms[22m[39m
+ [32m✓[39m scripts/guard-static.test.ts [2m([22m[2m17 tests[22m[2m)[22m[32m 17[2mms[22m[39m
+ [32m✓[39m src/lib/params-schema.test.ts [2m([22m[2m13 tests[22m[2m)[22m[32m 16[2mms[22m[39m
+ [32m✓[39m src/api/upload.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 16[2mms[22m[39m
+ [32m✓[39m src/styles/motion-scale.test.ts [2m([22m[2m20 tests[22m[2m)[22m[32m 15[2mms[22m[39m
+ [32m✓[39m src/data/adapters/tone-fields.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32m✓[39m src/styles/marketing-tokens.test.ts [2m([22m[2m26 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+ [32m✓[39m src/data/first-run-seed.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 15[2mms[22m[39m
+ [32m✓[39m scripts/gate/classify.test.ts [2m([22m[2m20 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+ [32m✓[39m src/api/session.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32m✓[39m src/lib/compose-player.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32m✓[39m src/features/billing/ledger.test.ts [2m([22m[2m23 tests[22m[2m)[22m[32m 15[2mms[22m[39m
+ [32m✓[39m scripts/verify-lib.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32m✓[39m src/styles/one-theme.test.ts [2m([22m[2m23 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+ [32m✓[39m src/features/billing/billing-view.test.ts [2m([22m[2m19 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+ [32m✓[39m src/data/adapters/brand-adapter.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+ [32m✓[39m src/lib/draft-status.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+ [32m✓[39m src/data/entities/generation-models.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+ [32m✓[39m src/data/readiness.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+ [32m✓[39m e2e/global-setup.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+ [32m✓[39m scripts/gate/lanes.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+ [32m✓[39m src/features/generate/run-plan.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+ [32m✓[39m src/data/adapters/holidays.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+ [32m✓[39m src/lib/money.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+ [32m✓[39m src/lib/format.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+ [32m✓[39m src/features/auth/password-rules.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+ [32m✓[39m src/features/calendar/reconcile-draft.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+ [32m✓[39m src/lib/source-url.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+ [32m✓[39m src/data/proposals.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+ [32m✓[39m src/data/adapters/org-selection.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+ [32m✓[39m src/lib/generate-stage.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32m✓[39m src/features/settings/tone-fields.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+ [32m✓[39m src/features/studio/use-create-visual.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32m✓[39m src/data/adapters/notification-adapter.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 3[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m73 passed[39m[22m[90m (73)[39m
+[2m      Tests [22m [1m[32m825 passed[39m[22m[90m (825)[39m
+[2m   Start at [22m 15:35:35
+[2m   Duration [22m 23.23s[2m (transform 4.59s, setup 52.35s, collect 31.61s, tests 16.38s, environment 102.22s, prepare 18.64s)[22m
+

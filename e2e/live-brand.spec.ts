@@ -117,6 +117,70 @@ test('voice rules: the flat live list persists through the API', async ({ page }
   )
 })
 
+test('a refused save keeps the draft, the alert and Save on screen (item 73)', async ({ page }) => {
+  await login(page, owner, PASSWORD)
+  await openSettingsTab(page, 'Brand voice')
+  await expect(page.getByRole('textbox', { name: 'Do rule 1', exact: true })).toHaveValue(
+    'Name the farm when it matters',
+    { timeout: SCREEN_SYNC },
+  )
+
+  // The wire refuses the save: its own 400 envelope, fulfilled at the browser
+  // for the canonical row's PATCH only — the preflight and every other request
+  // still reach the API. The app cannot tell this refusal from a real one.
+  const REQUEST_ID = 'fix-0915-refused-save'
+  const FIELD_MESSAGE = 'Too big: expected array to have <=50 items'
+  const isVoiceRow = (url: URL) => /\/brand\/voices\/[^/]+$/.test(url.pathname)
+  await page.route(isVoiceRow, async (route) => {
+    const request = route.request()
+    if (request.method() !== 'PATCH') return route.fallback()
+    await route.fulfill({
+      status: 400,
+      headers: {
+        'content-type': 'application/json',
+        'access-control-allow-origin': request.headers()['origin'] ?? '*',
+        'access-control-expose-headers': 'x-request-id',
+        'x-request-id': REQUEST_ID,
+      },
+      body: JSON.stringify({
+        error: {
+          code: 'validation_failed',
+          message: 'Validation failed',
+          details: [{ field: 'rules', message: FIELD_MESSAGE }],
+          requestId: REQUEST_ID,
+        },
+      }),
+    })
+  })
+
+  const typed = 'Say the roast date, never "fresh"'
+  await addVoiceRule(page, 'Do', typed)
+  await page.getByRole('button', { name: 'Save changes' }).click()
+
+  // Honest, as before: never "saved", the wire's field message in the toast…
+  await expect(page.getByText(FIELD_MESSAGE).first()).toBeVisible({ timeout: ONE_CALL })
+  await expect(page.getByText('Brand voice saved')).toHaveCount(0)
+  // …and now the rest STAYS: the alert with the request id, the draft and the
+  // Save button — three seconds on too, which is when proof C watched them go
+  // (the failure path resynced, the layout swapped in its skeleton, the screen
+  // remounted pristine).
+  const alert = page.getByRole('alert').filter({ hasText: `request ${REQUEST_ID}` })
+  await expect(alert).toContainText(FIELD_MESSAGE)
+  await page.waitForTimeout(3000)
+  await expect(alert).toBeVisible()
+  await expect(page.getByRole('textbox', { name: 'Do rule 2', exact: true })).toHaveValue(typed)
+  await expect(page.getByRole('button', { name: 'Save changes' })).toBeEnabled()
+
+  // The wire relents; the same draft saves for real and persists.
+  await page.unroute(isVoiceRow)
+  await page.getByRole('button', { name: 'Save changes' }).click()
+  await expect(page.getByText('Brand voice saved')).toBeVisible({ timeout: ONE_CALL })
+  await page.goto('/settings/brand-voice')
+  await expect(page.getByRole('textbox', { name: 'Do rule 2', exact: true })).toHaveValue(typed, {
+    timeout: SCREEN_SYNC,
+  })
+})
+
 test('sources and topics: scheme-less display, real persistence', async ({ page }) => {
   await login(page, owner, PASSWORD)
   await openSettingsTab(page, 'Sources & topics')
