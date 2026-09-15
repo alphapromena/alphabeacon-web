@@ -1,0 +1,9 @@
+warm-up: skipped — the runner warmed the fleet and keeps the heartbeat (GATE-0910 §3.2)
+
+Running 3 tests using 1 worker
+
+  ok 1 [chromium] › e2e\live-brand-kit.spec.ts:61:1 › a fresh owner + org, made through the product (6.0s)
+  ok 2 [chromium] › e2e\live-brand-kit.spec.ts:71:1 › the wire, from Node (NOT browser truth): presign the closed pair, PUT a tiny PDF, read the row back under Files, Delete, re-read (14.6s)
+  ok 3 [chromium] › e2e\live-brand-kit.spec.ts:130:1 › browser truth: the Brand kit type sends a PDF from Chromium with nothing typed, it lists, and Delete removes it (11.3s)
+
+  3 passed (32.7s)

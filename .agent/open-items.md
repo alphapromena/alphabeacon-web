@@ -1305,7 +1305,7 @@ Numbering continues from 50. The record: `Docs/qa/hsn-0910/phase0/` and the
     and shows no Arabic option there.
 
 58. **FOR HASAN — `photoshoot.generate` answers 502 on five
-    `referenceImages`, not 400.** Filed on the founder's word, 2026-09-10
+    `referenceImages`, not 400.** _TEST-0915-2 (gate 1, 18:24Z): five references answered **400 `bad_request`** (request `8c8bb992-ecfb-405f-b413-2129e4257b37`); gate 2 likewise; the flap continues, bucket c both gates._ Filed on the founder's word, 2026-09-10
     (first noted under item 55). The document says 1 to 4 urls. Measured on
     org 1824: four references → 402 at the wallet
     (`06a8212a-b28e-4121-b681-5a46821cd0f5`); five → **502 `bad_gateway`
@@ -1389,7 +1389,7 @@ Numbering continues from 50. The record: `Docs/qa/hsn-0910/phase0/` and the
 
 63. **For Hasan: `social-posts.media` checks the `durationS` TYPE before the
     wallet and the MAXIMUM after it (GATE-0910, measured 2026-09-13 at zero
-    spend — `Docs/qa/gate-0910/item-63/`, `pnpm probe:item-63`).** The two
+    spend — `Docs/qa/gate-0910/item-63/`, `pnpm probe:item-63`).** _TEST-0915-2: 999 → 402 at the wallet in both gates; known red, waiting on Hasan._ The two
     halves of one field are no longer enforced in the same place: `durationS:
     "abc"` is refused **400 `bad_request`** before the wallet, as the
     capabilities document says; `durationS: 999` passes validation and reaches
@@ -1597,7 +1597,7 @@ Numbering continues from 50. The record: `Docs/qa/hsn-0910/phase0/` and the
     opens the folder learns it there rather than here.
 
 70. **The static e2e suite is not deterministic under parallel load — four
-    specs flake, and locally there are no retries to absorb it.**
+    specs flake, and locally there are no retries to absorb it.** _TEST-0915-2: at one worker through the runner the static suite was 119 / 0 / 90 in both gates; the one flake of the session was `entry-flow:129` in the pre-flight run, green alone in 2.1 s (bucket d)._
     (2026-09-14, ORDER THEME-0913 close-out, filed on the founder's word.)
 
     **NOT a regression, and that is established rather than assumed.** All four
@@ -1841,3 +1841,46 @@ Numbering continues from 77. The record: `Docs/qa/fix-0915/`.
     the browser can see. For Ward: `Access-Control-Expose-Headers:
     x-request-id` would make every call findable from the console. Not a fix
     in this repo.
+
+### TEST-0915-2 — the named testing session (2026-09-15)
+
+Numbering continues from 80. The record: `Docs/qa/test-0915-2/`.
+
+79 (annotated, still open): no red of item 79's shape in either gate; the
+deferred reads were met on purpose by the Phase 4 probe's 401 cases and by
+`live-auth-401` (green in both gates). No harness fix landed — nothing to
+close.
+
+81. **Under the gate's live round, five form submits answered nothing inside
+    their 20 s and the specs went red — green alone, every one.** Gate 1
+    (`Docs/qa/test-0915-2/gate/20260915-180958/`): from 18:24Z `live-wallet:76`
+    and `live-media-upload:58` (Sign in) and `live-billing:62`,
+    `live-brand-rules:72`, `live-generate:50` (Create account) sat on the
+    filled form with no alert and no toast (the error contexts); alone at one
+    worker each was green (wallet 4/4, media-upload 3/3, billing 7/7,
+    brand-rules 4/4, generate 1/1; `gate1-isolation/`). Gate 2:
+    static GREEN through the runner (verify:all PASS, 119 / 0 / 90 at one worker, unit 829/829 in 74 files, the seven report checks PASS); live 20 of 22 green or all-skipped, the two reds the known bucket c — 58 (400, request `20bf58fb…`) and 63 (402); no bucket a, b or d; 25 min. The shape is the API under the round's burst — the
+    runner's warm-up already reads a 429 as an answer — not the code; the app
+    showed nothing for a hung submit because there was nothing to show. **For
+    a ruling:** whether the round should space its signups (the runner's
+    lane A opens a fresh org per file inside ten minutes), and for Ward
+    whether the auth endpoints rate-limit per IP.
+82. **First light overruns the 2000 ms ceiling in LIVE mode: 2287 / 2239 /
+    2196 ms on three fresh accounts (orgs 2312, 2315, 2318), page time,
+    mount → removal.** The moment closes on a 1800 ms `setTimeout`
+    (`first-light.tsx`), and live the workspace sync's re-renders land inside
+    that window, so the timer fires late. It plays once and never on a
+    reload (both proven live). Not this stack's regression — the moment and
+    the live sync predate it and the live duration was never held to the
+    ceiling (TEST-0915's smoke read "~4710 ms incl. verify") — and a fix is a
+    motion decision (close on the animation's own end rather than a timer, or
+    accept the sync's share). **For a ruling.** Record
+    `Docs/qa/test-0915-2/phase4/`.
+83. **A sign-out lands in two places by construction.** Since D-FIX-0915-A a
+    sign-out on an authed route re-renders through `Authed` and lands on
+    `/login`; a sign-out on `/` re-renders through `RootGate` and lands on
+    the marketing home. Two live specs asserted the old single landing and
+    were updated to accept either (bucket a, `2dc7c45`). Neither the order
+    nor D-FIX-0915-A names the sign-out case. **For a ruling:** one landing
+    for Sign out (navigate explicitly, before clearing the session), or keep
+    the guard's answer as it is.

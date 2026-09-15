@@ -76,3 +76,19 @@ Served: the gate's own live build (`dist/`, entry `index-Crboq77r.js`, the dev h
 | H · nothing paid, wires at 0 | PASS — orgs 2317, 2319, 2320: voices, tones, sources, topics, schedules all 0 on the wire; the gate's `live-create-visual` skipped all (no `--funded`); `live-billing`'s 402 on the unfunded org green alone; no `--funded`, nothing on 936 / 1867 / 619, 1813 only through the gate's own files. | `phase4-live3.md` |
 
 **Live3 rows.** Route arrivals, proof E's clock on the production build with the wire measured from resource timing: Today 5 / 5 / 6 ms (no wire), Calendar 4 / 4 / 4 ms, Billing 799 / 892 / 935 ms of which the wire is 797 / 891 / 932 (three reads on mount) → **the shell's own share 1–3 ms**; Studio's and Settings' markers were not found on this org's screens (the arrival could not be read; the identity walk covers both). Every hop that painted a skeleton had a wire wait ≥ 645 ms behind it; none flashed. The shell's share is under the static dev-server range (22–67 ms) — no regression. The tone sample rewrites beside the picker (two tones, org 2318). First light on org 2318: 2196 ms.
+
+## Phase 5 — fixes, then gate 2
+
+Fixes on the branch: `d827693` + `fbb8789` (Phase 1, the ignored build step), `2dc7c45` (the two sign-out helpers, bucket a), `9188ffc` (the Phase 4 probe, scripts only), docs commits between. No product code changed in this session.
+
+**Gate 2** on `7d256a9` (record `Docs/qa/test-0915-2/gate/20260915-192419/`), 19:24:20Z → 19:49:32Z, 25 min. Static half GREEN through the runner: verify:all PASS, `Running 209 tests using 1 worker`, static e2e 119 / 0 / 90, unit 829 / 829 in 74 files, the seven report checks PASS. Live round, one worker: 22 files — **20 green or all-skipped, 2 red, both the known bucket c**: `live-media-capabilities:338` five references → 400 again (request `20bf58fb-4a0a-4e87-b59b-1f8a623e6d80`, 19:38Z; item 58's flap held the same way as gate 1) and `live-video-duration:86` 999 → 402 (item 63). The five bucket-d files of gate 1 were green in the round (wallet 4/4, media-upload 3/3, billing 7/7, brand-rules 5/5, generate 2/2), the two bucket-a files green with their updated helpers (invite-org 3/3, team 6/6), `live-auth-401` 4/4 in both gates. No bucket a, b or d in gate 2. The runner's own verdict reads RED because it cannot classify bucket c; by the order's definition — every red fixed or in the known bucket — **gate 2 is clean** and the merge is on.
+
+| | gate 1 (`96e1c25`) | gate 2 (`7d256a9`) |
+|---|---|---|
+| static half | GREEN — 119 / 0 / 90, unit 829/829, wNN 7/7 | GREEN — 119 / 0 / 90, unit 829/829, wNN 7/7 |
+| live round | 13 green, 9 red (2 c, 2 a, 5 d) | 20 green or all-skipped, 2 red (both c) |
+| wall time | 22 min | 25 min |
+
+## Phase 6 — merge and deploy
+
+Step 1 — the close-out on the branch (sessions entry, open-items 58 / 63 / 70 / 79 annotated and 81–83 filed, D-TEST-0915-2-A) as a docs-only commit: proof (b) — its branch-preview deployment must be CANCELED by the ignored build step.

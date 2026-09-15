@@ -1,0 +1,31 @@
+warm-up: skipped — the runner warmed the fleet and keeps the heartbeat (GATE-0910 §3.2)
+
+Running 3 tests using 1 worker
+
+  ok 1 [chromium] › e2e\live-video-duration.spec.ts:76:1 › a fresh owner + org, made through the product (5.5s)
+  x  2 [chromium] › e2e\live-video-duration.spec.ts:86:1 › a bad durationS is refused with 400 BEFORE the wallet check — the field is known, a maximum is enforced (6.0s)
+  -  3 [chromium] › e2e\live-video-duration.spec.ts:109:1 › the valid video body clears validation — and self-skips on 402, the positive proof riding on LIVE_MEDIA=1
+
+
+  1) [chromium] › e2e\live-video-duration.spec.ts:86:1 › a bad durationS is refused with 400 BEFORE the wallet check — the field is known, a maximum is enforced 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 400
+    Received: 402
+
+       98 |   expect(notANumber.status()).toBe(400)
+       99 |   const overMax = await request.post(jobs, { headers: auth, data: videoBody(999) })
+    > 100 |   expect(overMax.status()).toBe(400)
+          |                            ^
+      101 |
+      102 |   // Nothing moved: the wallet is still zero and no job exists.
+      103 |   const after = await readWallet(page, request)
+        at C:\alphabeacon-web\alphabeacon-web\e2e\live-video-duration.spec.ts:100:28
+
+    Error Context: .gate\artifacts\20260915-192419\round-1\live-video-duration\live-video-duration-a-bad--154ff-known-a-maximum-is-enforced-chromium\error-context.md
+
+  1 failed
+    [chromium] › e2e\live-video-duration.spec.ts:86:1 › a bad durationS is refused with 400 BEFORE the wallet check — the field is known, a maximum is enforced 
+  1 did not run
+  1 passed (12.3s)

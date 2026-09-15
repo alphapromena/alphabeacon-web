@@ -1,0 +1,101 @@
+
+> alphabeacon-web@0.0.0 verify:w06 C:\alphabeacon-web\alphabeacon-web
+> tsx scripts/verify-w06.ts
+
+PASS  lint — 9 s in the report
+PASS  typecheck — 16 s in the report
+PASS  unit tests — 829 passed / 0 failed / 74 files (from the report)
+PASS  guard-static — 1 s in the report
+PASS  build — 26 s in the report
+PASS  e2e (compose, analytics, settings, axe) — 119 passed / 90 skipped / 0 failed (from the report)
+
+=== every generation entry reads the one readiness selector ===
+  F1 /generate: useReadiness yes, GenerationBlocked yes
+  E2 Studio composer: useReadiness yes, GenerationBlocked yes
+  D4 media panel: useReadiness yes, GenerationBlocked yes
+  the ruling lives in readiness.ts: yes
+  tone preview is NOT gated: yes
+gate: F1, the Studio composer and D4 all read useReadiness and render GenerationBlocked
+
+=== one tone editor, three entry points ===
+tones: the sheet and the routed page both render the shared ToneEditorForm
+
+=== a custom tone renders identically on every screen ===
+  D2 draft card: ToneBadge yes
+  D3 draft detail: ToneBadge yes
+  F1 generate: ToneBadge yes
+  G2 channel detail: ToneBadge yes
+tones: every screen badges a tone through ToneBadge and reads it from the provider
+
+=== analytics never draws a number it was not given ===
+analytics: absent deltas stay absent, unsynced channels are excluded and declared
+
+=== F1 hands off to the queue rather than copying it ===
+compose: F1 renders D2's card, D2's actions and D2's dialogs, entering at pending_review
+
+=== the stream is script-driven, not hardcoded in the screen ===
+compose: five scripts in data, selection in the player, no script named in the screen
+
+=== settings screens share one save bar and one guard ===
+  src/features/settings/organization-screen.tsx: SaveBar yes · own guard no
+  src/features/settings/brand-voice-screen.tsx: SaveBar yes · own guard no
+  src/features/calendar/schedule-config-screen.tsx: SaveBar yes · own guard no
+settings: every dirty-state screen commits through the shared SaveBar
+
+=== posting times name their zone, and claim nothing more ===
+time: posting times carry a GMT offset, local time shows only on a mismatch, no audience claim
+
+=== the keyboard-focus rules from the W6 manual pass ===
+focus: settings is a route layout with a real tablist, the guard restores focus, no hidden tab stops
+
+=== every W6 route is a real screen ===
+routes: every W6 path resolves to its real screen; the placeholder is gone
+
+=== e2e specs navigate in-app after switching datasets ===
+  entry-flow.spec.ts: switches via the shared helper, then walks in-app
+  today-queue.spec.ts: switches via the shared helper, then walks in-app
+  calendar-connections.spec.ts: switches via the shared helper, then walks in-app
+  studio-billing.spec.ts: switches via the shared helper, then walks in-app
+  compose-analytics-settings.spec.ts: switches via the shared helper, then walks in-app
+  settings-a11y.spec.ts: switches via the shared helper, then walks in-app
+  hsn-series.spec.ts: switches via the shared helper, then walks in-app
+
+=== W6 deliverables exist ===
+all 21 W6 deliverables present
+
+W6 verify summary
+------------------------------------------------
+lint                                        PASS
+typecheck                                   PASS
+unit tests                                  PASS
+guard-static                                PASS
+build                                       PASS
+e2e (compose, analytics, settings, axe)     PASS
+readiness gate is one selector              PASS
+one tone editor, three entry points         PASS
+custom tone renders identically everywhere  PASS
+analytics never invents a number            PASS
+F1 reuses the queue card and actions        PASS
+compose is script-driven                    PASS
+settings share one save bar                 PASS
+times are honest about zones                PASS
+keyboard-focus rules hold                   PASS
+no stub routes remain                       PASS
+e2e navigation rule holds                   PASS
+W6 deliverables exist                       PASS
+------------------------------------------------
+RESULT: PASS (automated steps)
+
+MANUAL -- human judgement; verify by hand (web-plan.md W6 Verify):
+  1. Watch a compose run at full length. Does the token pace read
+     as writing, or as a progress bar wearing words?
+  2. Read G1 as someone who did not publish this week: do the
+     deltas and the "not reported" line tell the same story?
+  3. Walk Settings with the keyboard only, tab by tab.
+
+  Carried forward, still open (see .agent/open-items.md):
+   - W1 screen-reader walk of the app shell (NVDA / VoiceOver)
+   - W2 marketing copy read, wizard at phone width, marketing in a dark OS
+   - W3 queue as one continuous tool, queue on a phone
+   - W4 month grid at phone width, posting times read in the schedule zone
+   - W5 D4 and E2 back to back, credits ledger read as a charge query

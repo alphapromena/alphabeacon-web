@@ -5629,3 +5629,41 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
 - Verify: as above; every Playwright run alone at `--workers=1`; no live run
 - Next: the founder's read of both branches; the testing session that gates
   them runs the full gate on `feat/shell-0915`'s tip
+
+### 2026-09-15 — TEST-0915-2: the second named testing session on the follow-ups stack — the ignored build step fixed, two gates, Phase 4 live proofs, merged to `main` and `live`
+
+- Did: **Pre-flight** matched (main = live = `f3d5a83`, `be0535c`, `2274244`,
+  linear; 5199 clear; the dev Lambda base); cheap checks on `2274244`
+  reproduced (unit 829/829 in 74 files; static 118 + one item-70 flake green
+  alone = 119). **Phase 1:** the ignored build step (D-TEST-0915-2-A) —
+  `d827693` (the one-liner, ERROR on Vercel's 256-character cap) then
+  `fbb8789` (`scripts/vercel-ignore.sh`); proof (a) READY for the docs HEAD
+  `96e1c25` on the branch preview. **Phase 2:** item 66b probed on org 2275
+  — the wire still accepts a second "Brand voice" (201, 201); 63 and 58
+  known. **Gate 1** (`20260915-180958`, 22 min): static half GREEN through the
+  runner at one worker (verify:all 486 s, 119 / 0 / 90, unit 829/829); live
+  22 files, 9 red → 2 bucket c (58: 400 today, 63: 402), 2 bucket a (the
+  sign-out landing since D-FIX-0915-A, `2dc7c45`), 5 bucket d (submit hangs
+  under the burst, item 81, all green alone); no bucket b. **Phase 4** on the
+  gate's live build: A the frame boundaries plus the throw proven by breaking
+  and reverting; B identity across five screens in both modes, the shell's
+  own share of a warm hop 1–6 ms on the production build; C first light once
+  and not on reload but 2.2–2.3 s live (item 82), the skeleton at 240 ms, the
+  tone sample; the moments that need a draft not reachable at zero spend; D
+  19 routes clean under axe inside the frame, the live toast 13.62:1 at every
+  offset from its mount, reduced motion at the end state; E item 75's three
+  cases by eye; F item 73's three checks; G one worker; H three fresh orgs at
+  0. **Fixes landed:** `d827693` + `fbb8789` (the ignored build step, D-TEST-0915-2-A), `2dc7c45` (the two sign-out helpers, bucket a), `9188ffc` (the Phase 4 probe); no product code changed. **Gate 2** (`20260915-192419`): static GREEN through the runner (verify:all PASS, 119 / 0 / 90 at one worker, unit 829/829 in 74 files, the seven report checks PASS); live 20 of 22 green or all-skipped, the two reds the known bucket c — 58 (400, request `20bf58fb…`) and 63 (402); no bucket a, b or d; 25 min. **Merge:** see the
+  line below, added after the deploy.
+- Phase: post-W7 — the named testing session that gates the follow-ups
+- Files: `vercel.json`, `scripts/vercel-ignore.sh`,
+  `scripts/probe-test-0915-2-live.ts`, `e2e/live-invite-org.spec.ts`,
+  `e2e/live-team.spec.ts`, `Docs/qa/test-0915-2/**`,
+  `.agent/{sessions,decisions,open-items,state}.md`
+- Decisions: D-TEST-0915-2-A (the ignored build step diffs against the last
+  successful deployment)
+- Verify: two gates as above; every Playwright run at one worker; the two
+  live-spec updates green alone; lint · typecheck · guard-static clean on
+  every commit
+- Next: the founder's rulings on 81, 82, 83 and 66b (still open on Hasan's
+  side); the topics seam (78) unchanged; returnTo pending

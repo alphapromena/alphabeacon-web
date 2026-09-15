@@ -4395,3 +4395,29 @@ the error itself.
   first measurement comes from that notification). The rail and the top bar's
   chips are memoised so a declaration costs the header, not the whole chrome.
   Commit `5f01310`.
+
+### 2026-09-15 — TEST-0915-2: the second named testing session — the ignored build step diffs against the last successful deployment
+
+- **The session.** The founder's word: fix one pre-flight regression in
+  `vercel.json`, run the full gate on the stack tip, fix what is
+  legitimately fixable, merge `fix/followups-0915` and `feat/shell-0915`
+  to `main` and `live` if the final gate is clean, verify the deploy.
+  Every red classified before anything was touched; no spec adjusted without
+  a cited decision.
+- **D-TEST-0915-2-A — the ignored build step diffs against the last
+  successful deployment, never HEAD^ alone.** `ae2d741`'s command compared
+  `HEAD^` with `HEAD`; Vercel builds only the pushed HEAD, so a push whose
+  last commit is docs-only was read as docs-only and canceled while the code
+  beneath it never deployed — and every merge here ends on a close-out docs
+  commit. The base is now `VERCEL_GIT_PREVIOUS_SHA` (the last successful
+  deployment, exposed to the ignored build step), `HEAD^` only when unset,
+  and a base that does not resolve to a commit object in the clone builds
+  (`git rev-parse --verify --quiet "$base^{commit}"` — a bare 40-hex SHA
+  answers 0 whether or not the object exists). It lives in
+  `scripts/vercel-ignore.sh` because `vercel.json` caps `ignoreCommand`
+  at 256 characters (the one-line form went ERROR on Vercel's schema check).
+  The exclusion list is unchanged. Proven on the branch preview: a push of
+  the fix plus a docs-only commit on top built READY for the docs HEAD
+  (`96e1c25`); a docs-only push alone is CANCELED (step 1 of the close-out).
+  Instead of: the dashboard's setting, or a HEAD~N heuristic — the base Vercel
+  knows is the truth. Commits `d827693`, `fbb8789`.

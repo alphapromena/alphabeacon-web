@@ -1,0 +1,17 @@
+warm-up: skipped — the runner warmed the fleet and keeps the heartbeat (GATE-0910 §3.2)
+
+Running 4 tests using 1 worker
+
+    a f · GET /me/orgs → 401 · request 3394fe96-bc6a-42b0-94d5-03d5428149ca
+  ok 1 [chromium] › e2e\live-auth-401.spec.ts:127:1 › a fresh owner + org, made through the product (6.0s)
+    1 · · GET /me/orgs → 401 · request ea4f0f31-3fbb-4ad1-9dcf-4869e7019b95
+    1 · · GET /me → 401 · request 50a6233f-6644-4972-8827-dc82e74ba87d
+  ok 2 [chromium] › e2e\live-auth-401.spec.ts:137:1 › 1 · a token expired at boot on `/` lands on login with the toast (5.5s)
+    2 · · GET /orgs/2325/event-sources/countries → 401 · request 967c1168-5029-4e55-97e9-045830623830
+    2 · · GET /orgs/2325/alphastudio/media/assets → 401 · request ee4408d1-3e97-48c5-b7b1-2ce959c967e9
+  ok 3 [chromium] › e2e\live-auth-401.spec.ts:145:1 › 2 · a token revoked mid-session on an authed route lands on login, not on the website (5.7s)
+    3 · · GET /me → 401 · request 15d3b2a3-b782-4ee9-9df9-ab5325a80d0a
+    3 · · GET /me/orgs → 401 · request bfc28368-2c31-42a6-b126-cbe4476827b3
+  ok 4 [chromium] › e2e\live-auth-401.spec.ts:173:1 › 3 · a boot on an authed route with a dead token lands on login, not on the website (5.8s)
+
+  4 passed (23.7s)
