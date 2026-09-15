@@ -1,0 +1,46 @@
+warm-up: skipped — the runner warmed the fleet and keeps the heartbeat (GATE-0910 §3.2)
+
+Running 6 tests using 1 worker
+
+  ok 1 [chromium] › e2e\live-team.spec.ts:75:1 › verifying creates the org LIVE; the dashboard follows immediately (6.5s)
+  ok 2 [chromium] › e2e\live-team.spec.ts:87:1 › I1 renames the org through PATCH, and the name survives a reload (10.3s)
+  x  3 [chromium] › e2e\live-team.spec.ts:116:1 › change-password keeps this session and only the new password works after (27.0s)
+  -  4 [chromium] › e2e\live-team.spec.ts:142:1 › inviting a NEW user: coded email, resend rate-limits honestly, cancel removes
+  -  5 [chromium] › e2e\live-team.spec.ts:166:1 › inviting an EXISTING user adds them immediately, and the role ladder holds
+  -  6 [chromium] › e2e\live-team.spec.ts:251:1 › an ADMIN viewing a team with an owner: no remove on the owner, no role selects at all
+
+
+  1) [chromium] › e2e\live-team.spec.ts:116:1 › change-password keeps this session and only the new password works after 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: getByRole('heading', { level: 1 })
+    Expected substring: "before you were."
+    Received string:    "Welcome back"
+    Timeout: 20000ms
+
+    Call log:
+      - Expect "toContainText" with timeout 20000ms
+      - waiting for getByRole('heading', { level: 1 })
+        3 × locator resolved to <h1 class="truncate font-display text-lg font-semibold tracking-tight">Organization</h1>
+          - unexpected value "Organization"
+        37 × locator resolved to <h1 class="font-display text-3xl font-semibold tracking-tight">Welcome back</h1>
+           - unexpected value "Welcome back"
+
+
+      57 |   // is the hero headline, which spans three lines.
+      58 |   // One POST round-trip — live-red-2026-08-23.
+    > 59 |   await expect(page.getByRole('heading', { level: 1 })).toContainText('before you were.', {
+         |                                                         ^
+      60 |     timeout: ONE_CALL,
+      61 |   })
+      62 | }
+        at signOut (C:\alphabeacon-web\alphabeacon-web\e2e\live-team.spec.ts:59:57)
+        at C:\alphabeacon-web\alphabeacon-web\e2e\live-team.spec.ts:129:3
+
+    Error Context: .gate\artifacts\20260915-180958\round-1\live-team\live-team-change-password--437e8-he-new-password-works-after-chromium\error-context.md
+
+  1 failed
+    [chromium] › e2e\live-team.spec.ts:116:1 › change-password keeps this session and only the new password works after 
+  3 did not run
+  2 passed (44.6s)

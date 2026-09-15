@@ -1,0 +1,51 @@
+
+> alphabeacon-web@0.0.0 verify:w00 C:\alphabeacon-web\alphabeacon-web
+> tsx scripts/verify-w00.ts
+
+
+=== shadcn config (info + committed skill) ===
+shadcn info ok; components.json and .agents/skills/shadcn present
+
+=== lint ===
+24 s in the report
+
+=== typecheck ===
+17 s in the report
+
+=== unit tests ===
+829 passed / 0 failed / 74 files (from the report)
+
+=== guard-static ===
+1 s in the report
+
+=== build ===
+28 s in the report
+
+=== e2e (Playwright smoke, zero-network assert) ===
+119 passed / 90 skipped / 0 failed (from the report)
+
+=== canary: planted fetch fails guard-static ===
+canary guard-static: planted fetch() was rejected as expected
+
+=== canary: raw color fails lint ===
+canary raw color: bg-blue-500 / #ff0000 were rejected as expected
+
+W0 verify summary
+-------------------------------------------------
+shadcn config (info + committed skill)       PASS
+lint                                         PASS
+typecheck                                    PASS
+unit tests                                   PASS
+guard-static                                 PASS
+build                                        PASS
+e2e (Playwright smoke, zero-network assert)  PASS
+canary: planted fetch fails guard-static     PASS
+canary: raw color fails lint                 PASS
+-------------------------------------------------
+RESULT: PASS (automated steps)
+
+MANUAL -- needs external setup; verify by hand (web-plan.md W0 Verify):
+  1. "a canary PR is blocked by every check" -- needs the GitHub repo: open a
+     canary PR and confirm every merge-blocking check rejects it.
+  2. "staging URL serves the shell" -- needs AWS + the domain/cert: deploy
+     staging and confirm the URL serves the app shell.

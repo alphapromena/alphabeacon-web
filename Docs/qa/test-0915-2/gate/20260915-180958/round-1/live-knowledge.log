@@ -1,0 +1,9 @@
+warm-up: skipped — the runner warmed the fleet and keeps the heartbeat (GATE-0910 §3.2)
+
+Running 3 tests using 1 worker
+
+  ok 1 [chromium] › e2e\live-knowledge.spec.ts:36:1 › a fresh owner + org, made through the product (6.5s)
+  ok 2 [chromium] › e2e\live-knowledge.spec.ts:46:1 › pasted text becomes a Ready source, and removing it removes it (15.8s)
+  ok 3 [chromium] › e2e\live-knowledge.spec.ts:76:1 › a FILE uploads straight to storage from the browser (open-item 24) (16.8s)
+
+  3 passed (40.0s)

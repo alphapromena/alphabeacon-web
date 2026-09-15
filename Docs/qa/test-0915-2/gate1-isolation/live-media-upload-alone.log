@@ -1,0 +1,17 @@
+
+warm-up: waking the API before the suite starts (https://<api-host>/api/health)
+warm-up: service awake after 2 probe(s) in 0.8s — last 2: 345ms, 183ms
+warm-up: 12-way fleet warm after 1 burst(s), 1.3s total — slowest 469ms
+
+warm-up: heartbeat started — 4 probes every 5s for the life of the run
+
+
+Running 3 tests using 1 worker
+
+  ok 1 [chromium] › e2e\live-media-upload.spec.ts:48:1 › a fresh owner + org, made through the product (6.9s)
+  ok 2 [chromium] › e2e\live-media-upload.spec.ts:58:1 › an image upload becomes a WIRE-listed Files row, and Delete removes it from the wire (11.6s)
+  ok 3 [chromium] › e2e\live-media-upload.spec.ts:97:1 › the logo uploads with desc "logo", shows as the logo, stays out of Files, and removes (14.6s)
+
+warm-up: heartbeat stopped after 6 beat(s)
+
+  3 passed (38.9s)

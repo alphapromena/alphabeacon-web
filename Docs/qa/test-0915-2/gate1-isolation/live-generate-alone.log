@@ -1,0 +1,17 @@
+
+warm-up: waking the API before the suite starts (https://<api-host>/api/health)
+warm-up: service awake after 2 probe(s) in 0.8s — last 2: 350ms, 198ms
+warm-up: 12-way fleet warm after 1 burst(s), 1.3s total — slowest 531ms
+
+warm-up: heartbeat started — 4 probes every 5s for the life of the run
+
+
+Running 2 tests using 1 worker
+
+  ok 1 [chromium] › e2e\live-generate.spec.ts:50:1 › a fresh owner + org, made through the product (26.3s)
+  -  2 [chromium] › e2e\live-generate.spec.ts:69:1 › one balanced run returns a draft with its tone and its rationale
+
+warm-up: heartbeat stopped after 6 beat(s)
+
+  1 skipped
+  1 passed (36.7s)

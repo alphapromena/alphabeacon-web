@@ -1,0 +1,79 @@
+
+> alphabeacon-web@0.0.0 verify:all C:\alphabeacon-web\alphabeacon-web
+> tsx scripts/verify-all.ts "--workers" "1"
+
+verify:all on tree 614809d3ebca (2026-09-15T18:10:00.487Z)
+
+=== lint === pnpm lint
+> alphabeacon-web@0.0.0 lint C:\alphabeacon-web\alphabeacon-web
+> eslint .
+--- lint: ok in 23.6 s
+
+=== typecheck === pnpm typecheck
+> alphabeacon-web@0.0.0 typecheck C:\alphabeacon-web\alphabeacon-web
+> tsc -b
+--- typecheck: ok in 17.2 s
+
+=== guard-static === pnpm guard:static
+> alphabeacon-web@0.0.0 guard:static C:\alphabeacon-web\alphabeacon-web
+> tsx scripts/guard-static.ts
+
+guard-static: 379 files clean
+--- guard-static: ok in 0.9 s
+
+=== unit === pnpm exec vitest run --reporter=default --reporter=json --outputFile="C:\alphabeacon-web\alphabeacon-web\.gate\reports\unit.json"
+ [32m✓[39m src/lib/source-url.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+ [32m✓[39m src/features/settings/tone-fields.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32m✓[39m src/data/proposals.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+ [32m✓[39m src/data/adapters/notification-adapter.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32m✓[39m src/features/studio/use-create-visual.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m74 passed[39m[22m[90m (74)[39m
+[2m      Tests [22m [1m[32m829 passed[39m[22m[90m (829)[39m
+[2m   Start at [22m 21:10:44
+[2m   Duration [22m 44.37s[2m (transform 5.28s, setup 119.81s, collect 59.63s, tests 19.05s, environment 220.64s, prepare 26.57s)[22m
+
+JSON report written to C:/alphabeacon-web/alphabeacon-web/.gate/reports/unit.json
+--- unit: ok in 47.0 s
+
+=== build === pnpm build
+[2mdist/[22m[36massets/generate-screen-BBX8fkdy.js                            [39m[1m[2m 22.48 kB[22m[1m[22m[2m │ gzip:   7.88 kB[22m
+[2mdist/[22m[36massets/studio-DMXBGOiF.js                                     [39m[1m[2m 29.82 kB[22m[1m[22m[2m │ gzip:   9.89 kB[22m
+[2mdist/[22m[36massets/studio-screens-BD80KRsu.js                             [39m[1m[2m 38.74 kB[22m[1m[22m[2m │ gzip:  11.84 kB[22m
+[2mdist/[22m[36massets/form-Bh24bZLC.js                                       [39m[1m[2m 40.47 kB[22m[1m[22m[2m │ gzip:  14.38 kB[22m
+[2mdist/[22m[36massets/analytics-screens-NRkp8mTA.js                          [39m[1m[2m359.83 kB[22m[1m[22m[2m │ gzip: 108.03 kB[22m
+[2mdist/[22m[36massets/index-Crboq77r.js                                      [39m[1m[33m782.44 kB[39m[22m[2m │ gzip: 244.65 kB[22m
+[32m✓ built in 10.97s[39m
+[33m
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+--- build: ok in 28.1 s
+
+=== e2e === pnpm exec playwright install chromium && pnpm exec playwright test --reporter=list,json --workers=1
+  ok 201 [chromium] › e2e\today-queue.spec.ts:32:1 › the queue groups drafts by slot and offers only legal actions (2.5s)
+  ok 202 [chromium] › e2e\today-queue.spec.ts:44:1 › @golden approving moves the card and updates the dashboard in the same session (3.4s)
+  ok 203 [chromium] › e2e\today-queue.spec.ts:71:1 › generating media spends credits, and the balance follows (5.6s)
+  ok 204 [chromium] › e2e\today-queue.spec.ts:96:1 › a short balance refuses the run and keeps the prompt (3.2s)
+  ok 205 [chromium] › e2e\today-queue.spec.ts:111:1 › scheduling reports per channel, and a re-auth channel cannot be picked (3.8s)
+  ok 206 [chromium] › e2e\today-queue.spec.ts:134:1 › draft detail shows the timeline and mirrors the queue actions (2.9s)
+  ok 207 [chromium] › e2e\today-queue.spec.ts:147:1 › rejecting asks why, and the draft leaves the queue (2.8s)
+  ok 208 [chromium] › e2e\today-queue.spec.ts:160:1 › @axe the queue and draft detail scan clean (3.6s)
+  ok 209 [chromium] › e2e\today-queue.spec.ts:169:1 › @axe the Approve toast is readable from its first frame — it rises, it does not fade (item 76) (3.2s)
+
+  90 skipped
+  119 passed (6.1m)
+--- e2e: ok in 367.8 s
+
+verify:all summary
+lint           PASS  24 s
+typecheck      PASS  17 s
+guard-static   PASS  1 s
+unit           PASS  47 s
+build          PASS  28 s
+e2e            PASS  368 s
+unit: 829 passed / 0 failed / 74 files
+e2e: 119 passed / 90 skipped / 0 failed
+report: .gate\reports\verify.json for tree 614809d3ebca
+RESULT: PASS

@@ -1,0 +1,34 @@
+[setup] NOTE · the fresh org for A, B, E · org 2311, qa+1789498236245147ab@alphapromena.com
+[A] PASS · signed out: `/` and the four marketing paths wear the marketing layout and no app frame; the auth pages wear neither · /: mk-world 1, rails 0, mains 1 · /pricing: mk-world 1, rails 0, mains 1 · /request-demo: mk-world 1, rails 0, mains 1 · /privacy: mk-world 1, rails 0, mains 1 · /terms: mk-world 1, rails 0, mains 1 · /login: mk-world 0, rails 0, mains 0 · /signup: mk-world 0, rails 0, mains 0 · /reset-password: mk-world 0, rails 0, mains 0
+[A] PASS · signed in: every app route renders inside one frame (19 routes: one main, one rail, one rail indicator, no marketing world) · /: mains 1, rails 1, indicators 1, mk 0 · /today: mains 1, rails 1, indicators 1, mk 0 · /calendar: mains 1, rails 1, indicators 1, mk 0 · /calendar/settings: mains 1, rails 1, indicators 1, mk 0 · /calendar/sources: mains 1, rails 1, indicators 1, mk 0 · /connections: mains 1, rails 1, indicators 1, mk 0 · /studio: mains 1, rails 1, indicators 1, mk 0 · /studio/new: mains 1, rails 1, indicators 1, mk 0 · /studio/jobs: mains 1, rails 1, indicators 1, mk 0 · /billing: mains 1, rails 1, indicators 1, mk 0 · /billing/balance: mains 1, rails 1, indicators 1, mk 0 · /generate: mains 1, rails 1, indicators 1, mk 0 · /analytics: mains 1, rails 1, indicators 1, mk 0 · /settings/organization: mains 1, rails 1, indicators 1, mk 0 · /settings/brand-voice: mains 1, rails 1, indicators 1, mk 0 · /settings/tones: mains 1, rails 1, indicators 1, mk 0 · /settings/sources: mains 1, rails 1, indicators 1, mk 0 · /settings/knowledge: mains 1, rails 1, indicators 1, mk 0 · /settings/team: mains 1, rails 1, indicators 1, mk 0
+[A] PASS · signed in: a marketing path still wears the marketing layout, no app frame · /pricing: mk-world 1, rails 0 · /privacy: mk-world 1, rails 0
+[B] PASS · motion: the tagged indicator, the rail and the main are the same nodes through Today, Billing, Calendar, Settings · Today: {"tagged":true,"indicators":1,"mains":1,"sameRail":true,"sameMain":true} · Billing: {"tagged":true,"indicators":1,"mains":1,"sameRail":true,"sameMain":true} · Calendar: {"tagged":true,"indicators":1,"mains":1,"sameRail":true,"sameMain":true} · Settings: {"tagged":true,"indicators":1,"mains":1,"sameRail":true,"sameMain":true}
+[B] NOTE · motion: arrival markers · Today: "Reading your queue…Needs" · Billing: "" · Settings: "em.Choose a country…Afgh" · Studio: "" · Calendar: "Nothing scheduled yetOnc"
+[B] FAIL · motion: route arrivals live (ms per run, first is cold) — warm hops against the static 22–67 ms range · Today 5/6/5 · Billing -2/-2/-2 · Settings 15/14/13 · Studio -2/-2/-2 · Calendar 4/4/4; median 5 ms, warm max 14 ms; indicator the same node on 15/15 hops
+[B] FAIL · motion: no skeleton painted on a finished screen's warm hop · 6 of 15 hops painted one (cold hops included)
+[B] PASS · reduced motion: the tagged indicator, the rail and the main are the same nodes through Today, Billing, Calendar, Settings · Today: {"tagged":true,"indicators":1,"mains":1,"sameRail":true,"sameMain":true} · Billing: {"tagged":true,"indicators":1,"mains":1,"sameRail":true,"sameMain":true} · Calendar: {"tagged":true,"indicators":1,"mains":1,"sameRail":true,"sameMain":true} · Settings: {"tagged":true,"indicators":1,"mains":1,"sameRail":true,"sameMain":true}
+[B] NOTE · reduced motion: arrival markers · Today: "Reading your queue…Needs" · Billing: "" · Settings: "em.Choose a country…Afgh" · Studio: "" · Calendar: "Nothing scheduled yetOnc"
+[B] FAIL · reduced motion: route arrivals live (ms per run, first is cold) — warm hops against the static 22–67 ms range · Today 5/5/6 · Billing -2/-2/-2 · Settings 15/14/14 · Studio -2/-2/-2 · Calendar 5/4/5; median 5 ms, warm max 14 ms; indicator the same node on 15/15 hops
+[B] FAIL · reduced motion: no skeleton painted on a finished screen's warm hop · 6 of 15 hops painted one (cold hops included)
+[C] NOTE · the fresh org for the moments · org 2312, qa+1789498503341171c@alphapromena.com
+[C] FAIL · first light plays once on a fresh account, under the 2000 ms ceiling (page-time mount → removal) · seen true; 2287 ms
+[D] PASS · axe clean while first light is on screen · 0 
+[C] PASS · first light never plays on a reload of the same account · mounted after reload: false
+[C] FAIL · section ran to the end · TimeoutError: locator.fill: Timeout 30000ms exceeded.
+Call log:
+[2m  - waiting for getByLabel('Prompt')[22m
+
+[D] FAIL · reduced-motion pass ran to the end · TimeoutError: locator.fill: Timeout 30000ms exceeded.
+Call log:
+[2m  - waiting for getByLabel('Prompt')[22m
+
+[E] FAIL · 1 · a token expired at boot on `/` lands on login with the toast, the session purged · {"path":"/login","toastSeen":true,"stored":false,"signIn":false}
+[E] NOTE · the revocation from outside · POST /auth/logout → 204 (request db6ec425-7583-443a-be64-3fa2313ba61d)
+[E] PASS · 2 · a token revoked mid-session on an authed route lands on login with the toast, not on the website · {"path":"/login","toastSeen":true,"stored":false,"signIn":true}
+[E] FAIL · 3 · a dead token on a direct load of Billing lands on login with the toast · {"path":"/login","toastSeen":true,"stored":false,"signIn":false}
+[H] FAIL · section ran to the end · TimeoutError: locator.fill: Timeout 30000ms exceeded.
+Call log:
+[2m  - waiting for getByLabel('Full name')[22m
+
+
+8 PASS · 10 FAIL · 5 NOTE → Docs/qa/test-0915-2/phase4/phase4-live.md

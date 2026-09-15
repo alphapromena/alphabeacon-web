@@ -1,0 +1,18 @@
+warm-up: skipped — the runner warmed the fleet and keeps the heartbeat (GATE-0910 §3.2)
+
+Running 4 tests using 1 worker
+
+    a f · GET /me/orgs → 401 · request e3e8dbf8-7e64-4f98-9d5d-55374f9742d7
+  ok 1 [chromium] › e2e\live-auth-401.spec.ts:127:1 › a fresh owner + org, made through the product (6.5s)
+    1 · · GET /me/orgs → 401 · request f10ef283-c625-4484-96e1-f1b69dc746d3
+    1 · · GET /me → 401 · request 47b58d03-35af-4237-a892-89a473c50899
+  ok 2 [chromium] › e2e\live-auth-401.spec.ts:137:1 › 1 · a token expired at boot on `/` lands on login with the toast (6.8s)
+    2 · · GET /orgs/2280/billing/subscription → 401 · request 8f19d17e-7b31-4095-b1a4-f848f35bffa9
+    2 · · GET /orgs/2280/billing/plans → 401 · request 0ccf78c6-e4ff-4e76-9e91-55389e130b07
+    2 · · GET /orgs/2280/billing/credits?limit=50&offset=0 → 401 · request 8697602d-567e-4fa0-b0e6-57a0cdcf0995
+  ok 3 [chromium] › e2e\live-auth-401.spec.ts:145:1 › 2 · a token revoked mid-session on an authed route lands on login, not on the website (6.1s)
+    3 · · GET /me/orgs → 401 · request 0b00a9de-0ee8-40e3-a873-5420b5687e43
+    3 · · GET /me → 401 · request 3099d200-de04-423b-a86e-1e5cdbc29261
+  ok 4 [chromium] › e2e\live-auth-401.spec.ts:173:1 › 3 · a boot on an authed route with a dead token lands on login, not on the website (6.2s)
+
+  4 passed (26.4s)

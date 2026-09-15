@@ -1,0 +1,12 @@
+warm-up: skipped — the runner warmed the fleet and keeps the heartbeat (GATE-0910 §3.2)
+
+Running 6 tests using 1 worker
+
+  ok 1 [chromium] › e2e\live-brand.spec.ts:57:1 › a fresh owner + org, made through the product (6.0s)
+  ok 2 [chromium] › e2e\live-brand.spec.ts:66:1 › a custom tone: created under the adapter, edited, and it survives a reload (10.1s)
+  ok 3 [chromium] › e2e\live-brand.spec.ts:101:1 › voice rules: the flat live list persists through the API (10.5s)
+  ok 4 [chromium] › e2e\live-brand.spec.ts:120:1 › a refused save keeps the draft, the alert and Save on screen (item 73) (15.1s)
+  ok 5 [chromium] › e2e\live-brand.spec.ts:184:1 › sources and topics: scheme-less display, real persistence (14.0s)
+  ok 6 [chromium] › e2e\live-brand.spec.ts:215:1 › deleting a tone reflects in the schedules that referenced it (8.6s)
+
+  6 passed (1.1m)

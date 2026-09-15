@@ -1,0 +1,43 @@
+warm-up: skipped — the runner warmed the fleet and keeps the heartbeat (GATE-0910 §3.2)
+
+Running 3 tests using 1 worker
+
+  ok 1 [chromium] › e2e\live-invite-org.spec.ts:84:1 › two accounts, each owning a workspace (13.8s)
+  x  2 [chromium] › e2e\live-invite-org.spec.ts:106:1 › an invited existing user can REACH the inviting workspace, and a reload keeps it (26.9s)
+  -  3 [chromium] › e2e\live-invite-org.spec.ts:165:1 › losing membership falls back honestly, and never to a dead screen
+
+
+  1) [chromium] › e2e\live-invite-org.spec.ts:106:1 › an invited existing user can REACH the inviting workspace, and a reload keeps it 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: getByRole('heading', { level: 1 })
+    Expected substring: "before you were."
+    Received string:    "Welcome back"
+    Timeout: 20000ms
+
+    Call log:
+      - Expect "toContainText" with timeout 20000ms
+      - waiting for getByRole('heading', { level: 1 })
+        4 × locator resolved to <h1 class="truncate font-display text-lg font-semibold tracking-tight">Team</h1>
+          - unexpected value "Team"
+        36 × locator resolved to <h1 class="font-display text-3xl font-semibold tracking-tight">Welcome back</h1>
+           - unexpected value "Welcome back"
+
+
+      66 |   await page.getByRole('button', { name: 'Account menu' }).click()
+      67 |   await page.getByRole('menuitem', { name: 'Sign out', exact: true }).click()
+    > 68 |   await expect(page.getByRole('heading', { level: 1 })).toContainText('before you were.', {
+         |                                                         ^
+      69 |     timeout: ONE_CALL,
+      70 |   })
+      71 | }
+        at signOut (C:\alphabeacon-web\alphabeacon-web\e2e\live-invite-org.spec.ts:68:57)
+        at C:\alphabeacon-web\alphabeacon-web\e2e\live-invite-org.spec.ts:112:3
+
+    Error Context: .gate\artifacts\20260915-180958\round-1\live-invite-org\live-invite-org-an-invited-33feb-space-and-a-reload-keeps-it-chromium\error-context.md
+
+  1 failed
+    [chromium] › e2e\live-invite-org.spec.ts:106:1 › an invited existing user can REACH the inviting workspace, and a reload keeps it 
+  1 did not run
+  1 passed (41.6s)

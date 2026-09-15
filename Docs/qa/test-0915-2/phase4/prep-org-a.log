@@ -1,0 +1,5 @@
+POST /auth/signup → 201
+POST /auth/verify-email → 200
+POST /orgs → 201
+POST /orgs/2310/brand/voices → 201
+org 2310

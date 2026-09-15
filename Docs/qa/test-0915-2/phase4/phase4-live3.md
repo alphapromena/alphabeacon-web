@@ -1,0 +1,35 @@
+# TEST-0915-2 — Phase 4 on the live app (live3, 2026-09-15T19:16:19.511Z)
+
+Base: http://localhost:5197 · API: <api-host> · sections B, C, H
+
+| section | result | check | detail |
+|---|---|---|---|
+| setup | NOTE | the fresh org for A, B, E | org 2317, qa+1789499779597025ab@alphapromena.com |
+| B | PASS | motion: the tagged indicator, the rail and the main are the same nodes through Today, Billing, Calendar, Settings | Today: {"tagged":true,"indicators":1,"mains":1,"sameRail":true,"sameMain":true} · Billing: {"tagged":true,"indicators":1,"mains":1,"sameRail":true,"sameMain":true} · Calendar: {"tagged":true,"indicators":1,"mains":1,"sameRail":true,"sameMain":true} · Settings: {"tagged":true,"indicators":1,"mains":1,"sameRail":true,"sameMain":true} |
+| B | NOTE | motion: no marker for Settings | main reads "OrganizationBrand voiceTonesSources & topicsKnowledgeTeamBrand setupFinish these and this workspace can write. Each one has its own screen — do them in any orde" |
+| B | NOTE | motion: no marker for Studio | main reads "" |
+| B | NOTE | motion: arrival markers | Today: "Needs review" · Billing: "Malaky Business" · Settings: "" · Studio: "" · Calendar: "Nothing scheduled yet" |
+| B | FAIL | motion: route arrivals live — the shell's own share (arrival minus the wire) of every warm hop stays inside the static 22–67 ms range | Today 5 / 5 / 6 · Billing 799 (wire 797, 3 calls → shell 2)† / 892 (wire 891, 3 calls → shell 1)† / 935 (wire 932, 3 calls → shell 3)† · Settings -2 (wire 730, 1 call → shell -1) / -2 (wire 802, 1 call → shell -1) / -2 (wire 645, 1 call → shell -1) · Studio -2 (wire 8016, 13 calls → shell -1)† / -2 (wire 2554, 13 calls → shell -1)† / -2 (wire 2434, 13 calls → shell -1)† · Calendar 4 / 4 / 6; warm shell max 6 ms; indicator the same node on 15/15 hops |
+| B | PASS | motion: no skeleton flash on a finished screen's warm hop (a skeleton only where the wire took ≥ 200 ms) | 4 of 10 warm hops painted a skeleton, 0 without a wire wait behind it |
+| B | PASS | reduced motion: the tagged indicator, the rail and the main are the same nodes through Today, Billing, Calendar, Settings | Today: {"tagged":true,"indicators":1,"mains":1,"sameRail":true,"sameMain":true} · Billing: {"tagged":true,"indicators":1,"mains":1,"sameRail":true,"sameMain":true} · Calendar: {"tagged":true,"indicators":1,"mains":1,"sameRail":true,"sameMain":true} · Settings: {"tagged":true,"indicators":1,"mains":1,"sameRail":true,"sameMain":true} |
+| B | NOTE | reduced motion: no marker for Settings | main reads "OrganizationBrand voiceTonesSources & topicsKnowledgeTeamBrand setupFinish these and this workspace can write. Each one has its own screen — do them in any orde" |
+| B | NOTE | reduced motion: no marker for Studio | main reads "" |
+| B | NOTE | reduced motion: arrival markers | Today: "Needs review" · Billing: "Malaky Business" · Settings: "" · Studio: "" · Calendar: "Nothing scheduled yet" |
+| B | FAIL | reduced motion: route arrivals live — the shell's own share (arrival minus the wire) of every warm hop stays inside the static 22–67 ms range | Today 5 / 5 / 5 · Billing 650 (wire 649, 3 calls → shell 1)† / 947 (wire 945, 3 calls → shell 2)† / 1019 (wire 1017, 3 calls → shell 2)† · Settings -2 (wire 787, 1 call → shell -1) / -2 (wire 788, 1 call → shell -1) / -2 (wire 813, 1 call → shell -1) · Studio -2 (wire 2653, 13 calls → shell -1)† / -2 (wire 2610, 13 calls → shell -1)† / -2 (wire 2474, 13 calls → shell -1)† · Calendar 5 / 4 / 4; warm shell max 5 ms; indicator the same node on 15/15 hops |
+| B | PASS | reduced motion: no skeleton flash on a finished screen's warm hop (a skeleton only where the wire took ≥ 200 ms) | 4 of 10 warm hops painted a skeleton, 0 without a wire wait behind it |
+| C | NOTE | the fresh org for the moments | org 2318, qa+1789500030615641c@alphapromena.com |
+| C | FAIL | first light plays once on a fresh account, under the 2000 ms ceiling (page-time mount → removal) | seen true; 2196 ms |
+| D | PASS | axe clean while first light is on screen | 0  |
+| C | PASS | first light never plays on a reload of the same account | mounted after reload: false |
+| D | PASS | live: the "Brand voice saved" toast description reads ≥ 4.5:1 as rendered at +40/+80/+160/+400 ms from its mount | toast mounted 2270 ms after Save; +50 ms → 13.62 (opacity 1); +82 ms → 13.62 (opacity 1); +163 ms → 13.62 (opacity 1); +409 ms → 13.62 (opacity 1) |
+| D | PASS | axe clean with a toast up | 0  |
+| C | NOTE | the live composer and the wallet chip | composer with a Generate button: true; top bar: "Toggle Sidebar Generate Text posts, on demand No balance yet — subscribe QT" |
+| C | NOTE | a generation on the unfunded fresh org | outcome: no terminal line in 60 s; main reads "Tones One to three of your own tones. Each one writes its own draft, with its rules attached. Roastery floor How it writes Balanced Grounded in your knowledge and sources, with fresh phrasing. The def" |
+| D | PASS | axe clean on the Generate screen after the run | 0  |
+| C | NOTE | moments that need a draft (Generating stages, Approve settle + sweep, §5.7, the toast samples) | not reachable at zero spend on a fresh live org — the wallet is empty by construction and a run is refused with 402; proven on the built app in static mode (Docs/qa/fix-0915/item-76, Docs/qa/test-0915/proofs) and exercised live by the gate on the funded org |
+| C | PASS | moment 1 — the tone sample rewrites beside the picker (data-slot="tone-sample") | 2 tone buttons in the picker; sample present: true |
+| D | PASS | axe clean at rest and mid-rewrite on the schedule screen | moment 1 — schedule, tone sample at rest: 0  · moment 1 — mid-rewrite: 0  |
+| C | PASS | a waiting screen mounts role="status" + aria-busy at the true start and paints it after the 220 ms threshold | aria-busy at mount: true; first paint 240 ms after mount (138 samples at 4 ms) |
+| D | PASS | every app route scans clean inside the frame while its entrance is in flight (19 routes) | /: 0 · /today: 0 · /calendar: 0 · /calendar/settings: 0 · /calendar/sources: 0 · /connections: 0 · /studio: 0 · /studio/new: 0 · /studio/jobs: 0 · /billing: 0 · /billing/balance: 0 · /generate: 0 · /analytics: 0 · /settings/organization: 0 · /settings/brand-voice: 0 · /settings/tones: 0 · /settings/sources: 0 · /settings/knowledge: 0 · /settings/team: 0 |
+| D | PASS | reduced motion: a toast ("Brand voice saved") is in its end state at the first sample (opacity 1, transform settled) | toast mounted 2153 ms after Save; +50 ms → opacity 1, matrix(1, 0, 0, 1, 0, 0); +82 ms → opacity 1, matrix(1, 0, 0, 1, 0, 0); +161 ms → opacity 1, matrix(1, 0, 0, 1, 0, 0); +406 ms → opacity 1, matrix(1, 0, 0, 1, 0, 0) |
+| H | PASS | three fresh live orgs with every wire at 0 (voices, tones, sources, topics, schedules) | org 2317: brand/voices 0, brand/tones 0, brand/sources 0, brand/topics 0, schedules 0 · org 2319: brand/voices 0, brand/tones 0, brand/sources 0, brand/topics 0, schedules 0 · org 2320: brand/voices 0, brand/tones 0, brand/sources 0, brand/topics 0, schedules 0 |

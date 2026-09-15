@@ -1,0 +1,40 @@
+warm-up: skipped — the runner warmed the fleet and keeps the heartbeat (GATE-0910 §3.2)
+
+Running 4 tests using 1 worker
+
+  ok 1 [chromium] › e2e\live-wallet.spec.ts:51:1 › a fresh owner + org, made through the product (16.7s)
+  x  2 [chromium] › e2e\live-wallet.spec.ts:76:1 › the balance chip shows money — and over a zero wallet, the instruction to subscribe (20.5s)
+  -  3 [chromium] › e2e\live-wallet.spec.ts:96:1 › H3 is a balance and a real usage read-back, in both allowed grains
+  -  4 [chromium] › e2e\live-wallet.spec.ts:131:1 › the wallet and usage endpoints answer the shapes the UI is built on
+
+
+  1) [chromium] › e2e\live-wallet.spec.ts:76:1 › the balance chip shows money — and over a zero wallet, the instruction to subscribe 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('heading', { name: 'Dashboard', level: 1 })
+    Expected: visible
+    Timeout: 20000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 20000ms
+      - waiting for getByRole('heading', { name: 'Dashboard', level: 1 })
+
+
+      35 |   await page.getByLabel('Password', { exact: true }).fill(PASSWORD)
+      36 |   await page.getByRole('button', { name: 'Sign in' }).click()
+    > 37 |   await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible({
+         |                                                                            ^
+      38 |     timeout: 20_000,
+      39 |   })
+      40 | }
+        at login (C:\alphabeacon-web\alphabeacon-web\e2e\live-wallet.spec.ts:37:76)
+        at C:\alphabeacon-web\alphabeacon-web\e2e\live-wallet.spec.ts:79:3
+
+    Error Context: .gate\artifacts\20260915-180958\round-1\live-wallet\live-wallet-the-balance-ch-d8a5d-he-instruction-to-subscribe-chromium\error-context.md
+
+  1 failed
+    [chromium] › e2e\live-wallet.spec.ts:76:1 › the balance chip shows money — and over a zero wallet, the instruction to subscribe 
+  2 did not run
+  1 passed (38.0s)

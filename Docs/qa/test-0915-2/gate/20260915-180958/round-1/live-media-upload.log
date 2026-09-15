@@ -1,0 +1,39 @@
+warm-up: skipped — the runner warmed the fleet and keeps the heartbeat (GATE-0910 §3.2)
+
+Running 3 tests using 1 worker
+
+  ok 1 [chromium] › e2e\live-media-upload.spec.ts:48:1 › a fresh owner + org, made through the product (7.0s)
+  x  2 [chromium] › e2e\live-media-upload.spec.ts:58:1 › an image upload becomes a WIRE-listed Files row, and Delete removes it from the wire (20.5s)
+  -  3 [chromium] › e2e\live-media-upload.spec.ts:97:1 › the logo uploads with desc "logo", shows as the logo, stays out of Files, and removes
+
+
+  1) [chromium] › e2e\live-media-upload.spec.ts:58:1 › an image upload becomes a WIRE-listed Files row, and Delete removes it from the wire 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('heading', { name: 'Dashboard', level: 1 })
+    Expected: visible
+    Timeout: 20000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 20000ms
+      - waiting for getByRole('heading', { name: 'Dashboard', level: 1 })
+
+
+      41 |   await page.getByLabel('Password', { exact: true }).fill(PASSWORD)
+      42 |   await page.getByRole('button', { name: 'Sign in' }).click()
+    > 43 |   await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible({
+         |                                                                            ^
+      44 |     timeout: 20_000,
+      45 |   })
+      46 | }
+        at login (C:\alphabeacon-web\alphabeacon-web\e2e\live-media-upload.spec.ts:43:76)
+        at C:\alphabeacon-web\alphabeacon-web\e2e\live-media-upload.spec.ts:62:3
+
+    Error Context: .gate\artifacts\20260915-180958\round-1\live-media-upload\live-media-upload-an-image-49f7c-te-removes-it-from-the-wire-chromium\error-context.md
+
+  1 failed
+    [chromium] › e2e\live-media-upload.spec.ts:58:1 › an image upload becomes a WIRE-listed Files row, and Delete removes it from the wire 
+  1 did not run
+  1 passed (28.3s)

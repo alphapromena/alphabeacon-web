@@ -1,0 +1,33 @@
+warm-up: skipped — the runner warmed the fleet and keeps the heartbeat (GATE-0910 §3.2)
+
+Running 3 tests using 1 worker
+
+  ok 1 [chromium] › e2e\live-media-capabilities.spec.ts:328:1 › a fresh owner + org, made through the product (6.4s)
+  x  2 [chromium] › e2e\live-media-capabilities.spec.ts:338:1 › every granted capability: the document’s example stops at the wallet (402), its trap before it (400) — zero spend (33.6s)
+  -  3 [chromium] › e2e\live-media-capabilities.spec.ts:413:1 › the Studio grid lists what the catalog grants, by name, with the catalog’s price
+
+
+  1) [chromium] › e2e\live-media-capabilities.spec.ts:338:1 › every granted capability: the document’s example stops at the wallet (402), its trap before it (400) — zero spend 
+
+    Error: photoshoot.generate · five referenceImages: {"error":{"code":"bad_request","message":"The media service rejected the request — check the body against the capability's schema","requestId":"8c8bb992-ecfb-405f-b413-2129e4257b37"}}
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 502
+    Received: 400
+
+      391 |     if (!granted.includes(trap.capability)) continue
+      392 |     const answer = await request.post(`${base}/media/jobs`, { headers: auth, data: trap.body })
+    > 393 |     expect(answer.status(), `${trap.capability} · ${trap.name}: ${await answer.text()}`).toBe(
+          |                                                                                          ^
+      394 |       trap.expect,
+      395 |     )
+      396 |   }
+        at C:\alphabeacon-web\alphabeacon-web\e2e\live-media-capabilities.spec.ts:393:90
+
+    Error Context: .gate\artifacts\20260915-180958\round-1\live-media-capabilities\live-media-capabilities-ev-7d3a6--before-it-400-—-zero-spend-chromium\error-context.md
+
+  1 failed
+    [chromium] › e2e\live-media-capabilities.spec.ts:338:1 › every granted capability: the document’s example stops at the wallet (402), its trap before it (400) — zero spend 
+  1 did not run
+  1 passed (40.8s)
