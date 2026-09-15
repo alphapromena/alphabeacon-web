@@ -53,12 +53,17 @@ async function login(page: Page, email: string, password: string) {
 async function signOut(page: Page) {
   await page.getByRole('button', { name: 'Account menu' }).click()
   await page.getByRole('menuitem', { name: 'Sign out', exact: true }).click()
-  // The signed-out front door is the concept-v2 marketing site (M2): its h1
-  // is the hero headline, which spans three lines.
+  // Signing out re-renders the current route signed out. On an authed route
+  // that is the guard, and since D-FIX-0915-A it lands on LOGIN ("Welcome
+  // back"); on `/` it is RootGate, which is the marketing home (the M2 hero
+  // headline). Either is the signed-out front door (TEST-0915-2, bucket a).
   // One POST round-trip — live-red-2026-08-23.
-  await expect(page.getByRole('heading', { level: 1 })).toContainText('before you were.', {
-    timeout: ONE_CALL,
-  })
+  await expect(page.getByRole('heading', { level: 1 })).toContainText(
+    /Welcome back|before you were./,
+    {
+      timeout: ONE_CALL,
+    },
+  )
 }
 
 async function openTeam(page: Page) {
