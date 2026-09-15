@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { E2eSummary } from '../verify-lib'
-import { classifyResult, isRerunnable, redact, skipLabel } from './classify'
+import { classifyResult, gateRoundGreen, isRerunnable, redact, skipLabel } from './classify'
 
 const summary = (over: Partial<E2eSummary>): E2eSummary => ({
   passed: 0,
@@ -143,6 +143,21 @@ describe('a skip and a not-run are different things (the founder, 2026-09-13)', 
 
   it('a test with no reason in a file that passed is an honest unknown, not a cascade', () => {
     expect(skipLabel({}, false)).toBe('skipped, no reason given')
+  })
+})
+
+describe("the round's verdict counts both of the runner's own classes (TEST-0915 proof D)", () => {
+  it('an error-page file re-run 3/3 green leaves the round GREEN, exactly like network-lost', () => {
+    // Proof D2 on 2026-09-15: classified error-page, re-run 3/3 green — and the
+    // README still said RED, because the verdict forgave network-lost only.
+    expect(gateRoundGreen(['green', 'error-page'])).toBe(true)
+    expect(gateRoundGreen(['green', 'network-lost'])).toBe(true)
+    expect(gateRoundGreen(['skipped-all', 'green'])).toBe(true)
+  })
+
+  it('anything the runner could not name keeps the round RED, and an empty round is not green', () => {
+    expect(gateRoundGreen(['green', 'unclassified'])).toBe(false)
+    expect(gateRoundGreen([])).toBe(false)
   })
 })
 

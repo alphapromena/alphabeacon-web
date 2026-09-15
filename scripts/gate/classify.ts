@@ -57,6 +57,18 @@ export function isRerunnable(classification: Classification): boolean {
 }
 
 /**
+ * The round's verdict (§3.5): green when every file is green, all-skipped, or
+ * one of the runner's own re-run classes — which the runner has already
+ * downgraded to `unclassified` unless its re-runs came back green 3/3.
+ */
+export function gateRoundGreen(classifications: Classification[]): boolean {
+  return (
+    classifications.length > 0 &&
+    classifications.every((c) => c === 'green' || c === 'skipped-all' || c === 'network-lost')
+  )
+}
+
+/**
  * What a skipped test's row says in the record (the founder's ruling,
  * 2026-09-13). Playwright marks every test after a failure in a `serial`
  * file as skipped, with no annotation — printing those as skips with "no
