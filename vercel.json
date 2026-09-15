@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- . ':(exclude).agent' ':(exclude)Docs' ':(exclude)CLAUDE.md' ':(exclude)design.md' ':(exclude)screens4.md' ':(exclude)web-plan.md'",
+  "ignoreCommand": "base=\"${VERCEL_GIT_PREVIOUS_SHA:-HEAD^}\"; git rev-parse --verify --quiet \"$base^{commit}\" >/dev/null || exit 1; git diff --quiet \"$base\" HEAD -- . ':(exclude).agent' ':(exclude)Docs' ':(exclude)CLAUDE.md' ':(exclude)design.md' ':(exclude)screens4.md' ':(exclude)web-plan.md' && exit 0 || exit 1",
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
   "headers": [
     {
