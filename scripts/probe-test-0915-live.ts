@@ -646,21 +646,36 @@ async function proofI(browser: Browser, request: APIRequestContext) {
         .then(() => true)
         .catch(() => false)
       if (tabs) await team.click().catch(() => {})
-      await page.waitForURL(/\/login$/, { timeout: SCREEN_SYNC }).catch(() => {})
-      const url = page.url().replace(/^https?:\/\/[^/]+/, '')
-      const toast = await page.getByText(SESSION_ENDED).count()
-      const stored = await page.evaluate(() =>
-        Boolean(
-          window.sessionStorage.getItem('ab-live-session') ||
-          window.localStorage.getItem('ab-live-session'),
-        ),
-      )
+      // Sample the walk every 200 ms for 12 s: the URL, the toast, the stored session.
+      const samples: { t: number; url: string; toast: number; stored: boolean }[] = []
+      const t0 = Date.now()
+      while (Date.now() - t0 < 12_000) {
+        samples.push({
+          t: Date.now() - t0,
+          url: page.url().replace(/^https?:\/\/[^/]+/, ''),
+          toast: await page.getByText(SESSION_ENDED).count(),
+          stored: await page.evaluate(() =>
+            Boolean(
+              window.sessionStorage.getItem('ab-live-session') ||
+              window.localStorage.getItem('ab-live-session'),
+            ),
+          ),
+        })
+        await page.waitForTimeout(200)
+      }
+      const firstToast = samples.find((s) => s.toast > 0)
+      const firstPurged = samples.find((s) => !s.stored)
+      const trajectory = samples
+        .map((s) => s.url)
+        .filter((u, i, all) => i === 0 || u !== all[i - 1])
+        .join(' → ')
+      const last = samples[samples.length - 1]
       const signInButton = await page.getByRole('button', { name: 'Sign in' }).count()
       record(
         'I',
         'a REVOKED token: the next read answers 401, the session is purged, the toast shows, the app lands on login',
-        url === '/login' && toast >= 1 && !stored && signInButton === 1,
-        `url ${url}; toast "${SESSION_ENDED}" ×${toast}; session in storage: ${stored}; Sign in button: ${signInButton}`,
+        last.url === '/login' && Boolean(firstToast) && !last.stored && signInButton === 1,
+        `url trajectory ${trajectory}; toast first seen ${firstToast ? `at ${firstToast.t} ms` : 'NEVER'}; session purged ${firstPurged ? `at ${firstPurged.t} ms` : 'NEVER'}; final url ${last.url}; Sign in button: ${signInButton}`,
       )
       await shot(page, 'proof-i-1-revoked-token')
     } catch (error) {
