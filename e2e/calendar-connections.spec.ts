@@ -189,6 +189,41 @@ test('a denied connect return is a choice, not an error', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Connections', level: 1 })).toBeVisible()
 })
 
+test('a connect return never shows a success state — nothing can link to a platform yet', async ({
+  page,
+}) => {
+  await open(page, 'Connections')
+  await expect(page.getByText(/no channel is linked to a platform yet/)).toBeVisible()
+  const revokedBefore = await page.getByText('Revoked', { exact: true }).count()
+
+  // TEST-0915: the "success" return used to flip the card to active after
+  // 1.2 s and toast "<Platform> connected · Posting and analytics are on" —
+  // a connection the product cannot make in either mode. By URL, the way a
+  // real callback would land (same document, the dataset survives).
+  await page.evaluate(() => {
+    window.history.pushState({}, '', '/connections?connect=success&platform=linkedin')
+    window.dispatchEvent(new PopStateEvent('popstate'))
+  })
+  await expect(page.getByRole('heading', { name: /is not linked yet/i })).toBeVisible()
+  await expect(page.getByText(/no channel is linked to a platform yet/)).toBeVisible()
+  await page.waitForTimeout(1_500)
+  await expect(page.locator('[data-sonner-toast]').filter({ hasText: /connected/i })).toHaveCount(0)
+  await expect(page.getByText('Posting and analytics are on')).toHaveCount(0)
+
+  await page.getByRole('button', { name: 'Back to connections' }).click()
+  await expect(page.getByRole('heading', { name: 'Connections', level: 1 })).toBeVisible()
+  // Nothing changed: the card keeps the status it had.
+  await expect(page.getByText('Revoked', { exact: true })).toHaveCount(revokedBefore)
+
+  // And from the real control: the first enabled Connect/Reconnect walks to the same honest end.
+  await page
+    .locator('button:not([disabled])')
+    .filter({ hasText: /^(Connect|Reconnect)$/ })
+    .first()
+    .click()
+  await expect(page.getByRole('heading', { name: /is not linked yet/i })).toBeVisible()
+})
+
 test('event sources keep their calendars when a token is lost', async ({ page }) => {
   await open(page, 'Calendar', 'Connections need attention')
   await page.getByRole('link', { name: 'Schedule settings' }).click()

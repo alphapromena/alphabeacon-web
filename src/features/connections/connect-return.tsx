@@ -9,15 +9,21 @@
  *
  * "Denied" is deliberately not an error: choosing not to grant access is a
  * legitimate answer, so it reads as a choice you can revisit, not a failure.
+ *
+ * "Success" links nothing (TEST-0915, the honesty rule of ORDER DEMO-0914
+ * applied to this flow). Nothing behind this screen reaches a platform in
+ * either mode — there is no connections endpoint in `src/api` — so the
+ * return that used to flip the card to active and toast "<Platform> connected
+ * · Posting and analytics are on" was promising something the product cannot
+ * do. It now says what is true, in the sentence the hub already carries, and
+ * changes no state. When publishing arrives, this branch is where a real
+ * callback lands, and the dispatches come back with it.
  */
-import { CheckCircle2, CircleSlash, TriangleAlert } from 'lucide-react'
-import { useEffect } from 'react'
+import { CheckCircle2, CircleSlash, TriangleAlert, Unplug } from 'lucide-react'
 import { AppShell } from '@/components/ab/app-shell'
-import { BeaconDot } from '@/components/ab/motion'
-import { toastSuccess } from '@/components/ab/toast'
 import { Button } from '@/components/ui/button'
-import { useDataDispatch } from '@/data/provider'
 import type { Platform } from '@/data/types'
+import { MESSAGES } from '@/lib/messages'
 
 const LABELS: Record<Platform, string> = {
   facebook: 'Facebook',
@@ -35,36 +41,21 @@ export function ConnectReturn({
   platform: Platform
   onDone: () => void
 }) {
-  const dispatch = useDataDispatch()
   const label = LABELS[platform] ?? platform
-
-  // Success is transient by design: it applies the connection and returns to
-  // the hub, where the newly-live card is the actual confirmation.
-  useEffect(() => {
-    if (state !== 'success') return
-    const timer = window.setTimeout(() => {
-      dispatch({ type: 'connection/reconnect', platform })
-      dispatch({ type: 'connections/connect', platform })
-      toastSuccess(`${label} connected`, { description: 'Posting and analytics are on.' })
-      onDone()
-    }, 1200)
-    return () => window.clearTimeout(timer)
-  }, [state, platform, label, dispatch, onDone])
 
   return (
     <AppShell title="Connections" context={`Connecting ${label}`}>
       <div className="mx-auto flex max-w-md flex-col items-center gap-6 py-16 text-center">
         {state === 'success' && (
           <>
-            <BeaconDot live />
+            <span className="flex size-12 items-center justify-center rounded-xl bg-muted text-muted-foreground">
+              <Unplug aria-hidden className="size-6" />
+            </span>
             <div className="flex flex-col gap-2">
-              <h2 className="font-display text-xl font-semibold">
-                Connecting your {label} account…
-              </h2>
-              <p className="text-sm text-muted-foreground">
-                Almost there. We are storing the permissions you granted.
-              </p>
+              <h2 className="font-display text-xl font-semibold">{label} is not linked yet</h2>
+              <p className="text-sm text-muted-foreground">{MESSAGES.notices.connectionsPreview}</p>
             </div>
+            <Button onClick={onDone}>Back to connections</Button>
           </>
         )}
 
