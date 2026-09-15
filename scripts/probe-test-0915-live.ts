@@ -638,14 +638,15 @@ async function proofI(browser: Browser, request: APIRequestContext) {
         'revocation',
         `POST /auth/logout with the app's own token → ${revoke.status} (request ${revoke.rid})`,
       )
-      await page.getByRole('link', { name: 'Settings' }).first().click()
-      // The first read after the revocation meets the 401 — the tab list may never render.
-      const team = page.getByRole('tab', { name: 'Team' })
-      const tabs = await team
-        .waitFor({ timeout: 5_000 })
-        .then(() => true)
-        .catch(() => false)
-      if (tabs) await team.click().catch(() => {})
+      // The app's own traffic (a poll, the dashboard's sync) may meet the 401
+      // before any click lands, so nothing here waits on a control: the walk
+      // is sampled from the revocation on, and Settings is asked for without
+      // blocking.
+      void page
+        .getByRole('link', { name: 'Settings' })
+        .first()
+        .click({ timeout: 3_000 })
+        .catch(() => {})
       // Sample the walk every 200 ms for 12 s: the URL, the toast, the stored session.
       const samples: { t: number; url: string; toast: number; stored: boolean }[] = []
       const t0 = Date.now()
