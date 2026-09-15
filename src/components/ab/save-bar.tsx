@@ -46,17 +46,32 @@ export function SaveBar({
    * dirty and its own screen owns the error, so this never claims a success
    * that did not happen. It holds for 1.6s — long enough to read, short enough
    * that the bar does not linger over the work it was covering.
+   *
+   * Two guards, both from TEST-0915 (`live-scheduling` on the built app):
+   * - the clean edge counts only after THIS bar's Save was pressed. A live
+   *   sync landing on a pristine form after a reload is dirty for one render
+   *   while the draft adopts the wire, and Cancel after a failed save is a
+   *   clean edge too — neither is a save, so neither may say "Saved";
+   * - an edit inside the 1.6s is unsaved work again: the bar says so at once
+   *   and brings its buttons back. The first version cleared the reset timer
+   *   on that edit and left the bar stuck on "Saved" with nothing to press.
    */
   const [justSaved, setJustSaved] = useState(false)
   const wasDirty = useRef(dirty)
+  const savePressed = useRef(false)
   useEffect(() => {
-    if (wasDirty.current && !dirty) {
-      setJustSaved(true)
-      const timer = setTimeout(() => setJustSaved(false), 1600)
-      wasDirty.current = dirty
-      return () => clearTimeout(timer)
+    if (dirty) {
+      setJustSaved(false)
+      wasDirty.current = true
+      return
     }
-    wasDirty.current = dirty
+    const landed = wasDirty.current && savePressed.current
+    wasDirty.current = false
+    savePressed.current = false
+    if (!landed) return
+    setJustSaved(true)
+    const timer = setTimeout(() => setJustSaved(false), 1600)
+    return () => clearTimeout(timer)
   }, [dirty])
 
   // The guard is the router's, not a window.confirm: leaving is a navigation,
@@ -121,10 +136,23 @@ export function SaveBar({
             )}
             {!justSaved && (
               <div className="flex items-center gap-2">
-                <Button variant="ghost" onClick={onCancel}>
+                <Button
+                  variant="ghost"
+                  onClick={() => {
+                    savePressed.current = false
+                    onCancel()
+                  }}
+                >
                   Cancel
                 </Button>
-                <Button onClick={onSave}>{saveLabel}</Button>
+                <Button
+                  onClick={() => {
+                    savePressed.current = true
+                    onSave()
+                  }}
+                >
+                  {saveLabel}
+                </Button>
               </div>
             )}
           </div>
