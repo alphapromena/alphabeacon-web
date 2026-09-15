@@ -1,0 +1,38 @@
+
+> alphabeacon-web@0.0.0 verify:w04 C:\alphabeacon-web\alphabeacon-web
+> tsx scripts/verify-w04.ts
+
+FAIL  lint — stale suite report (made for tree 08b3a00c5a29, this tree is f9d792bbee8a) — run `pnpm verify:all` again
+FAIL  typecheck — stale suite report (made for tree 08b3a00c5a29, this tree is f9d792bbee8a) — run `pnpm verify:all` again
+FAIL  unit tests — stale suite report (made for tree 08b3a00c5a29, this tree is f9d792bbee8a) — run `pnpm verify:all` again
+FAIL  guard-static — stale suite report (made for tree 08b3a00c5a29, this tree is f9d792bbee8a) — run `pnpm verify:all` again
+FAIL  build — stale suite report (made for tree 08b3a00c5a29, this tree is f9d792bbee8a) — run `pnpm verify:all` again
+FAIL  e2e (calendar, connections, axe) — stale suite report (made for tree 08b3a00c5a29, this tree is f9d792bbee8a) — run `pnpm verify:all` again
+suite report: stale suite report (made for tree 08b3a00c5a29, this tree is f9d792bbee8a) — run `pnpm verify:all` again
+
+W4 verify summary
+--------------------------------------
+lint                              FAIL
+typecheck                         FAIL
+unit tests                        FAIL
+guard-static                      FAIL
+build                             FAIL
+e2e (calendar, connections, axe)  FAIL
+Syncing never renders a zero      SKIP
+e2e navigation rule holds         SKIP
+W4 deliverables exist             SKIP
+e2e (calendar, connections, axe)  SKIP
+--------------------------------------
+RESULT: FAIL
+
+MANUAL -- human judgement; verify by hand (web-plan.md W4 Verify):
+  1. Read the month grid at 360px: three slot chips in one day cell
+     is the density this design is betting on -- does it hold?
+  2. Switch the timezone in Schedule settings and confirm the slot
+     times you see match what your audience in that zone would see.
+
+  Carried forward, still open (see .agent/open-items.md):
+   - W1 screen-reader walk of the app shell (NVDA / VoiceOver)
+   - W2 marketing copy read, wizard at phone width, marketing in a dark OS
+   - W3 queue as one continuous tool, queue on a phone
+ ELIFECYCLE  Command failed with exit code 1.

@@ -1,0 +1,83 @@
+{
+  "series": "fix-0915",
+  "run": "20260915-125446",
+  "commit": "7249bb4",
+  "dirty": true,
+  "startedAt": "2026-09-15T12:54:46.958Z",
+  "totalSeconds": 447.145,
+  "options": {
+    "series": "fix-0915",
+    "workers": 1,
+    "rounds": 2,
+    "lanes": [
+      "A",
+      "B"
+    ],
+    "only": null,
+    "skipStatic": false,
+    "skipLive": true,
+    "funded": false,
+    "media": false,
+    "pool": false,
+    "port": 5199
+  },
+  "static": {
+    "ok": false,
+    "rows": [
+      {
+        "name": "verify:all",
+        "outcome": "PASS",
+        "seconds": 425.53
+      },
+      {
+        "name": "verify:w00",
+        "outcome": "FAIL",
+        "seconds": 15.095
+      },
+      {
+        "name": "verify:w01",
+        "outcome": "FAIL",
+        "seconds": 0.947
+      },
+      {
+        "name": "verify:w02",
+        "outcome": "FAIL",
+        "seconds": 0.908
+      },
+      {
+        "name": "verify:w03",
+        "outcome": "FAIL",
+        "seconds": 0.907
+      },
+      {
+        "name": "verify:w04",
+        "outcome": "FAIL",
+        "seconds": 0.897
+      },
+      {
+        "name": "verify:w05",
+        "outcome": "FAIL",
+        "seconds": 0.905
+      },
+      {
+        "name": "verify:w06",
+        "outcome": "FAIL",
+        "seconds": 0.933
+      }
+    ]
+  },
+  "unit": {
+    "files": 73,
+    "tests": 825,
+    "passed": 825,
+    "failed": 0,
+    "skipped": 0
+  },
+  "staticE2e": {
+    "passed": 117,
+    "skipped": 90,
+    "failed": 0
+  },
+  "rounds": [],
+  "verdict": "RED"
+}

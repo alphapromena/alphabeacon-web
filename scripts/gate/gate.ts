@@ -95,6 +95,7 @@ function parseArgs(argv: string[]): Options {
     // ONE in flight by default: 3 and 2 were measured red on the dev function's
     // concurrency cap (429 ConcurrentInvocationLimitExceeded, 2026-09-10, item 61).
     // Re-measure with --workers once Ward raises it; the runner does not change.
+    // The same value reaches the static half's Playwright (item 74).
     workers: Number(get('--workers') ?? 1),
     rounds: Number(get('--rounds') ?? 2),
     lanes,
@@ -308,7 +309,13 @@ class Gate {
     mkdirSync(dir, { recursive: true })
 
     this.say('verify:all — the suites once')
-    const all = sh('pnpm verify:all', staticEnv, join(dir, 'verify-all.log'))
+    // The runner's worker count reaches the static half too (item 74):
+    // verify:all passes it to Playwright as `--workers=<n>`.
+    const all = sh(
+      `pnpm verify:all --workers ${this.opts.workers}`,
+      staticEnv,
+      join(dir, 'verify-all.log'),
+    )
     rows.push({ name: 'verify:all', outcome: all.ok ? 'PASS' : 'FAIL', seconds: all.seconds })
     this.say(`verify:all ${all.ok ? 'PASS' : 'FAIL'} in ${all.seconds.toFixed(0)} s`)
     if (existsSync(join(root, '.gate', 'reports', 'verify.json'))) {

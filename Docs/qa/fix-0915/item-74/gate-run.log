@@ -1,0 +1,18 @@
+
+> alphabeacon-web@0.0.0 gate C:\alphabeacon-web\alphabeacon-web
+> tsx scripts/gate/gate.ts "--skip-live" "--workers" "1" "--series" "fix-0915"
+
+12:54:47Z pnpm gate · series fix-0915 · record Docs\qa\fix-0915\gate\20260915-125446
+12:54:47Z keep-awake held (pid 15116)
+12:54:47Z verify:all — the suites once
+13:01:53Z verify:all PASS in 426 s
+13:02:08Z verify:w00 FAIL in 15 s
+13:02:09Z verify:w01 FAIL in 1 s
+13:02:10Z verify:w02 FAIL in 1 s
+13:02:11Z verify:w03 FAIL in 1 s
+13:02:12Z verify:w04 FAIL in 1 s
+13:02:12Z verify:w05 FAIL in 1 s
+13:02:13Z verify:w06 FAIL in 1 s
+13:02:14Z keep-awake released
+13:02:14Z record written: Docs\qa\fix-0915\gate\20260915-125446 — RED
+ ELIFECYCLE  Command failed with exit code 1.

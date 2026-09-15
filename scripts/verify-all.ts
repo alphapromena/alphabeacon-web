@@ -12,7 +12,7 @@
  * treats as "override the file" (playwright.config.ts) — the zero-network
  * test bed cannot be flipped live by a runner that also drives live rounds.
  *
- * Usage: pnpm verify:all [--skip-e2e]
+ * Usage: pnpm verify:all [--skip-e2e] [--workers <n>]
  */
 import { spawnSync } from 'node:child_process'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
@@ -30,6 +30,23 @@ import {
 } from './verify-lib'
 
 const skipE2e = process.argv.includes('--skip-e2e')
+
+/**
+ * The static suite's worker count (ORDER-FIX-0915, item 74). Outside CI it is
+ * ONE unless the caller says otherwise: a testing session runs every Playwright
+ * command line at `--workers=1` (item 70), and the motion specs sample clocks
+ * a parallel run perturbs. In CI nothing is passed and Playwright's own default
+ * stands, exactly as before. `pnpm gate` hands its own `--workers` down here.
+ */
+function workersArg(argv: string[]): string | undefined {
+  const index = argv.indexOf('--workers')
+  if (index >= 0) return argv[index + 1]
+  return argv.find((a) => a.startsWith('--workers='))?.slice('--workers='.length)
+}
+const workers = workersArg(process.argv) ?? (process.env.CI ? undefined : '1')
+if (workers !== undefined && !/^[1-9]\d*$/.test(workers)) {
+  throw new Error(`--workers must be a positive integer, got "${workers}"`)
+}
 
 function runStep(
   name: SuiteStepName,
@@ -94,7 +111,7 @@ function main(): void {
       { name: 'build', cmd: 'pnpm build' },
       {
         name: 'e2e',
-        cmd: 'pnpm exec playwright install chromium && pnpm exec playwright test --reporter=list,json',
+        cmd: `pnpm exec playwright install chromium && pnpm exec playwright test --reporter=list,json${workers ? ` --workers=${workers}` : ''}`,
         env: { ...staticEnv, PLAYWRIGHT_JSON_OUTPUT_NAME: e2eJson },
         after: () => {
           if (existsSync(e2eJson))
