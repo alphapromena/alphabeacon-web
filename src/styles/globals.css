@@ -816,6 +816,36 @@
 }
 
 /**
+ * 10. AMBIENT — the login panel's beacon (NIGHT-0916 order 6; D-NIGHT-0916-F).
+ *
+ * Not a moment: it marks nothing and answers nothing, it is the brand figure
+ * at rest. Static concentric gold rings (7–20% of the gold) around one accent
+ * core that is ALWAYS present — the core is the same ink as the one action on
+ * the screen, the way the panel's full stop already is. One pulsing layer
+ * breathes outward on `--ambient-period` (twenty seconds); it carries
+ * `data-ab-motion`, so under prefers-reduced-motion it does not exist, and
+ * the rings and the core stand still, which is the figure's end state.
+ * Everything here is a token: the gold, the accent, the period.
+ */
+@keyframes ab-ambient-breathe {
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  35% {
+    opacity: 0.2;
+  }
+  100% {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+}
+
+[data-ab-motion='ambient-beacon'] {
+  animation: ab-ambient-breathe var(--ambient-period) var(--ease-out) infinite;
+}
+
+/**
  * The M1 marketing layer (reveal, pinned stages, ambient card drift and the
  * 3D card shadow) lived here and was retired with M1 itself — the visitor
  * world is concept-v2 now, and it carries its own motion in

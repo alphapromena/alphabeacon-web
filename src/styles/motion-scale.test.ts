@@ -158,6 +158,48 @@ describe('no screen manufactures a wait', () => {
   })
 })
 
+/**
+ * AMBIENT is not a moment (NIGHT-0916 order 6; D-NIGHT-0916-F): the login
+ * panel's beacon breathes on its own period, outside the moments block, so
+ * the four-moments guard above keeps counting only moments. The taxonomy is
+ * extended by exactly one family, on exactly one token, and it collapses
+ * under reduced motion the way every flourish does.
+ */
+describe('ambient — the taxonomy beside the moments (NIGHT-0916 order 6)', () => {
+  const ambient = GLOBALS.slice(GLOBALS.indexOf('10. AMBIENT'))
+  const moments = GLOBALS.slice(
+    GLOBALS.indexOf('9. THE FOUR MOMENTS'),
+    GLOBALS.indexOf('THE GUARANTEE, IN ONE PLACE'),
+  )
+
+  it('is exactly one family, and it lives OUTSIDE the moments block', () => {
+    expect(GLOBALS.indexOf('10. AMBIENT')).toBeGreaterThan(
+      GLOBALS.indexOf('THE GUARANTEE, IN ONE PLACE'),
+    )
+    const families = new Set(
+      Array.from(ambient.matchAll(/\[data-ab-motion='([a-z-]+)'\]/g), (m) => m[1]),
+    )
+    expect([...families]).toEqual(['ambient-beacon'])
+    expect(moments).not.toMatch(/ambient-beacon/)
+  })
+
+  it('breathes on the one ambient token, which is not a member of the motion scale', () => {
+    expect(tokens['ambient-period']).toBeDefined()
+    expect(tokens['ambient-period']).toMatch(/^\d+s$/)
+    expect(Number.parseInt(tokens['ambient-period'], 10)).toBeGreaterThanOrEqual(15)
+    expect(Object.keys(tokens)).not.toContain('motion-ambient')
+    expect(ambient).toMatch(/\[data-ab-motion='ambient-beacon'\][^}]*var\(--ambient-period\)/)
+    const literals =
+      ambient.replace(/\/\*[\s\S]*?\*\//g, '').match(/animation:[^;{}]*?\b\d+m?s\b/g) ?? []
+    expect(literals).toEqual([])
+  })
+
+  it('introduces no colour of its own', () => {
+    const colours = ambient.match(/#[0-9a-f]{3,8}|\brgb\b|\boklch\b|\bhsl\b/gi) ?? []
+    expect(colours).toEqual([])
+  })
+})
+
 describe('the four moments (ORDER MOTION-0914/B)', () => {
   /** Rule 9 — the moments block, and only it. */
   const moments = GLOBALS.slice(

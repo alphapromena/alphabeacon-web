@@ -215,6 +215,14 @@
      for work that was already finished. */
   --skeleton-delay: 220ms;
 
+  /* --- Ambient: the login panel's beacon breathes on this period ------
+     (NIGHT-0916 order 6; D-NIGHT-0916-F). Ambient is NOT a moment and NOT a
+     member of the motion scale: it carries no meaning, it is atmosphere, and
+     it vanishes wholesale under prefers-reduced-motion through
+     `data-ab-motion` like every flourish. Twenty seconds is slow enough to be
+     felt as stillness that breathes rather than as motion. */
+  --ambient-period: 20s;
+
   /* --- Shadow: ambient, under true overlays only -------------------
      D-THEME-0913-E. There is no elevation shadow in this system; a card is
      raised because it is LIGHTER, not because it casts. These exist so a

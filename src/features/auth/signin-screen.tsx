@@ -12,13 +12,14 @@
  */
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router'
 import { z } from 'zod'
-import { Form, FormActions, FormField, TextField } from '@/components/ab/form'
+import { Form, FormActions, TextField } from '@/components/ab/form'
 import { MonoNumber } from '@/components/ab/mono-number'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
+import { Label } from '@/components/ui/label'
 import { useAuthActions } from '@/data/auth'
 import { useSession } from '@/data/provider'
 import { MESSAGES } from '@/lib/messages'
@@ -61,8 +62,10 @@ export function SignInScreen() {
       footer={
         <>
           New here?{' '}
+          {/* Not the accent: the one accent element on this screen is Sign in
+              (NIGHT-0916 order 6, finding 2; D-NIGHT-0916-F). */}
           <Link
-            className="font-medium text-primary underline-offset-4 hover:underline"
+            className="font-medium text-foreground underline underline-offset-4 hover:text-foreground/80"
             to="/signup"
           >
             Create an account
@@ -72,6 +75,10 @@ export function SignInScreen() {
     >
       <Form
         form={form}
+        // The inputs' radius is the small step (8 px), and the button below
+        // takes the same — one shape for the field and its action, not a pill
+        // beside a rounded box (NIGHT-0916 order 6, finding 4).
+        className="[&_input]:rounded-[var(--radius-sm)]"
         onSubmit={async (values) => {
           if (lockedOut) return
           setFailed(false)
@@ -129,20 +136,32 @@ export function SignInScreen() {
         <TextField name="password" label="Password" type="password" />
 
         {/* Mirrors the API's own rememberMe: 30-day sliding session instead
-            of 12-hour, localStorage instead of tab-scoped. */}
-        <FormField
+            of 12-hour, localStorage instead of tab-scoped. The box sits BESIDE
+            its words, on the start side, not across the row from them
+            (NIGHT-0916 order 6, finding 3). */}
+        <Controller
+          control={form.control}
           name="rememberMe"
-          label="Keep me signed in on this device"
-          orientation="horizontal"
-        >
-          {({ invalid: _invalid, value, onChange, ...field }) => (
-            <Checkbox {...field} checked={Boolean(value)} onCheckedChange={onChange} />
+          render={({ field }) => (
+            <div className="flex items-center gap-2">
+              <Checkbox
+                id="remember-me"
+                name={field.name}
+                ref={field.ref}
+                checked={Boolean(field.value)}
+                onCheckedChange={field.onChange}
+                onBlur={field.onBlur}
+              />
+              <Label htmlFor="remember-me" className="font-normal">
+                Keep me signed in on this device
+              </Label>
+            </div>
           )}
-        </FormField>
+        />
 
         <div className="-mt-2 text-end text-sm">
           <Link
-            className="font-medium text-primary underline-offset-4 hover:underline"
+            className="font-medium text-foreground underline underline-offset-4 hover:text-foreground/80"
             to="/reset-password"
           >
             Forgot password?
@@ -150,7 +169,12 @@ export function SignInScreen() {
         </div>
 
         <FormActions className="flex-col items-stretch">
-          <Button type="submit" size="lg" disabled={lockedOut}>
+          <Button
+            type="submit"
+            size="lg"
+            className="rounded-[var(--radius-sm)]"
+            disabled={lockedOut}
+          >
             {lockedOut ? 'Locked' : 'Sign in'}
           </Button>
         </FormActions>

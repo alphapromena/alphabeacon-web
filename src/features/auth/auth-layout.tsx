@@ -74,23 +74,52 @@ export function AuthLayout({
          * would have measured 1.46:1. `inset-inline-end` so the bloom mirrors
          * in RTL along with everything else.
          */
-        <aside className="relative hidden overflow-hidden border-s border-border bg-card p-12 lg:flex lg:flex-col lg:justify-end">
+        <aside className="relative hidden overflow-hidden border-s border-border bg-card px-12 py-10 lg:flex lg:flex-col lg:gap-8">
           <span
             aria-hidden
             className="absolute -top-24 -end-24 size-[28rem] rounded-full bg-brand opacity-[0.18] blur-3xl"
           />
-          <blockquote className="relative max-w-md">
-            <p className="font-display text-3xl leading-tight font-semibold text-balance text-foreground">
-              {/* The website's own idiom: the accent full stop that closes an
+          {/* The same rhythm as the form column — a wordmark-high row, the
+              same gap, then a block centred in what is left — so the copy and
+              the form share ONE optical centre (NIGHT-0916 order 6, finding 1). */}
+          <div aria-hidden className="h-8" />
+          <div className="relative flex flex-1 flex-col justify-center">
+            {/*
+             * The beacon at rest (D-NIGHT-0916-F): static concentric gold
+             * rings at 7–20% around one accent core that is always there,
+             * and one breathing layer that vanishes under reduced motion.
+             * Decorative in full, so it is hidden from assistive tech; the
+             * copy sits over its outer rings, which are hairlines — the
+             * background axe reads under the words is the card's.
+             */}
+            <div
+              aria-hidden
+              data-slot="ambient-beacon"
+              className="pointer-events-none absolute end-0 top-1/2 size-[22rem] -translate-y-1/2 translate-x-1/3"
+            >
+              <span className="absolute inset-0 rounded-full border border-brand opacity-[0.07]" />
+              <span className="absolute inset-[12%] rounded-full border border-brand opacity-[0.1]" />
+              <span className="absolute inset-[24%] rounded-full border border-brand opacity-[0.14]" />
+              <span className="absolute inset-[36%] rounded-full border border-brand opacity-[0.2]" />
+              <span
+                data-ab-motion="ambient-beacon"
+                className="absolute inset-[24%] rounded-full border border-brand"
+              />
+              <span className="absolute top-1/2 left-1/2 size-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary" />
+            </div>
+            <blockquote className="relative max-w-md">
+              <p className="font-display text-3xl leading-tight font-semibold text-balance text-foreground">
+                {/* The website's own idiom: the accent full stop that closes an
                   editorial headline, and the only accent on this panel. The
                   copy is NOT changed — all three headings already end in a
                   period, so the existing stop is simply drawn in the accent
                   rather than a second one being added. */}
-              {aside.heading.replace(/\.$/, '')}
-              <span className="text-primary">.</span>
-            </p>
-            <p className="mt-4 text-base/relaxed text-muted-foreground">{aside.body}</p>
-          </blockquote>
+                {aside.heading.replace(/\.$/, '')}
+                <span className="text-primary">.</span>
+              </p>
+              <p className="mt-4 text-base/relaxed text-muted-foreground">{aside.body}</p>
+            </blockquote>
+          </div>
         </aside>
       )}
     </div>
