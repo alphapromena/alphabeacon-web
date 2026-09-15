@@ -18,6 +18,7 @@
 import { useCallback } from 'react'
 import { api, resetUnauthorizedGuard, withDeliberateLogout } from '@/api/client'
 import { navigateTo } from '@/lib/navigation'
+import { clearReturnTo } from '@/lib/return-to'
 import { isLiveMode } from '@/api/config'
 import { isApiError, type ApiErrorCode, type ApiFieldDetail } from '@/api/errors'
 import { purgeSession, saveSession } from '@/api/session'
@@ -215,6 +216,8 @@ export function useAuthActions(): AuthActions {
     // signed out is RootGate — the marketing home. No timer: the router's own
     // promise is the order.
     async signOut() {
+      // Leaving on purpose is not "where they were": nothing to come back to.
+      clearReturnTo()
       if (!live) {
         await navigateTo('/')
         dispatch({ type: 'session/signOut' })
@@ -235,6 +238,7 @@ export function useAuthActions(): AuthActions {
     // that failed for any reason but a dead token stays on the screen, with
     // its failure.
     async signOutEverywhere() {
+      clearReturnTo()
       if (!live) {
         await navigateTo('/')
         dispatch({ type: 'session/signOut' })

@@ -40,12 +40,14 @@ import {
   lazy,
   useEffect,
   useLayoutEffect,
+  useRef,
   type ComponentType,
   type ReactNode,
 } from 'react'
 import { createBrowserRouter, Navigate, Outlet, useLocation } from 'react-router'
 import { AppFrame } from '@/components/ab/app-shell'
 import { configureNavigation, reportCommittedPath, setCommitReporter } from '@/lib/navigation'
+import { rememberReturnTo } from '@/lib/return-to'
 import { useInShellFrame } from '@/components/ab/shell-chrome'
 import { useOrg, useSession } from '@/data/provider'
 import { MarketingHome } from '@/features/marketing/home-screen'
@@ -172,7 +174,14 @@ function RootGate() {
 export function Authed({ children }: { children: ReactNode }) {
   const session = useSession()
   const org = useOrg()
-  if (!session.signedIn) return <Navigate to="/login" replace />
+  const { pathname, search } = useLocation()
+  if (!session.signedIn) {
+    // Where the person meant to be, remembered BEFORE the send to login so
+    // the sign-in can bring them back (NIGHT-0916 order 3; D-NIGHT-0916-C).
+    // Written in render on purpose: an effect would run after the redirect.
+    rememberReturnTo(pathname + search)
+    return <Navigate to="/login" replace />
+  }
   if (!org.exists) return <>{el.emptyOrg()}</>
   return children
 }
@@ -241,11 +250,19 @@ export function NavigationCommit() {
   return null
 }
 
-/** Auth screens redirect away once there is nothing left to authenticate. */
+/**
+ * Auth screens redirect away when there is nothing to authenticate — decided
+ * when the screen MOUNTS. A session that appears while the screen is up is
+ * the screen's own sign-in, and the screen navigates on success itself (to
+ * the remembered app path, or `/`; NIGHT-0916 order 3, D-NIGHT-0916-C): a
+ * redirect fired here on that same render raced the screen's navigation and
+ * won, landing on `/` instead of the path the person meant.
+ */
 export function SignedOutOnly({ children }: { children: ReactNode }) {
   const session = useSession()
   const org = useOrg()
-  if (session.signedIn && org.exists) return <Navigate to="/" replace />
+  const signedInAtMount = useRef(session.signedIn && org.exists)
+  if (signedInAtMount.current) return <Navigate to="/" replace />
   return children
 }
 

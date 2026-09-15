@@ -63,6 +63,7 @@ import type {
 import { MAX_SIGN_IN_ATTEMPTS, SIGN_IN_LOCKOUT_MS } from '@/data/types'
 import { canTransition, type DraftStatus } from '@/lib/draft-status'
 import { MESSAGES } from '@/lib/messages'
+import { rememberReturnTo } from '@/lib/return-to'
 
 /** /dev/states override: force the loading or error presentation anywhere. */
 export type DevForce = 'none' | 'loading' | 'error'
@@ -1307,6 +1308,10 @@ export function DataProvider({
         // A deliberate sign-out revokes the token while a sync may still be
         // in flight; its 401 is an echo, not a breach — nobody to evict.
         if (!liveSessionRef.current) return
+        // Where the session died, remembered before the purge and the push
+        // so the sign-in can bring the person back (NIGHT-0916 order 3;
+        // D-NIGHT-0916-C). Only an app path is kept (lib/return-to.ts).
+        rememberReturnTo(window.location.pathname + window.location.search)
         purgeSession()
         dispatch({ type: 'live/sessionCleared' })
         toastError(MESSAGES.errors.sessionExpired)

@@ -219,3 +219,44 @@ for (const start of [
     ).toBe(false)
   })
 }
+
+/**
+ * Back to where the person was (NIGHT-0916 order 3; D-NIGHT-0916-C): the
+ * guard and the 401 handler remember the intended app path before they send
+ * to login, and the sign-in takes it. A deep link with no session, and a
+ * token that dies on an authed route.
+ */
+test('5 · a deep link to /billing with no session: sign in lands on /billing', async ({ page }) => {
+  test.setTimeout(150_000)
+  await page.goto('/billing')
+  await expect(page.getByRole('heading', { name: 'Welcome back', level: 1 })).toBeVisible({
+    timeout: SCREEN_SYNC,
+  })
+  await page.getByLabel('Work email').fill(owner)
+  await page.getByLabel('Password', { exact: true }).fill(PASSWORD)
+  await page.getByRole('button', { name: 'Sign in' }).click()
+  await expect(page).toHaveURL(/\/billing$/, { timeout: SCREEN_SYNC })
+  await expect(page.getByRole('heading', { name: 'Billing', level: 1 })).toBeVisible({
+    timeout: SCREEN_SYNC,
+  })
+  expect(await page.evaluate(() => window.sessionStorage.getItem('ab-return-to'))).toBeNull()
+})
+
+test('6 · a token dead on /settings/organization: sign in lands back there', async ({ page }) => {
+  test.setTimeout(150_000)
+  await login(page)
+  await page.getByRole('link', { name: 'Settings' }).first().click()
+  await expect(page.getByRole('heading', { name: 'Organization', level: 1 })).toBeVisible({
+    timeout: SCREEN_SYNC,
+  })
+  await tamperStoredToken(page)
+  await page.reload()
+  await expectReLogin(page)
+  await page.getByLabel('Work email').fill(owner)
+  await page.getByLabel('Password', { exact: true }).fill(PASSWORD)
+  await page.getByRole('button', { name: 'Sign in' }).click()
+  await expect(page).toHaveURL(/\/settings\/organization$/, { timeout: SCREEN_SYNC })
+  await expect(page.getByRole('heading', { name: 'Organization', level: 1 })).toBeVisible({
+    timeout: SCREEN_SYNC,
+  })
+})

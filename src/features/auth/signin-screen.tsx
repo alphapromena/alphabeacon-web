@@ -22,6 +22,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { useAuthActions } from '@/data/auth'
 import { useSession } from '@/data/provider'
 import { MESSAGES } from '@/lib/messages'
+import { takeReturnTo } from '@/lib/return-to'
 import { AuthErrorAlert, type AuthFailure } from './auth-error'
 import { AuthLayout } from './auth-layout'
 import { formatCountdown, useCountdown } from './use-countdown'
@@ -94,7 +95,10 @@ export function SignInScreen() {
             setFailure(result)
             return
           }
-          navigate('/')
+          // Back to where the person was — the app path the guard or the 401
+          // handler remembered — or today's landing (NIGHT-0916 order 3;
+          // D-NIGHT-0916-C). Read once and cleared.
+          navigate(takeReturnTo() ?? '/')
         }}
       >
         {lockedOut ? (
@@ -126,7 +130,11 @@ export function SignInScreen() {
 
         {/* Mirrors the API's own rememberMe: 30-day sliding session instead
             of 12-hour, localStorage instead of tab-scoped. */}
-        <FormField name="rememberMe" label="Keep me signed in on this device" orientation="horizontal">
+        <FormField
+          name="rememberMe"
+          label="Keep me signed in on this device"
+          orientation="horizontal"
+        >
           {({ invalid: _invalid, value, onChange, ...field }) => (
             <Checkbox {...field} checked={Boolean(value)} onCheckedChange={onChange} />
           )}
