@@ -16,7 +16,10 @@ import { expect, test } from './fixtures'
 import { SCREEN_SYNC } from './live-clocks'
 import { runStamp, signUpAndEnter } from './live-setup'
 
+const API_BASE = process.env.VITE_API_BASE_URL
 const RUN = runStamp()
+
+test.skip(!API_BASE, 'live-mode run only (export VITE_API_BASE_URL)')
 const PASSWORD = 'Roasted2Order!'
 const owner = `qa+${RUN}fl@alphapromena.com`
 const CEILING_MS = 2_000
