@@ -40,3 +40,5 @@ Vercel's docs (project-configuration/vercel-json; system-environment-variables):
 | 63 | known red, waiting on Hasan; not chased |
 | 58 | noted at gate time |
 | 79 / 70 | bucket d by shape, isolated re-run on sight (70 already seen once above) |
+
+**Proof (a), attempt 1.** `8dfc022` (docs on top of `d827693`) went **ERROR** on Vercel before any build step: "`vercel.json` schema validation failed: `ignoreCommand` should NOT be longer than 256 characters" (no build log). The command moved into `scripts/vercel-ignore.sh`, exclusion list verbatim; `vercel.json` calls `bash scripts/vercel-ignore.sh`. Local matrix through the script: unset → HEAD^; base `5f01310` → 1 (the script and vercel.json are in the diff); `be0535c`, `f3d5a83` → 1; a SHA absent from the clone → 1. Attempt 2 is the next push: this line as the docs-only commit on top.
