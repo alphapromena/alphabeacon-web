@@ -419,17 +419,20 @@ async function proofB(browser: Browser, request: APIRequestContext) {
     record(
       'B',
       'above the cap: the counter says so, both Add controls are disabled, every row is still listed',
-      /^45 \/ 40/.test(counter) &&
+      Number.parseInt(counter, 10) === total &&
+        total > 40 &&
         capText === 1 &&
         (await addDo.isDisabled()) &&
         (await addDont.isDisabled()) &&
-        nDo === 30 &&
-        nDont === 15,
+        nDo + nDont === total,
       `counter "${counter}"; cap sentence present: ${capText === 1} ("${CAP_SENTENCE}"); Add do disabled: ${await addDo.isDisabled()}; Add don't disabled: ${await addDont.isDisabled()}; ${nDo} do + ${nDont} dont inputs`,
     )
     await shot(page, 'proof-b-1-above-cap')
 
-    await page.getByRole('button', { name: 'Remove do rule 30', exact: true }).click()
+    const shown = Number.parseInt(counter, 10)
+    await page.getByRole('button', { name: `Remove do rule ${nDo}`, exact: true }).click()
+    // The counter is a MonoNumber tween (D-MOTION-0914-E): read it once the 220 ms have passed.
+    await page.waitForTimeout(400)
     const counter2 = await counterOf(page)
     const stillDisabled = (await addDo.isDisabled()) && (await addDont.isDisabled())
     await page.getByRole('button', { name: 'Save changes' }).click()
@@ -440,7 +443,7 @@ async function proofB(browser: Browser, request: APIRequestContext) {
     record(
       'B',
       'a list above the cap still shrinks and saves; Add stays disabled while still at or above 40',
-      /^44 \/ 40/.test(counter2) && stillDisabled && totalAfter === 44,
+      Number.parseInt(counter2, 10) === shown - 1 && stillDisabled && totalAfter === total - 1,
       `counter after removal "${counter2}"; Add still disabled: ${stillDisabled}; wire after save: ${totalAfter} rules (request ${after.rid})`,
     )
     await shot(page, 'proof-b-2-after-one-removal')
@@ -636,7 +639,13 @@ async function proofI(browser: Browser, request: APIRequestContext) {
         `POST /auth/logout with the app's own token → ${revoke.status} (request ${revoke.rid})`,
       )
       await page.getByRole('link', { name: 'Settings' }).first().click()
-      await page.getByRole('tab', { name: 'Team' }).click()
+      // The first read after the revocation meets the 401 — the tab list may never render.
+      const team = page.getByRole('tab', { name: 'Team' })
+      const tabs = await team
+        .waitFor({ timeout: 5_000 })
+        .then(() => true)
+        .catch(() => false)
+      if (tabs) await team.click().catch(() => {})
       await page.waitForURL(/\/login$/, { timeout: SCREEN_SYNC }).catch(() => {})
       const url = page.url().replace(/^https?:\/\/[^/]+/, '')
       const toast = await page.getByText(SESSION_ENDED).count()
