@@ -8,7 +8,7 @@
  */
 import AxeBuilder from '@axe-core/playwright'
 import type { Page } from '@playwright/test'
-import { openFromRail as open, rail } from './datasets'
+import { activateDataset, openFromRail as open, rail } from './datasets'
 import { expect, test } from './fixtures'
 
 const WCAG_TAGS = ['wcag2a', 'wcag2aa']
@@ -238,26 +238,30 @@ test('a channel detail charts what the platform reports, and explains what it do
 test('with no channel left to report, analytics names the phase it is waiting on', async ({
   page,
 }) => {
-  // Reached the way an org actually reaches it — by disconnecting the
-  // channels — rather than from a world that never had any. The `fresh` world
-  // has none, but it also has not finished onboarding, so N3 owns it.
-  await open(page, 'Connections')
-  for (const channel of ['Facebook Page', 'Instagram', 'LinkedIn']) {
-    const card = page.locator('[data-slot="card"]').filter({ hasText: channel })
-    // A channel that needs re-auth offers Reconnect, not Manage — you cannot
-    // manage permissions you no longer hold.
-    const reconnect = card.getByRole('button', { name: 'Reconnect' })
-    if ((await reconnect.count()) > 0) {
-      await reconnect.click()
-      // B3's success state is transient: it applies the connection and returns
-      // to the hub on its own, where the live card is the confirmation.
-      await expect(card.getByRole('button', { name: 'Manage' })).toBeVisible({ timeout: 10_000 })
-    }
-    await card.getByRole('button', { name: 'Manage' }).click()
-    await page.getByRole('button', { name: 'Disconnect this account' }).click()
-    await page.getByRole('alertdialog').getByRole('button', { name: 'Disconnect' }).click()
-    await page.keyboard.press('Escape')
-  }
+  // A workspace with no channel, reached the way an org actually starts: a
+  // fresh signup lands in the review world DEMO-0914 seeds, and that seed
+  // refuses to invent connections (D-DEMO-0914-B). This walk used to empty
+  // the demo world instead — disconnecting its three channels after
+  // reconnecting LinkedIn through B3's "success" return. That return links
+  // nothing now (D-TEST-0915-C, TEST-0915), and a channel that needs re-auth
+  // offers no Disconnect, so the demo world cannot be emptied through the
+  // product. Same state, honest road.
+  await activateDataset(page, 'Visitor (signed out)')
+  await page.getByRole('banner').getByRole('link', { name: 'Get started' }).first().click()
+  await page.getByLabel('Full name').fill('Lena Park')
+  await page.getByLabel('Work email').fill('lena@novaskincare.example')
+  await page.getByLabel('Password', { exact: true }).fill('Roasted2Order')
+  await page.getByLabel('Organization name').fill('Nova Skincare')
+  await page.getByRole('checkbox').click()
+  await page.getByRole('button', { name: 'Create account' }).click()
+  await page.getByRole('button', { name: "I've verified my email" }).click()
+  await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible()
+
+  // Every channel starts not connected: nothing reports, and nothing can be
+  // asked of the person either.
+  await rail(page, 'Connections').click()
+  await expect(page.getByText('Not connected').first()).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Manage' })).toHaveCount(0)
 
   await rail(page, 'Analytics').click()
   await expect(page.locator('[aria-busy="true"]')).toHaveCount(0)
