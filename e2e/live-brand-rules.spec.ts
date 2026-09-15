@@ -17,7 +17,7 @@
  */
 import type { Page } from '@playwright/test'
 import { expect, test } from './fixtures'
-import { signUpAndEnter, skipUnlessFunded } from './live-setup'
+import { addVoiceRule, signUpAndEnter, skipUnlessFunded } from './live-setup'
 import { ONE_CALL, SCREEN_SYNC } from './live-clocks'
 import { runStamp } from './live-setup'
 
@@ -153,38 +153,36 @@ test('the brand voice writes to one row, and an edit does not reorder it', async
   await login(page)
   await openSettingsTab(page, 'Brand voice')
 
-  await page.getByRole('button', { name: 'Add do', exact: true }).click()
-  await page.locator('input[id^="voice-do"]').last().fill('Name the farm when it matters')
-  await page.getByRole('button', { name: 'Add do', exact: true }).click()
-  await page.locator('input[id^="voice-do"]').last().fill('Say what changed this week')
-  await page.getByRole('button', { name: "Add don't", exact: true }).click()
-  await page.locator('input[id^="voice-dont"]').last().fill('Call anything artisanal')
+  await addVoiceRule(page, 'Do', 'Name the farm when it matters')
+  await addVoiceRule(page, 'Do', 'Say what changed this week')
+  await addVoiceRule(page, "Don't", 'Call anything artisanal')
   await page.getByRole('button', { name: 'Save changes' }).click()
   await expect(page.getByText('Brand voice saved')).toBeVisible({ timeout: 20_000 })
 
   await page.goto('/settings/brand-voice')
   // First wait after a reload — the whole brand sync — live-red-2026-08-23.
-  await expect(page.locator('input[id^="voice-do"]').first()).toHaveValue(
+  await expect(page.getByRole('textbox', { name: 'Do rule 1', exact: true })).toHaveValue(
     'Name the farm when it matters',
     { timeout: SCREEN_SYNC },
   )
-  await expect(page.locator('input[id^="voice-dont"]').first()).toHaveValue(
+  await expect(page.getByRole('textbox', { name: "Don't rule 1", exact: true })).toHaveValue(
     'Call anything artisanal',
   )
 
   // Edit the FIRST rule. Under INT-3 this deleted and re-created the row, so
   // it came back at the top of a newest-first list - the list reordered itself
   // under the user. One canonical row cannot do that.
-  await page.locator('input[id^="voice-do"]').first().fill('Name the farm, always')
+  await page.getByRole('textbox', { name: 'Do rule 1', exact: true }).fill('Name the farm, always')
   await page.getByRole('button', { name: 'Save changes' }).click()
   await expect(page.getByText('Brand voice saved')).toBeVisible({ timeout: 20_000 })
 
   await page.goto('/settings/brand-voice')
   // First wait after a reload — the whole brand sync — live-red-2026-08-23.
-  await expect(page.locator('input[id^="voice-do"]').first()).toHaveValue('Name the farm, always', {
-    timeout: SCREEN_SYNC,
-  })
-  await expect(page.locator('input[id^="voice-do"]').nth(1)).toHaveValue(
+  await expect(page.getByRole('textbox', { name: 'Do rule 1', exact: true })).toHaveValue(
+    'Name the farm, always',
+    { timeout: SCREEN_SYNC },
+  )
+  await expect(page.getByRole('textbox', { name: 'Do rule 2', exact: true })).toHaveValue(
     'Say what changed this week',
   )
 })

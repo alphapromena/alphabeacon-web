@@ -20,7 +20,13 @@
 import type { Page } from '@playwright/test'
 import { expect, test } from './fixtures'
 import { SCREEN_SYNC } from './live-clocks'
-import { ensureToneLanguage, openSettingsTab, signUpAndEnter, skipUnlessFunded } from './live-setup'
+import {
+  addVoiceRule,
+  ensureToneLanguage,
+  openSettingsTab,
+  signUpAndEnter,
+  skipUnlessFunded,
+} from './live-setup'
 import { runStamp } from './live-setup'
 
 const API_BASE = process.env.VITE_API_BASE_URL
@@ -134,8 +140,7 @@ test('completing the four brand entities unlocks generation', async ({ page }) =
     .getByRole('link', { name: 'Set up Brand voice' })
     .click()
   await expect(page.locator('[aria-busy="true"]')).toHaveCount(0, { timeout: SCREEN_SYNC })
-  await page.getByRole('button', { name: 'Add do', exact: true }).click()
-  await page.locator('input[id^="voice-do"]').last().fill('Name the roast date')
+  await addVoiceRule(page, 'Do', 'Name the roast date')
   await page.getByRole('button', { name: 'Save changes' }).click()
   await expect(page.getByText('Brand voice saved')).toBeVisible({ timeout: SCREEN_SYNC })
 

@@ -169,8 +169,7 @@ async function ensureFundedBrand(page: Page, request: APIRequestContext, wallet:
   const voices = await brand('voices')
   if (!voices.items.some((voice) => (voice.rules?.length ?? 0) > 0)) {
     await openSettingsTab(page, 'Brand voice')
-    await page.getByRole('button', { name: 'Add do', exact: true }).click()
-    await page.locator('input[id^="voice-do"]').last().fill(FUNDED_TONE.doRule)
+    await addVoiceRule(page, 'Do', FUNDED_TONE.doRule)
     await page.getByRole('button', { name: 'Save changes' }).click()
     await expect(page.getByText('Brand voice saved')).toBeVisible({ timeout: SCREEN_SYNC })
   }
@@ -323,6 +322,30 @@ export async function signUpAndEnter(
 /** Signup + verify + `POST /orgs` + the resync, back to back. */
 export const WORKSPACE_READY = 60_000
 
+/**
+ * Add ONE rule to a Brand voice list and fill it — by the label `RuleList`
+ * writes (`Do rule N` / `Don't rule N`), never by an id prefix.
+ *
+ * Item 64 (TEST-0915): `input[id^="voice-do"]` also matched `voice-dont-0`,
+ * because `voice-do` is a prefix of `voice-dont`, so `.last()` typed the
+ * do-rule into the Don't input the moment a don't row existed — proven on org
+ * 2170 (the stored Don't rule was overwritten and no do rule reached the
+ * wire). The row count is read BEFORE Add, so the new row's label is exact
+ * and nothing relies on DOM order.
+ */
+export async function addVoiceRule(page: Page, kind: 'Do' | "Don't", text: string) {
+  const add = page.getByRole('button', {
+    name: kind === 'Do' ? 'Add do' : "Add don't",
+    exact: true,
+  })
+  await add.waitFor({ state: 'visible' })
+  const before = await page
+    .getByRole('textbox', { name: new RegExp(`^${kind} rule \\d+$`) })
+    .count()
+  await add.click()
+  await page.getByRole('textbox', { name: `${kind} rule ${before + 1}`, exact: true }).fill(text)
+}
+
 /** Settings is a tablist above one outlet; every section is reached this way. */
 export async function openSettingsTab(page: Page, tab: string) {
   await page.getByRole('link', { name: 'Settings' }).first().click()
@@ -392,8 +415,7 @@ export async function completeBrandSetup(
   brand: { toneName: string; toneDescription: string; doRule: string },
 ) {
   await openSettingsTab(page, 'Brand voice')
-  await page.getByRole('button', { name: 'Add do', exact: true }).click()
-  await page.locator('input[id^="voice-do"]').last().fill(brand.doRule)
+  await addVoiceRule(page, 'Do', brand.doRule)
   await page.getByRole('button', { name: 'Save changes' }).click()
   await expect(page.getByText('Brand voice saved')).toBeVisible({ timeout: SCREEN_SYNC })
 

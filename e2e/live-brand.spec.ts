@@ -8,7 +8,7 @@
  */
 import type { Page } from '@playwright/test'
 import { expect, test } from './fixtures'
-import { signUpAndEnter } from './live-setup'
+import { addVoiceRule, signUpAndEnter } from './live-setup'
 import { ONE_CALL, SCREEN_SYNC } from './live-clocks'
 import { runStamp } from './live-setup'
 
@@ -107,13 +107,12 @@ test('voice rules: the flat live list persists through the API', async ({ page }
   await expect(page.getByRole('group', { name: 'Example' })).toHaveCount(0)
   await expect(page.getByText(MESSAGE_REACHES_GENERATION)).toBeVisible()
 
-  await page.getByRole('button', { name: 'Add do', exact: true }).click()
-  await page.locator('input[id^="voice-do"]').last().fill('Name the farm when it matters')
+  await addVoiceRule(page, 'Do', 'Name the farm when it matters')
   await page.getByRole('button', { name: 'Save changes' }).click()
   await expect(page.getByText('Brand voice saved')).toBeVisible({ timeout: ONE_CALL })
 
   await page.goto('/settings/brand-voice')
-  await expect(page.locator('input[id^="voice-do"]').first()).toHaveValue(
+  await expect(page.getByRole('textbox', { name: 'Do rule 1', exact: true })).toHaveValue(
     'Name the farm when it matters',
   )
 })
