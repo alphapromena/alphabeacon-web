@@ -139,7 +139,7 @@ const FIRST_LIGHT_OBSERVER = (email: string) => `
         if (poll) clearInterval(poll);
       }
     });
-    // `document` itself: an init script runs before documentElement exists.
+    // document itself, not documentElement: an init script runs before that element exists.
     observer.observe(document, { childList: true, subtree: true });
   })()
 `
@@ -543,7 +543,13 @@ async function proofMoving(browser: Browser) {
         tick()
       })
     `
-    type NavSample = { t: number; node: string; placed: string | null; opacity: string | null; transform: string | null }
+    type NavSample = {
+      t: number
+      node: string
+      placed: string | null
+      opacity: string | null
+      transform: string | null
+    }
     const describeMotion = (samples: NavSample[]) => {
       const present = samples.filter((s) => s.node !== 'none')
       const sameNode = present.every((s) => s.node === 'before')
@@ -561,19 +567,30 @@ async function proofMoving(browser: Browser) {
       }
     }
     await go(page, '/', 500)
-    const railMove = describeMotion((await page.evaluate(NAV_SAMPLE('rail', 'Today'))) as NavSample[])
+    const railMove = describeMotion(
+      (await page.evaluate(NAV_SAMPLE('rail', 'Today'))) as NavSample[],
+    )
     await page.waitForTimeout(500)
-    const railMove2 = describeMotion((await page.evaluate(NAV_SAMPLE('rail', 'Billing'))) as NavSample[])
+    const railMove2 = describeMotion(
+      (await page.evaluate(NAV_SAMPLE('rail', 'Billing'))) as NavSample[],
+    )
     record(
       'G',
       'the rail indicator SLIDES between screens (the same node, intermediate transforms) rather than re-mounting and fading in',
-      railMove.sameNode && railMove.transforms >= 3 && railMove2.sameNode && railMove2.transforms >= 3,
+      railMove.sameNode &&
+        railMove.transforms >= 3 &&
+        railMove2.sameNode &&
+        railMove2.transforms >= 3,
       `Dashboard → Today: ${railMove.summary} · Today → Billing: ${railMove2.summary}`,
     )
     await go(page, '/settings', 800)
-    const tabMove = describeMotion((await page.evaluate(NAV_SAMPLE('tabs', 'Brand voice'))) as NavSample[])
+    const tabMove = describeMotion(
+      (await page.evaluate(NAV_SAMPLE('tabs', 'Brand voice'))) as NavSample[],
+    )
     await page.waitForTimeout(500)
-    const tabMove2 = describeMotion((await page.evaluate(NAV_SAMPLE('tabs', 'Tones'))) as NavSample[])
+    const tabMove2 = describeMotion(
+      (await page.evaluate(NAV_SAMPLE('tabs', 'Tones'))) as NavSample[],
+    )
     record(
       'G',
       'the settings sub-nav indicator SLIDES between tabs (the same node, intermediate transforms)',
