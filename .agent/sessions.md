@@ -5531,3 +5531,65 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   a layout route), 74 (the runner's static worker count); item 66b can go to
   Hasan now that proof A is on record; item 62 and the Today double-Finish
   route are still his; the post-verify destination stays the Dashboard.
+- Merge: `main` = `live` = **`f3d5a83`** (fast-forward 09:43Z, the
+  close-out commit itself on top of the gated tip `d793cb1`; confirmed from
+  GitHub's atom feeds); production and the `live` preview READY at 09:45Z,
+  one bundle `index-BPJU2leT.js` on `2.malaky.ai` and `1.malaky.ai`; the
+  post-deploy smoke on `2.malaky.ai` green except the 401 boot on Billing
+  landing at `/` (item 75's third case, fixed in ORDER-FIX-0915). Record:
+  `Docs/qa/test-0915/run-log.md` Phase 5, `Docs/qa/test-0915/post-deploy/`.
+
+### 2026-09-15 12:00 — ORDER-FIX-0915: items 73, 74, 75, 76 fixed one per commit on `fix/followups-0915`, the deployment-id trap killed (docs-only commits no longer deploy); pushed, NOT merged
+
+- Did: **Branch** `fix/followups-0915` off `main` `f3d5a83`. **Item 75**
+  (`a691b96`): probed first — the 401 handler purges, toasts and pushes
+  `/login`, and `Authed`'s `<Navigate to="/">` rendered first with the
+  cleared session and won; no returnTo exists anywhere. The guard now sends a
+  signed-out render to `/login`; the handler is unchanged. Unit
+  `routes.test.tsx` + `session-breach.test.tsx` (3 of 5 red before, the
+  handler end to end with the network stubbed); live `live-auth-401.spec.ts`
+  alone, `--workers=1`, on the dev API — **4 / 4 on org 2273** after four
+  runs red on the spec's own defects (no read after the revoke; the sync's
+  deferred reads meeting the 401 first; the toast gone by the time the spec
+  looked), each recorded. **Item 73** (`a700612`): `saveBrandVoice` no
+  longer resyncs in its catch (the resync remounted the settings screen and
+  erased the draft, the alert and its request id); seam tests on one shared
+  dispatch spy, 2 red before; `live-brand.spec.ts` gained the browser-
+  fulfilled 400 case — alert, draft and Save still up three seconds on, then
+  the real save — **6 / 6 in 1.3 min**. **Item 76** (`7249bb4`): one
+  unlayered rule `.toaster .cn-toast { transition-property: transform,
+  visibility, height, box-shadow }` — the rise stays, opacity is never
+  transitioned; measured on the BUILT app before (1:1 at +51 ms, 1.34:1 at
+  +85 ms, 4.27:1 at +168 ms against 13.62:1 at rest) and after (13.62:1 at
+  every offset, translateY 68 → 57 → 26 → 0 px, reduced motion the end state
+  at +45 ms); the +80 ms sample joined `today-queue.spec.ts` and was proven
+  by keying the rule off (red at 0.31) and reverting. **Item 74**
+  (`96b3435`): `verify:all` takes `--workers <n>` (default 1 outside
+  CI, CI untouched) and `gate.ts` hands its own value down;
+  `playwright.config.ts` untouched; proven by the runner's static half
+  (`Docs/qa/fix-0915/gate/20260915-130402/`: `Running … using 1 worker`). **§2 option B**
+  (`ae2d741`): `vercel.json` `ignoreCommand` skips a build whose
+  HEAD^..HEAD diff touches nothing outside `.agent/`, `Docs/` and the
+  root markdown files (exit 0 ignores, 1 builds — Vercel's documented
+  semantics, verified locally against `f3d5a83` → 0 and `d793cb1` → 1;
+  nothing under those paths is served or imported). The record under
+  `Docs/qa/fix-0915/`. Part B (item 77) follows on `feat/shell-0915`.
+- Phase: post-W7 — the follow-ups of the named testing session; no merge
+- Files: `src/routes.tsx` (+ test), `src/data/session-breach.test.tsx`,
+  `e2e/live-auth-401.spec.ts`, `scripts/gate/lanes.ts`, `src/data/brand.ts`
+  (+ `brand-voice.test.ts`), `e2e/live-brand.spec.ts`, `src/styles/globals.css`,
+  `e2e/today-queue.spec.ts`, `scripts/probe-fix-0915-toast.ts`,
+  `scripts/verify-all.ts`, `scripts/gate/gate.ts`, `vercel.json`,
+  `Docs/qa/fix-0915/**`, `Docs/qa/test-0915/{run-log.md,post-deploy/}`,
+  `.agent/{state,sessions,decisions,open-items}.md`
+- Decisions: see decisions.md — D-FIX-0915-A (a 401 lands on login in every
+  case), -B (a refused save never resyncs), -C (no fade on the toast's
+  entrance), -D (docs-only commits do not deploy)
+- Verify: per item and at the end — lint · typecheck · guard-static · unit ·
+  static e2e at one worker, every run green (item 75: unit 822/822 in 73
+  files, static 116 / 0 / 89; item 73: 825/825, 116 / 0 / 90; item 76:
+  117 / 0 / 90 (207 tests, one worker); item 74 through the runner: unit 825/825 in 73 files, static 117 / 0 / 90 through the runner (record 20260915-130402, GREEN));
+  exactly two live files ran, once each, alone; no gate live round; no merge
+- Next: the founder reads the report; Part B on `feat/shell-0915`; the
+  questions — a returnTo for the login redirect (none exists), the root
+  markdown files inside the docs-only rule, item 78's topics seam

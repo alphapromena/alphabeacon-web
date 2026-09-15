@@ -67,5 +67,6 @@ revert (`today-queue-with-rule.log`, `today-queue-reverted.log`), each run
 alone at `--workers=1`.
 
 **Cheap checks on this tree.** `lint.log` · `typecheck.log` · `guard-static.log`
-· `unit.log` 825 / 825 in 73 files · `static-e2e.log` **116 passed / 0 failed /
-90 skipped** in one worker (`Running 206 tests using 1 worker`).
+· `unit.log` 825 / 825 in 73 files · `static-e2e.log` **117 passed / 0 failed /
+90 skipped** in one worker (`Running 207 tests using 1 worker`; the commit message
+says 116 — a slip of one, the log is the record).

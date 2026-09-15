@@ -4273,3 +4273,76 @@ the error itself.
   reload-mid-moment replay the flag exists to prevent. `first-light-gate.test.tsx`
   holds the three cases; the mid-moment one was red on the previous code.
   Commit `b66b156`.
+
+### 2026-09-15 — ORDER-FIX-0915: the follow-ups' rulings applied — a 401 lands on login, a refused save never resyncs, the toast's entrance does not fade, docs-only commits do not deploy
+
+- **The order.** The founder's word after TEST-0915: fix items 73, 74, 75, 76
+  and 77 and kill the deployment-id trap (§2 option B) — probe first, measure
+  then assert, one item per commit, cheap checks only (lint · typecheck ·
+  guard-static · unit · static e2e at one worker) with exactly one bounded
+  live exception per fix item, guards proven by breaking them first, push,
+  report and stop. No merge. Items 73–76 and option B on `fix/followups-0915`;
+  item 77 on `feat/shell-0915` stacked on it.
+- **D-FIX-0915-A — a 401 lands on login in every case.** `Authed` answers a
+  signed-out render with `<Navigate to="/login" replace />`, never `/`. The
+  401 handler already purged, toasted and pushed `/login`; the provider's
+  update rendered the current authed route with the cleared session first, so
+  the guard's redirect — to the marketing home — won the race (TEST-0915 proof
+  I; the post-deploy smoke's Billing boot). Both navigations name one place
+  now, so their order no longer matters. Consequence accepted: an anonymous
+  deep link to a protected route lands on login with no toast, not on the
+  marketing home — the link was to the product, and login is the product's
+  door. No returnTo: none exists in the app and none was added (a question
+  for the founder, not a decision here). Instead of: moving the handler's
+  navigation into the router after the state settles — that leaves the guard
+  answering `/` for the deep link, two doors for one fact. `routes.test.tsx`
+  and `session-breach.test.tsx` hold the cases (3 of 5 red on the previous
+  code); `live-auth-401.spec.ts` 4 / 4 on org 2273. Commit `a691b96`.
+- **D-FIX-0915-B — a refused save never resyncs.** `saveBrandVoice`'s catch
+  returns the wire's refusal and dispatches nothing; `live/resync` follows a
+  save that landed (once) or the user's Try again. Nothing changed on the
+  wire, so there was nothing to re-read — and the re-read is what erased the
+  refusal (the sync phase, the settings layout's skeleton, the remount).
+  Instead of: candidate (b), keeping the outlet mounted during a re-sync —
+  that reshapes every settings screen's loading design to accommodate a
+  re-read nothing asked for. The same idiom in the topics seam is item 78,
+  not changed here. Seam tests 2 red before; `live-brand.spec.ts` 6 / 6.
+  Commit `a700612`.
+- **D-FIX-0915-C — no fade on the toast's entrance (nor on its exit).** One
+  unlayered rule in `globals.css` (override 7b), `.toaster .cn-toast {
+  transition-property: transform, visibility, height, box-shadow }` — the
+  fourth mechanism rule 3 allows, keyed on the two classes `ui/sonner.tsx`
+  owns, none of sonner's data attributes, no hand edit under
+  `components/ui/`. Only the property list changes, so sonner's durations
+  (matched by index through a slot the toast never animates), its
+  `transition: none` while swiping and its reduced-motion block all keep
+  their say; specificity (0,2,0) beats the shipped (0,1,0) whichever sheet
+  the browser reads last, which is why this override is not a `:where`. The
+  rise stays; opacity is never transitioned, so no frame of a toast is
+  half-readable — the exit is a cut now, the price of the same rule. Measured
+  on the built app before: 1:1 at +51 ms, 1.34:1 at +85 ms, 4.27:1 at +168 ms
+  against 13.62:1 at rest; after: 13.62:1 at every offset, the rise
+  68 → 57 → 26 → 0 px, reduced motion the end state at +45 ms. Instead of: a
+  Toaster prop — sonner has none for its entrance, and `toastOptions.style`
+  with `opacity: 1` would also unhide the stacked toasts sonner keeps at
+  opacity 0; an accepted transient — D-MOTION-0914-H reads "at any instant".
+  `today-queue.spec.ts` holds the +80 ms sample, red at 0.31 with the rule
+  keyed off. Commit `7249bb4`.
+- **D-FIX-0915-D — docs-only commits do not deploy.** `vercel.json` carries
+  `"ignoreCommand": "git diff --quiet HEAD^ HEAD -- . ':(exclude).agent'
+  ':(exclude)Docs' ':(exclude)CLAUDE.md' ':(exclude)design.md'
+  ':(exclude)screens4.md' ':(exclude)web-plan.md'"`. Vercel's documented
+  semantics: exit 0 ignores the build, exit 1 continues it; `git diff
+  --quiet` exits 0 when nothing differs on the pathspec — so a commit whose
+  HEAD^..HEAD diff is empty outside the ledgers and the docs is skipped.
+  Verified locally: `f3d5a83` (docs) → 0; `d793cb1` and the five code
+  commits of this branch → 1; nothing under those paths is imported or served
+  (the only `.md` in `src/` is an extension string). The root markdown
+  files are excluded by name — a reading of "`.agent/` and `Docs/`" the
+  order did not spell out, flagged for the founder. What it kills: the
+  serving pair recorded as deployment ids that a docs commit then
+  invalidated. Consequence: a branch's serving deployment is its latest CODE
+  commit, not its tip, and `state.md` names the pair by commit SHA. Instead
+  of: the dashboard's Ignored Build Step setting — configuration in the repo
+  is reviewable and travels with the branch. Commit `ae2d741`; the proof on
+  the branch preview is in the session report.

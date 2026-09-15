@@ -1710,9 +1710,9 @@ Numbering continues from 50. The record: `Docs/qa/hsn-0910/phase0/` and the
 
 Numbering continues from 72. The record: `Docs/qa/test-0915/`.
 
-73. **A refused Brand voice save wipes its own refusal and the user's draft:
+73. **CLOSED 2026-09-15 (ORDER-FIX-0915, D-FIX-0915-B) — candidate (a): `saveBrandVoice`'s catch returns the failure and does not resync; a save that lands still resyncs once, Try again still re-reads. Seam tests on a shared dispatch spy (2 red before); `live-brand.spec.ts`'s new browser-fulfilled 400 case — alert with the request id, the typed rule and Save still up three seconds on, then the real save — 6 / 6 alone on the dev API. The topics seam's identical idiom is item 78. Commit `a700612`; record `Docs/qa/fix-0915/item-73/`. Original text:** A refused Brand voice save wipes its own refusal and the user's draft:
     `saveBrandVoice`'s failure path resyncs, and the Settings layout unmounts
-    the screen while the sync runs.** (TEST-0915 proof C, on the built app
+    the screen while the sync runs. (TEST-0915 proof C, on the built app
     against the dev API, org 2199.) A PATCH answered 400 (intercepted, the
     wire's envelope with `details[0].message` and a request id). The honesty
     half held: no "Brand voice saved", and the error toast carried the wire's
@@ -1734,8 +1734,8 @@ Numbering continues from 72. The record: `Docs/qa/test-0915/`.
     `Docs/qa/test-0915/proofs/proof-c-1-refused-save.png`,
     `proof-c-2-three-seconds-later.png`, `proofs-live-run2.md`.
 
-74. **`pnpm gate`'s static half runs Playwright at the default worker count,
-    and nothing on its command line can change that.** (TEST-0915, item 70's
+74. **CLOSED 2026-09-15 (ORDER-FIX-0915) — `scripts/verify-all.ts` takes `--workers <n>` (one outside CI unless given; in CI nothing is passed and Playwright's default stands) and `gate.ts` hands its own `--workers` down to the static half; `playwright.config.ts` untouched. Proven by `pnpm gate --skip-live --workers 1 --series fix-0915` (`Docs/qa/fix-0915/gate/20260915-130402/`, GREEN): the e2e log reads `Running 207 tests using 1 worker`. Commit `96b3435`; record `Docs/qa/fix-0915/item-74/`. Original text:** `pnpm gate`'s static half runs Playwright at the default worker count,
+    and nothing on its command line can change that. (TEST-0915, item 70's
     rule for a testing session is `--workers=1` on every Playwright command
     line.) `scripts/verify-all.ts` spawns `pnpm exec playwright test
     --reporter=list,json` with no `--workers`, and `gate.ts`'s `--workers`
@@ -1747,8 +1747,8 @@ Numbering continues from 72. The record: `Docs/qa/test-0915/`.
     hand its own value down), or accept that the static half of a testing
     session runs outside the runner. Not a product item.
 
-75. **A 401 met MID-SESSION on an authed route lands on the marketing home,
-    not on login.** (TEST-0915 proof I, on the built app against the dev API,
+75. **CLOSED 2026-09-15 (ORDER-FIX-0915, D-FIX-0915-A) — `Authed` sends a signed-out render to `/login`, never to `/`; the handler is unchanged and the two navigations agree. No returnTo exists in the app and none was added (a question for the founder). Unit: `routes.test.tsx` + `data/session-breach.test.tsx`, 3 of 5 red before. Live: `e2e/live-auth-401.spec.ts` (expired at boot, revoked mid-session, dead at boot on Billing) alone at `--workers=1` on the dev API — 4 / 4 on org 2273 (request ids in the record); four earlier runs red on the spec's own defects, each kept. Commit `a691b96`; record `Docs/qa/fix-0915/item-75/`. Original text:** A 401 met MID-SESSION on an authed route lands on the marketing home,
+    not on login. (TEST-0915 proof I, on the built app against the dev API,
     org 2199.) The boot path is right: an expired or tampered token at reload
     answers 401 on the first sync, the session is purged, the toast "Your
     session ended. Sign in again to continue." shows, and the app lands on
@@ -1768,9 +1768,13 @@ Numbering continues from 72. The record: `Docs/qa/test-0915/`.
     (which also changes where an anonymous deep link to `/today` lands), or
     should the 401 handler navigate through the router after the state
     settles? Measured (run 6, sampled every 200 ms from the revocation, request `3c6f25d3…`): url `/ → /settings → /`; the toast and the purge both at 413 ms; `/login` never reached; no Sign in button at the end. Record `proofs/proofs-live-run6.md`.
+    **A third case, from the post-deploy smoke on `2.malaky.ai` after the
+    merge** (`Docs/qa/test-0915/run-log.md` Phase 5, `post-deploy/smoke.md`):
+    a boot on Billing with a tampered token ended at `/` with the toast up
+    and the session purged — the same guard, the same race, the same fix.
 
-76. **The Approve toast's ENTRANCE fade puts its description under AA for the
-    first ~400 ms — sonner's own motion, not ours.** (TEST-0915 proof E,
+76. **CLOSED 2026-09-15 (ORDER-FIX-0915, D-FIX-0915-C) — the first candidate: one unlayered rule in `globals.css` (override 7b), `.toaster .cn-toast { transition-property: transform, visibility, height, box-shadow }` — the rise stays, opacity is never transitioned (the exit is a cut now). Measured on the BUILT app: before, 1:1 at +51 ms, 1.34:1 at +85 ms, 4.27:1 at +168 ms against 13.62:1 at rest; after, 13.62:1 at every offset with the rise 68 → 57 → 26 → 0 px; reduced motion the end state at +45 ms (`scripts/probe-fix-0915-toast.ts`). The +80 ms sample lives in `today-queue.spec.ts`, proven by keying the rule off (0.31 at +80 ms) and reverting. Commit `7249bb4`; record `Docs/qa/fix-0915/item-76/`. Original text:** The Approve toast's ENTRANCE fade puts its description under AA for the
+    first ~400 ms — sonner's own motion, not ours. (TEST-0915 proof E,
     axe mid-animation.) Scanned 80 ms after the Approve click, axe reported one
     serious `color-contrast` node, `div[data-description]` of the toast;
     scanned again once the toast was up it reported 0 violations and the
@@ -1810,3 +1814,30 @@ Numbering continues from 72. The record: `Docs/qa/test-0915/`.
     mounts its shell, not a testing-session fix. Until then the rail's
     indicator appears at the new row in one fade; nothing is broken, the claim
     is narrower than written. Evidence: `proofs/proofs-static-run2.md`.
+
+### ORDER-FIX-0915 — the follow-ups (2026-09-15)
+
+Numbering continues from 77. The record: `Docs/qa/fix-0915/`.
+
+78. **The topics seam keeps the `catch { resync(); return failure }` idiom
+    item 73 removed from the brand voice save.** `saveTopics` in
+    `src/data/brand.ts` dispatches an optimistic `topics/set`, writes, and
+    resyncs on failure as on success. Whether a refused topic write erases
+    anything on screen is unmeasured — the topics editor is a tag input, not
+    a draft form with an alert — so it is filed, not changed: out of
+    ORDER-FIX-0915's scope (item 73 named the brand voice). **For a ruling:**
+    the same one-line change, once a refused topic write is measured.
+79. **The app makes deferred reads about a second after the sign-in sync
+    settles** — `event-sources/countries` and `alphastudio/media/assets`,
+    twice each on the dev server (StrictMode) — and a live spec's "next read"
+    can race them: item 75's runs 2–4 met the 401 on those reads before the
+    spec's own click. Not a product bug; a fact for spec authors —
+    `waitForLoadState('networkidle')` after the Dashboard heading does not
+    cover them. `live-auth-401.spec.ts` records every toast it sees and
+    dispatches its click best-effort for that reason.
+80. **Every `[api]` console line on the dev API reads `request-id
+    unexposed`:** the server's `x-request-id` header is not CORS-exposed, so
+    the client reads an id only from an error envelope; a success carries none
+    the browser can see. For Ward: `Access-Control-Expose-Headers:
+    x-request-id` would make every call findable from the console. Not a fix
+    in this repo.

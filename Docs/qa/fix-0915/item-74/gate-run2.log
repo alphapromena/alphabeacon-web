@@ -1,0 +1,17 @@
+
+> alphabeacon-web@0.0.0 gate C:\alphabeacon-web\alphabeacon-web
+> tsx scripts/gate/gate.ts "--skip-live" "--workers" "1" "--series" "fix-0915"
+
+13:04:03Z pnpm gate · series fix-0915 · record Docs\qa\fix-0915\gate\20260915-130402
+13:04:03Z keep-awake held (pid 37580)
+13:04:03Z verify:all — the suites once
+13:11:06Z verify:all PASS in 424 s
+13:11:12Z verify:w00 PASS in 6 s
+13:11:15Z verify:w01 PASS in 3 s
+13:11:16Z verify:w02 PASS in 1 s
+13:11:17Z verify:w03 PASS in 1 s
+13:11:18Z verify:w04 PASS in 1 s
+13:11:19Z verify:w05 PASS in 1 s
+13:11:20Z verify:w06 PASS in 1 s
+13:11:20Z keep-awake released
+13:11:20Z record written: Docs\qa\fix-0915\gate\20260915-130402 — GREEN

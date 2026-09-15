@@ -32,7 +32,10 @@ flag now governs both halves. `playwright.config.ts` untouched.
   (made for tree 08b3a00c5a29, this tree is 53ac97d5087d)`). The runner was
   right to refuse it.
 - run 2, the same command with the runner's stdout kept OUTSIDE the repo
-  (`gate-run2.log`, copied in afterwards): see the line appended below.
+  (`gate-run2.log`, copied in afterwards): **GREEN** — record
+  `Docs/qa/fix-0915/gate/20260915-130402/`: verify:all PASS in 424 s, the
+  e2e log `Running 207 tests using 1 worker` (`e2e-head-run2.txt`), 117 / 0 /
+  90 in 5.7 min, unit 825 / 825, and the seven `verify:wNN` checks all PASS.
 
 **Cheap checks on this tree.** The static half IS them — lint · typecheck ·
 guard-static · unit · build · static e2e at one worker — all inside
