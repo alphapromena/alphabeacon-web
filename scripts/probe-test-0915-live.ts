@@ -72,7 +72,7 @@ const FIRST_LIGHT_WATCH = `
       const el = document.querySelector('[data-slot="first-light"]');
       if (el && !window.__fl.mounted) { window.__fl.mounted = true; window.__fl.at = performance.now(); }
       if (!el && window.__fl.mounted && window.__fl.removedAt < 0) window.__fl.removedAt = performance.now();
-    }).observe(document.documentElement, { childList: true, subtree: true });
+    }).observe(document, { childList: true, subtree: true }); // not documentElement: null when an init script runs
   })()
 `
 

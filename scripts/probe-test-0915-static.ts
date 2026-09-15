@@ -37,6 +37,8 @@ function arg(name: string, fallback?: string): string {
 }
 const BASE = arg('base').replace(/\/+$/, '')
 const OUT = arg('out')
+const PROOFS = arg('proofs', 'firstlight,moving,reduced').split(',')
+const LABEL = arg('label', 'static')
 const WCAG = ['wcag2a', 'wcag2aa']
 
 interface Row {
@@ -137,7 +139,8 @@ const FIRST_LIGHT_OBSERVER = (email: string) => `
         if (poll) clearInterval(poll);
       }
     });
-    observer.observe(document.documentElement, { childList: true, subtree: true });
+    // `document` itself: an init script runs before documentElement exists.
+    observer.observe(document, { childList: true, subtree: true });
   })()
 `
 
@@ -515,6 +518,71 @@ async function proofMoving(browser: Browser) {
       `count ${before.count}; same node across 3 moves: ${sameNode}; transforms: ${positions.join(' → ')}`,
     )
 
+    // ---- G · the indicator's MOTION, sampled at 8 ms: the same node sliding, or a new node placed silently?
+    const NAV_SAMPLE = (scope: 'rail' | 'tabs', target: string) => `
+      new Promise((resolve) => {
+        const inRail = (el) => !!el.closest('[data-sidebar="sidebar"]')
+        const find = () => Array.from(document.querySelectorAll('[data-slot="nav-indicator"]')).find((el) => ${scope === 'rail' ? 'inRail(el)' : '!inRail(el)'})
+        const before = find()
+        if (before) before.setAttribute('data-test0915-node', 'before')
+        const control = ${
+          scope === 'rail'
+            ? `Array.from(document.querySelectorAll('[data-sidebar="sidebar"] a')).find((a) => (a.textContent || '').trim().indexOf(${JSON.stringify(target)}) === 0)`
+            : `Array.from(document.querySelectorAll('[role="tab"]')).find((a) => (a.textContent || '').trim() === ${JSON.stringify(target)})`
+        }
+        if (!control) { resolve({ error: 'no control' }); return }
+        const samples = []
+        const t0 = performance.now()
+        const tick = () => {
+          const el = find()
+          const s = el ? getComputedStyle(el) : null
+          samples.push({ t: Math.round(performance.now() - t0), node: el ? (el.getAttribute('data-test0915-node') || 'new') : 'none', placed: el ? el.getAttribute('data-placed') : null, opacity: s ? s.opacity : null, transform: s ? s.transform : null })
+          if (performance.now() - t0 < 450) setTimeout(tick, 8); else resolve(samples)
+        }
+        control.click()
+        tick()
+      })
+    `
+    type NavSample = { t: number; node: string; placed: string | null; opacity: string | null; transform: string | null }
+    const describeMotion = (samples: NavSample[]) => {
+      const present = samples.filter((s) => s.node !== 'none')
+      const sameNode = present.every((s) => s.node === 'before')
+      const transforms = [...new Set(present.map((s) => s.transform))]
+      const placedFalse = present.some((s) => s.placed === 'false')
+      const faded = present.some((s) => Number(s.opacity) < 1)
+      const firstNew = samples.find((s) => s.node === 'new')
+      return {
+        sameNode,
+        transforms: transforms.length,
+        placedFalse,
+        faded,
+        firstNewAt: firstNew ? firstNew.t : -1,
+        summary: `same node: ${sameNode}; distinct transforms: ${transforms.length} (${transforms.slice(0, 4).join(' | ')}); placed=false seen: ${placedFalse}; opacity<1 seen: ${faded}; first new node at ${firstNew ? `${firstNew.t} ms` : 'never'}`,
+      }
+    }
+    await go(page, '/', 500)
+    const railMove = describeMotion((await page.evaluate(NAV_SAMPLE('rail', 'Today'))) as NavSample[])
+    await page.waitForTimeout(500)
+    const railMove2 = describeMotion((await page.evaluate(NAV_SAMPLE('rail', 'Billing'))) as NavSample[])
+    record(
+      'G',
+      'the rail indicator SLIDES between screens (the same node, intermediate transforms) rather than re-mounting and fading in',
+      railMove.sameNode && railMove.transforms >= 3 && railMove2.sameNode && railMove2.transforms >= 3,
+      `Dashboard → Today: ${railMove.summary} · Today → Billing: ${railMove2.summary}`,
+    )
+    await go(page, '/settings', 800)
+    const tabMove = describeMotion((await page.evaluate(NAV_SAMPLE('tabs', 'Brand voice'))) as NavSample[])
+    await page.waitForTimeout(500)
+    const tabMove2 = describeMotion((await page.evaluate(NAV_SAMPLE('tabs', 'Tones'))) as NavSample[])
+    record(
+      'G',
+      'the settings sub-nav indicator SLIDES between tabs (the same node, intermediate transforms)',
+      tabMove.sameNode && tabMove.transforms >= 3 && tabMove2.sameNode && tabMove2.transforms >= 3,
+      `Organization → Brand voice: ${tabMove.summary} · Brand voice → Tones: ${tabMove2.summary}`,
+    )
+
+    if (!PROOFS.includes('moving')) return scans
+
     // ---- E · moment 1: the tone sample, at rest and mid-rewrite.
     await go(page, '/calendar/settings', 1_200)
     scans.push(await scan(page, 'moment 1 — schedule, tone sample at rest'))
@@ -861,9 +929,9 @@ async function main() {
   const startedAt = new Date().toISOString()
   let scans: { where: string; violations: number; detail: string }[] = []
   try {
-    await proofFirstLight(browser)
-    scans = await proofMoving(browser)
-    await proofReducedMotion(browser)
+    if (PROOFS.includes('firstlight')) await proofFirstLight(browser)
+    if (PROOFS.includes('moving') || PROOFS.includes('nav')) scans = await proofMoving(browser)
+    if (PROOFS.includes('reduced')) await proofReducedMotion(browser)
   } finally {
     await browser.close()
   }
@@ -887,8 +955,8 @@ async function main() {
       .map((s) => `| ${s.where} | **${s.violations}** | ${s.detail || '—'} |`),
     '',
   ].join('\n')
-  writeFileSync(`${OUT}/proofs-static.md`, doc, 'utf8')
-  console.log(`\nwritten ${OUT}/proofs-static.md`)
+  writeFileSync(`${OUT}/proofs-${LABEL}.md`, doc, 'utf8')
+  console.log(`\nwritten ${OUT}/proofs-${LABEL}.md`)
   const failed = rows.filter((r) => r.result === 'FAIL').length
   console.log(
     `${rows.filter((r) => r.result === 'PASS').length} PASS · ${failed} FAIL · ${rows.filter((r) => r.result === 'NOTE').length} NOTE`,
