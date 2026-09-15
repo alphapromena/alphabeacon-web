@@ -29,6 +29,7 @@
  */
 import { apiBaseUrl } from './config'
 import { ApiError, codeForStatus, type ApiErrorCode, type ApiErrorDetails } from './errors'
+import { MESSAGES } from '@/lib/messages'
 
 type QueryValue = string | number | boolean | undefined
 export type Query = Record<string, QueryValue>
@@ -89,7 +90,20 @@ export interface RequestOptions {
   signal?: AbortSignal
   /** Send without Authorization even if a token exists (auth endpoints). */
   anonymous?: boolean
+  /** How long to wait for an answer before giving up; the default is the client's. */
+  timeoutMs?: number
 }
+
+/**
+ * The client's own limit on a request (NIGHT-0916 order 1, item 81). TEST-0915-2
+ * watched five form submits sit for 20 s with no alert and no toast because
+ * fetch had nothing to say until the wire did. Now every call carries an
+ * AbortController: past this limit the request is aborted and surfaces as an
+ * ApiError with code `timeout`, which every seam already turns into a
+ * failure — so the form's alert names it, the toast fires, the button
+ * re-enables and the draft stays. Nothing retries on its own.
+ */
+export const REQUEST_TIMEOUT_MS = 15_000
 
 export async function api<T>(
   method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
@@ -115,21 +129,42 @@ export async function api<T>(
   if (token) headers.authorization = `Bearer ${token}`
   if (options.body !== undefined) headers['content-type'] = 'application/json'
 
+  // The timeout aborts through its own controller; a caller's signal aborts
+  // the same controller, so the caller's own AbortError still surfaces as
+  // itself and only the client's limit reads as `timeout`.
+  const limiter = new AbortController()
+  let timedOut = false
+  const timer = window.setTimeout(() => {
+    timedOut = true
+    limiter.abort()
+  }, options.timeoutMs ?? REQUEST_TIMEOUT_MS)
+  const forward = () => limiter.abort()
+  if (options.signal) {
+    if (options.signal.aborted) forward()
+    else options.signal.addEventListener('abort', forward, { once: true })
+  }
+
   let response: Response
   try {
     response = await fetch(`${base}${path}${buildQuery(options.query)}`, {
       method,
       headers,
       body: options.body !== undefined ? JSON.stringify(options.body) : undefined,
-      signal: options.signal,
+      signal: limiter.signal,
     })
   } catch (cause) {
+    if (timedOut) throw new ApiError(0, 'timeout', MESSAGES.errors.noAnswer)
     if (cause instanceof DOMException && cause.name === 'AbortError') throw cause
     throw new ApiError(0, 'network_error', 'The request never reached the server.')
+  } finally {
+    window.clearTimeout(timer)
+    options.signal?.removeEventListener('abort', forward)
   }
 
   const serverId = response.headers.get('x-request-id') ?? undefined
-  console.debug(`[api] ${method} ${path} → ${response.status} (request-id ${serverId ?? 'unexposed'})`)
+  console.debug(
+    `[api] ${method} ${path} → ${response.status} (request-id ${serverId ?? 'unexposed'})`,
+  )
 
   if (response.ok) {
     if (token) unauthorizedNotified = false

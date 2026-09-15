@@ -25,6 +25,11 @@ export interface LanedSpec {
 export const LANES: LanedSpec[] = [
   { file: 'live-auth', lane: 'A', reason: 'two fresh orgs plus an invitee; nothing shared' },
   {
+    file: 'live-timeout',
+    lane: 'A',
+    reason: 'one fresh org; a login held at the browser past the client limit (NIGHT-0916 order 1)',
+  },
+  {
     file: 'live-auth-401',
     lane: 'A',
     reason: 'one fresh org; three dead-token walks, reads only (ORDER-FIX-0915 item 75)',

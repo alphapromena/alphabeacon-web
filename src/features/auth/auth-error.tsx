@@ -26,6 +26,8 @@ function failureCopy(failure: AuthFailure): string {
       return MESSAGES.errors.emailTaken
     case 'network_error':
       return MESSAGES.notices.degraded
+    case 'timeout':
+      return MESSAGES.errors.noAnswer
     default:
       return MESSAGES.errors.generic
   }

@@ -44,7 +44,13 @@ export type ServerErrorCode = (typeof API_ERROR_CODES)[number]
  * It exists so screens can render N4's connectivity story instead of a
  * generic error, and it never comes from the server.
  */
-export type ApiErrorCode = ServerErrorCode | 'network_error'
+/**
+ * `timeout` is CLIENT-side too (NIGHT-0916 order 1, item 81): the request left
+ * the browser and no answer came back inside the client's own limit, so the
+ * client aborted it. Handled exactly like a network failure — the alert names
+ * it, nothing retries on its own.
+ */
+export type ApiErrorCode = ServerErrorCode | 'network_error' | 'timeout'
 
 export interface ApiFieldDetail {
   field: string

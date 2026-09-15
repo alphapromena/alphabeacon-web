@@ -5,8 +5,9 @@
  * Retry-After, 204 bodies, query building, and the static-mode refusal.
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { api, configureApi, resetUnauthorizedGuard } from './client'
+import { api, configureApi, REQUEST_TIMEOUT_MS, resetUnauthorizedGuard } from './client'
 import { ApiError } from './errors'
+import { MESSAGES } from '@/lib/messages'
 
 // A deliberately non-http scheme: fetch is mocked so it is never parsed, and
 // the http-literal ban stays total in src/api (the real base is env-supplied).
@@ -112,7 +113,11 @@ describe('api()', () => {
   it('exposes the 403 reason discriminator', async () => {
     fetchMock.mockResolvedValue(
       jsonResponse(403, {
-        error: { code: 'forbidden', message: 'Email not verified', details: { reason: 'email_not_verified' } },
+        error: {
+          code: 'forbidden',
+          message: 'Email not verified',
+          details: { reason: 'email_not_verified' },
+        },
       }),
     )
     const error = await capture(api('POST', '/auth/login', { anonymous: true }))
@@ -227,10 +232,61 @@ describe('api()', () => {
 
   it('turns an unreadable success body into an ApiError, not a raw throw', async () => {
     fetchMock.mockResolvedValue(
-      new Response('{"truncated":', { status: 200, headers: { 'content-type': 'application/json' } }),
+      new Response('{"truncated":', {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      }),
     )
     const error = await capture(api('GET', '/me'))
     expect(error).toBeInstanceOf(ApiError)
     expect(error.code).toBe('internal')
+  })
+})
+
+describe('the request timeout (NIGHT-0916 order 1, item 81)', () => {
+  /** A fetch that never answers on its own and only rejects when aborted. */
+  const neverAnswers: typeof fetch = (_input, init) =>
+    new Promise((_resolve, reject) => {
+      init?.signal?.addEventListener('abort', () =>
+        reject(new DOMException('The operation was aborted.', 'AbortError')),
+      )
+    })
+
+  it('a fetch that never answers is aborted at the limit and surfaces as `timeout` with the catalogue sentence', async () => {
+    fetchMock.mockImplementation(neverAnswers)
+    const started = Date.now()
+    const error = await capture(
+      api('POST', '/auth/login', {
+        body: { email: 'a@b.example' },
+        anonymous: true,
+        timeoutMs: 60,
+      }),
+    )
+    expect(error).toBeInstanceOf(ApiError)
+    expect(error.code).toBe('timeout')
+    expect(error.status).toBe(0)
+    expect(error.message).toBe(MESSAGES.errors.noAnswer)
+    expect(Date.now() - started).toBeGreaterThanOrEqual(50)
+    expect(fetchMock).toHaveBeenCalledTimes(1)
+  })
+
+  it("a caller's own abort still surfaces as its AbortError, never as a timeout", async () => {
+    fetchMock.mockImplementation(neverAnswers)
+    const controller = new AbortController()
+    const promise = api('GET', '/me', { signal: controller.signal, timeoutMs: 5_000 })
+    controller.abort()
+    await expect(promise).rejects.toMatchObject({ name: 'AbortError' })
+  })
+
+  it('an answer inside the limit is untouched, and the timer is cleared behind it', async () => {
+    fetchMock.mockResolvedValue(jsonResponse(200, { items: [], total: 0 }))
+    await expect(api('GET', '/me', { timeoutMs: 40 })).resolves.toEqual({ items: [], total: 0 })
+    await new Promise((resolve) => setTimeout(resolve, 80))
+    const init = fetchMock.mock.calls[0][1] as RequestInit
+    expect(init.signal?.aborted).toBe(false)
+  })
+
+  it('the default limit is 15 s', () => {
+    expect(REQUEST_TIMEOUT_MS).toBe(15_000)
   })
 })

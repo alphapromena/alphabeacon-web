@@ -65,6 +65,12 @@ export const MESSAGES = {
     // message covers verify/reset/invite codes alike (10-minute expiry,
     // 5 attempts); rate limiting always names the wait beside it in mono.
     sessionExpired: 'Your session ended. Sign in again to continue.',
+    /**
+     * A submit the server never answered (NIGHT-0916 order 1, item 81): the
+     * client waits 15 s, then gives up and says so — the draft stays, the
+     * button re-enables, nothing retries on its own.
+     */
+    noAnswer: 'The server did not answer. Try again.',
     accountDisabled: 'This account is disabled. Contact your administrator.',
     codeInvalid: 'That code is not right or has expired. Request a fresh one.',
     rateLimited: 'Too many requests. You can try again in',
