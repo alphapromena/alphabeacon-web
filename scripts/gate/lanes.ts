@@ -40,6 +40,12 @@ export const LANES: LanedSpec[] = [
     reason: 'one fresh org; the moment measured from its first paint (NIGHT-0916 order 4)',
   },
   { file: 'live-brand-kit', lane: 'A', reason: 'one fresh org; its PDF deleted in-test' },
+  {
+    file: 'live-topics-refused',
+    lane: 'A',
+    reason:
+      'one fresh org; a topic write refused at the browser, then one that lands (NIGHT-0916 order 5)',
+  },
   { file: 'live-brand', lane: 'A', reason: 'one fresh org; tone, voice, source, topic, schedule' },
   {
     file: 'live-country',

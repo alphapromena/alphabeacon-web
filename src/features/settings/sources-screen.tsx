@@ -39,6 +39,13 @@ export function SourcesScreen() {
   // already above it (possible from another client) keeps every row listed;
   // only adding stops.
   const atCap = sources.length >= MAX_FOLLOWED_SOURCES
+  // A refused topic write, in the wire's own words with its request id
+  // (NIGHT-0916 order 5, item 78; D-NIGHT-0916-E) — the same alert the brand
+  // voice save shows (item 73). The chip stays on screen; a later write that
+  // lands clears it.
+  const [topicFailure, setTopicFailure] = useState<{ message: string; requestId?: string } | null>(
+    null,
+  )
 
   const add = async () => {
     if (atCap) {
@@ -177,10 +184,34 @@ export function SourcesScreen() {
           description="Be specific. 'Data governance regulation in Saudi Arabia' works better than 'Technology'."
           placeholder="A specific subject, not a category"
           values={topics}
-          onChange={(next) => void brand.setTopics(next)}
+          onChange={async (next) => {
+            const result = await brand.setTopics(next)
+            if (!result.ok) {
+              const message =
+                result.fieldErrors[0]?.message || result.message || MESSAGES.errors.generic
+              setTopicFailure({ message, requestId: result.requestId })
+              toastError(message)
+              return
+            }
+            setTopicFailure(null)
+          }}
           max={MAX_TOPICS}
           capMessage={MESSAGES.errors.topicsCapReached}
         />
+
+        {topicFailure && (
+          <p
+            role="alert"
+            className="rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive"
+          >
+            {topicFailure.message}
+            {topicFailure.requestId && (
+              <span className="block font-mono text-xs opacity-80">
+                request {topicFailure.requestId}
+              </span>
+            )}
+          </p>
+        )}
 
         {topics.length === 0 && (
           <p className="text-sm text-muted-foreground">{MESSAGES.empty.noTopics}</p>

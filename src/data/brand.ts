@@ -356,10 +356,15 @@ export function useBrandActions() {
             api<ApiTopic>('POST', path('topics'), { body: { description: text } }),
           ),
         ])
+        // A landed write resyncs once: the server's ids for the new chips.
         resync()
         return ok
       } catch (error) {
-        resync()
+        // A REFUSED write never resyncs (item 73's rule, applied to topics —
+        // NIGHT-0916 order 5, item 78; D-NIGHT-0916-E). The resync here put
+        // the server's list back over the optimistic one, so the chip the
+        // person typed vanished with nothing said. It stays; the screen says
+        // why, with the request id; the person decides.
         return failure(error)
       }
     },
