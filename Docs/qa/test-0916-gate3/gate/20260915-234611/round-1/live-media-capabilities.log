@@ -1,0 +1,33 @@
+warm-up: skipped — the runner warmed the fleet and keeps the heartbeat (GATE-0910 §3.2)
+
+Running 3 tests using 1 worker
+
+  ok 1 [chromium] › e2e\live-media-capabilities.spec.ts:328:1 › a fresh owner + org, made through the product (6.0s)
+  x  2 [chromium] › e2e\live-media-capabilities.spec.ts:338:1 › every granted capability: the document’s example stops at the wallet (402), its trap before it (400) — zero spend (29.3s)
+  -  3 [chromium] › e2e\live-media-capabilities.spec.ts:413:1 › the Studio grid lists what the catalog grants, by name, with the catalog’s price
+
+
+  1) [chromium] › e2e\live-media-capabilities.spec.ts:338:1 › every granted capability: the document’s example stops at the wallet (402), its trap before it (400) — zero spend 
+
+    Error: video-ads.generate valid body: {"error":{"code":"bad_request","message":"The media service rejected the request — check the body against the capability's schema","requestId":"499f11e0-a3da-4acf-b5cb-b555102ea877"}}
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 402
+    Received: 400
+
+      386 |       data: valid[capability],
+      387 |     })
+    > 388 |     expect(answer.status(), `${capability} valid body: ${await answer.text()}`).toBe(402)
+          |                                                                                 ^
+      389 |   }
+      390 |   for (const trap of traps) {
+      391 |     if (!granted.includes(trap.capability)) continue
+        at C:\alphabeacon-web\alphabeacon-web\e2e\live-media-capabilities.spec.ts:388:81
+
+    Error Context: .gate\artifacts\20260915-234611\round-1\live-media-capabilities\live-media-capabilities-ev-7d3a6--before-it-400-—-zero-spend-chromium\error-context.md
+
+  1 failed
+    [chromium] › e2e\live-media-capabilities.spec.ts:338:1 › every granted capability: the document’s example stops at the wallet (402), its trap before it (400) — zero spend 
+  1 did not run
+  1 passed (36.1s)

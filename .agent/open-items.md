@@ -1819,8 +1819,12 @@ Numbering continues from 72. The record: `Docs/qa/test-0915/`.
 
 Numbering continues from 77. The record: `Docs/qa/fix-0915/`.
 
-78. **The topics seam keeps the `catch { resync(); return failure }` idiom
-    item 73 removed from the brand voice save.** `saveTopics` in
+78. **CLOSED 2026-09-16 (NIGHT-0916 order 5, D-NIGHT-0916-E).** _Measured
+    first: a refused topic POST wiped the chip with nothing said (12 reads).
+    Item 73's rule applied: no resync on a refusal, the chip stays, an alert
+    with the wire's message and request id. Commit `a7be9b7`._ **The topics
+    seam keeps the `catch { resync(); return failure }` idiom item 73
+    removed from the brand voice save.** `saveTopics` in
     `src/data/brand.ts` dispatches an optimistic `topics/set`, writes, and
     resyncs on failure as on success. Whether a refused topic write erases
     anything on screen is unmeasured — the topics editor is a tag input, not
@@ -1852,7 +1856,25 @@ deferred reads were met on purpose by the Phase 4 probe's 401 cases and by
 close.
 
 81. **Under the gate's live round, five form submits answered nothing inside
-    their 20 s and the specs went red — green alone, every one.** Gate 1
+    their 20 s and the specs went red — green alone, every one.** _NIGHT-0916
+    (order 1, D-NIGHT-0916-A): the client side is done — every request fails
+    at 15 s with "The server did not answer. Try again." (code `timeout`,
+    handled like a network failure: alert, toast, submit re-enabled, draft
+    kept, no retry), and the gate runner spaces file starts by 8 s
+    (`--spacing`). **Stays open for Ward, the wire side, with the night's
+    measurements:** a burst of eight signups answered 201 in 3.9–4.6 s (no
+    hang, no 429), so the hang is not width-driven; it is ONE request pending
+    15–30 s then answered — seen on a signup POST (~21:01Z), a login POST
+    (~21:23Z), five of seven product signups from a preview build
+    (21:54:57Z–22:04:16Z), and directly on the CORS preflight: `OPTIONS
+    /auth/signup` for origin `localhost:5197` answered 200 in **17,931 ms**
+    at 22:02:3xZ, then 357/367/398 ms; the signup POSTs right after 1.5–1.7 s.
+    Record `Docs/qa/night-0916/order-1/`, `order-4/`. Question for Ward:
+    what holds a single request (OPTIONS included) for 15–30 s while its
+    neighbours answer in under 3 s. Separately, this machine's outbound
+    dropped three times tonight (21:24–21:30Z, 22:19–22:20Z, 23:01–23:08Z:
+    `connect ETIMEDOUT` to the API's address, GitHub and 2.malaky.ai
+    unreachable together) — not the wire, and not this item._ Gate 1
     (`Docs/qa/test-0915-2/gate/20260915-180958/`): from 18:24Z `live-wallet:76`
     and `live-media-upload:58` (Sign in) and `live-billing:62`,
     `live-brand-rules:72`, `live-generate:50` (Create account) sat on the
@@ -1865,9 +1887,15 @@ close.
     a ruling:** whether the round should space its signups (the runner's
     lane A opens a fresh org per file inside ten minutes), and for Ward
     whether the auth endpoints rate-limit per IP.
-82. **First light overruns the 2000 ms ceiling in LIVE mode: 2287 / 2239 /
-    2196 ms on three fresh accounts (orgs 2312, 2315, 2318), page time,
-    mount → removal.** The moment closes on a 1800 ms `setTimeout`
+82. **CLOSED 2026-09-16 (NIGHT-0916 order 4, D-NIGHT-0916-D).** _The clock
+    runs from the overlay's first paint, not from mount; the gate waits for
+    the workspace; at the clock's end the node hides itself before it tells
+    the app. Measured on the built app: 2587 ms paint → removal before (the
+    dismissal render ~800 ms behind the sync's), 1814 ms after; the lane-A
+    live case reads 1802 ms. Commits `1452bda`, `e3ed7b1`; record
+    `Docs/qa/night-0916/order-4/`._ **First light overruns the 2000 ms
+    ceiling in LIVE mode: 2287 / 2239 / 2196 ms on three fresh accounts
+    (orgs 2312, 2315, 2318), page time, mount → removal.** The moment closes on a 1800 ms `setTimeout`
     (`first-light.tsx`), and live the workspace sync's re-renders land inside
     that window, so the timer fires late. It plays once and never on a
     reload (both proven live). Not this stack's regression — the moment and
@@ -1876,7 +1904,12 @@ close.
     motion decision (close on the animation's own end rather than a timer, or
     accept the sync's share). **For a ruling.** Record
     `Docs/qa/test-0915-2/phase4/`.
-83. **A sign-out lands in two places by construction.** Since D-FIX-0915-A a
+83. **CLOSED 2026-09-16 (NIGHT-0916 order 2, D-NIGHT-0916-B).** _One landing:
+    a deliberate sign-out moves to `/` through the router, waits for the
+    commit, then purges — the marketing home from every route; the forced
+    sign-out keeps login. The two helpers loosened in `2dc7c45` are tight
+    again. Commit `5fc614d`._ **A sign-out lands in two places by
+    construction.** Since D-FIX-0915-A a
     sign-out on an authed route re-renders through `Authed` and lands on
     `/login`; a sign-out on `/` re-renders through `RootGate` and lands on
     the marketing home. Two live specs asserted the old single landing and
@@ -1884,3 +1917,45 @@ close.
     nor D-FIX-0915-A names the sign-out case. **For a ruling:** one landing
     for Sign out (navigate explicitly, before clearing the session), or keep
     the guard's answer as it is.
+
+84. **returnTo survives a sign-in that lands on N3 (no workspace).**
+    (2026-09-16, NIGHT-0916 order 3.) The sign-in screen reads and clears
+    `ab-return-to` on success and navigates to it; when the account has no
+    workspace, RootGate shows N3 at `/` and the remembered path is consumed
+    the same way — but a path remembered AFTER that point by a guard (a deep
+    link tried while on N3) stays in sessionStorage until the next deliberate
+    sign-out or the next guard write, since nothing on N3 reads it. Harmless
+    today (the key dies with the tab; a later sign-in in the same tab would
+    honour a path the person did type), filed so it is not a surprise. **For
+    a ruling:** clear it on the N3 render, or leave it.
+
+85. **The login panel now carries two accent-inked figures — the beacon's
+    core (D-NIGHT-0916-F, ordered) and the headline's full stop
+    (D-THEME-0913-C, the website's idiom).** (2026-09-16, NIGHT-0916 order 6.)
+    Neither is a control, and the form keeps exactly one accent element
+    (Sign in), so the one-accent law as written holds; but the panel reads as
+    two accent points at 1440 (`Docs/qa/night-0916/login/after-1440.png`).
+    Not changed: the full stop is a prior ruling. **For the founder:** keep
+    both, or drop the stop now that the core carries the accent.
+
+86. **`pnpm lint` sweeps the git-ignored `.gate/` folder.** (2026-09-16,
+    NIGHT-0916 order 4.) A probe script parked there turned the cheap checks
+    red before anything ran
+    (`Docs/qa/night-0916/order-4/checks-lint-red-probe-file/`). The runner's
+    own artefacts under `.gate/` are not `.ts`, so the gate never trips on
+    it; a human's scratch file does. **Small:** add `.gate/**` to the eslint
+    ignores, or keep the rule "nothing of yours lives in `.gate/`".
+
+87. **An in-flight resync from an earlier write can wipe an optimistic chip
+    until the next resync lands.** (2026-09-16, TEST-0916 gate 1,
+    `live-brand › sources and topics`.) The seam dispatches a topic
+    optimistically and POSTs; if a resync started by the previous write (the
+    source's) lands in between, it puts the server's list — without the new
+    topic — over the optimistic one, and the chip is gone until the topic
+    write's own resync brings it back. On a slow wire that gap passed the
+    spec's 5 s (22:59Z; `Docs/qa/test-0916-gate1/gate/20260915-224502/`);
+    the same flow was green in `live-topics-refused` two minutes earlier and
+    in both TEST-0915-2 gates. Pre-existing (every write has dispatched
+    optimistically and resynced since INT-2); not touched tonight — the fix
+    is in the sync merge: an in-flight resync must not overwrite an
+    optimistic write that has not resolved. **For a ruling.**

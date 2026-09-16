@@ -1,0 +1,76 @@
+
+[1m[46m RUN [49m[22m [36mv3.2.7 [39m[90mC:/alphabeacon-web/alphabeacon-web[39m
+
+ [31m❯[39m src/data/return-to-flow.test.tsx [2m([22m[2m9 tests[22m[2m | [22m[31m1 failed[39m[2m | [22m[33m8 skipped[39m[2m)[22m[33m 1576[2mms[22m[39m
+   [2m[90m↓[39m[22m the guard writes the intended path before it sends a signed-out visit to login[2m > [22ma deep link with a query
+   [2m[90m↓[39m[22m the guard writes the intended path before it sends a signed-out visit to login[2m > [22ma nested settings path
+   [2m[90m↓[39m[22m the 401 handler writes the path it was on before its purge and push[2m > [22ma token dead on the boot sync at /settings/team?x=1
+   [2m[90m↓[39m[22m the sign-in screen takes it on success[2m > [22mreads, clears, and goes there
+[31m   [31m×[31m the sign-in screen takes it on success[2m > [22mgoes there even though the auth route redirects signed-in visitors — the redirect is decided at mount[39m[33m 1574[2mms[22m[39m
+[31m     → expected '/' to be '/billing?tab=balance' // Object.is equality
+
+Ignored nodes: comments, script, style
+[36m<html>[31m
+  [36m<head />[31m
+  [36m<body>[31m
+    [36m<div>[31m
+      [36m<div[31m
+        [33mdata-testid[31m=[32m"where"[31m
+      [36m>[31m
+        [0m/[0m
+      [36m</div>[31m
+      [36m<div>[31m
+        [0mfront door[0m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</body>[31m
+[36m</html>[31m[39m
+   [2m[90m↓[39m[22m the sign-in screen takes it on success[2m > [22mlands on `/` when there is none
+   [2m[90m↓[39m[22m the sign-in screen takes it on success[2m > [22ma stored value that is not an app path is ignored and cleared
+   [2m[90m↓[39m[22m a deliberate sign-out clears it[2m > [22msignOut
+   [2m[90m↓[39m[22m the verify screen never reads it[2m > [22ma verified code lands on `/` and leaves the key alone
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 1 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m src/data/return-to-flow.test.tsx[2m > [22mthe sign-in screen takes it on success[2m > [22mgoes there even though the auth route redirects signed-in visitors — the redirect is decided at mount
+[31m[1mAssertionError[22m: expected '/' to be '/billing?tab=balance' // Object.is equality
+
+Ignored nodes: comments, script, style
+[36m<html>[31m
+  [36m<head />[31m
+  [36m<body>[31m
+    [36m<div>[31m
+      [36m<div[31m
+        [33mdata-testid[31m=[32m"where"[31m
+      [36m>[31m
+        [0m/[0m
+      [36m</div>[31m
+      [36m<div>[31m
+        [0mfront door[0m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</body>[31m
+[36m</html>[31m[39m
+
+Expected: [32m"/[7mbilling?tab=balance[27m"[39m
+Received: [31m"/"[39m
+
+[36m [2m❯[22m src/data/return-to-flow.test.tsx:[2m310:41[22m[39m
+    [90m308| [39m    )
+    [90m309| [39m    [35mawait[39m [34msignIn[39m()
+    [90m310| [39m    [35mawait[39m [34mwaitFor[39m(() [33m=>[39m [34mexpect[39m([34mwhere[39m())[33m.[39m[34mtoBe[39m([32m'/billing?tab=balance'[39m))
+    [90m   | [39m                                        [31m^[39m
+    [90m311| [39m    [90m// And it stays there: no redirect to `/` comes after.[39m
+    [90m312| [39m    [35mawait[39m [35mnew[39m [33mPromise[39m((resolve) [33m=>[39m [34msetTimeout[39m(resolve[33m,[39m [34m50[39m))
+[90m [2m❯[22m runWithExpensiveErrorDiagnosticsDisabled node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/config.js:[2m47:12[22m[39m
+[90m [2m❯[22m checkCallback node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/wait-for.js:[2m124:77[22m[39m
+[90m [2m❯[22m Timeout.checkRealTimersCallback node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/wait-for.js:[2m118:16[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[33m8 skipped[39m[90m (9)[39m
+[2m   Start at [22m 00:44:55
+[2m   Duration [22m 5.55s[2m (transform 984ms, setup 371ms, collect 2.43s, tests 1.58s, environment 650ms, prepare 196ms)[22m
+

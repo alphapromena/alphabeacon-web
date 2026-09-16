@@ -1,0 +1,7 @@
+warm-up: skipped — the runner warmed the fleet and keeps the heartbeat (GATE-0910 §3.2)
+
+Running 1 test using 1 worker
+
+  ok 1 [chromium] › e2e\live-notifications.spec.ts:33:1 › the inbox endpoints hold their contract, and the bell tells the truth (10.1s)
+
+  1 passed (10.9s)

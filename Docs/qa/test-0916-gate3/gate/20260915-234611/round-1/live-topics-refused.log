@@ -1,0 +1,9 @@
+warm-up: skipped — the runner warmed the fleet and keeps the heartbeat (GATE-0910 §3.2)
+
+Running 2 tests using 1 worker
+
+  ok 1 [chromium] › e2e\live-topics-refused.spec.ts:39:1 › a fresh owner + org, made through the product (7.0s)
+[item 78] after the refusal: {"chipVisible":true,"alertVisible":true,"alertText":"Topic refused by the proberequest probe-78-request","readsAfterRefusal":0}
+  ok 2 [chromium] › e2e\live-topics-refused.spec.ts:49:1 › a refused topic write keeps the chip, says why with the request id, and does not resync; a landed one resyncs once (14.4s)
+
+  2 passed (22.2s)

@@ -1,0 +1,17 @@
+
+[1m[46m RUN [49m[22m [36mv3.2.7 [39m[90mC:/alphabeacon-web/alphabeacon-web[39m
+
+ [32m✓[39m src/features/settings/tone-fields.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 3[2mms[22m[39m
+ [32m✓[39m src/data/topics-refused.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[32m 23[2mms[22m[39m
+ [32m✓[39m src/data/timeout-surfaces.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[32m 76[2mms[22m[39m
+ [32m✓[39m src/features/settings/brand-voice-screen.test.tsx [2m([22m[2m8 tests[22m[2m)[22m[33m 1837[2mms[22m[39m
+   [33m[2m✓[22m[39m a workspace already above the cap (item 65)[2m > [22mlists every rule and keeps each one removable [33m 422[2mms[22m[39m
+   [33m[2m✓[22m[39m a refused save is never reported as a success (item 65)[2m > [22mrenders the wire’s FIELD message and request id, and fires no success toast [33m 406[2mms[22m[39m
+   [33m[2m✓[22m[39m a refused save is never reported as a success (item 65)[2m > [22mfalls back to the envelope message when the wire names no field [33m 357[2mms[22m[39m
+   [33m[2m✓[22m[39m a refused save is never reported as a success (item 65)[2m > [22mfires the green toast only after a save that actually succeeded [33m 336[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m4 passed[39m[22m[90m (4)[39m
+[2m      Tests [22m [1m[32m19 passed[39m[22m[90m (19)[39m
+[2m   Start at [22m 01:21:58
+[2m   Duration [22m 5.06s[2m (transform 648ms, setup 1.67s, collect 2.17s, tests 1.94s, environment 3.54s, prepare 825ms)[22m
+

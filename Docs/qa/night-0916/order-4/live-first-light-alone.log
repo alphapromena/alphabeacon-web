@@ -1,0 +1,16 @@
+
+warm-up: waking the API before the suite starts (https://<api-host>/api/health)
+warm-up: service awake after 2 probe(s) in 0.7s — last 2: 328ms, 118ms
+warm-up: 12-way fleet warm after 1 burst(s), 1.2s total — slowest 451ms
+
+warm-up: heartbeat started — 4 probes every 5s for the life of the run
+
+
+Running 1 test using 1 worker
+
+[item 82] first light: mount 6941, paint 6955, gone 8757 → seen for 1802 ms
+  ok 1 [chromium] › e2e\live-first-light.spec.ts:46:1 › first light plays once on a fresh account, under the 2000 ms ceiling from its first paint, and never on a reload (12.0s)
+
+warm-up: heartbeat stopped after 2 beat(s)
+
+  1 passed (18.0s)

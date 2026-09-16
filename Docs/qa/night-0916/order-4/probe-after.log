@@ -1,0 +1,6 @@
+| after 1 | 3579 | 3588 | 4011 | 3884 | 4484 | 5402 | **1814** | 1823 | /api/auth/verify-email 4→1136, /api/me/orgs 1136→1258, /api/me 1137→1728, /api/orgs 1259→2353, /api/me 2357→2728, /api/me/orgs 1137→3162, /api/me/orgs 2357→3565, /api/me 3577→4169, /api/me/orgs 3577→4202, /api/orgs/2357/brand/voices 3566→4715, /api/orgs/2357/brand/sources 3566→4892, /api/orgs/2357/members 3566→5207, /api/orgs/2357/schedules 3566→5363, /api/orgs/2357/invites 3566→5582, /api/orgs/2357/holidays 3567→5610, /api/orgs/2357/brand/tones 3566→5733, /api/orgs/2357/notifications 3567→5871, /api/orgs/2357/notifications/unread-count 3567→5916, /api/orgs/2357/brand/topics 3566→5972, /api/orgs/2357 3567→6082, /api/orgs/2357/brand/voices 4203→6376, /api/orgs/2357/members 4203→6468, /api/orgs/2357/brand/sources 4203→6506, /api/orgs/2357/schedules 4203→6616, /api/orgs/2357/invites 4203→6682, /api/orgs/2357/holidays 4203→7046, /api/orgs/2357/brand/tones 4203→7158, /api/orgs/2357/notifications 4203→7185 |
+run 2 stopped at h1 "Create your account" with alerts ["The server did not answer. Try again."] at 2026-09-15T22:04:16.250Z
+TimeoutError: locator.waitFor: Timeout 30000ms exceeded.
+Call log:
+[2m  - waiting for getByRole('heading', { name: 'Check your inbox' }) to be visible[22m
+

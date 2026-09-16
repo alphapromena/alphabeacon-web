@@ -1,0 +1,50 @@
+
+> alphabeacon-web@0.0.0 verify:w06 C:\alphabeacon-web\alphabeacon-web
+> tsx scripts/verify-w06.ts
+
+FAIL  lint — stale suite report (made for tree 838521dda978, this tree is 33a9600836e6) — run `pnpm verify:all` again
+FAIL  typecheck — stale suite report (made for tree 838521dda978, this tree is 33a9600836e6) — run `pnpm verify:all` again
+FAIL  unit tests — stale suite report (made for tree 838521dda978, this tree is 33a9600836e6) — run `pnpm verify:all` again
+FAIL  guard-static — stale suite report (made for tree 838521dda978, this tree is 33a9600836e6) — run `pnpm verify:all` again
+FAIL  build — stale suite report (made for tree 838521dda978, this tree is 33a9600836e6) — run `pnpm verify:all` again
+FAIL  e2e (compose, analytics, settings, axe) — stale suite report (made for tree 838521dda978, this tree is 33a9600836e6) — run `pnpm verify:all` again
+suite report: stale suite report (made for tree 838521dda978, this tree is 33a9600836e6) — run `pnpm verify:all` again
+
+W6 verify summary
+------------------------------------------------
+lint                                        FAIL
+typecheck                                   FAIL
+unit tests                                  FAIL
+guard-static                                FAIL
+build                                       FAIL
+e2e (compose, analytics, settings, axe)     FAIL
+readiness gate is one selector              SKIP
+one tone editor, three entry points         SKIP
+custom tone renders identically everywhere  SKIP
+analytics never invents a number            SKIP
+F1 reuses the queue card and actions        SKIP
+compose is script-driven                    SKIP
+settings share one save bar                 SKIP
+times are honest about zones                SKIP
+keyboard-focus rules hold                   SKIP
+no stub routes remain                       SKIP
+e2e navigation rule holds                   SKIP
+W6 deliverables exist                       SKIP
+e2e (compose, analytics, settings, axe)     SKIP
+------------------------------------------------
+RESULT: FAIL
+
+MANUAL -- human judgement; verify by hand (web-plan.md W6 Verify):
+  1. Watch a compose run at full length. Does the token pace read
+     as writing, or as a progress bar wearing words?
+  2. Read G1 as someone who did not publish this week: do the
+     deltas and the "not reported" line tell the same story?
+  3. Walk Settings with the keyboard only, tab by tab.
+
+  Carried forward, still open (see .agent/open-items.md):
+   - W1 screen-reader walk of the app shell (NVDA / VoiceOver)
+   - W2 marketing copy read, wizard at phone width, marketing in a dark OS
+   - W3 queue as one continuous tool, queue on a phone
+   - W4 month grid at phone width, posting times read in the schedule zone
+   - W5 D4 and E2 back to back, credits ledger read as a charge query
+ ELIFECYCLE  Command failed with exit code 1.

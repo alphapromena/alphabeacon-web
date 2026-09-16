@@ -1,0 +1,218 @@
+
+[1m[46m RUN [49m[22m [36mv3.2.7 [39m[90mC:/alphabeacon-web/alphabeacon-web[39m
+
+[90mstdout[2m | src/data/return-to-flow.test.tsx[2m > [22m[2mthe 401 handler writes the path it was on before its purge and push[2m > [22m[2ma token dead on the boot sync at /settings/team?x=1
+[22m[39m[api] GET /me → 401 (request-id unexposed)
+[api] GET /me/orgs → 401 (request-id unexposed)
+
+[90mstderr[2m | src/data/return-to-flow.test.tsx[2m > [22m[2mthe sign-in screen takes it on success[2m > [22m[2mreads, clears, and goes there
+[22m[39mNo routes matched location "/" 
+
+[90mstdout[2m | src/data/return-to-flow.test.tsx[2m > [22m[2ma deliberate sign-out clears it[2m > [22m[2msignOut
+[22m[39m[api] GET /me → 204 (request-id unexposed)
+[api] GET /me/orgs → 204 (request-id unexposed)
+[api] POST /auth/logout → 204 (request-id unexposed)
+
+ [31m❯[39m src/data/return-to-flow.test.tsx [2m([22m[2m8 tests[22m[2m | [22m[31m6 failed[39m[2m)[22m[33m 2956[2mms[22m[39m
+[31m   [31m×[31m the guard writes the intended path before it sends a signed-out visit to login[2m > [22ma deep link with a query[39m[32m 50[2mms[22m[39m
+[31m     → expected null to be '/billing?tab=balance' // Object.is equality[39m
+[31m   [31m×[31m the guard writes the intended path before it sends a signed-out visit to login[2m > [22ma nested settings path[39m[32m 9[2mms[22m[39m
+[31m     → expected null to be '/settings/team' // Object.is equality[39m
+[31m   [31m×[31m the 401 handler writes the path it was on before its purge and push[2m > [22ma token dead on the boot sync at /settings/team?x=1[39m[32m 31[2mms[22m[39m
+[31m     → expected null to be '/settings/team?x=1' // Object.is equality[39m
+[31m   [31m×[31m the sign-in screen takes it on success[2m > [22mreads, clears, and goes there[39m[33m 1563[2mms[22m[39m
+[31m     → Unable to find an element with the text: billing screen. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[31m
+  [36m<div>[31m
+    [36m<div[31m
+      [33mdata-testid[31m=[32m"where"[31m
+    [36m>[31m
+      [0m/[0m
+    [36m</div>[31m
+  [36m</div>[31m
+[36m</body>[31m
+
+Ignored nodes: comments, script, style
+[36m<html>[31m
+  [36m<head />[31m
+  [36m<body>[31m
+    [36m<div>[31m
+      [36m<div[31m
+        [33mdata-testid[31m=[32m"where"[31m
+      [36m>[31m
+        [0m/[0m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</body>[31m
+[36m</html>[31m[39m
+   [33m[2m✓[22m[39m the sign-in screen takes it on success[2m > [22mlands on `/` when there is none [33m 605[2mms[22m[39m
+[31m   [31m×[31m the sign-in screen takes it on success[2m > [22ma stored value that is not an app path is ignored and cleared[39m[33m 585[2mms[22m[39m
+[31m     → expected '//evil.example/billing' to be null[39m
+[31m   [31m×[31m a deliberate sign-out clears it[2m > [22msignOut[39m[32m 7[2mms[22m[39m
+[31m     → expected '/billing' to be null[39m
+   [32m✓[39m the verify screen never reads it[2m > [22ma verified code lands on `/` and leaves the key alone[32m 105[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 6 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m src/data/return-to-flow.test.tsx[2m > [22mthe guard writes the intended path before it sends a signed-out visit to login[2m > [22ma deep link with a query
+[31m[1mAssertionError[22m: expected null to be '/billing?tab=balance' // Object.is equality[39m
+
+[32m- Expected:[39m 
+"/billing?tab=balance"
+
+[31m+ Received:[39m 
+null
+
+[36m [2m❯[22m src/data/return-to-flow.test.tsx:[2m185:26[22m[39m
+    [90m183| [39m    [34mmount[39m([32m'/billing?tab=balance'[39m[33m,[39m [34mauthed[39m([32m'/billing'[39m[33m,[39m [32m'billing screen'[39m))
+    [90m184| [39m    [35mawait[39m [34mwaitFor[39m(() [33m=>[39m [34mexpect[39m([34mwhere[39m())[33m.[39m[34mtoBe[39m([32m'/login'[39m))
+    [90m185| [39m    [34mexpect[39m([34mremembered[39m())[33m.[39m[34mtoBe[39m([32m'/billing?tab=balance'[39m)
+    [90m   | [39m                         [31m^[39m
+    [90m186| [39m  })
+    [90m187| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/data/return-to-flow.test.tsx[2m > [22mthe guard writes the intended path before it sends a signed-out visit to login[2m > [22ma nested settings path
+[31m[1mAssertionError[22m: expected null to be '/settings/team' // Object.is equality[39m
+
+[32m- Expected:[39m 
+"/settings/team"
+
+[31m+ Received:[39m 
+null
+
+[36m [2m❯[22m src/data/return-to-flow.test.tsx:[2m191:26[22m[39m
+    [90m189| [39m    [34mmount[39m([32m'/settings/team'[39m[33m,[39m [34mauthed[39m([32m'/settings/team'[39m[33m,[39m [32m'team screen'[39m))
+    [90m190| [39m    [35mawait[39m [34mwaitFor[39m(() [33m=>[39m [34mexpect[39m([34mwhere[39m())[33m.[39m[34mtoBe[39m([32m'/login'[39m))
+    [90m191| [39m    [34mexpect[39m([34mremembered[39m())[33m.[39m[34mtoBe[39m([32m'/settings/team'[39m)
+    [90m   | [39m                         [31m^[39m
+    [90m192| [39m  })
+    [90m193| [39m})
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/data/return-to-flow.test.tsx[2m > [22mthe 401 handler writes the path it was on before its purge and push[2m > [22ma token dead on the boot sync at /settings/team?x=1
+[31m[1mAssertionError[22m: expected null to be '/settings/team?x=1' // Object.is equality[39m
+
+[32m- Expected:[39m 
+"/settings/team?x=1"
+
+[31m+ Received:[39m 
+null
+
+[36m [2m❯[22m src/data/return-to-flow.test.tsx:[2m206:26[22m[39m
+    [90m204| [39m    await waitFor(() => expect(window.location.pathname).toBe('/login'…
+    [90m205| [39m    [35mawait[39m [34mwaitFor[39m(() [33m=>[39m [34mexpect[39m([34mwhere[39m())[33m.[39m[34mtoBe[39m([32m'/login'[39m))
+    [90m206| [39m    [34mexpect[39m([34mremembered[39m())[33m.[39m[34mtoBe[39m([32m'/settings/team?x=1'[39m)
+    [90m   | [39m                         [31m^[39m
+    [90m207| [39m  })
+    [90m208| [39m})
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/data/return-to-flow.test.tsx[2m > [22mthe sign-in screen takes it on success[2m > [22mreads, clears, and goes there
+[31m[1mTestingLibraryElementError[22m: Unable to find an element with the text: billing screen. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[31m
+  [36m<div>[31m
+    [36m<div[31m
+      [33mdata-testid[31m=[32m"where"[31m
+    [36m>[31m
+      [0m/[0m
+    [36m</div>[31m
+  [36m</div>[31m
+[36m</body>[31m
+
+Ignored nodes: comments, script, style
+[36m<html>[31m
+  [36m<head />[31m
+  [36m<body>[31m
+    [36m<div>[31m
+      [36m<div[31m
+        [33mdata-testid[31m=[32m"where"[31m
+      [36m>[31m
+        [0m/[0m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</body>[31m
+[36m</html>[31m[39m
+[90m [2m❯[22m Proxy.waitForWrapper node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/wait-for.js:[2m163:27[22m[39m
+[36m [2m❯[22m src/data/return-to-flow.test.tsx:[2m241:11[22m[39m
+    [90m239| [39m    )
+    [90m240| [39m    [35mawait[39m [34msignIn[39m()
+    [90m241| [39m    await waitFor(() => expect(screen.getByText('billing screen')).toB…
+    [90m   | [39m          [31m^[39m
+    [90m242| [39m    [34mexpect[39m([34mremembered[39m())[33m.[39m[34mtoBeNull[39m()
+    [90m243| [39m  })
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/data/return-to-flow.test.tsx[2m > [22mthe sign-in screen takes it on success[2m > [22ma stored value that is not an app path is ignored and cleared
+[31m[1mAssertionError[22m: expected '//evil.example/billing' to be null[39m
+
+[32m- Expected:[39m 
+null
+
+[31m+ Received:[39m 
+"//evil.example/billing"
+
+[36m [2m❯[22m src/data/return-to-flow.test.tsx:[2m279:26[22m[39m
+    [90m277| [39m    [35mawait[39m [34msignIn[39m()
+    [90m278| [39m    [35mawait[39m [34mwaitFor[39m(() [33m=>[39m [34mexpect[39m([34mwhere[39m())[33m.[39m[34mtoBe[39m([32m'/'[39m))
+    [90m279| [39m    [34mexpect[39m([34mremembered[39m())[33m.[39m[34mtoBeNull[39m()
+    [90m   | [39m                         [31m^[39m
+    [90m280| [39m  })
+    [90m281| [39m})
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/data/return-to-flow.test.tsx[2m > [22ma deliberate sign-out clears it[2m > [22msignOut
+[31m[1mAssertionError[22m: expected '/billing' to be null[39m
+
+[32m- Expected:[39m 
+null
+
+[31m+ Received:[39m 
+"/billing"
+
+[36m [2m❯[22m src/data/return-to-flow.test.tsx:[2m313:26[22m[39m
+    [90m311| [39m    [35mawait[39m actions[33m![39m[33m.[39m[34msignOut[39m()
+    [90m312| [39m    [35mawait[39m [34mwaitFor[39m(() [33m=>[39m [34mexpect[39m([34mwhere[39m())[33m.[39m[34mtoBe[39m([32m'/'[39m))
+    [90m313| [39m    [34mexpect[39m([34mremembered[39m())[33m.[39m[34mtoBeNull[39m()
+    [90m   | [39m                         [31m^[39m
+    [90m314| [39m  })
+    [90m315| [39m})
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Unhandled Errors [49m[22m[31m⎯⎯⎯⎯⎯⎯[39m
+[31m[1m
+Vitest caught 1 unhandled error during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.[22m[39m
+
+[31m⎯⎯⎯⎯⎯[39m[1m[41m Uncaught Exception [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mReferenceError[22m: window is not defined[39m
+[90m [2m❯[22m resolveUpdatePriority node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:[2m1308:7[22m[39m
+[90m [2m❯[22m requestUpdateLane node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:[2m16345:11[22m[39m
+[90m [2m❯[22m setMirrorSelectionStart node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:[2m9126:14[22m[39m
+[90m [2m❯[22m Timeout._onTimeout node_modules/.pnpm/input-otp@1.4.2_react-dom@19.2.8_react@19.2.8__react@19.2.8/node_modules/input-otp/src/input.tsx:[2m250:11[22m[39m
+[90m [2m❯[22m listOnTimeout node:internal/timers:[2m605:17[22m[39m
+[90m [2m❯[22m processTimers node:internal/timers:[2m541:7[22m[39m
+
+[31mThis error originated in "[1msrc/data/return-to-flow.test.tsx[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+[31mThis error was caught after test environment was torn down. Make sure to cancel any running tasks before test finishes:
+- cancel timeouts using clearTimeout and clearInterval
+- wait for promises to resolve using the await keyword[39m
+[31m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m6 failed[39m[22m[2m | [22m[1m[32m2 passed[39m[22m[90m (8)[39m
+[2m     Errors [22m [1m[31m1 error[39m[22m
+[2m   Start at [22m 00:38:53
+[2m   Duration [22m 6.91s[2m (transform 984ms, setup 351ms, collect 2.45s, tests 2.96s, environment 644ms, prepare 194ms)[22m
+

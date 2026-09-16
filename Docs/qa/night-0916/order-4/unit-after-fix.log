@@ -1,0 +1,13 @@
+
+[1m[46m RUN [49m[22m [36mv3.2.7 [39m[90mC:/alphabeacon-web/alphabeacon-web[39m
+
+ [32m✓[39m src/components/ab/first-light-gate.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[32m 113[2mms[22m[39m
+ [32m✓[39m src/components/ab/first-light.test.tsx [2m([22m[2m14 tests[22m[2m)[22m[33m 1198[2mms[22m[39m
+   [33m[2m✓[22m[39m first light, the moment[2m > [22mgreets the person by their own first name [33m 512[2mms[22m[39m
+   [33m[2m✓[22m[39m first light, the moment[2m > [22mfalls back rather than greeting an empty string [33m 479[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m2 passed[39m[22m[90m (2)[39m
+[2m      Tests [22m [1m[32m18 passed[39m[22m[90m (18)[39m
+[2m   Start at [22m 01:00:16
+[2m   Duration [22m 2.94s[2m (transform 334ms, setup 754ms, collect 714ms, tests 1.31s, environment 1.38s, prepare 381ms)[22m
+

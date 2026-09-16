@@ -1,0 +1,37 @@
+warm-up: skipped — the runner warmed the fleet and keeps the heartbeat (GATE-0910 §3.2)
+
+Running 1 test using 1 worker
+
+  x  1 [chromium] › e2e\live-notifications.spec.ts:33:1 › the inbox endpoints hold their contract, and the bell tells the truth (20.7s)
+
+
+  1) [chromium] › e2e\live-notifications.spec.ts:33:1 › the inbox endpoints hold their contract, and the bell tells the truth 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('heading', { name: 'Check your inbox' })
+    Expected: visible
+    Timeout: 20000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 20000ms
+      - waiting for getByRole('heading', { name: 'Check your inbox' })
+
+
+       at live-setup.ts:309
+
+      307 |   await page.getByRole('checkbox', { name: /terms of service/ }).click()
+      308 |   await page.getByRole('button', { name: 'Create account' }).click()
+    > 309 |   await expect(page.getByRole('heading', { name: 'Check your inbox' })).toBeVisible({
+          |                                                                         ^
+      310 |     timeout: 20_000,
+      311 |   })
+      312 |
+        at signUpAndEnter (C:\alphabeacon-web\alphabeacon-web\e2e\live-setup.ts:309:73)
+        at C:\alphabeacon-web\alphabeacon-web\e2e\live-notifications.spec.ts:45:3
+
+    Error Context: .gate\artifacts\20260915-224502\round-1\live-notifications\live-notifications-the-inb-f0987-nd-the-bell-tells-the-truth-chromium\error-context.md
+
+  1 failed
+    [chromium] › e2e\live-notifications.spec.ts:33:1 › the inbox endpoints hold their contract, and the bell tells the truth 

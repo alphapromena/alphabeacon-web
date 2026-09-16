@@ -1,0 +1,22 @@
+warm-up: skipped — the runner warmed the fleet and keeps the heartbeat (GATE-0910 §3.2)
+
+Running 8 tests using 1 worker
+
+    a f · GET /me/orgs → 401 · request baf84da0-109f-4225-a3b0-3f3d64e694bf
+  ok 1 [chromium] › e2e\live-auth-401.spec.ts:127:1 › a fresh owner + org, made through the product (6.5s)
+    1 · · GET /me → 401 · request 4907a71d-a104-41c6-8605-3fce01f61938
+    1 · · GET /me/orgs → 401 · request 8094025f-4496-4c77-81dc-10144c287a1a
+  ok 2 [chromium] › e2e\live-auth-401.spec.ts:137:1 › 1 · a token expired at boot on `/` lands on login with the toast (7.0s)
+    2 · · GET /orgs/2367/event-sources/countries → 401 · request 67b56114-09ac-4e84-9821-8d123a1792cd
+  ok 3 [chromium] › e2e\live-auth-401.spec.ts:145:1 › 2 · a token revoked mid-session on an authed route lands on login, not on the website (5.9s)
+    3 · · GET /me/orgs → 401 · request 8506ed3a-6bcf-452e-af7e-f85253c37592
+    3 · · GET /me → 401 · request eb6d1c83-ee6b-4bf0-9af1-4c91972eccb6
+  ok 4 [chromium] › e2e\live-auth-401.spec.ts:173:1 › 3 · a boot on an authed route with a dead token lands on login, not on the website (7.6s)
+  ok 5 [chromium] › e2e\live-auth-401.spec.ts:197:3 › 4 · a deliberate sign-out from Settings lands on the marketing home, not on login (9.6s)
+  ok 6 [chromium] › e2e\live-auth-401.spec.ts:197:3 › 4 · a deliberate sign-out from Billing lands on the marketing home, not on login (6.1s)
+  ok 7 [chromium] › e2e\live-auth-401.spec.ts:229:1 › 5 · a deep link to /billing with no session: sign in lands on /billing (2.0s)
+    6 · · GET /me/orgs → 401 · request 455f2c10-5b82-4f65-b401-7cbf47aed581
+    6 · · GET /me → 401 · request c39599aa-270e-4c71-adad-020039d3d236
+  ok 8 [chromium] › e2e\live-auth-401.spec.ts:245:1 › 6 · a token dead on /settings/organization: sign in lands back there (8.1s)
+
+  8 passed (53.7s)

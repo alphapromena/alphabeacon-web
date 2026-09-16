@@ -1,0 +1,38 @@
+warm-up: skipped — the runner warmed the fleet and keeps the heartbeat (GATE-0910 §3.2)
+
+Running 3 tests using 1 worker
+
+  ok 1 [chromium] › e2e\live-invite-org.spec.ts:88:1 › two accounts, each owning a workspace (21.0s)
+  ok 2 [chromium] › e2e\live-invite-org.spec.ts:110:1 › an invited existing user can REACH the inviting workspace, and a reload keeps it (41.0s)
+  x  3 [chromium] › e2e\live-invite-org.spec.ts:169:1 › losing membership falls back honestly, and never to a dead screen (40.6s)
+
+
+  1) [chromium] › e2e\live-invite-org.spec.ts:169:1 › losing membership falls back honestly, and never to a dead screen 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('heading', { name: 'Dashboard', level: 1 })
+    Expected: visible
+    Timeout: 40000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 40000ms
+      - waiting for getByRole('heading', { name: 'Dashboard', level: 1 })
+
+
+      53 |   await page.getByLabel('Password', { exact: true }).fill(PASSWORD)
+      54 |   await page.getByRole('button', { name: 'Sign in' }).click()
+    > 55 |   await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible({
+         |                                                                            ^
+      56 |     timeout: SCREEN_SYNC,
+      57 |   })
+      58 | }
+        at login (C:\alphabeacon-web\alphabeacon-web\e2e\live-invite-org.spec.ts:55:76)
+        at C:\alphabeacon-web\alphabeacon-web\e2e\live-invite-org.spec.ts:174:3
+
+    Error Context: .gate\artifacts\20260915-224502\round-1\live-invite-org\live-invite-org-losing-mem-1b93f--and-never-to-a-dead-screen-chromium\error-context.md
+
+  1 failed
+    [chromium] › e2e\live-invite-org.spec.ts:169:1 › losing membership falls back honestly, and never to a dead screen 
+  2 passed (1.7m)

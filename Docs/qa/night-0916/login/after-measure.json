@@ -1,0 +1,418 @@
+{
+  "390": {
+    "viewport": {
+      "w": 390,
+      "h": 844
+    },
+    "buttonRadius": "8px",
+    "buttonHeight": 36,
+    "inputRadius": "8px",
+    "inputHeight": 32,
+    "checkbox": {
+      "x": 24,
+      "y": 503,
+      "w": 16,
+      "h": 16
+    },
+    "checkboxLabel": {
+      "x": 48,
+      "y": 504,
+      "w": 213,
+      "h": 14
+    },
+    "h1FontSize": "30px",
+    "panelHeadlineFontSize": "30px",
+    "formCentre": 454,
+    "panelCopyCentre": 0,
+    "formBlock": {
+      "x": 24,
+      "y": 104,
+      "w": 342,
+      "h": 700
+    },
+    "panelCopy": {
+      "x": 0,
+      "y": 0,
+      "w": 0,
+      "h": 0
+    },
+    "panelPresent": false,
+    "wordmark": {
+      "x": 24,
+      "y": 40,
+      "w": 55,
+      "h": 32
+    },
+    "wordmarkSrc": "/brand/malaky-logo-white.png",
+    "rail": false,
+    "accented": [
+      "input \"\"",
+      "button \"Sign in\""
+    ],
+    "motion": [
+      {
+        "family": "ambient-beacon",
+        "animation": "ab-ambient-breathe",
+        "duration": "20s",
+        "display": "block"
+      }
+    ],
+    "timing": {
+      "domContentLoaded": 82,
+      "load": 83,
+      "first-paint": 24,
+      "first-contentful-paint": 412,
+      "interactionAt": 437
+    },
+    "axeRest": [],
+    "axePulse": []
+  },
+  "1024": {
+    "viewport": {
+      "w": 1024,
+      "h": 768
+    },
+    "buttonRadius": "8px",
+    "buttonHeight": 36,
+    "inputRadius": "8px",
+    "inputHeight": 32,
+    "checkbox": {
+      "x": 40,
+      "y": 465,
+      "w": 16,
+      "h": 16
+    },
+    "checkboxLabel": {
+      "x": 64,
+      "y": 466,
+      "w": 213,
+      "h": 14
+    },
+    "h1FontSize": "30px",
+    "panelHeadlineFontSize": "30px",
+    "formCentre": 416,
+    "panelCopyCentre": 417,
+    "formBlock": {
+      "x": 40,
+      "y": 104,
+      "w": 432,
+      "h": 624
+    },
+    "panelCopy": {
+      "x": 561,
+      "y": 332,
+      "w": 415,
+      "h": 169
+    },
+    "panelPresent": true,
+    "wordmark": {
+      "x": 40,
+      "y": 40,
+      "w": 55,
+      "h": 32
+    },
+    "wordmarkSrc": "/brand/malaky-logo-white.png",
+    "rail": false,
+    "accented": [
+      "input \"\"",
+      "button \"Sign in\"",
+      "span \"\"",
+      "span \".\""
+    ],
+    "motion": [
+      {
+        "family": "ambient-beacon",
+        "animation": "ab-ambient-breathe",
+        "duration": "20s",
+        "display": "block"
+      }
+    ],
+    "timing": {
+      "domContentLoaded": 90,
+      "load": 91,
+      "first-paint": 44,
+      "first-contentful-paint": 432,
+      "interactionAt": 442
+    },
+    "axeRest": [],
+    "axePulse": []
+  },
+  "1440": {
+    "viewport": {
+      "w": 1440,
+      "h": 900
+    },
+    "buttonRadius": "8px",
+    "buttonHeight": 36,
+    "inputRadius": "8px",
+    "inputHeight": 32,
+    "checkbox": {
+      "x": 140,
+      "y": 531,
+      "w": 16,
+      "h": 16
+    },
+    "checkboxLabel": {
+      "x": 164,
+      "y": 532,
+      "w": 213,
+      "h": 14
+    },
+    "h1FontSize": "30px",
+    "panelHeadlineFontSize": "30px",
+    "formCentre": 482,
+    "panelCopyCentre": 483,
+    "formBlock": {
+      "x": 140,
+      "y": 104,
+      "w": 440,
+      "h": 756
+    },
+    "panelCopy": {
+      "x": 769,
+      "y": 411,
+      "w": 448,
+      "h": 143
+    },
+    "panelPresent": true,
+    "wordmark": {
+      "x": 40,
+      "y": 40,
+      "w": 55,
+      "h": 32
+    },
+    "wordmarkSrc": "/brand/malaky-logo-white.png",
+    "rail": false,
+    "accented": [
+      "input \"\"",
+      "button \"Sign in\"",
+      "span \"\"",
+      "span \".\""
+    ],
+    "motion": [
+      {
+        "family": "ambient-beacon",
+        "animation": "ab-ambient-breathe",
+        "duration": "20s",
+        "display": "block"
+      }
+    ],
+    "timing": {
+      "domContentLoaded": 104,
+      "load": 104,
+      "first-paint": 44,
+      "first-contentful-paint": 460,
+      "interactionAt": 467
+    },
+    "axeRest": [],
+    "axePulse": []
+  },
+  "1440-reduced": {
+    "viewport": {
+      "w": 1440,
+      "h": 900
+    },
+    "buttonRadius": "8px",
+    "buttonHeight": 36,
+    "inputRadius": "8px",
+    "inputHeight": 32,
+    "checkbox": {
+      "x": 140,
+      "y": 531,
+      "w": 16,
+      "h": 16
+    },
+    "checkboxLabel": {
+      "x": 164,
+      "y": 532,
+      "w": 213,
+      "h": 14
+    },
+    "h1FontSize": "30px",
+    "panelHeadlineFontSize": "30px",
+    "formCentre": 482,
+    "panelCopyCentre": 483,
+    "formBlock": {
+      "x": 140,
+      "y": 104,
+      "w": 440,
+      "h": 756
+    },
+    "panelCopy": {
+      "x": 769,
+      "y": 411,
+      "w": 448,
+      "h": 143
+    },
+    "panelPresent": true,
+    "wordmark": {
+      "x": 40,
+      "y": 40,
+      "w": 55,
+      "h": 32
+    },
+    "wordmarkSrc": "/brand/malaky-logo-white.png",
+    "rail": false,
+    "accented": [
+      "input \"\"",
+      "button \"Sign in\"",
+      "span \"\"",
+      "span \".\""
+    ],
+    "motion": [
+      {
+        "family": "ambient-beacon",
+        "animation": "none",
+        "duration": "0s",
+        "display": "none"
+      }
+    ],
+    "timing": {
+      "domContentLoaded": 81,
+      "load": 82,
+      "first-paint": 32,
+      "first-contentful-paint": 424,
+      "interactionAt": 426
+    },
+    "axeRest": [],
+    "axePulse": null
+  },
+  "1024-reduced": {
+    "viewport": {
+      "w": 1024,
+      "h": 768
+    },
+    "buttonRadius": "8px",
+    "buttonHeight": 36,
+    "inputRadius": "8px",
+    "inputHeight": 32,
+    "checkbox": {
+      "x": 40,
+      "y": 465,
+      "w": 16,
+      "h": 16
+    },
+    "checkboxLabel": {
+      "x": 64,
+      "y": 466,
+      "w": 213,
+      "h": 14
+    },
+    "h1FontSize": "30px",
+    "panelHeadlineFontSize": "30px",
+    "formCentre": 416,
+    "panelCopyCentre": 417,
+    "formBlock": {
+      "x": 40,
+      "y": 104,
+      "w": 432,
+      "h": 624
+    },
+    "panelCopy": {
+      "x": 561,
+      "y": 332,
+      "w": 415,
+      "h": 169
+    },
+    "panelPresent": true,
+    "wordmark": {
+      "x": 40,
+      "y": 40,
+      "w": 55,
+      "h": 32
+    },
+    "wordmarkSrc": "/brand/malaky-logo-white.png",
+    "rail": false,
+    "accented": [
+      "input \"\"",
+      "button \"Sign in\"",
+      "span \"\"",
+      "span \".\""
+    ],
+    "motion": [
+      {
+        "family": "ambient-beacon",
+        "animation": "none",
+        "duration": "0s",
+        "display": "none"
+      }
+    ],
+    "timing": {
+      "domContentLoaded": 82,
+      "load": 83,
+      "first-paint": 36,
+      "first-contentful-paint": 420,
+      "interactionAt": 443
+    },
+    "axeRest": [],
+    "axePulse": null
+  },
+  "390-reduced": {
+    "viewport": {
+      "w": 390,
+      "h": 844
+    },
+    "buttonRadius": "8px",
+    "buttonHeight": 36,
+    "inputRadius": "8px",
+    "inputHeight": 32,
+    "checkbox": {
+      "x": 24,
+      "y": 503,
+      "w": 16,
+      "h": 16
+    },
+    "checkboxLabel": {
+      "x": 48,
+      "y": 504,
+      "w": 213,
+      "h": 14
+    },
+    "h1FontSize": "30px",
+    "panelHeadlineFontSize": "30px",
+    "formCentre": 454,
+    "panelCopyCentre": 0,
+    "formBlock": {
+      "x": 24,
+      "y": 104,
+      "w": 342,
+      "h": 700
+    },
+    "panelCopy": {
+      "x": 0,
+      "y": 0,
+      "w": 0,
+      "h": 0
+    },
+    "panelPresent": false,
+    "wordmark": {
+      "x": 24,
+      "y": 40,
+      "w": 55,
+      "h": 32
+    },
+    "wordmarkSrc": "/brand/malaky-logo-white.png",
+    "rail": false,
+    "accented": [
+      "input \"\"",
+      "button \"Sign in\""
+    ],
+    "motion": [
+      {
+        "family": "ambient-beacon",
+        "animation": "none",
+        "duration": "0s",
+        "display": "none"
+      }
+    ],
+    "timing": {
+      "domContentLoaded": 80,
+      "load": 80,
+      "first-paint": 24,
+      "first-contentful-paint": 416,
+      "interactionAt": 456
+    },
+    "axeRest": [],
+    "axePulse": null
+  }
+}

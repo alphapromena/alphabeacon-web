@@ -1,0 +1,237 @@
+
+[1m[46m RUN [49m[22m [36mv3.2.7 [39m[90mC:/alphabeacon-web/alphabeacon-web[39m
+
+ [31m❯[39m src/data/timeout-surfaces.test.tsx [2m([22m[2m7 tests[22m[2m | [22m[31m7 failed[39m[2m)[22m[32m 73[2mms[22m[39m
+[31m   [31m×[31m a submit the server never answered surfaces as a timeout failure[2m > [22msignup[39m[32m 19[2mms[22m[39m
+[31m     → expected '' to be undefined // Object.is equality[39m
+[31m   [31m×[31m a submit the server never answered surfaces as a timeout failure[2m > [22mverify-code[39m[32m 2[2mms[22m[39m
+[31m     → expected '' to be undefined // Object.is equality[39m
+[31m   [31m×[31m a submit the server never answered surfaces as a timeout failure[2m > [22mlogin[39m[32m 2[2mms[22m[39m
+[31m     → expected '' to be undefined // Object.is equality[39m
+[31m   [31m×[31m a submit the server never answered surfaces as a timeout failure[2m > [22mbrand voice — and it never resyncs (item 73)[39m[32m 2[2mms[22m[39m
+[31m     → expected '' to be undefined // Object.is equality[39m
+[31m   [31m×[31m a submit the server never answered surfaces as a timeout failure[2m > [22mtopics[39m[32m 2[2mms[22m[39m
+[31m     → result.current.saveTopics is not a function[39m
+[31m   [31m×[31m a submit the server never answered surfaces as a timeout failure[2m > [22mschedule[39m[32m 2[2mms[22m[39m
+[31m     → expected '' to be undefined // Object.is equality[39m
+[31m   [31m×[31m a submit the server never answered surfaces as a timeout failure[2m > [22mthe auth alert names it, from the catalogue[39m[32m 44[2mms[22m[39m
+[31m     → [2mexpect([22m[31melement[31m[2m).toHaveTextContent()[22m
+
+Expected element to have text content:
+[32m  undefined[31m
+Received:
+[31m  Something went wrong on our side. Try again — your work is safe.[31m[39m
+ [31m❯[39m src/api/client.test.ts [2m([22m[2m20 tests[22m[2m | [22m[31m3 failed[39m[2m)[22m[33m 5121[2mms[22m[39m
+   [32m✓[39m api()[2m > [22mrefuses to run in static mode — the provider decides, not the network[32m 3[2mms[22m[39m
+   [32m✓[39m api()[2m > [22mjoins base + path + query, skipping undefined params[32m 4[2mms[22m[39m
+   [32m✓[39m api()[2m > [22msends Bearer when a token exists, and never for anonymous calls[32m 1[2mms[22m[39m
+   [32m✓[39m api()[2m > [22mresolves 204 to undefined[32m 1[2mms[22m[39m
+   [32m✓[39m api()[2m > [22mparses the error envelope into an ApiError switched on code[32m 1[2mms[22m[39m
+   [32m✓[39m api()[2m > [22mexposes the 403 reason discriminator[32m 1[2mms[22m[39m
+   [32m✓[39m api()[2m > [22mparses Retry-After on 429[32m 1[2mms[22m[39m
+   [32m✓[39m api()[2m > [22mfires onUnauthorized once for a token-carrying 401, and never for anonymous[32m 2[2mms[22m[39m
+   [32m✓[39m api()[2m > [22mwraps a network failure as a client-side network_error[32m 1[2mms[22m[39m
+   [32m✓[39m api()[2m > [22msurvives a non-JSON error body by synthesizing from the status[32m 1[2mms[22m[39m
+   [32m✓[39m api()[2m > [22mcarries the two codes the 2026-08-17 contract added[32m 1[2mms[22m[39m
+   [32m✓[39m api()[2m > [22mtreats 202 as a JSON success — the async surfaces answer a receipt[32m 1[2mms[22m[39m
+   [32m✓[39m api()[2m > [22mreads a DELETE that answers 200 WITH a body (the RAG source delete)[32m 0[2mms[22m[39m
+   [32m✓[39m api()[2m > [22msends PUT with a JSON body[32m 0[2mms[22m[39m
+   [32m✓[39m api()[2m > [22mresolves an EMPTY 200 body to undefined instead of throwing a SyntaxError[32m 0[2mms[22m[39m
+   [32m✓[39m api()[2m > [22mturns an unreadable success body into an ApiError, not a raw throw[32m 0[2mms[22m[39m
+[31m   [31m×[31m the request timeout (NIGHT-0916 order 1, item 81)[2m > [22ma fetch that never answers is aborted at the limit and surfaces as `timeout` with the catalogue sentence[39m[33m 5014[2mms[22m[39m
+[31m     → Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".[39m
+   [32m✓[39m the request timeout (NIGHT-0916 order 1, item 81)[2m > [22ma caller's own abort still surfaces as its AbortError, never as a timeout[32m 1[2mms[22m[39m
+[31m   [31m×[31m the request timeout (NIGHT-0916 order 1, item 81)[2m > [22man answer inside the limit is untouched, and the timer is cleared behind it[39m[32m 85[2mms[22m[39m
+[31m     → expected undefined to be false // Object.is equality[39m
+[31m   [31m×[31m the request timeout (NIGHT-0916 order 1, item 81)[2m > [22mthe default limit is 15 s[39m[32m 1[2mms[22m[39m
+[31m     → expected undefined to be 15000 // Object.is equality[39m
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 10 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m src/api/client.test.ts[2m > [22mthe request timeout (NIGHT-0916 order 1, item 81)[2m > [22ma fetch that never answers is aborted at the limit and surfaces as `timeout` with the catalogue sentence
+[31m[1mError[22m: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".[39m
+[36m [2m❯[22m src/api/client.test.ts:[2m255:3[22m[39m
+    [90m253| [39m    })
+    [90m254| [39m
+    [90m255| [39m  it('a fetch that never answers is aborted at the limit and surfaces …
+    [90m   | [39m  [31m^[39m
+    [90m256| [39m    fetchMock[33m.[39m[34mmockImplementation[39m(neverAnswers)
+    [90m257| [39m    [35mconst[39m started [33m=[39m [33mDate[39m[33m.[39m[34mnow[39m()
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/10]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/api/client.test.ts[2m > [22mthe request timeout (NIGHT-0916 order 1, item 81)[2m > [22man answer inside the limit is untouched, and the timer is cleared behind it
+[31m[1mAssertionError[22m: expected undefined to be false // Object.is equality[39m
+
+[32m- Expected:[39m 
+false
+
+[31m+ Received:[39m 
+undefined
+
+[36m [2m❯[22m src/api/client.test.ts:[2m286:34[22m[39m
+    [90m284| [39m    [35mawait[39m [35mnew[39m [33mPromise[39m((resolve) [33m=>[39m [34msetTimeout[39m(resolve[33m,[39m [34m80[39m))
+    [90m285| [39m    [35mconst[39m init [33m=[39m fetchMock[33m.[39mmock[33m.[39mcalls[[34m0[39m][[34m1[39m] [35mas[39m [33mRequestInit[39m
+    [90m286| [39m    [34mexpect[39m(init[33m.[39msignal[33m?.[39maborted)[33m.[39m[34mtoBe[39m([35mfalse[39m)
+    [90m   | [39m                                 [31m^[39m
+    [90m287| [39m  })
+    [90m288| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/10]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/api/client.test.ts[2m > [22mthe request timeout (NIGHT-0916 order 1, item 81)[2m > [22mthe default limit is 15 s
+[31m[1mAssertionError[22m: expected undefined to be 15000 // Object.is equality[39m
+
+[32m- Expected:[39m 
+15000
+
+[31m+ Received:[39m 
+undefined
+
+[36m [2m❯[22m src/api/client.test.ts:[2m290:32[22m[39m
+    [90m288| [39m
+    [90m289| [39m  [34mit[39m([32m'the default limit is 15 s'[39m[33m,[39m () [33m=>[39m {
+    [90m290| [39m    [34mexpect[39m([33mREQUEST_TIMEOUT_MS[39m)[33m.[39m[34mtoBe[39m([34m15_000[39m)
+    [90m   | [39m                               [31m^[39m
+    [90m291| [39m  })
+    [90m292| [39m})
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/10]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/data/timeout-surfaces.test.tsx[2m > [22ma submit the server never answered surfaces as a timeout failure[2m > [22msignup
+[31m[1mAssertionError[22m: expected '' to be undefined // Object.is equality[39m
+
+[32m- Expected:[39m 
+undefined
+
+[31m+ Received:[39m 
+""
+
+[36m [2m❯[22m expectTimeout src/data/timeout-surfaces.test.tsx:[2m49:26[22m[39m
+    [90m 47| [39m  if (result.ok) throw new Error('unreachable — the write was supposed…
+    [90m 48| [39m  [34mexpect[39m(result[33m.[39mcode)[33m.[39m[34mtoBe[39m([32m'timeout'[39m)
+    [90m 49| [39m  [34mexpect[39m(result[33m.[39mmessage)[33m.[39m[34mtoBe[39m([33mMESSAGES[39m[33m.[39merrors[33m.[39mnoAnswer)
+    [90m   | [39m                         [31m^[39m
+    [90m 50| [39m}
+    [90m 51| [39m
+[90m [2m❯[22m src/data/timeout-surfaces.test.tsx:[2m61:5[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/10]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/data/timeout-surfaces.test.tsx[2m > [22ma submit the server never answered surfaces as a timeout failure[2m > [22mverify-code
+[31m[1mAssertionError[22m: expected '' to be undefined // Object.is equality[39m
+
+[32m- Expected:[39m 
+undefined
+
+[31m+ Received:[39m 
+""
+
+[36m [2m❯[22m expectTimeout src/data/timeout-surfaces.test.tsx:[2m49:26[22m[39m
+    [90m 47| [39m  if (result.ok) throw new Error('unreachable — the write was supposed…
+    [90m 48| [39m  [34mexpect[39m(result[33m.[39mcode)[33m.[39m[34mtoBe[39m([32m'timeout'[39m)
+    [90m 49| [39m  [34mexpect[39m(result[33m.[39mmessage)[33m.[39m[34mtoBe[39m([33mMESSAGES[39m[33m.[39merrors[33m.[39mnoAnswer)
+    [90m   | [39m                         [31m^[39m
+    [90m 50| [39m}
+    [90m 51| [39m
+[90m [2m❯[22m src/data/timeout-surfaces.test.tsx:[2m74:5[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/10]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/data/timeout-surfaces.test.tsx[2m > [22ma submit the server never answered surfaces as a timeout failure[2m > [22mlogin
+[31m[1mAssertionError[22m: expected '' to be undefined // Object.is equality[39m
+
+[32m- Expected:[39m 
+undefined
+
+[31m+ Received:[39m 
+""
+
+[36m [2m❯[22m expectTimeout src/data/timeout-surfaces.test.tsx:[2m49:26[22m[39m
+    [90m 47| [39m  if (result.ok) throw new Error('unreachable — the write was supposed…
+    [90m 48| [39m  [34mexpect[39m(result[33m.[39mcode)[33m.[39m[34mtoBe[39m([32m'timeout'[39m)
+    [90m 49| [39m  [34mexpect[39m(result[33m.[39mmessage)[33m.[39m[34mtoBe[39m([33mMESSAGES[39m[33m.[39merrors[33m.[39mnoAnswer)
+    [90m   | [39m                         [31m^[39m
+    [90m 50| [39m}
+    [90m 51| [39m
+[90m [2m❯[22m src/data/timeout-surfaces.test.tsx:[2m80:5[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/10]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/data/timeout-surfaces.test.tsx[2m > [22ma submit the server never answered surfaces as a timeout failure[2m > [22mbrand voice — and it never resyncs (item 73)
+[31m[1mAssertionError[22m: expected '' to be undefined // Object.is equality[39m
+
+[32m- Expected:[39m 
+undefined
+
+[31m+ Received:[39m 
+""
+
+[36m [2m❯[22m expectTimeout src/data/timeout-surfaces.test.tsx:[2m49:26[22m[39m
+    [90m 47| [39m  if (result.ok) throw new Error('unreachable — the write was supposed…
+    [90m 48| [39m  [34mexpect[39m(result[33m.[39mcode)[33m.[39m[34mtoBe[39m([32m'timeout'[39m)
+    [90m 49| [39m  [34mexpect[39m(result[33m.[39mmessage)[33m.[39m[34mtoBe[39m([33mMESSAGES[39m[33m.[39merrors[33m.[39mnoAnswer)
+    [90m   | [39m                         [31m^[39m
+    [90m 50| [39m}
+    [90m 51| [39m
+[90m [2m❯[22m src/data/timeout-surfaces.test.tsx:[2m88:5[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/10]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/data/timeout-surfaces.test.tsx[2m > [22ma submit the server never answered surfaces as a timeout failure[2m > [22mtopics
+[31m[1mTypeError[22m: result.current.saveTopics is not a function[39m
+[36m [2m❯[22m src/data/timeout-surfaces.test.tsx:[2m95:40[22m[39m
+    [90m 93| [39m    apiMock[33m.[39m[34mmockRejectedValueOnce[39m([34mnoAnswer[39m())
+    [90m 94| [39m    [35mconst[39m { result } [33m=[39m [34mrenderHook[39m(() [33m=>[39m [34museBrandActions[39m())
+    [90m 95| [39m    [34mexpectTimeout[39m([35mawait[39m result[33m.[39mcurrent[33m.[39m[34msaveTopics[39m([[32m'single origin'[39m]))
+    [90m   | [39m                                       [31m^[39m
+    [90m 96| [39m  })
+    [90m 97| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/10]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/data/timeout-surfaces.test.tsx[2m > [22ma submit the server never answered surfaces as a timeout failure[2m > [22mschedule
+[31m[1mAssertionError[22m: expected '' to be undefined // Object.is equality[39m
+
+[32m- Expected:[39m 
+undefined
+
+[31m+ Received:[39m 
+""
+
+[36m [2m❯[22m expectTimeout src/data/timeout-surfaces.test.tsx:[2m49:26[22m[39m
+    [90m 47| [39m  if (result.ok) throw new Error('unreachable — the write was supposed…
+    [90m 48| [39m  [34mexpect[39m(result[33m.[39mcode)[33m.[39m[34mtoBe[39m([32m'timeout'[39m)
+    [90m 49| [39m  [34mexpect[39m(result[33m.[39mmessage)[33m.[39m[34mtoBe[39m([33mMESSAGES[39m[33m.[39merrors[33m.[39mnoAnswer)
+    [90m   | [39m                         [31m^[39m
+    [90m 50| [39m}
+    [90m 51| [39m
+[90m [2m❯[22m src/data/timeout-surfaces.test.tsx:[2m111:5[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/10]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/data/timeout-surfaces.test.tsx[2m > [22ma submit the server never answered surfaces as a timeout failure[2m > [22mthe auth alert names it, from the catalogue
+[31m[1mError[22m: [2mexpect([22m[31melement[31m[2m).toHaveTextContent()[22m
+
+Expected element to have text content:
+[32m  undefined[31m
+Received:
+[31m  Something went wrong on our side. Try again — your work is safe.[31m[39m
+[36m [2m❯[22m src/data/timeout-surfaces.test.tsx:[2m120:39[22m[39m
+    [90m118| [39m      [33m/[39m[33m>[39m[33m,[39m
+    [90m119| [39m    )
+    [90m120| [39m    expect(screen.getByRole('alert')).toHaveTextContent(MESSAGES.error…
+    [90m   | [39m                                      [31m^[39m
+    [90m121| [39m  })
+    [90m122| [39m})
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/10]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m2 failed[39m[22m[90m (2)[39m
+[2m      Tests [22m [1m[31m10 failed[39m[22m[2m | [22m[1m[32m17 passed[39m[22m[90m (27)[39m
+[2m   Start at [22m 23:58:42
+[2m   Duration [22m 6.78s[2m (transform 210ms, setup 745ms, collect 405ms, tests 5.19s, environment 1.38s, prepare 380ms)[22m
+

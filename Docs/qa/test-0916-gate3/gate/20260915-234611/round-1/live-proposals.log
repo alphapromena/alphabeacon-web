@@ -1,0 +1,12 @@
+warm-up: skipped — the runner warmed the fleet and keeps the heartbeat (GATE-0910 §3.2)
+
+Running 5 tests using 1 worker
+
+  ok 1 [chromium] › e2e\live-proposals.spec.ts:48:1 › a fresh owner + org, with its brand set up (25.8s)
+  -  2 [chromium] › e2e\live-proposals.spec.ts:88:1 › one balanced run — the drafts it produces become the proposals under test
+  -  3 [chromium] › e2e\live-proposals.spec.ts:103:1 › after a RELOAD, Today shows the draft from the ledger
+  -  4 [chromium] › e2e\live-proposals.spec.ts:123:1 › approving records it as posted, and the decision survives a reload
+  -  5 [chromium] › e2e\live-proposals.spec.ts:173:1 › declining asks why, keeps the row, and is reversible
+
+  4 skipped
+  1 passed (42.6s)

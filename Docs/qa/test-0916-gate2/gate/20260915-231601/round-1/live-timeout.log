@@ -1,0 +1,8 @@
+warm-up: skipped — the runner warmed the fleet and keeps the heartbeat (GATE-0910 §3.2)
+
+Running 2 tests using 1 worker
+
+  ok 1 [chromium] › e2e\live-timeout.spec.ts:22:1 › a fresh owner + org, made through the product (9.5s)
+  ok 2 [chromium] › e2e\live-timeout.spec.ts:32:1 › a sign-in the server does not answer in 15 s says so, keeps the form, retries nothing — and the next sign-in lands (19.2s)
+
+  2 passed (29.6s)

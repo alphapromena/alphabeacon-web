@@ -1,0 +1,34 @@
+
+> alphabeacon-web@0.0.0 verify:w01 C:\alphabeacon-web\alphabeacon-web
+> tsx scripts/verify-w01.ts
+
+
+=== lint ===
+stale suite report (made for tree 838521dda978, this tree is 33a9600836e6) — run `pnpm verify:all` again
+stale suite report (made for tree 838521dda978, this tree is 33a9600836e6) — run `pnpm verify:all` again
+step failed: lint -- remaining steps skipped
+
+W1 verify summary
+--------------------------------------------------------
+lint                                                FAIL
+typecheck                                           SKIP
+unit tests                                          SKIP
+guard-static                                        SKIP
+build                                               SKIP
+e2e (kitchen-sink axe both themes, reduced-motion)  SKIP
+canary: raw color in ab/ fails lint                 SKIP
+W1 deliverables exist                               SKIP
+--------------------------------------------------------
+RESULT: FAIL
+
+MANUAL -- human judgement; verify by hand (web-plan.md W1 Verify):
+  1. "visual pass of /dev/kitchen-sink in light + dark against design.md" --
+     design.md now exists, written from the Alpha MENA Branding Kit, and
+     tokens.test.ts proves the palette meets AA. What a machine cannot judge
+     is whether it LOOKS like the brand: check the rose against the kit
+     swatches, the Barlow setting, the wordmark, and status treatments.
+  2. "keyboard-only walk of the shell" -- drive the rail, org switcher, bell,
+     theme toggle, and account menu with the keyboard alone on a real screen
+     reader (NVDA or VoiceOver) and confirm every stop announces a name and
+     keeps a visible focus ring. axe cannot hear what the screen reader says.
+ ELIFECYCLE  Command failed with exit code 1.

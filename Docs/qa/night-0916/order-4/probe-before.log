@@ -1,0 +1,5 @@
+| before 1 | 3411 | 3434 | 3836 | 4519 | 4318 | 6021 | **2587** | 2610 | /api/auth/verify-email 3→1178, /api/me/orgs 1179→1314, /api/me 1180→2259, /api/me/orgs 1180→2655, /api/orgs 1315→3408, /api/me 3411→3819, /api/me/orgs 3411→4199, /api/me/orgs 4213→5974, /api/me 4212→6362, /api/orgs/2356/members 4200→7065, /api/orgs/2356/invites 4201→7619 |
+TimeoutError: locator.waitFor: Timeout 30000ms exceeded.
+Call log:
+[2m  - waiting for getByRole('heading', { name: 'Check your inbox' }) to be visible[22m
+

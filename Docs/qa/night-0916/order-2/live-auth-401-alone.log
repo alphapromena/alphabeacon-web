@@ -1,0 +1,38 @@
+
+warm-up: waking the API before the suite starts (https://<api-host>/api/health)
+warm-up: service awake after 2 probe(s) in 1.2s — last 2: 814ms, 141ms
+warm-up: 12-way fleet warm after 1 burst(s), 1.6s total — slowest 418ms
+
+warm-up: heartbeat started — 4 probes every 5s for the life of the run
+
+
+Running 6 tests using 1 worker
+
+    a f · GET /me/orgs → 401 · request 8ccae08b-c629-497a-b90a-f7bf7a62b495
+  ok 1 [chromium] › e2e\live-auth-401.spec.ts:127:1 › a fresh owner + org, made through the product (10.3s)
+    1 · · GET /me → 401 · request 64849f6e-92d7-420f-be0e-c0df8b3212fa
+    1 · · GET /me/orgs → 401 · request b71aac9f-3ce8-417b-95fa-3e99d34d8381
+    1 · · GET /me → 401 · request 8b216f14-7ad9-4d8a-873a-a8a2587a43c0
+    1 · · GET /me/orgs → 401 · request 2f16237e-883a-4d2a-8ebe-c97abf565d18
+  ok 2 [chromium] › e2e\live-auth-401.spec.ts:137:1 › 1 · a token expired at boot on `/` lands on login with the toast (8.3s)
+    2 · · GET /orgs/2353/alphastudio/media/assets → 401 · request 94a0abbd-f4a5-4fd0-9520-21871d5ea3d7
+    2 · · GET /orgs/2353/billing/plans → 401 · request 8200d502-bb8b-4746-ad54-1723c96988df
+    2 · · GET /orgs/2353/billing/subscription → 401 · request ffc81b94-aa03-4dc7-be89-7acb6552339a
+    2 · · GET /orgs/2353/billing/credits?limit=50&offset=0 → 401 · request 0b0e8b72-6dbb-4d3c-97a1-f9c842f61ef3
+    2 · · GET /orgs/2353/billing/subscription → 401 · request 7e87b53b-6154-44a5-9873-c2fc5f210249
+    2 · · GET /orgs/2353/billing/plans → 401 · request 97f75aa5-8b93-4c87-a3d9-29c911f2d2cb
+    2 · · GET /orgs/2353/billing/credits?limit=50&offset=0 → 401 · request 0e2ed5c1-50b6-475e-99f6-2aa368971ea2
+  ok 3 [chromium] › e2e\live-auth-401.spec.ts:145:1 › 2 · a token revoked mid-session on an authed route lands on login, not on the website (7.9s)
+    3 · · GET /me/orgs → 401 · request 93756070-c8d0-4621-8ef2-f4885bf8bf30
+    3 · · GET /me → 401 · request 781d4891-0b95-4db8-9c2f-5b341a40b4c5
+    3 · · GET /me/orgs → 401 · request 138fc316-66be-45a3-a27b-494f90de5d74
+    3 · · GET /me → 401 · request eb70f4f1-52a8-4958-a02b-5c499d377cee
+  ok 4 [chromium] › e2e\live-auth-401.spec.ts:173:1 › 3 · a boot on an authed route with a dead token lands on login, not on the website (6.7s)
+    4 · · GET /orgs/2353/event-sources/countries → 401 · request b416353a-17ba-44de-92af-5719cde46094
+    4 · · GET /orgs/2353/alphastudio/media/assets → 401 · request a7a4ce78-bd24-4588-a1fe-419c8ccf6630
+  ok 5 [chromium] › e2e\live-auth-401.spec.ts:197:3 › 4 · a deliberate sign-out from Settings lands on the marketing home, not on login (6.8s)
+  ok 6 [chromium] › e2e\live-auth-401.spec.ts:197:3 › 4 · a deliberate sign-out from Billing lands on the marketing home, not on login (6.7s)
+
+warm-up: heartbeat stopped after 9 beat(s)
+
+  6 passed (53.1s)

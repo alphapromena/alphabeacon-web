@@ -1,0 +1,35 @@
+warm-up: skipped — the runner warmed the fleet and keeps the heartbeat (GATE-0910 §3.2)
+
+Running 3 tests using 1 worker
+
+  x  1 [chromium] › e2e\live-schedule-repair.spec.ts:45:1 › a live org in the 619 shape: tones seeded, no schedule (22.6s)
+  -  2 [chromium] › e2e\live-schedule-repair.spec.ts:85:1 › C1 creates the missing schedule through the POST fallback, with the exact tones picked
+  -  3 [chromium] › e2e\live-schedule-repair.spec.ts:143:1 › and it survives a reload, still clean
+
+
+  1) [chromium] › e2e\live-schedule-repair.spec.ts:45:1 › a live org in the 619 shape: tones seeded, no schedule 
+
+    Error: apiRequestContext.post: connect ETIMEDOUT 51.24.30.245:443
+    Call log:
+      - → POST https://<api-host>/auth/signup
+        - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.7922.34 Safari/537.36
+        - accept: */*
+        - accept-encoding: gzip,deflate,br
+        - content-type: application/json
+        - content-length: 96
+
+
+      46 |   test.setTimeout(120_000)
+      47 |
+    > 48 |   await request.post(`${API_BASE}/auth/signup`, {
+         |                 ^
+      49 |     data: { name: 'QA Repair', email: owner, password: PASSWORD },
+      50 |   })
+      51 |   const verified = (await json(
+        at C:\alphabeacon-web\alphabeacon-web\e2e\live-schedule-repair.spec.ts:48:17
+
+    Error Context: .gate\artifacts\20260915-224502\round-1\live-schedule-repair\live-schedule-repair-a-liv-e579c-pe-tones-seeded-no-schedule-chromium\error-context.md
+
+  1 failed
+    [chromium] › e2e\live-schedule-repair.spec.ts:45:1 › a live org in the 619 shape: tones seeded, no schedule 
+  2 did not run

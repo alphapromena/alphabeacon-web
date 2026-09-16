@@ -1,0 +1,8 @@
+
+Running 3 tests using 1 worker
+
+  ok 1 [chromium] › e2e\login-panel.spec.ts:25:1 › the panel: rings, an accent core, one breathing layer on the ambient period; axe clean at rest and mid-breath (6.8s)
+  ok 2 [chromium] › e2e\login-panel.spec.ts:77:1 › the form: one accent element (Sign in), the checkbox beside its label, the button on the inputs’ radius (2.1s)
+  ok 3 [chromium] › e2e\login-panel.spec.ts:124:3 › under prefers-reduced-motion › the breathing layer does not exist; the rings and the core stand still; axe clean (2.0s)
+
+  3 passed (15.7s)

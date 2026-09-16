@@ -1,0 +1,60 @@
+
+warm-up: waking the API before the suite starts (https://<api-host>/api/health)
+warm-up: probe 1 — 200 in 1315ms — not warm yet
+warm-up: service awake after 3 probe(s) in 2.1s — last 2: 134ms, 126ms
+warm-up: burst 1 — slowest of 12 was 200 in 1261ms — fleet not warm yet
+warm-up: 12-way fleet warm after 2 burst(s), 4.1s total — slowest 520ms
+
+warm-up: heartbeat started — 4 probes every 5s for the life of the run
+
+
+Running 6 tests using 1 worker
+
+    a f · GET /me/orgs → 401 · request dce553f3-b95f-4a92-b337-70d30006f3b6
+  ok 1 [chromium] › e2e\live-auth-401.spec.ts:127:1 › a fresh owner + org, made through the product (10.3s)
+    1 · · GET /me/orgs → 401 · request c983bcb1-8346-423e-94f6-b2d97f05965f
+    1 · · GET /me → 401 · request bc6d2332-c0b2-4c3e-8d2d-085c50081f38
+    1 · · GET /me/orgs → 401 · request 71d521dd-fc11-49d1-84a7-e0875e357211
+    1 · · GET /me → 401 · request 232141a1-130e-4d89-8a88-a45040ed44fb
+  ok 2 [chromium] › e2e\live-auth-401.spec.ts:137:1 › 1 · a token expired at boot on `/` lands on login with the toast (9.5s)
+    2 · · GET /orgs/2352/alphastudio/media/assets → 401 · request d171fd2b-dd3c-48c9-8187-a7e067242d3e
+  ok 3 [chromium] › e2e\live-auth-401.spec.ts:145:1 › 2 · a token revoked mid-session on an authed route lands on login, not on the website (7.6s)
+    3 · · GET /me/orgs → 401 · request 738a1608-c349-4ef4-bad1-69545d3a6daa
+    3 · · GET /me → 401 · request 31ad542c-a6d9-4b83-8724-4440b8c3a8c7
+  ok 4 [chromium] › e2e\live-auth-401.spec.ts:173:1 › 3 · a boot on an authed route with a dead token lands on login, not on the website (8.3s)
+  x  5 [chromium] › e2e\live-auth-401.spec.ts:197:3 › 4 · a deliberate sign-out from Settings lands on the marketing home, not on login (40.7s)
+  -  6 [chromium] › e2e\live-auth-401.spec.ts:197:3 › 4 · a deliberate sign-out from Billing lands on the marketing home, not on login
+
+warm-up: heartbeat stopped after 15 beat(s)
+
+
+  1) [chromium] › e2e\live-auth-401.spec.ts:197:3 › 4 · a deliberate sign-out from Settings lands on the marketing home, not on login 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('heading', { name: 'Dashboard', level: 1 })
+    Expected: visible
+    Timeout: 40000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 40000ms
+      - waiting for getByRole('heading', { name: 'Dashboard', level: 1 })
+
+
+      54 |   await page.getByLabel('Password', { exact: true }).fill(PASSWORD)
+      55 |   await page.getByRole('button', { name: 'Sign in' }).click()
+    > 56 |   await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible({
+         |                                                                            ^
+      57 |     timeout: SCREEN_SYNC,
+      58 |   })
+      59 |   // The heading shows before the sign-in sync's tail (org, wallet, schedules)
+        at login (C:\alphabeacon-web\alphabeacon-web\e2e\live-auth-401.spec.ts:56:76)
+        at C:\alphabeacon-web\alphabeacon-web\e2e\live-auth-401.spec.ts:201:5
+
+    Error Context: test-results\live-auth-401-4-·-a-delibe-9255a-marketing-home-not-on-login-chromium\error-context.md
+
+  1 failed
+    [chromium] › e2e\live-auth-401.spec.ts:197:3 › 4 · a deliberate sign-out from Settings lands on the marketing home, not on login 
+  1 did not run
+  4 passed (1.4m)

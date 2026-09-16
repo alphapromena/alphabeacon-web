@@ -1,0 +1,17 @@
+probe-81 2026-09-15T20:50:09.622Z · burst of 8
+signup 1: 201 in 3954 ms (body at 3954 ms) · request 0025dc08-6c1b-4345-affb-a9ae413c27a6
+signup 2: 201 in 4644 ms (body at 4650 ms) · request 59d72fb2-5502-4f8e-aa8b-11372d66fd34
+signup 3: 201 in 3927 ms (body at 3927 ms) · request 87e06e34-bfe7-4a36-a0c5-52524f1dd21f
+signup 4: 201 in 3925 ms (body at 3926 ms) · request e52a60b3-df20-48f3-b4c4-2741a2b041f8
+signup 5: 201 in 4121 ms (body at 4121 ms) · request 50b9a5cf-7fa5-4820-a189-5b7685b5b356
+signup 6: 201 in 3922 ms (body at 3923 ms) · request d33d0ee5-0fbe-4207-a005-b782846fca1e
+signup 7: 201 in 4152 ms (body at 4152 ms) · request 5aaa80f9-bd57-42ce-85d5-e7520e331180
+signup 8: 201 in 3924 ms (body at 3924 ms) · request 71096d2d-fc9b-476e-b403-4f2e95ed9cba
+login 1 (unverified): 403 in 527 ms (body at 527 ms) · request f855c16e-5d78-40d9-b102-e85389ad1576 · forbidden
+login 2 (unverified): 403 in 541 ms (body at 541 ms) · request 07b1f99a-e5ec-4241-b7fd-f94944d8b460 · forbidden
+login 3 (unverified): 403 in 537 ms (body at 538 ms) · request cab29569-72a6-4566-80b1-765bc6384e29 · forbidden
+login 4 (unverified): 403 in 561 ms (body at 561 ms) · request b4d7aa07-19f9-4b20-8b8d-fafcac48f5bc · forbidden
+login 5 (unverified): 403 in 520 ms (body at 522 ms) · request 4c187c5f-bb4d-408d-9021-529cdca727e2 · forbidden
+login 6 (unverified): 403 in 542 ms (body at 542 ms) · request 8509e9e1-bae4-4360-b796-06e4f59021b6 · forbidden
+login 7 (unverified): 403 in 522 ms (body at 523 ms) · request ba4d9163-3795-42d2-a316-2c1b10e9bd34 · forbidden
+login 8 (unverified): 403 in 781 ms (body at 781 ms) · request fac8734c-17d2-441c-80ab-4a1b0d7b8db8 · forbidden

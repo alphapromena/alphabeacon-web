@@ -1,0 +1,41 @@
+warm-up: skipped — the runner warmed the fleet and keeps the heartbeat (GATE-0910 §3.2)
+
+Running 4 tests using 1 worker
+
+  x  1 [chromium] › e2e\live-studio.spec.ts:37:1 › a fresh owner + org, made through the product (20.6s)
+  -  2 [chromium] › e2e\live-studio.spec.ts:47:1 › E1 is built from the catalog: the granted capabilities, real prices, no vendors
+  -  3 [chromium] › e2e\live-studio.spec.ts:88:1 › E3 lists renders, and is honest when there are none
+  -  4 [chromium] › e2e\live-studio.spec.ts:99:1 › E2 renders for real, and E4 opens the asset it made
+
+
+  1) [chromium] › e2e\live-studio.spec.ts:37:1 › a fresh owner + org, made through the product ─────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('heading', { name: 'Check your inbox' })
+    Expected: visible
+    Timeout: 20000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 20000ms
+      - waiting for getByRole('heading', { name: 'Check your inbox' })
+
+
+       at live-setup.ts:309
+
+      307 |   await page.getByRole('checkbox', { name: /terms of service/ }).click()
+      308 |   await page.getByRole('button', { name: 'Create account' }).click()
+    > 309 |   await expect(page.getByRole('heading', { name: 'Check your inbox' })).toBeVisible({
+          |                                                                         ^
+      310 |     timeout: 20_000,
+      311 |   })
+      312 |
+        at signUpAndEnter (C:\alphabeacon-web\alphabeacon-web\e2e\live-setup.ts:309:73)
+        at C:\alphabeacon-web\alphabeacon-web\e2e\live-studio.spec.ts:39:3
+
+    Error Context: .gate\artifacts\20260915-224502\round-1\live-studio\live-studio-a-fresh-owner-org-made-through-the-product-chromium\error-context.md
+
+  1 failed
+    [chromium] › e2e\live-studio.spec.ts:37:1 › a fresh owner + org, made through the product ──────
+  3 did not run

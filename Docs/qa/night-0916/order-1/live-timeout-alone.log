@@ -1,0 +1,16 @@
+
+warm-up: waking the API before the suite starts (https://<api-host>/api/health)
+warm-up: service awake after 2 probe(s) in 0.8s — last 2: 446ms, 129ms
+warm-up: 12-way fleet warm after 1 burst(s), 1.4s total — slowest 515ms
+
+warm-up: heartbeat started — 4 probes every 5s for the life of the run
+
+
+Running 2 tests using 1 worker
+
+  ok 1 [chromium] › e2e\live-timeout.spec.ts:22:1 › a fresh owner + org, made through the product (7.0s)
+  ok 2 [chromium] › e2e\live-timeout.spec.ts:32:1 › a sign-in the server does not answer in 15 s says so, keeps the form, retries nothing — and the next sign-in lands (19.4s)
+
+warm-up: heartbeat stopped after 5 beat(s)
+
+  2 passed (32.4s)

@@ -1,0 +1,82 @@
+
+> alphabeacon-web@0.0.0 verify:all C:\alphabeacon-web\alphabeacon-web
+> tsx scripts/verify-all.ts "--workers" "1"
+
+verify:all on tree 838521dda978 (2026-09-15T23:16:03.314Z)
+
+=== lint === pnpm lint
+> alphabeacon-web@0.0.0 lint C:\alphabeacon-web\alphabeacon-web
+> eslint .
+--- lint: ok in 9.3 s
+
+=== typecheck === pnpm typecheck
+> alphabeacon-web@0.0.0 typecheck C:\alphabeacon-web\alphabeacon-web
+> tsc -b
+--- typecheck: ok in 14.7 s
+
+=== guard-static === pnpm guard:static
+> alphabeacon-web@0.0.0 guard:static C:\alphabeacon-web\alphabeacon-web
+> tsx scripts/guard-static.ts
+
+guard-static: 386 files clean
+--- guard-static: ok in 0.9 s
+
+=== unit === pnpm exec vitest run --reporter=default --reporter=json --outputFile="C:\alphabeacon-web\alphabeacon-web\.gate\reports\unit.json"
+ [32m✓[39m src/lib/generate-stage.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+ [32m✓[39m src/data/proposals.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32m✓[39m src/data/adapters/notification-adapter.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 3[2mms[22m[39m
+ [32m✓[39m src/features/studio/use-create-visual.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32m✓[39m src/features/settings/tone-fields.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m79 passed[39m[22m[90m (79)[39m
+[2m      Tests [22m [1m[32m899 passed[39m[22m[90m (899)[39m
+[2m   Start at [22m 02:16:29
+[2m   Duration [22m 28.68s[2m (transform 5.57s, setup 61.52s, collect 44.26s, tests 22.63s, environment 124.12s, prepare 21.97s)[22m
+
+JSON report written to C:/alphabeacon-web/alphabeacon-web/.gate/reports/unit.json
+--- unit: ok in 30.1 s
+
+=== build === pnpm build
+[2mdist/[22m[36massets/generate-screen-dKNqvuhw.js                            [39m[1m[2m 22.48 kB[22m[1m[22m[2m │ gzip:   7.88 kB[22m
+[2mdist/[22m[36massets/studio-nEb2-OpN.js                                     [39m[1m[2m 29.82 kB[22m[1m[22m[2m │ gzip:   9.89 kB[22m
+[2mdist/[22m[36massets/studio-screens-C0he1LC_.js                             [39m[1m[2m 38.74 kB[22m[1m[22m[2m │ gzip:  11.84 kB[22m
+[2mdist/[22m[36massets/form-DAjupGRT.js                                       [39m[1m[2m 40.48 kB[22m[1m[22m[2m │ gzip:  14.38 kB[22m
+[2mdist/[22m[36massets/analytics-screens-MSs39UeI.js                          [39m[1m[2m359.83 kB[22m[1m[22m[2m │ gzip: 108.03 kB[22m
+[2mdist/[22m[36massets/index-iFEiG8T_.js                                      [39m[1m[33m784.56 kB[39m[22m[2m │ gzip: 245.55 kB[22m
+[32m✓ built in 9.51s[39m
+[33m
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+--- build: ok in 24.8 s
+
+=== e2e === pnpm exec playwright install chromium && pnpm exec playwright test --reporter=list,json --workers=1
+          |                                                                            ^
+      259 |
+      260 |   await form.getByLabel('Company website', { exact: true }).fill('falak.example')
+      261 |   // The chip's input is visually hidden and the label is the affordance, so
+        at C:\alphabeacon-web\alphabeacon-web\e2e\marketing.spec.ts:258:76
+
+    Error Context: test-results\marketing-the-demo-request-181b5-esolves-locally-and-says-so-chromium\error-context.md
+
+  1 failed
+    [chromium] › e2e\marketing.spec.ts:227:1 › the demo request validates, then resolves locally and says so 
+  99 skipped
+  121 passed (6.3m)
+--- e2e: FAILED (exit 1) in 381.5 s
+
+the tree changed during verify:all (838521dda978 → 33a9600836e6); the report is written for the tree the suites ran on and will read as stale
+
+verify:all summary
+lint           PASS  9 s
+typecheck      PASS  15 s
+guard-static   PASS  1 s
+unit           PASS  30 s
+build          PASS  25 s
+e2e            FAIL  382 s
+unit: 899 passed / 0 failed / 79 files
+e2e: 121 passed / 99 skipped / 1 failed
+report: .gate\reports\verify.json for tree 838521dda978
+RESULT: FAIL
+ ELIFECYCLE  Command failed with exit code 1.

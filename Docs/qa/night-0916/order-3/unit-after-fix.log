@@ -1,0 +1,23 @@
+
+[1m[46m RUN [49m[22m [36mv3.2.7 [39m[90mC:/alphabeacon-web/alphabeacon-web[39m
+
+ [32m✓[39m src/lib/return-to.test.ts [2m([22m[2m33 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+[90mstdout[2m | src/data/return-to-flow.test.tsx[2m > [22m[2mthe 401 handler writes the path it was on before its purge and push[2m > [22m[2ma token dead on the boot sync at /settings/team?x=1
+[22m[39m[api] GET /me → 401 (request-id unexposed)
+[api] GET /me/orgs → 401 (request-id unexposed)
+
+[90mstdout[2m | src/data/return-to-flow.test.tsx[2m > [22m[2ma deliberate sign-out clears it[2m > [22m[2msignOut
+[22m[39m[api] GET /me → 204 (request-id unexposed)
+[api] GET /me/orgs → 204 (request-id unexposed)
+[api] POST /auth/logout → 204 (request-id unexposed)
+
+ [32m✓[39m src/data/return-to-flow.test.tsx [2m([22m[2m8 tests[22m[2m)[22m[33m 1725[2mms[22m[39m
+   [33m[2m✓[22m[39m the sign-in screen takes it on success[2m > [22mreads, clears, and goes there [33m 621[2mms[22m[39m
+   [33m[2m✓[22m[39m the sign-in screen takes it on success[2m > [22mlands on `/` when there is none [33m 509[2mms[22m[39m
+   [33m[2m✓[22m[39m the sign-in screen takes it on success[2m > [22ma stored value that is not an app path is ignored and cleared [33m 418[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m2 passed[39m[22m[90m (2)[39m
+[2m      Tests [22m [1m[32m41 passed[39m[22m[90m (41)[39m
+[2m   Start at [22m 00:39:53
+[2m   Duration [22m 5.91s[2m (transform 1.01s, setup 767ms, collect 2.51s, tests 1.73s, environment 1.57s, prepare 480ms)[22m
+

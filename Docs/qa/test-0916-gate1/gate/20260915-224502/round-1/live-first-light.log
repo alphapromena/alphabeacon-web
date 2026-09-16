@@ -1,0 +1,8 @@
+warm-up: skipped — the runner warmed the fleet and keeps the heartbeat (GATE-0910 §3.2)
+
+Running 1 test using 1 worker
+
+[item 82] first light: mount 7689, paint 7697, gone 9501 → seen for 1803 ms
+  ok 1 [chromium] › e2e\live-first-light.spec.ts:49:1 › first light plays once on a fresh account, under the 2000 ms ceiling from its first paint, and never on a reload (12.8s)
+
+  1 passed (13.6s)

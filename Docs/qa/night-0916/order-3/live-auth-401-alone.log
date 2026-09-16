@@ -1,0 +1,38 @@
+
+warm-up: waking the API before the suite starts (https://<api-host>/api/health)
+warm-up: service awake after 2 probe(s) in 1.0s — last 2: 533ms, 169ms
+warm-up: 12-way fleet warm after 1 burst(s), 1.6s total — slowest 591ms
+
+warm-up: heartbeat started — 4 probes every 5s for the life of the run
+
+
+Running 8 tests using 1 worker
+
+    a f · GET /me/orgs → 401 · request de75503d-88b0-4b11-b95f-c53b2b58facb
+  ok 1 [chromium] › e2e\live-auth-401.spec.ts:127:1 › a fresh owner + org, made through the product (7.3s)
+    1 · · GET /me/orgs → 401 · request e0c9c764-b00f-42bd-a54a-146ed63c5da5
+    1 · · GET /me → 401 · request 924bbee6-fcfc-42f1-9005-727efe5db7f7
+    1 · · GET /me/orgs → 401 · request c969deed-fd0d-4397-8eaa-7a0d26022e72
+    1 · · GET /me → 401 · request 87dc49f7-1798-46b1-9797-2165b650a8a0
+  ok 2 [chromium] › e2e\live-auth-401.spec.ts:137:1 › 1 · a token expired at boot on `/` lands on login with the toast (6.9s)
+    2 · · GET /orgs/2355/event-sources/countries → 401 · request 5e4a7a50-9283-4194-8e52-f98302d0a135
+  ok 3 [chromium] › e2e\live-auth-401.spec.ts:145:1 › 2 · a token revoked mid-session on an authed route lands on login, not on the website (6.8s)
+    3 · · GET /me/orgs → 401 · request e2531901-4b4b-44d5-bf3a-eab761b3a9c1
+    3 · · GET /me → 401 · request bacd5edd-e82b-42e6-896f-956769597c7f
+    3 · · GET /me → 401 · request 21bb58fa-3c8d-4ca6-acef-c647bbcdbc62
+    3 · · GET /me/orgs → 401 · request bf786d4e-9afc-40e5-a544-b09e3a4d9f95
+  ok 4 [chromium] › e2e\live-auth-401.spec.ts:173:1 › 3 · a boot on an authed route with a dead token lands on login, not on the website (6.6s)
+    4 · · GET /orgs/2355/event-sources/countries → 401 · request 21df3c93-084c-4582-84af-ec7c7249d6c0
+    4 · · GET /orgs/2355/alphastudio/media/assets → 401 · request 2b083554-bf36-41ca-b1aa-e7e737ebfb5f
+  ok 5 [chromium] › e2e\live-auth-401.spec.ts:197:3 › 4 · a deliberate sign-out from Settings lands on the marketing home, not on login (7.0s)
+  ok 6 [chromium] › e2e\live-auth-401.spec.ts:197:3 › 4 · a deliberate sign-out from Billing lands on the marketing home, not on login (8.0s)
+  ok 7 [chromium] › e2e\live-auth-401.spec.ts:229:1 › 5 · a deep link to /billing with no session: sign in lands on /billing (5.3s)
+    6 · · GET /me → 401 · request e43f87e2-1152-4275-9555-24151c8e571d
+    6 · · GET /me/orgs → 401 · request 0a32b96a-a555-4201-b68c-75fd4fc64941
+    6 · · GET /me → 401 · request 131be853-3839-4ea9-b726-88a11ae16127
+    6 · · GET /me/orgs → 401 · request d50eb9f5-6689-4fa1-981a-2159a0c6dae2
+  ok 8 [chromium] › e2e\live-auth-401.spec.ts:245:1 › 6 · a token dead on /settings/organization: sign in lands back there (8.2s)
+
+warm-up: heartbeat stopped after 11 beat(s)
+
+  8 passed (1.0m)

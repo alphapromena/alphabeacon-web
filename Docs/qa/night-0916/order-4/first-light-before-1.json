@@ -1,0 +1,107 @@
+{
+  "mountAt": 10915.200000047684,
+  "paintAt": 10938.900000095367,
+  "litAt": 11340.400000095367,
+  "animEndAt": 11822.5,
+  "animEnds": [
+    {
+      "name": "first-light-ring",
+      "at": 11822.5,
+      "animation": "ab-first-light-ring"
+    },
+    {
+      "name": "first-light-core",
+      "at": 11822.5,
+      "animation": "ab-first-light-core"
+    },
+    {
+      "name": "first-light-ring",
+      "at": 11989.799999952316,
+      "animation": "ab-first-light-ring"
+    },
+    {
+      "name": "first-light-rule",
+      "at": 12255.900000095367,
+      "animation": "ab-queue-clear"
+    }
+  ],
+  "removedAt": 13525.599999904633,
+  "dashboardAt": 12023.5,
+  "calls": [
+    {
+      "path": "/api/auth/signup",
+      "start": 564.7999999523163,
+      "end": 6689.599999904633,
+      "ms": 6125
+    },
+    {
+      "path": "/api/auth/verify-email",
+      "start": 7507.299999952316,
+      "end": 8682.400000095367,
+      "ms": 1175
+    },
+    {
+      "path": "/api/me/orgs",
+      "start": 8683.5,
+      "end": 8818.200000047684,
+      "ms": 135
+    },
+    {
+      "path": "/api/me",
+      "start": 8684.700000047684,
+      "end": 9763.599999904633,
+      "ms": 1079
+    },
+    {
+      "path": "/api/me/orgs",
+      "start": 8684.799999952316,
+      "end": 10159.700000047684,
+      "ms": 1475
+    },
+    {
+      "path": "/api/orgs",
+      "start": 8819.5,
+      "end": 10912.299999952316,
+      "ms": 2093
+    },
+    {
+      "path": "/api/me",
+      "start": 10915.5,
+      "end": 11323.400000095367,
+      "ms": 408
+    },
+    {
+      "path": "/api/me/orgs",
+      "start": 10915.700000047684,
+      "end": 11703.5,
+      "ms": 788
+    },
+    {
+      "path": "/api/me/orgs",
+      "start": 11717.200000047684,
+      "end": 13478.599999904633,
+      "ms": 1761
+    },
+    {
+      "path": "/api/me",
+      "start": 11717.099999904633,
+      "end": 13866.900000095367,
+      "ms": 2150
+    },
+    {
+      "path": "/api/orgs/2356/members",
+      "start": 11705.099999904633,
+      "end": 14570,
+      "ms": 2865
+    },
+    {
+      "path": "/api/orgs/2356/invites",
+      "start": 11705.200000047684,
+      "end": 15123.5,
+      "ms": 3418
+    }
+  ],
+  "verifyClickAt": 7504.700000047684,
+  "email": "qa+1789509251210365fl@alphapromena.com",
+  "total": 2586.699999809265
+}

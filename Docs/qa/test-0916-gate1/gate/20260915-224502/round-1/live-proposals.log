@@ -1,0 +1,42 @@
+warm-up: skipped — the runner warmed the fleet and keeps the heartbeat (GATE-0910 §3.2)
+
+Running 5 tests using 1 worker
+
+  x  1 [chromium] › e2e\live-proposals.spec.ts:48:1 › a fresh owner + org, with its brand set up (20.7s)
+  -  2 [chromium] › e2e\live-proposals.spec.ts:88:1 › one balanced run — the drafts it produces become the proposals under test
+  -  3 [chromium] › e2e\live-proposals.spec.ts:103:1 › after a RELOAD, Today shows the draft from the ledger
+  -  4 [chromium] › e2e\live-proposals.spec.ts:123:1 › approving records it as posted, and the decision survives a reload
+  -  5 [chromium] › e2e\live-proposals.spec.ts:173:1 › declining asks why, keeps the row, and is reversible
+
+
+  1) [chromium] › e2e\live-proposals.spec.ts:48:1 › a fresh owner + org, with its brand set up ─────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('heading', { name: 'Check your inbox' })
+    Expected: visible
+    Timeout: 20000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 20000ms
+      - waiting for getByRole('heading', { name: 'Check your inbox' })
+
+
+       at live-setup.ts:309
+
+      307 |   await page.getByRole('checkbox', { name: /terms of service/ }).click()
+      308 |   await page.getByRole('button', { name: 'Create account' }).click()
+    > 309 |   await expect(page.getByRole('heading', { name: 'Check your inbox' })).toBeVisible({
+          |                                                                         ^
+      310 |     timeout: 20_000,
+      311 |   })
+      312 |
+        at signUpAndEnter (C:\alphabeacon-web\alphabeacon-web\e2e\live-setup.ts:309:73)
+        at C:\alphabeacon-web\alphabeacon-web\e2e\live-proposals.spec.ts:50:3
+
+    Error Context: .gate\artifacts\20260915-224502\round-1\live-proposals\live-proposals-a-fresh-owner-org-with-its-brand-set-up-chromium\error-context.md
+
+  1 failed
+    [chromium] › e2e\live-proposals.spec.ts:48:1 › a fresh owner + org, with its brand set up ──────
+  4 did not run

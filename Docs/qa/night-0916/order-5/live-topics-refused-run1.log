@@ -1,0 +1,49 @@
+
+warm-up: waking the API before the suite starts (https://<api-host>/api/health)
+warm-up: probe 1 — error in 10644ms (TypeError: fetch failed) — not warm yet
+warm-up: probe 2 — error in 10629ms (TypeError: fetch failed) — not warm yet
+warm-up: probe 3 — error in 10644ms (TypeError: fetch failed) — not warm yet
+warm-up: probe 4 — error in 10618ms (TypeError: fetch failed) — not warm yet
+warm-up: probe 5 — error in 8637ms (TypeError: fetch failed) — not warm yet
+warm-up: probe 6 — 200 in 1433ms — not warm yet
+warm-up: service awake after 8 probe(s) in 55.2s — last 2: 353ms, 411ms
+warm-up: burst 1 — slowest of 12 was 200 in 1275ms — fleet not warm yet
+warm-up: 12-way fleet warm after 2 burst(s), 57.3s total — slowest 518ms
+
+warm-up: heartbeat started — 4 probes every 5s for the life of the run
+
+
+Running 2 tests using 1 worker
+
+  ok 1 [chromium] › e2e\live-topics-refused.spec.ts:39:1 › a fresh owner + org, made through the product (10.8s)
+[item 78] after the refusal: {"chipVisible":false,"alertVisible":false,"alertText":"","readsAfterRefusal":12}
+  x  2 [chromium] › e2e\live-topics-refused.spec.ts:49:1 › a refused topic write keeps the chip, says why with the request id, and does not resync; a landed one resyncs once (2.5m)
+
+warm-up: heartbeat stopped after 32 beat(s)
+
+
+  1) [chromium] › e2e\live-topics-refused.spec.ts:49:1 › a refused topic write keeps the chip, says why with the request id, and does not resync; a landed one resyncs once 
+
+    Test timeout of 150000ms exceeded.
+
+    Error: the chip the person typed stays
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+       98 |   console.log(`[item 78] after the refusal: ${JSON.stringify(observed)}`)
+       99 |
+    > 100 |   expect(observed.chipVisible, 'the chip the person typed stays').toBe(true)
+          |                                                                   ^
+      101 |   expect(observed.alertVisible, 'an alert names the refusal').toBe(true)
+      102 |   expect(observed.alertText).toContain(REFUSAL)
+      103 |   expect(observed.alertText).toContain(REQUEST_ID)
+        at C:\alphabeacon-web\alphabeacon-web\e2e\live-topics-refused.spec.ts:100:67
+
+    Error Context: test-results\live-topics-refused-a-refu-7f0e8-c-a-landed-one-resyncs-once-chromium\error-context.md
+
+  1 failed
+    [chromium] › e2e\live-topics-refused.spec.ts:49:1 › a refused topic write keeps the chip, says why with the request id, and does not resync; a landed one resyncs once 
+  1 passed (3.7m)

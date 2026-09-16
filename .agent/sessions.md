@@ -5674,3 +5674,121 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   builds static); the docs-only commit that carries this line is CANCELED on
   both targets and both hosts still serve `index-BVhSvkNX.js`. Smoke on
   `2.malaky.ai`: green on every row in run 4.
+
+## 2026-09-16 — NIGHT-0916 order 1: the submit that hangs (item 81)
+
+- Phase: post-W7 — the night's six build orders on `feat/night-0916`
+- Files: `src/api/client.ts`, `src/api/errors.ts`, `src/lib/messages.ts`,
+  `src/features/auth/auth-error.tsx`, `src/api/client.test.ts`,
+  `src/data/timeout-surfaces.test.tsx`, `e2e/live-timeout.spec.ts`,
+  `scripts/gate/{gate,lanes}.ts`
+- Decisions: D-NIGHT-0916-A
+- Verify: probe — eight signups at once all 201 in 3.9–4.6 s (no hang, no
+  429); a real signup then got no answer in 15 s on the spec's first run and
+  3.1 s on the next — pending, intermittent, not width-driven; unit red first
+  (10 of 27 with a fetch that never resolves) then 27/27; six seams + the
+  alert 7/7; live case alone 2/2 (the held login says the sentence at ~15 s,
+  keeps the email, retries nothing); `--spacing -1` refused before anything
+  starts; cheap checks: unit 840/840, static 119/0/92
+- Next: order 2. Item 81 stays open for Ward (the wire side)
+
+## 2026-09-16 — NIGHT-0916 order 2: where a deliberate sign-out lands (item 83)
+
+- Files: `src/lib/navigation.ts` (new), `src/routes.tsx`, `src/data/auth.ts`,
+  `src/data/sign-out-landing.test.tsx`, `e2e/live-auth-401.spec.ts`,
+  `e2e/live-invite-org.spec.ts`, `e2e/live-team.spec.ts`
+- Decisions: D-NIGHT-0916-B
+- Verify: unit red first (4 of 8 — a navigation merely requested lost to the
+  purge's render) then 8/8 from Today, Billing, Settings, Dashboard; live
+  6/6 (two deliberate sign-outs land on the M2 hero, session gone); the two
+  loosened helpers tight again; cheap checks: unit 848/848, static 119/0/94
+- Next: order 3. Item 83 closes
+
+## 2026-09-16 — NIGHT-0916 order 3: returnTo
+
+- Files: `src/lib/return-to.ts` + test (new), `src/data/return-to-flow.test.tsx`
+  (new), `src/routes.tsx`, `src/data/provider.tsx`,
+  `src/features/auth/signin-screen.tsx`, `src/data/auth.ts`,
+  `e2e/live-auth-401.spec.ts`
+- Decisions: D-NIGHT-0916-C
+- Verify: validation 33 cases; seams 9 (guard write ×2, handler write, login
+  consume ×4 incl. the redirect race, sign-out clears, verify ignores); red
+  first 6 of 8 and 1 of 1 for the race; live 8/8 (deep link `/billing` →
+  sign in → `/billing`; a token dead on `/settings/organization` → back
+  there); cheap checks: unit 890/890, static 119/0/96
+- Next: order 4
+
+## 2026-09-16 — NIGHT-0916 order 4: first light under the ceiling (item 82)
+
+- Files: `src/components/ab/first-light.tsx`, `first-light-gate.tsx`, both
+  tests, `e2e/live-first-light.spec.ts` (new), `scripts/gate/lanes.ts`
+- Decisions: D-NIGHT-0916-D
+- Verify: probe on the built app before — paint → removal 2587 ms, the
+  dismissal render ~800 ms behind the sync's; after — 1814 ms with twenty
+  reads landing inside the moment; unit red first 4 of 18 then 18/18; live
+  case 1802 ms from first paint, none on reload; cheap checks: unit 894/894,
+  static 122 (119 + the guarded case) — the new live case lacked the
+  static-mode skip and went red once, fixed in `e3ed7b1`
+- Next: order 5. Item 82 closes
+
+## 2026-09-16 — NIGHT-0916 order 5: a refused topic write (item 78)
+
+- Files: `src/data/brand.ts`, `src/features/settings/sources-screen.tsx`,
+  `src/data/topics-refused.test.tsx` (new), `e2e/live-topics-refused.spec.ts`
+  (new), `scripts/gate/lanes.ts`
+- Decisions: D-NIGHT-0916-E
+- Verify: measured first — chip gone, no alert, 12 reads after a refused
+  POST; seam test red first (1 of 2) then 19/19 across the related files;
+  live 2/2 (chip stays, alert with message + request id, 0 reads; the next
+  topic lands, alert clears, one resync); cheap checks: unit 896/896, static
+  119/0/99
+- Next: order 6. Item 78 closes
+
+## 2026-09-16 — NIGHT-0916 order 6: the login right panel
+
+- Files: `src/styles/tokens.css`, `src/styles/globals.css`,
+  `src/features/auth/auth-layout.tsx`, `src/features/auth/signin-screen.tsx`,
+  `src/styles/motion-scale.test.ts`, `e2e/login-panel.spec.ts` (new)
+- Decisions: D-NIGHT-0916-F
+- Verify: measured before and after on built apps at 1440/1024/390 and under
+  reduced motion (`Docs/qa/night-0916/login/`): radii 18 → 8 px; form and
+  panel centres 482/781 → 482/483; checkbox 564 → 140 beside its label at
+  164; accent-painted controls 3 → 1; the beacon's breathing layer on 20 s,
+  display none under reduced motion; axe clean at rest, mid-breath and
+  reduced; FCP 412–460 ms both ways; the moments guard proven to bite (1 of
+  23 red on a fake fifth family); static spec 3/3; cheap checks: unit
+  899/899, static 122/0/99
+- Next: TEST-0916
+
+## 2026-09-16 — TEST-0916: the night's testing session — three gates, the merge, the smoke
+
+- Phase: post-W7 — the named testing session that gates the six NIGHT-0916
+  orders and merges them
+- Files: `Docs/qa/night-0916/**`, `Docs/qa/test-0916-gate{1,2,3}/**`,
+  `.agent/{sessions,decisions,open-items,state}.md`; no product code changed
+  in the session itself
+- Decisions: none new (the six orders' A–F stand); the session applied the
+  buckets as written
+- Verify: **gate 1** (22:45–23:15Z, `20260915-224502`): static clean (unit
+  899/899, static e2e 122/0/99), live 13 green + 11 red — 9 of them one
+  network-loss window (23:01–23:08Z, `connect ETIMEDOUT` to the API's
+  address; bucket d), 1 item 63 (bucket c), 1 `live-brand` (wire timing over
+  a pre-existing resync race, item 87; bucket c after gate 2). **Gate 2**
+  (23:16–23:46Z, `20260915-231601`): static half VOID — I appended to the
+  run-log during the run and the tree hash moved, every report check read
+  "stale" (memory updated); its one static red a marketing validation-timing
+  flake (item 70's shape); live half 22 green + items 63 and 58 (bucket c),
+  every gate-1 red green. **Gate 3** (23:46Z–, `20260915-234611`, the tree
+  frozen): static clean (verify:all PASS, w00–w06 PASS; unit 899/899; static e2e 122/0/99); live 22 green + items 63 and 58 (bucket c) + 1 skipped-all — clean except c, merged. Live proofs beyond the gate:
+  the login panel by eye and axe on the built app (order 6's record), deep
+  link and 401 with returnTo (`live-auth-401` 8/8 in every gate), a
+  deliberate sign-out from Settings, Billing (the gate) and Today
+  (1/1 at 00:16Z), first light 1802 ms from first paint (gate) / SMOKE_FL on
+  production, the topics seam 2/2, the 15 s message 2/2 in every gate;
+  draft-dependent moments stay on the static and funded proofs
+- Next: the Arabic order on `feat/ar-0916` (pushed, never merged); the
+  founder's rulings on 84, 85, 87; Ward on 81; Hasan on 63, 58, 66b
+- Merge: `main` = `live` = **`MERGE_SHA`** (fast-forward from `3b5d72c`,
+  confirmed from GitHub's atom feeds); production and the `live` preview
+  READY at that SHA on one bundle `BUNDLE`; the close-out docs commit
+  CANCELED on both targets; smoke on `2.malaky.ai`: SMOKE_SUMMARY

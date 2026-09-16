@@ -1,0 +1,62 @@
+
+[1m[46m RUN [49m[22m [36mv3.2.7 [39m[90mC:/alphabeacon-web/alphabeacon-web[39m
+
+ [31m❯[39m src/styles/motion-scale.test.ts [2m([22m[2m23 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 15[2mms[22m[39m
+   [32m✓[39m the motion scale[2m > [22mis exactly three durations, and all three are real time[32m 2[2mms[22m[39m
+   [32m✓[39m the motion scale[2m > [22mruns fast < medium < slow, so the names mean what they say[32m 0[2mms[22m[39m
+   [32m✓[39m the motion scale[2m > [22mkeeps hover and press UNDER the 150ms default the product ran on by accident[32m 0[2mms[22m[39m
+   [32m✓[39m the reduced-motion collapse[2m > [22mzeroes EVERY duration in the scale[32m 0[2mms[22m[39m
+   [32m✓[39m the reduced-motion collapse[2m > [22mstill removes the signature animations, so §5.7 is untouched[32m 0[2mms[22m[39m
+   [32m✓[39m the reduced-motion collapse[2m > [22mcollapses the content entrance rather than deleting the content[32m 0[2mms[22m[39m
+   [32m✓[39m the real-wait threshold (ORDER MOTION-0914/A2)[2m > [22mexists, is real time, and is NOT a fourth member of the scale[32m 1[2mms[22m[39m
+   [32m✓[39m the real-wait threshold (ORDER MOTION-0914/A2)[2m > [22mdoes NOT collapse under reduced motion[32m 0[2mms[22m[39m
+   [32m✓[39m the real-wait threshold (ORDER MOTION-0914/A2)[2m > [22mholds the skeleton invisible until the threshold has passed[32m 0[2mms[22m[39m
+   [32m✓[39m no screen manufactures a wait[2m > [22museScreenPhase takes no delay argument any more[32m 0[2mms[22m[39m
+   [32m✓[39m no screen manufactures a wait[2m > [22mstatic mode is ready without waiting for anything[32m 0[2mms[22m[39m
+   [32m✓[39m ambient — the taxonomy beside the moments (NIGHT-0916 order 6)[2m > [22mis exactly one family, and it lives OUTSIDE the moments block[32m 0[2mms[22m[39m
+   [32m✓[39m ambient — the taxonomy beside the moments (NIGHT-0916 order 6)[2m > [22mbreathes on the one ambient token, which is not a member of the motion scale[32m 0[2mms[22m[39m
+   [32m✓[39m ambient — the taxonomy beside the moments (NIGHT-0916 order 6)[2m > [22mintroduces no colour of its own[32m 0[2mms[22m[39m
+[31m   [31m×[31m the four moments (ORDER MOTION-0914/B)[2m > [22mthere are FOUR, and the vocabulary is the beacon[39m[32m 7[2mms[22m[39m
+[31m     → expected [ Array(6) ] to deeply equal [ 'approve-sweep', …(4) ][39m
+   [32m✓[39m the four moments (ORDER MOTION-0914/B)[2m > [22mintroduces no colour of its own — the gold is the only ink[32m 0[2mms[22m[39m
+   [32m✓[39m the four moments (ORDER MOTION-0914/B)[2m > [22muses no literal duration — every moment comes from the scale[32m 0[2mms[22m[39m
+   [32m✓[39m the four moments (ORDER MOTION-0914/B)[2m > [22mdraws the approve sweep and the queue rule on the SAME keyframe[32m 0[2mms[22m[39m
+   [32m✓[39m the four moments (ORDER MOTION-0914/B)[2m > [22mnever hangs data-ab-motion on something that carries meaning[32m 0[2mms[22m[39m
+   [32m✓[39m the four moments (ORDER MOTION-0914/B)[2m > [22mcollapses the approve settle to its end state under reduced motion[32m 0[2mms[22m[39m
+   [32m✓[39m every value comes from the scale[2m > [22muses no literal duration in the motion block[32m 0[2mms[22m[39m
+   [32m✓[39m every value comes from the scale[2m > [22mcarries the one memorable moment on the slow token, not on a literal[32m 0[2mms[22m[39m
+   [32m✓[39m every value comes from the scale[2m > [22mkeeps the JS counter and the CSS medium in step[32m 0[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 1 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m src/styles/motion-scale.test.ts[2m > [22mthe four moments (ORDER MOTION-0914/B)[2m > [22mthere are FOUR, and the vocabulary is the beacon
+[31m[1mAssertionError[22m: expected [ Array(6) ] to deeply equal [ 'approve-sweep', …(4) ][39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  [[22m
+[2m    "approve-sweep",[22m
+[31m+   "fifth-thing",[39m
+[2m    "first-light-core",[22m
+[2m    "first-light-ring",[22m
+[2m    "first-light-rule",[22m
+[2m    "tone-rewrite",[22m
+[2m  ][22m
+
+[36m [2m❯[22m src/styles/motion-scale.test.ts:[2m216:34[22m[39m
+    [90m214| [39m      Array.from(moments.matchAll(/\[data-ab-motion='([a-z-]+)'\]/g), …
+    [90m215| [39m    )
+    [90m216| [39m    [34mexpect[39m([[33m...[39mfamilies][33m.[39m[34msort[39m())[33m.[39m[34mtoEqual[39m([
+    [90m   | [39m                                 [31m^[39m
+    [90m217| [39m      [32m'approve-sweep'[39m[33m,[39m
+    [90m218| [39m      [32m'first-light-core'[39m[33m,[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m22 passed[39m[22m[90m (23)[39m
+[2m   Start at [22m 01:35:27
+[2m   Duration [22m 1.80s[2m (transform 64ms, setup 347ms, collect 48ms, tests 15ms, environment 707ms, prepare 238ms)[22m
+

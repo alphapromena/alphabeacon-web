@@ -1,0 +1,186 @@
+
+[1m[46m RUN [49m[22m [36mv3.2.7 [39m[90mC:/alphabeacon-web/alphabeacon-web[39m
+
+ [31m❯[39m src/components/ab/first-light-gate.test.tsx [2m([22m[2m4 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 126[2mms[22m[39m
+   [32m✓[39m FirstLightGate[2m > [22mplays on a fresh account, and a provider update mid-moment does not dismiss it[32m 93[2mms[22m[39m
+   [32m✓[39m FirstLightGate[2m > [22mnever plays for an account that has been welcomed[32m 6[2mms[22m[39m
+[31m   [31m×[31m FirstLightGate[2m > [22mwaits for the workspace, then plays — armed on a world with no org yet[39m[32m 20[2mms[22m[39m
+[31m     → [2mexpect([22m[31melement[31m[2m).not.toBeInTheDocument()[22m
+
+[31mexpected document not to contain element, found <div
+  aria-label="Welcome to Malaky, Dana"
+  class="fixed inset-0 z-50 flex flex-col items-center justify-center gap-6 bg-background"
+  data-slot="first-light"
+  role="status"
+>
+  <div
+    class="relative flex size-32 items-center justify-center"
+  >
+    <span
+      aria-hidden="true"
+      class="absolute size-16 rounded-full border border-brand"
+      data-ab-motion="first-light-ring"
+    />
+    <span
+      aria-hidden="true"
+      class="absolute size-16 rounded-full border border-brand"
+      data-ab-motion="first-light-ring"
+      data-ring="2"
+    />
+    <span
+      aria-hidden="true"
+      class="size-3 rounded-full bg-brand"
+      data-ab-motion="first-light-core"
+    />
+  </div>
+  <button
+    class="absolute bottom-8 rounded-lg px-3 py-1.5 text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+    type="button"
+  >
+    Skip
+  </button>
+</div> instead[31m[39m
+   [32m✓[39m FirstLightGate[2m > [22mis not mounted at all under reduced motion[32m 6[2mms[22m[39m
+ [31m❯[39m src/components/ab/first-light.test.tsx [2m([22m[2m14 tests[22m[2m | [22m[31m3 failed[39m[2m)[22m[33m 1121[2mms[22m[39m
+   [32m✓[39m first light, the moment[2m > [22mis under the two-second ceiling the order sets[32m 2[2mms[22m[39m
+   [33m[2m✓[22m[39m first light, the moment[2m > [22mgreets the person by their own first name [33m 466[2mms[22m[39m
+   [32m✓[39m first light, the moment[2m > [22mnames the account in its accessible label from the very first frame[32m 36[2mms[22m[39m
+   [33m[2m✓[22m[39m first light, the moment[2m > [22mfalls back rather than greeting an empty string [33m 438[2mms[22m[39m
+   [32m✓[39m first light, the moment[2m > [22mdismisses itself, once, when nobody touches it[32m 5[2mms[22m[39m
+[31m   [31m×[31m first light, the moment[2m > [22mruns its clock from the first paint, not from mount[39m[32m 8[2mms[22m[39m
+[31m     → expected "spy" to not be called at all, but actually been called 1 times[90m
+
+Received: 
+
+[1m  1st spy call:
+
+[22m    Array []
+[31m[90m
+
+Number of calls: [1m1[22m
+[31m[39m
+[31m   [31m×[31m first light, the moment[2m > [22mtakes itself off the screen BEFORE it tells the app, so nothing the app is busy with can hold it there[39m[32m 6[2mms[22m[39m
+[31m     → expected false to be true // Object.is equality[39m
+[31m   [31m×[31m first light, the moment[2m > [22ma skip hides it the same way, at once[39m[32m 77[2mms[22m[39m
+[31m     → expected false to be true // Object.is equality[39m
+   [32m✓[39m first light, the moment[2m > [22mis skippable by click, and by key, and both land in the same place[32m 78[2mms[22m[39m
+   [32m✓[39m first light fires once per account[2m > [22mrecords the account BEFORE it plays, so a reload mid-moment cannot repeat it[32m 2[2mms[22m[39m
+   [32m✓[39m first light fires once per account[2m > [22msurvives a reload — mount, unmount, mount again[32m 1[2mms[22m[39m
+   [32m✓[39m first light fires once per account[2m > [22mis keyed by the account, so a second signup on the same machine is welcomed[32m 0[2mms[22m[39m
+   [32m✓[39m first light fires once per account[2m > [22mtreats the address case-insensitively — one account, one welcome[32m 0[2mms[22m[39m
+   [32m✓[39m first light fires once per account[2m > [22manswers "already seen" when storage throws, so it can never loop[32m 0[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 4 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m src/components/ab/first-light-gate.test.tsx[2m > [22mFirstLightGate[2m > [22mwaits for the workspace, then plays — armed on a world with no org yet
+[31m[1mError[22m: [2mexpect([22m[31melement[31m[2m).not.toBeInTheDocument()[22m
+
+[31mexpected document not to contain element, found <div
+  aria-label="Welcome to Malaky, Dana"
+  class="fixed inset-0 z-50 flex flex-col items-center justify-center gap-6 bg-background"
+  data-slot="first-light"
+  role="status"
+>
+  <div
+    class="relative flex size-32 items-center justify-center"
+  >
+    <span
+      aria-hidden="true"
+      class="absolute size-16 rounded-full border border-brand"
+      data-ab-motion="first-light-ring"
+    />
+    <span
+      aria-hidden="true"
+      class="absolute size-16 rounded-full border border-brand"
+      data-ab-motion="first-light-ring"
+      data-ring="2"
+    />
+    <span
+      aria-hidden="true"
+      class="size-3 rounded-full bg-brand"
+      data-ab-motion="first-light-core"
+    />
+  </div>
+  <button
+    class="absolute bottom-8 rounded-lg px-3 py-1.5 text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+    type="button"
+  >
+    Skip
+  </button>
+</div> instead[31m[39m
+[36m [2m❯[22m src/components/ab/first-light-gate.test.tsx:[2m105:77[22m[39m
+    [90m103| [39m      [34mdispatchRef[39m[33m![39m({ type[33m:[39m [32m'firstLight/arm'[39m[33m,[39m [33m...[39m[33mACCOUNT[39m })
+    [90m104| [39m    })
+    [90m105| [39m    expect(screen.queryByRole('status', { name: /Welcome to Malaky/ })…
+    [90m   | [39m                                                                            [31m^[39m
+    [90m106| [39m    [90m// Not seen: nothing has played, so nothing is recorded.[39m
+    [90m107| [39m    expect(window.localStorage.getItem(firstLightKey(ACCOUNT.email))).…
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/components/ab/first-light.test.tsx[2m > [22mfirst light, the moment[2m > [22mruns its clock from the first paint, not from mount
+[31m[1mAssertionError[22m: expected "spy" to not be called at all, but actually been called 1 times[90m
+
+Received: 
+
+[1m  1st spy call:
+
+[22m    Array []
+[31m[90m
+
+Number of calls: [1m1[22m
+[31m[39m
+[36m [2m❯[22m src/components/ab/first-light.test.tsx:[2m85:24[22m[39m
+    [90m 83| [39m    [90m// second frame, so the moment is still short by those two frames.[39m
+    [90m 84| [39m    vi[33m.[39m[34madvanceTimersByTime[39m([33mFIRST_LIGHT_MS[39m [33m+[39m [34m16[39m)
+    [90m 85| [39m    [34mexpect[39m(onDone)[33m.[39mnot[33m.[39m[34mtoHaveBeenCalled[39m()
+    [90m   | [39m                       [31m^[39m
+    [90m 86| [39m    vi[33m.[39m[34madvanceTimersByTime[39m([34m32[39m)
+    [90m 87| [39m    [34mexpect[39m(onDone)[33m.[39m[34mtoHaveBeenCalledTimes[39m([34m1[39m)
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/components/ab/first-light.test.tsx[2m > [22mfirst light, the moment[2m > [22mtakes itself off the screen BEFORE it tells the app, so nothing the app is busy with can hold it there
+[31m[1mAssertionError[22m: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m src/components/ab/first-light.test.tsx:[2m101:28[22m[39m
+    [90m 99| [39m    vi[33m.[39m[34madvanceTimersByTime[39m([33mFIRST_LIGHT_MS[39m [33m+[39m [34m64[39m)
+    [90m100| [39m    [34mexpect[39m(onDone)[33m.[39m[34mtoHaveBeenCalledTimes[39m([34m1[39m)
+    [90m101| [39m    [34mexpect[39m(hiddenWhenTold)[33m.[39m[34mtoBe[39m([35mtrue[39m)
+    [90m   | [39m                           [31m^[39m
+    [90m102| [39m  })
+    [90m103| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/components/ab/first-light.test.tsx[2m > [22mfirst light, the moment[2m > [22ma skip hides it the same way, at once
+[31m[1mAssertionError[22m: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m src/components/ab/first-light.test.tsx:[2m111:28[22m[39m
+    [90m109| [39m    [34mrender[39m([33m<[39m[33mFirstLight[39m [33m{[39m[33m...[39m[33mACCOUNT[39m[33m}[39m [33monDone[39m[33m=[39m[33m{[39monDone[33m}[39m [33m/[39m[33m>[39m)
+    [90m110| [39m    [35mawait[39m userEvent[33m.[39m[34mclick[39m(screen[33m.[39m[34mgetByRole[39m([32m'button'[39m[33m,[39m { name[33m:[39m [32m'Skip'[39m }))
+    [90m111| [39m    [34mexpect[39m(hiddenWhenTold)[33m.[39m[34mtoBe[39m([35mtrue[39m)
+    [90m   | [39m                           [31m^[39m
+    [90m112| [39m  })
+    [90m113| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m2 failed[39m[22m[90m (2)[39m
+[2m      Tests [22m [1m[31m4 failed[39m[22m[2m | [22m[1m[32m14 passed[39m[22m[90m (18)[39m
+[2m   Start at [22m 01:00:11
+[2m   Duration [22m 2.85s[2m (transform 328ms, setup 750ms, collect 707ms, tests 1.25s, environment 1.39s, prepare 376ms)[22m
+

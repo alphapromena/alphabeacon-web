@@ -1,0 +1,58 @@
+
+> alphabeacon-web@0.0.0 verify:w02 C:\alphabeacon-web\alphabeacon-web
+> tsx scripts/verify-w02.ts
+
+PASS  lint — 9 s in the report
+PASS  typecheck — 15 s in the report
+PASS  unit tests — 899 passed / 0 failed / 79 files (from the report)
+PASS  guard-static — 1 s in the report
+PASS  build — 25 s in the report
+PASS  e2e (@golden walk, marketing + auth axe) — 122 passed / 99 skipped / 0 failed (from the report)
+
+=== posts-per-day cap is declared once, with a named message ===
+cap: MAX_POSTS_PER_DAY = 3, enforced by the shared schema with the catalogue message
+
+=== a production build boots into the visitor world ===
+production default: source derives it from the build, and dist falls back to "visitor"
+
+=== the visitor world holds its laws (structural) ===
+visitor-world laws: 58 marketing files clean
+
+=== W2 deliverables exist ===
+all 38 W2 deliverables present
+
+W2 verify summary
+----------------------------------------------
+lint                                      PASS
+typecheck                                 PASS
+unit tests                                PASS
+guard-static                              PASS
+build                                     PASS
+e2e (@golden walk, marketing + auth axe)  PASS
+posts-per-day cap declared once           PASS
+production boots into visitor             PASS
+visitor-world laws hold                   PASS
+W2 deliverables exist                     PASS
+----------------------------------------------
+RESULT: PASS (automated steps)
+
+MANUAL -- human judgement; verify by hand (web-plan.md W2 Verify):
+  1. Read the visitor world as a prospect would, end to end: does the hero
+     say what Malaky makes, and does each section answer one question
+     (what / how / proof / control / memory / Arabic / your company / next)?
+  2. Walk the wizard on a phone-width viewport -- the day pills, the
+     stepper, and the tone sheet are the three places touch targets and
+     overlay behaviour are hardest to get right.
+  3. Cross the seam at "Get started": /signup still wears the APP design.
+     That is deliberate this pass and logged as an open item -- confirm it
+     reads as a change of place, not as a broken page.
+  4. Scroll the homepage by hand at 1440 and at 390: the hero orbit turns
+     and slows on hover, the card stack swipes on the phone, the brand demo
+     runs a company and says it is a preview, and with reduced motion on
+     every section is complete and still, with no video mounted.
+  5. Review the AA corrections (design.md Part 7, D-M2-F-r2): the dark
+     ink on the orange CTA, the fourth text tier aliased to the third,
+     the approval preview absent rather than ghosted, the monogram one
+     tier up -- and in the Memory section, a reveal that slides without
+     fading plus a "Superseded" badge carrying what the fourth tier
+     used to say by colour alone.

@@ -1,0 +1,49 @@
+
+warm-up: waking the API before the suite starts (https://<api-host>/api/health)
+warm-up: probe 1 — 200 in 1306ms — not warm yet
+warm-up: service awake after 3 probe(s) in 2.1s — last 2: 135ms, 123ms
+warm-up: burst 1 — slowest of 12 was 200 in 1175ms — fleet not warm yet
+warm-up: 12-way fleet warm after 2 burst(s), 4.1s total — slowest 538ms
+
+warm-up: heartbeat started — 4 probes every 5s for the life of the run
+
+
+Running 2 tests using 1 worker
+
+  x  1 [chromium] › e2e\live-timeout.spec.ts:22:1 › a fresh owner + org, made through the product (20.9s)
+  -  2 [chromium] › e2e\live-timeout.spec.ts:32:1 › a sign-in the server does not answer in 15 s says so, keeps the form, retries nothing — and the next sign-in lands
+
+warm-up: heartbeat stopped after 4 beat(s)
+
+
+  1) [chromium] › e2e\live-timeout.spec.ts:22:1 › a fresh owner + org, made through the product ────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('heading', { name: 'Check your inbox' })
+    Expected: visible
+    Timeout: 20000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 20000ms
+      - waiting for getByRole('heading', { name: 'Check your inbox' })
+
+
+       at live-setup.ts:309
+
+      307 |   await page.getByRole('checkbox', { name: /terms of service/ }).click()
+      308 |   await page.getByRole('button', { name: 'Create account' }).click()
+    > 309 |   await expect(page.getByRole('heading', { name: 'Check your inbox' })).toBeVisible({
+          |                                                                         ^
+      310 |     timeout: 20_000,
+      311 |   })
+      312 |
+        at signUpAndEnter (C:\alphabeacon-web\alphabeacon-web\e2e\live-setup.ts:309:73)
+        at C:\alphabeacon-web\alphabeacon-web\e2e\live-timeout.spec.ts:24:3
+
+    Error Context: test-results\live-timeout-a-fresh-owner-org-made-through-the-product-chromium\error-context.md
+
+  1 failed
+    [chromium] › e2e\live-timeout.spec.ts:22:1 › a fresh owner + org, made through the product ─────
+  1 did not run

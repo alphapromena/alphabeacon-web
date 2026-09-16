@@ -4421,3 +4421,81 @@ the error itself.
   (`96e1c25`); a docs-only push alone is CANCELED (step 1 of the close-out).
   Instead of: the dashboard's setting, or a HEAD~N heuristic — the base Vercel
   knows is the truth. Commits `d827693`, `fbb8789`.
+
+### 2026-09-16 — NIGHT-0916: six build orders, one testing session, the Arabic branch
+
+- **The night.** The founder's word, unattended: six orders in sequence on
+  `feat/night-0916`, each proven and cheap-checked before the next; then
+  TEST-0916 gating and merging what completed; then item 68's Arabic order on
+  its own branch, pushed for review and not merged. None of the six hit a hard
+  stop. Record: `Docs/qa/night-0916/run-log.md`.
+- **D-NIGHT-0916-A — a request the server never answers is a failure the
+  client makes at 15 s, and the runner never fires signups back to back
+  (item 81).** Every request carries an `AbortController` with a 15 s limit
+  (`REQUEST_TIMEOUT_MS`; a caller's own signal still forwards). Past it the
+  request fails with `ApiError` code `timeout`, status 0, and the catalogue's
+  sentence "The server did not answer. Try again." — every seam already
+  handles a failure, so the alert names it, the toast says it, the submit
+  re-enables, the draft stays, and nothing retries (no auto-retry anywhere).
+  The gate runner spaces consecutive file starts in each lane (`--spacing`,
+  8 s by default, 0 switches off, negative refused). Instead of: a longer
+  Playwright clock (the person, not the spec, is who waits), or a retry (the
+  order forbids it). The wire side stays open on 81: the probe found the hang
+  intermittent, not width-driven, and on `OPTIONS` as well as `POST` — one
+  request pending 15–30 s then normal. Commits `4c27be3`, `1a4cc65`.
+- **D-NIGHT-0916-B — a deliberate sign-out lands on the marketing home from
+  every route; a forced one lands on login (item 83).** The action revokes
+  on the screen the person is on, moves to `/` through the router AND waits
+  for the router to COMMIT that location (`src/lib/navigation.ts`: the world
+  layout reports every committed path; no timer), then purges — so the route
+  that renders signed out is `RootGate`, never a guard. A request alone was
+  not enough: the router's navigation is a React transition and the purge, a
+  plain state update, rendered first (4 of 8 red in the unit test). The 401
+  handler keeps its own push to login (D-FIX-0915-A stands). The two helpers
+  loosened in `2dc7c45` are tight again. Commit `5fc614d`.
+- **D-NIGHT-0916-C — the intended app path is remembered once, before the
+  navigation to login, under one key; the sign-in consumes it; nothing else
+  reads it.** `ab-return-to` in sessionStorage (`src/lib/return-to.ts`):
+  the guard and the 401 handler write pathname + search before they send to
+  login; the sign-in screen reads it once, clears it, goes there, or to `/`.
+  Only an app route is kept — one leading slash, same origin, never a
+  marketing or auth path, never protocol-relative or absolute; a deliberate
+  sign-out clears it; signup and verify never read it; storage that throws is
+  absent; it survives a refresh of the tab and never reaches a new one. The
+  auth screens' signed-in redirect (`SignedOutOnly`) is decided when the
+  screen MOUNTS: fired on the sign-in's own render it raced the screen's
+  navigation and won (the first live run landed on `/`). Commit `5f1d32f`.
+- **D-NIGHT-0916-D — first light runs its clock from its first paint and
+  leaves the screen itself (item 82).** The overlay first paints only when
+  the workspace is in the state the product renders from (the gate waits for
+  the org, deciding once per arming); the clock starts two animation frames
+  after mount — the first frame shown — and runs `FIRST_LIGHT_MS` (1800); at
+  its end the node hides itself synchronously and only then tells the app,
+  so a landing sync delays the unmount but never the leaving; if the sync is
+  not done, the screen shows its own state under the 220 ms skeleton rule.
+  Never a timer from arming. Measured on the built app: 2587 ms paint →
+  removal before (the dismissal's render ~800 ms behind the sync's), 1814 ms
+  after with twenty reads landing inside the moment; the lane-A live case
+  reads 1802 ms. Once-per-account and storage-that-throws unchanged.
+  Commits `1452bda`, `e3ed7b1`.
+- **D-NIGHT-0916-E — item 73's rule is the rule for every write seam
+  (item 78).** A refused write never resyncs; what the person typed stays;
+  the screen says why in the wire's words with the request id; a landed
+  write resyncs once. Measured first: a topic POST refused at the browser
+  wiped the chip with nothing said (the seam resynced on the refusal, 12
+  reads; the screen never looked at the result). Commit `a7be9b7`.
+- **D-NIGHT-0916-F — the login panel's beacon is ambient, not a moment; the
+  login form has one accent element.** Static concentric gold rings
+  (7–20%) around one accent core that is always present, and one breathing
+  layer on the new `--ambient-period` token (20 s) carrying `data-ab-motion`,
+  so under reduced motion it does not exist and the figure stands still. The
+  family lives in a new section 10 after the guarantee block, OUTSIDE the
+  four moments' section the fifth-family guard reads; the taxonomy test
+  gained three cases and the moments guard was proven to bite on a fake
+  fifth family inside the block. The six findings: the panel copy shares the
+  form's optical centre (482/483 at 1440); one accent element (Sign in), the
+  links step down; the checkbox beside its label; button and inputs on the
+  small radius (8 px); the panel headline at the H1's size; the wordmark
+  untouched. Not touched by ruling: the panel's accent full stop
+  (D-THEME-0913-C) and the gold bloom. This decision licenses the static
+  spec `e2e/login-panel.spec.ts`. Commit `60be807`.

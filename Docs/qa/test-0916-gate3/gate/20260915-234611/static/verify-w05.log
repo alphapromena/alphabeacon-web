@@ -1,0 +1,61 @@
+
+> alphabeacon-web@0.0.0 verify:w05 C:\alphabeacon-web\alphabeacon-web
+> tsx scripts/verify-w05.ts
+
+PASS  lint — 9 s in the report
+PASS  typecheck — 14 s in the report
+PASS  unit tests — 899 passed / 0 failed / 79 files (from the report)
+PASS  guard-static — 1 s in the report
+PASS  build — 25 s in the report
+PASS  e2e (studio, billing, axe) — 122 passed / 99 skipped / 0 failed (from the report)
+
+=== D4 and E2 are the same composer ===
+composer: D4 and E2 both render the shared ComposerBody; neither has forked the form
+
+=== the params form is generated from the schema ===
+params: every control comes from fieldsFromSchema; no model or parameter is named in the UI
+
+=== the balance is computed from the ledger ===
+credits: useCreditBalance sums the ledger, and no entity stores a balance
+
+=== past due gates the product, not a screen ===
+past_due: banner in the shell, generation and publishing both refused
+
+=== e2e specs navigate in-app after switching datasets ===
+  entry-flow.spec.ts: switches via the shared helper, then walks in-app
+  today-queue.spec.ts: switches via the shared helper, then walks in-app
+  calendar-connections.spec.ts: switches via the shared helper, then walks in-app
+  studio-billing.spec.ts: switches via the shared helper, then walks in-app
+
+=== W5 deliverables exist ===
+all 10 W5 deliverables present
+
+W5 verify summary
+-------------------------------------
+lint                             PASS
+typecheck                        PASS
+unit tests                       PASS
+guard-static                     PASS
+build                            PASS
+e2e (studio, billing, axe)       PASS
+D4 and E2 share one composer     PASS
+params form is schema-generated  PASS
+balance computed, never stored   PASS
+past_due gates product-wide      PASS
+e2e navigation rule holds        PASS
+W5 deliverables exist            PASS
+-------------------------------------
+RESULT: PASS (automated steps)
+
+MANUAL -- human judgement; verify by hand (web-plan.md W5 Verify):
+  1. Open D4 from a draft and E2 from the gallery back to back.
+     They pass the structural check -- but do they FEEL like one
+     tool? That is the judgement the checklist actually asks for.
+  2. Read the credits ledger as someone querying a charge: do the
+     held rows explain why the balance is lower than the spend?
+
+  Carried forward, still open (see .agent/open-items.md):
+   - W1 screen-reader walk of the app shell (NVDA / VoiceOver)
+   - W2 marketing copy read, wizard at phone width, marketing in a dark OS
+   - W3 queue as one continuous tool, queue on a phone
+   - W4 month grid at phone width, timezone as the audience sees it

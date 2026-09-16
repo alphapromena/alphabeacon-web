@@ -1,0 +1,209 @@
+{
+  "mountAt": 6483.099999904633,
+  "paintAt": 6491.599999904633,
+  "litAt": 6915.199999809265,
+  "animEndAt": 7388,
+  "animEnds": [
+    {
+      "name": "first-light-ring",
+      "at": 7387.899999856949,
+      "animation": "ab-first-light-ring"
+    },
+    {
+      "name": "first-light-core",
+      "at": 7388.099999904633,
+      "animation": "ab-first-light-core"
+    },
+    {
+      "name": "first-light-ring",
+      "at": 7553.899999856949,
+      "animation": "ab-first-light-ring"
+    },
+    {
+      "name": "first-light-rule",
+      "at": 7820.299999952316,
+      "animation": "ab-queue-clear"
+    }
+  ],
+  "removedAt": 8305.899999856949,
+  "dashboardAt": 6788,
+  "calls": [
+    {
+      "path": "/api/auth/signup",
+      "start": 545.1999998092651,
+      "end": 2201.199999809265,
+      "ms": 1656
+    },
+    {
+      "path": "/api/auth/verify-email",
+      "start": 2908.0999999046326,
+      "end": 4039.699999809265,
+      "ms": 1132
+    },
+    {
+      "path": "/api/me/orgs",
+      "start": 4040.2999999523163,
+      "end": 4162.299999952316,
+      "ms": 122
+    },
+    {
+      "path": "/api/me",
+      "start": 4041.399999856949,
+      "end": 4631.899999856949,
+      "ms": 591
+    },
+    {
+      "path": "/api/orgs",
+      "start": 4163,
+      "end": 5257.299999952316,
+      "ms": 1094
+    },
+    {
+      "path": "/api/me",
+      "start": 5260.699999809265,
+      "end": 5632.399999856949,
+      "ms": 372
+    },
+    {
+      "path": "/api/me/orgs",
+      "start": 4041.5,
+      "end": 6066.299999952316,
+      "ms": 2025
+    },
+    {
+      "path": "/api/me/orgs",
+      "start": 5260.799999952316,
+      "end": 6468.699999809265,
+      "ms": 1208
+    },
+    {
+      "path": "/api/me",
+      "start": 6480.899999856949,
+      "end": 7073,
+      "ms": 592
+    },
+    {
+      "path": "/api/me/orgs",
+      "start": 6480.899999856949,
+      "end": 7105.699999809265,
+      "ms": 625
+    },
+    {
+      "path": "/api/orgs/2357/brand/voices",
+      "start": 6470,
+      "end": 7619.199999809265,
+      "ms": 1149
+    },
+    {
+      "path": "/api/orgs/2357/brand/sources",
+      "start": 6470.099999904633,
+      "end": 7796,
+      "ms": 1326
+    },
+    {
+      "path": "/api/orgs/2357/members",
+      "start": 6469.599999904633,
+      "end": 8110.899999856949,
+      "ms": 1641
+    },
+    {
+      "path": "/api/orgs/2357/schedules",
+      "start": 6470.399999856949,
+      "end": 8266.799999952316,
+      "ms": 1796
+    },
+    {
+      "path": "/api/orgs/2357/invites",
+      "start": 6469.699999809265,
+      "end": 8485.899999856949,
+      "ms": 2016
+    },
+    {
+      "path": "/api/orgs/2357/holidays",
+      "start": 6470.599999904633,
+      "end": 8514.299999952316,
+      "ms": 2044
+    },
+    {
+      "path": "/api/orgs/2357/brand/tones",
+      "start": 6469.899999856949,
+      "end": 8637.399999856949,
+      "ms": 2168
+    },
+    {
+      "path": "/api/orgs/2357/notifications",
+      "start": 6470.799999952316,
+      "end": 8775.399999856949,
+      "ms": 2305
+    },
+    {
+      "path": "/api/orgs/2357/notifications/unread-count",
+      "start": 6470.799999952316,
+      "end": 8819.799999952316,
+      "ms": 2349
+    },
+    {
+      "path": "/api/orgs/2357/brand/topics",
+      "start": 6470.199999809265,
+      "end": 8875.899999856949,
+      "ms": 2406
+    },
+    {
+      "path": "/api/orgs/2357",
+      "start": 6470.899999856949,
+      "end": 8985.599999904633,
+      "ms": 2515
+    },
+    {
+      "path": "/api/orgs/2357/brand/voices",
+      "start": 7107,
+      "end": 9280,
+      "ms": 2173
+    },
+    {
+      "path": "/api/orgs/2357/members",
+      "start": 7106.699999809265,
+      "end": 9371.599999904633,
+      "ms": 2265
+    },
+    {
+      "path": "/api/orgs/2357/brand/sources",
+      "start": 7107.099999904633,
+      "end": 9409.899999856949,
+      "ms": 2303
+    },
+    {
+      "path": "/api/orgs/2357/schedules",
+      "start": 7107.199999809265,
+      "end": 9520,
+      "ms": 2413
+    },
+    {
+      "path": "/api/orgs/2357/invites",
+      "start": 7106.799999952316,
+      "end": 9586.099999904633,
+      "ms": 2479
+    },
+    {
+      "path": "/api/orgs/2357/holidays",
+      "start": 7107.299999952316,
+      "end": 9949.699999809265,
+      "ms": 2842
+    },
+    {
+      "path": "/api/orgs/2357/brand/tones",
+      "start": 7106.899999856949,
+      "end": 10061.799999952316,
+      "ms": 2955
+    },
+    {
+      "path": "/api/orgs/2357/notifications",
+      "start": 7107.399999856949,
+      "end": 10089.399999856949,
+      "ms": 2982
+    }
+  ],
+  "verifyClickAt": 2904.0999999046326,
+  "email": "qa+1789509815341904fl@alphapromena.com",
+  "total": 1814.2999999523163
+}
