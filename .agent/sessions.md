@@ -5783,12 +5783,12 @@ entities/studio-models.ts}`, `src/components/ab/app-shell.tsx`,
   the login panel by eye and axe on the built app (order 6's record), deep
   link and 401 with returnTo (`live-auth-401` 8/8 in every gate), a
   deliberate sign-out from Settings, Billing (the gate) and Today
-  (1/1 at 00:16Z), first light 1802 ms from first paint (gate) / SMOKE_FL on
+  (1/1 at 00:16Z), first light 1802 ms from first paint (gate) / 1803 ms on
   production, the topics seam 2/2, the 15 s message 2/2 in every gate;
   draft-dependent moments stay on the static and funded proofs
 - Next: the Arabic order on `feat/ar-0916` (pushed, never merged); the
   founder's rulings on 84, 85, 87; Ward on 81; Hasan on 63, 58, 66b
-- Merge: `main` = `live` = **`MERGE_SHA`** (fast-forward from `3b5d72c`,
+- Merge: `main` = `live` = **`b1783d6`** (fast-forward from `3b5d72c`,
   confirmed from GitHub's atom feeds); production and the `live` preview
-  READY at that SHA on one bundle `BUNDLE`; the close-out docs commit
-  CANCELED on both targets; smoke on `2.malaky.ai`: SMOKE_SUMMARY
+  READY at that SHA on one bundle `index-Dtgnuihw.js`; the close-out docs commit
+  CANCELED on both targets; smoke on `2.malaky.ai`: green on every row (the login panel with the beacon and one accent, a fresh signup with 000000, first light once at 1803 ms and not on reload, five screens in one frame with zero console errors per hop, the toast at 13.62:1 from +40 ms, a deliberate sign-out to the marketing home with the session gone, a mid-session 401 on /billing to login and back on /billing after sign-in; the three console errors are the revoked token's own 401 resource loads)
